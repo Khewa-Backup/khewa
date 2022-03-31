@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<pack><id_product_pack><![CDATA[15]]></id_product_pack>
+<id_product_item><![CDATA[5]]></id_product_item>
+<id_product_attribute_item><![CDATA[19]]></id_product_attribute_item>
+<quantity><![CDATA[5]]></quantity>
+</pack>
+<pack><id_product_pack><![CDATA[15]]></id_product_pack>
+<id_product_item><![CDATA[7]]></id_product_item>
+<id_product_attribute_item><![CDATA[0]]></id_product_attribute_item>
+<quantity><![CDATA[5]]></quantity>
+</pack>
+</entity_profile>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<zone><id_zone><![CDATA[1]]></id_zone>
+<name><![CDATA[Europe]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[2]]></id_zone>
+<name><![CDATA[North America]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[3]]></id_zone>
+<name><![CDATA[Asia]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[4]]></id_zone>
+<name><![CDATA[Africa]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[5]]></id_zone>
+<name><![CDATA[Oceania]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[6]]></id_zone>
+<name><![CDATA[South America]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[7]]></id_zone>
+<name><![CDATA[Europe (non-EU)]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[8]]></id_zone>
+<name><![CDATA[Central America/Antilla]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[9]]></id_zone>
+<name><![CDATA[United States]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[10]]></id_zone>
+<name><![CDATA[Canada]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+<zone><id_zone><![CDATA[11]]></id_zone>
+<name><![CDATA[Mexico]]></name>
+<active><![CDATA[1]]></active>
+<datashop id_shop="1"></datashop>
+</zone>
+</entity_profile>

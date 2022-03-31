@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<currency><id_currency><![CDATA[1]]></id_currency>
+<iso_code><![CDATA[CAD]]></iso_code>
+<numeric_iso_code><![CDATA[124]]></numeric_iso_code>
+<precision><![CDATA[2]]></precision>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<deleted><![CDATA[0]]></deleted>
+<active><![CDATA[1]]></active>
+<datalanguage iso_code="en" >
+<name><![CDATA[Canadian Dollar]]></name>
+<symbol><![CDATA[$]]></symbol>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[dollar canadien]]></name>
+<symbol><![CDATA[$]]></symbol>
+</datalanguage>
+</currency>
+</entity_profile>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<supplier><id_supplier><![CDATA[2]]></id_supplier>
+<name><![CDATA[Collection Coutou]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-04-28 22:48:54]]></date_add>
+<date_upd><![CDATA[2020-04-28 22:49:04]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</supplier>
+<supplier><id_supplier><![CDATA[3]]></id_supplier>
+<name><![CDATA[Bastien Industries]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-04-29 15:02:36]]></date_add>
+<date_upd><![CDATA[2020-04-29 15:02:36]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[<p>Hiawatha 100% Autochtones</p>]]></description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</supplier>
+<supplier><id_supplier><![CDATA[4]]></id_supplier>
+<name><![CDATA[Laurentian Chief]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-04-29 15:04:14]]></date_add>
+<date_upd><![CDATA[2020-05-01 17:03:41]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[<p>Mocassins Slippers Mukluks</p>]]></description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</supplier>
+</entity_profile>

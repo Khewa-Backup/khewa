@@ -1,0 +1,2998 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<category><id_category><![CDATA[1]]></id_category>
+<id_parent><![CDATA[0]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[0]]></level_depth>
+<nleft><![CDATA[1]]></nleft>
+<nright><![CDATA[176]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2015-06-11 11:07:55]]></date_add>
+<date_upd><![CDATA[2015-06-11 11:07:55]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[1]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Root]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[root]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[1]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Racine]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[racine]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[2]]></id_category>
+<id_parent><![CDATA[1]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[1]]></level_depth>
+<nleft><![CDATA[2]]></nleft>
+<nright><![CDATA[175]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2015-06-11 11:07:55]]></date_add>
+<date_upd><![CDATA[2020-04-17 17:38:40]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[1]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[2]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Home]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[home]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[2]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Accueil]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[accueil]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[18]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[97]]></nleft>
+<nright><![CDATA[118]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2015-06-12 09:09:53]]></date_add>
+<date_upd><![CDATA[2020-11-18 15:44:04]]></date_upd>
+<position><![CDATA[4]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[18]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Kitchen]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[kitchen]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[18]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Cuisine]]></name>
+<description><![CDATA[<p>Description Accessoires</p>]]></description>
+<link_rewrite><![CDATA[cuisine]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[65]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[108]]></nleft>
+<nright><![CDATA[109]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 15:06:30]]></date_add>
+<date_upd><![CDATA[2018-08-02 14:51:18]]></date_upd>
+<position><![CDATA[5]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[65]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Mugs]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[mugs]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[65]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Tasses]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[tasses]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[66]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[106]]></nleft>
+<nright><![CDATA[107]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:06:52]]></date_add>
+<date_upd><![CDATA[2020-11-18 15:38:42]]></date_upd>
+<position><![CDATA[4]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[66]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Aprons]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[aprons]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[66]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Tabliers]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[tabliers]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[67]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[100]]></nleft>
+<nright><![CDATA[101]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 15:07:20]]></date_add>
+<date_upd><![CDATA[2018-08-02 12:25:50]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[67]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Oven Mitts]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[oven-mitts]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[67]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Mitaines de four]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[mitaines-de-four]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[69]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[98]]></nleft>
+<nright><![CDATA[99]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:08:36]]></date_add>
+<date_upd><![CDATA[2018-09-11 15:03:12]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[69]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Dish Towels]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[dish-towels]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[69]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Linges à vaiselle]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[linges-a-vaiselle]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><link_image><![CDATA[https://khewa.com/img/c/251.jpg]]></link_image>
+<id_category><![CDATA[251]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[102]]></nleft>
+<nright><![CDATA[103]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-05-25 18:18:41]]></date_add>
+<date_upd><![CDATA[2018-08-02 12:25:50]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[251]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Plates & Platters]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[plates-platters]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[251]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Plats de collection]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[plats-de-collection]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[277]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[110]]></nleft>
+<nright><![CDATA[111]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 12:26:47]]></date_add>
+<date_upd><![CDATA[2018-08-02 14:51:18]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[277]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Utensils]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[utensils]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[277]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Utensils]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[utensils]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[279]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[104]]></nleft>
+<nright><![CDATA[105]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 14:48:14]]></date_add>
+<date_upd><![CDATA[2018-12-18 19:03:59]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[279]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Trivets & Under glass]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[trivets-under-glass]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[279]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Sous-plats]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[sous-plats]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[286]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[112]]></nleft>
+<nright><![CDATA[113]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2019-12-19 13:51:53]]></date_add>
+<date_upd><![CDATA[2019-12-19 13:55:23]]></date_upd>
+<position><![CDATA[7]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[286]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Tablecloths]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[tablecloths]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[286]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Nappes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[nappes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[287]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[114]]></nleft>
+<nright><![CDATA[115]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2019-12-19 13:52:44]]></date_add>
+<date_upd><![CDATA[2019-12-19 13:54:02]]></date_upd>
+<position><![CDATA[8]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[287]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Place Mats]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[place-mats]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[287]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Napperons]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[napperons]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[296]]></id_category>
+<id_parent><![CDATA[18]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[116]]></nleft>
+<nright><![CDATA[117]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-04-21 16:45:00]]></date_add>
+<date_upd><![CDATA[2020-04-21 16:45:00]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[296]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Grinders]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[grinders]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[296]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Moulins]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[moulins]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[34]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[15]]></nleft>
+<nright><![CDATA[42]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 09:41:25]]></date_add>
+<date_upd><![CDATA[2020-09-07 14:47:29]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[34]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Fashion Accessories]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[fashion-accessories]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[34]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Accessoires de mode]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[accessoires-de-mode]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[16]]></id_category>
+<id_parent><![CDATA[34]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[16]]></nleft>
+<nright><![CDATA[29]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2015-06-12 09:07:37]]></date_add>
+<date_upd><![CDATA[2020-06-02 14:55:11]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[16]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Jewelry]]></name>
+<description><![CDATA[<p><span style="color:#000000;">All jewelry labeled "Southwest" is handcrafted by Indigenous peoples from the Navajo, Zuni and Hopi Nations.</span></p>]]></description>
+<link_rewrite><![CDATA[jewelry]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[16]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Bijoux]]></name>
+<description><![CDATA[<p>Tous les bijoux étiquetés "Sud-Ouest" sont fabriqués à la main par des peuples Autochtones des Nations Navajo, Zuni et Hopi.</p>]]></description>
+<link_rewrite><![CDATA[bijoux]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[120]]></id_category>
+<id_parent><![CDATA[16]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[17]]></nleft>
+<nright><![CDATA[18]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-26 09:31:54]]></date_add>
+<date_upd><![CDATA[2018-08-02 12:10:12]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[120]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Earrings]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[earrings]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[120]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Boucles d'oreilles]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[boucles-d-oreilles]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[121]]></id_category>
+<id_parent><![CDATA[16]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[19]]></nleft>
+<nright><![CDATA[20]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-26 09:32:31]]></date_add>
+<date_upd><![CDATA[2018-08-02 12:10:12]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[121]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Bracelets]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[bracelets]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[121]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Bracelets]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[bracelets]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[122]]></id_category>
+<id_parent><![CDATA[16]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[21]]></nleft>
+<nright><![CDATA[22]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-26 09:32:57]]></date_add>
+<date_upd><![CDATA[2018-08-02 12:10:12]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[122]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Necklaces]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[necklaces]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[122]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Colliers]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[colliers]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[123]]></id_category>
+<id_parent><![CDATA[16]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[23]]></nleft>
+<nright><![CDATA[24]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-26 09:33:45]]></date_add>
+<date_upd><![CDATA[2019-05-14 12:12:25]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[123]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Pendants]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[pendants]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[123]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Pendentifs]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[pendentifs]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[124]]></id_category>
+<id_parent><![CDATA[16]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[25]]></nleft>
+<nright><![CDATA[26]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-26 09:34:04]]></date_add>
+<date_upd><![CDATA[2018-08-02 12:10:12]]></date_upd>
+<position><![CDATA[4]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[124]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Rings]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[rings]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[124]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Bagues]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[bagues]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[125]]></id_category>
+<id_parent><![CDATA[16]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[27]]></nleft>
+<nright><![CDATA[28]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-26 09:34:26]]></date_add>
+<date_upd><![CDATA[2018-08-02 12:10:12]]></date_upd>
+<position><![CDATA[5]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[125]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Broches]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[broches]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[125]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Broches]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[broches]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[54]]></id_category>
+<id_parent><![CDATA[34]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[30]]></nleft>
+<nright><![CDATA[31]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 13:45:30]]></date_add>
+<date_upd><![CDATA[2018-08-02 12:10:12]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[54]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Belts]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[belts]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[54]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Ceintures]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[ceintures]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[55]]></id_category>
+<id_parent><![CDATA[34]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[34]]></nleft>
+<nright><![CDATA[35]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 13:46:13]]></date_add>
+<date_upd><![CDATA[2018-08-02 12:14:28]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[55]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Bags & Purses]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[bags-purses]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[55]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Sacs et sacoches]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[sacs-et-sacoches]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[269]]></id_category>
+<id_parent><![CDATA[34]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[36]]></nleft>
+<nright><![CDATA[37]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 12:12:25]]></date_add>
+<date_upd><![CDATA[2018-09-01 20:13:41]]></date_upd>
+<position><![CDATA[4]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[269]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Ties]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[ties]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[269]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Cravates]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[cravates]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[270]]></id_category>
+<id_parent><![CDATA[34]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[38]]></nleft>
+<nright><![CDATA[39]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2018-08-02 12:12:43]]></date_add>
+<date_upd><![CDATA[2018-08-08 10:12:27]]></date_upd>
+<position><![CDATA[5]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[270]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Gloves]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[gloves]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[270]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Gloves]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[gloves]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[271]]></id_category>
+<id_parent><![CDATA[34]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[32]]></nleft>
+<nright><![CDATA[33]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2018-08-02 12:13:04]]></date_add>
+<date_upd><![CDATA[2018-08-08 10:12:23]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[271]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Hats]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[hats]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[271]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Hats]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[hats]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[272]]></id_category>
+<id_parent><![CDATA[34]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[40]]></nleft>
+<nright><![CDATA[41]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2018-08-02 12:13:22]]></date_add>
+<date_upd><![CDATA[2018-08-08 10:12:38]]></date_upd>
+<position><![CDATA[6]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[272]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Mittens]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[mittens]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[272]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Mittens]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[mittens]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[35]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[67]]></nleft>
+<nright><![CDATA[96]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 09:42:26]]></date_add>
+<date_upd><![CDATA[2020-09-07 14:47:29]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[35]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Foot wear]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[foot-wear]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[35]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Chaussures]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[chaussures]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[39]]></id_category>
+<id_parent><![CDATA[35]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[68]]></nleft>
+<nright><![CDATA[79]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:44:20]]></date_add>
+<date_upd><![CDATA[2020-12-30 17:28:36]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[39]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Moccasins]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[moccasins]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[39]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Mocassins]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[mocassins]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[40]]></id_category>
+<id_parent><![CDATA[39]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[69]]></nleft>
+<nright><![CDATA[70]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:44:48]]></date_add>
+<date_upd><![CDATA[2017-04-25 11:44:48]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[40]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Ladies]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[ladies]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[40]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Femmes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[femmes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[41]]></id_category>
+<id_parent><![CDATA[39]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[71]]></nleft>
+<nright><![CDATA[72]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:45:06]]></date_add>
+<date_upd><![CDATA[2019-05-09 15:36:44]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[41]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Men]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[men]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[41]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Hommes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[hommes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[42]]></id_category>
+<id_parent><![CDATA[39]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[73]]></nleft>
+<nright><![CDATA[74]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:45:49]]></date_add>
+<date_upd><![CDATA[2019-05-09 15:36:45]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[42]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Infants]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[infants]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[42]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Enfants]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[enfants]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[43]]></id_category>
+<id_parent><![CDATA[39]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[75]]></nleft>
+<nright><![CDATA[76]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:46:14]]></date_add>
+<date_upd><![CDATA[2019-05-09 15:36:46]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[43]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Junior]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[junior]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[43]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Junior]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[junior]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[44]]></id_category>
+<id_parent><![CDATA[39]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[77]]></nleft>
+<nright><![CDATA[78]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:46:35]]></date_add>
+<date_upd><![CDATA[2018-08-31 18:35:09]]></date_upd>
+<position><![CDATA[4]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[44]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Babies]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[babies]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[44]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Bébés]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[bebes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[45]]></id_category>
+<id_parent><![CDATA[35]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[80]]></nleft>
+<nright><![CDATA[91]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:47:03]]></date_add>
+<date_upd><![CDATA[2020-12-30 17:28:36]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[45]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Mukluks]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[mukluks]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[45]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Mukluks]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[mukluks]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[46]]></id_category>
+<id_parent><![CDATA[45]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[81]]></nleft>
+<nright><![CDATA[82]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:47:24]]></date_add>
+<date_upd><![CDATA[2020-12-30 17:18:22]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[46]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Ladies]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[ladies]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[46]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Femmes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[femmes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[47]]></id_category>
+<id_parent><![CDATA[45]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[83]]></nleft>
+<nright><![CDATA[84]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:47:42]]></date_add>
+<date_upd><![CDATA[2020-12-30 17:18:22]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[47]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Men]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[men]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[47]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Hommes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[hommes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[48]]></id_category>
+<id_parent><![CDATA[45]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[85]]></nleft>
+<nright><![CDATA[86]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:48:02]]></date_add>
+<date_upd><![CDATA[2020-12-30 17:18:22]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[48]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Infants]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[infants]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[48]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Enfants]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[enfants]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[49]]></id_category>
+<id_parent><![CDATA[45]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[87]]></nleft>
+<nright><![CDATA[88]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:48:25]]></date_add>
+<date_upd><![CDATA[2020-12-30 17:18:22]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[49]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Junior]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[junior]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[49]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Junior]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[junior]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[50]]></id_category>
+<id_parent><![CDATA[45]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[89]]></nleft>
+<nright><![CDATA[90]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 11:48:41]]></date_add>
+<date_upd><![CDATA[2020-12-30 17:18:22]]></date_upd>
+<position><![CDATA[4]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[50]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Babies]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[babies]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[50]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Bébés]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[bebes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[303]]></id_category>
+<id_parent><![CDATA[35]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[92]]></nleft>
+<nright><![CDATA[95]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-12-30 17:15:53]]></date_add>
+<date_upd><![CDATA[2020-12-30 17:28:36]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[303]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Insoles]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[insoles]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[303]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Semelles]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[semelles]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[304]]></id_category>
+<id_parent><![CDATA[303]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[93]]></nleft>
+<nright><![CDATA[94]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-12-30 17:21:08]]></date_add>
+<date_upd><![CDATA[2020-12-30 17:30:09]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[304]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Insoles]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[insoles]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[304]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Semelles]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[semelles]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[56]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[139]]></nleft>
+<nright><![CDATA[166]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 13:46:42]]></date_add>
+<date_upd><![CDATA[2020-11-18 16:35:27]]></date_upd>
+<position><![CDATA[6]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[56]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Clothing]]></name>
+<description><![CDATA[<p>Nathalie Coutou's Collection</p>]]></description>
+<link_rewrite><![CDATA[clothing]]></link_rewrite>
+<meta_title><![CDATA[Clothing collection from artist Nathalie Coutou, made in Quebec.]]></meta_title>
+<meta_keywords><![CDATA[coutou, nathalie, clothing, cardigan, dress, skirt, shirts, scarf, indigenous, native, khewa]]></meta_keywords>
+<meta_description><![CDATA[Beautiful native indigenous selection of clothing by artist Nathalie Coutou, available online and at Boutique Khewa, Wakefield, Quebec, Canada.]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[56]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Vêtements]]></name>
+<description><![CDATA[<p>Collection Nathalie Coutou</p>]]></description>
+<link_rewrite><![CDATA[vetements]]></link_rewrite>
+<meta_title><![CDATA[Collection de vêtements de l'artiste Nathalie Coutou, fait au Québec.]]></meta_title>
+<meta_keywords><![CDATA[nathalie, coutou, vetements, autochtone, quebec, canada, khewa, cardigan, robe, pantalon, foulard, chandail]]></meta_keywords>
+<meta_description><![CDATA[Superbe collection de vêtements de l'artiste autochtone Nathalie Coutou, disponible en ligne et à la Boutique Khewa à Wakefield, Québec, Canada.]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[257]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[142]]></nleft>
+<nright><![CDATA[143]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-05-27 13:48:50]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:09]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[257]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Scarves]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[scarves]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[257]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Foulards]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[foulards]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[258]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[150]]></nleft>
+<nright><![CDATA[151]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-05-27 13:58:49]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:10]]></date_upd>
+<position><![CDATA[5]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[258]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Dresses]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[dresses]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[258]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Robes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[robes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[259]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[140]]></nleft>
+<nright><![CDATA[141]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-05-27 14:00:00]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:09]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[259]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Cardigan]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[cardigan]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[259]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Cardigan]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[cardigan]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[260]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[148]]></nleft>
+<nright><![CDATA[149]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-05-27 14:11:43]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:10]]></date_upd>
+<position><![CDATA[4]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[260]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Pants]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[pants]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[260]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Pantalons]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[pantalons]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[261]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[152]]></nleft>
+<nright><![CDATA[153]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-05-27 14:12:28]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:10]]></date_upd>
+<position><![CDATA[6]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[261]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Tunics]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[tunics]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[261]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Tuniques]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[tuniques]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[273]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[146]]></nleft>
+<nright><![CDATA[147]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 12:16:14]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:10]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[273]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Leggings]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[leggings]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[273]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Leggings]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[leggings]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[274]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[144]]></nleft>
+<nright><![CDATA[145]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 12:16:34]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:09]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[274]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Skirts]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[skirts]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[274]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Jupes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[jupes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[281]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[154]]></nleft>
+<nright><![CDATA[155]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-23 10:15:35]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:10]]></date_upd>
+<position><![CDATA[7]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[281]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Tank Tops]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[tank-tops]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[281]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Débardeurs]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[debardeurs]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[282]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[156]]></nleft>
+<nright><![CDATA[157]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-23 10:16:19]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:10]]></date_upd>
+<position><![CDATA[8]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[282]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[T-Shirts]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[t-shirts]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[282]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[T-Shirts]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[t-shirts]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[283]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[158]]></nleft>
+<nright><![CDATA[159]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2019-09-18 14:40:37]]></date_add>
+<date_upd><![CDATA[2019-10-21 09:11:10]]></date_upd>
+<position><![CDATA[9]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[283]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Kimonos]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[kimonos]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[283]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Kimonos]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[kimonos]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[285]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[160]]></nleft>
+<nright><![CDATA[161]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2019-12-19 13:26:43]]></date_add>
+<date_upd><![CDATA[2019-12-19 15:15:14]]></date_upd>
+<position><![CDATA[10]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[285]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Turtlenecks]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[turtlenecks]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[285]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Cols Roulés]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[cols-roules]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[288]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[162]]></nleft>
+<nright><![CDATA[163]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2019-12-19 16:05:57]]></date_add>
+<date_upd><![CDATA[2019-12-19 16:05:57]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[288]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Vests]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[vests]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[288]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Vestes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[vests]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[299]]></id_category>
+<id_parent><![CDATA[56]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[164]]></nleft>
+<nright><![CDATA[165]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-06-23 16:13:36]]></date_add>
+<date_upd><![CDATA[2020-06-23 16:13:36]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[299]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Masks]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[masks]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[299]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Masques]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[masques]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[73]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[119]]></nleft>
+<nright><![CDATA[138]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 15:10:40]]></date_add>
+<date_upd><![CDATA[2020-09-07 14:47:29]]></date_upd>
+<position><![CDATA[5]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[73]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Decor]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[decor]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[73]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Décor]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[decor]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[74]]></id_category>
+<id_parent><![CDATA[73]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[126]]></nleft>
+<nright><![CDATA[127]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:10:58]]></date_add>
+<date_upd><![CDATA[2020-04-14 18:23:21]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[74]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Linen]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[linen]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[74]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Literie]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[literie]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[75]]></id_category>
+<id_parent><![CDATA[73]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[136]]></nleft>
+<nright><![CDATA[137]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-04-25 15:11:25]]></date_add>
+<date_upd><![CDATA[2020-04-14 18:23:21]]></date_upd>
+<position><![CDATA[8]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[75]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Sculptures]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[sculptures]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[75]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Sculptures]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[sculptures]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[79]]></id_category>
+<id_parent><![CDATA[73]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[132]]></nleft>
+<nright><![CDATA[133]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:13:13]]></date_add>
+<date_upd><![CDATA[2020-04-14 18:23:21]]></date_upd>
+<position><![CDATA[6]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[79]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Vases]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[vases]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[79]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Vases]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[vases]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[81]]></id_category>
+<id_parent><![CDATA[73]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[120]]></nleft>
+<nright><![CDATA[121]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:14:03]]></date_add>
+<date_upd><![CDATA[2020-10-08 16:57:15]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[81]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Magnets]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[magnets]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[81]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Aimants]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[aimants]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[82]]></id_category>
+<id_parent><![CDATA[73]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[128]]></nleft>
+<nright><![CDATA[129]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:14:39]]></date_add>
+<date_upd><![CDATA[2020-04-14 18:23:21]]></date_upd>
+<position><![CDATA[4]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[82]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Ornaments]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[ornaments]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[82]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Boules de Noel]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[boules-de-noel]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[83]]></id_category>
+<id_parent><![CDATA[73]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[130]]></nleft>
+<nright><![CDATA[131]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:15:00]]></date_add>
+<date_upd><![CDATA[2020-04-14 18:23:21]]></date_upd>
+<position><![CDATA[5]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[83]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Baskets]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[baskets]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[83]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Paniers]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[paniers]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><link_image><![CDATA[https://khewa.com/img/c/252.jpg]]></link_image>
+<id_category><![CDATA[252]]></id_category>
+<id_parent><![CDATA[73]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[122]]></nleft>
+<nright><![CDATA[123]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-05-25 18:19:30]]></date_add>
+<date_upd><![CDATA[2020-04-14 18:23:21]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[252]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Collection boxes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[collection-boxes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[252]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Coffrets de collection]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[coffrets-de-collection]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><link_image><![CDATA[https://khewa.com/img/c/253.jpg]]></link_image>
+<id_category><![CDATA[253]]></id_category>
+<id_parent><![CDATA[73]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[124]]></nleft>
+<nright><![CDATA[125]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2017-05-25 18:22:58]]></date_add>
+<date_upd><![CDATA[2020-04-14 18:23:21]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[253]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Board games]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[board-games]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[253]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Jeux de société]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[jeux-de-societe]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[280]]></id_category>
+<id_parent><![CDATA[73]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[134]]></nleft>
+<nright><![CDATA[135]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-23 10:10:19]]></date_add>
+<date_upd><![CDATA[2020-04-14 18:23:21]]></date_upd>
+<position><![CDATA[7]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[280]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Cushions]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[cushions]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[280]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Coussins]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[coussins]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[262]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[43]]></nleft>
+<nright><![CDATA[66]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 11:09:07]]></date_add>
+<date_upd><![CDATA[2020-09-07 14:47:29]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[262]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Ceremonial]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[ceremonial]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[262]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Cérémonial]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[ceremonial]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[17]]></id_category>
+<id_parent><![CDATA[262]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[44]]></nleft>
+<nright><![CDATA[45]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2015-06-12 09:09:17]]></date_add>
+<date_upd><![CDATA[2020-03-25 12:48:42]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[17]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Dream catchers]]></name>
+<description><![CDATA[<p>Description Dream catchers</p>]]></description>
+<link_rewrite><![CDATA[dream-catchers]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[17]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Capteurs de rêves]]></name>
+<description><![CDATA[<p>Description Capteurs de rêves</p>]]></description>
+<link_rewrite><![CDATA[capteurs-de-reves]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[59]]></id_category>
+<id_parent><![CDATA[262]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[52]]></nleft>
+<nright><![CDATA[53]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 13:54:37]]></date_add>
+<date_upd><![CDATA[2020-03-25 12:49:04]]></date_upd>
+<position><![CDATA[4]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[59]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Mandala]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[mandala]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[59]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Mandala]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[mandala]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[64]]></id_category>
+<id_parent><![CDATA[262]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[54]]></nleft>
+<nright><![CDATA[55]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:03:33]]></date_add>
+<date_upd><![CDATA[2020-03-25 12:48:58]]></date_upd>
+<position><![CDATA[5]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[64]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Medecine Wheels]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[medecine-wheels]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[64]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Roue de Médecine]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[roue-de-medecine]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[76]]></id_category>
+<id_parent><![CDATA[262]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[56]]></nleft>
+<nright><![CDATA[57]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:11:42]]></date_add>
+<date_upd><![CDATA[2020-03-25 12:49:00]]></date_upd>
+<position><![CDATA[6]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[76]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Drums]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[drums]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[76]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Tambours]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[tambours]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[77]]></id_category>
+<id_parent><![CDATA[262]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[48]]></nleft>
+<nright><![CDATA[49]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:12:05]]></date_add>
+<date_upd><![CDATA[2020-03-25 12:48:50]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[77]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Flutes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[flutes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[77]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Flûtes]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[flutes]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[78]]></id_category>
+<id_parent><![CDATA[262]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[50]]></nleft>
+<nright><![CDATA[51]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:12:32]]></date_add>
+<date_upd><![CDATA[2020-03-25 12:48:51]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[78]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Rattles]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[rattles]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[78]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Hochets]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[hochets]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[80]]></id_category>
+<id_parent><![CDATA[262]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[46]]></nleft>
+<nright><![CDATA[47]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2017-04-25 15:13:40]]></date_add>
+<date_upd><![CDATA[2020-03-25 12:48:48]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[80]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Spirit Strands]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[spirit-strands]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[80]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Fils d'esprits]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[fils-d-esprits]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[289]]></id_category>
+<id_parent><![CDATA[262]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[58]]></nleft>
+<nright><![CDATA[65]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-03-25 12:50:12]]></date_add>
+<date_upd><![CDATA[2020-03-27 11:25:03]]></date_upd>
+<position><![CDATA[7]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[289]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Smudging]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[smudging]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[289]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Fumigation]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[fumigation]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[290]]></id_category>
+<id_parent><![CDATA[289]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[59]]></nleft>
+<nright><![CDATA[60]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-03-26 17:23:39]]></date_add>
+<date_upd><![CDATA[2020-03-26 17:24:19]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[290]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Sage]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[sage]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[290]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Sauge]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[sauge]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[291]]></id_category>
+<id_parent><![CDATA[289]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[61]]></nleft>
+<nright><![CDATA[62]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-03-26 17:25:06]]></date_add>
+<date_upd><![CDATA[2020-03-26 17:25:06]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[291]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Sweetgrass]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[sweetgrass]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[291]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Foin d'Odeur]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[foin-d-odeur]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[292]]></id_category>
+<id_parent><![CDATA[289]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[4]]></level_depth>
+<nleft><![CDATA[63]]></nleft>
+<nright><![CDATA[64]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2020-03-26 17:26:22]]></date_add>
+<date_upd><![CDATA[2020-03-27 13:48:22]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[292]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Shell]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[shell]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[292]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Coquillage]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[coquillage]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[264]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[3]]></nleft>
+<nright><![CDATA[14]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 11:20:55]]></date_add>
+<date_upd><![CDATA[2020-11-18 16:14:17]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[264]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Art]]></name>
+<description><![CDATA[<p>Nathalie Coutou Art Collection</p>]]></description>
+<link_rewrite><![CDATA[artcoutou]]></link_rewrite>
+<meta_title><![CDATA[Artwork from artist Nathalie Coutou, made in Quebec.]]></meta_title>
+<meta_keywords><![CDATA[coutou, art, watercolor, acrylic, nathalie, quebec, canada, wakefield, native, indigenous]]></meta_keywords>
+<meta_description><![CDATA[Native Indigenous watercolor and acrylic artwork from artist Nathalie Coutou, Boutique Khewa, situated in the village of Wakefield, Quebec.]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[264]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Art]]></name>
+<description><![CDATA[<p>Collection d'Art Nathalie Coutou</p>]]></description>
+<link_rewrite><![CDATA[artnathaliecoutou]]></link_rewrite>
+<meta_title><![CDATA[Oeuvres de l'artiste Nathalie Coutou, Boutique Khewa, fait au Québec]]></meta_title>
+<meta_keywords><![CDATA[coutou, autochtone, art, oeuvre, aquarelle, acrylique, quebec, canada, nathalie]]></meta_keywords>
+<meta_description><![CDATA[Oeuvres autochtone, aquarelles et acryliques disponible en ligne ou à la Boutique Khewa, située dans le village de Wakefield, Québec.]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[266]]></id_category>
+<id_parent><![CDATA[264]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[8]]></nleft>
+<nright><![CDATA[9]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 11:25:13]]></date_add>
+<date_upd><![CDATA[2018-08-08 10:48:59]]></date_upd>
+<position><![CDATA[2]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[266]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Matted Prints]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[matted-prints]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[266]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Reproductions avec passe-partouts]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[reproductions-avec-passe-partouts]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[267]]></id_category>
+<id_parent><![CDATA[264]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[10]]></nleft>
+<nright><![CDATA[11]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 11:25:50]]></date_add>
+<date_upd><![CDATA[2018-08-24 18:57:59]]></date_upd>
+<position><![CDATA[3]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[267]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Prints on Canvas]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[prints-on-canvas]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[267]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Reproductions sur toile]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[reproductions-sur-toile]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[275]]></id_category>
+<id_parent><![CDATA[264]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[4]]></nleft>
+<nright><![CDATA[5]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 12:19:12]]></date_add>
+<date_upd><![CDATA[2018-08-08 10:45:41]]></date_upd>
+<position><![CDATA[0]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[275]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Wish Cards]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[wish-cards]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[275]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Cartes de souhaits]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[cartes-de-souhaits]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[276]]></id_category>
+<id_parent><![CDATA[264]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[6]]></nleft>
+<nright><![CDATA[7]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 12:19:52]]></date_add>
+<date_upd><![CDATA[2020-11-23 09:24:49]]></date_upd>
+<position><![CDATA[1]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[276]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Matted Limited Editions]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[matted-limited-editions]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[276]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Éditions limitées avec passe-partouts]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[editions-limitees-avec-passe-partouts]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[278]]></id_category>
+<id_parent><![CDATA[264]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[3]]></level_depth>
+<nleft><![CDATA[12]]></nleft>
+<nright><![CDATA[13]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2018-08-02 13:14:37]]></date_add>
+<date_upd><![CDATA[2018-08-08 10:47:23]]></date_upd>
+<position><![CDATA[5]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[278]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Originals]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[originals]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[278]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Originaux]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[originaux]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[295]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[167]]></nleft>
+<nright><![CDATA[168]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-04-07 17:48:14]]></date_add>
+<date_upd><![CDATA[2020-09-07 14:47:29]]></date_upd>
+<position><![CDATA[7]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[295]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Gift cards]]></name>
+<description><![CDATA[<h3 style="text-align:center;"></h3>]]></description>
+<link_rewrite><![CDATA[gift-cards]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[295]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Cartes cadeaux]]></name>
+<description><![CDATA[<h3 style="text-align:center;"></h3>]]></description>
+<link_rewrite><![CDATA[cartes-cadeaux]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[298]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[169]]></nleft>
+<nright><![CDATA[170]]></nright>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2020-05-02 15:21:56]]></date_add>
+<date_upd><![CDATA[2021-03-23 11:12:56]]></date_upd>
+<position><![CDATA[8]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[298]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Gift Card]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[gift-card]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[298]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Cartes cadeaux]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[cartes-cadeaux]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[301]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[171]]></nleft>
+<nright><![CDATA[172]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-07-02 14:48:08]]></date_add>
+<date_upd><![CDATA[2020-09-07 14:47:29]]></date_upd>
+<position><![CDATA[9]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[301]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Masks]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[masks]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[masks]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[301]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Masques]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[masques]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[masques]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category><category><id_category><![CDATA[302]]></id_category>
+<id_parent><![CDATA[2]]></id_parent>
+<id_shop_default><![CDATA[1]]></id_shop_default>
+<level_depth><![CDATA[2]]></level_depth>
+<nleft><![CDATA[173]]></nleft>
+<nright><![CDATA[174]]></nright>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2020-10-05 15:50:33]]></date_add>
+<date_upd><![CDATA[2020-10-05 16:01:08]]></date_upd>
+<position><![CDATA[10]]></position>
+<is_root_category><![CDATA[0]]></is_root_category>
+<datalanguage iso_code="en" >
+<id_category><![CDATA[302]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[Divers]]></name>
+<description><![CDATA[]]></description>
+<link_rewrite><![CDATA[divers]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<id_category><![CDATA[302]]></id_category>
+<id_shop><![CDATA[1]]></id_shop>
+<id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Divers]]></name>
+<description><![CDATA[<p>catégorie à Nancy</p>]]></description>
+<link_rewrite><![CDATA[divers]]></link_rewrite>
+<meta_title><![CDATA[]]></meta_title>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_description><![CDATA[]]></meta_description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</category></entity_profile>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<lang><id_lang><![CDATA[1]]></id_lang>
+<name><![CDATA[English (English)]]></name>
+<iso_code><![CDATA[en]]></iso_code>
+<locale><![CDATA[en-US]]></locale>
+<language_code><![CDATA[en-us]]></language_code>
+<active><![CDATA[1]]></active>
+<is_rtl><![CDATA[0]]></is_rtl>
+<date_format_lite><![CDATA[m/d/Y]]></date_format_lite>
+<date_format_full><![CDATA[m/d/Y H:i:s]]></date_format_full>
+</lang>
+<lang><id_lang><![CDATA[3]]></id_lang>
+<name><![CDATA[Français (French)]]></name>
+<iso_code><![CDATA[qc]]></iso_code>
+<locale><![CDATA[fr-CA]]></locale>
+<language_code><![CDATA[fr-ca]]></language_code>
+<active><![CDATA[1]]></active>
+<is_rtl><![CDATA[0]]></is_rtl>
+<date_format_lite><![CDATA[d/m/Y]]></date_format_lite>
+<date_format_full><![CDATA[d/m/Y H:i:s]]></date_format_full>
+</lang>
+</entity_profile>

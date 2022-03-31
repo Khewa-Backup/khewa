@@ -1,0 +1,12 @@
+{
+    "name": "pilipiliweb/favorites",
+    "description": "Favorites",
+    "type": "prestashop-module",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Pw\\Favorites\\": "src/"
+        }
+    },
+    "require": {}
+}

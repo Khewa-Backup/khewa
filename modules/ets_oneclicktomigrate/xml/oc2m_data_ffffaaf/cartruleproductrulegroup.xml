@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<cart_rule_product_rule_group><id_product_rule_group><![CDATA[6]]></id_product_rule_group>
+<id_cart_rule><![CDATA[92]]></id_cart_rule>
+<quantity><![CDATA[1]]></quantity>
+</cart_rule_product_rule_group>
+<cart_rule_product_rule_group><id_product_rule_group><![CDATA[8]]></id_product_rule_group>
+<id_cart_rule><![CDATA[91]]></id_cart_rule>
+<quantity><![CDATA[1]]></quantity>
+</cart_rule_product_rule_group>
+<cart_rule_product_rule_group><id_product_rule_group><![CDATA[19]]></id_product_rule_group>
+<id_cart_rule><![CDATA[97]]></id_cart_rule>
+<quantity><![CDATA[1]]></quantity>
+</cart_rule_product_rule_group>
+<cart_rule_product_rule_group><id_product_rule_group><![CDATA[23]]></id_product_rule_group>
+<id_cart_rule><![CDATA[276]]></id_cart_rule>
+<quantity><![CDATA[1]]></quantity>
+</cart_rule_product_rule_group>
+</entity_profile>

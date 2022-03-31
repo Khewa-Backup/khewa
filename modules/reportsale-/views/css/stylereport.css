@@ -1,0 +1,206 @@
+#reportsaleba_report_basic .table-responsive,
+#reportsaleba_report_product .table-responsive,
+#reportsaleba_report_taxonly .table-responsive,
+#reportsaleba_report_profit .table-responsive,
+#reportsaleba_report_full .table-responsive,
+#reportsaleba_report_brand .table-responsive,
+#reportsaleba_report_supplier .table-responsive,
+#reportsaleba_report_category .table-responsive,
+#reportsaleba_report_customer .table-responsive,
+#reportsaleba_report_storecredit .table-responsive{
+	overflow-x: scroll;
+	border-radius: 0px;
+	overflow-y:hidden;
+}
+#form-reportsaleba_report_product .table-responsive-row,
+#form-reportsaleba_report_category .table-responsive-row,
+#form-reportsaleba_report_brand .table-responsive-row,
+#form-reportsaleba_report_supplier .table-responsive-row,
+#form-reportsaleba_report_taxonly .table-responsive-row,
+#form-reportsaleba_report_customer .table-responsive-row,
+#form-reportsaleba_report_basic .table-responsive-row,
+#form-reportsaleba_report_full .table-responsive-row,
+#form-reportsaleba_report_profit .table-responsive-row,
+#form-reportsaleba_report_storecredit .table-responsive-row{
+	overflow-x: scroll !important;
+	border-radius: 0px;
+}
+.ba-panel-report{
+	border-radius: 0px !important;
+	padding-bottom: 0px !important;
+	box-shadow: none !important;
+	margin-bottom: 10px !important;
+}
+.ba-panel-report h3{
+	margin-bottom: 0px !important;
+}
+.ba-panel-report .click_open{
+	border-bottom: solid 1px #eeeeee !important;
+}
+#form-reportsaleba_report_basic .panel{
+	border-radius: 0px 0px 5px 5px !important;
+}
+.panel .main_text_option{
+	text-align: right !important;
+}
+/*  */
+.panel h3{
+	cursor: pointer;
+	border-bottom: 0px !important;
+}
+.panel .report_ba_click{
+	position: absolute;
+    right: 10px;
+    top: 9px;
+}
+.panel .main_helper_content{
+	display: none;
+	padding: 20px;
+}
+#ba_url_hidden ,#url_report_hidden{
+	display: none !important;
+}
+@media screen and (max-width: 767px) {
+	#reportsaleba_report_basic .panel-heading{
+		width: 100%;
+	}
+}
+/* 
+loadding
+ */
+ #ba_load_hidden{
+ 	display: none;
+ }
+ #ba_load_hidden img{
+    margin: 245px auto;
+    display: block;
+ }
+ .ba_load_hidden{
+	width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+    background: #fff;
+    z-index: 2000;
+ }
+.reportsaleba_report_basic thead .row_hover th select{
+ 	width: 200px;
+ }
+ .report_sale_color{
+    font-size: 12px;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+    padding: .2em .6em .3em;
+ }
+/*** fixed table ********/
+.bootstrap .summary_wrapper .summary_col{
+	padding: 0;
+	position: fixed;
+	z-index: 9999;
+	bottom: 3px;
+	border-left: 1px solid #fff;
+    height: 60px;
+    padding: 7px 0px 15px 7px;
+	color: #fff;
+	font-weight: 500;
+	text-align: center;
+}
+.summary_table{
+	
+}
+.summary_wrapper {
+	width: 100%;
+    position: fixed;
+    bottom: 0;
+	left: 12rem;
+    background: #2EACCE;
+    height: 63px;
+    z-index: 999;
+	webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+	border-bottom: 3px solid #363a41;
+}
+.summary_line{
+	display: block;
+	text-align: center;
+	width: 100%;
+}
+.summary_col .summary_line:first-child{
+	font-weight:bold;
+}
+.bootstrap table.table>tbody>tr>td{
+	padding: 8px;
+}
+/** since 1.0.20 **/
+.right{
+	text-align: right;
+}
+#reportsale_bgoverlay{
+	position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    z-index: 999999;
+    opacity: 0.7;
+    width: 100%;
+    height: 100%;
+}
+#reportsale_modal{
+	width: 600px;
+    height: 300px;
+    background: #fff;
+    z-index: 1000000;
+    position: fixed;
+    border-radius: 5px;
+    overflow-y: scroll;
+    max-width: 100%;
+    max-height: 90%;
+    left: 50%;
+    top: 10%;
+}
+.reportsale_searchbox{
+	text-align: center;
+    padding: 20px 0px;
+}
+#reportsale_searchmodal{
+    height: 30px;
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    width: 200px;
+    max-width: 90%;
+    padding: 0 5px;
+    font-size: 1rem;
+}
+.reportsale_btn:hover{
+	background-color: #fff;
+    border-color: #dedede;
+    color: #363a41;
+}
+.reportsale_btn{
+	color: #fff;
+    background-color: #00aff0;
+    border-color: #00aff0;
+    height: 32px;
+    border: 1px solid #00aff0;
+    border-radius: 3px;
+    position: relative;
+    top: -1px;
+    padding: 0px 15px;
+}
+.reportsale_btn.reportsale_reset {
+    background-color: #fff;
+    border-color: #dedede;
+    color: #363a41;
+}
+.reportsale_btn.reportsale_reset:hover{
+	background-color: #00aff0;
+    border-color: #00aff0;
+	color: #fff;
+}

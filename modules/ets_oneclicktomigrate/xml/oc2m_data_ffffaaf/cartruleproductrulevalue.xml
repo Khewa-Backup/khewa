@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<cart_rule_product_rule_value><id_product_rule><![CDATA[6]]></id_product_rule>
+<id_item><![CDATA[1300]]></id_item>
+</cart_rule_product_rule_value>
+<cart_rule_product_rule_value><id_product_rule><![CDATA[8]]></id_product_rule>
+<id_item><![CDATA[1300]]></id_item>
+</cart_rule_product_rule_value>
+<cart_rule_product_rule_value><id_product_rule><![CDATA[15]]></id_product_rule>
+<id_item><![CDATA[1300]]></id_item>
+</cart_rule_product_rule_value>
+<cart_rule_product_rule_value><id_product_rule><![CDATA[19]]></id_product_rule>
+<id_item><![CDATA[1300]]></id_item>
+</cart_rule_product_rule_value>
+</entity_profile>

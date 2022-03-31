@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<cart_rule_product_rule><id_product_rule><![CDATA[6]]></id_product_rule>
+<id_product_rule_group><![CDATA[6]]></id_product_rule_group>
+<type><![CDATA[products]]></type>
+</cart_rule_product_rule>
+<cart_rule_product_rule><id_product_rule><![CDATA[8]]></id_product_rule>
+<id_product_rule_group><![CDATA[8]]></id_product_rule_group>
+<type><![CDATA[products]]></type>
+</cart_rule_product_rule>
+<cart_rule_product_rule><id_product_rule><![CDATA[15]]></id_product_rule>
+<id_product_rule_group><![CDATA[19]]></id_product_rule_group>
+<type><![CDATA[products]]></type>
+</cart_rule_product_rule>
+<cart_rule_product_rule><id_product_rule><![CDATA[19]]></id_product_rule>
+<id_product_rule_group><![CDATA[23]]></id_product_rule_group>
+<type><![CDATA[products]]></type>
+</cart_rule_product_rule>
+</entity_profile>

@@ -1,0 +1,68 @@
+/**
+ * RockPOS - Point of Sale for PrestaShop.
+ *
+ * @author    Hamsa Technologies
+ * @copyright Hamsa Technologies
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+const qzTrayDigitalKey = '-----BEGIN CERTIFICATE-----\n' +
+    'MIIFBzCCAvGgAwIBAgIFMTA2NjAwCwYJKoZIhvcNAQEFMIGYMQswCQYDVQQGEwJV\n' +
+    'UzELMAkGA1UECAwCTlkxGzAZBgNVBAoMElFaIEluZHVzdHJpZXMsIExMQzEbMBkG\n' +
+    'A1UECwwSUVogSW5kdXN0cmllcywgTExDMRkwFwYDVQQDDBBxemluZHVzdHJpZXMu\n' +
+    'Y29tMScwJQYJKoZIhvcNAQkBFhhzdXBwb3J0QHF6aW5kdXN0cmllcy5jb20wHhcN\n' +
+    'MjEwNDI2MDQwMDAwWhcNMjMwNTEzMDQwMDAwWjCB0TELMAkGA1UEBgwCVk4xFjAU\n' +
+    'BgNVBAgMDU5PVCBBVkFJTEFCTEUxETAPBgNVBAcMCE5hbSBEaW5oMREwDwYDVQQK\n' +
+    'DAhSb2NrIFBPUzERMA8GA1UECwwIUm9jayBQT1MxETAPBgNVBAMMCFJvY2sgUE9T\n' +
+    'MSAwHgYJKoZIhvcNAQkBDBFtc242Nzg5QGdtYWlsLmNvbTE8MDoGA1UEDQwzcmVu\n' +
+    'ZXdhbC1vZi04NTAxODM0YmY1YjI1MmNiMTY3ZjRlNTk0NmUxNTJjOTFiYjgxNTk0\n' +
+    'MIIBIDALBgkqhkiG9w0BAQEDggEPADCCAQoCggEBAJ8XIY6JpNJfcMi+unBEqavF\n' +
+    'zgntdqHER/P29ftmz6Bb3RmExT3u1DantqfkspVl65TB+eK9VDeB8aoG1Gut6LbE\n' +
+    'qOQyTb8S8Gx6izasUwqZaB2acVA/W2xaIoPmvLl/vjSlgmqnfUp5GkoQlKKdqCis\n' +
+    'H4I/ch8Ov8kFZJXsM9t5jBxljPnED/uPiY7Mek9QbbgNp1yf+/tIX0E+Ap5gRyTx\n' +
+    'jFUCFMeoTJYKus/KFUcjyA/xBfaN9LtTCzpEQu4aQgP6g8Y4g3mf/w6QlC6Aq+WZ\n' +
+    'CzWlOFV6x1K6GuYfY1t4g7hgr392bj308bN8bVTdZnmUOCSN9Wv5KS+1bKZyCE8C\n' +
+    'AwEAAaMjMCEwHwYDVR0jBBgwFoAUkKZQt4TUuepf8gWEE3hF6Kl1VFwwCwYJKoZI\n' +
+    'hvcNAQEFA4ICAQCftnYWG4SZepJWx7pGJBG4yL08PVT12PF7qJahIgFCcTrZuDKe\n' +
+    'DuzWp9YDVw4QwONQNzaHWaPfVkvUgz33bHQjIIITb5AjeU3RPrj0yEdnJuCwKAJn\n' +
+    'UPUfob/+zJlokL4ueGmyU3yhdXWt9FMQg/k8oym7/5bi0LIKgRb9FvHqwTVmfbfR\n' +
+    'BoqA0rgzqrWUP0VptAhl51b5cqBBTcK1Mn9rQynS8n8spsSX4wu3QM6YQYzVS+Gs\n' +
+    'ulp3ApgASnMQjGrZwHnUcOZJttInEeNOJ1TCFAjEwb9jZ+Ngw1UZXU3MCZdnXogm\n' +
+    'AJE1fZWiEWXnGkMCem5FoDZUsi09XdGfR1a2oQD3FO4A+p/hn0HSSBDt+wxVPJlP\n' +
+    'gYkIf1CXZjo8oKlgMLTZI4RWTjk5eMWTRdiEEYHjqUIXTfsArJWhFW0Q3DrC7hHc\n' +
+    'QS8/Geb4G7qCsAiZlx3mzW6luT8qRHX51fW6N7yMjEAScvmjkiHSx4z4iajVAgAd\n' +
+    'ktuZLOgkslWgJEEVms0DoCjBRCMvhOnDV07iq1risa9iR0cQHn1lXZ5wTNW/RL0J\n' +
+    '46zIRzur5fbkRn0OHbr4S6Lsv1tGVukPyLoCA97BEFS05ZSu6QfTTDXkMnceKaGP\n' +
+    'uI6M6azp0tCEbhw4xOcjlLkhp82w4nczRkT7GAFVCHY5oCTFQeRIzvdbdw==\n' +
+    '-----END CERTIFICATE-----\n' +
+    '--START INTERMEDIATE CERT--\n' +
+    '-----BEGIN CERTIFICATE-----\n' +
+    'MIIFEjCCA/qgAwIBAgICEAAwDQYJKoZIhvcNAQELBQAwgawxCzAJBgNVBAYTAlVT\n' +
+    'MQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYDVQQKDBJRWiBJ\n' +
+    'bmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMsIExMQzEZMBcG\n' +
+    'A1UEAwwQcXppbmR1c3RyaWVzLmNvbTEnMCUGCSqGSIb3DQEJARYYc3VwcG9ydEBx\n' +
+    'emluZHVzdHJpZXMuY29tMB4XDTE1MDMwMjAwNTAxOFoXDTM1MDMwMjAwNTAxOFow\n' +
+    'gZgxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOWTEbMBkGA1UECgwSUVogSW5kdXN0\n' +
+    'cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMxGTAXBgNVBAMM\n' +
+    'EHF6aW5kdXN0cmllcy5jb20xJzAlBgkqhkiG9w0BCQEWGHN1cHBvcnRAcXppbmR1\n' +
+    'c3RyaWVzLmNvbTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANTDgNLU\n' +
+    'iohl/rQoZ2bTMHVEk1mA020LYhgfWjO0+GsLlbg5SvWVFWkv4ZgffuVRXLHrwz1H\n' +
+    'YpMyo+Zh8ksJF9ssJWCwQGO5ciM6dmoryyB0VZHGY1blewdMuxieXP7Kr6XD3GRM\n' +
+    'GAhEwTxjUzI3ksuRunX4IcnRXKYkg5pjs4nLEhXtIZWDLiXPUsyUAEq1U1qdL1AH\n' +
+    'EtdK/L3zLATnhPB6ZiM+HzNG4aAPynSA38fpeeZ4R0tINMpFThwNgGUsxYKsP9kh\n' +
+    '0gxGl8YHL6ZzC7BC8FXIB/0Wteng0+XLAVto56Pyxt7BdxtNVuVNNXgkCi9tMqVX\n' +
+    'xOk3oIvODDt0UoQUZ/umUuoMuOLekYUpZVk4utCqXXlB4mVfS5/zWB6nVxFX8Io1\n' +
+    '9FOiDLTwZVtBmzmeikzb6o1QLp9F2TAvlf8+DIGDOo0DpPQUtOUyLPCh5hBaDGFE\n' +
+    'ZhE56qPCBiQIc4T2klWX/80C5NZnd/tJNxjyUyk7bjdDzhzT10CGRAsqxAnsjvMD\n' +
+    '2KcMf3oXN4PNgyfpbfq2ipxJ1u777Gpbzyf0xoKwH9FYigmqfRH2N2pEdiYawKrX\n' +
+    '6pyXzGM4cvQ5X1Yxf2x/+xdTLdVaLnZgwrdqwFYmDejGAldXlYDl3jbBHVM1v+uY\n' +
+    '5ItGTjk+3vLrxmvGy5XFVG+8fF/xaVfo5TW5AgMBAAGjUDBOMB0GA1UdDgQWBBSQ\n' +
+    'plC3hNS56l/yBYQTeEXoqXVUXDAfBgNVHSMEGDAWgBQDRcZNwPqOqQvagw9BpW0S\n' +
+    'BkOpXjAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAJIO8SiNr9jpLQ\n' +
+    'eUsFUmbueoxyI5L+P5eV92ceVOJ2tAlBA13vzF1NWlpSlrMmQcVUE/K4D01qtr0k\n' +
+    'gDs6LUHvj2XXLpyEogitbBgipkQpwCTJVfC9bWYBwEotC7Y8mVjjEV7uXAT71GKT\n' +
+    'x8XlB9maf+BTZGgyoulA5pTYJ++7s/xX9gzSWCa+eXGcjguBtYYXaAjjAqFGRAvu\n' +
+    'pz1yrDWcA6H94HeErJKUXBakS0Jm/V33JDuVXY+aZ8EQi2kV82aZbNdXll/R6iGw\n' +
+    '2ur4rDErnHsiphBgZB71C5FD4cdfSONTsYxmPmyUb5T+KLUouxZ9B0Wh28ucc1Lp\n' +
+    'rbO7BnjW\n' +
+    '-----END CERTIFICATE-----'

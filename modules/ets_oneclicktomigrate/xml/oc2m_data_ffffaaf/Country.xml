@@ -1,0 +1,4639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<country><id_country><![CDATA[1]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[49]]></call_prefix>
+<iso_code><![CDATA[DE]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Germany]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Allemagne]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[2]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[43]]></call_prefix>
+<iso_code><![CDATA[AT]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Austria]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Autriche]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[3]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[32]]></call_prefix>
+<iso_code><![CDATA[BE]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Belgium]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Belgique]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[4]]></id_country>
+<id_zone><![CDATA[10]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[1]]></call_prefix>
+<iso_code><![CDATA[CA]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[1]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LNL NLN]]></zip_code_format>
+<display_tax_label><![CDATA[0]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Canada]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Canada]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[5]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[86]]></call_prefix>
+<iso_code><![CDATA[CN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[China]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Chine]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[6]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[34]]></call_prefix>
+<iso_code><![CDATA[ES]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[1]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Spain]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Espagne]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[7]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[358]]></call_prefix>
+<iso_code><![CDATA[FI]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Finland]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Finlande]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[8]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[33]]></call_prefix>
+<iso_code><![CDATA[FR]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[0]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[France]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[France]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[9]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[30]]></call_prefix>
+<iso_code><![CDATA[GR]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Greece]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Grèce]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[10]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[39]]></call_prefix>
+<iso_code><![CDATA[IT]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[1]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Italy]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Italie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[11]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[81]]></call_prefix>
+<iso_code><![CDATA[JP]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[1]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNN-NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Japan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Japon]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[12]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[352]]></call_prefix>
+<iso_code><![CDATA[LU]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Luxembourg]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Luxembourg]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[13]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[31]]></call_prefix>
+<iso_code><![CDATA[NL]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN LL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Netherlands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Pays-Bas]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[14]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[48]]></call_prefix>
+<iso_code><![CDATA[PL]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NN-NNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Poland]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Pologne]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[15]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[351]]></call_prefix>
+<iso_code><![CDATA[PT]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN-NNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Portugal]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Portugal]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[16]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[420]]></call_prefix>
+<iso_code><![CDATA[CZ]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNN NN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Czech Republic]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[République Tchèque]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[17]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[44]]></call_prefix>
+<iso_code><![CDATA[GB]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[United Kingdom]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Royaume-Uni]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[18]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[46]]></call_prefix>
+<iso_code><![CDATA[SE]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNN NN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Sweden]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Suède]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[19]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[41]]></call_prefix>
+<iso_code><![CDATA[CH]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Switzerland]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Suisse]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[20]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[45]]></call_prefix>
+<iso_code><![CDATA[DK]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Denmark]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Danemark]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[21]]></id_country>
+<id_zone><![CDATA[9]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[1]]></call_prefix>
+<iso_code><![CDATA[US]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[1]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[0]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[United States]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[États-Unis]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[22]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[852]]></call_prefix>
+<iso_code><![CDATA[HK]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[0]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Hong Kong SAR China]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[R.A.S. Chinoise De Hong Kong]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[23]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[47]]></call_prefix>
+<iso_code><![CDATA[NO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Norway]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Norvège]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[24]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[61]]></call_prefix>
+<iso_code><![CDATA[AU]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[1]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Australia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Australie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[25]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[65]]></call_prefix>
+<iso_code><![CDATA[SG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Singapore]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Singapour]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[26]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[353]]></call_prefix>
+<iso_code><![CDATA[IE]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[0]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Ireland]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Irlande]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[27]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[64]]></call_prefix>
+<iso_code><![CDATA[NZ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[New Zealand]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Nouvelle-Zélande]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[28]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[82]]></call_prefix>
+<iso_code><![CDATA[KR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNN-NNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[South Korea]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Corée Du Sud]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[29]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[972]]></call_prefix>
+<iso_code><![CDATA[IL]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Israel]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Israël]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[30]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[27]]></call_prefix>
+<iso_code><![CDATA[ZA]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[South Africa]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Afrique Du Sud]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[31]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[234]]></call_prefix>
+<iso_code><![CDATA[NG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Nigeria]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Nigéria]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[32]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[225]]></call_prefix>
+<iso_code><![CDATA[CI]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Côte D’Ivoire]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Côte D’Ivoire]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[33]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[228]]></call_prefix>
+<iso_code><![CDATA[TG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Togo]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Togo]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[34]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[591]]></call_prefix>
+<iso_code><![CDATA[BO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bolivia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bolivie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[35]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[230]]></call_prefix>
+<iso_code><![CDATA[MU]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Mauritius]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Maurice]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[36]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[40]]></call_prefix>
+<iso_code><![CDATA[RO]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Romania]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Roumanie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[37]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[421]]></call_prefix>
+<iso_code><![CDATA[SK]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNN NN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Slovakia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Slovaquie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[38]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[213]]></call_prefix>
+<iso_code><![CDATA[DZ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Algeria]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Algérie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[39]]></id_country>
+<id_zone><![CDATA[2]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[AS]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[American Samoa]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Samoa Américaines]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[40]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[376]]></call_prefix>
+<iso_code><![CDATA[AD]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[CNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Andorra]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Andorre]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[41]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[244]]></call_prefix>
+<iso_code><![CDATA[AO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[0]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Angola]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Angola]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[42]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[AI]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Anguilla]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Anguilla]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[43]]></id_country>
+<id_zone><![CDATA[2]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[AG]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Antigua & Barbuda]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Antigua-et-Barbuda]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[44]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[54]]></call_prefix>
+<iso_code><![CDATA[AR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[1]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LNNNNLLL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Argentina]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Argentine]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[45]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[374]]></call_prefix>
+<iso_code><![CDATA[AM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Armenia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Arménie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[46]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[297]]></call_prefix>
+<iso_code><![CDATA[AW]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Aruba]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Aruba]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[47]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[994]]></call_prefix>
+<iso_code><![CDATA[AZ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[CNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Azerbaijan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Azerbaïdjan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[48]]></id_country>
+<id_zone><![CDATA[2]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[BS]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bahamas]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bahamas]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[49]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[973]]></call_prefix>
+<iso_code><![CDATA[BH]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bahrain]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bahreïn]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[50]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[880]]></call_prefix>
+<iso_code><![CDATA[BD]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bangladesh]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bangladesh]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[51]]></id_country>
+<id_zone><![CDATA[2]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[BB]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[CNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Barbados]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Barbade]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[52]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[BY]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Belarus]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bélarus]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[53]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[501]]></call_prefix>
+<iso_code><![CDATA[BZ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[0]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Belize]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Belize]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[54]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[229]]></call_prefix>
+<iso_code><![CDATA[BJ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[0]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Benin]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bénin]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[55]]></id_country>
+<id_zone><![CDATA[2]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[BM]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bermuda]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bermudes]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[56]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[975]]></call_prefix>
+<iso_code><![CDATA[BT]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bhutan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bhoutan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[57]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[267]]></call_prefix>
+<iso_code><![CDATA[BW]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Botswana]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Botswana]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[58]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[55]]></call_prefix>
+<iso_code><![CDATA[BR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN-NNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Brazil]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Brésil]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[59]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[673]]></call_prefix>
+<iso_code><![CDATA[BN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LLNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Brunei]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Brunéi Darussalam]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[60]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[226]]></call_prefix>
+<iso_code><![CDATA[BF]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Burkina Faso]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Burkina Faso]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[61]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[95]]></call_prefix>
+<iso_code><![CDATA[MM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Myanmar (Burma)]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Myanmar]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[62]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[257]]></call_prefix>
+<iso_code><![CDATA[BI]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Burundi]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Burundi]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[63]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[855]]></call_prefix>
+<iso_code><![CDATA[KH]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cambodia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cambodge]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[64]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[237]]></call_prefix>
+<iso_code><![CDATA[CM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cameroon]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cameroun]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[65]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[238]]></call_prefix>
+<iso_code><![CDATA[CV]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cape Verde]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cap-Vert]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[66]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[236]]></call_prefix>
+<iso_code><![CDATA[CF]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Central African Republic]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[République Centrafricaine]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[67]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[235]]></call_prefix>
+<iso_code><![CDATA[TD]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Chad]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Tchad]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[68]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[56]]></call_prefix>
+<iso_code><![CDATA[CL]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNN-NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Chile]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Chili]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[69]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[57]]></call_prefix>
+<iso_code><![CDATA[CO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Colombia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Colombie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[70]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[269]]></call_prefix>
+<iso_code><![CDATA[KM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Comoros]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Comores]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[71]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[242]]></call_prefix>
+<iso_code><![CDATA[CD]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Congo - Kinshasa]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Congo-Kinshasa]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[72]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[243]]></call_prefix>
+<iso_code><![CDATA[CG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Congo - Brazzaville]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Congo-Brazzaville]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[73]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[506]]></call_prefix>
+<iso_code><![CDATA[CR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Costa Rica]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Costa Rica]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[74]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[385]]></call_prefix>
+<iso_code><![CDATA[HR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Croatia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Croatie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[75]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[53]]></call_prefix>
+<iso_code><![CDATA[CU]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cuba]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cuba]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[76]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[357]]></call_prefix>
+<iso_code><![CDATA[CY]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cyprus]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Chypre]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[77]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[253]]></call_prefix>
+<iso_code><![CDATA[DJ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Djibouti]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Djibouti]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[78]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[DM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Dominica]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Dominique]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[79]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[DO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Dominican Republic]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[République Dominicaine]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[80]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[670]]></call_prefix>
+<iso_code><![CDATA[TL]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Timor-Leste]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Timor Oriental]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[81]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[593]]></call_prefix>
+<iso_code><![CDATA[EC]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[CNNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Ecuador]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Équateur]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[82]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[20]]></call_prefix>
+<iso_code><![CDATA[EG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Egypt]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Égypte]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[83]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[503]]></call_prefix>
+<iso_code><![CDATA[SV]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[El Salvador]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Salvador]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[84]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[240]]></call_prefix>
+<iso_code><![CDATA[GQ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Equatorial Guinea]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Guinée équatoriale]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[85]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[291]]></call_prefix>
+<iso_code><![CDATA[ER]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Eritrea]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Érythrée]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[86]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[372]]></call_prefix>
+<iso_code><![CDATA[EE]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Estonia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Estonie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[87]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[251]]></call_prefix>
+<iso_code><![CDATA[ET]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Ethiopia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Éthiopie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[88]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[FK]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LLLL NLL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Falkland Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Malouines]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[89]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[298]]></call_prefix>
+<iso_code><![CDATA[FO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Faroe Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Féroé]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[90]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[679]]></call_prefix>
+<iso_code><![CDATA[FJ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Fiji]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Fidji]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[91]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[241]]></call_prefix>
+<iso_code><![CDATA[GA]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gabon]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Gabon]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[92]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[220]]></call_prefix>
+<iso_code><![CDATA[GM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gambia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Gambie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[93]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[995]]></call_prefix>
+<iso_code><![CDATA[GE]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Georgia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Géorgie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[94]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[233]]></call_prefix>
+<iso_code><![CDATA[GH]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Ghana]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Ghana]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[95]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[GD]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Grenada]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Grenade]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[96]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[299]]></call_prefix>
+<iso_code><![CDATA[GL]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Greenland]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Groenland]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[97]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[350]]></call_prefix>
+<iso_code><![CDATA[GI]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gibraltar]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Gibraltar]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[98]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[590]]></call_prefix>
+<iso_code><![CDATA[GP]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Guadeloupe]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Guadeloupe]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[99]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[GU]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Guam]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Guam]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[100]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[502]]></call_prefix>
+<iso_code><![CDATA[GT]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Guatemala]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Guatemala]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[101]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[GG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LLN NLL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Guernsey]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Guernesey]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[102]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[224]]></call_prefix>
+<iso_code><![CDATA[GN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Guinea]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Guinée]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[103]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[245]]></call_prefix>
+<iso_code><![CDATA[GW]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Guinea-Bissau]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Guinée-Bissau]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[104]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[592]]></call_prefix>
+<iso_code><![CDATA[GY]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Guyana]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Guyana]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[105]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[509]]></call_prefix>
+<iso_code><![CDATA[HT]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Haiti]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Haïti]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[106]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[HM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Heard & McDonald Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Heard Et McDonald]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[107]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[379]]></call_prefix>
+<iso_code><![CDATA[VA]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Vatican City]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[État De La Cité Du Vatican]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[108]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[504]]></call_prefix>
+<iso_code><![CDATA[HN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Honduras]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Honduras]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[109]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[354]]></call_prefix>
+<iso_code><![CDATA[IS]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Iceland]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Islande]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[110]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[91]]></call_prefix>
+<iso_code><![CDATA[IN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNN NNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[India]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Inde]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[111]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[62]]></call_prefix>
+<iso_code><![CDATA[ID]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[1]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Indonesia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Indonésie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[112]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[98]]></call_prefix>
+<iso_code><![CDATA[IR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN-NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Iran]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Iran]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[113]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[964]]></call_prefix>
+<iso_code><![CDATA[IQ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Iraq]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Irak]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[114]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[IM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[CN NLL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Isle Of Man]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Île De Man]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[115]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[JM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Jamaica]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Jamaïque]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[116]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[JE]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[CN NLL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Jersey]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Jersey]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[117]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[962]]></call_prefix>
+<iso_code><![CDATA[JO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Jordan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Jordanie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[118]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[7]]></call_prefix>
+<iso_code><![CDATA[KZ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Kazakhstan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Kazakhstan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[119]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[254]]></call_prefix>
+<iso_code><![CDATA[KE]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Kenya]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Kenya]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[120]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[686]]></call_prefix>
+<iso_code><![CDATA[KI]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Kiribati]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Kiribati]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[121]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[850]]></call_prefix>
+<iso_code><![CDATA[KP]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[North Korea]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Corée Du Nord]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[122]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[965]]></call_prefix>
+<iso_code><![CDATA[KW]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Kuwait]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Koweït]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[123]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[996]]></call_prefix>
+<iso_code><![CDATA[KG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Kyrgyzstan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Kirghizistan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[124]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[856]]></call_prefix>
+<iso_code><![CDATA[LA]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Laos]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Laos]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[125]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[371]]></call_prefix>
+<iso_code><![CDATA[LV]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[C-NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Latvia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Lettonie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[126]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[961]]></call_prefix>
+<iso_code><![CDATA[LB]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Lebanon]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Liban]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[127]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[266]]></call_prefix>
+<iso_code><![CDATA[LS]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Lesotho]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Lesotho]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[128]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[231]]></call_prefix>
+<iso_code><![CDATA[LR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Liberia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Libéria]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[129]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[218]]></call_prefix>
+<iso_code><![CDATA[LY]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Libya]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Libye]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[130]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[423]]></call_prefix>
+<iso_code><![CDATA[LI]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Liechtenstein]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Liechtenstein]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[131]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[370]]></call_prefix>
+<iso_code><![CDATA[LT]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Lithuania]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Lituanie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[132]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[853]]></call_prefix>
+<iso_code><![CDATA[MO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[0]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Macau SAR China]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[R.A.S. Chinoise De Macao]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[133]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[389]]></call_prefix>
+<iso_code><![CDATA[MK]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Macedonia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Macédoine]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[134]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[261]]></call_prefix>
+<iso_code><![CDATA[MG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Madagascar]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Madagascar]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[135]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[265]]></call_prefix>
+<iso_code><![CDATA[MW]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Malawi]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Malawi]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[136]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[60]]></call_prefix>
+<iso_code><![CDATA[MY]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Malaysia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Malaisie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[137]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[960]]></call_prefix>
+<iso_code><![CDATA[MV]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Maldives]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Maldives]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[138]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[223]]></call_prefix>
+<iso_code><![CDATA[ML]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Mali]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Mali]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[139]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[356]]></call_prefix>
+<iso_code><![CDATA[MT]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LLL NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Malta]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Malte]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[140]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[692]]></call_prefix>
+<iso_code><![CDATA[MH]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Marshall Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Marshall]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[141]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[596]]></call_prefix>
+<iso_code><![CDATA[MQ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Martinique]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Martinique]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[142]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[222]]></call_prefix>
+<iso_code><![CDATA[MR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Mauritania]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Mauritanie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[143]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[36]]></call_prefix>
+<iso_code><![CDATA[HU]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Hungary]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Hongrie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[144]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[262]]></call_prefix>
+<iso_code><![CDATA[YT]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Mayotte]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Mayotte]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[145]]></id_country>
+<id_zone><![CDATA[11]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[52]]></call_prefix>
+<iso_code><![CDATA[MX]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[1]]></contains_states>
+<need_identification_number><![CDATA[1]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Mexico]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Mexique]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[146]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[691]]></call_prefix>
+<iso_code><![CDATA[FM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Micronesia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Micronésie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[147]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[373]]></call_prefix>
+<iso_code><![CDATA[MD]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[C-NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Moldova]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Moldavie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[148]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[377]]></call_prefix>
+<iso_code><![CDATA[MC]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[980NN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Monaco]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Monaco]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[149]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[976]]></call_prefix>
+<iso_code><![CDATA[MN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Mongolia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Mongolie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[150]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[382]]></call_prefix>
+<iso_code><![CDATA[ME]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Montenegro]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Monténégro]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[151]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[MS]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Montserrat]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Montserrat]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[152]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[212]]></call_prefix>
+<iso_code><![CDATA[MA]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Morocco]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Maroc]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[153]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[258]]></call_prefix>
+<iso_code><![CDATA[MZ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Mozambique]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Mozambique]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[154]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[264]]></call_prefix>
+<iso_code><![CDATA[NA]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Namibia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Namibie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[155]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[674]]></call_prefix>
+<iso_code><![CDATA[NR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Nauru]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Nauru]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[156]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[977]]></call_prefix>
+<iso_code><![CDATA[NP]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Nepal]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Népal]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[157]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[599]]></call_prefix>
+<iso_code><![CDATA[AN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Netherlands Antilles]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Antilles Néerlandaises]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[158]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[687]]></call_prefix>
+<iso_code><![CDATA[NC]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[New Caledonia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Nouvelle-Calédonie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[159]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[505]]></call_prefix>
+<iso_code><![CDATA[NI]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Nicaragua]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Nicaragua]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[160]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[227]]></call_prefix>
+<iso_code><![CDATA[NE]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Niger]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Niger]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[161]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[683]]></call_prefix>
+<iso_code><![CDATA[NU]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Niue]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Niue]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[162]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[NF]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Norfolk Island]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Île Norfolk]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[163]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[MP]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Northern Mariana Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Mariannes Du Nord]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[164]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[968]]></call_prefix>
+<iso_code><![CDATA[OM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Oman]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Oman]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[165]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[92]]></call_prefix>
+<iso_code><![CDATA[PK]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Pakistan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Pakistan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[166]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[680]]></call_prefix>
+<iso_code><![CDATA[PW]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Palau]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Palaos]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[167]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[PS]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Palestinian Territories]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Territoires Palestiniens]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[168]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[507]]></call_prefix>
+<iso_code><![CDATA[PA]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Panama]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Panama]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[169]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[675]]></call_prefix>
+<iso_code><![CDATA[PG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Papua New Guinea]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Papouasie-Nouvelle-Guinée]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[170]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[595]]></call_prefix>
+<iso_code><![CDATA[PY]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Paraguay]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Paraguay]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[171]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[51]]></call_prefix>
+<iso_code><![CDATA[PE]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Peru]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Pérou]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[172]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[63]]></call_prefix>
+<iso_code><![CDATA[PH]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Philippines]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Philippines]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[173]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[PN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LLLL NLL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Pitcairn Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Pitcairn]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[174]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[PR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Puerto Rico]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Porto Rico]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[175]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[974]]></call_prefix>
+<iso_code><![CDATA[QA]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Qatar]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Qatar]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[176]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[262]]></call_prefix>
+<iso_code><![CDATA[RE]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Réunion]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[La Réunion]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[177]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[7]]></call_prefix>
+<iso_code><![CDATA[RU]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Russia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Russie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[178]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[250]]></call_prefix>
+<iso_code><![CDATA[RW]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Rwanda]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Rwanda]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[179]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[BL]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[St. Barthélemy]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Saint-Barthélemy]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[180]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[KN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[St. Kitts & Nevis]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Saint-Christophe-et-Niévès]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[181]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[LC]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[St. Lucia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sainte-Lucie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[182]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[MF]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[St. Martin]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Saint-Martin (France)]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[183]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[508]]></call_prefix>
+<iso_code><![CDATA[PM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[St. Pierre & Miquelon]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Saint-Pierre-et-Miquelon]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[184]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[VC]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[St. Vincent & Grenadines]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Saint-Vincent-et-les Grenadines]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[185]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[685]]></call_prefix>
+<iso_code><![CDATA[WS]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Samoa]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Samoa]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[186]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[378]]></call_prefix>
+<iso_code><![CDATA[SM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[San Marino]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Saint-Marin]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[187]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[239]]></call_prefix>
+<iso_code><![CDATA[ST]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[São Tomé & Príncipe]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sao Tomé-et-Principe]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[188]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[966]]></call_prefix>
+<iso_code><![CDATA[SA]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Saudi Arabia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Arabie Saoudite]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[189]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[221]]></call_prefix>
+<iso_code><![CDATA[SN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Senegal]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sénégal]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[190]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[381]]></call_prefix>
+<iso_code><![CDATA[RS]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Serbia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Serbie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[191]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[248]]></call_prefix>
+<iso_code><![CDATA[SC]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Seychelles]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Seychelles]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[192]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[232]]></call_prefix>
+<iso_code><![CDATA[SL]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Sierra Leone]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sierra Leone]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[193]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[386]]></call_prefix>
+<iso_code><![CDATA[SI]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[C-NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Slovenia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Slovénie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[194]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[677]]></call_prefix>
+<iso_code><![CDATA[SB]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Solomon Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Salomon]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[195]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[252]]></call_prefix>
+<iso_code><![CDATA[SO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Somalia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Somalie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[196]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[GS]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LLLL NLL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[South Georgia & South Sandwich Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Géorgie Du Sud Et Les îles Sandwich Du Sud]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[197]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[94]]></call_prefix>
+<iso_code><![CDATA[LK]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Sri Lanka]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sri Lanka]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[198]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[249]]></call_prefix>
+<iso_code><![CDATA[SD]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Sudan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Soudan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[199]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[597]]></call_prefix>
+<iso_code><![CDATA[SR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Suriname]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Suriname]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[200]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[SJ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Svalbard & Jan Mayen]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Svalbard Et Jan Mayen]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[201]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[268]]></call_prefix>
+<iso_code><![CDATA[SZ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Swaziland]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Swaziland]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[202]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[963]]></call_prefix>
+<iso_code><![CDATA[SY]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Syria]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Syrie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[203]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[886]]></call_prefix>
+<iso_code><![CDATA[TW]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Taiwan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Taïwan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[204]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[992]]></call_prefix>
+<iso_code><![CDATA[TJ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Tajikistan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Tadjikistan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[205]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[255]]></call_prefix>
+<iso_code><![CDATA[TZ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Tanzania]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Tanzanie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[206]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[66]]></call_prefix>
+<iso_code><![CDATA[TH]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Thailand]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Thaïlande]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[207]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[690]]></call_prefix>
+<iso_code><![CDATA[TK]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Tokelau]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Tokelau]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[208]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[676]]></call_prefix>
+<iso_code><![CDATA[TO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Tonga]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Tonga]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[209]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[TT]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Trinidad & Tobago]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Trinité-et-Tobago]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[210]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[216]]></call_prefix>
+<iso_code><![CDATA[TN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Tunisia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Tunisie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[211]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[90]]></call_prefix>
+<iso_code><![CDATA[TR]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Turkey]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Turquie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[212]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[993]]></call_prefix>
+<iso_code><![CDATA[TM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Turkmenistan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Turkménistan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[213]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[TC]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LLLL NLL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Turks & Caicos Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Turques-et-Caïques]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[214]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[688]]></call_prefix>
+<iso_code><![CDATA[TV]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Tuvalu]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Tuvalu]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[215]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[256]]></call_prefix>
+<iso_code><![CDATA[UG]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Uganda]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Ouganda]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[216]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[380]]></call_prefix>
+<iso_code><![CDATA[UA]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Ukraine]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Ukraine]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[217]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[971]]></call_prefix>
+<iso_code><![CDATA[AE]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[United Arab Emirates]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Émirats Arabes Unis]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[218]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[598]]></call_prefix>
+<iso_code><![CDATA[UY]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Uruguay]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Uruguay]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[219]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[998]]></call_prefix>
+<iso_code><![CDATA[UZ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Uzbekistan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Ouzbékistan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[220]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[678]]></call_prefix>
+<iso_code><![CDATA[VU]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Vanuatu]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Vanuatu]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[221]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[58]]></call_prefix>
+<iso_code><![CDATA[VE]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Venezuela]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Venezuela]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[222]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[84]]></call_prefix>
+<iso_code><![CDATA[VN]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Vietnam]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Vietnam]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[223]]></id_country>
+<id_zone><![CDATA[2]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[VG]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[CNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[British Virgin Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Vierges Britanniques]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[224]]></id_country>
+<id_zone><![CDATA[2]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[VI]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[U.S. Virgin Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Vierges Des États-Unis]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[225]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[681]]></call_prefix>
+<iso_code><![CDATA[WF]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Wallis & Futuna]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Wallis-et-Futuna]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[226]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[EH]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Western Sahara]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sahara Occidental]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[227]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[967]]></call_prefix>
+<iso_code><![CDATA[YE]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Yemen]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Yémen]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[228]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[260]]></call_prefix>
+<iso_code><![CDATA[ZM]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Zambia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Zambie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[229]]></id_country>
+<id_zone><![CDATA[4]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[263]]></call_prefix>
+<iso_code><![CDATA[ZW]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Zimbabwe]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Zimbabwe]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[230]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[355]]></call_prefix>
+<iso_code><![CDATA[AL]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Albania]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Albanie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[231]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[93]]></call_prefix>
+<iso_code><![CDATA[AF]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Afghanistan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Afghanistan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[232]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[AQ]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Antarctica]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Antarctique]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[233]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[387]]></call_prefix>
+<iso_code><![CDATA[BA]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bosnia & Herzegovina]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bosnie-Herzégovine]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[234]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[BV]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bouvet Island]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Île Bouvet]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[235]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[IO]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[LLLL NLL]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[British Indian Ocean Territory]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Territoire Britannique De L’océan Indien]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[236]]></id_country>
+<id_zone><![CDATA[1]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[359]]></call_prefix>
+<iso_code><![CDATA[BG]]></iso_code>
+<active><![CDATA[1]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bulgaria]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bulgarie]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[237]]></id_country>
+<id_zone><![CDATA[8]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[KY]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cayman Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Caïmans]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[238]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[CX]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Christmas Island]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Île Christmas]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[239]]></id_country>
+<id_zone><![CDATA[3]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[CC]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cocos (Keeling) Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Cocos (Keeling)]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[240]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[682]]></call_prefix>
+<iso_code><![CDATA[CK]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cook Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Cook]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[241]]></id_country>
+<id_zone><![CDATA[6]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[594]]></call_prefix>
+<iso_code><![CDATA[GF]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[French Guiana]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Guyane Française]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[242]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[689]]></call_prefix>
+<iso_code><![CDATA[PF]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[French Polynesia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Polynésie Française]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[243]]></id_country>
+<id_zone><![CDATA[5]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[TF]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[French Southern Territories]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Terres Australes Françaises]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+<country><id_country><![CDATA[244]]></id_country>
+<id_zone><![CDATA[7]]></id_zone>
+<id_currency><![CDATA[0]]></id_currency>
+<call_prefix><![CDATA[0]]></call_prefix>
+<iso_code><![CDATA[AX]]></iso_code>
+<active><![CDATA[0]]></active>
+<contains_states><![CDATA[0]]></contains_states>
+<need_identification_number><![CDATA[0]]></need_identification_number>
+<need_zip_code><![CDATA[1]]></need_zip_code>
+<zip_code_format><![CDATA[NNNNN]]></zip_code_format>
+<display_tax_label><![CDATA[1]]></display_tax_label>
+<datalanguage iso_code="en" >
+<name><![CDATA[Åland Islands]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Îles Åland]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</country>
+</entity_profile>

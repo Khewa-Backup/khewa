@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<tax><id_tax><![CDATA[1]]></id_tax>
+<rate><![CDATA[5.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA 5%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA 5%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[2]]></id_tax>
+<rate><![CDATA[7.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-BC 7%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-BC 7%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[3]]></id_tax>
+<rate><![CDATA[7.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-MB 7%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-MB 8%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[4]]></id_tax>
+<rate><![CDATA[8.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[1]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-NB 8%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-NB 8%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[5]]></id_tax>
+<rate><![CDATA[10.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-NL 10%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-NL 8%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[6]]></id_tax>
+<rate><![CDATA[10.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-NS 10%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-NS 10%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[7]]></id_tax>
+<rate><![CDATA[8.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-ON 8%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-ON 8%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[8]]></id_tax>
+<rate><![CDATA[10.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-PE 10%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-PE 9%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[9]]></id_tax>
+<rate><![CDATA[9.975]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[1]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-QC 9.975%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-QC 9.975%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[10]]></id_tax>
+<rate><![CDATA[6.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-SK 6%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-SK 5%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[11]]></id_tax>
+<rate><![CDATA[0.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gift card 0%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Gift card 0%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[12]]></id_tax>
+<rate><![CDATA[0.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[1]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gift card 0%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Gift card 0%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[13]]></id_tax>
+<rate><![CDATA[10.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-NB 10%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-NB 8%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[14]]></id_tax>
+<rate><![CDATA[0.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gift card 0%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Gift card 0%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[15]]></id_tax>
+<rate><![CDATA[14.975]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[1]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[STORE]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[STORE]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[16]]></id_tax>
+<rate><![CDATA[0.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gift card 0%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Gift card 0%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[17]]></id_tax>
+<rate><![CDATA[9.975]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[1]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-QC 9.975%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-QC 9.975%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[18]]></id_tax>
+<rate><![CDATA[9.980]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[1]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-QC 9.975%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-QC 9.98%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[20]]></id_tax>
+<rate><![CDATA[9.980]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[1]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-QC 9.98%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-QC 9.98%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[21]]></id_tax>
+<rate><![CDATA[14.975]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[1]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-QC 9.975%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-QC 14.975%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[22]]></id_tax>
+<rate><![CDATA[14.980]]></rate>
+<active><![CDATA[0]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[STORE]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[STORE]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[23]]></id_tax>
+<rate><![CDATA[0.000]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[No Tax]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[No tax]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[25]]></id_tax>
+<rate><![CDATA[9.976]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-QC 9.975%]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-QC 14.975%]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[26]]></id_tax>
+<rate><![CDATA[9.975]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[1]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-QC]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-QC]]></name>
+</datalanguage>
+</tax>
+<tax><id_tax><![CDATA[27]]></id_tax>
+<rate><![CDATA[9.975]]></rate>
+<active><![CDATA[1]]></active>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[CA-QC]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[CA-QC]]></name>
+</datalanguage>
+</tax>
+</entity_profile>

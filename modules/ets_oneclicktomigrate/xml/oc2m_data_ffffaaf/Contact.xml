@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<contact><id_contact><![CDATA[2]]></id_contact>
+<email><![CDATA[info@khewa.com]]></email>
+<customer_service><![CDATA[1]]></customer_service>
+<datalanguage iso_code="en" >
+<name><![CDATA[Customer service]]></name>
+<description><![CDATA[For any question about a product or an order]]></description>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Service client]]></name>
+<description><![CDATA[Pour toute question sur un produit ou une commande]]></description>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</contact>
+</entity_profile>
