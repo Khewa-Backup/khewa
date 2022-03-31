@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>wkinventory</name>
+    <displayName><![CDATA[Wk Inventory Management]]></displayName>
+    <version><![CDATA[2.1.63]]></version>
+    <description><![CDATA[Manage easily and quickly your inventory]]></description>
+    <author><![CDATA[Khoufi Wissem]]></author>
+    <tab><![CDATA[shipping_logistics]]></tab>
+	<confirmUninstall><![CDATA[Warning: all the data saved in your database will be deleted. Are you sure you want uninstall this module?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>

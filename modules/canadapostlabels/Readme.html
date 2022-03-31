@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Readme.md</title>
+  <style>
+    .prism *,.token.pre.gfm *{font-weight:inherit!important}.prism .token.cdata,.prism .token.comment,.prism .token.doctype,.prism .token.prolog,.token.pre.gfm .token.cdata,.token.pre.gfm .token.comment,.token.pre.gfm .token.doctype,.token.pre.gfm .token.prolog{color:#708090}.prism .token.punctuation,.token.pre.gfm .token.punctuation{color:#999}.prism .namespace,.token.pre.gfm .namespace{opacity:.7}.prism .token.boolean,.prism .token.constant,.prism .token.deleted,.prism .token.number,.prism .token.property,.prism .token.symbol,.prism .token.tag,.token.pre.gfm .token.boolean,.token.pre.gfm .token.constant,.token.pre.gfm .token.deleted,.token.pre.gfm .token.number,.token.pre.gfm .token.property,.token.pre.gfm .token.symbol,.token.pre.gfm .token.tag{color:#905}.prism .token.attr-name,.prism .token.builtin,.prism .token.char,.prism .token.inserted,.prism .token.selector,.prism .token.string,.token.pre.gfm .token.attr-name,.token.pre.gfm .token.builtin,.token.pre.gfm .token.char,.token.pre.gfm .token.inserted,.token.pre.gfm .token.selector,.token.pre.gfm .token.string{color:#690}.prism .language-css .token.string,.prism .style .token.string,.prism .token.entity,.prism .token.operator,.prism .token.url,.token.pre.gfm .language-css .token.string,.token.pre.gfm .style .token.string,.token.pre.gfm .token.entity,.token.pre.gfm .token.operator,.token.pre.gfm .token.url{color:#a67f59}.prism .token.atrule,.prism .token.attr-value,.prism .token.keyword,.token.pre.gfm .token.atrule,.token.pre.gfm .token.attr-value,.token.pre.gfm .token.keyword{color:#07a}.prism .token.function,.token.pre.gfm .token.function{color:#dd4a68}.prism .token.important,.prism .token.regex,.prism .token.variable,.token.pre.gfm .token.important,.token.pre.gfm .token.regex,.token.pre.gfm .token.variable{color:#e90}.prism .token.bold,.prism .token.important,.token.pre.gfm .token.bold,.token.pre.gfm .token.important{font-weight:500}.prism .token.italic,.token.pre.gfm .token.italic{font-style:italic}.mermaid{font-size:16px}.mermaid svg{color:rgba(0,0,0,.75);width:100%;max-width:100%}.app--dark .mermaid svg{color:hsla(0,0%,100%,.75)}.mermaid svg *{font-family:Lato,Helvetica Neue,Helvetica,sans-serif}.mermaid .mermaid .label{color:#333}.mermaid .node circle,.mermaid .node ellipse,.mermaid .node polygon,.mermaid .node rect{fill:#eee;stroke:#999;stroke-width:1px}.mermaid .edgePath .path{stroke:#666;stroke-width:1.5px}.mermaid .edgeLabel{background-color:#fff}.mermaid .cluster rect{fill:#eaf2fb!important;rx:4!important;stroke:#26a!important;stroke-width:1px!important}.mermaid .cluster text{fill:#333}.mermaid .actor{stroke:#999;fill:#eee}.mermaid text.actor{fill:#333;stroke:none}.mermaid .actor-line{stroke:#666}.mermaid .messageLine0{marker-end:"url(#arrowhead)"}.mermaid .messageLine0,.mermaid .messageLine1{stroke-width:1.5;stroke-dasharray:"2 2";stroke:#333}.mermaid #arrowhead{fill:#333}.mermaid #crosshead path{fill:#333!important;stroke:#333!important}.mermaid .messageText{fill:#333;stroke:none}.mermaid .labelBox{stroke:#999;fill:#eee}.mermaid .labelText,.mermaid .loopText{fill:#fff;stroke:none}.mermaid .loopLine{stroke-width:2;stroke-dasharray:"2 2";marker-end:"url(#arrowhead)";stroke:#999}.mermaid .note{stroke:#770;fill:#ffa}.mermaid .noteText{fill:#000;stroke:none;font-family:Arial,Helvetica,sans-serif;font-size:14px}.mermaid .section{stroke:none;opacity:.2}.mermaid .section0,.mermaid .section2{fill:#7fb2e6}.mermaid .section1,.mermaid .section3{fill:#fff;opacity:.2}.mermaid .sectionTitle0,.mermaid .sectionTitle1,.mermaid .sectionTitle2,.mermaid .sectionTitle3{fill:#333}.mermaid .sectionTitle{text-anchor:start;font-size:11px}.mermaid .grid .tick{stroke:#e5e5e5;opacity:.3;shape-rendering:crispEdges}.mermaid .grid path{stroke-width:0}.mermaid .today{fill:none;stroke:#d42;stroke-width:2px}.mermaid .task{stroke-width:2}.mermaid .taskText{text-anchor:middle;font-size:11px}.mermaid .taskTextOutsideRight{fill:#333;text-anchor:start;font-size:11px}.mermaid .taskTextOutsideLeft{fill:#333;text-anchor:end;font-size:11px}.mermaid .taskText0,.mermaid .taskText1,.mermaid .taskText2,.mermaid .taskText3{fill:#fff}.mermaid .task0,.mermaid .task1,.mermaid .task2,.mermaid .task3{fill:#26a;stroke:#194c7f}.mermaid .taskTextOutside0,.mermaid .taskTextOutside1,.mermaid .taskTextOutside2,.mermaid .taskTextOutside3{fill:#333}.mermaid .active0,.mermaid .active1,.mermaid .active2,.mermaid .active3{fill:#eee;stroke:#194c7f}.mermaid .activeText0,.mermaid .activeText1,.mermaid .activeText2,.mermaid .activeText3{fill:#333!important}.mermaid .done0,.mermaid .done1,.mermaid .done2,.mermaid .done3{stroke:#666;fill:#bbb;stroke-width:2}.mermaid .doneText0,.mermaid .doneText1,.mermaid .doneText2,.mermaid .doneText3{fill:#333!important}.mermaid .crit0,.mermaid .crit1,.mermaid .crit2,.mermaid .crit3{stroke:#b1361b;fill:#d42;stroke-width:2}.mermaid .activeCrit0,.mermaid .activeCrit1,.mermaid .activeCrit2,.mermaid .activeCrit3{stroke:#b1361b;fill:#eee;stroke-width:2}.mermaid .doneCrit0,.mermaid .doneCrit1,.mermaid .doneCrit2,.mermaid .doneCrit3{stroke:#b1361b;fill:#bbb;stroke-width:2;cursor:pointer}.mermaid .activeCritText0,.mermaid .activeCritText1,.mermaid .activeCritText2,.mermaid .activeCritText3,.mermaid .doneCritText0,.mermaid .doneCritText1,.mermaid .doneCritText2,.mermaid .doneCritText3{fill:#333!important}.mermaid .titleText{text-anchor:middle;font-size:18px;fill:#333}.mermaid g.classGroup text{fill:#999;stroke:none;font-family:trebuchet ms,verdana,arial;font-size:10px}.mermaid g.classGroup rect{fill:#eee;stroke:#999}.mermaid g.classGroup line{stroke:#999;stroke-width:1}.mermaid svg .classLabel .box{stroke:none;stroke-width:0;fill:#eee;opacity:.5}.mermaid svg .classLabel .label{fill:#999;font-size:10px}.mermaid .relation{stroke:#999;stroke-width:1;fill:none}.mermaid #compositionEnd,.mermaid #compositionStart,.mermaid .composition{fill:#999;stroke:#999;stroke-width:1}.mermaid #aggregationEnd,.mermaid #aggregationStart,.mermaid .aggregation{fill:#eee;stroke:#999;stroke-width:1}.mermaid #dependencyEnd,.mermaid #dependencyStart,.mermaid #extensionEnd,.mermaid #extensionStart{fill:#999;stroke:#999;stroke-width:1}.mermaid .node text{font-family:Arial,Helvetica,sans-serif;font-size:14px}.mermaid div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:Arial,Helvetica,sans-serif;font-size:12px;background:#eaf2fb;border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100}.app--dark .mermaid .label{color:#323d47}.app--dark .mermaid .node circle,.app--dark .mermaid .node ellipse,.app--dark .mermaid .node polygon,.app--dark .mermaid .node rect{fill:#bdd5ea;stroke:#81b1db;stroke-width:1px}.app--dark .mermaid .edgePath .path{stroke:#d3d3d3}.app--dark .mermaid .edgeLabel{background-color:#e8e8e8}.app--dark .mermaid .cluster rect{fill:#6d6d65!important;rx:4!important;stroke:hsla(0,0%,100%,.25)!important;stroke-width:1px!important}.app--dark .mermaid .cluster text{fill:#f9fffe}.app--dark .mermaid .actor{stroke:#81b1db;fill:#bdd5ea}.app--dark .mermaid text.actor{fill:#000;stroke:none}.app--dark .mermaid .actor-line{stroke:#d3d3d3}.app--dark .mermaid .messageLine0{marker-end:"url(#arrowhead)"}.app--dark .mermaid .messageLine0,.app--dark .mermaid .messageLine1{stroke-width:1.5;stroke-dasharray:"2 2";stroke:#d3d3d3}.app--dark .mermaid #arrowhead{fill:#d3d3d3!important}.app--dark .mermaid #crosshead path{fill:#d3d3d3!important;stroke:#d3d3d3!important}.app--dark .mermaid .messageText{fill:#d3d3d3;stroke:none}.app--dark .mermaid .labelBox{stroke:#81b1db;fill:#bdd5ea}.app--dark .mermaid .labelText{fill:#323d47;stroke:none}.app--dark .mermaid .loopText{fill:#d3d3d3;stroke:none}.app--dark .mermaid .loopLine{stroke-width:2;stroke-dasharray:"2 2";marker-end:"url(#arrowhead)";stroke:#81b1db}.app--dark .mermaid .note{stroke:hsla(0,0%,100%,.25);fill:#fff5ad}.app--dark .mermaid .noteText{fill:#000;stroke:none;font-family:trebuchet ms,verdana,arial;font-size:14px}.app--dark .mermaid .section{stroke:none;opacity:.2}.app--dark .mermaid .section0{fill:hsla(0,0%,100%,.3)}.app--dark .mermaid .section2{fill:#eae8b9}.app--dark .mermaid .section1,.app--dark .mermaid .section3{fill:#fff;opacity:.2}.app--dark .mermaid .sectionTitle0,.app--dark .mermaid .sectionTitle1,.app--dark .mermaid .sectionTitle2,.app--dark .mermaid .sectionTitle3{fill:#f9fffe}.app--dark .mermaid .sectionTitle{text-anchor:start;font-size:11px}.app--dark .mermaid .grid .tick{stroke:hsla(0,0%,100%,.3);opacity:.3;shape-rendering:crispEdges}.app--dark .mermaid .grid .tick text{fill:#d3d3d3;opacity:.5}.app--dark .mermaid .grid path{stroke-width:0}.app--dark .mermaid .today{fill:none;stroke:#db5757;stroke-width:2px}.app--dark .mermaid .task{stroke-width:1}.app--dark .mermaid .taskText{text-anchor:middle;font-size:11px}.app--dark .mermaid .taskTextOutsideRight{fill:#323d47;text-anchor:start;font-size:11px}.app--dark .mermaid .taskTextOutsideLeft{fill:#323d47;text-anchor:end;font-size:11px}.app--dark .mermaid .taskText0,.app--dark .mermaid .taskText1,.app--dark .mermaid .taskText2,.app--dark .mermaid .taskText3{fill:#323d47}.app--dark .mermaid .task0,.app--dark .mermaid .task1,.app--dark .mermaid .task2,.app--dark .mermaid .task3{fill:#bdd5ea;stroke:hsla(0,0%,100%,.5)}.app--dark .mermaid .taskTextOutside0,.app--dark .mermaid .taskTextOutside1,.app--dark .mermaid .taskTextOutside2,.app--dark .mermaid .taskTextOutside3{fill:#d3d3d3}.app--dark .mermaid .active0,.app--dark .mermaid .active1,.app--dark .mermaid .active2,.app--dark .mermaid .active3{fill:#81b1db;stroke:hsla(0,0%,100%,.5)}.app--dark .mermaid .activeText0,.app--dark .mermaid .activeText1,.app--dark .mermaid .activeText2,.app--dark .mermaid .activeText3{fill:#323d47!important}.app--dark .mermaid .done0,.app--dark .mermaid .done1,.app--dark .mermaid .done2,.app--dark .mermaid .done3{fill:#d3d3d3}.app--dark .mermaid .doneText0,.app--dark .mermaid .doneText1,.app--dark .mermaid .doneText2,.app--dark .mermaid .doneText3{fill:#323d47!important}.app--dark .mermaid .crit0,.app--dark .mermaid .crit1,.app--dark .mermaid .crit2,.app--dark .mermaid .crit3{stroke:#e83737;fill:#e83737;stroke-width:2}.app--dark .mermaid .activeCrit0,.app--dark .mermaid .activeCrit1,.app--dark .mermaid .activeCrit2,.app--dark .mermaid .activeCrit3{stroke:#e83737;fill:#81b1db;stroke-width:2}.app--dark .mermaid .doneCrit0,.app--dark .mermaid .doneCrit1,.app--dark .mermaid .doneCrit2,.app--dark .mermaid .doneCrit3{stroke:#e83737;fill:#d3d3d3;stroke-width:1;cursor:pointer;shape-rendering:crispEdges}.app--dark .mermaid .doneCritText0,.app--dark .mermaid .doneCritText1,.app--dark .mermaid .doneCritText2,.app--dark .mermaid .doneCritText3{fill:#d3d3d3!important}.app--dark .mermaid .activeCritText0,.app--dark .mermaid .activeCritText1,.app--dark .mermaid .activeCritText2,.app--dark .mermaid .activeCritText3{fill:#323d47!important}.app--dark .mermaid .titleText{text-anchor:middle;font-size:18px;fill:#d3d3d3}.app--dark .mermaid .node text{font-family:trebuchet ms,verdana,arial;font-size:14px}.app--dark .mermaid div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:trebuchet ms,verdana,arial;font-size:12px;background:#6d6d65;border:1px solid hsla(0,0%,100%,.25);border-radius:2px;pointer-events:none;z-index:100}
+
+    /*! normalize-scss | MIT/GPLv2 License | bit.ly/normalize-scss */html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}main{display:block}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent;-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit;font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}dfn{font-style:italic}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button{overflow:visible}button,select{text-transform:none}[type=reset],[type=submit],button,html [type=button]{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}input{overflow:visible}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;display:table;max-width:100%;padding:0;color:inherit;white-space:normal}progress{display:inline-block;vertical-align:baseline}textarea{overflow:auto}details{display:block}summary{display:list-item}menu{display:block}canvas{display:inline-block}[hidden],template{display:none}body,html{color:rgba(0,0,0,.75);font-size:16px;font-family:Lato,Helvetica Neue,Helvetica,sans-serif;font-variant-ligatures:common-ligatures;line-height:1.67;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.app--dark .layout__panel--editor,.app--dark .layout__panel--preview{color:hsla(0,0%,100%,.75)}blockquote,dl,ol,p,pre,ul{margin:1.2em 0}h1,h2,h3,h4,h5,h6{margin:1.8em 0;line-height:1.33}h1:after,h2:after{content:"";display:block;position:relative;top:.33em;border-bottom:1px solid hsla(0,0%,50%,.2)}ol ol,ol ul,ul ol,ul ul{margin:0}a{color:#0c93e4;text-decoration:underline;text-decoration-skip:ink}a:focus,a:hover{text-decoration:none}code,pre,samp{font-family:Roboto Mono,Lucida Sans Typewriter,Lucida Console,monaco,Courrier,monospace;font-size:.85em}code *,pre *,samp *{font-size:inherit}blockquote{color:rgba(0,0,0,.5);padding-left:1.5em;border-left:5px solid rgba(0,0,0,.075)}.app--dark .layout__panel--editor blockquote,.app--dark .layout__panel--preview blockquote{color:hsla(0,0%,100%,.4);border-left-color:hsla(0,0%,100%,.075)}code{background-color:rgba(0,0,0,.05);border-radius:2px;padding:2px 4px}hr{border:0;border-top:1px solid hsla(0,0%,50%,.2);margin:2em 0}pre>code{background-color:rgba(0,0,0,.05);display:block;padding:.5em;-webkit-text-size-adjust:none;white-space:pre-wrap}.toc ul{list-style-type:none;padding-left:20px}table{background-color:transparent;border-collapse:collapse;border-spacing:0}td,th{border-right:1px solid #dcdcdc;padding:8px 12px}td:last-child,th:last-child{border-right:0}td{border-top:1px solid #dcdcdc}kbd{font-family:Lato,Helvetica Neue,Helvetica,sans-serif;background-color:#fff;border:1px solid rgba(63,63,63,.25);border-radius:3px;box-shadow:0 1px 0 rgba(63,63,63,.25);color:#333;display:inline-block;font-size:.8em;margin:0 .1em;padding:.1em .6em;white-space:nowrap}abbr[title]{border-bottom:1px dotted #777;cursor:help}img{max-width:100%}.footnote{font-size:.8em;position:relative;top:-.25em;vertical-align:top}.page-break-after{page-break-after:always}.stackedit__html{margin-bottom:180px;margin-left:auto;margin-right:auto;padding-left:30px;padding-right:30px;max-width:750px}.stackedit__toc ul{padding:0}.stackedit__toc ul a{margin:.5rem 0;padding:.5rem 1rem}.stackedit__toc ul ul{color:#888;font-size:.9em}.stackedit__toc ul ul a{margin:0;padding:.1rem 1rem}.stackedit__toc li{display:block}.stackedit__toc a{display:block;color:inherit;text-decoration:none}.stackedit__toc a:active,.stackedit__toc a:focus,.stackedit__toc a:hover{background-color:rgba(0,0,0,.075);border-radius:2px}.stackedit__left{position:fixed;display:none;width:250px;top:0;left:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;-ms-overflow-style:none}@media (min-width:1060px){.stackedit__left{display:block}}.stackedit__right{position:absolute;right:0;top:0;left:0}@media (min-width:1060px){.stackedit__right{left:250px}}.stackedit--pdf blockquote{border-left-color:#ececec}.stackedit--pdf .stackedit__html{padding-left:0;padding-right:0;max-width:none}
+  </style>
+</head>
+
+<body class="stackedit">
+<div class="stackedit__html"><h1 id="canada-post-module"><img src="logo.png" alt="canada post logo" width="40" style="vertical-align: top;margin-right: 1rem;">Canada Post Module</h1>
+  <p>Offer real-time rates to customers, generate bulk order labels in one click, allow customers to track their orders, and more.</p>
+  <p><em>Developed by Zack Hussain @ <a href="https://zhmedia.ca">zhmedia.ca</a></em></p>
+  <ol>
+    <li><a href="#installation--configuration">Installation &amp; Configuration</a></li>
+    <li><a href="#upgrading-from-version-3.x">Upgrading From Version 3.x</a></li>
+    <li><a href="#notice-for-prestashop-1.6.0.0-to-1.7.0.5">Notice for PrestaShop 1.6.0.0 to 1.7.0.5</a></li>
+    <li><a href="#rates">Rates</a></li>
+    <li><a href="#boxes--box-packing">Boxes &amp; Box Packing</a></li>
+    <li><a href="#rate-discount-rules--free-shipping">Rate Discount Rules &amp; Free Shipping</a></li>
+    <li><a href="#delivery-time-estimates">Delivery Time Estimates</a></li>
+    <li><a href="#shipping-estimator">Shipping Estimator</a></li>
+    <li><a href="#addresses">Addresses</a></li>
+    <li><a href="#labels">Labels</a></li>
+    <li><a href="#return-labels">Return Labels</a></li>
+    <li><a href="#bulk-labels">Bulk Labels</a></li>
+    <li><a href="#manifests">Manifests</a></li>
+    <li><a href="#groups">Groups</a></li>
+    <li><a href="#tracking">Tracking</a></li>
+    <li><a href="#auto-update-on-delivered">Auto-Update Order Status on Delivered</a></li>
+    <li><a href="#setting-up-cron-job">Setting Up Cron Job</a></li>
+    <li><a href="#smart-caching">Smart Caching</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+    <li><a href="#common-error-messages">Common Error Messages</a></li>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#changelog">Changelog</a></li>
+  </ol>
+  <h2 id="installation--configuration">Installation &amp; Configuration</h2>
+  <ol>
+    <li>Go to the Modules page.</li>
+    <li>Search for “Canada Post” and click <strong>Install</strong></li>
+    <li>If you don’t see the module, click <strong>Upload a Module</strong> and upload the module .zip file.</li>
+  </ol>
+  <p>The module must be configured with your Canada Post account, an origin address, and at least one box.</p>
+  <p>To configure the module:</p>
+  <ol>
+    <li>Go to Modules page.</li>
+    <li>Find the <strong>Canada Post</strong> module and click <strong>Configure</strong>.</li>
+    <li>Click <strong>Sign in with Canada Post</strong></li>
+    <li>You’ll be redirected to the Canada Post website where it will prompt you to login to your account and authorize the module to create shipments on your behalf. You can revoke these permissions at any time from the Canada Post website.</li>
+  </ol>
+  <blockquote>
+    <p>If this is your first time creating a Canada Post account and/or adding a new credit card to your Canada Post profile, please allow up to 24 hours for your information to process before using this module. You may encounter errors during that time.</p>
+  </blockquote>
+  <p>Once you’re connected, it’s recommended to configure all the default label values in the <strong>Labels</strong> preferences so that you don’t have to set them for every single label you create.</p>
+  <h2 id="upgrading-from-version-3.x">Upgrading From Version 3.x</h2>
+  <p><strong>Notice for users upgrading the module from any version prior to 4.0.0</strong>: While care was taken to ensure a smooth update, it is highly recommended to uninstall and reinstall the module as version 4.0.0 is completely re-written from scratch and there’s a possibility of encountering errors.</p>
+  <p>There are also several dozens of new configuration and customization options in version 4.0.0 that are not in prior versions which should be configured immediately after updating.</p>
+  <h2 id="notice-for-prestashop-1.6.0.0-to-1.7.0.5">Notice for PrestaShop 1.6.0.0 to 1.7.0.5</h2>
+  <p>PS versions 1.6.x and early versions of PS 1.7 contain bugs that this module must work around.</p>
+  <p>For versions 1.6.0.0 to 1.7.0.5, this module automatically installs an <strong>Override</strong> file at <code>{your_prestashop}/override/classes/Hook.php</code> to solve a particular bug. Before using the module, verify that this file present. If you encounter the error “<em>Invalid id_module or hook_name</em>”, try clearing your cache in <em>Advanced Parameters &gt; Performance</em> and click “<em>Clear Cache</em>” in the top right.</p>
+  <p>If you still encounter the above error, compare the following two files to see that there isn’t another module attempting to override the same function in the same file: <code>{your_prestashop}/override/classes/Hook.php</code> and <code>{your_prestashop}/modules/canadapostlabels/override/classes/Hook.php</code>. As a last resort, you can manually transfer the module’s <code>Hook.php</code> contents into the <code>Hook.php</code> file in your store’s <code>override/classes</code> folder.</p>
+  <p>In PS 1.7.0.0 to 1.7.0.5, you may also need to alter one line of your theme to get the front-office order tracking feature to display properly - add “nofilter” to the following hook:</p>
+  <ol>
+    <li>Open the file <code>{your_theme}/templates/customer/order-detail.tpl</code></li>
+    <li>Replace <code>{$HOOK_DISPLAYORDERDETAIL}</code> with <code>{$HOOK_DISPLAYORDERDETAIL nofilter}</code></li>
+  </ol>
+  <h2 id="rates">Rates</h2>
+  <p>The checkout rates can be configured by selecting the carriers you wish to enable in the <strong>Rates</strong> preferences. Enabling carriers in the <strong>Rates</strong> preferences will install them in your back-office automatically <em>(Shipping &gt; Carriers)</em>.</p>
+  <p>The <strong>Rates</strong> preferences include various settings for <strong>Box Packing</strong> which are explained in the next section.</p>
+  <p>If you are not seeing the rates after enabling the carriers, please see the <a href="#troubleshooting">Troubleshooting</a> section.</p>
+  <h2 id="boxes--box-packing">Boxes / Box Packing</h2>
+  <p>Add all the box dimensions that you ship orders with in the <strong>Boxes</strong> preferences.</p>
+  <p>The module uses a sophisticated <a href="https://en.wikipedia.org/wiki/Bin_packing_problem"><strong>box packing algorithm</strong></a> to determine the <strong>smallest box(es)</strong> that will fit all the products in the customer’s cart; it can <strong>split the products</strong> into <strong>multiple boxes</strong> when the cart has more products than your largest box can fit.</p>
+  <p>You can add unlimited boxes into the module from the configuration page. The more boxes you add, the more accurate the rates will be.</p>
+  <p>You can <strong>disable product splitting</strong> and only use 1 box for each cart by setting <strong>Multiple Box Rates</strong> to <strong>Off</strong>. This will show standard rates for a single box; the module will still use box packing to determine the best box to use.</p>
+  <p>The <strong>Multiple Box Rates</strong> setting determines how the module sums up the rates for each box:</p>
+  <blockquote>
+    <p><strong>Off</strong>: Disables multiple boxes and only uses 1 box.</p>
+    <p><strong>Simple &amp; Fast (recommended)</strong>: Finds the rate for the LARGEST required box and<br>
+      MULTIPLIES the rate by the amount of boxes needed. e.g. For 3 boxes:<br>
+      $10 * 3 boxes = $30 Shipping Fee. This method only calls the Canada<br>
+      Post API once to get the rates for the cart.</p>
+    <p><strong>Accurate &amp; Slower</strong>: Finds the rate for EVERY box required to fit all<br>
+      the products in the cart and SUMS all the rates together. e.g. For 3<br>
+      boxes: $10 + $11 + $12 = $33 Shipping Fee. This method will call the<br>
+      Canada Post API once for each box that the cart requires. Carts<br>
+      requiring many boxes may have a longer loading time when retrieving<br>
+      rates. If your store has a lot of traffic, you may reach your Canada<br>
+      Post API throttle limit which results in an API timeout for 60<br>
+      seconds. You can request an increased API limit from Canada Post -<br>
+      more info on the throttle limit can be found here:<br>
+      <a href="https://www.canadapost.ca/cpo/mc/business/productsservices/developers/throttlelimits.jsf">https://www.canadapost.ca/cpo/mc/business/productsservices/developers/throttlelimits.jsf</a></p>
+  </blockquote>
+  <p>If the cart products require more boxes than the maximum allowed, the module will choose boxes that fit the largest products in the cart until it reaches the maximum.</p>
+  <p>The Canada Post weight limit per box is <strong>30kg</strong> and the module will spread weight across multiple boxes if required.</p>
+  <p>The limit of boxes per cart is <strong>25</strong>.</p>
+  <p><strong>Possible Issue:</strong> If the cart contains a product that does not fit in any of your boxes, the module will be unable to pack the products into your boxes and will revert to using <strong>(1)</strong> of the <strong>largest box</strong> you have. The module will display a warning on the configuration page if any of your products are too large for your largest box.</p>
+  <h2 id="rate-discount-rules--free-shipping">Rate Discount Rules &amp; Free Shipping</h2>
+  <p>You can configure discounts for each Canada Post carrier in the <strong>Rate Discount Rules</strong> preferences.</p>
+  <p>Each carrier can have a percentage, dollar amount, or Free Shipping discount applied to it. e.g. <strong>Free Shipping</strong> when <strong>Order Total Is At Least</strong> CAD$100.00 <strong>tax excl.</strong></p>
+  <p>You can only create one discount rule per carrier for each <strong>Shop</strong>.</p>
+  <p>If you require more flexible ranges, consider using PrestaShop’s built-in carrier system using the following example as a starting point:</p>
+  <p>In this example we will offer free shipping for only <strong>Canada</strong> on orders above <strong>$100</strong>.</p>
+  <ol>
+    <li>Create a new <strong>zone</strong> called “Canada” <em>(International &gt; Locations &gt; Zones menu)</em>.</li>
+    <li>Edit the country <strong>Canada</strong> and change its zone from <strong>North America</strong> to <strong>Canada</strong> <em>(International &gt; Locations &gt; Countries menu)</em>. Zones are only used for Shipping, so update any other carriers with the new Zone if needed.</li>
+    <li>Create a new <strong>carrier</strong> called “Free Shipping” (or any other name).</li>
+    <li>Set its Billing to ‘<strong>According to total price</strong>’.</li>
+    <li>Set its Out-of-range behavior to ‘<strong>Disable Carrier</strong>’.</li>
+    <li>Set its range to ‘&gt;= 100’ and ‘&lt; 999999’.</li>
+    <li>Deselect all zones except Canada, and set Canada to 0.00      This will display free shipping for Canada orders when the order total is above $100.00. To disable one or more carriers when free shipping is enabled, do the following for each carrier.</li>
+    <li>Edit a Canada Post carrier.</li>
+    <li>Set its Billing to ‘<strong>According to total price</strong>’.</li>
+    <li>Set its Out-of-range behavior to ‘<strong>Disable Carrier</strong>’.</li>
+    <li>Set its range to ‘&gt;= 0’ and ‘&lt; 100’.      This will disable that particular carrier when the order total is above $100.00. Repeat for each carrier you wish to disable.</li>
+  </ol>
+  <h2 id="delivery-time-estimates">Delivery Time Estimates</h2>
+  <p>To display delivery time estimates on the checkout page (e.g. 3 Business Days), you must edit one line of code on your theme. Use the following instructions to enable delivery times.</p>
+  <ol>
+    <li>Enable <strong>Show Delivery Time Estimates</strong> in the <strong>Rates</strong> preferences.</li>
+    <li>Open the file at <code>/themes/(your_theme_name)/templates/checkout/_partials/steps/shipping.tpl</code></li>
+    <li>Near the top, locate the following line: <code>{block name='step_content'}</code></li>
+    <li>Immediately after that line, paste the following code: <code>{if isset($delay_times)}{assign var=delivery_options value=$delay_times}{/if}</code></li>
+  </ol>
+  <h2 id="shipping-estimator">Shipping Estimator</h2>
+  <p>The <strong>Shipping Estimator</strong> allows guests/customers to estimate shipping fees on the <strong>Product</strong> and <strong>Cart</strong> pages. To display the Shipping Estimator, enable the <strong>Enable Shipping Estimator</strong> setting in the <strong>Rates</strong> preferences.</p>
+  <p>To estimate rates, guests <em>without addresses</em> can enter a <strong>Country</strong> &amp; <strong>Postal/Zip Code</strong>, and customers <em>with addresses</em> will see rates based on their account’s shipping address. Customers <em>with addresses</em> can select which address they wish to estimate shipping rates for.</p>
+  <p>On the <strong>Product</strong> page, the shipping estimates are based on the product that the customer is currently viewing along with any products already in their cart, any carrier restrictions for those particular products will apply.</p>
+  <p>When a guest/customer adds a product to their cart, the <strong>Shipping Estimator</strong> will then allow the customer to change their cart’s selected shipping method from the <strong>Product</strong> or <strong>Cart</strong> pages.</p>
+  <h2 id="addresses">Addresses</h2>
+  <p>Configure your addresses in the <strong>Addresses</strong> preferences.</p>
+  <p>Select one address as your <strong>Origin</strong> address to be used as the origin for front-office rate calculation.</p>
+  <p>Your addresses will also be available to be selected for any of the following:</p>
+  <ol>
+    <li>The shipping label “From” address.</li>
+    <li>The return label “Receiver” address.</li>
+    <li>The manifest address.</li>
+  </ol>
+  <h2 id="labels">Labels</h2>
+  <p>You can create shipping labels on any <strong>Order</strong> page or in the “<em>Canada Post &gt; Create Label &amp; Return</em>” page in the sidebar.</p>
+  <p>Creating a label will also create a <strong>Shipment</strong> in the <em>Canada Post &gt; View Shipments</em> page where you can <em>re-print</em>, <em>void</em>, or <em>track</em> previously created labels.</p>
+  <p><strong>Shipments</strong> created for an <strong>Order</strong> can also be viewed on the <strong>Order</strong>’s page.</p>
+  <p>You can set default values for most of the label fields in the <strong>Labels</strong> preferences.</p>
+  <p>You can choose to auto-update <strong>Orders</strong> to a custom order status and auto-update an <strong>Order</strong>’s tracking number on label creation in the <strong>Labels</strong> preferences.</p>
+  <p>You can view real-time rates for your selected label settings by clicking <em>Update Rate</em> in the label form.</p>
+  <p>PDF files for created labels can be found in <code>/modules/canadapostlabels/pdf/shipping</code> folder.</p>
+  <blockquote>
+    <p>Note: Commercial Contract Canada Post customers will need to <strong>Transmit</strong> their <strong>Shipments</strong> to create a <strong>Manifest</strong> in the <em>Canada Post &gt; End of Day / Transmit page</em>. More information can be found in the <a href="#manifests">Manifests</a> section.</p>
+  </blockquote>
+  <h2 id="return-labels">Return Labels</h2>
+  <p>You can create a return label for any order that has a Canadian shipping address. Create a return label on an order’s individual <strong>Order</strong> page and clicking “<em>Create Return Label</em>” or in the <em>Canada Post &gt; Create Label &amp; Return</em> page in the sidebar.</p>
+  <p>Creating a return label will also create a <strong>Return Shipment</strong> in the <em>Canada Post &gt; View Return Shipments</em> page where you can <em>re-print</em> or <em>track</em> previously created return labels.</p>
+  <p>PDF files for created return labels can be found in <code>/modules/canadapostlabels/pdf/returns</code> folder.</p>
+  <h2 id="bulk-labels">Bulk Labels</h2>
+  <p>The <strong>Bulk Labels</strong> feature allows you to create labels for multiple orders at once with powerful customization options to optimize your workflow.</p>
+  <h3 id="overview">Overview</h3>
+  <p>You can create <strong>Bulk Labels</strong> in the <em>Canada Post &gt; Create Bulk Order Labels</em> page in the sidebar.</p>
+  <p>Select multiple orders by clicking the checkboxes next to each order, or by clicking <em>Bulk actions &gt; Select All</em> at the bottom of the page.</p>
+  <p>Filter your orders by configuring the filters at the top of the <em>Bulk Order Labels</em> table. Your configured filters will be saved and persist every time you visit the page until you reset them.</p>
+  <p>Create labels for the selected orders by clicking <em>Bulk actions &gt; Create Labels for Selected</em>.</p>
+  <p>Creating labels for multiple orders will also create a <strong>Batch</strong> of labels that can be viewed and re-printed in the <em>Canada Post &gt; View Batches</em> page in the sidebar.</p>
+  <p>If there are any errors for one or more labels during the label creation process, those labels will be excluded from the <strong>Batch</strong>. You will be able to view the error message by clicking the red error link under the <strong>Error</strong> column. You can also view all the errors that occurred for a <strong>Batch</strong> on the <em>Canada Post &gt; View Batches</em> page under the <strong>Errors</strong> column. Fix the errors for each order and try re-creating the labels.</p>
+  <p>PDF files for created batches of labels can be found in <code>/modules/canadapostlabels/pdf/batch</code> folder.</p>
+  <blockquote>
+    <p><strong>Note:</strong> Creating large amounts of labels may take several minutes to complete, please allow the page to finish loading and do not refresh/cancel the page load.</p>
+  </blockquote>
+  <h3 id="modifying-label-settings">Modifying Label Settings</h3>
+  <p>You can modify each individual <strong>Order</strong>’s label settings by clicking the <strong>Edit Label Settings</strong> button for the <strong>Order</strong> or from each <strong>Order</strong>’s order page.</p>
+  <p>Any modifications made to an order’s label settings will be stored permanently and will be used instead of the default label values.</p>
+  <p>Orders with modified label settings will have a <em>Yes</em> under the <strong>Modified</strong> column and will also be indicated as <em>modified</em> next to <strong>Saved Changes</strong> in the label form.</p>
+  <blockquote>
+    <p><strong>Be careful</strong> when trying to change an order’s shipping address <strong>after</strong> modifying an order’s label settings. When you modify an order’s label settings, the shipping address in the label form will be stored independently from the shipping address on the customer’s order. In which case, you will then have to change the shipping address in both the <strong>Order</strong> and the <strong>Label Form Settings</strong>.</p>
+  </blockquote>
+  <h3 id="live-rates">Live Rates</h3>
+  <p>Real-time rates can be fetched for each order by clicking on the <strong>refresh</strong> icon under the <strong>Live Rate</strong> column. These rates are tax incl/excl depending on your tax setting in the <strong>Rates</strong> preferences.</p>
+  <h3 id="label-carriers">Label Carriers</h3>
+  <p>The <strong>Label Carrier</strong> column indicates which Canada Post shipping method the label will use. By default, the module will automatically choose the <strong>Label Carrier</strong> based on the following in order of priority: (1) the carrier that the customer chose in their <strong>Order</strong> or (2) the first active carrier for the Order’s shipping country or (3) the first inactive carrier for the Order’s shipping country.</p>
+  <p>You can override these defaults by using <strong>Carrier Mappings</strong> in the following section.</p>
+  <h3 id="carrier-mappings">Carrier Mappings</h3>
+  <p>You can map your PrestaShop carriers to Canada Post carriers in the <strong>Carrier Mappings</strong> preferences. Mapping your carriers will pre-select the <strong>Label Carrier</strong> for you.</p>
+  <p><strong>Example</strong>: If you map “My Custom Carrier” to “Canada Post Expedited” - any orders that chose “My Custom Carrier” as their shipping method will have their <strong>Label Carrier</strong> defaulted to “Canada Post Expedited”.</p>
+  <h3 id="preferences">Preferences</h3>
+  <p>You can configure bulk label preferences in the <strong>Bulk Order Labels</strong> preferences.</p>
+  <p>You can exclude orders with certain order statuses from showing up in the Bulk Order Labels page by selecting one or more statuses in the <strong>Exclude Order Statuses</strong> setting. Select/Deselect statuses by holding Cmd/Ctrl+Click.</p>
+  <p><strong>Example:</strong> If you choose to exclude “<em>Shipped</em>” orders, they will disappear from the page after you create labels for them (provided that you have <em>Auto-Update Order Statuses</em> enabled in the <strong>Labels</strong> preferences).</p>
+  <p>You can choose to sort your bulk label PDFs by Order ID, Shipping Date, or Order Date (ASC/DESC).</p>
+  <p>The <strong>Delay Between Labels</strong> setting is used to slow down the label creation process when more than 60 labels are requested. This adds a delay in between each label to make sure you aren’t hitting the Canada Post API throttle limit and timing out. An <strong>API timeout</strong> is indicated by the error message “<em><strong>Rejected by SLM Monitor</strong></em>”. You can request an increase in API limits by signing into the <a href="https://www.canadapost.ca/cpotools/apps/drc/registered?execution=e2s1">Canada Post Developer Program</a> and clicking “<em>Increase Limits</em>”.</p>
+  <h2 id="manifests">Manifests</h2>
+  <p>A <strong>Manifest</strong> is proof of payment for a collection of physical shipments. If you are a commercial Canada Post customer you must produce a hard copy of your manifest and provide to Canada Post when they pick up your shipments or when you drop off your shipments at a mail processing plant.</p>
+  <p>You can <strong>Transmit</strong> a group of <strong>Shipments</strong> in the “<em>Canada Post &gt; End of Day / Transmit</em>” page to create a <strong>Manifest</strong>. Manifests are only used by commercial Canada Post customers with a parcel agreement, regular customers do not need to transmit shipments or present manifests.</p>
+  <p>You can view all previously created <strong>Manifests</strong> in the “<em>Canada Post &gt; View Manifests</em>” page in the sidebar.</p>
+  <p>PDF files for created manifests can be found in <code>/modules/canadapostlabels/pdf/manifests/</code> folder.</p>
+  <blockquote>
+    <p><strong>Note from Canada Post:</strong> After you print your commercial shipping labels, you must also transmit your shipment information, create a manifest, and provide a hard-copy manifest to Canada Post with your shipment. We monitor all shipments that have not followed this process. Failure to comply will result in manual billing at full rates and/or a loss of your automation discount.</p>
+  </blockquote>
+  <h2 id="groups">Groups</h2>
+  <p>For commercial contract Canada Post customers, Groups are used to organize shipments into groups and transmitting them at separate times. For regular Canada Post customers, Groups can be used as an internal organizational tool.</p>
+  <p>You can choose which group a shipment will belong to when creating a shipment label. If you don’t need to group shipments, you can simply use the “Default” group for all your shipments.</p>
+  <p>You can configure your groups in the <strong>Groups</strong> preferences.</p>
+  <h2 id="tracking">Tracking</h2>
+  <p>Allow customers to see their order’s tracking progress from their front-office <strong>Order Details</strong> page by enabling <strong>Enable Order Tracking</strong> in the <strong>Tracking</strong> preferences.</p>
+  <p>This will display a green progress bar in the order details page along with brief information about the last tracking event for their parcel (event description, current location, event time).</p>
+  <p>The tracking progress will only be displayed if a label was created for the order either via the <strong>Bulk Order Labels</strong> page or from the individual <strong>Order</strong> page. It will <strong>not</strong> be displayed if you created a custom label from the “<em>Create Label &amp; Return</em>” page or if you entered a tracking number manually.</p>
+  <p>An order may have multiple labels associated with it, in which case the front-office order detail page will have multiple tracking progress bars (one for each label).</p>
+  <blockquote>
+    <p><strong>For PrestaShop versions 1.7.0.0 to 1.7.0.5</strong>: A theme modification may be required to make this feature work due to a bug in the default theme.</p>
+    <ol>
+      <li>Open the file <code>{your_theme}/templates/customer/order-detail.tpl</code></li>
+      <li>Replace <code>{$HOOK_DISPLAYORDERDETAIL}</code> with <code>{$HOOK_DISPLAYORDERDETAIL nofilter}</code></li>
+    </ol>
+  </blockquote>
+  <h2 id="auto-update-on-delivered">Auto-Update on Delivered</h2>
+  <p>You can choose to auto-update orders to a custom order status when the Canada Post tracking says it has been delivered. Enable <strong>Auto-Update Order Status When Delivered</strong> in the <strong>Tracking</strong> preferences.</p>
+  <p>The <strong>Auto-Update Order Status When Delivered</strong> feature requires that you have the free “<strong>Cron tasks manager</strong>” module made by PrestaShop installed and enabled. Install it by going to the “Module Catalog” page and searching for “Cron” and clicking “Install”. You will then be able to customize the frequency of tracking updates from the “Cron tasks manager” module configuration page.</p>
+  <p>You can choose multiple order statuses that you want the module to track and auto-update when delivered in the <strong>Order Statuses to Track</strong> setting. Select/Deselect statuses by holding Cmd/Ctrl+Click. The module will only track orders with those selected statuses and will ignore any orders without those statuses.</p>
+  <p>Choose which status to update an order with once it has been tracked as delivered in the <strong>Delivered Order Status</strong> setting.</p>
+  <h2 id="setting-up-cron-job">Setting Up Cron Job</h2>
+  <h3 id="what-is-cron">What is Cron</h3>
+  <p>Cron is a Unix system tool that provides time-based job scheduling: you can create many cron jobs on your server which are then run periodically at fixed times, dates, or intervals.</p>
+  <p>This module uses Cron Jobs for the following two tasks:</p>
+  <ol>
+    <li>Track all shipped orders and auto-update their order status when they are delivered by Canada Post.</li>
+    <li>Clear cached front-office rates that are older than 3 months.</li>
+  </ol>
+  <h3 id="how-to-set-it-up">How to set it up</h3>
+  <ol>
+    <li>Install the free “Cron tasks manager” module by PrestaShop by going to the “Module Catalog” page and searching for “Cron” and clicking “Install”.</li>
+    <li>Go to the “Cron tasks manager” configuration page and change “Cron mode” to “Advanced”.</li>
+  </ol>
+  <dl>
+    <dt>If you are comfortable setting up a cron job on your own server:</dt>
+    <dd>Copy the cron command from the “Cron tasks manager” module and paste it in your server’s cron manager (varies by server). Set the cron job to run hourly (<code>0 * * * *</code>).</dd>
+    <dt>If you’re not comfortable setting up a cron job yourself, or you don’t have a developer who can do it for you:</dt>
+    <dd>Consider using the service <strong>EasyCron</strong> (free for 200 cron jobs per day): <a href="https://www.easycron.com/cron-job-tutorials/how-to-set-up-cron-job-for-prestashop-cron-tasks-manager">https://www.easycron.com/cron-job-tutorials/how-to-set-up-cron-job-for-prestashop-cron-tasks-manager</a> - and configure the task to run hourly.</dd>
+  </dl>
+  <h2 id="smart-caching">Smart Caching</h2>
+  <p>The module stores rates for each cart in the database to speed up your website. It will only retrieve new rates if the customer changes their zip/postal code, the products in their cart, or the quantities for products already in their cart.</p>
+  <p>In some cases you may be trying to change the module configuration/carriers and refreshing your website to see updated rates. The rates will not update until one of the above conditions have been met, so try changing the products/quantities in your cart to see the new rates.</p>
+  <p>If you have the free “<em>Cron task manager</em>” module by PrestaShop installed, the module will regularly delete cached front-office rates older than 3 months (<em>cpl_cache</em> &amp; <em>cpl_cache_rate tables</em>) to save space.</p>
+  <h2 id="troubleshooting">Troubleshooting</h2>
+  <h3 id="q-why-are-the-rates-not-showing-up">Q: Why are the rates not showing up?</h3>
+  <ul>
+    <li>Check each <strong>product’s</strong> Shipping settings to see if the carriers are enabled/disabled in Catalog &gt; Products &gt; (edit a product) &gt; Shipping <em>(this is the most common issue)</em>.</li>
+    <li>Make sure the <strong>carriers’ zones</strong> are enabled in Shipping &gt; Carriers.</li>
+    <li>If you’re using <strong>Advanced Stock Management</strong>, make sure your <strong>Warehouses</strong> are set to the proper carriers in Stock &gt; Warehouses &gt; (edit Warehouse). Make sure that your <strong>products</strong> are set to the proper <strong>Warehouses</strong> in each product’s configuration page.</li>
+    <li>Go to the module’s configuration page and see if there are any warnings/errors.</li>
+  </ul>
+  <p>Enable <strong>Error Logging</strong> in the module configuration page to help troubleshoot rates. If there are any errors while retrieving rates, the errors will get logged in the <strong>Advanced Parameters &gt; Logs</strong> menu. Search for "<strong>Canada Post"</strong> in the log page to filter your logs.</p>
+  <h2 id="common-error-messages">Common Error Messages</h2>
+  <dl>
+    <dt>“Rejected by SLM Monitor”</dt>
+    <dd>You have exceeded the <a href="https://www.canadapost.ca/cpo/mc/business/productsservices/developers/throttlelimits.jsf">throttle limit for your API key</a>. You will be blocked from making additional calls for up to a minute. You can request for a limit increase using the “Increase Limits” link found below your API keys on <a href="http://canadapost.ca">canadapost.ca</a>.</dd>
+    <dt>“The service USA.EP is not available for the specified country or customer/contract.”</dt>
+    <dd>You are trying to create a label with a shipping method that is not supported for the destination country. “USA.EP” refers to “Expedited Parcel USA”. Other service codes include “DOM.RP” for “Expedited Parcel” (DOM = domestic/Canada), or “INT.XP” for “International Xpresspost”).</dd>
+    <dt>“postal-code value ‘A1A1’ is not a valid instance of type PostalCodeType”</dt>
+    <dd>You are trying to create a label or retrieve a rate with an invalid postal code.</dd>
+    <dt>" " is not a valid Shipping Point Id on the date of deposit. Use Find a Deposit Location on <a href="http://canadapost.ca">canadapost.ca</a> to find valid site numbers."</dt>
+    <dd>You must enter a “Shipping Point ID” in the <strong>Labels</strong> preferences. Or enable “Pickup” and enter a “Requested Shipping Point” instead.</dd>
+    <dt>“requested-shipping-point of type PostalCodeType may not be empty”</dt>
+    <dd>You must enter a “Requested Shipping Point” postal code in the <strong>Labels</strong> preferences. Or disable “Pickup” and enter a “Shipping Point ID” instead.</dd>
+  </dl>
+  <h2 id="requirements">Requirements</h2>
+  <ol>
+    <li>A Canada Post account.</li>
+    <li>Your website’s PHP version should be at least 5.4.0</li>
+  </ol>
+  <h2 id="changelog">Changelog</h2>
+  <ul>
+    <li>
+      <p>4.0.3</p>
+      <ul>
+        <li>NEW: Option to send tracking emails on label creation</li>
+        <li>Fix error on orders containing only virtual products</li>
+        <li>Fix: save tracking number before changing order status</li>
+        <li>Fix styling on estimator</li>
+        <li>Prevent user from removing all Groups</li>
+      </ul>
+    </li>
+    <li>
+      <p>4.0.2</p>
+      <ul>
+        <li>Fix Rate Discount rule error when discount value is empty</li>
+        <li>Fix styling on estimator</li>
+        <li>Add HS Tariff in label form</li>
+        <li>Fix double div closing tag in development template</li>
+        <li>Fix return label error on intl shipments</li>
+        <li>Fix unit weight on intl shipments</li>
+      </ul>
+    </li>
+    <li>
+      <p>4.0.1</p>
+      <ul>
+        <li>Fix estimator showing as Free on out-of-stock products</li>
+      </ul>
+    </li>
+    <li>
+      <p>4.0.0</p>
+      <ul>
+        <li>Module completely re-built from the ground up with new features and better performance.</li>
+        <li>NEW: Create Bulk Order Labels in one click</li>
+        <li>NEW: Re-designed label interface with dozens of new label options</li>
+        <li>NEW: Front-office Shipping Estimator on Product/Cart pages</li>
+        <li>NEW: Front-office Order Tracking</li>
+        <li>NEW: Create Return Labels</li>
+        <li>NEW: Custom Rate Discount Rules</li>
+        <li>NEW: Auto-Update Order Status when Delivered</li>
+        <li>NEW: Box Packing Algorithm</li>
+        <li>NEW: Powerful bulk-shipping workflow optimization options</li>
+        <li>NEW: Smart Rate Caching to speed up the front-office</li>
+        <li>NEW: Re-designed Shipment/Manifest History</li>
+        <li>NEW: Bulk-re-print and bulk-void/refund labels</li>
+        <li>NEW: Track parcels from the back-office</li>
+        <li>NEW: Get rates with tax included OR excluded</li>
+        <li>NEW: Upload your own carrier logo</li>
+        <li>Added metrics for storage space used by module</li>
+        <li>Rewritten documentation</li>
+        <li>Contract/Non-Contract Modules are now consolidated into one module</li>
+        <li>Numerous bug fixes and improvements</li>
+        <li>Add Hook.php override for backwards compatibility (namespace issue)</li>
+      </ul>
+    </li>
+    <li>
+      <p>3.0.4<br>
+        - FIX delivery estimate bug</p>
+    </li>
+    <li>
+      <p>3.0.3<br>
+        - FIX uninstall bug in Prestashop 1.7.2.2</p>
+    </li>
+    <li>
+      <p>3.0.2<br>
+        - FIX Bug with creating manual orders.</p>
+    </li>
+    <li>
+      <p>3.0.1<br>
+        - Updated for Prestashop 1.7<br>
+        - Added more documentation<br>
+        - Added manual workaround for delivery times<br>
+        - Fixed cookie-&gt;exists</p>
+    </li>
+    <li>
+      <p>2.2.8<br>
+        - FIX Bug with adding package weight to total weight.<br>
+        - FIX Bug with creating custom orders.</p>
+    </li>
+    <li>
+      <p>2.2.7<br>
+        - FIX Some rate services not appearing for certain addresses.</p>
+    </li>
+    <li>
+      <p>2.2.6<br>
+        - FIX DC option code enabled on addresses that don’t support it.<br>
+        - FIX Add conversion rate from CAD for International shipments.<br>
+        - FIX Bug preventing from deleting a box on some servers.<br>
+        - NEW Added two new International shipping methods (parcel air, parcel surface).</p>
+    </li>
+    <li>
+      <p>2.2.5<br>
+        - Fixed rate not updating for Shipping Estimator module.<br>
+        - Added $delay_times smarty variable.</p>
+    </li>
+    <li>
+      <p>2.2.4<br>
+        - IMPROVED: Rate volume calculation<br>
+        - FIX: Admin order page now correctly pre-selects the optimal package size</p>
+    </li>
+    <li>
+      <p>2.2.3<br>
+        - FIX: Syntax for select form fields in latest PS version on older PHP versions.<br>
+        - FIX: CSS and JS selectors for new select form fields in latest PS version.</p>
+    </li>
+    <li>
+      <p>2.2.2<br>
+        - NEW: Rate algorithm improvement with long edges<br>
+        - FIX: Syntax for select form fields in latest PS version<br>
+        - FIX: Bug with commercial invoices</p>
+    </li>
+  </ul>
+</div>
+</body>
+
+</html>

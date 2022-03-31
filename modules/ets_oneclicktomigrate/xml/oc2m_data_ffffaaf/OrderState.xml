@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<order_state><id_order_state><![CDATA[1]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[ps_checkpayment]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#4169E1]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Awaiting check payment]]></name>
+<template><![CDATA[cheque]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[En attente du paiement par chèque]]></name>
+<template><![CDATA[cheque]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[2]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[1]]></invoice>
+<color><![CDATA[#32CD32]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[1]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[1]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[1]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Payment accepted]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Paiement accepté]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[3]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[1]]></invoice>
+<color><![CDATA[#FF8C00]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[1]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[1]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Processing in progress]]></name>
+<template><![CDATA[preparation]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[En cours de préparation]]></name>
+<template><![CDATA[preparation]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[4]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[1]]></invoice>
+<color><![CDATA[#8A2BE2]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[1]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[1]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[1]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Shipped]]></name>
+<template><![CDATA[shipped]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Expédié]]></name>
+<template><![CDATA[shipped]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[5]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[1]]></invoice>
+<color><![CDATA[#108510]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[1]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[1]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[1]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Delivered]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Livré]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[6]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#DC143C]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Canceled]]></name>
+<template><![CDATA[order_canceled]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Annulé]]></name>
+<template><![CDATA[order_canceled]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[7]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[1]]></invoice>
+<color><![CDATA[#ec2e15]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Refunded]]></name>
+<template><![CDATA[refund]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Remboursé]]></name>
+<template><![CDATA[refund]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[8]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#8f0621]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Payment error]]></name>
+<template><![CDATA[payment_error]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Erreur de paiement]]></name>
+<template><![CDATA[payment_error]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[9]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[1]]></invoice>
+<color><![CDATA[#FF69B4]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[1]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[On backorder (paid)]]></name>
+<template><![CDATA[outofstock]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[En attente de réapprovisionnement (payé)]]></name>
+<template><![CDATA[outofstock]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[10]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[ps_wirepayment]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#4169E1]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Awaiting bank wire payment]]></name>
+<template><![CDATA[bankwire]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[En attente de virement bancaire]]></name>
+<template><![CDATA[bankwire]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[11]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[1]]></invoice>
+<color><![CDATA[#32CD32]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[1]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Remote payment accepted]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Paiement à distance accepté]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[12]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#FF69B4]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[On backorder (not paid)]]></name>
+<template><![CDATA[outofstock]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[En attente de réapprovisionnement (non payé)]]></name>
+<template><![CDATA[outofstock]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[13]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[ps_cashondelivery]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#4169E1]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Awaiting Cash On Delivery validation]]></name>
+<template><![CDATA[cashondelivery]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[En attente de paiement à la livraison]]></name>
+<template><![CDATA[cashondelivery]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[14]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#4169E1]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Awaiting for PayPal payment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Awaiting for PayPal payment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[17]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[realexpaymentshpp]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#DDEEFF]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Payment accepted / Waiting for settlement]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Payment accepted / Waiting for settlement]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[18]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#FFDD99]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Stripe Partial Refund]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Stripe Partial Refund]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[19]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#4169E1]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Awaiting for Sofort payment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Awaiting for Sofort payment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[20]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#4199E1]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Awaiting for SEPA payment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Awaiting for SEPA payment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[21]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[ps_checkout]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#34209E]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Waiting for PayPal payment]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Waiting for PayPal payment]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[22]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[ps_checkout]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#34209E]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Waiting for Credit Card Payment]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Waiting for Credit Card Payment]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[23]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[ps_checkout]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#34209E]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Waiting for Local Payment Method Payment]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Waiting for Local Payment Method Payment]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[24]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[ps_checkout]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#3498D8]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Authorized. To be captured by merchant]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Authorized. To be captured by merchant]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[25]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[ps_checkout]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#01B887]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Partial refund]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Remboursement partiel]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[26]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[ps_checkout]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#3498D8]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Waiting capture]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Waiting capture]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[27]]></id_order_state>
+<send_email><![CDATA[1]]></send_email>
+<module_name><![CDATA[hspointofsalepro]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#FF8C00]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[1]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Pre-order]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Pre-order]]></name>
+<template><![CDATA[payment]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[28]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#FFDD99]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Stripe Partial Refund]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Stripe Partial Refund]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[34]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#03befc]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Waiting for Stripe capture]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Waiting for Stripe capture]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[35]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#fcba03]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Waiting for SEPA payment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Waiting for SEPA payment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[36]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#e3e1dc]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[SEPA dispute]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[SEPA dispute]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[37]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[gmerchantcenterpro]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#27FF00]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Validation in Progress (Google Shopping Action)]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Validation in Progress (Google Shopping Action)]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[38]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[gmerchantcenterpro]]></module_name>
+<invoice><![CDATA[1]]></invoice>
+<color><![CDATA[#27FF00]]></color>
+<logable><![CDATA[1]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[1]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Google order pending shipment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Google order pending shipment]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+<order_state><id_order_state><![CDATA[39]]></id_order_state>
+<send_email><![CDATA[0]]></send_email>
+<module_name><![CDATA[gmerchantcenterpro]]></module_name>
+<invoice><![CDATA[0]]></invoice>
+<color><![CDATA[#DC143C]]></color>
+<logable><![CDATA[0]]></logable>
+<shipped><![CDATA[0]]></shipped>
+<unremovable><![CDATA[0]]></unremovable>
+<delivery><![CDATA[0]]></delivery>
+<hidden><![CDATA[0]]></hidden>
+<paid><![CDATA[0]]></paid>
+<pdf_delivery><![CDATA[0]]></pdf_delivery>
+<pdf_invoice><![CDATA[0]]></pdf_invoice>
+<deleted><![CDATA[0]]></deleted>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cancel by the customer (Google Shopping Action)]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cancel by the customer (Google Shopping Action)]]></name>
+<template><![CDATA[]]></template>
+</datalanguage>
+</order_state>
+</entity_profile>

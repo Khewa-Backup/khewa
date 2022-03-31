@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>ewrelatedproductspro</name>
+    <displayName><![CDATA[Related Products Pro]]></displayName>
+    <version><![CDATA[1.0.0]]></version>
+    <description><![CDATA[Module to generate blocks and sliders of related products by attributes, features, name, reference... You choose whether to configure it at the product level or at the category level.]]></description>
+    <author><![CDATA[Elina Webs]]></author>
+    <tab><![CDATA[front_office_features]]></tab>
+	<confirmUninstall><![CDATA[Are you sure to uninstall the module?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>elegantalseoessentials</name>
+    <displayName><![CDATA[Essential SEO All-In-One Tools by Experts]]></displayName>
+    <version><![CDATA[3.4.3]]></version>
+    <description><![CDATA[Most important SEO tools needed for optimizing your site]]></description>
+    <author><![CDATA[ELEGANTAL]]></author>
+    <tab><![CDATA[seo]]></tab>
+	<confirmUninstall><![CDATA[Are you sure you want to uninstall?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>

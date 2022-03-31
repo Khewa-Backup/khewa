@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>thegiftcard</name>
+    <displayName><![CDATA[The gift card]]></displayName>
+    <version><![CDATA[1.8.0]]></version>
+    <description><![CDATA[A customer stuck for inspiration ? The module The Gift Card gives the possibility of offering the perfect gift for all ocasions. Attract new customers and boost your sales by suggesting customizable gift cards. Very intuitive, the module is already preconfigured for immediate use !]]></description>
+    <author><![CDATA[Keyrnel]]></author>
+    <tab><![CDATA[front_office_features]]></tab>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

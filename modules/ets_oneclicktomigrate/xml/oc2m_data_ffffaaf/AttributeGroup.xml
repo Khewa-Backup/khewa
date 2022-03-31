@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<attribute_group><id_attribute_group><![CDATA[1]]></id_attribute_group>
+<is_color_group><![CDATA[0]]></is_color_group>
+<group_type><![CDATA[radio]]></group_type>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Size]]></name>
+<public_name><![CDATA[Size]]></public_name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Taille]]></name>
+<public_name><![CDATA[Taille]]></public_name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute_group>
+<attribute_group><id_attribute_group><![CDATA[2]]></id_attribute_group>
+<is_color_group><![CDATA[0]]></is_color_group>
+<group_type><![CDATA[radio]]></group_type>
+<position><![CDATA[2]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Shoes Size]]></name>
+<public_name><![CDATA[Size]]></public_name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Pointure]]></name>
+<public_name><![CDATA[Pointure]]></public_name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute_group>
+<attribute_group><id_attribute_group><![CDATA[6]]></id_attribute_group>
+<is_color_group><![CDATA[0]]></is_color_group>
+<group_type><![CDATA[radio]]></group_type>
+<position><![CDATA[3]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Colors]]></name>
+<public_name><![CDATA[Colors]]></public_name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Couleurs]]></name>
+<public_name><![CDATA[Couleurs]]></public_name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute_group>
+<attribute_group><id_attribute_group><![CDATA[7]]></id_attribute_group>
+<is_color_group><![CDATA[0]]></is_color_group>
+<group_type><![CDATA[radio]]></group_type>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Frame Options]]></name>
+<public_name><![CDATA[Frame Options]]></public_name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Options d'encadrement]]></name>
+<public_name><![CDATA[Options d'encadrement]]></public_name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute_group>
+<attribute_group><id_attribute_group><![CDATA[8]]></id_attribute_group>
+<is_color_group><![CDATA[0]]></is_color_group>
+<group_type><![CDATA[select]]></group_type>
+<position><![CDATA[4]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Smudge]]></name>
+<public_name><![CDATA[Smudge]]></public_name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Fumigation]]></name>
+<public_name><![CDATA[Fumigation]]></public_name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute_group>
+<attribute_group><id_attribute_group><![CDATA[10]]></id_attribute_group>
+<is_color_group><![CDATA[0]]></is_color_group>
+<group_type><![CDATA[select]]></group_type>
+<position><![CDATA[5]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Style]]></name>
+<public_name><![CDATA[Style]]></public_name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Style]]></name>
+<public_name><![CDATA[Style]]></public_name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute_group>
+<attribute_group><id_attribute_group><![CDATA[14]]></id_attribute_group>
+<is_color_group><![CDATA[0]]></is_color_group>
+<group_type><![CDATA[radio]]></group_type>
+<position><![CDATA[6]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gift card template]]></name>
+<public_name><![CDATA[Gift card template]]></public_name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Gabarit de la carte cadeau]]></name>
+<public_name><![CDATA[Gabarit de la carte cadeau]]></public_name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute_group>
+<attribute_group><id_attribute_group><![CDATA[15]]></id_attribute_group>
+<is_color_group><![CDATA[0]]></is_color_group>
+<group_type><![CDATA[radio]]></group_type>
+<position><![CDATA[7]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gift card amount]]></name>
+<public_name><![CDATA[Gift card amount]]></public_name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Montant de la carte cadeau]]></name>
+<public_name><![CDATA[Montant de la carte cadeau]]></public_name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute_group>
+<attribute_group><id_attribute_group><![CDATA[16]]></id_attribute_group>
+<is_color_group><![CDATA[0]]></is_color_group>
+<group_type><![CDATA[select]]></group_type>
+<position><![CDATA[8]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Jewelry]]></name>
+<public_name><![CDATA[Jewelry]]></public_name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bijoux]]></name>
+<public_name><![CDATA[Bijoux]]></public_name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute_group>
+</entity_profile>

@@ -1,0 +1,2535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<attribute><id_attribute><![CDATA[1]]></id_attribute>
+<id_attribute_group><![CDATA[1]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[S]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[S]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[2]]></id_attribute>
+<id_attribute_group><![CDATA[1]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[2]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[M]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[M]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[3]]></id_attribute>
+<id_attribute_group><![CDATA[1]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[3]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[L]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[L]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[18]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[1]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[1]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[19]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[2]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[2]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[20]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[2]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[3]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[3]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[21]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[3]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[4]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[4]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[22]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[4]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[5]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[5]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[23]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[5]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[6]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[6]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[32]]></id_attribute>
+<id_attribute_group><![CDATA[1]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[4]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[XL]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[XL]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[33]]></id_attribute>
+<id_attribute_group><![CDATA[1]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[XS]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[XS]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[42]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[6]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[7]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[7]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[43]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[7]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[8]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[8]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[44]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[8]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[9]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[9]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[45]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[9]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[10]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[10]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[46]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[10]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[11]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[11]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[47]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[11]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[12]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[12]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[48]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[12]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[13]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[13]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[49]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[13]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[14]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[14]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[50]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[14]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[15]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[15]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[51]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Black]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Noir]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[52]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Red]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Rouge]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[53]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[2]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cherry]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cerise]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[54]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[3]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Burgundy]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bourgogne]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[55]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[4]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Sky Blue]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bleu ciel]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[56]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[5]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Navy Blue]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bleu marin]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[57]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[6]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Aqua]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Aqua]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[58]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[7]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Turquoise]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Turquoise]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[59]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[8]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Royal Blue]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bleu royal]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[60]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[9]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Violet]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Violet]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[61]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[10]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Purple]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Mauve]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[62]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[11]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Pink]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Rose]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[63]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[12]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Fushia]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Fushia]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[64]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[13]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cream]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Crème]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[65]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[14]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Plum]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Prune]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[66]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[15]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Apple Green]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Vert pomme]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[67]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[16]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Forest Green]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Vert forêt]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[68]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[17]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Dark Brown]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Brun foncé]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[69]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[18]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Light Brown]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Brun pâle]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[70]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[19]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Moka]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Moka]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[71]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[20]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Chocolate]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Chocolat]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[72]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[21]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Sand]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sable]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[73]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[22]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Coral]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Corail]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[74]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[23]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Gray]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Gris]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[75]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[24]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Ice]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Ice]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[76]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[25]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[White]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Blanc]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[77]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[26]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Embossed]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Imprimé]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[83]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[27]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Walnut]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Noisette]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[84]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[28]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Black Deer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Noir chevreuil]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[85]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[29]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Red Deer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Rouge chevreuil]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[86]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[30]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Light Brown Deer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Brun pâle chevreuil]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[87]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[31]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Dark Brown Deer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Brun foncé chevreuil]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[88]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[32]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Turquoise Deer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Turquoise chevreuil]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[89]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[33]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Walnut Deer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Noisette chevreuil]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[90]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[34]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bronze]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bronze]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[91]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[35]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Cherry Deer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cerise chevreuil]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[92]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[36]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Teal ]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bleu sarcelle]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[93]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[37]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Teal Deer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Bleu sarcelle chevreuil]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[106]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[38]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Rosewood]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Rosewood]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[107]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[39]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Charcoal]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Charcoal]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[108]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[40]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Red/Black]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Rouge/noir]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[109]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[41]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Red/Black/White]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Rouge/noir/blanc]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[110]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[15]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[18 months]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[18 mois]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[111]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[16]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[24 months]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[24 mois]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[112]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[17]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[36 months]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[36 mois]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[120]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[4]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Black rustic frame 1"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cadre rustique noir 1"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[121]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[5]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Brown rustic frame 1"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cadre rustique brun 1"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[122]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[6]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Grey rustic frame 1"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cadre rustique gris 1"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[123]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[7]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Wood floater frame black]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cadre flottant bois noir]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[124]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[8]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Wood floater frame brown]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cadre flottant bois brun]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[125]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[9]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Wood floater frame pewter]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cadre flottant bois étain]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[126]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Without frame ]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sans cadre]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[137]]></id_attribute>
+<id_attribute_group><![CDATA[1]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[6]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[TU/OS]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[TU/OS]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[138]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[42]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Tan]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Tan]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[139]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[5" thin]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[5" mince]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[140]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[5" large]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[5" large]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[141]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[2]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[9" pearly-everlasting]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[9" l'immortelle]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[142]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[4]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Bulk 1oz]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Vrac 1oz]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[143]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[5]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[1]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[1]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[144]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[6]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[2]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[2]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[145]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[7]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[3]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[3]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[146]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[8]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[4]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[4]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[147]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[9]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[5]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[5]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[148]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[10]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[6]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[6]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[149]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[11]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[7]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[7]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[150]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[12]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[8]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[8]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[151]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[13]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[9]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[9]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[152]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[14]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[10]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[10]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[153]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[3]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[9" large]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[9" large]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[154]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[43]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Yellow]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Jaune]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[156]]></id_attribute>
+<id_attribute_group><![CDATA[10]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Slotted ladle]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Louche à fente]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[157]]></id_attribute>
+<id_attribute_group><![CDATA[10]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Ladle]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Louche]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[158]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[44]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Ivory]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Ivoire]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[159]]></id_attribute>
+<id_attribute_group><![CDATA[6]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[45]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Slate]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Ardoise]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[773]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[25]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[25]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[778]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[30]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[30]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[788]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[2]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[40]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[40]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[798]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[3]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[50]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[50]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[799]]></id_attribute>
+<id_attribute_group><![CDATA[14]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[3810]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[3810]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[809]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[4]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[60]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[60]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[819]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[5]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[70]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[70]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[829]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[6]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[80]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[80]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[839]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[7]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[90]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[90]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[849]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[8]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[100]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[100]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[859]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[9]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[110]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[110]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[869]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[10]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[120]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[120]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[879]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[11]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[130]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[130]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[889]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[12]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[140]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[140]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[899]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[13]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[150]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[150]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[909]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[14]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[160]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[160]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[919]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[15]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[170]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[170]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[929]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[16]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[180]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[180]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[939]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[17]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[190]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[190]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[949]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[18]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[200]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[200]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[959]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[19]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[210]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[210]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[969]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[20]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[220]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[220]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[979]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[21]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[230]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[230]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[989]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[22]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[240]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[240]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[999]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[23]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[250]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[250]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1009]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[24]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[260]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[260]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1019]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[25]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[270]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[270]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1029]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[26]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[280]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[280]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1039]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[27]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[290]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[290]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1049]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[28]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[300]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[300]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1059]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[29]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[310]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[310]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1069]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[30]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[320]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[320]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1079]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[31]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[330]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[330]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1089]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[32]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[340]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[340]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1099]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[33]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[350]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[350]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1109]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[34]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[360]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[360]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1119]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[35]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[370]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[370]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1129]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[36]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[380]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[380]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1139]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[37]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[390]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[390]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1149]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[38]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[400]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[400]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1159]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[39]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[410]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[410]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1169]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[40]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[420]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[420]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1179]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[41]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[430]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[430]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1189]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[42]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[440]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[440]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1199]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[43]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[450]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[450]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1209]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[44]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[460]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[460]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1219]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[45]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[470]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[470]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1229]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[46]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[480]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[480]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1239]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[47]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[490]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[490]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1249]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[48]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[500]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[500]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1250]]></id_attribute>
+<id_attribute_group><![CDATA[16]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Chain]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Chaîne]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1251]]></id_attribute>
+<id_attribute_group><![CDATA[16]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Black Satin Cord]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cordon Satin Noir]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1252]]></id_attribute>
+<id_attribute_group><![CDATA[1]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[7]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[6.5"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[6.5"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1253]]></id_attribute>
+<id_attribute_group><![CDATA[1]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[8]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[8"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[8"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1254]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[2]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Without frame 24" x 30"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sans cadre 24" x 30"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1255]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Without frame 18" x 36"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sans cadre 18" x 36"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1256]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[3]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Without frame 36" x 18"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sans cadre 36" x 18"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1257]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[18]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[S]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[S]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1258]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[19]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[M]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[M]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1259]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[20]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[L]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[L]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1260]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[21]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[XL]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[XL]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1261]]></id_attribute>
+<id_attribute_group><![CDATA[8]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[15]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[5" thin with lavender]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[5" mince avec lavande]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1277]]></id_attribute>
+<id_attribute_group><![CDATA[2]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[22]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[XXL]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[XXL]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1278]]></id_attribute>
+<id_attribute_group><![CDATA[1]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[5]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[XXL]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[XXL]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1279]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[10]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Without frame 48" x 30"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sans cadre - 48" x 30"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1280]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[11]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Without frame 20" x 20"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sans cadre 20" x 20"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1281]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[12]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Without frame 24" x 12"]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Sans cadre 24" x 12"]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1282]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[13]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Wood floater black]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cadre flottant noir]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1283]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[14]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Wood floater brown]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cadre flottant brun]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1284]]></id_attribute>
+<id_attribute_group><![CDATA[7]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[15]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Wood floater pewter]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Cadre flottant étain]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1285]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[49]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[35]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[35]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1286]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[50]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[45]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[45]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1287]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[51]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[55]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[55]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1288]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[52]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[65]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[65]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1289]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[53]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[75]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[75]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1290]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[54]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[85]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[85]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1291]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[55]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[95]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[95]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1292]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[56]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[105]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[105]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1293]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[57]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[115]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[115]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1294]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[58]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[125]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[125]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1295]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[59]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[135]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[135]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1296]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[60]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[145]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[145]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1297]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[61]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[155]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[155]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1298]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[62]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[165]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[165]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1299]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[63]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[175]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[175]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1300]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[64]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[185]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[185]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1301]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[65]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[195]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[195]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1302]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[66]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[205]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[205]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1303]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[67]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[215]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[215]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1304]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[68]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[225]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[225]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1305]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[69]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[235]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[235]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1306]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[70]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[245]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[245]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1307]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[71]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[255]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[255]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1308]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[72]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[265]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[265]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1309]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[73]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[275]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[275]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1310]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[74]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[285]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[285]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1311]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[75]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[295]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[295]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1312]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[76]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[305]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[305]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1313]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[77]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[315]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[315]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1314]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[78]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[325]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[325]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1315]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[79]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[335]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[335]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1316]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[80]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[345]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[345]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1317]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[81]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[355]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[355]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1318]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[82]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[365]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[365]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1319]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[83]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[375]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[375]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1320]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[84]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[385]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[385]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1321]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[85]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[395]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[395]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1322]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[86]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[405]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[405]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1323]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[87]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[415]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[415]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1324]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[88]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[425]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[425]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1325]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[89]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[435]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[435]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1326]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[90]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[445]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[445]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1327]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[91]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[455]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[455]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1328]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[92]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[465]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[465]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1329]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[93]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[475]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[475]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1330]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[94]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[485]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[485]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+<attribute><id_attribute><![CDATA[1331]]></id_attribute>
+<id_attribute_group><![CDATA[15]]></id_attribute_group>
+<color><![CDATA[]]></color>
+<position><![CDATA[95]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[495]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[495]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</attribute>
+</entity_profile>

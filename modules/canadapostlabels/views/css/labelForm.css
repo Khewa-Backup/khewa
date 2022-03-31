@@ -1,0 +1,128 @@
+/**
+ * 2019 ZH Media
+ *
+ * NOTICE OF LICENSE
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Do not resell or redistribute this file, either fully or partially.
+ * Do not remove this comment containing author information and copyright.
+ *
+ * @author    Zack Hussain <me@zackhussain.ca>
+ * @copyright 2019 ZH Media - All Rights Reserved
+ */
+
+.bootstrap #canadapost select.fixed-width-xl {
+    width: 300px !important;
+}
+
+#customs .form-group.product-last {
+    margin: 0;
+    padding: 0;
+}
+
+.has-invoice {
+    background-color: #666 !important;
+}
+
+#canadapost .success,
+#canadapost #live-rate.success {
+    color: #00BE3D;
+}
+
+#canadapost .info,
+#canadapost #live-rate.info {
+    color: #0077a4;
+}
+
+#canadapost .error,
+#canadapost #live-rate.error {
+    color: #F00;
+}
+
+.zhmedia-modal .pdf-iframe {
+    width: 100%;
+    min-height: 40rem;
+}
+
+.zhmedia-modal .modal-header,
+#editLabelModal .modal-header {
+    background: #004890;
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+}
+
+#errorModal .modal-header {
+    background: #c20000;
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+}
+
+.zhmedia-modal .modal-header h4,
+#editLabelModal .modal-header h4,
+#errorModal .modal-header h4 {
+    font-size: 26px;
+    color: #fff;
+}
+
+#editLabelModal .modal-dialog {
+    width: 60%;
+}
+
+.modal .zhmedia-logo {
+  position: absolute;
+  bottom: -40px;
+  color: #ddd;
+  text-shadow: 0px 0px 10px rgb(0, 0, 0);
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.zhmedia-logo {
+  float: left;
+  width: 100%;
+  text-align: center;
+}
+
+#canadapost-logo {
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+    from {
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotating {
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+#canadapost .rotating, .modal .rotating, form .rotating {
+    -webkit-animation: rotating 2s linear infinite;
+    -moz-animation: rotating 2s linear infinite;
+    -ms-animation: rotating 2s linear infinite;
+    -o-animation: rotating 2s linear infinite;
+    animation: rotating 2s linear infinite;
+}

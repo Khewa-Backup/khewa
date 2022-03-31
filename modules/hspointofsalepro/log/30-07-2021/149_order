@@ -1,0 +1,1437 @@
+*DEBUG* 	v1.7.7.5	2021/07/30 - 16:44:48: Property OrderPayment->amount is not valid
+*DEBUG* 	v1.7.7.5	2021/07/30 - 16:44:48: PosCart Object
+(
+    [id] => 149
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-07-30 16:43:15
+    [secure_key] => befb6f8063e4410d95f2cb6621156dbe
+    [id_carrier] => 25
+    [date_upd] => 2021-07-30 16:44:24
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => Array
+        (
+            [0] => Array
+                (
+                    [id_product_attribute] => 7849
+                    [id_product] => 1089
+                    [cart_quantity] => 2
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Buffalo Sage
+                    [is_virtual] => 0
+                    [description_short] => <p><span style="color:#000000;">Sage is burned in ceremony to drive out negative feelings or influences.</span><span style="color:#000000;"><strong><br /></strong></span></p>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 262
+                    [id_supplier] => 0
+                    [id_manufacturer] => 0
+                    [manufacturer_name] => 
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 9.95
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 23
+                    [width] => 35.000000
+                    [height] => 27.000000
+                    [depth] => 4.000000
+                    [out_of_stock] => 2
+                    [weight] => 0.1
+                    [available_date] => 0000-00-00
+                    [date_add] => 2020-03-26 17:31:38
+                    [date_upd] => 2021-07-26 15:45:19
+                    [quantity] => 2
+                    [link_rewrite] => buffalo-sage
+                    [category] => ceremonial
+                    [unique_id] => 00000010890000007849970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 9.950000
+                    [ecotax_attr] => 0.000000
+                    [reference] => Sauge
+                    [weight_attribute] => 0.1
+                    [ean13] => 2470000000030
+                    [isbn] => 754000023773
+                    [upc] => 754000023773
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 0.000000
+                    [id_image] => 1089-5044
+                    [legend] => 
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 9.95
+                    [specific_prices] => 
+                    [stock_quantity] => 23
+                    [price_without_reduction_tax_incl] => 11.44
+                    [price_without_reduction_tax_excl] => 9.95
+                    [price_with_reduction_tax_incl] => 11.44
+                    [price_with_reduction_tax_excl] => 9.95
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 11.44
+                    [price_without_customer_discount_tax_excl] => 9.95
+                    [total] => 19.9
+                    [total_wt] => 22.88
+                    [price_wt] => 11.44
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                        )
+
+                    [attributes] => Smudge : 5" thin with rosemary
+                    [attributes_small] => 5" thin with rosemary
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+            [1] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 1090
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Sweetgrass
+                    [is_virtual] => 0
+                    [description_short] => <p>Sweetgrass is used to bring positive energies to the ceremony.</p>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 262
+                    [id_supplier] => 0
+                    [id_manufacturer] => 0
+                    [manufacturer_name] => 
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 12
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 46
+                    [width] => 17.280000
+                    [height] => 12.700000
+                    [depth] => 2.400000
+                    [out_of_stock] => 1
+                    [weight] => 0.03
+                    [available_date] => 0000-00-00
+                    [date_add] => 2020-03-27 10:57:20
+                    [date_upd] => 2021-04-13 18:08:49
+                    [quantity] => 1
+                    [link_rewrite] => sweetgrass
+                    [category] => ceremonial
+                    [unique_id] => 00000010900000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => Sweetgrass
+                    [weight_attribute] => 
+                    [ean13] => 7540000023805
+                    [isbn] => 754000023803
+                    [upc] => 754000023803
+                    [mpn] => 
+                    [minimal_quantity] => 0
+                    [wholesale_price] => 0.000000
+                    [id_image] => 1090-3334
+                    [legend] => Sweetgrass
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 12
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 46
+                    [price_without_reduction_tax_incl] => 13.797
+                    [price_without_reduction_tax_excl] => 12
+                    [price_with_reduction_tax_incl] => 13.797
+                    [price_with_reduction_tax_excl] => 12
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 13.797
+                    [price_without_customer_discount_tax_excl] => 12
+                    [total] => 12
+                    [total_wt] => 13.797
+                    [price_wt] => 13.797
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 1
+                    [features] => Array
+                        (
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+        )
+
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+
+*DEBUG* 	v1.7.7.5	2021/07/30 - 16:45:17: Property OrderPayment->amount is not valid
+*DEBUG* 	v1.7.7.5	2021/07/30 - 16:45:17: PosCart Object
+(
+    [id] => 149
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-07-30 16:43:15
+    [secure_key] => befb6f8063e4410d95f2cb6621156dbe
+    [id_carrier] => 25
+    [date_upd] => 2021-07-30 16:44:24
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => Array
+        (
+            [0] => Array
+                (
+                    [id_product_attribute] => 7849
+                    [id_product] => 1089
+                    [cart_quantity] => 2
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Buffalo Sage
+                    [is_virtual] => 0
+                    [description_short] => <p><span style="color:#000000;">Sage is burned in ceremony to drive out negative feelings or influences.</span><span style="color:#000000;"><strong><br /></strong></span></p>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 262
+                    [id_supplier] => 0
+                    [id_manufacturer] => 0
+                    [manufacturer_name] => 
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 9.95
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 21
+                    [width] => 35.000000
+                    [height] => 27.000000
+                    [depth] => 4.000000
+                    [out_of_stock] => 2
+                    [weight] => 0.1
+                    [available_date] => 0000-00-00
+                    [date_add] => 2020-03-26 17:31:38
+                    [date_upd] => 2021-07-26 15:45:19
+                    [quantity] => 2
+                    [link_rewrite] => buffalo-sage
+                    [category] => ceremonial
+                    [unique_id] => 00000010890000007849970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 9.950000
+                    [ecotax_attr] => 0.000000
+                    [reference] => Sauge
+                    [weight_attribute] => 0.1
+                    [ean13] => 2470000000030
+                    [isbn] => 754000023773
+                    [upc] => 754000023773
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 0.000000
+                    [id_image] => 1089-5044
+                    [legend] => 
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 9.95
+                    [specific_prices] => 
+                    [stock_quantity] => 21
+                    [price_without_reduction_tax_incl] => 11.44
+                    [price_without_reduction_tax_excl] => 9.95
+                    [price_with_reduction_tax_incl] => 11.44
+                    [price_with_reduction_tax_excl] => 9.95
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 11.44
+                    [price_without_customer_discount_tax_excl] => 9.95
+                    [total] => 19.9
+                    [total_wt] => 22.88
+                    [price_wt] => 11.44
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                        )
+
+                    [attributes] => Smudge : 5" thin with rosemary
+                    [attributes_small] => 5" thin with rosemary
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+            [1] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 1090
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Sweetgrass
+                    [is_virtual] => 0
+                    [description_short] => <p>Sweetgrass is used to bring positive energies to the ceremony.</p>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 262
+                    [id_supplier] => 0
+                    [id_manufacturer] => 0
+                    [manufacturer_name] => 
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 12
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 45
+                    [width] => 17.280000
+                    [height] => 12.700000
+                    [depth] => 2.400000
+                    [out_of_stock] => 1
+                    [weight] => 0.03
+                    [available_date] => 0000-00-00
+                    [date_add] => 2020-03-27 10:57:20
+                    [date_upd] => 2021-04-13 18:08:49
+                    [quantity] => 1
+                    [link_rewrite] => sweetgrass
+                    [category] => ceremonial
+                    [unique_id] => 00000010900000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => Sweetgrass
+                    [weight_attribute] => 
+                    [ean13] => 7540000023805
+                    [isbn] => 754000023803
+                    [upc] => 754000023803
+                    [mpn] => 
+                    [minimal_quantity] => 0
+                    [wholesale_price] => 0.000000
+                    [id_image] => 1090-3334
+                    [legend] => Sweetgrass
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 12
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 45
+                    [price_without_reduction_tax_incl] => 13.797
+                    [price_without_reduction_tax_excl] => 12
+                    [price_with_reduction_tax_incl] => 13.797
+                    [price_with_reduction_tax_excl] => 12
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 13.797
+                    [price_without_customer_discount_tax_excl] => 12
+                    [total] => 12
+                    [total_wt] => 13.797
+                    [price_wt] => 13.797
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 1
+                    [features] => Array
+                        (
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+        )
+
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+
+*DEBUG* 	v1.7.7.5	2021/07/30 - 16:45:41: Property OrderPayment->amount is not valid
+*DEBUG* 	v1.7.7.5	2021/07/30 - 16:45:41: PosCart Object
+(
+    [id] => 149
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-07-30 16:43:15
+    [secure_key] => befb6f8063e4410d95f2cb6621156dbe
+    [id_carrier] => 25
+    [date_upd] => 2021-07-30 16:44:24
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => Array
+        (
+            [0] => Array
+                (
+                    [id_product_attribute] => 7849
+                    [id_product] => 1089
+                    [cart_quantity] => 2
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Buffalo Sage
+                    [is_virtual] => 0
+                    [description_short] => <p><span style="color:#000000;">Sage is burned in ceremony to drive out negative feelings or influences.</span><span style="color:#000000;"><strong><br /></strong></span></p>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 262
+                    [id_supplier] => 0
+                    [id_manufacturer] => 0
+                    [manufacturer_name] => 
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 9.95
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 19
+                    [width] => 35.000000
+                    [height] => 27.000000
+                    [depth] => 4.000000
+                    [out_of_stock] => 2
+                    [weight] => 0.1
+                    [available_date] => 0000-00-00
+                    [date_add] => 2020-03-26 17:31:38
+                    [date_upd] => 2021-07-26 15:45:19
+                    [quantity] => 2
+                    [link_rewrite] => buffalo-sage
+                    [category] => ceremonial
+                    [unique_id] => 00000010890000007849970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 9.950000
+                    [ecotax_attr] => 0.000000
+                    [reference] => Sauge
+                    [weight_attribute] => 0.1
+                    [ean13] => 2470000000030
+                    [isbn] => 754000023773
+                    [upc] => 754000023773
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 0.000000
+                    [id_image] => 1089-5044
+                    [legend] => 
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 9.95
+                    [specific_prices] => 
+                    [stock_quantity] => 19
+                    [price_without_reduction_tax_incl] => 11.44
+                    [price_without_reduction_tax_excl] => 9.95
+                    [price_with_reduction_tax_incl] => 11.44
+                    [price_with_reduction_tax_excl] => 9.95
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 11.44
+                    [price_without_customer_discount_tax_excl] => 9.95
+                    [total] => 19.9
+                    [total_wt] => 22.88
+                    [price_wt] => 11.44
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                        )
+
+                    [attributes] => Smudge : 5" thin with rosemary
+                    [attributes_small] => 5" thin with rosemary
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+            [1] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 1090
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Sweetgrass
+                    [is_virtual] => 0
+                    [description_short] => <p>Sweetgrass is used to bring positive energies to the ceremony.</p>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 262
+                    [id_supplier] => 0
+                    [id_manufacturer] => 0
+                    [manufacturer_name] => 
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 12
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 44
+                    [width] => 17.280000
+                    [height] => 12.700000
+                    [depth] => 2.400000
+                    [out_of_stock] => 1
+                    [weight] => 0.03
+                    [available_date] => 0000-00-00
+                    [date_add] => 2020-03-27 10:57:20
+                    [date_upd] => 2021-04-13 18:08:49
+                    [quantity] => 1
+                    [link_rewrite] => sweetgrass
+                    [category] => ceremonial
+                    [unique_id] => 00000010900000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => Sweetgrass
+                    [weight_attribute] => 
+                    [ean13] => 7540000023805
+                    [isbn] => 754000023803
+                    [upc] => 754000023803
+                    [mpn] => 
+                    [minimal_quantity] => 0
+                    [wholesale_price] => 0.000000
+                    [id_image] => 1090-3334
+                    [legend] => Sweetgrass
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 12
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 44
+                    [price_without_reduction_tax_incl] => 13.797
+                    [price_without_reduction_tax_excl] => 12
+                    [price_with_reduction_tax_incl] => 13.797
+                    [price_with_reduction_tax_excl] => 12
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 13.797
+                    [price_without_customer_discount_tax_excl] => 12
+                    [total] => 12
+                    [total_wt] => 13.797
+                    [price_wt] => 13.797
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 1
+                    [features] => Array
+                        (
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+        )
+
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+

@@ -1,0 +1,50 @@
+[29-Nov-2021 09:02:30 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: address_zip_check
+[29-Nov-2021 09:02:30 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: cvc_check
+[29-Nov-2021 09:02:30 America/Montreal] PHP Fatal error:  Uncaught Error: Undefined class constant 'Stripe\Event::CHARGE_EXPIRED' in /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php:123
+Stack trace:
+#0 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(123): ReflectionClass->newInstance()
+#1 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(153): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->makeInstanceFromClassName('stripe_official', Array)
+#2 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(166): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->doMake('stripe_official', Array)
+#3 /home/j8m1o8hr4gjg/public_html/src/Adapter/ServiceLocator.php(65): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->make('stripe_official')
+#4 /home/j8m1o8hr4gjg/public_html/classes/module/Module.php(1170): PrestaShop\PrestaShop\Adapter\ServiceLocator::get('stripe_official')
+#5 /home/j8m1o8hr4gjg/public_html/classes/module/Module.php(1149): ModuleCore::coreLoadModule('stripe_official')
+#6 /home/j8 in /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php on line 123
+[29-Nov-2021 09:05:38 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: address_zip_check
+[29-Nov-2021 09:05:38 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: cvc_check
+[29-Nov-2021 09:05:38 America/Montreal] PHP Fatal error:  Uncaught Error: Undefined class constant 'Stripe\Event::CHARGE_EXPIRED' in /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php:123
+Stack trace:
+#0 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(123): ReflectionClass->newInstance()
+#1 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(153): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->makeInstanceFromClassName('stripe_official', Array)
+#2 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(166): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->doMake('stripe_official', Array)
+#3 /home/j8m1o8hr4gjg/public_html/src/Adapter/ServiceLocator.php(65): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->make('stripe_official')
+#4 /home/j8m1o8hr4gjg/public_html/classes/module/Module.php(1170): PrestaShop\PrestaShop\Adapter\ServiceLocator::get('stripe_official')
+#5 /home/j8m1o8hr4gjg/public_html/classes/module/Module.php(1149): ModuleCore::coreLoadModule('stripe_official')
+#6 /home/j8 in /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php on line 123
+[29-Nov-2021 10:29:48 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: address_zip_check
+[29-Nov-2021 10:29:48 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: cvc_check
+[29-Nov-2021 10:36:13 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: address_zip_check
+[29-Nov-2021 10:36:13 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: cvc_check
+[29-Nov-2021 10:49:53 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: address_zip_check
+[29-Nov-2021 10:49:53 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: cvc_check
+[29-Nov-2021 10:49:53 America/Montreal] PHP Fatal error:  Uncaught Error: Undefined class constant 'Stripe\Event::CHARGE_EXPIRED' in /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php:123
+Stack trace:
+#0 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(123): ReflectionClass->newInstance()
+#1 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(153): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->makeInstanceFromClassName('stripe_official', Array)
+#2 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(166): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->doMake('stripe_official', Array)
+#3 /home/j8m1o8hr4gjg/public_html/src/Adapter/ServiceLocator.php(65): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->make('stripe_official')
+#4 /home/j8m1o8hr4gjg/public_html/classes/module/Module.php(1170): PrestaShop\PrestaShop\Adapter\ServiceLocator::get('stripe_official')
+#5 /home/j8m1o8hr4gjg/public_html/classes/module/Module.php(1149): ModuleCore::coreLoadModule('stripe_official')
+#6 /home/j8 in /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php on line 123
+[29-Nov-2021 10:58:48 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: address_zip_check
+[29-Nov-2021 10:58:48 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: cvc_check
+[29-Nov-2021 10:58:48 America/Montreal] PHP Fatal error:  Uncaught Error: Undefined class constant 'Stripe\Event::CHARGE_EXPIRED' in /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php:123
+Stack trace:
+#0 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(123): ReflectionClass->newInstance()
+#1 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(153): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->makeInstanceFromClassName('stripe_official', Array)
+#2 /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php(166): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->doMake('stripe_official', Array)
+#3 /home/j8m1o8hr4gjg/public_html/src/Adapter/ServiceLocator.php(65): PrestaShop\PrestaShop\Core\Foundation\IoC\Container->make('stripe_official')
+#4 /home/j8m1o8hr4gjg/public_html/classes/module/Module.php(1170): PrestaShop\PrestaShop\Adapter\ServiceLocator::get('stripe_official')
+#5 /home/j8m1o8hr4gjg/public_html/classes/module/Module.php(1149): ModuleCore::coreLoadModule('stripe_official')
+#6 /home/j8 in /home/j8m1o8hr4gjg/public_html/src/Core/Foundation/IoC/Container.php on line 123
+[29-Nov-2021 11:16:48 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: address_zip_check
+[29-Nov-2021 11:16:48 America/Montreal] Stripe Notice: Undefined property of Stripe\Source instance: cvc_check

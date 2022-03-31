@@ -1,0 +1,25 @@
+<?php return array (
+  'parameters' => 
+  array (
+    'database_host' => '127.0.0.1',
+    'database_port' => '',
+    'database_name' => 'prev_khewa_2',
+    'database_user' => 'musa',
+    'database_password' => 'Admin@1234',
+    'database_prefix' => 'ps_',
+    'database_engine' => 'InnoDB',
+    'mailer_transport' => 'smtp',
+    'mailer_host' => '127.0.0.1',
+    'mailer_user' => NULL,
+    'mailer_password' => NULL,
+    'secret' => 'CcbY352ZCXAnx0nq0H0yvHr45w14nNbvzq6Ay3c9IsmcdyWmhYoEO554XYvj1IZe',
+    'ps_caching' => 'CacheMemcache',
+    'ps_cache_enable' => false,
+    'ps_creation_date' => '2021-03-29',
+    'locale' => 'en-US',
+    'use_debug_toolbar' => true,
+    'cookie_key' => 'XQ9i9WUJFIIiTKCv6XGQ68I2hJWCgB19AQuhSvJhit6555ReKJS1nK8BJbAcBXWy',
+    'cookie_iv' => 'ifUZNMYFQ98BQY7nTu6F3yEd0ZVJT5so',
+    'new_cookie_key' => 'def0000070fd5e8abd9247b0e22a19cb7fc35289706542e6bc1f041fd31887259d32e61d7bbd76cdb297ea583e4716d5dac67ce6afd2e9a7a166efb9a5dd746fa84aa613',
+  ),
+);

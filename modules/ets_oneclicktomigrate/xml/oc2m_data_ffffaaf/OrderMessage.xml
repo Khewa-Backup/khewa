@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<order_message><id_order_message><![CDATA[1]]></id_order_message>
+<date_add><![CDATA[2018-12-11 09:36:43]]></date_add>
+<datalanguage iso_code="en" >
+<name><![CDATA[Order Shipped & Tracking Number]]></name>
+<message><![CDATA[Thank you for placing an order with us. Your order has been shipped. Click on the link below to follow your package:
+https://www.canadapost.ca/trackweb/en#/search?searchFor=
+]]></message>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Commande envoyée et Numéro de suivie]]></name>
+<message><![CDATA[Merci d'avoir placé une commande avec nous. Votre commande a été envoyée. Cliquez sur le lien ci-dessous pour suivre votre colis:
+https://www.canadapost.ca/trackweb/fr#/search?searchFor=]]></message>
+</datalanguage>
+</order_message>
+<order_message><id_order_message><![CDATA[2]]></id_order_message>
+<date_add><![CDATA[2019-02-08 14:38:20]]></date_add>
+<datalanguage iso_code="en" >
+<name><![CDATA[Our Valentine Contest]]></name>
+<message><![CDATA[Good day, Thank you for your order. By opening an account online with us, please know that you just entered our Valentines contest :)]]></message>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Concours pour la St Valentin]]></name>
+<message><![CDATA[Bonjour, la présente est pour confirmer votre participation à notre tirage de la St-Valentin 2019 :)]]></message>
+</datalanguage>
+</order_message>
+</entity_profile>

@@ -1,0 +1,26 @@
+<div class="tab-pane d-print-block fade js-rcgtm-info-panel" id="rcgtmTrackingTabContent" role="tabpanel" aria-labelledby="rcgtmTrackingTab" data-tracking-data="{{ tracking_data }}">
+    <div class="info-block">
+        <div class="rc-messages">
+            <p class="js-rcgtm-st-status alert alert-warning" hidden>
+                {{'This order has been included in the control table at installation process to avoid duplicates with old tracking modules, so maybe the transaction is not registered on GA'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}.<br>
+                <strong>{{'If you want to send this order to GA, click on'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}} "{{'Remove from Control Table'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}" {{'button to enable the manual send'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}</strong>
+            </p>
+            <p class="js-rcgtm-not-send alert alert-danger" hidden>
+                {{'This order has not been sent to GA'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}.<br>
+                <strong>{{'Change the order status to send it automatically or click the'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}} "{{'Force Send to GA'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}" {{'button'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}</strong>
+            </p>
+        </div>
+        <dl class="js-rcgtm-order-detail list-detail" hidden>
+            <dt>{{'Transaction sent'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}</dt>
+            <dd class="js-rcgtm-detail-sent"></dd>
+            <dt>{{'Sent By'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}</dt>
+            <dd class="js-rcgtm-detail-by"></dd>
+        </dl>
+    </div>
+    <div class="tracking-options">
+        <button type="button" class="js-rcgtm-send btn btn-primary" data-action="forceTransaction" hidden>{{'Force Send to GA'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}</button>
+        <button type="button" class="js-rcgtm-remove btn btn-danger" data-action="deleteFromControlTable" hidden>{{'Remove from Control Table'|trans({}, 'Modules.Rc_Pgtagmanager.Admin')}}</button>
+    </div>
+</div>
+
+<script src="{{ asset('../modules/rc_pgtagmanager/views/js/admin/controllers/order/order_tab_content.js') }}"></script>

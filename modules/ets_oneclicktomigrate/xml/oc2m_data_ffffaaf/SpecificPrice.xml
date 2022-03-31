@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<specific_price><id_specific_price><![CDATA[8]]></id_specific_price>
+<id_shop_group><![CDATA[0]]></id_shop_group>
+<id_shop><![CDATA[0]]></id_shop>
+<id_cart><![CDATA[0]]></id_cart>
+<id_product><![CDATA[531]]></id_product>
+<id_product_attribute><![CDATA[68]]></id_product_attribute>
+<id_currency><![CDATA[0]]></id_currency>
+<id_specific_price_rule><![CDATA[0]]></id_specific_price_rule>
+<id_country><![CDATA[0]]></id_country>
+<id_group><![CDATA[0]]></id_group>
+<id_customer><![CDATA[0]]></id_customer>
+<price><![CDATA[28.000000]]></price>
+<from_quantity><![CDATA[1]]></from_quantity>
+<reduction><![CDATA[0.000000]]></reduction>
+<reduction_tax><![CDATA[1]]></reduction_tax>
+<reduction_type><![CDATA[amount]]></reduction_type>
+<from><![CDATA[0000-00-00 00:00:00]]></from>
+<to><![CDATA[0000-00-00 00:00:00]]></to>
+</specific_price>
+<specific_price><id_specific_price><![CDATA[9]]></id_specific_price>
+<id_shop_group><![CDATA[0]]></id_shop_group>
+<id_shop><![CDATA[0]]></id_shop>
+<id_cart><![CDATA[0]]></id_cart>
+<id_product><![CDATA[531]]></id_product>
+<id_product_attribute><![CDATA[67]]></id_product_attribute>
+<id_currency><![CDATA[0]]></id_currency>
+<id_specific_price_rule><![CDATA[0]]></id_specific_price_rule>
+<id_country><![CDATA[0]]></id_country>
+<id_group><![CDATA[0]]></id_group>
+<id_customer><![CDATA[0]]></id_customer>
+<price><![CDATA[28.000000]]></price>
+<from_quantity><![CDATA[1]]></from_quantity>
+<reduction><![CDATA[0.000000]]></reduction>
+<reduction_tax><![CDATA[1]]></reduction_tax>
+<reduction_type><![CDATA[amount]]></reduction_type>
+<from><![CDATA[0000-00-00 00:00:00]]></from>
+<to><![CDATA[0000-00-00 00:00:00]]></to>
+</specific_price>
+<specific_price><id_specific_price><![CDATA[15]]></id_specific_price>
+<id_shop_group><![CDATA[0]]></id_shop_group>
+<id_shop><![CDATA[0]]></id_shop>
+<id_cart><![CDATA[0]]></id_cart>
+<id_product><![CDATA[518]]></id_product>
+<id_product_attribute><![CDATA[84]]></id_product_attribute>
+<id_currency><![CDATA[0]]></id_currency>
+<id_specific_price_rule><![CDATA[0]]></id_specific_price_rule>
+<id_country><![CDATA[0]]></id_country>
+<id_group><![CDATA[0]]></id_group>
+<id_customer><![CDATA[0]]></id_customer>
+<price><![CDATA[102.000000]]></price>
+<from_quantity><![CDATA[1]]></from_quantity>
+<reduction><![CDATA[0.000000]]></reduction>
+<reduction_tax><![CDATA[1]]></reduction_tax>
+<reduction_type><![CDATA[amount]]></reduction_type>
+<from><![CDATA[0000-00-00 00:00:00]]></from>
+<to><![CDATA[0000-00-00 00:00:00]]></to>
+</specific_price>
+<specific_price><id_specific_price><![CDATA[16]]></id_specific_price>
+<id_shop_group><![CDATA[0]]></id_shop_group>
+<id_shop><![CDATA[0]]></id_shop>
+<id_cart><![CDATA[0]]></id_cart>
+<id_product><![CDATA[518]]></id_product>
+<id_product_attribute><![CDATA[85]]></id_product_attribute>
+<id_currency><![CDATA[0]]></id_currency>
+<id_specific_price_rule><![CDATA[0]]></id_specific_price_rule>
+<id_country><![CDATA[0]]></id_country>
+<id_group><![CDATA[0]]></id_group>
+<id_customer><![CDATA[0]]></id_customer>
+<price><![CDATA[102.000000]]></price>
+<from_quantity><![CDATA[1]]></from_quantity>
+<reduction><![CDATA[0.000000]]></reduction>
+<reduction_tax><![CDATA[1]]></reduction_tax>
+<reduction_type><![CDATA[amount]]></reduction_type>
+<from><![CDATA[0000-00-00 00:00:00]]></from>
+<to><![CDATA[0000-00-00 00:00:00]]></to>
+</specific_price>
+<specific_price><id_specific_price><![CDATA[17]]></id_specific_price>
+<id_shop_group><![CDATA[0]]></id_shop_group>
+<id_shop><![CDATA[0]]></id_shop>
+<id_cart><![CDATA[0]]></id_cart>
+<id_product><![CDATA[518]]></id_product>
+<id_product_attribute><![CDATA[86]]></id_product_attribute>
+<id_currency><![CDATA[0]]></id_currency>
+<id_specific_price_rule><![CDATA[0]]></id_specific_price_rule>
+<id_country><![CDATA[0]]></id_country>
+<id_group><![CDATA[0]]></id_group>
+<id_customer><![CDATA[0]]></id_customer>
+<price><![CDATA[92.000000]]></price>
+<from_quantity><![CDATA[1]]></from_quantity>
+<reduction><![CDATA[0.000000]]></reduction>
+<reduction_tax><![CDATA[1]]></reduction_tax>
+<reduction_type><![CDATA[amount]]></reduction_type>
+<from><![CDATA[0000-00-00 00:00:00]]></from>
+<to><![CDATA[0000-00-00 00:00:00]]></to>
+</specific_price>
+<specific_price><id_specific_price><![CDATA[18]]></id_specific_price>
+<id_shop_group><![CDATA[0]]></id_shop_group>
+<id_shop><![CDATA[0]]></id_shop>
+<id_cart><![CDATA[0]]></id_cart>
+<id_product><![CDATA[518]]></id_product>
+<id_product_attribute><![CDATA[87]]></id_product_attribute>
+<id_currency><![CDATA[0]]></id_currency>
+<id_specific_price_rule><![CDATA[0]]></id_specific_price_rule>
+<id_country><![CDATA[0]]></id_country>
+<id_group><![CDATA[0]]></id_group>
+<id_customer><![CDATA[0]]></id_customer>
+<price><![CDATA[102.000000]]></price>
+<from_quantity><![CDATA[1]]></from_quantity>
+<reduction><![CDATA[0.000000]]></reduction>
+<reduction_tax><![CDATA[1]]></reduction_tax>
+<reduction_type><![CDATA[amount]]></reduction_type>
+<from><![CDATA[0000-00-00 00:00:00]]></from>
+<to><![CDATA[0000-00-00 00:00:00]]></to>
+</specific_price>
+<specific_price><id_specific_price><![CDATA[19]]></id_specific_price>
+<id_shop_group><![CDATA[0]]></id_shop_group>
+<id_shop><![CDATA[0]]></id_shop>
+<id_cart><![CDATA[0]]></id_cart>
+<id_product><![CDATA[518]]></id_product>
+<id_product_attribute><![CDATA[89]]></id_product_attribute>
+<id_currency><![CDATA[0]]></id_currency>
+<id_specific_price_rule><![CDATA[0]]></id_specific_price_rule>
+<id_country><![CDATA[0]]></id_country>
+<id_group><![CDATA[0]]></id_group>
+<id_customer><![CDATA[0]]></id_customer>
+<price><![CDATA[92.000000]]></price>
+<from_quantity><![CDATA[1]]></from_quantity>
+<reduction><![CDATA[0.000000]]></reduction>
+<reduction_tax><![CDATA[1]]></reduction_tax>
+<reduction_type><![CDATA[amount]]></reduction_type>
+<from><![CDATA[0000-00-00 00:00:00]]></from>
+<to><![CDATA[0000-00-00 00:00:00]]></to>
+</specific_price>
+<specific_price><id_specific_price><![CDATA[55]]></id_specific_price>
+<id_shop_group><![CDATA[0]]></id_shop_group>
+<id_shop><![CDATA[0]]></id_shop>
+<id_cart><![CDATA[0]]></id_cart>
+<id_product><![CDATA[435]]></id_product>
+<id_product_attribute><![CDATA[1015]]></id_product_attribute>
+<id_currency><![CDATA[0]]></id_currency>
+<id_specific_price_rule><![CDATA[0]]></id_specific_price_rule>
+<id_country><![CDATA[0]]></id_country>
+<id_group><![CDATA[0]]></id_group>
+<id_customer><![CDATA[0]]></id_customer>
+<price><![CDATA[60.000000]]></price>
+<from_quantity><![CDATA[1]]></from_quantity>
+<reduction><![CDATA[0.000000]]></reduction>
+<reduction_tax><![CDATA[1]]></reduction_tax>
+<reduction_type><![CDATA[amount]]></reduction_type>
+<from><![CDATA[0000-00-00 00:00:00]]></from>
+<to><![CDATA[0000-00-00 00:00:00]]></to>
+</specific_price>
+<specific_price><id_specific_price><![CDATA[56]]></id_specific_price>
+<id_shop_group><![CDATA[0]]></id_shop_group>
+<id_shop><![CDATA[0]]></id_shop>
+<id_cart><![CDATA[0]]></id_cart>
+<id_product><![CDATA[454]]></id_product>
+<id_product_attribute><![CDATA[1091]]></id_product_attribute>
+<id_currency><![CDATA[0]]></id_currency>
+<id_specific_price_rule><![CDATA[0]]></id_specific_price_rule>
+<id_country><![CDATA[0]]></id_country>
+<id_group><![CDATA[0]]></id_group>
+<id_customer><![CDATA[0]]></id_customer>
+<price><![CDATA[885.500000]]></price>
+<from_quantity><![CDATA[1]]></from_quantity>
+<reduction><![CDATA[0.000000]]></reduction>
+<reduction_tax><![CDATA[1]]></reduction_tax>
+<reduction_type><![CDATA[amount]]></reduction_type>
+<from><![CDATA[0000-00-00 00:00:00]]></from>
+<to><![CDATA[0000-00-00 00:00:00]]></to>
+</specific_price>
+</entity_profile>

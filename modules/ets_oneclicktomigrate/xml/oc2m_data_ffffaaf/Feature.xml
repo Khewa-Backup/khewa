@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<feature><id_feature><![CDATA[1]]></id_feature>
+<position><![CDATA[5]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Height]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Hauteur]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[2]]></id_feature>
+<position><![CDATA[9]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Width]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Largeur]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[3]]></id_feature>
+<position><![CDATA[4]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Depth]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Profondeur]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[4]]></id_feature>
+<position><![CDATA[8]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Weight]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Poids]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[5]]></id_feature>
+<position><![CDATA[3]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Compositions]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Composition]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[6]]></id_feature>
+<position><![CDATA[7]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Styles]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Styles]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[7]]></id_feature>
+<position><![CDATA[6]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Properties]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Propriétés]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[8]]></id_feature>
+<position><![CDATA[2]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Card size]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Taille de la carte]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[9]]></id_feature>
+<position><![CDATA[10]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Mat size]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Taille du passe-partout]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[10]]></id_feature>
+<position><![CDATA[0]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Image size]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Taille de l'image]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[11]]></id_feature>
+<position><![CDATA[1]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Approx. size framed]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Taille approx avec cadre]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[12]]></id_feature>
+<position><![CDATA[11]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Number of copies]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Nombre de copies]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+<feature><id_feature><![CDATA[13]]></id_feature>
+<position><![CDATA[12]]></position>
+<datalanguage iso_code="en" >
+<name><![CDATA[Insole]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Semelle Intérieur]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</feature>
+</entity_profile>

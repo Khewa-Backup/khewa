@@ -1,0 +1,242 @@
+/**
+ * 2019 ZH Media
+ *
+ * NOTICE OF LICENSE
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Do not resell or redistribute this file, either fully or partially.
+ * Do not remove this comment containing author information and copyright.
+ *
+ * @author    Zack Hussain <me@zackhussain.ca>
+ * @copyright 2019 ZH Media - All Rights Reserved
+ */
+
+.canadapost-tracking .tracking-progress {
+    border-top: 1px solid #dedede;
+}
+
+.canadapost-tracking .icon-container {
+    text-align: center;
+}
+.canadapost-tracking .icon-container i.shipping-icon {
+    font-size: 3rem;
+    margin-top: 2.5rem;
+    color: #5a5a5a;
+}
+
+.canadapost-tracking .tracking-details li {
+    color: #232323;
+    font-size: 1rem;
+    margin: 0 0 1rem 0;
+}
+
+.canadapost-tracking .progress-bar-container {
+    padding: 2rem 1rem 1rem;
+}
+.canadapost-tracking .progress-bar-background,
+.canadapost-tracking .progress-bar-fill {
+    height: 0.8rem;
+    border-radius: 5px;
+    float: left;
+}
+
+.canadapost-tracking .progress-bar-background {
+    background: rgb(235, 235, 235);
+    width: 100%;
+}
+.canadapost-tracking .progress-bar-fill {
+    /*background: rgb(103, 205, 94);*/
+    overflow: hidden;
+}
+.canadapost-tracking .progress-bar-labels ul {
+    margin: 0 auto;
+}
+.canadapost-tracking .progress-bar-labels li {
+    display: inline-block;
+    color: #999;
+    width: 32%;
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: center;
+    margin: 1.2rem 0 0;
+}
+.canadapost-tracking .progress-bar-labels li.progress-bar-current-state {
+    color: #232323;
+}
+
+@media screen and (max-width: 480px) {
+    .canadapost-tracking .progress-bar-labels li {
+        font-size: 12px;
+        width: 30%;
+    }
+}
+
+#canadapost-product-rates {
+    margin-top: 1.5rem;
+    padding-top: .85rem;
+    padding-bottom: .85rem;
+}
+
+.quickview #canadapost-product-rates {
+    display: none;
+}
+
+#canadapost-product-rates.card {
+    padding: 1.25rem 1.875rem;
+}
+
+@media screen and (max-width: 768px) {
+    #canadapost-product-rates.card {
+        padding: 0;
+        margin: 0;
+    }
+}
+
+#cart #canadapost-product-rates .product-information {
+    display: block;
+    margin-bottom: 1rem;
+}
+#cart #canadapost-product-rates .product-information .shipping-icon {
+    display: none;
+}
+
+#canadapost-product-rates > a {
+    width: 100%;
+    display: block;
+    text-align: left;
+    font-weight: bold;
+}
+
+#canadapost-product-rates .update-address-container {
+    margin-top: 1rem;
+}
+
+#canadapost-product-rates .update-address-container select {
+    padding-right: 1.7rem;
+}
+
+#canadapost-product-rates .update-address-container select,
+#canadapost-product-rates .update-address-container a,
+#canadapost-product-rates .update-address-container input {
+    display: inline-block;
+    float: left;
+    height: 2.3rem;
+    font-size: 0.85rem;
+}
+
+#canadapost-product-rates .update-address-container select#id_country {
+    width: 49.5%;
+    margin-right: 1%;
+}
+
+
+#canadapost-product-rates .update-address-container select#id_state {
+    /*width: 24.33%;*/
+    margin-right: 1%;
+}
+
+#canadapost-product-rates .update-address-container input {
+    width: 49.5%;
+}
+
+#canadapost-product-rates .update-address-container a {
+    width: 100%;
+    margin-top: 0.3rem;
+}
+
+@media screen and (max-width: 991px) {
+    #canadapost-product-rates .update-address-container select#id_country,
+    #canadapost-product-rates .update-address-container select#id_state,
+    #canadapost-product-rates .update-address-container a,
+    #canadapost-product-rates .update-address-container input {
+        width: 100%;
+        margin-top: 0.3rem;
+    }
+}
+
+#cart #canadapost-product-rates,
+#cart #canadapost-product-rates .update-address-container {
+    margin-top: 0;
+    padding-bottom: 0;
+}
+
+#cart #canadapost-product-rates .update-address-container select#id_country,
+#cart #canadapost-product-rates .update-address-container select#id_state,
+#cart #canadapost-product-rates .update-address-container a,
+#cart #canadapost-product-rates .update-address-container input {
+    width: 100%;
+    margin-top: 0.3rem;
+    margin-right: 0;
+}
+
+#canadapost-product-rates .update-address-container .fieldError {
+    border: 2px solid #d44242;
+}
+
+#canadapost-product-rates .loading,
+#canadapost-product-rates .error-message {
+    display: none;
+}
+
+#canadapost-product-rates .error-message,
+#canadapost-product-rates .error {
+    color: #d44242;
+}
+
+#canadapost-product-rates .loading,
+#canadapost-product-rates .error-message,
+#canadapost-product-rates .error {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+#canadapost-product-rates > a:active,
+#canadapost-product-rates > a:focus {
+    text-decoration: none;
+}
+
+#canadapost-product-rates .carrier-list {
+    margin-top: 1rem;
+}
+
+#canadapost-product-rates .carrier-list td {
+    text-align: left;
+    font-size: 0.85rem;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    border: 0;
+}
+
+#canadapost-product-rates .carrier-list td:first-child {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#canadapost-product-rates .carrier-list td:first-child input {
+    margin-top: 1rem;
+}
+
+#canadapost-product-rates .carrier-list .carrier-delay {
+    color: #777;
+    font-size: .8rem;
+    margin-bottom: 0;
+}
+
+#canadapost-product-rates .shipping-icon {
+    margin-right: .625rem;
+}
+
+#canadapost-product-rates .caret-down-icon {
+    float: right;
+    font-size: 2rem;
+    line-height: 0.75;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+#canadapost-product-rates button.submit-change-carrier {
+    float: right;
+    width: 11rem;
+    height: 2.75rem;
+    font-size: 0.85rem;
+}

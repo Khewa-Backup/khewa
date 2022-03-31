@@ -1,0 +1,1976 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<message><id_message><![CDATA[1]]></id_message>
+<message><![CDATA[----- Payment Information -----
+RESULT : 00
+AUTHCODE : 12345
+MESSAGE : [ syst&amp;eacute;me de test ] R&amp;eacute;ponse du Portaille [AUTHORISED]
+AVSPOSTCODERESULT : M
+AVSADDRESSRESULT : M
+CVNRESULT : M
+ORDER_ID : 21-20180911142629
+HPP_FRAUDFILTER_RESULT : NOT_EXECUTED
+TYPEPROD : SANDBOX
+]]></message>
+<id_cart><![CDATA[21]]></id_cart>
+<id_order><![CDATA[6]]></id_order>
+<id_customer><![CDATA[2]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2018-09-11 14:28:00]]></date_add>
+</message>
+<message><id_message><![CDATA[3]]></id_message>
+<message><![CDATA[Tax-exempt; Item to be shipped on-reserve; my band # is 0510169001]]></message>
+<id_cart><![CDATA[44]]></id_cart>
+<id_order><![CDATA[6]]></id_order>
+<id_customer><![CDATA[22]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2018-11-28 16:40:16]]></date_add>
+</message>
+<message><id_message><![CDATA[4]]></id_message>
+<message><![CDATA[I need the deep blue color (and *not* the teal color). Thanks.]]></message>
+<id_cart><![CDATA[85]]></id_cart>
+<id_order><![CDATA[12]]></id_order>
+<id_customer><![CDATA[34]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2019-05-18 10:24:16]]></date_add>
+</message>
+<message><id_message><![CDATA[5]]></id_message>
+<message><![CDATA[Thank you ]]></message>
+<id_cart><![CDATA[92]]></id_cart>
+<id_order><![CDATA[14]]></id_order>
+<id_customer><![CDATA[36]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2019-06-22 19:46:57]]></date_add>
+</message>
+<message><id_message><![CDATA[6]]></id_message>
+<message><![CDATA[&Agrave; remettre &agrave; Paulette Trottier]]></message>
+<id_cart><![CDATA[98]]></id_cart>
+<id_order><![CDATA[15]]></id_order>
+<id_customer><![CDATA[39]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2019-07-23 11:13:38]]></date_add>
+</message>
+<message><id_message><![CDATA[7]]></id_message>
+<message><![CDATA[Meegwech]]></message>
+<id_cart><![CDATA[279]]></id_cart>
+<id_order><![CDATA[31]]></id_order>
+<id_customer><![CDATA[152]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-04-09 10:16:57]]></date_add>
+</message>
+<message><id_message><![CDATA[8]]></id_message>
+<message><![CDATA[when i searched CARTES in french nothing. i had to search CARDS in anglish]]></message>
+<id_cart><![CDATA[264]]></id_cart>
+<id_order><![CDATA[35]]></id_order>
+<id_customer><![CDATA[154]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-04-16 09:42:16]]></date_add>
+</message>
+<message><id_message><![CDATA[9]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GbTOSIzX7CANEyJhpbHAaBd]]></message>
+<id_cart><![CDATA[315]]></id_cart>
+<id_order><![CDATA[47]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-04-24 11:25:23]]></date_add>
+</message>
+<message><id_message><![CDATA[10]]></id_message>
+<message><![CDATA[This is a birthday gift for my daughter, Erin.]]></message>
+<id_cart><![CDATA[319]]></id_cart>
+<id_order><![CDATA[48]]></id_order>
+<id_customer><![CDATA[158]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-04-29 14:58:46]]></date_add>
+</message>
+<message><id_message><![CDATA[11]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GdHtJIzX7CANEyJ4VIYW8RJ]]></message>
+<id_cart><![CDATA[319]]></id_cart>
+<id_order><![CDATA[48]]></id_order>
+<id_customer><![CDATA[158]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-04-29 15:00:11]]></date_add>
+</message>
+<message><id_message><![CDATA[12]]></id_message>
+<message><![CDATA[J`ai une renezvous avec Anouk pour mercredi le 6 mai vers 12:30]]></message>
+<id_cart><![CDATA[321]]></id_cart>
+<id_order><![CDATA[49]]></id_order>
+<id_customer><![CDATA[159]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-04-30 15:09:56]]></date_add>
+</message>
+<message><id_message><![CDATA[13]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GdhirIzX7CANEyJcuDlOb5N]]></message>
+<id_cart><![CDATA[321]]></id_cart>
+<id_order><![CDATA[49]]></id_order>
+<id_customer><![CDATA[159]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-04-30 15:10:47]]></date_add>
+</message>
+<message><id_message><![CDATA[14]]></id_message>
+<message><![CDATA[Pour ajouter a ma commande (moccasins)]]></message>
+<id_cart><![CDATA[323]]></id_cart>
+<id_order><![CDATA[50]]></id_order>
+<id_customer><![CDATA[160]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-04-30 15:15:16]]></date_add>
+</message>
+<message><id_message><![CDATA[15]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GdhpFIzX7CANEyJbw5rNxxq]]></message>
+<id_cart><![CDATA[323]]></id_cart>
+<id_order><![CDATA[50]]></id_order>
+<id_customer><![CDATA[160]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-04-30 15:16:15]]></date_add>
+</message>
+<message><id_message><![CDATA[16]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GdhqdIzX7CANEyJJdTkcCOR]]></message>
+<id_cart><![CDATA[322]]></id_cart>
+<id_order><![CDATA[51]]></id_order>
+<id_customer><![CDATA[161]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-04-30 15:18:08]]></date_add>
+</message>
+<message><id_message><![CDATA[17]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GdzWOIzX7CANEyJ3SyKwIVU]]></message>
+<id_cart><![CDATA[325]]></id_cart>
+<id_order><![CDATA[52]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-01 10:09:26]]></date_add>
+</message>
+<message><id_message><![CDATA[18]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1Ge1KhIzX7CANEyJMcBJKJSo]]></message>
+<id_cart><![CDATA[328]]></id_cart>
+<id_order><![CDATA[54]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-01 12:04:03]]></date_add>
+</message>
+<message><id_message><![CDATA[19]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GeQsrIzX7CANEyJY1SFqiZv]]></message>
+<id_cart><![CDATA[335]]></id_cart>
+<id_order><![CDATA[57]]></id_order>
+<id_customer><![CDATA[163]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-02 15:23:07]]></date_add>
+</message>
+<message><id_message><![CDATA[20]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GfIV5IzX7CANEyJLCk53PKN]]></message>
+<id_cart><![CDATA[339]]></id_cart>
+<id_order><![CDATA[60]]></id_order>
+<id_customer><![CDATA[166]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-05 00:40:57]]></date_add>
+</message>
+<message><id_message><![CDATA[21]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GfS7pIzX7CANEyJp712fub0]]></message>
+<id_cart><![CDATA[329]]></id_cart>
+<id_order><![CDATA[61]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-05 10:52:58]]></date_add>
+</message>
+<message><id_message><![CDATA[22]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GfZjjIzX7CANEyJA7vEqYAy]]></message>
+<id_cart><![CDATA[346]]></id_cart>
+<id_order><![CDATA[63]]></id_order>
+<id_customer><![CDATA[167]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-05 19:03:46]]></date_add>
+</message>
+<message><id_message><![CDATA[23]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GfmcjIzX7CANEyJe862b590]]></message>
+<id_cart><![CDATA[347]]></id_cart>
+<id_order><![CDATA[64]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-06 08:50:14]]></date_add>
+</message>
+<message><id_message><![CDATA[24]]></id_message>
+<message><![CDATA[Please put $100 in the wish card or have the owner of Khewa give me a foot massage! ]]></message>
+<id_cart><![CDATA[353]]></id_cart>
+<id_order><![CDATA[65]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-05-06 14:25:51]]></date_add>
+</message>
+<message><id_message><![CDATA[25]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GfoAZIzX7CANEyJIFFYpBu8]]></message>
+<id_cart><![CDATA[353]]></id_cart>
+<id_order><![CDATA[65]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-06 14:26:30]]></date_add>
+</message>
+<message><id_message><![CDATA[26]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GfsSsIzX7CANEyJowKvuCBX]]></message>
+<id_cart><![CDATA[363]]></id_cart>
+<id_order><![CDATA[66]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-06 15:46:19]]></date_add>
+</message>
+<message><id_message><![CDATA[27]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1Gg9BaIzX7CANEyJ5RhJrVq3]]></message>
+<id_cart><![CDATA[365]]></id_cart>
+<id_order><![CDATA[68]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-07 08:51:47]]></date_add>
+</message>
+<message><id_message><![CDATA[28]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GgBYhIzX7CANEyJd8pdxF35]]></message>
+<id_cart><![CDATA[366]]></id_cart>
+<id_order><![CDATA[69]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-07 11:23:32]]></date_add>
+</message>
+<message><id_message><![CDATA[29]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GguapIzX7CANEyJRIOsILu5]]></message>
+<id_cart><![CDATA[370]]></id_cart>
+<id_order><![CDATA[71]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-09 11:28:41]]></date_add>
+</message>
+<message><id_message><![CDATA[30]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1Ggz8IIzX7CANEyJCFI52zZp]]></message>
+<id_cart><![CDATA[374]]></id_cart>
+<id_order><![CDATA[72]]></id_order>
+<id_customer><![CDATA[171]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-09 16:21:21]]></date_add>
+</message>
+<message><id_message><![CDATA[31]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GhD6NIzX7CANEyJSs3LRkFK]]></message>
+<id_cart><![CDATA[380]]></id_cart>
+<id_order><![CDATA[74]]></id_order>
+<id_customer><![CDATA[173]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-10 07:20:40]]></date_add>
+</message>
+<message><id_message><![CDATA[32]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GhHs4IzX7CANEyJe2mBu68s]]></message>
+<id_cart><![CDATA[381]]></id_cart>
+<id_order><![CDATA[75]]></id_order>
+<id_customer><![CDATA[174]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-10 12:22:21]]></date_add>
+</message>
+<message><id_message><![CDATA[33]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GiN4LIzX7CANEyJ69Uwq1Dg]]></message>
+<id_cart><![CDATA[392]]></id_cart>
+<id_order><![CDATA[77]]></id_order>
+<id_customer><![CDATA[176]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-13 14:20:38]]></date_add>
+</message>
+<message><id_message><![CDATA[34]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1Go8yfIzX7CANEyJUiLOYkUm]]></message>
+<id_cart><![CDATA[403]]></id_cart>
+<id_order><![CDATA[79]]></id_order>
+<id_customer><![CDATA[179]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-29 10:19:30]]></date_add>
+</message>
+<message><id_message><![CDATA[35]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 290520EC0-8398A107-1F48-4540-A0A9-00B3E174D32D, Approval Code: 217535, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[398]]></id_cart>
+<id_order><![CDATA[80]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-05-29 17:53:52]]></date_add>
+</message>
+<message><id_message><![CDATA[36]]></id_message>
+<message><![CDATA[Merci!]]></message>
+<id_cart><![CDATA[458]]></id_cart>
+<id_order><![CDATA[86]]></id_order>
+<id_customer><![CDATA[189]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-06-15 15:24:00]]></date_add>
+</message>
+<message><id_message><![CDATA[37]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 150620E3D-7215481A-6834-4954-8655-8C59F513483A, Approval Code: 21525Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[458]]></id_cart>
+<id_order><![CDATA[86]]></id_order>
+<id_customer><![CDATA[189]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-06-15 15:25:36]]></date_add>
+</message>
+<message><id_message><![CDATA[38]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 220620AD2-F253B361-9F98-4367-8DC7-3840A203BA6D, Approval Code: 027503, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[488]]></id_cart>
+<id_order><![CDATA[96]]></id_order>
+<id_customer><![CDATA[192]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-06-22 16:51:52]]></date_add>
+</message>
+<message><id_message><![CDATA[39]]></id_message>
+<message><![CDATA[Stripe Transaction ID: pi_1GyFl7IzX7CANEyJ34BYFSZz]]></message>
+<id_cart><![CDATA[496]]></id_cart>
+<id_order><![CDATA[102]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-06-26 12:10:45]]></date_add>
+</message>
+<message><id_message><![CDATA[41]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 260620EC0-4F07F059-6DED-46EB-A83E-D0B402521A7D, Approval Code: 21738Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[515]]></id_cart>
+<id_order><![CDATA[106]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-06-26 17:38:41]]></date_add>
+</message>
+<message><id_message><![CDATA[42]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 300620EC0-5FF11845-5ED3-499B-97A1-FC27C13312E4, Approval Code: 05666S, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[529]]></id_cart>
+<id_order><![CDATA[112]]></id_order>
+<id_customer><![CDATA[199]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-06-30 16:35:22]]></date_add>
+</message>
+<message><id_message><![CDATA[43]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 060720ED2-E15DB5EF-7F71-4AD3-BEB9-D8D6D2687D12, Approval Code: 001142, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[589]]></id_cart>
+<id_order><![CDATA[158]]></id_order>
+<id_customer><![CDATA[201]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-06 11:53:37]]></date_add>
+</message>
+<message><id_message><![CDATA[44]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 080720EBF-8DB0C8F6-4DE7-4DCB-9CA4-03028252FF27, Approval Code: 623709, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[548]]></id_cart>
+<id_order><![CDATA[172]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-08 23:02:37]]></date_add>
+</message>
+<message><id_message><![CDATA[45]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 080720A43-0592B5A7-EBD0-4CD2-B893-F9E6D1E78AB0, Approval Code: 22337Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[613]]></id_cart>
+<id_order><![CDATA[173]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-08 23:37:04]]></date_add>
+</message>
+<message><id_message><![CDATA[46]]></id_message>
+<message><![CDATA[VENTE DU 9 JUILLET]]></message>
+<id_cart><![CDATA[688]]></id_cart>
+<id_order><![CDATA[228]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-12 18:39:03]]></date_add>
+</message>
+<message><id_message><![CDATA[47]]></id_message>
+<message><![CDATA[VENTE DU 9 JUILLET]]></message>
+<id_cart><![CDATA[689]]></id_cart>
+<id_order><![CDATA[229]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-12 18:39:44]]></date_add>
+</message>
+<message><id_message><![CDATA[48]]></id_message>
+<message><![CDATA[A commander et a livrer BDC2164486]]></message>
+<id_cart><![CDATA[709]]></id_cart>
+<id_order><![CDATA[246]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-13 18:33:16]]></date_add>
+</message>
+<message><id_message><![CDATA[49]]></id_message>
+<message><![CDATA[Dépot sur BDC 2164491]]></message>
+<id_cart><![CDATA[721]]></id_cart>
+<id_order><![CDATA[252]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-14 17:55:42]]></date_add>
+</message>
+<message><id_message><![CDATA[50]]></id_message>
+<message><![CDATA[Thank you, Nathalie xx]]></message>
+<id_cart><![CDATA[856]]></id_cart>
+<id_order><![CDATA[359]]></id_order>
+<id_customer><![CDATA[138]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-07-22 06:57:18]]></date_add>
+</message>
+<message><id_message><![CDATA[51]]></id_message>
+<message><![CDATA[PROMO ]]></message>
+<id_cart><![CDATA[886]]></id_cart>
+<id_order><![CDATA[376]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-23 14:50:42]]></date_add>
+</message>
+<message><id_message><![CDATA[52]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 250720A42-42B85F37-8304-4F10-85A8-4B6C16E95AEA, Approval Code: 06627F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[908]]></id_cart>
+<id_order><![CDATA[394]]></id_order>
+<id_customer><![CDATA[232]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-25 16:35:54]]></date_add>
+</message>
+<message><id_message><![CDATA[53]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 270720AD2-36879F50-3429-4ADA-8E5A-1FA313BD42A6, Approval Code: 21501Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[945]]></id_cart>
+<id_order><![CDATA[428]]></id_order>
+<id_customer><![CDATA[236]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-27 15:01:55]]></date_add>
+</message>
+<message><id_message><![CDATA[54]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 280720ABF-9A12084F-DE7E-46B4-A1CD-FF58017E7A88, Approval Code: 084138, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[955]]></id_cart>
+<id_order><![CDATA[435]]></id_order>
+<id_customer><![CDATA[237]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-28 14:26:13]]></date_add>
+</message>
+<message><id_message><![CDATA[55]]></id_message>
+<message><![CDATA[BDC 077065]]></message>
+<id_cart><![CDATA[960]]></id_cart>
+<id_order><![CDATA[440]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-07-28 17:19:18]]></date_add>
+</message>
+<message><id_message><![CDATA[56]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 010820EC0-E7FAC1DB-7747-43B4-9352-DCF22854BED8, Approval Code: 001687, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1024]]></id_cart>
+<id_order><![CDATA[498]]></id_order>
+<id_customer><![CDATA[243]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-08-01 11:22:31]]></date_add>
+</message>
+<message><id_message><![CDATA[57]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 020820A42-E470184D-323C-4F0F-8D31-DFEBD8E2C795, Approval Code: 08498Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[848]]></id_cart>
+<id_order><![CDATA[538]]></id_order>
+<id_customer><![CDATA[244]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-08-02 16:39:50]]></date_add>
+</message>
+<message><id_message><![CDATA[58]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 100820AD2-BD7D4C0C-39E7-404D-8AF9-8018168560C3, Approval Code: 05080I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1110]]></id_cart>
+<id_order><![CDATA[577]]></id_order>
+<id_customer><![CDATA[245]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-08-10 10:25:03]]></date_add>
+</message>
+<message><id_message><![CDATA[59]]></id_message>
+<message><![CDATA[50th Anniversary ]]></message>
+<id_cart><![CDATA[1234]]></id_cart>
+<id_order><![CDATA[692]]></id_order>
+<id_customer><![CDATA[246]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-08-15 21:37:30]]></date_add>
+</message>
+<message><id_message><![CDATA[60]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 150820A43-0A64E05F-D361-4033-B4B1-42326DEF18E4, Approval Code: 01775I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1234]]></id_cart>
+<id_order><![CDATA[692]]></id_order>
+<id_customer><![CDATA[246]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-08-15 21:41:00]]></date_add>
+</message>
+<message><id_message><![CDATA[61]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 190820A43-53EAC0EB-0466-44FF-9B30-9DC0A42ACCE5, Approval Code: 06973J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1293]]></id_cart>
+<id_order><![CDATA[735]]></id_order>
+<id_customer><![CDATA[249]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-08-19 15:42:32]]></date_add>
+</message>
+<message><id_message><![CDATA[62]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 260820E3C-BCC34D4A-CCB5-41DD-9CD4-50037CC273D6, Approval Code: 04304Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1362]]></id_cart>
+<id_order><![CDATA[889]]></id_order>
+<id_customer><![CDATA[138]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-08-26 19:11:43]]></date_add>
+</message>
+<message><id_message><![CDATA[63]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 280820AD2-755DFA76-FEEB-42CA-9B4F-E27D6090A83D, Approval Code: 08610J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1506]]></id_cart>
+<id_order><![CDATA[917]]></id_order>
+<id_customer><![CDATA[253]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-08-28 08:56:20]]></date_add>
+</message>
+<message><id_message><![CDATA[64]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 290820ABF-5495EFB0-616B-4117-8768-3B59E5CFD2BB, Approval Code: 02837I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1528]]></id_cart>
+<id_order><![CDATA[937]]></id_order>
+<id_customer><![CDATA[254]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-08-29 13:24:28]]></date_add>
+</message>
+<message><id_message><![CDATA[65]]></id_message>
+<message><![CDATA[PROMO]]></message>
+<id_cart><![CDATA[1543]]></id_cart>
+<id_order><![CDATA[950]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-08-30 12:15:22]]></date_add>
+</message>
+<message><id_message><![CDATA[66]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 020920AD2-F44FE5A0-D080-4CF7-9D2F-F9F034A7DB67, Approval Code: 26291J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1449]]></id_cart>
+<id_order><![CDATA[1000]]></id_order>
+<id_customer><![CDATA[256]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-02 17:28:39]]></date_add>
+</message>
+<message><id_message><![CDATA[67]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 020920E3E-8F4CF220-E627-4CC5-9FE0-1ECE09488F6C, Approval Code: 01005F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1604]]></id_cart>
+<id_order><![CDATA[1001]]></id_order>
+<id_customer><![CDATA[257]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-02 21:10:35]]></date_add>
+</message>
+<message><id_message><![CDATA[68]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 030920E3C-28C45062-1AB4-4637-9731-115232BA0DD7, Approval Code: 034680, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1605]]></id_cart>
+<id_order><![CDATA[1002]]></id_order>
+<id_customer><![CDATA[258]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-03 01:16:57]]></date_add>
+</message>
+<message><id_message><![CDATA[69]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 060920A43-8AD6109F-633B-4C8F-8322-D3A205254157, Approval Code: 09180F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1678]]></id_cart>
+<id_order><![CDATA[1063]]></id_order>
+<id_customer><![CDATA[262]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-06 09:36:42]]></date_add>
+</message>
+<message><id_message><![CDATA[70]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 060920E3C-57E7AD86-2633-4789-9EDF-1BE535A4C7AC, Approval Code: 03311Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1697]]></id_cart>
+<id_order><![CDATA[1086]]></id_order>
+<id_customer><![CDATA[36]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-06 15:14:46]]></date_add>
+</message>
+<message><id_message><![CDATA[71]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 060920A42-277A224A-8A82-4216-B334-D67ABCB458C0, Approval Code: 472998, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1262]]></id_cart>
+<id_order><![CDATA[1104]]></id_order>
+<id_customer><![CDATA[263]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-06 22:08:55]]></date_add>
+</message>
+<message><id_message><![CDATA[72]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 070920A42-77FF98B0-A32F-4454-A17E-4382EB80B646, Approval Code: 640114, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[523]]></id_cart>
+<id_order><![CDATA[1118]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-07 17:54:01]]></date_add>
+</message>
+<message><id_message><![CDATA[73]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 070920E3D-8680FCE6-2D53-43A8-AC7A-D945EB2C8EC9, Approval Code: 01670J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1642]]></id_cart>
+<id_order><![CDATA[1119]]></id_order>
+<id_customer><![CDATA[199]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-07 19:17:24]]></date_add>
+</message>
+<message><id_message><![CDATA[74]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 070920ABF-B99408EB-31BD-4F21-8F18-F800A75AC605, Approval Code: 08308P, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1736]]></id_cart>
+<id_order><![CDATA[1120]]></id_order>
+<id_customer><![CDATA[265]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-07 20:49:43]]></date_add>
+</message>
+<message><id_message><![CDATA[75]]></id_message>
+<message><![CDATA[If order is ready for Sept 10, my friend Val McCavour will pick-up]]></message>
+<id_cart><![CDATA[1753]]></id_cart>
+<id_order><![CDATA[0]]></id_order>
+<id_customer><![CDATA[266]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-09-08 20:02:33]]></date_add>
+</message>
+<message><id_message><![CDATA[76]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 140920A42-0A63B056-5EFC-4096-883D-821B2A17A9A2, Approval Code: 21538Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1832]]></id_cart>
+<id_order><![CDATA[1211]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-14 15:38:11]]></date_add>
+</message>
+<message><id_message><![CDATA[77]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 140920A42-B95153A3-1F81-4B18-8C70-B0EB337B95B1, Approval Code: 21544Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1845]]></id_cart>
+<id_order><![CDATA[1212]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-14 15:44:19]]></date_add>
+</message>
+<message><id_message><![CDATA[78]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 140920AC0-51B046E6-EE0E-4315-8AB7-7661A6506BC9, Approval Code: 21551Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1846]]></id_cart>
+<id_order><![CDATA[1213]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-14 15:51:38]]></date_add>
+</message>
+<message><id_message><![CDATA[79]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 140920A44-14CA485A-4E4F-4EAC-BEC0-1F755AE7AFBF, Approval Code: 21555Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1847]]></id_cart>
+<id_order><![CDATA[1214]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-14 15:54:58]]></date_add>
+</message>
+<message><id_message><![CDATA[80]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 140920A43-51CE61AC-971D-4305-A321-EFE0EC69451F, Approval Code: 21606Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1849]]></id_cart>
+<id_order><![CDATA[1216]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-14 16:06:42]]></date_add>
+</message>
+<message><id_message><![CDATA[81]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 150920EC0-116366BE-A76F-492A-92A1-E24DB9434480, Approval Code: 07214Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1867]]></id_cart>
+<id_order><![CDATA[1230]]></id_order>
+<id_customer><![CDATA[272]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-15 17:32:40]]></date_add>
+</message>
+<message><id_message><![CDATA[82]]></id_message>
+<message><![CDATA[Could you please provide me the cell # of the owner of Khewa. I want to ask her out on a date! : )]]></message>
+<id_cart><![CDATA[698]]></id_cart>
+<id_order><![CDATA[1231]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-09-16 11:36:19]]></date_add>
+</message>
+<message><id_message><![CDATA[83]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 160920A44-6C367299-49D2-408E-B25C-3B2CD92ECBD6, Approval Code: 21138Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[698]]></id_cart>
+<id_order><![CDATA[1231]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-16 11:38:25]]></date_add>
+</message>
+<message><id_message><![CDATA[84]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 170920E3C-2DF524A2-DC7A-4D7A-967E-517EDE8652B7, Approval Code: 01517Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1887]]></id_cart>
+<id_order><![CDATA[1248]]></id_order>
+<id_customer><![CDATA[273]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-17 14:17:17]]></date_add>
+</message>
+<message><id_message><![CDATA[85]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 180920EBF-6265E67C-8A6A-4030-A47E-20319E085C2C, Approval Code: 07112Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1902]]></id_cart>
+<id_order><![CDATA[1261]]></id_order>
+<id_customer><![CDATA[274]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-18 18:49:04]]></date_add>
+</message>
+<message><id_message><![CDATA[86]]></id_message>
+<message><![CDATA[C&#039;est mon amie Manon qui passera chercher les trucs &agrave; la boutique, merci!]]></message>
+<id_cart><![CDATA[1938]]></id_cart>
+<id_order><![CDATA[1292]]></id_order>
+<id_customer><![CDATA[276]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-09-20 08:02:42]]></date_add>
+</message>
+<message><id_message><![CDATA[87]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 200920A44-9E9517EB-0272-4F7F-88B8-E28CFBF9145D, Approval Code: 20805Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1938]]></id_cart>
+<id_order><![CDATA[1292]]></id_order>
+<id_customer><![CDATA[276]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-20 08:05:55]]></date_add>
+</message>
+<message><id_message><![CDATA[88]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 210920A44-5F98F4CE-5039-4896-AB2A-3E1C7A63B09B, Approval Code: 05579Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1970]]></id_cart>
+<id_order><![CDATA[1318]]></id_order>
+<id_customer><![CDATA[272]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-21 19:45:20]]></date_add>
+</message>
+<message><id_message><![CDATA[89]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 240920E3C-461452B7-10A1-4446-BDB4-480D1C9297D7, Approval Code: 040533, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2008]]></id_cart>
+<id_order><![CDATA[1352]]></id_order>
+<id_customer><![CDATA[294]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-09-24 16:48:53]]></date_add>
+</message>
+<message><id_message><![CDATA[94]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 031020AC0-A92B36BE-3944-4AF2-A6B4-CFDCC50BAA89, Approval Code: 03909Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2094]]></id_cart>
+<id_order><![CDATA[1458]]></id_order>
+<id_customer><![CDATA[6]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-03 11:31:30]]></date_add>
+</message>
+<message><id_message><![CDATA[95]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 031020A43-1D8C8686-9346-44F6-A751-650A863E2AB5, Approval Code: 653734, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2149]]></id_cart>
+<id_order><![CDATA[1467]]></id_order>
+<id_customer><![CDATA[300]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-03 14:15:37]]></date_add>
+</message>
+<message><id_message><![CDATA[96]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 051020AC0-8AFE46C5-3108-4C1C-B31E-B29E5310EF71, Approval Code: 02703I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2192]]></id_cart>
+<id_order><![CDATA[1498]]></id_order>
+<id_customer><![CDATA[302]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-05 15:27:57]]></date_add>
+</message>
+<message><id_message><![CDATA[97]]></id_message>
+<message><![CDATA[Miigwetch ]]></message>
+<id_cart><![CDATA[2194]]></id_cart>
+<id_order><![CDATA[1499]]></id_order>
+<id_customer><![CDATA[303]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-10-06 10:27:21]]></date_add>
+</message>
+<message><id_message><![CDATA[98]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 061020A43-91E400EB-EC49-4ED7-9133-30501D8BC1D3, Approval Code: 102934, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2194]]></id_cart>
+<id_order><![CDATA[1499]]></id_order>
+<id_customer><![CDATA[303]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-06 10:29:35]]></date_add>
+</message>
+<message><id_message><![CDATA[99]]></id_message>
+<message><![CDATA[no signature required]]></message>
+<id_cart><![CDATA[2199]]></id_cart>
+<id_order><![CDATA[1503]]></id_order>
+<id_customer><![CDATA[304]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-10-06 16:14:08]]></date_add>
+</message>
+<message><id_message><![CDATA[100]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 061020EBF-E70B526F-BD50-4EC8-AF26-AC063C63879B, Approval Code: 057641, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2199]]></id_cart>
+<id_order><![CDATA[1503]]></id_order>
+<id_customer><![CDATA[304]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-06 16:15:25]]></date_add>
+</message>
+<message><id_message><![CDATA[101]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 071020ABF-1E22867B-AD27-4D51-8462-581A00BD8726, Approval Code: 007730, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2204]]></id_cart>
+<id_order><![CDATA[1507]]></id_order>
+<id_customer><![CDATA[306]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-07 12:20:43]]></date_add>
+</message>
+<message><id_message><![CDATA[102]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 091020A42-CCA43D80-BBE3-4DEF-8BAF-3E2DBCFF214B, Approval Code: 009411, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2230]]></id_cart>
+<id_order><![CDATA[1530]]></id_order>
+<id_customer><![CDATA[306]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-09 17:58:26]]></date_add>
+</message>
+<message><id_message><![CDATA[103]]></id_message>
+<message><![CDATA[remboursement pour BO briser (custom sale) mastercard ref#00000001
+AID: A0000000041010 Nicole Goderre (Gauvreau/Roma)]]></message>
+<id_cart><![CDATA[2267]]></id_cart>
+<id_order><![CDATA[1563]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-12 14:13:20]]></date_add>
+</message>
+<message><id_message><![CDATA[104]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 151020AD2-3705AD79-EAD4-4666-A89E-6C9D6D8DAB6F, Approval Code: 09854Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[1971]]></id_cart>
+<id_order><![CDATA[1581]]></id_order>
+<id_customer><![CDATA[138]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-15 08:13:29]]></date_add>
+</message>
+<message><id_message><![CDATA[105]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 171020A43-9D0ABD88-0249-47FB-B124-AE45325DC41A, Approval Code: 00347Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2340]]></id_cart>
+<id_order><![CDATA[1612]]></id_order>
+<id_customer><![CDATA[138]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-17 16:00:11]]></date_add>
+</message>
+<message><id_message><![CDATA[106]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 221020ED2-3ED98A0F-DF53-49F8-9BCB-48EF52FFE2DA, Approval Code: 024451, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2367]]></id_cart>
+<id_order><![CDATA[1636]]></id_order>
+<id_customer><![CDATA[313]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-22 09:34:11]]></date_add>
+</message>
+<message><id_message><![CDATA[107]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 231020AD2-F51024CB-D186-490B-91CB-C9A8A844BF14, Approval Code: 035522, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2379]]></id_cart>
+<id_order><![CDATA[1645]]></id_order>
+<id_customer><![CDATA[294]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-23 09:52:03]]></date_add>
+</message>
+<message><id_message><![CDATA[108]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281020AD2-B7EC073D-6056-432B-862E-7528B1D90B8B, Approval Code: 06728E, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2457]]></id_cart>
+<id_order><![CDATA[1695]]></id_order>
+<id_customer><![CDATA[314]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-10-28 08:12:24]]></date_add>
+</message>
+<message><id_message><![CDATA[109]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 011120E3C-34AC92E4-3F80-4ABA-8B1B-CF4771CD3F16, Approval Code: 001302, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2503]]></id_cart>
+<id_order><![CDATA[1731]]></id_order>
+<id_customer><![CDATA[243]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-01 14:14:29]]></date_add>
+</message>
+<message><id_message><![CDATA[110]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 011120AD2-804D37E8-CE7B-4588-997E-6E0958FF3666, Approval Code: 05988Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2506]]></id_cart>
+<id_order><![CDATA[1734]]></id_order>
+<id_customer><![CDATA[317]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-01 18:45:33]]></date_add>
+</message>
+<message><id_message><![CDATA[111]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 021120A43-8D814F56-98B1-43BD-B14D-0DD191848C87, Approval Code: 021888, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2507]]></id_cart>
+<id_order><![CDATA[1735]]></id_order>
+<id_customer><![CDATA[318]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-02 00:31:29]]></date_add>
+</message>
+<message><id_message><![CDATA[112]]></id_message>
+<message><![CDATA[We were in your store Labour Day weekend and both my daughter and myself fell in love with your clothing! And she asked for a dress for Christmas! So happy to be shopping Canadian and we wish you all an amazing holiday season! ]]></message>
+<id_cart><![CDATA[2514]]></id_cart>
+<id_order><![CDATA[1738]]></id_order>
+<id_customer><![CDATA[319]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-11-03 08:55:34]]></date_add>
+</message>
+<message><id_message><![CDATA[113]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 031120E3D-DDF27BEA-3225-41CB-8D6C-1A78E14B82B6, Approval Code: 440468, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2514]]></id_cart>
+<id_order><![CDATA[1738]]></id_order>
+<id_customer><![CDATA[319]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-03 08:57:28]]></date_add>
+</message>
+<message><id_message><![CDATA[114]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 031120E3D-BE86171E-E887-4C76-B737-A0F6B2C7B198, Approval Code: 07652N, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2515]]></id_cart>
+<id_order><![CDATA[1739]]></id_order>
+<id_customer><![CDATA[320]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-03 11:22:55]]></date_add>
+</message>
+<message><id_message><![CDATA[115]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 051120A42-D6EC23C0-ECD8-4C9C-9960-5B8E85FB1DE4, Approval Code: 09261Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2529]]></id_cart>
+<id_order><![CDATA[1753]]></id_order>
+<id_customer><![CDATA[321]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-05 14:16:42]]></date_add>
+</message>
+<message><id_message><![CDATA[116]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 101120ED2-398B0D41-8426-4B12-AE20-964C55824D12, Approval Code: 046625, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2593]]></id_cart>
+<id_order><![CDATA[1803]]></id_order>
+<id_customer><![CDATA[323]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-10 13:28:22]]></date_add>
+</message>
+<message><id_message><![CDATA[117]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 141120EBF-ED78EF7E-084B-4349-B196-3402BF6CB7C4, Approval Code: 443956, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2663]]></id_cart>
+<id_order><![CDATA[1847]]></id_order>
+<id_customer><![CDATA[140]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-14 13:30:54]]></date_add>
+</message>
+<message><id_message><![CDATA[118]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 141120E3C-BC907830-1040-40B4-A80A-40E96381413B, Approval Code: 01024F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2676]]></id_cart>
+<id_order><![CDATA[1860]]></id_order>
+<id_customer><![CDATA[327]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-14 19:57:01]]></date_add>
+</message>
+<message><id_message><![CDATA[119]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 161120AD2-D1FB8A8A-4EC9-464F-B6A5-561E8401FF25, Approval Code: 02980Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2590]]></id_cart>
+<id_order><![CDATA[1875]]></id_order>
+<id_customer><![CDATA[329]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-16 16:34:32]]></date_add>
+</message>
+<message><id_message><![CDATA[120]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 191120AC0-036BAFB4-1F88-46D2-A9E1-27A4D93DF5B6, Approval Code: 21319Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2113]]></id_cart>
+<id_order><![CDATA[1886]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-19 13:19:20]]></date_add>
+</message>
+<message><id_message><![CDATA[121]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 191120A44-FB5ED7EB-8BBF-486B-808C-79213F0ED49F, Approval Code: 21329Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2721]]></id_cart>
+<id_order><![CDATA[1888]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-19 13:29:51]]></date_add>
+</message>
+<message><id_message><![CDATA[122]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 191120ABF-CBE5BE0A-9113-42EA-9FE4-64B9EA3780F1, Approval Code: 04021Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2725]]></id_cart>
+<id_order><![CDATA[1890]]></id_order>
+<id_customer><![CDATA[333]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-19 16:41:34]]></date_add>
+</message>
+<message><id_message><![CDATA[124]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 201120ABF-84C18F58-BA57-4A68-AFE7-17809FA0AD52, Approval Code: 482141, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2695]]></id_cart>
+<id_order><![CDATA[1901]]></id_order>
+<id_customer><![CDATA[337]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-20 16:27:45]]></date_add>
+</message>
+<message><id_message><![CDATA[125]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 231120EC0-AB189848-9E51-4897-B6B6-5470002C0143, Approval Code: 355446, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2797]]></id_cart>
+<id_order><![CDATA[1938]]></id_order>
+<id_customer><![CDATA[342]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-23 15:24:06]]></date_add>
+</message>
+<message><id_message><![CDATA[126]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 251120E3C-1516D00C-8E05-42A5-B1B3-E8C4A92EE8D7, Approval Code: 07300N, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2832]]></id_cart>
+<id_order><![CDATA[1952]]></id_order>
+<id_customer><![CDATA[343]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-25 14:02:43]]></date_add>
+</message>
+<message><id_message><![CDATA[127]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 271120EC0-79DBA04A-52A2-43B1-89CA-CD995AA8F117, Approval Code: 075424, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2844]]></id_cart>
+<id_order><![CDATA[1960]]></id_order>
+<id_customer><![CDATA[345]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-27 12:37:04]]></date_add>
+</message>
+<message><id_message><![CDATA[128]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 271120E3D-C7FC4D0E-92F5-4F8D-85F4-C06DF407D794, Approval Code: 03294Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2846]]></id_cart>
+<id_order><![CDATA[1962]]></id_order>
+<id_customer><![CDATA[346]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-27 13:14:43]]></date_add>
+</message>
+<message><id_message><![CDATA[129]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 271120EC0-5037F73A-198A-4B58-AEDD-AC8B583E159F, Approval Code: 06417F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2849]]></id_cart>
+<id_order><![CDATA[1965]]></id_order>
+<id_customer><![CDATA[347]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-27 13:55:47]]></date_add>
+</message>
+<message><id_message><![CDATA[130]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 271120E3C-9032A54D-839A-41A8-B68C-D03C981BC136, Approval Code: 07515F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2859]]></id_cart>
+<id_order><![CDATA[1974]]></id_order>
+<id_customer><![CDATA[349]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-27 16:29:17]]></date_add>
+</message>
+<message><id_message><![CDATA[131]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 271120A43-0AD452F5-2E4F-4B57-8C84-68CEFAAAB941, Approval Code: 08200J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2862]]></id_cart>
+<id_order><![CDATA[1975]]></id_order>
+<id_customer><![CDATA[350]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-27 17:46:06]]></date_add>
+</message>
+<message><id_message><![CDATA[132]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 271120EC0-C7888463-456C-4D0C-8C42-840196EE5CC0, Approval Code: 21922J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2864]]></id_cart>
+<id_order><![CDATA[1976]]></id_order>
+<id_customer><![CDATA[351]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-27 19:22:53]]></date_add>
+</message>
+<message><id_message><![CDATA[133]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 271120A44-9361B428-567B-442A-8EF5-7793EAC2043C, Approval Code: 04110Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2869]]></id_cart>
+<id_order><![CDATA[1978]]></id_order>
+<id_customer><![CDATA[353]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-27 21:48:03]]></date_add>
+</message>
+<message><id_message><![CDATA[134]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 271120ED2-FC386C6E-4C2C-4F12-8BEF-5B9D91905064, Approval Code: 04062F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2871]]></id_cart>
+<id_order><![CDATA[1979]]></id_order>
+<id_customer><![CDATA[354]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-27 22:31:37]]></date_add>
+</message>
+<message><id_message><![CDATA[135]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281120ED2-AA9944E8-121D-477D-8BC6-9A006E5AD568, Approval Code: 05274I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2874]]></id_cart>
+<id_order><![CDATA[1981]]></id_order>
+<id_customer><![CDATA[356]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-28 10:25:09]]></date_add>
+</message>
+<message><id_message><![CDATA[136]]></id_message>
+<message><![CDATA[Looking forward to receiving these beautiful masks. Thank you]]></message>
+<id_cart><![CDATA[2885]]></id_cart>
+<id_order><![CDATA[1986]]></id_order>
+<id_customer><![CDATA[357]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-11-28 12:49:46]]></date_add>
+</message>
+<message><id_message><![CDATA[137]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281120EC0-A51872B5-D22F-435C-80CB-6D37D42D3146, Approval Code: 06519Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2885]]></id_cart>
+<id_order><![CDATA[1986]]></id_order>
+<id_customer><![CDATA[357]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-28 12:52:17]]></date_add>
+</message>
+<message><id_message><![CDATA[138]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281120A42-D68C1778-36E9-45CF-BB05-1FD4A99A5459, Approval Code: 09296Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2889]]></id_cart>
+<id_order><![CDATA[1989]]></id_order>
+<id_customer><![CDATA[359]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-28 13:16:43]]></date_add>
+</message>
+<message><id_message><![CDATA[139]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281120A43-7856D5E3-EA38-4854-BF91-D26209512C57, Approval Code: 143210, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2901]]></id_cart>
+<id_order><![CDATA[1998]]></id_order>
+<id_customer><![CDATA[360]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-28 14:32:10]]></date_add>
+</message>
+<message><id_message><![CDATA[140]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281120A42-D2DF31DE-98A2-48D5-9EA6-F7235ABD9FB5, Approval Code: 067909, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2914]]></id_cart>
+<id_order><![CDATA[2012]]></id_order>
+<id_customer><![CDATA[361]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-28 16:02:26]]></date_add>
+</message>
+<message><id_message><![CDATA[141]]></id_message>
+<message><![CDATA[These are beautiful cards, especially now. Thank you!]]></message>
+<id_cart><![CDATA[2924]]></id_cart>
+<id_order><![CDATA[2019]]></id_order>
+<id_customer><![CDATA[328]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-11-28 17:18:42]]></date_add>
+</message>
+<message><id_message><![CDATA[142]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281120EBF-09AECC27-8CC2-4F2A-B8CA-AEF18E186D81, Approval Code: 00414J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2928]]></id_cart>
+<id_order><![CDATA[2022]]></id_order>
+<id_customer><![CDATA[362]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-28 19:13:47]]></date_add>
+</message>
+<message><id_message><![CDATA[143]]></id_message>
+<message><![CDATA[Beautiful art, looking forward to my cards! Thank you kindly! ]]></message>
+<id_cart><![CDATA[2881]]></id_cart>
+<id_order><![CDATA[2023]]></id_order>
+<id_customer><![CDATA[358]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-11-28 21:13:54]]></date_add>
+</message>
+<message><id_message><![CDATA[144]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281120A42-1359F7D8-DD24-4A96-8CA1-18298D23DE6E, Approval Code: 05364J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2881]]></id_cart>
+<id_order><![CDATA[2023]]></id_order>
+<id_customer><![CDATA[358]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-28 21:15:12]]></date_add>
+</message>
+<message><id_message><![CDATA[145]]></id_message>
+<message><![CDATA[Merci pour le bon service !!!]]></message>
+<id_cart><![CDATA[2951]]></id_cart>
+<id_order><![CDATA[2041]]></id_order>
+<id_customer><![CDATA[364]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-11-29 20:26:07]]></date_add>
+</message>
+<message><id_message><![CDATA[146]]></id_message>
+<message><![CDATA[don]]></message>
+<id_cart><![CDATA[2959]]></id_cart>
+<id_order><![CDATA[2046]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-30 14:21:44]]></date_add>
+</message>
+<message><id_message><![CDATA[147]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 301120E3C-2CC3C999-8AD7-4175-B042-A5A6D02DC569, Approval Code: 07946Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2963]]></id_cart>
+<id_order><![CDATA[2049]]></id_order>
+<id_customer><![CDATA[366]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-11-30 22:39:31]]></date_add>
+</message>
+<message><id_message><![CDATA[148]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 021220ED2-58E9DB35-5708-4CED-A25D-51CABCBF6DC6, Approval Code: 025482, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2978]]></id_cart>
+<id_order><![CDATA[2057]]></id_order>
+<id_customer><![CDATA[368]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-02 15:24:43]]></date_add>
+</message>
+<message><id_message><![CDATA[149]]></id_message>
+<message><![CDATA[If possible, I would like to pick up this weekend.  Thanks ]]></message>
+<id_cart><![CDATA[2991]]></id_cart>
+<id_order><![CDATA[2066]]></id_order>
+<id_customer><![CDATA[369]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-12-03 22:03:39]]></date_add>
+</message>
+<message><id_message><![CDATA[150]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 031220E3E-C200E523-BE25-4286-A2C1-98310775174E, Approval Code: 03278F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2991]]></id_cart>
+<id_order><![CDATA[2066]]></id_order>
+<id_customer><![CDATA[369]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-03 22:04:42]]></date_add>
+</message>
+<message><id_message><![CDATA[151]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 041220ABF-62947875-EA8B-4B87-A6BA-2A8F734E8939, Approval Code: 045389, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3009]]></id_cart>
+<id_order><![CDATA[2080]]></id_order>
+<id_customer><![CDATA[371]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-04 21:28:18]]></date_add>
+</message>
+<message><id_message><![CDATA[152]]></id_message>
+<message><![CDATA[Svp confirmer que ce produit est en stock pr&eacute;sentement dans votre boutique pour que je puisse aller le chercher]]></message>
+<id_cart><![CDATA[3048]]></id_cart>
+<id_order><![CDATA[2139]]></id_order>
+<id_customer><![CDATA[373]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-12-08 11:26:28]]></date_add>
+</message>
+<message><id_message><![CDATA[153]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 081220A43-79CAFD30-8A2D-41A8-8325-45A5574650E7, Approval Code: 00311I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3048]]></id_cart>
+<id_order><![CDATA[2139]]></id_order>
+<id_customer><![CDATA[373]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-08 11:30:12]]></date_add>
+</message>
+<message><id_message><![CDATA[154]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 081220AC0-B066C2FE-A804-4009-AFA0-140D53399F57, Approval Code: 299614, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3093]]></id_cart>
+<id_order><![CDATA[2147]]></id_order>
+<id_customer><![CDATA[374]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-08 17:13:14]]></date_add>
+</message>
+<message><id_message><![CDATA[155]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 101220E3E-2C1B1F66-CABF-4A5F-B3E8-974D85CAE65B, Approval Code: 08261I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3101]]></id_cart>
+<id_order><![CDATA[2148]]></id_order>
+<id_customer><![CDATA[377]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-10 07:19:42]]></date_add>
+</message>
+<message><id_message><![CDATA[156]]></id_message>
+<message><![CDATA[Je ne pourrai pas ramasser la commande avant le 20 d&eacute;cembre car nous sommes en isolement pr&eacute;ventif. Merci!]]></message>
+<id_cart><![CDATA[3109]]></id_cart>
+<id_order><![CDATA[2149]]></id_order>
+<id_customer><![CDATA[378]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-12-10 08:39:31]]></date_add>
+</message>
+<message><id_message><![CDATA[157]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 101220EC0-0B2B8A73-404B-4444-B7F2-9ACF86FA35FC, Approval Code: 03125J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3109]]></id_cart>
+<id_order><![CDATA[2149]]></id_order>
+<id_customer><![CDATA[378]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-10 08:40:51]]></date_add>
+</message>
+<message><id_message><![CDATA[158]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 101220AD2-974CFE87-4856-4DF7-9797-E29762E5209E, Approval Code: 01597I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3127]]></id_cart>
+<id_order><![CDATA[2155]]></id_order>
+<id_customer><![CDATA[380]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-10 15:17:20]]></date_add>
+</message>
+<message><id_message><![CDATA[159]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 101220ABF-1F4B151D-1275-4CBB-BE2B-E84FA8D58DAF, Approval Code: 095655, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3128]]></id_cart>
+<id_order><![CDATA[2156]]></id_order>
+<id_customer><![CDATA[379]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-10 15:26:52]]></date_add>
+</message>
+<message><id_message><![CDATA[160]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 111220AC0-A8EE1BE7-9A02-43FB-9B85-74386B10FF52, Approval Code: 03665E, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3159]]></id_cart>
+<id_order><![CDATA[2172]]></id_order>
+<id_customer><![CDATA[382]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-11 17:31:22]]></date_add>
+</message>
+<message><id_message><![CDATA[161]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 141220EBF-013BE436-FD0D-49C0-94DD-8283C5520BB2, Approval Code: 02404J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3250]]></id_cart>
+<id_order><![CDATA[2238]]></id_order>
+<id_customer><![CDATA[385]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-14 19:37:47]]></date_add>
+</message>
+<message><id_message><![CDATA[162]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 141220EBF-89E11FA5-3761-4A54-AD26-C45EA3616946, Approval Code: 04353I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3251]]></id_cart>
+<id_order><![CDATA[2239]]></id_order>
+<id_customer><![CDATA[386]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-14 21:31:45]]></date_add>
+</message>
+<message><id_message><![CDATA[163]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 161220ED2-E0FFF95D-D595-4DFE-91E5-FD3A49BDC46D, Approval Code: 068408, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3266]]></id_cart>
+<id_order><![CDATA[2252]]></id_order>
+<id_customer><![CDATA[387]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-16 07:53:28]]></date_add>
+</message>
+<message><id_message><![CDATA[164]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 171220E3E-E2B1D538-85BD-4F9B-81FB-2D2853415A80, Approval Code: 02466Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3276]]></id_cart>
+<id_order><![CDATA[2254]]></id_order>
+<id_customer><![CDATA[389]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-17 11:54:15]]></date_add>
+</message>
+<message><id_message><![CDATA[165]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 171220ABF-12D023D8-93F2-445F-B081-40A383ECE60A, Approval Code: 087112, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3297]]></id_cart>
+<id_order><![CDATA[2274]]></id_order>
+<id_customer><![CDATA[390]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-17 16:16:23]]></date_add>
+</message>
+<message><id_message><![CDATA[167]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 181220AD2-600AE75D-8A07-4512-AA0D-815156338C7D, Approval Code: 09538I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3306]]></id_cart>
+<id_order><![CDATA[2280]]></id_order>
+<id_customer><![CDATA[392]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-18 13:13:18]]></date_add>
+</message>
+<message><id_message><![CDATA[168]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 191220E3E-88203515-4CD4-4E1F-80D0-A4FA6BCEF22C, Approval Code: 090698, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3334]]></id_cart>
+<id_order><![CDATA[2301]]></id_order>
+<id_customer><![CDATA[394]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-19 08:31:39]]></date_add>
+</message>
+<message><id_message><![CDATA[169]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 211220AD2-44A45972-2959-49EE-8B8B-04AB6A7B08E9, Approval Code: 00859Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[2993]]></id_cart>
+<id_order><![CDATA[2363]]></id_order>
+<id_customer><![CDATA[6]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-21 13:00:28]]></date_add>
+</message>
+<message><id_message><![CDATA[170]]></id_message>
+<message><![CDATA[I would like only the scarf to be gift wrapped thank you!]]></message>
+<id_cart><![CDATA[3407]]></id_cart>
+<id_order><![CDATA[2372]]></id_order>
+<id_customer><![CDATA[398]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-12-21 14:47:40]]></date_add>
+</message>
+<message><id_message><![CDATA[171]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 211220E3D-5CDABDC3-EB00-4DA2-8BF0-120B07A9E930, Approval Code: 05377J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3407]]></id_cart>
+<id_order><![CDATA[2372]]></id_order>
+<id_customer><![CDATA[398]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-21 14:48:49]]></date_add>
+</message>
+<message><id_message><![CDATA[172]]></id_message>
+<message><![CDATA[100SXPEZB PROMO CODE]]></message>
+<id_cart><![CDATA[3459]]></id_cart>
+<id_order><![CDATA[2413]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-23 13:54:52]]></date_add>
+</message>
+<message><id_message><![CDATA[173]]></id_message>
+<message><![CDATA[50LWPEKP PROMO CODE]]></message>
+<id_cart><![CDATA[3460]]></id_cart>
+<id_order><![CDATA[2414]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-23 13:59:13]]></date_add>
+</message>
+<message><id_message><![CDATA[174]]></id_message>
+<message><![CDATA[staff discount N.D]]></message>
+<id_cart><![CDATA[3474]]></id_cart>
+<id_order><![CDATA[2427]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-23 17:27:18]]></date_add>
+</message>
+<message><id_message><![CDATA[175]]></id_message>
+<message><![CDATA[Prefer Black colour, alternatively other natural colours]]></message>
+<id_cart><![CDATA[3511]]></id_cart>
+<id_order><![CDATA[2452]]></id_order>
+<id_customer><![CDATA[401]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-12-28 12:34:23]]></date_add>
+</message>
+<message><id_message><![CDATA[176]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281220A44-63F81FAF-F3C8-4CD4-B89D-DC63189EA649, Approval Code: 439394, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3511]]></id_cart>
+<id_order><![CDATA[2452]]></id_order>
+<id_customer><![CDATA[401]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-28 12:40:52]]></date_add>
+</message>
+<message><id_message><![CDATA[177]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 281220AC0-2C57CF0F-AA05-4722-A278-30F570EEB504, Approval Code: 084715, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3512]]></id_cart>
+<id_order><![CDATA[2453]]></id_order>
+<id_customer><![CDATA[402]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-28 15:11:55]]></date_add>
+</message>
+<message><id_message><![CDATA[178]]></id_message>
+<message><![CDATA[J&#039;aimerais savoir &agrave; quoi correspond la grandeur 9 pour &ecirc;tre certaine que cela soit la bonne!]]></message>
+<id_cart><![CDATA[3517]]></id_cart>
+<id_order><![CDATA[0]]></id_order>
+<id_customer><![CDATA[404]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2020-12-29 21:10:26]]></date_add>
+</message>
+<message><id_message><![CDATA[179]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 301220ABF-EB62B96A-C914-4B83-9782-839F3ECF6980, Approval Code: 053884, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3520]]></id_cart>
+<id_order><![CDATA[2455]]></id_order>
+<id_customer><![CDATA[405]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-30 11:18:46]]></date_add>
+</message>
+<message><id_message><![CDATA[180]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 301220AD2-9FB9C03B-2F31-4D8C-ACB6-2F45F65461B8, Approval Code: 08560F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3527]]></id_cart>
+<id_order><![CDATA[2456]]></id_order>
+<id_customer><![CDATA[407]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-30 19:59:52]]></date_add>
+</message>
+<message><id_message><![CDATA[181]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 311220EBF-9BA8E840-5F11-420B-973D-57AB665242A2, Approval Code: 21440Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3521]]></id_cart>
+<id_order><![CDATA[2457]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2020-12-31 14:40:02]]></date_add>
+</message>
+<message><id_message><![CDATA[182]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 080121EBF-F223C1CF-CDB1-40F2-A379-0EF843D07033, Approval Code: 00659N, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3560]]></id_cart>
+<id_order><![CDATA[2461]]></id_order>
+<id_customer><![CDATA[410]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-01-08 11:10:22]]></date_add>
+</message>
+<message><id_message><![CDATA[183]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 080121EBF-64A28269-2FC8-43DF-BE72-C9AA217FA888, Approval Code: 09558N, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3561]]></id_cart>
+<id_order><![CDATA[2462]]></id_order>
+<id_customer><![CDATA[410]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-01-08 11:16:52]]></date_add>
+</message>
+<message><id_message><![CDATA[184]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 110121E3E-E4D7C788-B8A0-44C4-825C-C948783907BC, Approval Code: 023307, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3567]]></id_cart>
+<id_order><![CDATA[2463]]></id_order>
+<id_customer><![CDATA[413]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-01-11 08:57:44]]></date_add>
+</message>
+<message><id_message><![CDATA[185]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 140121E3E-4005A648-338D-4617-BC8F-7D40CFEE3132, Approval Code: 049277, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3582]]></id_cart>
+<id_order><![CDATA[2467]]></id_order>
+<id_customer><![CDATA[416]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-01-14 10:54:37]]></date_add>
+</message>
+<message><id_message><![CDATA[186]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 150121A44-FF4EE70F-5612-4672-ABBD-3FCF828A6773, Approval Code: 02442J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3587]]></id_cart>
+<id_order><![CDATA[2469]]></id_order>
+<id_customer><![CDATA[419]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-01-15 09:17:48]]></date_add>
+</message>
+<message><id_message><![CDATA[187]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 150121A44-1A016F9F-CFB9-4644-A0E6-98B9144A267F, Approval Code: 21551Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3554]]></id_cart>
+<id_order><![CDATA[2471]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-01-15 15:51:36]]></date_add>
+</message>
+<message><id_message><![CDATA[188]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 190121A43-B1ED3F69-CCB6-4AB0-ADDC-8763602990FA, Approval Code: 21944J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3609]]></id_cart>
+<id_order><![CDATA[2476]]></id_order>
+<id_customer><![CDATA[422]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-01-19 19:44:07]]></date_add>
+</message>
+<message><id_message><![CDATA[189]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 200121EBF-983C8559-6547-4386-8A76-2859FBA0A7D1, Approval Code: 06207J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3583]]></id_cart>
+<id_order><![CDATA[2477]]></id_order>
+<id_customer><![CDATA[417]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-01-20 14:25:40]]></date_add>
+</message>
+<message><id_message><![CDATA[190]]></id_message>
+<message><![CDATA[I can pick it up when available]]></message>
+<id_cart><![CDATA[3656]]></id_cart>
+<id_order><![CDATA[2488]]></id_order>
+<id_customer><![CDATA[422]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2021-01-26 14:56:18]]></date_add>
+</message>
+<message><id_message><![CDATA[191]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 010221ED2-2CB28576-83C4-4A64-B283-220AEBB330CF, Approval Code: 21723Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3551]]></id_cart>
+<id_order><![CDATA[2494]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-01 17:23:45]]></date_add>
+</message>
+<message><id_message><![CDATA[192]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 020221EBF-BE9D60A4-299B-4728-965B-6FE39FB7EE81, Approval Code: 03306F, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3678]]></id_cart>
+<id_order><![CDATA[2496]]></id_order>
+<id_customer><![CDATA[436]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-02 15:14:44]]></date_add>
+</message>
+<message><id_message><![CDATA[193]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 020221ED2-C735E497-543D-4D03-B720-603D40393C17, Approval Code: 01055I, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3679]]></id_cart>
+<id_order><![CDATA[2497]]></id_order>
+<id_customer><![CDATA[437]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-02 17:10:35]]></date_add>
+</message>
+<message><id_message><![CDATA[194]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 030221A43-DD25C569-09CE-4A0D-B604-3699A333EDEB, Approval Code: 037615, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3686]]></id_cart>
+<id_order><![CDATA[2503]]></id_order>
+<id_customer><![CDATA[345]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-03 21:33:35]]></date_add>
+</message>
+<message><id_message><![CDATA[195]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 040221A43-4AF10B72-A63B-44DB-B6AA-C0E8A932C893, Approval Code: 041198, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3690]]></id_cart>
+<id_order><![CDATA[2504]]></id_order>
+<id_customer><![CDATA[438]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-04 16:59:59]]></date_add>
+</message>
+<message><id_message><![CDATA[196]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 140221E3C-523CEB4C-02FB-4691-892B-3A11030818E1, Approval Code: 43719J, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3729]]></id_cart>
+<id_order><![CDATA[2535]]></id_order>
+<id_customer><![CDATA[441]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-14 10:19:56]]></date_add>
+</message>
+<message><id_message><![CDATA[197]]></id_message>
+<message><![CDATA[Rabais employé Nancy]]></message>
+<id_cart><![CDATA[3753]]></id_cart>
+<id_order><![CDATA[2544]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-14 16:15:38]]></date_add>
+</message>
+<message><id_message><![CDATA[198]]></id_message>
+<message><![CDATA[Rabais employée Nancy]]></message>
+<id_cart><![CDATA[3760]]></id_cart>
+<id_order><![CDATA[2550]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-15 16:53:17]]></date_add>
+</message>
+<message><id_message><![CDATA[199]]></id_message>
+<message><![CDATA[Balance sur echange du web 2496 104.00-retour ]]></message>
+<id_cart><![CDATA[3763]]></id_cart>
+<id_order><![CDATA[2552]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-16 16:40:00]]></date_add>
+</message>
+<message><id_message><![CDATA[200]]></id_message>
+<message><![CDATA[Linda Jacquot 819-770-2331]]></message>
+<id_cart><![CDATA[3804]]></id_cart>
+<id_order><![CDATA[2585]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-26 13:21:57]]></date_add>
+</message>
+<message><id_message><![CDATA[201]]></id_message>
+<message><![CDATA[Déja dépot 50.00 BDC 788250]]></message>
+<id_cart><![CDATA[3823]]></id_cart>
+<id_order><![CDATA[2598]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-02-28 16:08:25]]></date_add>
+</message>
+<message><id_message><![CDATA[202]]></id_message>
+<message><![CDATA[Echange mitts K-275-VB XL pour Mocassin KB88 L9]]></message>
+<id_cart><![CDATA[3831]]></id_cart>
+<id_order><![CDATA[2604]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-01 13:09:17]]></date_add>
+</message>
+<message><id_message><![CDATA[203]]></id_message>
+<message><![CDATA[# 737151/ 50IRKMZM]]></message>
+<id_cart><![CDATA[3834]]></id_cart>
+<id_order><![CDATA[2605]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-02 10:45:19]]></date_add>
+</message>
+<message><id_message><![CDATA[204]]></id_message>
+<message><![CDATA[cOQUILLE BRISé]]></message>
+<id_cart><![CDATA[3839]]></id_cart>
+<id_order><![CDATA[2610]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-02 16:14:57]]></date_add>
+</message>
+<message><id_message><![CDATA[205]]></id_message>
+<message><![CDATA[Retour/échange PSMOIKVZZ]]></message>
+<id_cart><![CDATA[3870]]></id_cart>
+<id_order><![CDATA[2626]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-06 16:00:29]]></date_add>
+</message>
+<message><id_message><![CDATA[206]]></id_message>
+<message><![CDATA[Rabais employé (Nancy)]]></message>
+<id_cart><![CDATA[3892]]></id_cart>
+<id_order><![CDATA[2647]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-08 16:48:08]]></date_add>
+</message>
+<message><id_message><![CDATA[207]]></id_message>
+<message><![CDATA[Rabais employée Nancy]]></message>
+<id_cart><![CDATA[3895]]></id_cart>
+<id_order><![CDATA[2649]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-09 16:52:31]]></date_add>
+</message>
+<message><id_message><![CDATA[208]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 140321AC0-ADC74676-B5B0-4A16-A67D-67394C920595, Approval Code: 128806, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3915]]></id_cart>
+<id_order><![CDATA[2657]]></id_order>
+<id_customer><![CDATA[455]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-14 11:47:12]]></date_add>
+</message>
+<message><id_message><![CDATA[209]]></id_message>
+<message><![CDATA[Pour journée du 13-03-21]]></message>
+<id_cart><![CDATA[3930]]></id_cart>
+<id_order><![CDATA[2670]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 12:11:00]]></date_add>
+</message>
+<message><id_message><![CDATA[210]]></id_message>
+<message><![CDATA[Journée du 13-03-21]]></message>
+<id_cart><![CDATA[3931]]></id_cart>
+<id_order><![CDATA[2671]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 12:14:12]]></date_add>
+</message>
+<message><id_message><![CDATA[211]]></id_message>
+<message><![CDATA[Journée du 13-03-21]]></message>
+<id_cart><![CDATA[3932]]></id_cart>
+<id_order><![CDATA[2672]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 12:16:29]]></date_add>
+</message>
+<message><id_message><![CDATA[212]]></id_message>
+<message><![CDATA[Journée du 13-03-21]]></message>
+<id_cart><![CDATA[3933]]></id_cart>
+<id_order><![CDATA[2673]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 12:20:49]]></date_add>
+</message>
+<message><id_message><![CDATA[213]]></id_message>
+<message><![CDATA[Journée du 13-03-21]]></message>
+<id_cart><![CDATA[3935]]></id_cart>
+<id_order><![CDATA[2675]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 12:26:26]]></date_add>
+</message>
+<message><id_message><![CDATA[214]]></id_message>
+<message><![CDATA[Journée du 13-03-21]]></message>
+<id_cart><![CDATA[3937]]></id_cart>
+<id_order><![CDATA[2677]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 12:57:53]]></date_add>
+</message>
+<message><id_message><![CDATA[215]]></id_message>
+<message><![CDATA[Journée du 13-03-21]]></message>
+<id_cart><![CDATA[3939]]></id_cart>
+<id_order><![CDATA[2679]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 13:12:06]]></date_add>
+</message>
+<message><id_message><![CDATA[216]]></id_message>
+<message><![CDATA[Journée du 13-03-21]]></message>
+<id_cart><![CDATA[3940]]></id_cart>
+<id_order><![CDATA[2680]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 13:17:14]]></date_add>
+</message>
+<message><id_message><![CDATA[217]]></id_message>
+<message><![CDATA[Journée du 13-03-21]]></message>
+<id_cart><![CDATA[3941]]></id_cart>
+<id_order><![CDATA[2681]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 13:29:25]]></date_add>
+</message>
+<message><id_message><![CDATA[218]]></id_message>
+<message><![CDATA[Dédut du 15-03-21]]></message>
+<id_cart><![CDATA[3942]]></id_cart>
+<id_order><![CDATA[2682]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 13:40:39]]></date_add>
+</message>
+<message><id_message><![CDATA[219]]></id_message>
+<message><![CDATA[My aunt Edie Jane will be picking up the order when it is ready. ]]></message>
+<id_cart><![CDATA[3945]]></id_cart>
+<id_order><![CDATA[2685]]></id_order>
+<id_customer><![CDATA[456]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[0]]></private>
+<date_add><![CDATA[2021-03-15 14:48:57]]></date_add>
+</message>
+<message><id_message><![CDATA[220]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 150321EBF-FD79BC08-DF04-4278-A11B-2F63BD56E2FC, Approval Code: 09562E, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3945]]></id_cart>
+<id_order><![CDATA[2685]]></id_order>
+<id_customer><![CDATA[456]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-15 15:03:19]]></date_add>
+</message>
+<message><id_message><![CDATA[221]]></id_message>
+<message><![CDATA[180321 sale]]></message>
+<id_cart><![CDATA[5002]]></id_cart>
+<id_order><![CDATA[2721]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-23 14:15:21]]></date_add>
+</message>
+<message><id_message><![CDATA[222]]></id_message>
+<message><![CDATA[Rabais Belle de nuit/Claude]]></message>
+<id_cart><![CDATA[5091]]></id_cart>
+<id_order><![CDATA[2778]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-31 11:36:37]]></date_add>
+</message>
+<message><id_message><![CDATA[223]]></id_message>
+<message><![CDATA[rabais Belle de nuit (Claude)]]></message>
+<id_cart><![CDATA[5101]]></id_cart>
+<id_order><![CDATA[2784]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-31 12:43:53]]></date_add>
+</message>
+<message><id_message><![CDATA[224]]></id_message>
+<message><![CDATA[test]]></message>
+<id_cart><![CDATA[5103]]></id_cart>
+<id_order><![CDATA[2786]]></id_order>
+<id_customer><![CDATA[186]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-31 13:03:32]]></date_add>
+</message>
+<message><id_message><![CDATA[225]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 310321ED2-9A73EF80-33B7-4DFF-8628-DAEC820C2DD3, Approval Code: 011992, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[5117]]></id_cart>
+<id_order><![CDATA[2797]]></id_order>
+<id_customer><![CDATA[458]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-03-31 17:13:13]]></date_add>
+</message>
+<message><id_message><![CDATA[226]]></id_message>
+<message><![CDATA[Authorization Transaction Number: 010421E3D-3F01448A-FBF5-44B4-B438-E17D98CA4FCD, Approval Code: 21350Z, Result Message: APPROVAL]]></message>
+<id_cart><![CDATA[3707]]></id_cart>
+<id_order><![CDATA[2799]]></id_order>
+<id_customer><![CDATA[148]]></id_customer>
+<id_employee><![CDATA[0]]></id_employee>
+<private><![CDATA[1]]></private>
+<date_add><![CDATA[2021-04-01 13:50:25]]></date_add>
+</message>
+</entity_profile>

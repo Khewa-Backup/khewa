@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>ordersexportsalesreportpro</name>
+    <displayName><![CDATA[Advanced Orders Exports &amp; Reports]]></displayName>
+    <version><![CDATA[4.1.7]]></version>
+    <description><![CDATA[With this module you will be able to get reports of your sales in Excel, CSV, HTML &amp; PDF files, and also send them to emails and FTP addresses.]]></description>
+    <author><![CDATA[IntelliPresta]]></author>
+    <tab><![CDATA[export]]></tab>
+	<confirmUninstall><![CDATA[All the saved settings will be lost. Are you sure to uninstall Best Sales Reports &amp; Accounting Exports module?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

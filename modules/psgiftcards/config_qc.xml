@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>psgiftcards</name>
+    <displayName><![CDATA[Carte Cadeau Premium]]></displayName>
+    <version><![CDATA[2.1.0]]></version>
+    <description><![CDATA[Ce module vous permet de cr&eacute;er et de vendre des cartes cadeaux &agrave; vos clients sur votre site.]]></description>
+    <author><![CDATA[PrestaShop]]></author>
+    <tab><![CDATA[]]></tab>
+	<confirmUninstall><![CDATA[Etes vous sûr de vouloir désinstaller ce module ?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>

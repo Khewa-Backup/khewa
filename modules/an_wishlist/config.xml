@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>an_wishlist</name>
+    <displayName><![CDATA[Anvanto Wishlist]]></displayName>
+    <version><![CDATA[2.2.5]]></version>
+    <description><![CDATA[Extend default functionality by adding Wishlist &mdash; users can add products to it and buy them later. Wishlisted products are offered to buy in the cart to increase average cart value. Feedback on the most wishlisted products is available in live mode.]]></description>
+    <author><![CDATA[Anvanto]]></author>
+    <tab><![CDATA[others]]></tab>
+	<confirmUninstall><![CDATA[Are you sure you want to uninstall the module?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<cms><id_cms><![CDATA[1]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[2]]></position>
+<indexation><![CDATA[0]]></indexation>
+<active><![CDATA[1]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[Our shipping and returns terms]]></meta_description>
+<meta_keywords><![CDATA[conditions, delivery, delay, shipment, pack]]></meta_keywords>
+<meta_title><![CDATA[Return Policy]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[return-policy]]></link_rewrite>
+<content><![CDATA[<p><span style="color:#d0121a;"><strong>RETURN &amp; EXCHANGE</strong></span></p>
+<p>For any return or exchange, the customer must make the request for an authorization number (RA). To obtain this number, please contact our customer service department at 819 459 2112 or use our <a href="https://khewa.com/en/contact-us">Contact Us</a> form.</p>
+<p>We accept returns if they are received at our office before the 30th day since delivery to your home. We take no responsibility for shipments and / or insurance for deliveries made by customers to our offices.</p>
+<p><strong>From Canada:</strong> The customer must use Canada Post (with reference number).</p>
+<p><strong>From the United States:</strong> The customer must use USPS postal services (with reference number). Returns or exchanges that have been sent by any other delivery service involve brokerage fees which KHEWA reserves the right to deduct from your refund. All product returns must be declared as "return of Canadian goods" on the customs forms. Without this, the return may not be routed or subject to additional charges. Note that specific instructions will be sent to you with our Return Authorization Number Request.</p>
+<p><strong>From any other country:</strong> The customer can use the postal service of his choice to the extent that he can provide a reference number (allowing tracking) for the product (s) shipped. All product returns must be declared as "Return of Canadian Goods" on customs forms. Without this, the return may not be routed or subject to additional charges. Note that specific instructions will be sent to you with our Return Authorization Number Request.</p>
+<p>KHEWA will pay the delivery costs associated with returning an exchange to the customer.</p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[Notre politique d'expédition et de retours]]></meta_description>
+<meta_keywords><![CDATA[conditions, delivery, delay, shipment, pack]]></meta_keywords>
+<meta_title><![CDATA[Politique de Retours]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[politique-de-retours]]></link_rewrite>
+<content><![CDATA[<p><strong style="color:#d0121a;">RETOUR ET ÉCHANGE</strong></p>
+<p>Pour tout retour ou échange, le client doit faire la demande pour un numéro de d’autorisation (RA). Pour obtenir ce numéro, veuillez communiquer avec notre service à la clientèle au 819 459 2112 ou nous envoyé un courriel à l’adresse courriel suivante : ncoutou@khewa.com</p>
+<p>Nous acceptons les retours s’ils sont reçus à nos bureaux avant le 30ième jour depuis la livraison à votre domicile. Nous ne prenons aucune responsabilité à l’égard des envois et/ou assurances pour des livraisons effectuées par les clients en direction de nos bureaux.</p>
+<p><strong>En provenance du Canada :</strong> Le client doit utiliser les services de Poste Canada (avec numéro de référence).</p>
+<p><strong>En provenance des États-Unis:</strong> Le client doit utiliser les services postaux de USPS (avec numéro de référence). Les retours ou échanges ayant étés envoyés par tout autre service de livraison impliquent des frais de courtages dont KHEWA se réserve le droit de déduire de votre remboursement. Tout retour de produit se doit obligatoirement être déclaré en tant que « retour de marchandise canadienne » sur les formulaires de douanes. Sans ce, le retour pourrait ne pas être acheminé ou être sujet à des frais additionnels. À noter que des instructions précises vous seront envoyées avec notre demande de numéro d’autorisation de retour.</p>
+<p><strong>En provenance de tout autre pays:</strong> Le client peut utiliser le service postal de son choix dans la mesure où il peut fournir un numéro de référence (permettant le suivi) pour le ou les produit(s) expédiés. Tout retour de produit se doit obligatoirement d’être déclaré en tant que « retour de marchandise canadienne » sur les formulaires de douanes. Sans ce, le retour pourrait ne pas être acheminé ou être sujet à des frais additionnels. À noter que des instructions précises vous seront envoyées avec notre demande de numéro d’autorisation de retour.</p>
+<p>KHEWA paiera les frais de livraisons associés au retour d’un échange en direction du client.</p>
+<p></p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+<cms><id_cms><![CDATA[3]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[4]]></position>
+<indexation><![CDATA[0]]></indexation>
+<active><![CDATA[1]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[Our terms and conditions of use]]></meta_description>
+<meta_keywords><![CDATA[conditions, terms, use, sell]]></meta_keywords>
+<meta_title><![CDATA[Terms and conditions]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[terms-and-conditions-of-use]]></link_rewrite>
+<content><![CDATA[<h2><span style="text-decoration:underline;"><strong>Khewa.com Terms &amp; Conditions</strong></span></h2>
+<p>These terms and conditions outline the rules and regulations for the use of Khewa.com's Website.  <br />Khewa.com is located at:<br />737 chemin Riverside, Wakefield (Québec) J0X3G0, Canada<br />    <br />By accessing this website you accept these terms and conditions in full. Do not continue to use Khewa.com's website if you do not accept all of the terms and conditions stated on this page. The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice and any or all Agreements: “Client”, “You” and “Your” refers to you, the person accessing this website and accepting the Company’s terms and conditions. “The Company”, “Ourselves”, “We”, “Our” and “Us”, refers to our Company. “Party”, “Parties”, or “Us”, refers to both the Client and ourselves, or either the Client or ourselves. All terms refer to the offer, acceptance and consideration of payment necessary to undertake the process of our assistance to the Client in the most appropriate manner, whether by formal meetings of a fixed duration, or any other means, for the express purpose of meeting the Client’s needs in respect of provision of the Company’s stated services/products, in accordance with and subject to, prevailing law of Canada. Any use of the above terminology or other words in the singular, plural, capitalization and/or he/she or they, are taken as interchangeable and therefore as referring to same.</p>
+<p><span style="text-decoration:underline;"><strong>Cookies </strong></span></p>
+<p>We employ the use of cookies. By using Khewa.com's website you consent to the use of cookies in accordance with Khewa.com’s privacy policy. Most of the modern day interactive web sites use cookies to enable us to retrieve user details for each visit. Cookies are used in some areas of our site to enable the functionality of this area and ease of use for those people visiting. Some of our affiliate / advertising partners may also use cookies.</p>
+<p><span style="text-decoration:underline;"><strong>License</strong></span></p>
+<p>Unless otherwise stated, Khewa.com and/or it’s licensors own the intellectual property rights for all material on Khewa.com. All intellectual property rights are reserved. You may view and/or print pages from https://khewa.com for your own personal use subject to restrictions set in these terms and conditions. You must not:<br />    <br />Republish material from https://khewa.com<br />Sell, rent or sub-license material from https://khewa.com<br />Reproduce, duplicate or copy material from https://khewa.com<br />Redistribute content from Khewa.com (unless content is specifically made for redistribution).<br /><br /><span style="text-decoration:underline;"><strong>Reservation of Rights</strong></span></p>
+<p>We reserve the right at any time and in its sole discretion to request that you remove all links or any particular link to our Web site. You agree to immediately remove all links to our Web site upon such request. We also reserve the right to amend these terms and conditions and its linking policy at any time. By continuing to link to our Web site, you agree to be bound to and abide by these linking terms and conditions.</p>
+<p><br /><span style="text-decoration:underline;"><strong>Content Liability</strong></span></p>
+<p>We shall have no responsibility or liability for any content appearing on your Web site. You agree to indemnify and defend us against all claims arising out of or based upon your Website. No link(s) may appear on any page on your Web site or within any context containing content or materials that may be interpreted as libelous, obscene or criminal, or which infringes, otherwise violates, or advocates the infringement or other violation of, any third party rights.</p>
+<p><br /><span style="text-decoration:underline;"><strong>Disclaimer</strong></span></p>
+<p>To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website (including, without limitation, any warranties implied by law in respect of satisfactory quality, fitness for purpose and/or the use of          reasonable care and skill). Nothing in this disclaimer will:<br />    <br />limit or exclude our or your liability for death or personal injury resulting from negligence;<br />limit or exclude our or your liability for fraud or fraudulent misrepresentation;<br />limit any of our or your liabilities in any way that is not permitted under applicable law; or<br />exclude any of our or your liabilities that may not be excluded under applicable law.<br />    <br />The limitations and exclusions of liability set out in this Section and elsewhere in this disclaimer: (a) are subject to the preceding paragraph; and (b) govern all liabilities arising under the disclaimer or in relation to the subject matter of this disclaimer, including liabilities arising in contract, in tort (including negligence) and for breach of statutory duty. To the extent that the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.</p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[Nos termes et conditions d'utilisation]]></meta_description>
+<meta_keywords><![CDATA[conditions, terms, use, sell]]></meta_keywords>
+<meta_title><![CDATA[Termes et conditions]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[terms-and-conditions-of-use]]></link_rewrite>
+<content><![CDATA[<h2><span style="text-decoration:underline;"><strong><span id="result_box" xml:lang="fr" lang="fr"><span title="Khewa.com Terms &amp; Conditions      ">Conditions générales de </span></span><span xml:lang="fr" lang="fr"><span title="Khewa.com Terms &amp; Conditions      "><span xml:lang="fr" lang="fr"><span title="Khewa.com Terms &amp; Conditions      ">Khewa.com</span></span></span></span></strong></span></h2>
+<p><span xml:lang="fr" lang="fr"><span title="These terms and conditions outline the rules and regulations for the use of Khewa.com's Website.      ">Ces termes et conditions décrivent les règles et règlements pour l'utilisation du site Web de Khewa.com.</span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="Khewa.com is located at:     ">Khewa.com est situé au:<br /></span><span title="737 chemin Riverside Apt B , WakefieldQuébec - J0X3G0, Canada          ">737 chemin Riverside, Wakefield (Québec) J0X3G0, Canada<br />    <br /></span><span title="By accessing this website we assume you accept these terms and conditions in full.">En accédant à ce site, vous acceptez les présentes conditions générales dans leur intégralité. </span><span title="Do not continue to use Khewa.com's website     ">Ne continuez pas à utiliser le site </span></span><span xml:lang="fr" lang="fr"><span title="Do not continue to use Khewa.com's website     "><span xml:lang="fr" lang="fr"><span title="737 chemin Riverside Apt B , WakefieldQuébec - J0X3G0, Canada          ">    </span></span>Web de Khewa.com </span><span title="if you do not accept all of the terms and conditions stated on this page.     ">si vous n'acceptez pas tous les termes et conditions énoncés sur cette page. </span><span title="The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice     ">La terminologie suivante s'applique aux présentes conditions générales, à la déclaration de confidentialité et à l'avis de non-responsabilité </span><span title="and any or all Agreements: “Client”, “You” and “Your” refers to you, the person accessing this website     ">et tout ou partie des accords: «client», «vous» et «votre» se réfèrent à vous, la personne accédant à ce site Web </span><span title="and accepting the Company’s terms and conditions.">et accepter les conditions générales de la société. </span><span title="“The Company”, “Ourselves”, “We”, “Our” and “Us”, refers     ">«La société», «nous-mêmes», «nous», «notre» et «nous» font référence </span><span title="to our Company.">à notre société. </span><span title="“Party”, “Parties”, or “Us”, refers to both the Client and ourselves, or either the Client     ">«Partie», «Parties» ou «Nous» fait référence à la fois au client et à nous-mêmes, ou au client </span><span title="or ourselves.">ou nous-mêmes. </span><span title="All terms refer to the offer, acceptance and consideration of payment necessary to undertake     ">Tous les termes se réfèrent à l'offre, à l'acceptation et à la considération du paiement nécessaire pour entreprendre </span><span title="the process of our assistance to the Client in the most appropriate manner, whether by formal meetings     ">le processus de notre assistance au client de la manière la plus appropriée, que ce soit par des réunions formelles </span><span title="of a fixed duration, or any other means, for the express purpose of meeting the Client’s needs in respect     ">d'une durée déterminée, ou de tout autre moyen, dans le but exprès de répondre aux besoins du client </span><span title="of provision of the Company’s stated services/products, in accordance with and subject to, prevailing law     ">de fourniture des services / produits déclarés de la Société, conformément à et sous réserve des lois en vigueur<br /></span><span title="of Canada.">du Canada. </span><span title="Any use of the above terminology or other words in the singular, plural,     ">Toute utilisation de la terminologie ci-dessus ou d'autres mots au singulier, au pluriel, </span><span title="capitalization and/or he/she or they, are taken as interchangeable and therefore as referring to same.Cookies     ">capitalisation et / ou il / elle ou ils, sont considérés comme interchangeables et donc se rapportant à même.</span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="capitalization and/or he/she or they, are taken as interchangeable and therefore as referring to same.Cookies     "><span style="text-decoration:underline;"><strong>Cookies</strong></span></span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="capitalization and/or he/she or they, are taken as interchangeable and therefore as referring to same.Cookies     "></span><span title="We employ the use of cookies.">Nous utilisons des cookies. </span><span title="By using Khewa.com's website you consent to the use of cookies     ">En utilisant le site Web de Khewa.com, vous consentez à l'utilisation de cookies </span><span title="in accordance with Khewa.com’s privacy policy.Most of the modern day interactive web sites     ">conformément à la politique de confidentialité de Khewa.com. La plupart des sites Web interactifs modernes </span><span title="use cookies to enable us to retrieve user details for each visit.">utiliser des cookies pour nous permettre de récupérer les détails de l'utilisateur pour chaque visite. </span><span title="Cookies are used in some areas of our site     ">Les cookies sont utilisés dans certaines zones de </span></span><span xml:lang="fr" lang="fr"><span title="Cookies are used in some areas of our site     ">notre site </span><span title="to enable the functionality of this area and ease of use for those people visiting.">pour permettre la fonctionnalité de cette zone et la facilité d'utilisation pour les visiteurs. </span><span title="Some of our     ">Certains de nos </span><span title="affiliate / advertising partners may also use cookies.License     ">les partenaires affiliés / publicitaires peuvent également utiliser des cookies.</span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="affiliate / advertising partners may also use cookies.License     "><span style="text-decoration:underline;"><strong>License</strong></span></span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="affiliate / advertising partners may also use cookies.License     "></span><span title="Unless otherwise stated, Khewa.com and/or it’s licensors own the intellectual property rights for     ">Sauf indication contraire, Khewa.com et / ou ses concédants de licence possèdent les droits de propriété intellectuelle </span><span title="all material on Khewa.com.">tout le matériel sur Khewa.com. </span><span title="All intellectual property rights are reserved.">Tous les droits de propriété intellectuelle sont réservés. </span><span title="You may view and/or print     ">Vous pouvez voir et / ou imprimer </span><span title="pages from https://khewa.com for your own personal use subject to restrictions set in these terms and conditions.     ">des pages de https://khewa.com pour votre usage personnel, sous réserve des restrictions définies dans les présentes conditions générales.</span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="pages from https://khewa.com for your own personal use subject to restrictions set in these terms and conditions.     "></span><span title="You must not:              ">Il ne faut pas:<br /></span><span title="Republish material from https://khewa.com         ">Republier le matériel de https://khewa.com<br /></span><span title="Sell, rent or sub-license material from https://khewa.com         ">Vendre, louer ou sous-licencier du matériel sur https://khewa.com<br /></span><span title="Reproduce, duplicate or copy material from https://khewa.com          ">Reproduire, dupliquer ou copier des documents depuis https://khewa.com<br /></span><span title="Redistribute content from Khewa.com (unless content is specifically made for redistribution).">Redistribuer le contenu de Khewa.com (sauf si le contenu est spécifiquement conçu pour la redistribution).<br /><br /></span><span title="Reservation of Rights     "><span style="text-decoration:underline;"><strong>Réserve de droits</strong></span></span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="We reserve the right at any time and in its sole discretion to request that you remove all links or any particular     ">Nous nous réservons le droit, à tout moment et à sa seule discrétion, de vous demander de supprimer tous les liens ou tout autre élément particulier.<br /></span><span title="link to our Web site.">lien vers notre site Web. </span><span title="You agree to immediately remove all links to our Web site upon such request.">Vous acceptez de supprimer immédiatement tous les liens vers notre site Web à cette demande. </span><span title="We also     ">Nous avons aussi </span><span title="reserve the right to amend these terms and conditions and its linking policy at any time.">se réserve le droit de modifier ces termes et conditions et sa politique de liens à tout moment. </span><span title="By continuing     ">En continuant</span><span title="to link to our Web site, you agree to be bound to and abide by these linking terms and conditions.">, vous acceptez d'être lié et de respecter ces conditions générales.</span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="to link to our Web site, you agree to be bound to and abide by these linking terms and conditions."><br /></span><span title="Content Liability     "><span style="text-decoration:underline;"><strong>Responsabilité du contenu</strong></span></span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="Content Liability     "></span><span title="We shall have no responsibility or liability for any content appearing on your Web site.">Nous n'assumerons aucune responsabilité pour tout contenu figurant sur votre site Web. </span><span title="You agree to indemnify     ">Vous acceptez d'indemniser </span><span title="and defend us against all claims arising out of or based upon your Website.">et nous défendre contre toute réclamation découlant de ou basée sur votre site Web. </span><span title="No link(s) may appear on any     ">Aucun lien ne peut apparaître sur aucun </span><span title="page on your Web site or within any context containing content or materials that may be interpreted as     ">page sur votre site Web ou dans tout contexte contenant du contenu ou des documents pouvant être interprétés comme </span><span title="libelous, obscene or criminal, or which infringes, otherwise violates, or advocates the infringement or     ">diffamatoire, obscène ou criminel, ou qui enfreint, viole ou préconise l'infraction ou </span><span title="other violation of, any third party rights.">autre violation des droits de tiers.</span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="other violation of, any third party rights."><br /></span><span title="Disclaimer     "><span style="text-decoration:underline;"><strong>Avertissement</strong></span></span></span></p>
+<p><span xml:lang="fr" lang="fr"><span title="Disclaimer     "></span><span title="To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website (including, without limitation, any warranties implied by law in respect of satisfactory quality, fitness for purpose and/or">Dans toute la mesure permise par la loi applicable, nous excluons toutes les représentations, garanties et conditions relatives à notre site Web et </span></span><span xml:lang="fr" lang="fr"><span title="To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website (including, without limitation, any warranties implied by law in respect of satisfactory quality, fitness for purpose and/or"><span xml:lang="fr" lang="fr"><span title="737 chemin Riverside Apt B , WakefieldQuébec - J0X3G0, Canada          ">    </span></span></span></span><span xml:lang="fr" lang="fr"><span title="To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website (including, without limitation, any warranties implied by law in respect of satisfactory quality, fitness for purpose and/or"><span xml:lang="fr" lang="fr"><span title="737 chemin Riverside Apt B , WakefieldQuébec - J0X3G0, Canada          "><span xml:lang="fr" lang="fr"><span title="Disclaimer     ">    </span><span title="To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website (including, without limitation, any warranties implied by law in respect of satisfactory quality, fitness for purpose and/or"></span></span></span></span>l'utilisation de ce site (y compris, sans limitation, toute garantie implicite légale relative à la qualité satisfaisante, </span><span title="the use of reasonable care and skill).">l'utilisation de soins et de </span></span><span xml:lang="fr" lang="fr"><span title="the use of reasonable care and skill)."><span xml:lang="fr" lang="fr"><span title="Disclaimer     ">    </span></span></span></span><span xml:lang="fr" lang="fr"><span title="the use of reasonable care and skill)."><span xml:lang="fr" lang="fr"><span title="Disclaimer     "><span xml:lang="fr" lang="fr"><span title="Disclaimer     ">  </span><span title="To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website (including, without limitation, any warranties implied by law in respect of satisfactory quality, fitness for purpose and/or"></span></span></span><span title="To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website (including, without limitation, any warranties implied by law in respect of satisfactory quality, fitness for purpose and/or"></span></span></span></span><span xml:lang="fr" lang="fr"><span title="the use of reasonable care and skill)."><span xml:lang="fr" lang="fr"><span title="Disclaimer     ">    </span><span title="To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website (including, without limitation, any warranties implied by law in respect of satisfactory quality, fitness for purpose and/or"></span></span>     compétences raisonnables). </span><span title="Nothing in this disclaimer will:          ">Rien dans cet avertissement:<br />    <br /></span><span title="limit or exclude our or your liability for death or personal injury resulting from negligence;     ">limiter ou exclure notre ou votre responsabilité en cas de décès ou de blessures résultant d'une négligence;<br /></span><span title="limit or exclude our or your liability for fraud or fraudulent misrepresentation;     ">limiter ou exclure notre ou votre responsabilité en cas de fraude ou de déclaration frauduleuse;<br /></span><span title="limit any of our or your liabilities in any way that is not permitted under applicable law;">limiter tout ou partie de vos responsabilités de quelque manière que ce soit qui n'est pas autorisée par la loi applicable; </span><span title="or     ">ou<br /></span><span title="exclude any of our or your liabilities that may not be excluded under applicable law.          ">exclure l'un de nos ou vos responsabilités qui ne peuvent être exclus en vertu de la loi applicable.<br />    <br /></span><span title="The limitations and exclusions of liability set out in this Section and elsewhere in this disclaimer: (a)     ">Les limitations et exclusions de responsabilité énoncées dans cette section et ailleurs dans la présente exclusion de responsabilité:<br /></span><span title="are subject to the preceding paragraph;">sont soumis au paragraphe précédent; </span><span title="and (b) govern all liabilities arising under the disclaimer or     ">et (b) régissent tous les engagements découlant de la clause de non-responsabilité ou e</span><span title="in relation to the subject matter of this disclaimer, including liabilities arising in contract, in tort     ">n relation avec l'objet de la présente clause de non-responsabilité, y compris les responsabilités contractuelles, en matière de responsabilité civile<br /></span><span title="(including negligence) and for breach of statutory duty.     ">(y compris la négligence) et pour manquement à une obligation légale. </span><span title="To the extent that the website and the information and services on the website are provided free of charge,     ">Dans la mesure où le site Web et les informations et services du site Web sont fournis gratuitement, </span><span title="we will not be liable for any loss or damage of any nature.">nous ne serons pas responsables de toute perte ou dommage de toute nature.</span></span></p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+<cms><id_cms><![CDATA[4]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[0]]></position>
+<indexation><![CDATA[1]]></indexation>
+<active><![CDATA[1]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[Learn more about us]]></meta_description>
+<meta_keywords><![CDATA[about us, informations]]></meta_keywords>
+<meta_title><![CDATA[About Khewa]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[about-us]]></link_rewrite>
+<content><![CDATA[]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[Apprenez en plus à propos de Khewa]]></meta_description>
+<meta_keywords><![CDATA[about us, informations]]></meta_keywords>
+<meta_title><![CDATA[À propos de Khewa]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[about-us]]></link_rewrite>
+<content><![CDATA[]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+<cms><id_cms><![CDATA[5]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[3]]></position>
+<indexation><![CDATA[0]]></indexation>
+<active><![CDATA[0]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[Our secure payment method]]></meta_description>
+<meta_keywords><![CDATA[secure payment, ssl, visa, mastercard, paypal]]></meta_keywords>
+<meta_title><![CDATA[Secure payment]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[secure-payment]]></link_rewrite>
+<content><![CDATA[<h2>Secure payment</h2>
+<h3>Our secure payment</h3><p>With SSL</p>
+<h3>Using Visa/Mastercard/Paypal</h3><p>About this service</p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[Our secure payment method]]></meta_description>
+<meta_keywords><![CDATA[secure payment, ssl, visa, mastercard, paypal]]></meta_keywords>
+<meta_title><![CDATA[Secure payment]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[secure-payment]]></link_rewrite>
+<content><![CDATA[<h2>Secure payment</h2>
+<h3>Our secure payment</h3><p>With SSL</p>
+<h3>Using Visa/Mastercard/Paypal</h3><p>About this service</p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+<cms><id_cms><![CDATA[6]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[1]]></position>
+<indexation><![CDATA[1]]></indexation>
+<active><![CDATA[0]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[Learn more about Nathalie]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[About Nathalie Coutou]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[about-nathalie-coutou]]></link_rewrite>
+<content><![CDATA[<p><span style="color:#000000;">Nathalie Coutou was born in 1972 in a small village near Joliette, Quebec where she inherited a rich cultural background. Nathalie is the daughter of Ginette Boucher, who is of Aboriginal descent, and Claude Coutou who hailed originally from France. As a little girl, she was given the freedom to explore her imagination and was inspired by her father’s artistry and her mother’s enduring joy. Painting soon became her way to honour and express the beauty of her mixed heritage.</span></p>
+<p><span style="color:#000000;">As a Graphic Arts graduate, Coutou was involved in many projects that focused on bringing to light ancient values in relation to contemporary life. One initiative, in particular, was the Wakefield Harvest Festival. Its goal was to honour and recognize the land for its abundance and to link the values of Aboriginal peoples to our modern lives with the support of people who still harvest the land.</span></p>
+<p><span style="color:#000000;">Since 2001 she has passionately sought to educate people about the arts and handicrafts of First Nation, Métis, and Inuit culture. Her art gallery, KHEWA (meaning the north wind which brings people back to essentials), is located in the heart of the Outaouais region in Wakefield, Quebec.</span></p>
+<p><img src="https://khewa.com/img/cms/p7khewa_1-jpg-7de1e925.jpg" alt="" width="900" height="624" /></p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[À propos de Nathalie Coutou]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[À propos de Nathalie Coutou]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[a-propos-de-nathalie-coutou]]></link_rewrite>
+<content><![CDATA[<p><span style="color:#000000;">Nathalie Coutou est née dans un petit village près de Joliette au Québec en 1972. Fille de Ginette Boucher, d’origine québécoise et autochtone, et du gascon français Claude Coutou, elle hérite d’un bagage culturel fort diversifié. Toute petite, déjà, elle se voit initiée à la liberté qu’offre l’imaginaire par le biais de ses créations artistiques.</span></p>
+<p><span style="color:#000000;">La peinture est ainsi devenue un moyen d’exprimer et d’honorer la beauté de son héritage métissé. Le fruit de ses œuvres démontre la passion de ses doux moments vécus au travers de ses souvenirs d’enfance et de diverses conversations de tous les jours.</span></p>
+<p><span style="color:#000000;">Diplômée en art graphique, Nathalie Coutou s’est impliquée dans de nombreux projets ayant pour but de faire rayonner les valeurs ancestrales face à la préservation de notre patrimoine à tous : la Terre. Sa dernière contribution a été de mettre sur pied le « Festival des récoltes ». Cet événement avait pour but de remercier notre Terre de son abondance et de faire le lien entre les nations autochtones et les peuples d’aujourd’hui.</span></p>
+<p><span style="color:#000000;">Depuis 2001, c’est dans cet environnement, axé sur les valeurs de la Terre et la diffusion de l’art et de l’artisanat des Autochtones, des Métis et des Inuits, qu’elle élève sa famille et opère sa boutique et galerie d’art nommé KHEWA, située au cœur des collines de l’Outaouais, à Wakefield.</span></p>
+<p><span style="color:#000000;"><strong><img src="https://khewa.com/img/cms/p7khewa_1-jpg-7de1e925.jpg" alt="" width="900" height="624" /></strong></span></p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+<cms><id_cms><![CDATA[8]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[5]]></position>
+<indexation><![CDATA[1]]></indexation>
+<active><![CDATA[0]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[Gifts]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[gifts]]></link_rewrite>
+<content><![CDATA[<p>Content here</p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[Cadeaux]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[Cadeaux]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[cadeaux]]></link_rewrite>
+<content><![CDATA[<p>Contenu ici</p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+<cms><id_cms><![CDATA[9]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[6]]></position>
+<indexation><![CDATA[1]]></indexation>
+<active><![CDATA[0]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[Events]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[Events]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[events]]></link_rewrite>
+<content><![CDATA[<p>Content here</p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[Évènements]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[Évènements]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[evenements]]></link_rewrite>
+<content><![CDATA[<p><a href="https://www.journeesdelaculture.qc.ca/activites/dans-les-coulisses-de-mon-village-je-cree">Démonstration artistique</a></p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+<cms><id_cms><![CDATA[10]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[7]]></position>
+<indexation><![CDATA[0]]></indexation>
+<active><![CDATA[0]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[Wakefield Store]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[Wakefield Store]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[wakefield-store]]></link_rewrite>
+<content><![CDATA[<p><img src="https://khewa.com/img/cms/p7khewa_1-jpg-7de1e925.jpg" alt="Khewa store with Nathalie Coutou" width="350" height="243" /></p>
+<h2 class="h3 card-title"><strong>Khewa</strong></h2>
+<p>737 Riverside<br />Wakefield, Quebec, J0X 3G0<br />Canada<br />(819) 459-2112</p>
+<p><strong>Open year round: from 12PM to 5PM, closed on Wednesdays.<br /></strong></p>
+<p><span style="text-decoration:underline;">PLEASE NOTE</span>:</p>
+<ul><li>December 25th: <strong>CLOSED</strong></li>
+<li>December 26th: <strong>CLOSED</strong> </li>
+<li>January 1st: <strong>CLOSED</strong></li>
+</ul><p><a href="https://goo.gl/maps/xdRWZeFDmN22" target="_blank" rel="noreferrer noopener">View on Google Maps</a></p>
+<p></p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[Boutique de Wakefield]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[Boutique de Wakefield]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[wakefield-store]]></link_rewrite>
+<content><![CDATA[<p><img src="https://khewa.com/img/cms/p7khewa_1-jpg-7de1e925.jpg" alt="Khewa store with Nathalie Coutou" width="350" height="243" /></p>
+<h2 class="h3 card-title"><strong>Khewa</strong></h2>
+<p>737 chemin Riverside<br />Wakefield Québec  J0X 3G0<br />Canada<br />(819) 459-2112</p>
+<p><strong>Ouvert à l'année: de 12h à 17h, fermé les mercredis.<br /></strong></p>
+<p><span>VEUILLEZ PRENDRE NOTE de nos exceptions</span>:</p>
+<ul><li>25 décembre: <strong>FERMÉ</strong></li>
+<li>26 décembre: <strong>FERMÉ </strong></li>
+<li>1er Janvier:<strong> </strong><strong>FERMÉ</strong></li>
+</ul><p></p>
+<p><a href="https://goo.gl/maps/xdRWZeFDmN22" target="_blank" rel="noreferrer noopener">Voir dans Google Maps<br /></a></p>
+<p></p>]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+<cms><id_cms><![CDATA[11]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[8]]></position>
+<indexation><![CDATA[0]]></indexation>
+<active><![CDATA[0]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[test]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[test]]></link_rewrite>
+<content><![CDATA[]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[test]]></meta_description>
+<meta_keywords><![CDATA[test]]></meta_keywords>
+<meta_title><![CDATA[test]]></meta_title>
+<head_seo_title><![CDATA[test]]></head_seo_title>
+<link_rewrite><![CDATA[test]]></link_rewrite>
+<content><![CDATA[]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+<cms><id_cms><![CDATA[12]]></id_cms>
+<id_cms_category><![CDATA[1]]></id_cms_category>
+<position><![CDATA[9]]></position>
+<indexation><![CDATA[0]]></indexation>
+<active><![CDATA[0]]></active>
+<datalanguage iso_code="en" >
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[test2]]></meta_title>
+<head_seo_title><![CDATA[]]></head_seo_title>
+<link_rewrite><![CDATA[test2]]></link_rewrite>
+<content><![CDATA[]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<meta_title><![CDATA[test2]]></meta_title>
+<head_seo_title><![CDATA[test2]]></head_seo_title>
+<link_rewrite><![CDATA[test2]]></link_rewrite>
+<content><![CDATA[]]></content>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms>
+</entity_profile>

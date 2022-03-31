@@ -1,0 +1,17 @@
+#printLabel {
+    background: url("../img/icon-print.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    float: right;
+    height: 35px;
+    margin-right: -4px;
+    margin-top: -11px;
+    width: 35px;
+    cursor: pointer;
+}
+#printLabelSmall {
+     background: url("../img/icon-print.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+     background-size: 20px 20px;
+     height: 20px;
+     width: 20px;
+     float: left;
+     cursor: pointer;
+ }

@@ -1,0 +1,84 @@
+[11-Apr-2021 18:48:38 America/Montreal] PHP Warning:  Cannot assign an empty string to a string offset in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 56
+[11-Apr-2021 18:48:38 America/Montreal] PHP Warning:  Cannot assign an empty string to a string offset in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 56
+[11-Apr-2021 18:48:38 America/Montreal] PHP Notice:  Uninitialized string offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[11-Apr-2021 18:48:38 America/Montreal] PHP Notice:  Uninitialized string offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[11-Apr-2021 18:49:06 America/Montreal] PHP Warning:  Cannot assign an empty string to a string offset in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 56
+[11-Apr-2021 18:49:06 America/Montreal] PHP Warning:  Cannot assign an empty string to a string offset in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 56
+[11-Apr-2021 18:49:06 America/Montreal] PHP Notice:  Uninitialized string offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[11-Apr-2021 18:49:06 America/Montreal] PHP Notice:  Uninitialized string offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[11-Apr-2021 18:53:41 America/Montreal] PHP Warning:  Cannot assign an empty string to a string offset in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 56
+[11-Apr-2021 18:53:41 America/Montreal] PHP Warning:  Cannot assign an empty string to a string offset in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 56
+[11-Apr-2021 18:53:41 America/Montreal] PHP Notice:  Uninitialized string offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[11-Apr-2021 18:53:41 America/Montreal] PHP Notice:  Uninitialized string offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[26-Apr-2021 16:21:34 America/Montreal] PHP Warning:  Use of undefined constant _PS_BASE_URL_SSL_ - assumed '_PS_BASE_URL_SSL_' (this will throw an Error in a future version of PHP) in /home/j8m1o8hr4gjg/public_html/modules/crazyelements/PrestaHelper.php on line 26
+[27-Apr-2021 14:17:58 America/Montreal] PHP Warning:  Use of undefined constant _PS_BASE_URL_SSL_ - assumed '_PS_BASE_URL_SSL_' (this will throw an Error in a future version of PHP) in /home/j8m1o8hr4gjg/public_html/modules/crazyelements/PrestaHelper.php on line 26
+[15-Mar-2022 04:24:29 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 04:24:29 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[15-Mar-2022 04:24:29 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[15-Mar-2022 04:24:55 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 04:24:55 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[15-Mar-2022 04:24:55 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[15-Mar-2022 04:25:55 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 04:34:47 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 04:38:45 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 04:39:06 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 04:41:25 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 12:39:23 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 12:45:40 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 12:47:13 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 12:50:34 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 12:54:49 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 12:55:28 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 13:06:25 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 13:34:26 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 16:54:58 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[15-Mar-2022 16:54:58 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[15-Mar-2022 16:54:58 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 15:34:09 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[16-Mar-2022 15:34:09 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 15:34:09 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 15:54:20 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[16-Mar-2022 15:54:20 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 15:54:20 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 15:54:35 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[16-Mar-2022 15:54:35 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 15:54:35 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 15:55:33 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[16-Mar-2022 15:55:33 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 15:55:33 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 16:21:12 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[16-Mar-2022 16:21:12 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 16:21:12 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 16:27:53 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[16-Mar-2022 16:27:53 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 16:27:53 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 16:28:34 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[16-Mar-2022 16:28:34 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 16:28:34 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 16:32:51 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[16-Mar-2022 16:32:51 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 16:32:51 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 18:06:56 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[16-Mar-2022 18:06:56 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[16-Mar-2022 18:06:56 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:28:36 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[19-Mar-2022 12:28:36 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:28:36 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:29:01 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[19-Mar-2022 12:29:01 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:29:01 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:32:32 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[19-Mar-2022 12:32:32 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:32:32 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:38:11 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[19-Mar-2022 12:38:11 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:38:11 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:40:38 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[19-Mar-2022 12:40:38 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:40:38 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:41:40 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[19-Mar-2022 12:41:40 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:41:40 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:41:55 America/Montreal] PHP Warning:  max(): Array must contain at least one element in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 74
+[19-Mar-2022 12:41:55 America/Montreal] PHP Notice:  Undefined offset: 1 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85
+[19-Mar-2022 12:41:55 America/Montreal] PHP Notice:  Undefined offset: 3 in /home/j8m1o8hr4gjg/public_html/modules/pronesissizechart/productpronesissizechart17.php on line 85

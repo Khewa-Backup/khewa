@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<manufacturer><id_manufacturer><![CDATA[3]]></id_manufacturer>
+<name><![CDATA[Nathalie Coutou]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-07-26 12:37:40]]></date_add>
+<date_upd><![CDATA[2021-01-22 15:15:09]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[Nathalie Coutou]]></meta_title>
+<meta_description><![CDATA[Nathalie Coutou]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[<p></p>
+<p><img src="https://khewa.com/img/cms/p7khewa_1-jpg-7de1e925.jpg" alt="Nathalie Coutou" width="600" height="416" /></p>]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[Nathalie Coutou]]></meta_title>
+<meta_description><![CDATA[Nathalie Coutou]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[4]]></id_manufacturer>
+<name><![CDATA[Jim Charlie]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-07-26 12:38:04]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:29:49]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[<p>Jim Charlie was born in 1967 in North Vancouver, British Columbia. Jim Charlie is part of the Coast Salish Nation. He was educated in the histories and culture of the Salish peoples throughout his youth and studied under Salish carvers Floyd Joseph and Jacob Lewis as well as the renowned Gitksan artist Phil Janze. Charlie's work represents a variety of Northwest Coast legends, and is notable for its broad and accessible style.</p>]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[5]]></id_manufacturer>
+<name><![CDATA[Connie Dickens]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-07-26 12:38:13]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:30:49]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<div class="tab-content" id="tab-content">
+<div class="tab-pane fade in active" id="description">
+<div class="product-description">
+<p><span style="color:#333333;font-family:Helvetica, Verdana, Arial;">Located twenty miles below the Alaskan border is the Coast Tsimshian village of Lax Kw'alaams. Connie Dickens is a Raven of this village also known as Port Simpson. After graduating from high school in Prince Rupert where she was born and raised, Connie attended the Kitanmax School of Northwest Coast Native Art in Hazelton, B.C. for two years. On completion of the course, wood carving became the medium of choice. Once Connie and her husband Art had their three children, she decided to try and develop her drawing skills. Drawing has become the main focus of her artistic pursuits.</span></p>
+</div>
+</div>
+</div>
+<p></p>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[6]]></id_manufacturer>
+<name><![CDATA[Jeremy Dumont]]></name>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2018-08-01 12:43:32]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:32:36]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[7]]></id_manufacturer>
+<name><![CDATA[Fred Clifton]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:44:23]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:30:21]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[<p>As a Crow of the Tlingit tribe, Clifton Fred’s artistic sensibility reflects the views and achievements of his cultural ancestry. As he puts it “through our art I hope we can remind each other of who we were, what we did, and how we felt. If understanding our beginnings enable us to know our ends, then we may find that all cultures have the same origins and therefore the same destiny. Knowing this we can do nothing other than work together.”</p>]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[8]]></id_manufacturer>
+<name><![CDATA[Dorothy Grant]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:44:48]]></date_add>
+<date_upd><![CDATA[2018-09-20 16:30:34]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[9]]></id_manufacturer>
+<name><![CDATA[Bill Helin]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:44:59]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:32:58]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<p>Tsimshian native artist Bill Helin enjoys a very rewarding career as a creative gold engraver, painter, woodcarver, and book illustrator. He loves to paint mythological images to educate people on the history of the Tsimshian nation and the many stories passed down through his ancestors. His greatest passion however is to spiritually represent and bond individuals together through the use of native Life Crest symbols.<strong> </strong></p>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[10]]></id_manufacturer>
+<name><![CDATA[Corrine Hunt]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:45:10]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:33:09]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<div class="tab-pane fade active in" id="description">
+<div class="product-description">
+<p>Born in Alert Bay  British Columbia in 1959 Corrine Hunt has been producing contemporary art that reflects the themes and traditions of her First Nations Kwakiutl and Tlingit heritage for more than 22 years. "I want to show how both the First Nations people and the art have evolved", she explains. Corrine has mentored First Nations and other artists and continues to be a strong and vocal supporter of the arts in British Columbia.</p>
+<p>Namwayut "We are One".</p>
+</div>
+</div>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[11]]></id_manufacturer>
+<name><![CDATA[Anthony Joseph]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:45:26]]></date_add>
+<date_upd><![CDATA[2020-05-01 17:20:30]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<p>Coast Salish artist Anthony Joseph resides with the Squamish Nation in British Columbia. Born into the Eagle Wolf Clan, Anthony is the youngest of eight brothers, all of whom are traditional carvers. Anthony’s art reflects the beauty of his surroundings and the artistic traditions of his family.</p>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[12]]></id_manufacturer>
+<name><![CDATA[Klatle-Bhi]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:45:45]]></date_add>
+<date_upd><![CDATA[2018-08-08 12:27:14]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<p>Klatle-Bhi (pronounced “Klath-Bay”) is an artist of Squamish and Kwakwaka’wakw ancestry. He grew up in the Kwakiutl culture of mask dancing, singing, and potlatching and has played a prominent role in the recent revival of the sea-going canoe journeys. Klatle-Bhi’s art is an expression of his personal and spiritual journey, as well as a reflection of his respective cultures.</p>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[13]]></id_manufacturer>
+<name><![CDATA[Mark Nadjiwan]]></name>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2018-08-01 12:46:04]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:34:11]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[14]]></id_manufacturer>
+<name><![CDATA[Bill Reid]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:46:59]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:34:43]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<div class="tab-content" id="tab-content">
+<div class="tab-pane fade in active" id="description">
+<div class="product-description">
+<p><span id="result_box" xml:lang="en" lang="en"><span title="William Ronald Reid, dit Bill, sculpteur (Victoria, 12 janv. 1920 -- id. 13 mars 1998).">William Ronald Reid, "Bill", sculptor (Victoria, Jan 12, 1920 - March 13, 1998). </span><span title="Bill Reid, artiste Haida de renommée internationale, est souvent cité comme celui qui a renouvelé et fait renaître les arts autochtones de la côte du Nord-Ouest sur la scène de l'art contemporain.">Bill Reid, an internationally renowned Haida artist  is often cited as one who has renewed and revived Northwest Coast Aboriginal arts on the contemporary art scene. </span><span title="Très doué dans de nombreuses techniques, il a sculpté l'argent, l'or, le bois ainsi que l'argilite, et coulait le bronze.">Very talented in many techniques, he carved silver, gold, wood, argilite and bronze. </span><span title="Il a publié plusieurs éditions de sérigraphies, et illustré et collaboré à de nombreux livres.">He has published several editions of silk screening, has illustrated and collaborated on numerous books.<br /><br /></span><span title="Il a reçu un doctorat honorifique de l'Université de la Colombie-Britannique en 1976, le Prix Molson en 1977, puis le prix hommage remis dans le cadre des Prix nationaux d'excellence décernés aux autochtones, qui sont commandités par la Fondation canadienne des">He received an honorary doctorate from the University of British Columbia in 1976, the Molson Prize in 1977, and the National Aboriginal Achievement Award which is sponsored by the Canadian Foundation for  Aboriginal Art </span><span title="arts autochtones, en 1994. Bill Reid était un grand défenseur des droits des autochtones au Canada."> in 1994. Bill Reid was a strong advocate for Aboriginal rights in Canada. </span><span title="Il a joué d'ailleurs un rôle particulièrement actif dans la bataille visant à préserver l'histoire nationale et culturelle de South Moresby, dans Haida Gwaii.">He played a particularly active role in the battle to preserve the national and cultural history of South Moresby in Haida Gwaii.</span></span></p>
+</div>
+</div>
+</div>
+<p></p>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[15]]></id_manufacturer>
+<name><![CDATA[Kelly Robinson]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:47:14]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:34:56]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<p>Born in 1981 in Nanaimo, British Columbia, Kelly Robinson's roots and family originate in Bella Coola, BC with descendants from both the Nuxalk and Nuu-chah-nulth nations. He was exposed to First Nations artwork from an early age and has always been interested in learning and refining the art- specifically the unique design forms of the Nuxalk.</p>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[16]]></id_manufacturer>
+<name><![CDATA[John Robson]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:47:26]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:35:10]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[17]]></id_manufacturer>
+<name><![CDATA[John Rombough]]></name>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2018-08-01 12:47:40]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:35:24]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[18]]></id_manufacturer>
+<name><![CDATA[Keith Tait]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:47:53]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:35:35]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<p>Keith Tait was born into the Gitsan Nation at Kispiox in the province of British Columbia. He was trained in art and design at the Gitamaax School of northwest art at Ksan Village in Hazelton. Keith Tait’s graphic sensibility is reflected in the bold precision of his artwork. His designs provide a unique and natural expression of the Northwest Coast traditions of the Bella Coola region.</p>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[19]]></id_manufacturer>
+<name><![CDATA[Andrew William]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-01 12:48:05]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:35:46]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<div class="tab-pane fade in active" id="description">
+<div class="product-description">
+<p>Andrew Williams was born in 1964 in Haida Gwaii. He is a carver of argillite, silver and gold as well as a graphic designer. He is part of the Raven clan in the Old Masset on Haida Gwaii. His work is a blend of traditional and contemporary art and shows his passion for his Haida Ancestory and the "old stories".</p>
+<p>A literal symbol of joy, this tiny bird represents friendship and intelligence.  He is also a symbol of good luck.</p>
+</div>
+</div>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[20]]></id_manufacturer>
+<name><![CDATA[Maxine Noel]]></name>
+<active><![CDATA[1]]></active>
+<date_add><![CDATA[2018-08-02 12:44:50]]></date_add>
+<date_upd><![CDATA[2018-09-20 11:34:29]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[<p><span xml:lang="en-ca" lang="en-ca">Maxine was born in Manitoba of Santee Oglala Sioux parents. She spent her early childhood on her mother’s reserve but at the age of six she left to attend an Indian residential school. Maxine’s early career as a legal secretary was soon overshadowed by her preoccupation with painting and drawing. She took a course in advanced design where a teacher noticed Maxine’s tendency toward linear expression and encouraged her in the use of shape and line to suggest movement. She learned those lessons well, as evidenced by much of her work today. Since those early days Maxine has mastered the skills of painting and drawing plus the processes of serigraphy, etching and stone lithography. Recently she has turned her talents to the creation of editions in cast paper and limited edition bronze castings. Maxine has received excellent response to her work and is now able to devote herself full-time to the creation of art. Maxine Noel signs her artwork with her Sioux name IOYAN MANI, which translates as “Walk Beyond”.</span></p>]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[21]]></id_manufacturer>
+<name><![CDATA[Laurentien Chief]]></name>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2019-11-29 16:05:59]]></date_add>
+<date_upd><![CDATA[2020-04-28 22:45:30]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+<manufacturer><id_manufacturer><![CDATA[23]]></id_manufacturer>
+<name><![CDATA[Bastien Industries Hiawatha 100% Autochtones]]></name>
+<active><![CDATA[0]]></active>
+<date_add><![CDATA[2020-04-27 15:19:42]]></date_add>
+<date_upd><![CDATA[2020-05-01 17:21:35]]></date_upd>
+<datalanguage iso_code="en" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<description><![CDATA[]]></description>
+<short_description><![CDATA[]]></short_description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</manufacturer>
+</entity_profile>

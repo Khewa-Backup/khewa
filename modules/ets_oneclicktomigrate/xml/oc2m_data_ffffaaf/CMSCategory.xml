@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<cms_category><id_cms_category><![CDATA[1]]></id_cms_category>
+<active><![CDATA[1]]></active>
+<id_parent><![CDATA[0]]></id_parent>
+<position><![CDATA[0]]></position>
+<level_depth><![CDATA[1]]></level_depth>
+<date_add><![CDATA[2018-07-06 09:18:57]]></date_add>
+<date_upd><![CDATA[2018-07-06 09:18:57]]></date_upd>
+<datalanguage iso_code="en" >
+<name><![CDATA[Home]]></name>
+<link_rewrite><![CDATA[home]]></link_rewrite>
+<description><![CDATA[]]></description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Accueil]]></name>
+<link_rewrite><![CDATA[accueil]]></link_rewrite>
+<description><![CDATA[]]></description>
+<meta_title><![CDATA[]]></meta_title>
+<meta_description><![CDATA[]]></meta_description>
+<meta_keywords><![CDATA[]]></meta_keywords>
+<id_shop><![CDATA[1]]></id_shop>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</cms_category>
+</entity_profile>

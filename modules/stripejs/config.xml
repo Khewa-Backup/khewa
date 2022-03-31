@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>stripejs</name>
+    <displayName><![CDATA[Stripe Payment Pro]]></displayName>
+    <version><![CDATA[3.9.1]]></version>
+    <description><![CDATA[Accept payments with Google/ Apple Pay/ Microsoft Pay/ WeChat Pay/ 3D-Secure/ Credit Cards/ Bitcoins/ Alipay / IDEAL / SOFORT / BANCONTACT/ GIROPAY/ P24/ EPS/ Multibanco/ SEPA Direct Debit with one Stripe account]]></description>
+    <author><![CDATA[NTS]]></author>
+    <tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall><![CDATA[Warning: all the Stripe customers credit cards token and transaction details saved in your database will be deleted. Are you sure you want uninstall this module?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

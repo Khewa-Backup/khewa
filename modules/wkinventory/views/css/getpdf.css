@@ -1,0 +1,21 @@
+.ui-progressbar {
+    position: relative;
+}
+.progress-label {
+    position: absolute;
+    left: 44%;
+    top: 4px;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #fff;
+}
+#progressbar {
+    margin-bottom: 10px;
+}
+.settings_disable {
+    width: 28px;
+    height: 28px;
+    background: url('../img/settings_disable.png') no-repeat;
+    background-size: 28px;
+    float: right;
+    margin: 1px 0 0 5px;
+}

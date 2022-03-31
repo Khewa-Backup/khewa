@@ -1,0 +1,29 @@
+.pw-fav-toggle, .pw-fav-toggle:hover, .pw-fav-toggle:focus {
+  color: #CC0000;
+}
+
+.pw-fav-toggle.active {
+  color: #363636;
+}
+
+.pw-fav-toggle:hover i {
+  text-shadow: 0 0 4px #CC0000;
+}
+
+.pw-fav-toggle.active:hover i {
+  text-shadow: 0 0 4px #363636;
+}
+
+article.product-miniature.js-product-miniature .pw-fav-toggle .pw-fav-btn-text {
+  display: none;
+}
+
+article.product-miniature.js-product-miniature .pw-fav-toggle {
+  position: absolute;
+  right: 0;
+  margin: 8px;
+}
+
+article.product-miniature.js-product-miniature .pw-fav-toggle {
+  top: 0;
+}

@@ -1,0 +1,55 @@
+/**
+ * 2019 ZH Media
+ *
+ * NOTICE OF LICENSE
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Do not resell or redistribute this file, either fully or partially.
+ * Do not remove this comment containing author information and copyright.
+ *
+ * @author    Zack Hussain <me@zackhussain.ca>
+ * @copyright 2019 ZH Media - All Rights Reserved
+ */
+
+#canadapost .sidebar {
+    display: none;
+}
+
+#canadapost .sidebar .list-group-item i {
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-right: 0.75rem;
+}
+
+#canadapost .sidebar .list-group-item .panel-heading-action {
+    display: none;
+}
+
+#canadapost .sidebar .list-group-item .rate {
+    color: goldenrod;
+}
+
+#canadapost .forms label.account-connected {
+    font-weight: bold;
+    color: #444;
+}
+
+#canadapost .form-container.panel {
+    float: left;
+    width: 100%;
+}
+
+#canadapost-logo {
+    text-align: center;
+}
+
+#canadapost-logo .material-icons {
+  vertical-align: middle;
+}
+
+form a.order-error-link,
+form a.order-error-link:hover,
+form a.order-error-link:active,
+form a.order-error-link:focus {
+    color: #f00;
+}

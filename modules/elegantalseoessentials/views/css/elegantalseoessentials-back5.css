@@ -1,0 +1,258 @@
+/**
+ * @author    Jamoliddin Nasriddinov <jamolsoft@gmail.com>
+ * @copyright (c) 2022, Jamoliddin Nasriddinov
+ * @license   http://www.gnu.org/licenses/gpl-2.0.html  GNU General Public License, version 2
+ */
+
+.radio_button {
+    float: left !important;
+    margin: 0 25px 15px 0 !important;
+}
+
+textarea {
+    min-height: 180px;
+    resize: vertical !important;
+}
+
+.help-block {
+    clear: both !important;
+}
+
+.bootstrap select[multiple] {
+    width: auto !important;
+    height: auto !important;
+    min-width: 400px;
+    min-height: 120px;
+}
+
+.bootstrap .fixed-width-xl {
+    width: 250px !important;
+}
+
+.bootstrap .fixed-width-xl[multiple] {
+    width: auto !important;
+    height: auto !important;
+    min-width: 500px;
+    min-height: 300px;
+}
+
+.alert-link-icon:before {
+    content: "\f0c1" !important;
+    font-size: 30px !important;
+    top: 10px !important;
+}
+
+.number_field {
+    max-width: 267px;
+}
+
+.elegantal_hidden {
+    display: none;
+}
+
+.elegantal_panel a {
+    text-decoration: none !important;
+}
+
+.elegantal_panel_footer {
+    height: auto !important; 
+    min-height: 70px !important;
+}
+
+.elegantal_panel_footer>.btn, .elegantal_panel_footer>.btn-group {
+    margin: 5px 5px 10px 0px;
+}
+
+.elegantal_panel_footer .btn {
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 8px 10px;
+}
+
+.bx-wrapper .bx-pager.bx-default-pager a {
+    background: #666 !important;
+}
+
+.bx-wrapper .bx-pager.bx-default-pager a:hover, .bx-wrapper .bx-pager.bx-default-pager a.active {
+    background: #111 !important;
+}
+
+#module_form .input-group.fixed-width-lg {
+    width: auto !important;
+}
+
+div .btn-group .btn.btn-primary .caret {
+    border-top-color: #fff !important;
+}
+
+.elegantal_dropdown_menu {
+    min-width: 175px !important;
+}
+
+.elegantal_dropdown_menu a {
+    white-space: normal !important;
+    padding: 8px 10px !important;
+}
+
+.elegantal_dropdown_menu a {
+    text-transform: uppercase;
+}
+
+.elegantal_dropdown_menu.dropdown-menu>li>a:hover {
+    background-color: #dedede !important;
+    border-color: #cccccc !important;
+}
+
+.elegantal_dropdown_menu.dropdown-menu>li>a:focus,
+.elegantal_dropdown_menu.dropdown-menu>li>a:active {
+    background-color: #dedede !important;
+}
+
+.elegantal_home_list_btns {
+    padding: 20px 0;
+}
+
+.elegantal_home_list_btns .elegantal_home_list_btn {
+    display: block;
+    position: relative;
+    line-height: normal;
+    margin-bottom: 10px;
+    color: #555555;
+    text-decoration: none;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.elegantal_home_list_btns .elegantal_home_list_btn .btn_icon {
+    display: block;
+    position: relative;
+    background: #ffffff;
+    height: 100px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid #e1e1e1;
+    padding-top: 20px;
+    color: #555555;
+    margin-bottom: 5px;
+}
+
+.elegantal_home_list_btns .elegantal_home_list_btn .btn_icon .elegantal_version_num {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    color: #aaa;
+    font-size: 10px;
+}
+
+.elegantal_home_list_btns .elegantal_home_list_btn .btn_icon i {
+    font-size: 60px;
+}
+
+.elegantal_home_list_btns .elegantal_home_list_btn .btn_text {
+    text-transform: uppercase;
+}
+
+.elegantal_home_list_btns .elegantal_home_list_btn:hover, 
+.elegantal_home_list_btns .elegantal_home_list_btn:focus,
+.elegantal_home_list_btns .elegantal_home_list_btn:active {
+    text-decoration: none;
+    color: #333333;
+}
+
+.elegantal_home_list_btns .elegantal_home_list_btn:hover .btn_icon{
+    box-shadow: 0px 1px 3px #dddddd;
+    border-color: #d5d5d5;
+    color: #333333;
+}
+
+.elegantalBootstrapWrapper .popover.bottom>.arrow {
+    border-bottom-color: #999 !important;
+}
+
+.elegantalBootstrapWrapper table .popover {
+    min-width: 300px;
+    max-width: none !important;
+}
+
+.elegantalBootstrapWrapper .form-group .popover {
+    width: 99% !important;
+    max-width: none !important;
+}
+
+.elegantalBootstrapWrapper .form-group .popover ul{
+    list-style: none;
+    padding: 0;
+}
+
+.elegantal_shortcodes {
+    display: none;
+}
+
+.elegantal_shortcodes_wrapper h3 {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    line-height: 1 !important;
+    border: 0 !important;
+}
+
+.elegantal_shortcodes_list {
+    list-style: none;
+    margin-bottom: 10px !important;
+    padding: 0;
+    clear: both;
+}
+
+.elegantal_shortcodes_list li {
+    padding: 2px 0;
+    font-size: 14px;
+}
+
+.elegantal_shortcodes_list li span {
+    color: #00aff0;
+    cursor: pointer;
+}
+
+.elegantal_shortcodes_list li span:hover {
+    color: #0077a4;
+    cursor: pointer;
+    border-bottom: 1px solid #0077a4;
+}
+
+.elegantal_sortable_table tbody:after{
+    content: ' ';
+    display: block;
+    height: 55px;
+}
+
+.ui-sortable-helper {
+    display: table;
+    border: 1px solid #d5d5d5;
+    -moz-box-shadow: rgba(0,0,0,0.2) 0 0 6px;
+    -webkit-box-shadow: rgba(0,0,0,0.2) 0 0 6px;
+    box-shadow: rgba(0,0,0,0.2) 0 0 6px;
+}
+
+.ui-sortable-helper td {
+    border-color: #d5d5d5 !important;
+}
+
+.position_handle {
+    cursor: pointer;
+}
+
+.position_handle i {
+    color: #999;
+    padding-right: 5px;
+}
+
+.position_handle:hover i {
+    color: #666;
+}
+
+.process-icon-facebook:before{
+    content:""
+}
+.process-icon-twitter:before{
+    content:""
+}

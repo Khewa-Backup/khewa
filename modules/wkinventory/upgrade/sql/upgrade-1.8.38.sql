@@ -1,0 +1,1 @@
+ALTER TABLE `PREFIX_wkinventory` ADD `stock_zero` TINYINT(1) UNSIGNED NULL DEFAULT '0' AFTER `is_empty`;

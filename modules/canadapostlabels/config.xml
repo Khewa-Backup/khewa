@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>canadapostlabels</name>
+    <displayName><![CDATA[Canada Post: Rates, Bulk Labels, Returns, Tracking, Estimator]]></displayName>
+    <version><![CDATA[4.0.8]]></version>
+    <description><![CDATA[Offer real-time rates to customers, create bulk order labels in one click, allow customers to track their orders, and provide shipping quotes on the product and cart pages.]]></description>
+    <author><![CDATA[ZH Media]]></author>
+    <tab><![CDATA[shipping_logistics]]></tab>
+	<confirmUninstall><![CDATA[Are you sure you want to remove all your settings and data? Your carriers, boxes, addresses, shipments, manifests, carrier mappings, rate discounts, will all be deleted. Enable Save Info on Uninstall in the module to keep this data when uninstalling/reinstalling, or perform a database backup first.]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries>ca</limited_countries>
+</module>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>upc2isbn</name>
+    <displayName><![CDATA[Copy UPC values to isbn]]></displayName>
+    <version><![CDATA[1.0.0]]></version>
+    <description><![CDATA[Copy UPC values to isbn.]]></description>
+    <author><![CDATA[Leon&eacute; MusicReader B.V.]]></author>
+    <tab><![CDATA[other]]></tab>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

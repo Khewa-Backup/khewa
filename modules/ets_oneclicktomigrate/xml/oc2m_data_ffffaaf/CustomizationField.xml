@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<customization_field><id_customization_field><![CDATA[1]]></id_customization_field>
+<id_product><![CDATA[19]]></id_product>
+<type><![CDATA[1]]></type>
+<required><![CDATA[1]]></required>
+<is_module><![CDATA[0]]></is_module>
+<is_deleted><![CDATA[0]]></is_deleted>
+<datalanguage iso_code="en">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Type your text here]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Type your text here]]></name>
+</datalanguage>
+</customization_field>
+<customization_field><id_customization_field><![CDATA[6]]></id_customization_field>
+<id_product><![CDATA[1300]]></id_product>
+<type><![CDATA[1]]></type>
+<required><![CDATA[0]]></required>
+<is_module><![CDATA[0]]></is_module>
+<is_deleted><![CDATA[0]]></is_deleted>
+<datalanguage iso_code="en">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Friend Name]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Nom du bénéficiaire]]></name>
+</datalanguage>
+</customization_field>
+<customization_field><id_customization_field><![CDATA[7]]></id_customization_field>
+<id_product><![CDATA[1300]]></id_product>
+<type><![CDATA[1]]></type>
+<required><![CDATA[0]]></required>
+<is_module><![CDATA[0]]></is_module>
+<is_deleted><![CDATA[0]]></is_deleted>
+<datalanguage iso_code="en">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Email]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Courriel]]></name>
+</datalanguage>
+</customization_field>
+<customization_field><id_customization_field><![CDATA[8]]></id_customization_field>
+<id_product><![CDATA[1300]]></id_product>
+<type><![CDATA[1]]></type>
+<required><![CDATA[0]]></required>
+<is_module><![CDATA[0]]></is_module>
+<is_deleted><![CDATA[0]]></is_deleted>
+<datalanguage iso_code="en">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Email content]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Contenu du courriel]]></name>
+</datalanguage>
+</customization_field>
+<customization_field><id_customization_field><![CDATA[9]]></id_customization_field>
+<id_product><![CDATA[1300]]></id_product>
+<type><![CDATA[1]]></type>
+<required><![CDATA[0]]></required>
+<is_module><![CDATA[0]]></is_module>
+<is_deleted><![CDATA[0]]></is_deleted>
+<datalanguage iso_code="en">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Date of send]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Date d'envoi]]></name>
+</datalanguage>
+</customization_field>
+<customization_field><id_customization_field><![CDATA[10]]></id_customization_field>
+<id_product><![CDATA[1360]]></id_product>
+<type><![CDATA[1]]></type>
+<required><![CDATA[0]]></required>
+<is_module><![CDATA[0]]></is_module>
+<is_deleted><![CDATA[0]]></is_deleted>
+<datalanguage iso_code="en">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Friend Name]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Friend Name]]></name>
+</datalanguage>
+</customization_field>
+<customization_field><id_customization_field><![CDATA[11]]></id_customization_field>
+<id_product><![CDATA[1360]]></id_product>
+<type><![CDATA[1]]></type>
+<required><![CDATA[0]]></required>
+<is_module><![CDATA[0]]></is_module>
+<is_deleted><![CDATA[0]]></is_deleted>
+<datalanguage iso_code="en">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Email]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Email]]></name>
+</datalanguage>
+</customization_field>
+<customization_field><id_customization_field><![CDATA[12]]></id_customization_field>
+<id_product><![CDATA[1360]]></id_product>
+<type><![CDATA[1]]></type>
+<required><![CDATA[0]]></required>
+<is_module><![CDATA[0]]></is_module>
+<is_deleted><![CDATA[0]]></is_deleted>
+<datalanguage iso_code="en">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Email content]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Email content]]></name>
+</datalanguage>
+</customization_field>
+<customization_field><id_customization_field><![CDATA[13]]></id_customization_field>
+<id_product><![CDATA[1360]]></id_product>
+<type><![CDATA[1]]></type>
+<required><![CDATA[0]]></required>
+<is_module><![CDATA[0]]></is_module>
+<is_deleted><![CDATA[0]]></is_deleted>
+<datalanguage iso_code="en">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Date of send]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1">
+<id_shop><![CDATA[1]]></id_shop>
+<name><![CDATA[Date of send]]></name>
+</datalanguage>
+</customization_field>
+</entity_profile>

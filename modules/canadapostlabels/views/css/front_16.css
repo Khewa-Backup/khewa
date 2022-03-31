@@ -1,0 +1,126 @@
+/**
+ * 2019 ZH Media
+ *
+ * NOTICE OF LICENSE
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Do not resell or redistribute this file, either fully or partially.
+ * Do not remove this comment containing author information and copyright.
+ *
+ * @author    Zack Hussain <me@zackhussain.ca>
+ * @copyright 2019 ZH Media - All Rights Reserved
+ */
+
+.material-icons {
+    display: none;
+}
+
+#canadapost-product-rates.card {
+    padding: 0;
+}
+
+
+#order #canadapost-product-rates {
+    width: 50%;
+}
+
+@media screen and (max-width: 768px) {
+    #order #canadapost-product-rates {
+        width: 100%;
+    }
+}
+
+#order #canadapost-product-rates .product-information {
+    display: block;
+    border: 0;
+    padding-top: 0;
+    padding-bottom: 0.6rem;
+}
+
+#canadapost-product-rates #carrier-table {
+    padding: 0 1.8rem;
+}
+
+#canadapost-product-rates .update-address-container {
+    margin-bottom: 2rem;
+}
+
+#canadapost-product-rates .update-address-container .button {
+    height: 100%;
+    font-size: 12px;
+    text-align: center;
+}
+
+#canadapost-product-rates .product-information {
+    width: 100%;
+    padding: 2rem 1.8rem;
+    font-size: 16px;
+    color: #444;
+    border-bottom: 1px solid #dfdede;
+    border-top: 1px solid #dfdede;
+}
+
+#canadapost-product-rates > a:after {
+    content: "\f0d7";
+    font-family: "FontAwesome";
+    display: inline-block;
+    float: right;
+    font-size: 18px;
+    padding: 0;
+}
+
+#canadapost-product-rates > a:before {
+    content: "\f0d1";
+    font-family: "FontAwesome";
+    display: inline-block;
+    float: left;
+    font-size: 18px;
+    padding: 0 15px 0 0;
+}
+
+#canadapost-product-rates .carrier-list td {
+    font-size: 12px;
+    padding-top: .35rem;
+    padding-bottom: .35rem;
+}
+
+#canadapost-product-rates .carrier-list b {
+    color: #444;
+}
+
+#canadapost-product-rates .carrier-list .carrier-delay {
+    font-size: 11px;
+}
+
+#canadapost-product-rates .update-address-container select,
+#canadapost-product-rates .update-address-container input {
+    font-size: 12px;
+    height: 4rem;
+}
+
+.canadapost-tracking .icon-container:before {
+    content: "\f0d1";
+    font-family: "FontAwesome";
+    display: inline-block;
+    font-size: 36px;
+    padding: 0;
+    margin-top: 4rem;
+    color: #444;
+}
+
+.canadapost-tracking .tracking-details h3 {
+    color: #444;
+}
+
+.canadapost-tracking .tracking-details li {
+    font-size: 14px;
+    color: #555;
+}
+
+.canadapost-tracking .tracking-details li a {
+    text-decoration: underline;
+}
+
+.canadapost-tracking .progress-bar-labels li {
+    font-size: 1.8rem;
+}

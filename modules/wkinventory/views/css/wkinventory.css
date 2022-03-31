@@ -1,0 +1,280 @@
+#module_form #fieldset_0 .control-label {
+	display:none;
+}
+#module_form #fieldset_0 .col-lg-9 {
+	width:100% !Important;
+}
+#form-wkinventory_product td.right, #form-wkinventory_product th.right, #form-wkinventory_product td.right > input {
+	text-align: right;
+}
+#form-wkinventory_product .real_quantity, #form-wkinventory_product .stock_difference input {
+	max-width: 100px;
+	text-align:center;
+}
+#form-wkinventory_product .panel-footer {
+	display:none
+}
+.wkinventory_product, #wkinventory_panel_form_scan, #wkinventory_form {
+	font-family:"Ubuntu Condensed", Helvetica, Arial, sans-serif;
+	font-size:14px!Important;
+}
+#wkinventory_panel_form_scan .btn, #wkinventory_form .btn {
+	font-size:13px!Important;
+}
+.wkinventory_product td, .wkinventory_product th {
+	font-size:14px!Important;
+}
+.wkinventory_product tbody td:nth-child(4), .wkinventory_product thead th:nth-child(4) {
+	width:300px !Important;
+	word-wrap: break-word!Important;
+	white-space: normal !Important;
+}
+.wkinventory_product tbody .shop_quantity {
+	background-color: #F7F7F7 !Important;
+	font-weight:bold;
+}
+.grey-desc {
+	color:#999;
+	font-style:italic;
+	font-size:13px
+}
+.toolbarBox .process-icon-configure {
+	background-image: url('../img/conf.png');
+}
+.barCodeGenerator .col-lg-3 {
+	width:24%!Important;
+	margin-right:5px;
+	box-sizing: border-box!Important;
+	-moz-box-sizing: border-box!Important;
+	-webkit-box-sizing: border-box!Important;
+}
+/*
+* dashborad
+*/
+#btn_panel {
+	display:block;
+	text-align:left;
+	background-color: #666;
+	color:white;
+	font-size:12px;
+	padding:10px;
+	margin-bottom:10px;
+	text-decoration:none;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	min-height:57px;
+	text-transform:uppercase
+}
+#btn_panel {
+	float:left;
+	width:100%;
+	margin-right:5px;
+	text-align:center;
+}
+#btn_panel:hover {
+	background-color:#333;
+}
+/*******************************/
+#products_found {
+	display:none;
+	border:1px solid #ddd;
+	background-color:#f5f6f6;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	padding-top:15px;
+	padding-left:10px;
+	padding-right:10px;
+}
+#product_list .control-label, #attributes_list .control-label, #warehouses_list .control-label {
+	text-align:left!Important;
+}
+#product_list .col-lg-3, #attributes_list .col-lg-3, #warehouses_list .col-lg-3 {
+	width:9%;
+}
+.addInventoryProduct-disabled {
+	cursor:not-allowed;
+	opacity:0.5;
+	filter:alpha(opacity=50);
+	-webkit-box-shadow:none;
+	box-shadow:none;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+	pointer-events:none;
+}
+.panel-all, .panel-empty {
+	font-family:"Ubuntu Condensed", Helvetica, Arial, sans-serif;
+	font-size:14px!Important;
+}
+.red {
+	color:#F00;
+	font-weight:bold
+}
+.panel-all .btn-primary, .panel-empty .btn-primary {
+	font-family: "Open Sans", Helvetica, Arial, sans-serif;
+	font-size:13px!Important;
+	text-transform:uppercase;
+	font-weight:bold!Important;
+}
+.bootstrap .table tbody>tr.hasError>td {
+	background-color:#fac8c8!Important;
+}
+/*
+* Rating bloc
+*/
+.note div.ui-corner-all {
+	background-image: url(../img/star.png), url(../img/star.png);
+	background-position: 1% center, 99% center;
+	background-repeat: no-repeat;
+}
+.note p.dismiss {
+	font-size:10px;
+}
+.dismiss a:link, .dismiss a:visited {
+	color:#2eacce
+}
+/*********/
+
+.left-free-block {
+	width:100%;
+	border-left:1px solid #999;
+	border-right:1px solid #999;
+	border-bottom:1px solid #999;
+	border-top:none;
+	background-color: #b0b0b0;
+	-moz-border-radius-bottomleft: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-khtml-border-bottom-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-khtml-border-bottom-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	color:#FFF;
+	padding: 5px;
+	margin-top:0;
+	text-transform:uppercase;
+	font-family:"Ubuntu Condensed", Helvetica, Arial, sans-serif;
+	font-size:0.95em;
+	text-shadow: 0 1px black;
+	font-weight: normal;
+	letter-spacing:1px;
+}
+.bootstrap .page-head .toolbarBox .btn-toolbar .btn-help {
+	display:none
+}
+#openmsgbox {
+	font-size:12px!important;
+}
+.adminstocktake .bootstrap .page-head .toolbarBox .btn-toolbar .toolbar_btn {
+	white-space: normal!important;
+	line-height:15px!important;
+}
+.adminstocktake .bootstrap .page-head .toolbarBox .btn-toolbar li #page-header-desc-wkinventory_product-update_sold_qties {
+	width:140px;
+}
+.adminstocktake .bootstrap .page-head .toolbarBox .btn-toolbar li #page-header-desc-wkinventory_product-update_end_inv {
+	width:132px;
+	font-weight:bold!important;
+}
+/* 
+ * CSS FOR POPUP TO EDIT LOCATIONS
+ */
+.div-location {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9998;
+    background: rgba(0,0,0, 0.3);
+	display:none;
+}
+.form-location, .dialog-notice {
+    position: absolute;
+    z-index: 9999;
+    background: #FFFFFF;
+    padding: 10px;
+    min-width: 600px;
+	display:none;
+}
+.dialog-notice .panel-heading {
+    font-size: 14px;
+    color: #4B91C9;
+    text-transform: uppercase;
+    padding: 0!important;
+    margin-bottom: 0!important;
+}
+.close-form-location {
+	margin-bottom:5px!Important;
+	right: -10px!Important;
+	position:absolute;
+	top:-10px;
+	z-index:9999
+}
+.AdminStocktake .form-wrapper {
+	padding-top:10px!Important;
+}
+/*#wkinventory_panel_form_scan {
+	width:100%;
+	height:300px;
+	padding:0;
+	margin:0;
+	position:fixed;
+	z-index:499;
+	left:0;
+	border-bottom:#DFDFDF 1px solid;
+	top:140px
+}
+#form-wkinventory_product {
+	margin: 300px auto 0;
+}*/
+#inventoried_product {
+	margin-top:2px;
+}
+#wkinventory_panel_form_scan .alert {
+	margin-bottom:0;
+}
+.dialog-notice {
+	width: 680px;
+}
+.adminstocktakelogs .bootstrap .badge {
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	margin-bottom:1px
+}
+#desc-wkinventory_product-save {
+	display:none;
+}
+.bootstrap .badge {
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	margin-bottom:2px;
+}
+.bootstrap .table>tbody>tr.success>td {
+	background-color:#f4f8fb!Important;
+}
+.bootstrap .table>tbody>tr.info>td {
+	background-color:#d3f1f7;
+}
+.bootstrap .table>tbody>tr.warning>td {
+	background-color:#fef1d3;
+}
+#page-header-desc-wkinventory_product-update_end_inv {
+	text-transform:uppercase;
+	font-size:12px
+}
+@media (max-width: 992px) {
+	/* Hide the filter bar */
+	#form-wkinventory_product thead .filter, #form-wkinventory_product thead tr:first-child {
+		display:none;
+	}
+	.wkinventory_product tbody td:nth-child(4), .wkinventory_product thead th:nth-child(4) {
+		width: auto!Important;
+	}
+}

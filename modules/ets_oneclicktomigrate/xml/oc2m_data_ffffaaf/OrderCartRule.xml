@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<order_cart_rule><id_order_cart_rule><![CDATA[1]]></id_order_cart_rule>
+<id_order><![CDATA[55]]></id_order>
+<id_cart_rule><![CDATA[6]]></id_cart_rule>
+<id_order_invoice><![CDATA[50]]></id_order_invoice>
+<name><![CDATA[The gift card]]></name>
+<value><![CDATA[13.22]]></value>
+<value_tax_excl><![CDATA[11.50]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[2]]></id_order_cart_rule>
+<id_order><![CDATA[62]]></id_order>
+<id_cart_rule><![CDATA[8]]></id_cart_rule>
+<id_order_invoice><![CDATA[57]]></id_order_invoice>
+<name><![CDATA[The gift card]]></name>
+<value><![CDATA[6.32]]></value>
+<value_tax_excl><![CDATA[5.50]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[3]]></id_order_cart_rule>
+<id_order><![CDATA[84]]></id_order>
+<id_cart_rule><![CDATA[17]]></id_cart_rule>
+<id_order_invoice><![CDATA[79]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[13.22]]></value>
+<value_tax_excl><![CDATA[11.50]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[4]]></id_order_cart_rule>
+<id_order><![CDATA[85]]></id_order>
+<id_cart_rule><![CDATA[3]]></id_cart_rule>
+<id_order_invoice><![CDATA[80]]></id_order_invoice>
+<name><![CDATA[GIFTCARD_1]]></name>
+<value><![CDATA[17.23]]></value>
+<value_tax_excl><![CDATA[14.99]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[5]]></id_order_cart_rule>
+<id_order><![CDATA[95]]></id_order>
+<id_cart_rule><![CDATA[23]]></id_cart_rule>
+<id_order_invoice><![CDATA[0]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[19.55]]></value>
+<value_tax_excl><![CDATA[17.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[6]]></id_order_cart_rule>
+<id_order><![CDATA[133]]></id_order>
+<id_cart_rule><![CDATA[29]]></id_cart_rule>
+<id_order_invoice><![CDATA[127]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[1.15]]></value>
+<value_tax_excl><![CDATA[1.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[7]]></id_order_cart_rule>
+<id_order><![CDATA[137]]></id_order>
+<id_cart_rule><![CDATA[41]]></id_cart_rule>
+<id_order_invoice><![CDATA[131]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[25.78]]></value>
+<value_tax_excl><![CDATA[22.42]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[8]]></id_order_cart_rule>
+<id_order><![CDATA[142]]></id_order>
+<id_cart_rule><![CDATA[51]]></id_cart_rule>
+<id_order_invoice><![CDATA[136]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[40.02]]></value>
+<value_tax_excl><![CDATA[34.80]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[9]]></id_order_cart_rule>
+<id_order><![CDATA[376]]></id_order>
+<id_cart_rule><![CDATA[56]]></id_cart_rule>
+<id_order_invoice><![CDATA[370]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[32.19]]></value>
+<value_tax_excl><![CDATA[28.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[10]]></id_order_cart_rule>
+<id_order><![CDATA[620]]></id_order>
+<id_cart_rule><![CDATA[59]]></id_cart_rule>
+<id_order_invoice><![CDATA[614]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[4.14]]></value>
+<value_tax_excl><![CDATA[3.60]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[11]]></id_order_cart_rule>
+<id_order><![CDATA[723]]></id_order>
+<id_cart_rule><![CDATA[19]]></id_cart_rule>
+<id_order_invoice><![CDATA[717]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[22.15]]></value>
+<value_tax_excl><![CDATA[19.27]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[12]]></id_order_cart_rule>
+<id_order><![CDATA[767]]></id_order>
+<id_cart_rule><![CDATA[61]]></id_cart_rule>
+<id_order_invoice><![CDATA[760]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[6.32]]></value>
+<value_tax_excl><![CDATA[5.50]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[13]]></id_order_cart_rule>
+<id_order><![CDATA[769]]></id_order>
+<id_cart_rule><![CDATA[62]]></id_cart_rule>
+<id_order_invoice><![CDATA[762]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[28.75]]></value>
+<value_tax_excl><![CDATA[25.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[14]]></id_order_cart_rule>
+<id_order><![CDATA[959]]></id_order>
+<id_cart_rule><![CDATA[63]]></id_cart_rule>
+<id_order_invoice><![CDATA[952]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[28.75]]></value>
+<value_tax_excl><![CDATA[25.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[15]]></id_order_cart_rule>
+<id_order><![CDATA[1102]]></id_order>
+<id_cart_rule><![CDATA[64]]></id_cart_rule>
+<id_order_invoice><![CDATA[1095]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[0.95]]></value>
+<value_tax_excl><![CDATA[0.83]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[16]]></id_order_cart_rule>
+<id_order><![CDATA[1103]]></id_order>
+<id_cart_rule><![CDATA[65]]></id_cart_rule>
+<id_order_invoice><![CDATA[1096]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[3.11]]></value>
+<value_tax_excl><![CDATA[2.70]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[17]]></id_order_cart_rule>
+<id_order><![CDATA[1136]]></id_order>
+<id_cart_rule><![CDATA[66]]></id_cart_rule>
+<id_order_invoice><![CDATA[1129]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[4.05]]></value>
+<value_tax_excl><![CDATA[3.53]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[18]]></id_order_cart_rule>
+<id_order><![CDATA[1228]]></id_order>
+<id_cart_rule><![CDATA[67]]></id_cart_rule>
+<id_order_invoice><![CDATA[1220]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[8.19]]></value>
+<value_tax_excl><![CDATA[7.13]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[19]]></id_order_cart_rule>
+<id_order><![CDATA[1308]]></id_order>
+<id_cart_rule><![CDATA[30]]></id_cart_rule>
+<id_order_invoice><![CDATA[1300]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[1.32]]></value>
+<value_tax_excl><![CDATA[1.15]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[20]]></id_order_cart_rule>
+<id_order><![CDATA[1319]]></id_order>
+<id_cart_rule><![CDATA[68]]></id_cart_rule>
+<id_order_invoice><![CDATA[1311]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[2.07]]></value>
+<value_tax_excl><![CDATA[1.80]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[21]]></id_order_cart_rule>
+<id_order><![CDATA[1423]]></id_order>
+<id_cart_rule><![CDATA[69]]></id_cart_rule>
+<id_order_invoice><![CDATA[1415]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[2.59]]></value>
+<value_tax_excl><![CDATA[2.25]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[22]]></id_order_cart_rule>
+<id_order><![CDATA[1488]]></id_order>
+<id_cart_rule><![CDATA[70]]></id_cart_rule>
+<id_order_invoice><![CDATA[1480]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[6.32]]></value>
+<value_tax_excl><![CDATA[5.50]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[23]]></id_order_cart_rule>
+<id_order><![CDATA[1529]]></id_order>
+<id_cart_rule><![CDATA[72]]></id_cart_rule>
+<id_order_invoice><![CDATA[1521]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[29.87]]></value>
+<value_tax_excl><![CDATA[25.98]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[24]]></id_order_cart_rule>
+<id_order><![CDATA[1563]]></id_order>
+<id_cart_rule><![CDATA[60]]></id_cart_rule>
+<id_order_invoice><![CDATA[1555]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[137.97]]></value>
+<value_tax_excl><![CDATA[120.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[25]]></id_order_cart_rule>
+<id_order><![CDATA[1692]]></id_order>
+<id_cart_rule><![CDATA[74]]></id_cart_rule>
+<id_order_invoice><![CDATA[1684]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[44.96]]></value>
+<value_tax_excl><![CDATA[39.10]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[26]]></id_order_cart_rule>
+<id_order><![CDATA[1710]]></id_order>
+<id_cart_rule><![CDATA[75]]></id_cart_rule>
+<id_order_invoice><![CDATA[1702]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[70.19]]></value>
+<value_tax_excl><![CDATA[61.05]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[27]]></id_order_cart_rule>
+<id_order><![CDATA[1727]]></id_order>
+<id_cart_rule><![CDATA[76]]></id_cart_rule>
+<id_order_invoice><![CDATA[1719]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[37.57]]></value>
+<value_tax_excl><![CDATA[32.68]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[28]]></id_order_cart_rule>
+<id_order><![CDATA[1817]]></id_order>
+<id_cart_rule><![CDATA[32]]></id_cart_rule>
+<id_order_invoice><![CDATA[1809]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[4.14]]></value>
+<value_tax_excl><![CDATA[3.60]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[29]]></id_order_cart_rule>
+<id_order><![CDATA[1901]]></id_order>
+<id_cart_rule><![CDATA[80]]></id_cart_rule>
+<id_order_invoice><![CDATA[1893]]></id_order_invoice>
+<name><![CDATA[Discount Ranya Sheriff]]></name>
+<value><![CDATA[56.50]]></value>
+<value_tax_excl><![CDATA[50.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[30]]></id_order_cart_rule>
+<id_order><![CDATA[1946]]></id_order>
+<id_cart_rule><![CDATA[94]]></id_cart_rule>
+<id_order_invoice><![CDATA[1938]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[27.85]]></value>
+<value_tax_excl><![CDATA[24.23]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[31]]></id_order_cart_rule>
+<id_order><![CDATA[1958]]></id_order>
+<id_cart_rule><![CDATA[83]]></id_cart_rule>
+<id_order_invoice><![CDATA[1950]]></id_order_invoice>
+<name><![CDATA[Émilie Éthier]]></name>
+<value><![CDATA[28.74]]></value>
+<value_tax_excl><![CDATA[25.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[32]]></id_order_cart_rule>
+<id_order><![CDATA[1960]]></id_order>
+<id_cart_rule><![CDATA[89]]></id_cart_rule>
+<id_order_invoice><![CDATA[1952]]></id_order_invoice>
+<name><![CDATA[François Clément]]></name>
+<value><![CDATA[28.74]]></value>
+<value_tax_excl><![CDATA[25.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[33]]></id_order_cart_rule>
+<id_order><![CDATA[1971]]></id_order>
+<id_cart_rule><![CDATA[33]]></id_cart_rule>
+<id_order_invoice><![CDATA[1963]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[1.32]]></value>
+<value_tax_excl><![CDATA[1.15]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[34]]></id_order_cart_rule>
+<id_order><![CDATA[1988]]></id_order>
+<id_cart_rule><![CDATA[93]]></id_cart_rule>
+<id_order_invoice><![CDATA[1980]]></id_order_invoice>
+<name><![CDATA[customer discount]]></name>
+<value><![CDATA[25.35]]></value>
+<value_tax_excl><![CDATA[22.05]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[35]]></id_order_cart_rule>
+<id_order><![CDATA[2040]]></id_order>
+<id_cart_rule><![CDATA[100]]></id_cart_rule>
+<id_order_invoice><![CDATA[2032]]></id_order_invoice>
+<name><![CDATA[15_discount]]></name>
+<value><![CDATA[79.16]]></value>
+<value_tax_excl><![CDATA[70.05]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[36]]></id_order_cart_rule>
+<id_order><![CDATA[2047]]></id_order>
+<id_cart_rule><![CDATA[101]]></id_cart_rule>
+<id_order_invoice><![CDATA[2039]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[4.17]]></value>
+<value_tax_excl><![CDATA[3.63]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[37]]></id_order_cart_rule>
+<id_order><![CDATA[2095]]></id_order>
+<id_cart_rule><![CDATA[103]]></id_cart_rule>
+<id_order_invoice><![CDATA[2087]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[14.66]]></value>
+<value_tax_excl><![CDATA[12.75]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[38]]></id_order_cart_rule>
+<id_order><![CDATA[2207]]></id_order>
+<id_cart_rule><![CDATA[147]]></id_cart_rule>
+<id_order_invoice><![CDATA[2199]]></id_order_invoice>
+<name><![CDATA[Gift Certificate]]></name>
+<value><![CDATA[17.25]]></value>
+<value_tax_excl><![CDATA[15.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[39]]></id_order_cart_rule>
+<id_order><![CDATA[2207]]></id_order>
+<id_cart_rule><![CDATA[149]]></id_cart_rule>
+<id_order_invoice><![CDATA[2199]]></id_order_invoice>
+<name><![CDATA[Gift Certificate]]></name>
+<value><![CDATA[17.25]]></value>
+<value_tax_excl><![CDATA[15.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[40]]></id_order_cart_rule>
+<id_order><![CDATA[2207]]></id_order>
+<id_cart_rule><![CDATA[151]]></id_cart_rule>
+<id_order_invoice><![CDATA[2199]]></id_order_invoice>
+<name><![CDATA[Gift Certificate]]></name>
+<value><![CDATA[17.25]]></value>
+<value_tax_excl><![CDATA[15.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[41]]></id_order_cart_rule>
+<id_order><![CDATA[2207]]></id_order>
+<id_cart_rule><![CDATA[153]]></id_cart_rule>
+<id_order_invoice><![CDATA[2199]]></id_order_invoice>
+<name><![CDATA[Gift Certificate]]></name>
+<value><![CDATA[16.67]]></value>
+<value_tax_excl><![CDATA[14.50]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[42]]></id_order_cart_rule>
+<id_order><![CDATA[2252]]></id_order>
+<id_cart_rule><![CDATA[179]]></id_cart_rule>
+<id_order_invoice><![CDATA[2244]]></id_order_invoice>
+<name><![CDATA[Gift Certificate]]></name>
+<value><![CDATA[17.25]]></value>
+<value_tax_excl><![CDATA[15.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[43]]></id_order_cart_rule>
+<id_order><![CDATA[2268]]></id_order>
+<id_cart_rule><![CDATA[283]]></id_cart_rule>
+<id_order_invoice><![CDATA[2260]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[85.94]]></value>
+<value_tax_excl><![CDATA[74.73]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[44]]></id_order_cart_rule>
+<id_order><![CDATA[2274]]></id_order>
+<id_cart_rule><![CDATA[82]]></id_cart_rule>
+<id_order_invoice><![CDATA[2266]]></id_order_invoice>
+<name><![CDATA[Élyse Boileau]]></name>
+<value><![CDATA[28.74]]></value>
+<value_tax_excl><![CDATA[25.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[45]]></id_order_cart_rule>
+<id_order><![CDATA[2363]]></id_order>
+<id_cart_rule><![CDATA[276]]></id_cart_rule>
+<id_order_invoice><![CDATA[2355]]></id_order_invoice>
+<name><![CDATA[Khewa gift]]></name>
+<value><![CDATA[10.00]]></value>
+<value_tax_excl><![CDATA[10.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[46]]></id_order_cart_rule>
+<id_order><![CDATA[2367]]></id_order>
+<id_cart_rule><![CDATA[284]]></id_cart_rule>
+<id_order_invoice><![CDATA[2359]]></id_order_invoice>
+<name><![CDATA[The gift card]]></name>
+<value><![CDATA[28.74]]></value>
+<value_tax_excl><![CDATA[25.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[47]]></id_order_cart_rule>
+<id_order><![CDATA[2379]]></id_order>
+<id_cart_rule><![CDATA[286]]></id_cart_rule>
+<id_order_invoice><![CDATA[2371]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[10.06]]></value>
+<value_tax_excl><![CDATA[8.75]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[48]]></id_order_cart_rule>
+<id_order><![CDATA[2427]]></id_order>
+<id_cart_rule><![CDATA[287]]></id_cart_rule>
+<id_order_invoice><![CDATA[2419]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[17.94]]></value>
+<value_tax_excl><![CDATA[15.60]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[49]]></id_order_cart_rule>
+<id_order><![CDATA[2448]]></id_order>
+<id_cart_rule><![CDATA[257]]></id_cart_rule>
+<id_order_invoice><![CDATA[2440]]></id_order_invoice>
+<name><![CDATA[Gift Certificate]]></name>
+<value><![CDATA[57.50]]></value>
+<value_tax_excl><![CDATA[50.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[50]]></id_order_cart_rule>
+<id_order><![CDATA[2448]]></id_order>
+<id_cart_rule><![CDATA[258]]></id_cart_rule>
+<id_order_invoice><![CDATA[2440]]></id_order_invoice>
+<name><![CDATA[Gift Certificate]]></name>
+<value><![CDATA[57.50]]></value>
+<value_tax_excl><![CDATA[50.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[51]]></id_order_cart_rule>
+<id_order><![CDATA[2448]]></id_order>
+<id_cart_rule><![CDATA[259]]></id_cart_rule>
+<id_order_invoice><![CDATA[2440]]></id_order_invoice>
+<name><![CDATA[Gift Certificate]]></name>
+<value><![CDATA[57.50]]></value>
+<value_tax_excl><![CDATA[50.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[52]]></id_order_cart_rule>
+<id_order><![CDATA[2468]]></id_order>
+<id_cart_rule><![CDATA[254]]></id_cart_rule>
+<id_order_invoice><![CDATA[2460]]></id_order_invoice>
+<name><![CDATA[Gift Certificate]]></name>
+<value><![CDATA[50.00]]></value>
+<value_tax_excl><![CDATA[50.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[53]]></id_order_cart_rule>
+<id_order><![CDATA[2475]]></id_order>
+<id_cart_rule><![CDATA[290]]></id_cart_rule>
+<id_order_invoice><![CDATA[2467]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[20.35]]></value>
+<value_tax_excl><![CDATA[17.70]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[54]]></id_order_cart_rule>
+<id_order><![CDATA[2517]]></id_order>
+<id_cart_rule><![CDATA[291]]></id_cart_rule>
+<id_order_invoice><![CDATA[2509]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[54.61]]></value>
+<value_tax_excl><![CDATA[47.50]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[55]]></id_order_cart_rule>
+<id_order><![CDATA[2544]]></id_order>
+<id_cart_rule><![CDATA[292]]></id_cart_rule>
+<id_order_invoice><![CDATA[2536]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[104.40]]></value>
+<value_tax_excl><![CDATA[90.80]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[56]]></id_order_cart_rule>
+<id_order><![CDATA[2550]]></id_order>
+<id_cart_rule><![CDATA[293]]></id_cart_rule>
+<id_order_invoice><![CDATA[2542]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[0.95]]></value>
+<value_tax_excl><![CDATA[0.83]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[57]]></id_order_cart_rule>
+<id_order><![CDATA[2561]]></id_order>
+<id_cart_rule><![CDATA[294]]></id_cart_rule>
+<id_order_invoice><![CDATA[2553]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[28.75]]></value>
+<value_tax_excl><![CDATA[25.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[58]]></id_order_cart_rule>
+<id_order><![CDATA[2577]]></id_order>
+<id_cart_rule><![CDATA[295]]></id_cart_rule>
+<id_order_invoice><![CDATA[2569]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[451.30]]></value>
+<value_tax_excl><![CDATA[392.50]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[59]]></id_order_cart_rule>
+<id_order><![CDATA[2610]]></id_order>
+<id_cart_rule><![CDATA[296]]></id_cart_rule>
+<id_order_invoice><![CDATA[2602]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[14.95]]></value>
+<value_tax_excl><![CDATA[13.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[60]]></id_order_cart_rule>
+<id_order><![CDATA[2644]]></id_order>
+<id_cart_rule><![CDATA[146]]></id_cart_rule>
+<id_order_invoice><![CDATA[2636]]></id_order_invoice>
+<name><![CDATA[Congratulations]]></name>
+<value><![CDATA[56.50]]></value>
+<value_tax_excl><![CDATA[50.00]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[61]]></id_order_cart_rule>
+<id_order><![CDATA[2647]]></id_order>
+<id_cart_rule><![CDATA[297]]></id_cart_rule>
+<id_order_invoice><![CDATA[2639]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[130.61]]></value>
+<value_tax_excl><![CDATA[113.60]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[62]]></id_order_cart_rule>
+<id_order><![CDATA[2649]]></id_order>
+<id_cart_rule><![CDATA[298]]></id_cart_rule>
+<id_order_invoice><![CDATA[2641]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[2.07]]></value>
+<value_tax_excl><![CDATA[1.80]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[63]]></id_order_cart_rule>
+<id_order><![CDATA[2670]]></id_order>
+<id_cart_rule><![CDATA[299]]></id_cart_rule>
+<id_order_invoice><![CDATA[2662]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[0.99]]></value>
+<value_tax_excl><![CDATA[0.86]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[64]]></id_order_cart_rule>
+<id_order><![CDATA[2778]]></id_order>
+<id_cart_rule><![CDATA[300]]></id_cart_rule>
+<id_order_invoice><![CDATA[0]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[30.81]]></value>
+<value_tax_excl><![CDATA[26.80]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+<order_cart_rule><id_order_cart_rule><![CDATA[65]]></id_order_cart_rule>
+<id_order><![CDATA[2784]]></id_order>
+<id_cart_rule><![CDATA[301]]></id_cart_rule>
+<id_order_invoice><![CDATA[2774]]></id_order_invoice>
+<name><![CDATA[Point of Sale]]></name>
+<value><![CDATA[30.81]]></value>
+<value_tax_excl><![CDATA[26.80]]></value_tax_excl>
+<free_shipping><![CDATA[0]]></free_shipping>
+</order_cart_rule>
+</entity_profile>

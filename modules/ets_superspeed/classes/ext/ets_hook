@@ -1,0 +1,529 @@
+<?php
+/**
+ * 2007-2020 ETS-Soft
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is not open source! Each license that you purchased is only available for 1 wesite only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
+ * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
+ * 
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please contact us for extra customization service at an affordable price
+ *
+ *  @author ETS-Soft <etssoft.jsc@gmail.com>
+ *  @copyright  2007-2021 ETS-Soft
+ *  @license    Valid for 1 website (or project) for each purchase of license
+ *  International Registered Trademark & Property of ETS-Soft
+ */
+
+class Ets_Hook
+{  
+    protected static $deprecated_hooks = array(
+        // Back office
+        'backOfficeFooter' => array('from' => '1.7.0.0'),
+        'displayBackOfficeFooter' => array('from' => '1.7.0.0'),
+
+        // Shipping step
+        'displayCarrierList' => array('from' => '1.7.0.0'),
+        'extraCarrier' => array('from' => '1.7.0.0'),
+
+        // Payment step
+        'hookBackBeforePayment' => array('from' => '1.7.0.0'),
+        'hookDisplayBeforePayment' => array('from' => '1.7.0.0'),
+        'hookOverrideTOSDisplay' => array('from' => '1.7.0.0'),
+
+        // Product page
+        'displayProductTabContent' => array('from' => '1.7.0.0'),
+        'displayProductTab' => array('from' => '1.7.0.0'),
+    );
+    public static function exec16($hook_name, $hook_args = array(), $id_module = null, $array_return = false, $check_exceptions = true,
+                                $use_push = false, $id_shop = null)
+    {
+        if (defined('PS_INSTALLATION_IN_PROGRESS')) {
+            return;
+        }
+        if(Tools::isSubmit('ajax')) {
+            $ajax=true;
+        }
+        else
+            $ajax=false;
+        if(self::_checkPageCache()&& !$ajax)
+            return HookCore::exec($hook_name,$hook_args,$id_module,$array_return,$check_exceptions,$use_push,$id_shop);
+        $controller_page = Tools::getValue('controller');
+        $page_cache = Configuration::get('ETS_SPEED_ENABLE_PAGE_CACHE') && Configuration::get('ETS_SPEED_PAGES_TO_CACHE') && $controller_page && Validate::isControllerName($controller_page) &&  in_array($controller_page,explode(',',Configuration::get('ETS_SPEED_PAGES_TO_CACHE'))); 
+        $controller = Context::getContext()->controller;
+        if(!isset($controller->controller_type) || ($controller->controller_type!='modulefront' && $controller->controller_type!='front'))
+            return HookCore::exec($hook_name,$hook_args,$id_module,$array_return,$check_exceptions,$use_push,$id_shop);
+        static $disable_non_native_modules = null;
+        if ($disable_non_native_modules === null) {
+            $disable_non_native_modules = (bool)Configuration::get('PS_DISABLE_NON_NATIVE_MODULE');
+        }
+        if (($id_module && !is_numeric($id_module)) || !Validate::isHookName($hook_name)) {
+            throw new PrestaShopException('Invalid id_module or hook_name');
+        }
+        if (!$module_list = Hook::getHookModuleExecList($hook_name)) {
+            return '';
+        }
+        if (!$id_hook = Hook::getIdByName($hook_name)) {
+            return false;
+        }
+        Hook::$executed_hooks[$id_hook] = $hook_name;
+        $live_edit = false;
+        $context = Context::getContext();
+        if (!isset($hook_args['cookie']) || !$hook_args['cookie']) {
+            $hook_args['cookie'] = $context->cookie;
+        }
+        if (!isset($hook_args['cart']) || !$hook_args['cart']) {
+            $hook_args['cart'] = $context->cart;
+        }
+        $retro_hook_name = Hook::getRetroHookName($hook_name);
+        $altern = 0;
+        if ($array_return) {
+            $output = array();
+        } else {
+            $output = '';
+        }
+        if ($disable_non_native_modules && !isset(Hook::$native_module)) {
+            Hook::$native_module = Module::getNativeModuleList();
+        }
+        $different_shop = false;
+        if ($id_shop !== null && Validate::isUnsignedId($id_shop) && $id_shop != $context->shop->getContextShopID()) {
+            $old_context = $context->shop->getContext();
+            $old_shop = clone $context->shop;
+            $shop = new Shop((int)$id_shop);
+            if (Validate::isLoadedObject($shop)) {
+                $context->shop = $shop;
+                $context->shop->setContext(Shop::CONTEXT_SHOP, $shop->id);
+                $different_shop = true;
+            }
+        }
+        foreach ($module_list as $array) {
+            if ($id_module && $id_module != $array['id_module']) {
+                continue;
+            }
+            if ((bool)$disable_non_native_modules && Hook::$native_module && count(Hook::$native_module) && !in_array($array['module'], Hook::$native_module)) {
+                continue;
+            }
+            if ($check_exceptions) {
+                $exceptions = Module::getExceptionsStatic($array['id_module'], $array['id_hook']);
+                $controller = Dispatcher::getInstance()->getController();
+                $controller_obj = Context::getContext()->controller;
+                if (isset($controller_obj->module) && Validate::isLoadedObject($controller_obj->module)) {
+                    $controller = 'module-'.$controller_obj->module->name.'-'.$controller;
+                }
+                if (in_array($controller, $exceptions)) {
+                    continue;
+                }
+                $matching_name = array(
+                    'authentication' => 'auth',
+                    'productscomparison' => 'compare'
+                );
+                if (isset($matching_name[$controller]) && in_array($matching_name[$controller], $exceptions)) {
+                    continue;
+                }
+                if (Validate::isLoadedObject($context->employee) && !Module::getPermissionStatic($array['id_module'], 'view', $context->employee)) {
+                    continue;
+                }
+            }
+            if (!($moduleInstance = Module::getInstanceByName($array['module']))) {
+                continue;
+            }
+            if ($use_push && !$moduleInstance->allow_push) {
+                continue;
+            }
+            $dynamicHook=Ets_superspeed::getDynamicHookModule($array['id_module'],$hook_name);
+            $time_start = microtime(true);
+            if($dynamicHook && !$array_return && $page_cache && !$ajax)
+            {
+                $output .='<div id="ets_speed_dy_'.$array['id_module'].$hook_name.'" data-moudule="'.$array['id_module'].'" data-hook="'.$hook_name.'" class="ets_speed_dynamic_hook">';
+            }
+            if (!$dynamicHook || ($dynamicHook && !$dynamicHook['empty_content']) || !$page_cache || $ajax)
+            {
+                $hook_callable = is_callable(array($moduleInstance, 'hook'.$hook_name));
+                $hook_retro_callable = is_callable(array($moduleInstance, 'hook'.$retro_hook_name));
+                if (($hook_callable || $hook_retro_callable) && Module::preCall($moduleInstance->name)) {
+                    $hook_args['altern'] = ++$altern;
+                    if ($use_push && isset($moduleInstance->push_filename) && file_exists($moduleInstance->push_filename)) {
+                        Tools::waitUntilFileIsModified($moduleInstance->push_filename, $moduleInstance->push_time_limit);
+                    }
+                    if(method_exists('Hook','coreCallHook'))
+                    {
+                        if ($hook_callable) {
+                            $display = Hook::coreCallHook($moduleInstance, 'hook'.$hook_name, $hook_args);
+                        } elseif ($hook_retro_callable) {
+                            $display = Hook::coreCallHook($moduleInstance, 'hook'.$retro_hook_name, $hook_args);
+                        }
+                    }
+                    else
+                    {
+                        if ($hook_callable)
+        					$display = $moduleInstance->{'hook'.$hook_name}($hook_args);
+        				else if ($hook_retro_callable)
+        					$display = $moduleInstance->{'hook'.$retro_hook_name}($hook_args);
+                    }
+                    $id_employee = (int)Tools::getValue('id_employee');
+                    $ad = Tools::getValue('ad');
+                    $liveToken = Tools::getValue('liveToken');
+                    if (!$array_return && $array['live_edit'] && Tools::isSubmit('live_edit') && $ad && Validate::isCleanHtml($ad)
+                        && Validate::isCleanHtml($liveToken)&& $liveToken == Tools::getAdminToken('AdminModulesPositions'
+                            .(int)Tab::getIdFromClassName('AdminModulesPositions').(int)$id_employee)) {
+                        $live_edit = true;
+                        $output .= Hook::wrapLiveEdit($display, $moduleInstance, $array['id_hook']);
+                    } elseif ($array_return) {
+                        $output[$moduleInstance->name] = $display;
+                    } else {
+                        $output .= $display;
+                    }
+                }
+            }
+            if($dynamicHook && !$array_return && $page_cache && !$ajax)
+            {
+                $output .='</div>';
+            }
+            if(Configuration::get('ETS_SPEED_RECORD_MODULE_PERFORMANCE'))
+            {
+                $time_end = microtime(true);
+                $time= $time_end-$time_start;
+                if(Db::getInstance()->getRow('SELECT * FROM `'._DB_PREFIX_.'ets_superspeed_hook_time` WHERE id_module="'.(int)$array['id_module'].'" AND hook_name="'.pSQL($hook_name).'" AND id_shop='.(int)Context::getContext()->shop->id))
+                {
+                    Db:: getInstance()->execute('UPDATE `'._DB_PREFIX_.'ets_superspeed_hook_time` SET page="'.pSQL($_SERVER['REQUEST_URI']).'",time="'.(float)$time.'",date_add ="'.pSQL(date('Y-m-d H:i:s')).'" WHERE id_module="'.(int)$array['id_module'].'" AND hook_name="'.pSQL($hook_name).'" AND id_shop='.(int)Context::getContext()->shop->id);
+                }
+                else
+                {
+                    Db::getInstance()->execute('INSERT INTO `'._DB_PREFIX_.'ets_superspeed_hook_time`(id_module,hook_name,page,time,date_add,id_shop) VALUES("'.(int)$array['id_module'].'","'.pSQL($hook_name).'","'.pSQL($_SERVER['REQUEST_URI']).'","'.(float)$time.'","'.pSQL(date('Y-m-d H:i:s')).'","'.(int)Context::getContext()->shop->id.'")');
+                }
+            }
+            
+        }
+        if ($different_shop) {
+            $context->shop = $old_shop;
+            $context->shop->setContext($old_context, $shop->id);
+        }
+        if ($array_return) {
+            return $output;
+        } else {
+            return ($live_edit ? '<script type="text/javascript">hooks_list.push(\''.$hook_name.'\');</script>
+				<div id="'.$hook_name.'" class="dndHook" style="min-height:50px">' : '').$output.($live_edit ? '</div>' : '');
+        }// Return html string
+    }
+    public static function exec17(
+        $hook_name,
+        $hook_args = array(),
+        $id_module = null,
+        $array_return = false,
+        $check_exceptions = true,
+        $use_push = false,
+        $id_shop = null,
+        $chain = false,
+        $backtrace
+    ) {
+        if (defined('PS_INSTALLATION_IN_PROGRESS')) {
+            return;
+        }
+        if(Tools::isSubmit('ajax')) {
+            $ajax=true;
+        }
+        else
+            $ajax=false;
+        if((self::_checkPageCache() && !$ajax) || $ajax )
+            return HookCore::exec($hook_name,$hook_args,$id_module,$array_return,$check_exceptions,$use_push,$id_shop,$chain);
+        $controller_page = Tools::getValue('controller');
+        $page_cache = Configuration::get('ETS_SPEED_ENABLE_PAGE_CACHE') && Configuration::get('ETS_SPEED_PAGES_TO_CACHE') && $controller_page &&  in_array($controller_page,explode(',',Configuration::get('ETS_SPEED_PAGES_TO_CACHE'))); 
+        $controller = Context::getContext()->controller;
+        if(!isset($controller->controller_type) || ($controller->controller_type!='modulefront' && $controller->controller_type!='front'))
+            return HookCore::exec($hook_name,$hook_args,$id_module,$array_return,$check_exceptions,$use_push,$id_shop,$chain);
+        $hook = new HookCore();
+        if(method_exists($hook,'getHookRegistry'))
+        {
+            $myClassReflection = new ReflectionClass('HookCore');
+            $secret = $myClassReflection->getMethod('getHookRegistry');
+            $secret->setAccessible(true);
+            $hookRegistry =$secret->invoke($hook);          
+            $isRegistryEnabled = !is_null($hookRegistry);
+        }
+        else
+            $isRegistryEnabled=false;
+        if ($isRegistryEnabled) {
+            $hookRegistry->selectHook($hook_name, $hook_args, $backtrace[0]['file'], $backtrace[0]['line']);
+        }
+        if (true === $chain) {
+            $array_return = false;
+        }
+        static $disable_non_native_modules = null;
+        if ($disable_non_native_modules === null) {
+            $disable_non_native_modules = (bool)Configuration::get('PS_DISABLE_NON_NATIVE_MODULE');
+        }
+        if (($id_module && !is_numeric($id_module)) || !Validate::isHookName($hook_name)) {
+            throw new PrestaShopException('Invalid id_module or hook_name');
+        }
+        if (!$module_list = HookCore::getHookModuleExecList($hook_name)) {
+            if ($isRegistryEnabled) {
+                $hookRegistry->collect();
+            }
+            if ($array_return) {
+                return array();
+            } else {
+                return '';
+            }
+        }
+        if (!$id_hook = Hook::getIdByName($hook_name)) {
+            if ($isRegistryEnabled) {
+                $hookRegistry->collect();
+            }
+            if ($array_return) {
+                return array();
+            } else {
+                return false;
+            }
+        }
+        if (array_key_exists($hook_name, self::$deprecated_hooks)) {
+            $deprecVersion = isset(self::$deprecated_hooks[$hook_name]['from'])?
+                    self::$deprecated_hooks[$hook_name]['from']:
+                    _PS_VERSION_;
+            Tools::displayAsDeprecated('The hook '. $hook_name .' is deprecated in PrestaShop v.'. $deprecVersion);
+        }
+        Hook::$executed_hooks[$id_hook] = $hook_name;
+        $context = Context::getContext();
+        if (!isset($hook_args['cookie']) || !$hook_args['cookie']) {
+            $hook_args['cookie'] = $context->cookie;
+        }
+        if (!isset($hook_args['cart']) || !$hook_args['cart']) {
+            $hook_args['cart'] = $context->cart;
+        }
+        $altern = 0;
+        if ($array_return) {
+            $output = array();
+        } else {
+            $output = '';
+        }
+        if ($disable_non_native_modules && !isset(Hook::$native_module)) {
+            Hook::$native_module = Module::getNativeModuleList();
+        }
+        $different_shop = false;
+        if ($id_shop !== null && Validate::isUnsignedId($id_shop) && $id_shop != $context->shop->getContextShopID()) {
+            $old_context = $context->shop->getContext();
+            $old_shop = clone $context->shop;
+            $shop = new Shop((int)$id_shop);
+            if (Validate::isLoadedObject($shop)) {
+                $context->shop = $shop;
+                $context->shop->setContext(Shop::CONTEXT_SHOP, $shop->id);
+                $different_shop = true;
+            }
+        }
+        foreach ($module_list as $key => $array) {
+            if ($id_module && $id_module != $array['id_module']) {
+                continue;
+            }
+            if ((bool)$disable_non_native_modules && Hook::$native_module && count(Hook::$native_module) && !in_array($array['module'], Hook::$native_module)) {
+                continue;
+            }
+            if ($check_exceptions) {
+                $exceptions = Module::getExceptionsStatic($array['id_module'], $array['id_hook']);
+                $controller = Dispatcher::getInstance()->getController();
+                $controller_obj = Context::getContext()->controller;
+                if (isset($controller_obj->module) && Validate::isLoadedObject($controller_obj->module)) {
+                    $controller = 'module-'.$controller_obj->module->name.'-'.$controller;
+                }
+                if (in_array($controller, $exceptions)) {
+                    continue;
+                }
+                $matching_name = array(
+                    'authentication' => 'auth'
+                );
+                if (isset($matching_name[$controller]) && in_array($matching_name[$controller], $exceptions)) {
+                    continue;
+                }
+                if (Validate::isLoadedObject($context->employee) && !Module::getPermissionStatic($array['id_module'], 'view', $context->employee)) {
+                    continue;
+                }
+            }
+            if (!($moduleInstance = Module::getInstanceByName($array['module']))) {
+                continue;
+            }
+            if ($use_push && !$moduleInstance->allow_push) {
+                continue;
+            }
+            if ($isRegistryEnabled) {
+                $hookRegistry->hookedByModule($moduleInstance);
+            }  
+            $dynamicHook = Ets_superspeed::getDynamicHookModule($array['id_module'],$hook_name);
+            if($dynamicHook && !$array_return && $page_cache && !$ajax)
+            {
+                $output .='<div id="ets_speed_dy_'.$array['id_module'].$hook_name.'" data-moudule="'.$array['id_module'].'" data-hook="'.$hook_name.'" class="ets_speed_dynamic_hook">';
+            }
+            $time_start = microtime(true);
+            if(!$dynamicHook || ($dynamicHook && !$dynamicHook['empty_content']) || !$page_cache || $ajax)
+            {
+                if (Ets_Hook::isHookCallableOn($moduleInstance, $hook_name)) {
+                    $hook_args['altern'] = ++$altern;
+                    if ($use_push && isset($moduleInstance->push_filename) && file_exists($moduleInstance->push_filename)) {
+                        Tools::waitUntilFileIsModified($moduleInstance->push_filename, $moduleInstance->push_time_limit);
+                    }
+    
+                    if (0 !== $key && true === $chain) {
+                        $hook_args = $output;
+                    }
+    
+                    $display = Ets_Hook::callHookOn($moduleInstance, $hook_name, $hook_args);
+    
+                    if ($array_return) {
+                        $output[$moduleInstance->name] = $display;
+                    } else {
+                        if (true === $chain) {
+                            $output = $display;
+                        } else {
+                            $output .= $display;
+                        }
+                    }
+                    if ($isRegistryEnabled) {
+                        $hookRegistry->hookedByCallback($moduleInstance, $hook_args);
+                    }
+                } elseif (Hook::isDisplayHookName($hook_name)) {
+                    if ($moduleInstance instanceof PrestaShop\PrestaShop\Core\Module\WidgetInterface) {
+    
+                        if (0 !== $key && true === $chain) {
+                            $hook_args = $output;
+                        }
+                        $display = Hook::coreRenderWidget($moduleInstance, $hook_name, $hook_args);
+    
+                        if ($array_return) {
+                            $output[$moduleInstance->name] = $display;
+                        } else {
+                            if (true === $chain) {
+                                $output = $display;
+                            } else {
+                                $output .= $display;
+                            }
+                        }
+                    }
+    
+                    if ($isRegistryEnabled) {
+                        $hookRegistry->hookedByWidget($moduleInstance, $hook_args);
+                    }
+                }
+            }
+            if($dynamicHook && !$array_return && $page_cache && !$ajax)
+            {
+                $output .='</div>';
+            }
+            if(Configuration::get('ETS_SPEED_RECORD_MODULE_PERFORMANCE'))
+            {
+                $time_end = microtime(true);
+                $time= $time_end-$time_start;
+                if(Db::getInstance()->getRow('SELECT * FROM `'._DB_PREFIX_.'ets_superspeed_hook_time` WHERE id_module="'.(int)$array['id_module'].'" AND hook_name="'.pSQL($hook_name).'" AND id_shop='.(int)Context::getContext()->shop->id))
+                {
+                    Db:: getInstance()->execute('UPDATE `'._DB_PREFIX_.'ets_superspeed_hook_time` SET page="'.pSQL($_SERVER['REQUEST_URI']).'",time="'.(float)$time.'",date_add ="'.pSQL(date('Y-m-d H:i:s')).'" WHERE id_module="'.(int)$array['id_module'].'" AND hook_name="'.pSQL($hook_name).'" AND id_shop='.(int)Context::getContext()->shop->id);
+                }
+                else
+                {
+                    Db::getInstance()->execute('INSERT INTO `'._DB_PREFIX_.'ets_superspeed_hook_time`(id_module,hook_name,page,time,date_add,id_shop) VALUES("'.(int)$array['id_module'].'","'.pSQL($hook_name).'","'.pSQL($_SERVER['REQUEST_URI']).'","'.(float)$time.'","'.pSQL(date('Y-m-d H:i:s')).'","'.(int)Context::getContext()->shop->id.'")');
+                }
+            }
+            
+        }
+        if ($different_shop) {
+            $context->shop = $old_shop;
+            $context->shop->setContext($old_context, $shop->id);
+        }
+        if (true === $chain) {
+            if (isset($output['cookie'])) {
+                unset($output['cookie']);
+            }
+            if (isset($output['cart'])) {
+                unset($output['cart']);
+            }
+        }
+        if ($isRegistryEnabled) {
+            $hookRegistry->hookWasCalled();
+            $hookRegistry->collect();
+        }
+        return $output;
+    }
+    public static function _checkPageCache()
+    {
+        require_once(dirname(__FILE__).'/../../ets_superspeed.php');
+		if($pages_exception = Configuration::get('ETS_SPEED_PAGES_EXCEPTION'))
+        {
+            $pages_exception = explode("\n",$pages_exception);
+            foreach($pages_exception as $page_exception)
+            {
+                
+                if($page_exception && isset($_SERVER['REQUEST_URI']) && Tools::strpos($_SERVER['REQUEST_URI'],$page_exception)!==false)
+                    return true;
+            }
+        }
+        if(Configuration::get('ETS_SPEED_ENABLE_PAGE_CACHE') && (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD']!='POST'))
+        {
+            return false;
+        }
+    }
+    public static function isHookCallableOn($module, $hookName)
+    {
+        $aliases = Ets_Hook::getHookAliasesFor($hookName);
+        $aliases[] = $hookName;
+
+        return array_reduce($aliases, function ($prev, $curr) use ($module) {
+            return $prev || is_callable(array($module, 'hook' . $curr));
+        }, false);
+    }
+    public static function getHookAliasesFor($hookName)
+    {
+        $cacheId = 'hook_aliases_' . $hookName;
+        if (!Cache::isStored($cacheId)) {
+            $aliasesList = Ets_Hook::getHookAliasesList();
+
+            if (isset($aliasesList[$hookName])) {
+                Cache::store($cacheId, $aliasesList[$hookName]);
+                return $aliasesList[$hookName];
+            }
+
+            $retroName = array_keys(array_filter($aliasesList, function ($elem) use ($hookName) {
+                return in_array($hookName, $elem);
+            }));
+
+            if (empty($retroName)) {
+                Cache::store($cacheId, array());
+                return array();
+            }
+
+            Cache::store($cacheId, $retroName);
+            return $retroName;
+        }
+        return Cache::retrieve($cacheId);
+    }
+    public static function getHookAliasesList()
+    {
+        $cacheId = 'hook_aliases';
+        if (!Cache::isStored($cacheId)) {
+            $hookAliasList = Db::getInstance()->executeS('SELECT * FROM `'._DB_PREFIX_.'hook_alias`');
+            $hookAliases = array();
+            if ($hookAliasList) {
+                foreach ($hookAliasList as $ha) {
+                    if (!isset($hookAliases[$ha['name']])) {
+                        $hookAliases[$ha['name']] = array();
+                    }
+                    $hookAliases[$ha['name']][] = $ha['alias'];
+                }
+            }
+            Cache::store($cacheId, $hookAliases);
+            return $hookAliases;
+        }
+        return Cache::retrieve($cacheId);
+    }
+    public static function callHookOn($module, $hookName, $hookArgs)
+    {
+        if (is_callable(array($module, 'hook' . $hookName))) {
+            return Hook::coreCallHook($module, 'hook' . $hookName, $hookArgs);
+        }
+        foreach (Ets_Hook::getHookAliasesFor($hookName) as $hook) {
+            if (is_callable(array($module, 'hook' . $hook))) {
+                return Hook::coreCallHook($module, 'hook' . $hook, $hookArgs);
+            }
+        }
+        return '';
+    }
+}

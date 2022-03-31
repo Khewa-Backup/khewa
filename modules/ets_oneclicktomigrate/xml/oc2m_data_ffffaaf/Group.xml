@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<group><id_group><![CDATA[1]]></id_group>
+<reduction><![CDATA[0.00]]></reduction>
+<price_display_method><![CDATA[1]]></price_display_method>
+<show_prices><![CDATA[1]]></show_prices>
+<date_add><![CDATA[2015-06-11 11:07:49]]></date_add>
+<date_upd><![CDATA[2015-06-11 11:09:14]]></date_upd>
+<visitor_group><![CDATA[1]]></visitor_group>
+<datalanguage iso_code="en" >
+<name><![CDATA[Visitor]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Visiteur]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</group>
+<group><id_group><![CDATA[2]]></id_group>
+<reduction><![CDATA[0.00]]></reduction>
+<price_display_method><![CDATA[1]]></price_display_method>
+<show_prices><![CDATA[1]]></show_prices>
+<date_add><![CDATA[2015-06-11 11:07:50]]></date_add>
+<date_upd><![CDATA[2015-06-11 11:09:14]]></date_upd>
+<guest_group><![CDATA[1]]></guest_group>
+<datalanguage iso_code="en" >
+<name><![CDATA[Guest]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Invité]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</group>
+<group><id_group><![CDATA[3]]></id_group>
+<reduction><![CDATA[0.00]]></reduction>
+<price_display_method><![CDATA[1]]></price_display_method>
+<show_prices><![CDATA[1]]></show_prices>
+<date_add><![CDATA[2015-06-11 11:07:52]]></date_add>
+<date_upd><![CDATA[2015-06-11 11:09:14]]></date_upd>
+<customer_group><![CDATA[1]]></customer_group>
+<datalanguage iso_code="en" >
+<name><![CDATA[Customer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[Client]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</group>
+<group><id_group><![CDATA[4]]></id_group>
+<reduction><![CDATA[0.00]]></reduction>
+<price_display_method><![CDATA[1]]></price_display_method>
+<show_prices><![CDATA[1]]></show_prices>
+<date_add><![CDATA[2016-03-15 11:23:22]]></date_add>
+<date_upd><![CDATA[2016-03-15 11:23:22]]></date_upd>
+<datalanguage iso_code="en" >
+<name><![CDATA[POS Customer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[POS Customer]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</group>
+<group><id_group><![CDATA[5]]></id_group>
+<reduction><![CDATA[0.00]]></reduction>
+<price_display_method><![CDATA[1]]></price_display_method>
+<show_prices><![CDATA[1]]></show_prices>
+<date_add><![CDATA[2020-03-31 13:42:51]]></date_add>
+<date_upd><![CDATA[2020-03-31 13:42:51]]></date_upd>
+<datalanguage iso_code="en" >
+<name><![CDATA[POS Customer]]></name>
+</datalanguage>
+<datalanguage iso_code="qc" default="1" >
+<name><![CDATA[POS Customer]]></name>
+</datalanguage>
+<datashop id_shop="1"></datashop>
+</group>
+</entity_profile>

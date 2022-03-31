@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<employee><id_employee><![CDATA[1]]></id_employee>
+<lastname><![CDATA[Guindon]]></lastname>
+<firstname><![CDATA[Jean-Pierre]]></firstname>
+<email><![CDATA[jpsimulart@gmail.com]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$5JEFiJ5xkYa3p6dbdz1UGuc.WHIsoJRoRdFI8t8C6zQwTL2A3sEGy]]></passwd>
+<last_passwd_gen><![CDATA[2018-07-06 00:19:05]]></last_passwd_gen>
+<active><![CDATA[0]]></active>
+<optin><![CDATA[1]]></optin>
+<id_profile><![CDATA[1]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[1]]></default_tab>
+<bo_theme><![CDATA[default]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2019-01-01]]></stats_date_from>
+<stats_date_to><![CDATA[2019-12-31]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[]]></preselect_date_range>
+<id_last_order><![CDATA[28]]></id_last_order>
+<id_last_customer_message><![CDATA[72]]></id_last_customer_message>
+<id_last_customer><![CDATA[146]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[2]]></id_employee>
+<lastname><![CDATA[Coutou]]></lastname>
+<firstname><![CDATA[Nathalie]]></firstname>
+<email><![CDATA[ncoutou@khewa.com]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$W8ES7Lszi1omKqguW.CP0elspBbbBgsg3u/8ksmhhXL51pvEQ2esm]]></passwd>
+<last_passwd_gen><![CDATA[2018-07-06 01:09:58]]></last_passwd_gen>
+<active><![CDATA[1]]></active>
+<optin><![CDATA[0]]></optin>
+<id_profile><![CDATA[7]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[1]]></default_tab>
+<bo_theme><![CDATA[default]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2020-12-22]]></stats_date_from>
+<stats_date_to><![CDATA[2020-12-22]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[day]]></preselect_date_range>
+<id_last_order><![CDATA[2733]]></id_last_order>
+<id_last_customer_message><![CDATA[328]]></id_last_customer_message>
+<id_last_customer><![CDATA[456]]></id_last_customer>
+<reset_password_token><![CDATA[2412f2ec80dbc3bcd67fdd1dcac3f05745b61c51]]></reset_password_token>
+<reset_password_validity><![CDATA[2018-09-11 17:19:39]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[3]]></id_employee>
+<lastname><![CDATA[Maranda]]></lastname>
+<firstname><![CDATA[Isabelle]]></firstname>
+<email><![CDATA[lazabi@sympatico.ca]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$t.ROC9tmrzq7fV9zmhG3NufHYdCwBvnTcdCJHlfEN9KI3HxqkehES]]></passwd>
+<last_passwd_gen><![CDATA[2018-07-12 05:43:52]]></last_passwd_gen>
+<active><![CDATA[1]]></active>
+<optin><![CDATA[0]]></optin>
+<id_profile><![CDATA[7]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[1]]></default_tab>
+<bo_theme><![CDATA[default]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2021-01-01]]></stats_date_from>
+<stats_date_to><![CDATA[2021-01-20]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[month]]></preselect_date_range>
+<id_last_order><![CDATA[2813]]></id_last_order>
+<id_last_customer_message><![CDATA[355]]></id_last_customer_message>
+<id_last_customer><![CDATA[462]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[5]]></id_employee>
+<lastname><![CDATA[Duquette]]></lastname>
+<firstname><![CDATA[Nancy]]></firstname>
+<email><![CDATA[khewa.nancy@gmail.com]]></email>
+<id_lang><![CDATA[3]]></id_lang>
+<passwd><![CDATA[$2y$10$qY4fjLz6fVtkTI3ppTEak.TfQy3pFcMPRJNpVdop.SudgPchoMA6u]]></passwd>
+<last_passwd_gen><![CDATA[2018-07-12 05:46:27]]></last_passwd_gen>
+<active><![CDATA[1]]></active>
+<optin><![CDATA[0]]></optin>
+<id_profile><![CDATA[4]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[4]]></default_tab>
+<bo_theme><![CDATA[default]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2018-06-12]]></stats_date_from>
+<stats_date_to><![CDATA[2018-07-12]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[]]></preselect_date_range>
+<id_last_order><![CDATA[2712]]></id_last_order>
+<id_last_customer_message><![CDATA[327]]></id_last_customer_message>
+<id_last_customer><![CDATA[456]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[7]]></id_employee>
+<lastname><![CDATA[Cattani]]></lastname>
+<firstname><![CDATA[Alison]]></firstname>
+<email><![CDATA[Khewa.alison@gmail.com]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$UlcZJcCdjaw56M0rCEPL/uGi4kbQS./osS2FHXKWMwIQ4VU1N/gNS]]></passwd>
+<last_passwd_gen><![CDATA[2018-08-30 01:04:47]]></last_passwd_gen>
+<active><![CDATA[0]]></active>
+<optin><![CDATA[0]]></optin>
+<id_profile><![CDATA[4]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[4]]></default_tab>
+<bo_theme><![CDATA[default]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2018-07-30]]></stats_date_from>
+<stats_date_to><![CDATA[2018-08-30]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[]]></preselect_date_range>
+<id_last_order><![CDATA[5]]></id_last_order>
+<id_last_customer_message><![CDATA[0]]></id_last_customer_message>
+<id_last_customer><![CDATA[4]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[10]]></id_employee>
+<lastname><![CDATA[Rahman]]></lastname>
+<firstname><![CDATA[Masudur]]></firstname>
+<email><![CDATA[developer.musa@gmail.com]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$UXNLt4Z38m1udYEjo2lAnOtHcHVor8FbNy4.rmho8S3nR7AQxP7HW]]></passwd>
+<last_passwd_gen><![CDATA[2020-07-08 20:59:51]]></last_passwd_gen>
+<active><![CDATA[1]]></active>
+<optin><![CDATA[0]]></optin>
+<id_profile><![CDATA[1]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[1]]></default_tab>
+<bo_theme><![CDATA[default]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2020-02-26]]></stats_date_from>
+<stats_date_to><![CDATA[2020-03-26]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[]]></preselect_date_range>
+<id_last_order><![CDATA[2493]]></id_last_order>
+<id_last_customer_message><![CDATA[271]]></id_last_customer_message>
+<id_last_customer><![CDATA[149]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[11]]></id_employee>
+<lastname><![CDATA[Armstrong]]></lastname>
+<firstname><![CDATA[Malcolm]]></firstname>
+<email><![CDATA[m@v-x.cc]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$lJDtz1FJB4ijG8En30y8vOjJ.wPlY5REohVihMlg5fEx/kL.oOWrm]]></passwd>
+<last_passwd_gen><![CDATA[2020-04-11 13:39:48]]></last_passwd_gen>
+<active><![CDATA[1]]></active>
+<optin><![CDATA[0]]></optin>
+<id_profile><![CDATA[1]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[1]]></default_tab>
+<bo_theme><![CDATA[default]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2021-03-31]]></stats_date_from>
+<stats_date_to><![CDATA[2021-04-01]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[day]]></preselect_date_range>
+<id_last_order><![CDATA[2813]]></id_last_order>
+<id_last_customer_message><![CDATA[354]]></id_last_customer_message>
+<id_last_customer><![CDATA[462]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[16]]></id_employee>
+<lastname><![CDATA[Gregoire]]></lastname>
+<firstname><![CDATA[Anouk]]></firstname>
+<email><![CDATA[khewa.anouk@gmail.com]]></email>
+<id_lang><![CDATA[3]]></id_lang>
+<passwd><![CDATA[$2y$10$Mqshh.IeB59Mq.NwMGtHm.Kd.JturKwHps8stidFPP64CsK.YRuMK]]></passwd>
+<last_passwd_gen><![CDATA[2020-05-27 08:52:12]]></last_passwd_gen>
+<active><![CDATA[1]]></active>
+<optin><![CDATA[1]]></optin>
+<id_profile><![CDATA[4]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[4]]></default_tab>
+<bo_theme><![CDATA[]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2020-04-27]]></stats_date_from>
+<stats_date_to><![CDATA[2020-05-27]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[]]></preselect_date_range>
+<id_last_order><![CDATA[661]]></id_last_order>
+<id_last_customer_message><![CDATA[139]]></id_last_customer_message>
+<id_last_customer><![CDATA[237]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[17]]></id_employee>
+<lastname><![CDATA[Maranda]]></lastname>
+<firstname><![CDATA[Isabelle]]></firstname>
+<email><![CDATA[khewa.zabi@gmail.com]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$BxPTm0iI9s76oDWIAyNKr.WK0vy557fbY9EkZN0vOdXS6LfjbgZO2]]></passwd>
+<last_passwd_gen><![CDATA[2020-07-16 06:49:51]]></last_passwd_gen>
+<active><![CDATA[1]]></active>
+<optin><![CDATA[1]]></optin>
+<id_profile><![CDATA[7]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[1]]></default_tab>
+<bo_theme><![CDATA[default]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2020-07-17]]></stats_date_from>
+<stats_date_to><![CDATA[2020-07-17]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[]]></preselect_date_range>
+<id_last_order><![CDATA[2474]]></id_last_order>
+<id_last_customer_message><![CDATA[252]]></id_last_customer_message>
+<id_last_customer><![CDATA[420]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[18]]></id_employee>
+<lastname><![CDATA[Joarder]]></lastname>
+<firstname><![CDATA[Shovon]]></firstname>
+<email><![CDATA[s.u.joarder@freelancers-hub.com]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$nAohD/j69UYlSujJYM4Qr.imRrt3jIGxqhJC6oruB.e6zmARxmRv2]]></passwd>
+<last_passwd_gen><![CDATA[2020-10-15 09:14:23]]></last_passwd_gen>
+<active><![CDATA[0]]></active>
+<optin><![CDATA[0]]></optin>
+<id_profile><![CDATA[5]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[44]]></default_tab>
+<bo_theme><![CDATA[]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2020-09-15]]></stats_date_from>
+<stats_date_to><![CDATA[2020-10-15]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[]]></preselect_date_range>
+<id_last_order><![CDATA[1587]]></id_last_order>
+<id_last_customer_message><![CDATA[162]]></id_last_customer_message>
+<id_last_customer><![CDATA[310]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[19]]></id_employee>
+<lastname><![CDATA[Rahman]]></lastname>
+<firstname><![CDATA[Masudur]]></firstname>
+<email><![CDATA[musa@khewa.com]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$KXZAvX1VeiT4cGf/UQTHz.d7uvQ.EgidNxy94JSqb6J00uCnKf4.q]]></passwd>
+<last_passwd_gen><![CDATA[2021-03-22 14:20:52]]></last_passwd_gen>
+<active><![CDATA[1]]></active>
+<optin><![CDATA[0]]></optin>
+<id_profile><![CDATA[1]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[1]]></default_tab>
+<bo_theme><![CDATA[]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2021-02-22]]></stats_date_from>
+<stats_date_to><![CDATA[2021-03-22]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[]]></preselect_date_range>
+<id_last_order><![CDATA[2695]]></id_last_order>
+<id_last_customer_message><![CDATA[323]]></id_last_customer_message>
+<id_last_customer><![CDATA[456]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+<employee><id_employee><![CDATA[20]]></id_employee>
+<lastname><![CDATA[Support]]></lastname>
+<firstname><![CDATA[Module]]></firstname>
+<email><![CDATA[module_support@prestashop.com]]></email>
+<id_lang><![CDATA[1]]></id_lang>
+<passwd><![CDATA[$2y$10$MJiIhtiNdu520aNv4ybBS.o7Kxc1bUry7/Aw5MRNOnJ9PiDeYG0Oe]]></passwd>
+<last_passwd_gen><![CDATA[2021-03-25 14:59:10]]></last_passwd_gen>
+<active><![CDATA[1]]></active>
+<optin><![CDATA[0]]></optin>
+<id_profile><![CDATA[1]]></id_profile>
+<bo_color><![CDATA[]]></bo_color>
+<default_tab><![CDATA[1]]></default_tab>
+<bo_theme><![CDATA[]]></bo_theme>
+<bo_css><![CDATA[theme.css]]></bo_css>
+<bo_width><![CDATA[0]]></bo_width>
+<bo_menu><![CDATA[1]]></bo_menu>
+<stats_date_from><![CDATA[2021-02-25]]></stats_date_from>
+<stats_date_to><![CDATA[2021-03-25]]></stats_date_to>
+<stats_compare_from><![CDATA[0000-00-00]]></stats_compare_from>
+<stats_compare_to><![CDATA[0000-00-00]]></stats_compare_to>
+<stats_compare_option><![CDATA[1]]></stats_compare_option>
+<preselect_date_range><![CDATA[]]></preselect_date_range>
+<id_last_order><![CDATA[2797]]></id_last_order>
+<id_last_customer_message><![CDATA[348]]></id_last_customer_message>
+<id_last_customer><![CDATA[458]]></id_last_customer>
+<reset_password_token><![CDATA[]]></reset_password_token>
+<reset_password_validity><![CDATA[0000-00-00 00:00:00]]></reset_password_validity>
+<datashop id_shop="1"></datashop>
+</employee>
+</entity_profile>

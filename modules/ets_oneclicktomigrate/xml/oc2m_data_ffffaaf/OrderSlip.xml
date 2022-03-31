@@ -1,0 +1,1443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity_profile>
+<order_slip><id_order_slip><![CDATA[1]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[80]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-05-29 17:53:52]]></date_add>
+<date_upd><![CDATA[2020-05-31 19:21:37]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[2]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[69]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-05-07 11:23:32]]></date_add>
+<date_upd><![CDATA[2020-05-31 19:23:21]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[3]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[67]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-05-06 23:47:20]]></date_add>
+<date_upd><![CDATA[2020-05-31 19:23:49]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[4]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[65]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[10.700000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[10.700000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[10.70]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-05-06 14:26:30]]></date_add>
+<date_upd><![CDATA[2020-05-31 19:24:17]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[5]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[62]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-05-05 10:57:01]]></date_add>
+<date_upd><![CDATA[2020-05-31 19:24:38]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[6]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[68]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-05-07 08:51:46]]></date_add>
+<date_upd><![CDATA[2020-05-31 19:26:22]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[7]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[64]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.220000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[9.950000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[11.240000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[11.24]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-05-06 08:50:14]]></date_add>
+<date_upd><![CDATA[2020-05-31 19:27:00]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[8]]></id_order_slip>
+<id_customer><![CDATA[6]]></id_customer>
+<id_order><![CDATA[82]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[90.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[103.480000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[90.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-06-05 12:46:58]]></date_add>
+<date_upd><![CDATA[2020-06-05 14:52:49]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[9]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[133]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[10.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[11.500000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[10.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-02 16:47:58]]></date_add>
+<date_upd><![CDATA[2020-07-02 17:22:01]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[10]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[155]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[11.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[13.220000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[11.50]]></amount>
+<shipping_cost><![CDATA[0]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-04 18:58:21]]></date_add>
+<date_upd><![CDATA[2020-07-04 18:58:22]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[11]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[198]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[46.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[52.890000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[46.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-11 16:32:01]]></date_add>
+<date_upd><![CDATA[2020-07-12 17:42:27]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[12]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[232]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[5.75]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-13 11:00:45]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:13:02]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[13]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[231]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[11.50]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-13 10:57:12]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:13:25]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[14]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[236]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[5.75]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-13 13:08:31]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:14:31]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[15]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[173]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[59.49]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-08 23:37:04]]></date_add>
+<date_upd><![CDATA[2020-07-08 23:37:05]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[16]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[173]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[45.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[51.740000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[45.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[59.49]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-08 23:37:04]]></date_add>
+<date_upd><![CDATA[2020-07-08 23:37:05]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[17]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[172]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[35.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[39.550000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[35.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[44.69]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-08 23:02:37]]></date_add>
+<date_upd><![CDATA[2020-07-08 23:02:39]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[18]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[266]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[94.300000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[108.410000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[94.30]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-16 12:09:42]]></date_add>
+<date_upd><![CDATA[2020-07-16 12:16:12]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[19]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[263]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[5.75]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-15 17:04:10]]></date_add>
+<date_upd><![CDATA[2020-07-15 17:04:10]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[20]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[262]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-15 16:59:29]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:08:22]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[21]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[261]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-15 16:57:55]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:09:06]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[22]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[260]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-15 16:57:10]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:09:50]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[23]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[259]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-15 16:27:41]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:10:25]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[24]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[258]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-15 16:20:26]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:10:57]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[25]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[257]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-15 16:11:31]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:12:13]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[26]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[232]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-13 11:00:45]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:13:02]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[27]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[231]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[10.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[10.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[10.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-13 10:57:12]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:13:25]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[28]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[236]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-13 13:08:31]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:14:31]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[29]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[235]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-13 13:06:03]]></date_add>
+<date_upd><![CDATA[2020-07-16 14:15:17]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[30]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[293]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-18 12:34:14]]></date_add>
+<date_upd><![CDATA[2020-07-18 14:27:08]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[31]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[304]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[25.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[28.750000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[25.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-18 17:54:48]]></date_add>
+<date_upd><![CDATA[2020-07-18 17:56:53]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[32]]></id_order_slip>
+<id_customer><![CDATA[202]]></id_customer>
+<id_order><![CDATA[330]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[20.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[22.200000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[20.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-07-19 22:53:34]]></date_add>
+<date_upd><![CDATA[2020-07-19 22:54:28]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[33]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[867]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[9.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[10.350000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[9.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-08-24 15:59:08]]></date_add>
+<date_upd><![CDATA[2020-08-24 16:18:34]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[34]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[881]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.750000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.610000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.75]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-08-26 14:04:29]]></date_add>
+<date_upd><![CDATA[2020-08-26 20:34:55]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[35]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[891]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[5.75]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-08-26 20:38:00]]></date_add>
+<date_upd><![CDATA[2020-08-26 21:25:16]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[36]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[896]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-08-26 20:58:42]]></date_add>
+<date_upd><![CDATA[2020-08-26 21:20:39]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[37]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[895]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-08-26 20:52:42]]></date_add>
+<date_upd><![CDATA[2020-08-26 21:21:30]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[38]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[894]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-08-26 20:40:30]]></date_add>
+<date_upd><![CDATA[2020-08-26 21:22:21]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[39]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[892]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-08-26 20:38:37]]></date_add>
+<date_upd><![CDATA[2020-08-26 21:24:20]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[40]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[891]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[5.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-08-26 20:38:00]]></date_add>
+<date_upd><![CDATA[2020-08-26 21:25:16]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[41]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[951]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-08-30 12:22:08]]></date_add>
+<date_upd><![CDATA[2020-09-04 09:26:56]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[42]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1015]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[18.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[20.700000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[18.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-09-04 12:10:45]]></date_add>
+<date_upd><![CDATA[2020-09-04 12:49:40]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[43]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1300]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[30.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[34.500000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[30.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-09-20 14:47:58]]></date_add>
+<date_upd><![CDATA[2020-09-20 14:51:30]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[44]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1294]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[130.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[149.470000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[130.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-09-20 12:38:12]]></date_add>
+<date_upd><![CDATA[2020-09-21 13:34:13]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[45]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[1216]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-09-14 16:06:42]]></date_add>
+<date_upd><![CDATA[2020-09-29 19:28:28]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[46]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[1211]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-09-14 15:38:11]]></date_add>
+<date_upd><![CDATA[2020-09-29 19:29:54]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[47]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[1118]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.220000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[2.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[2.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[2.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-09-07 17:54:01]]></date_add>
+<date_upd><![CDATA[2020-09-29 19:30:27]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[48]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1134]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[92.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[105.780000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[92.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-09-09 11:57:56]]></date_add>
+<date_upd><![CDATA[2020-10-08 14:08:32]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[49]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1576]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[18.950000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[21.780000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[18.95]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-10-13 15:45:31]]></date_add>
+<date_upd><![CDATA[2020-10-13 17:12:08]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[50]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1688]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-10-26 13:54:34]]></date_add>
+<date_upd><![CDATA[2020-10-26 14:13:46]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[51]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1689]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-10-26 14:19:01]]></date_add>
+<date_upd><![CDATA[2020-10-26 14:23:00]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[52]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1690]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-10-26 14:48:16]]></date_add>
+<date_upd><![CDATA[2020-10-26 14:59:51]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[53]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1741]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[144.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[165.560000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[144.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-03 14:31:58]]></date_add>
+<date_upd><![CDATA[2020-11-03 14:34:13]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[54]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1665]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[145.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[166.710000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[145.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-10-24 16:15:35]]></date_add>
+<date_upd><![CDATA[2020-11-10 13:29:16]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[55]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1829]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 15:56:54]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:19:33]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[56]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1828]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 15:49:55]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:20:28]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[57]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1827]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 15:44:37]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:20:44]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[58]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1826]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 15:41:29]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:21:05]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[59]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1825]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 15:23:21]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:21:25]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[60]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1824]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 15:15:15]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:21:40]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[61]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1823]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 15:12:07]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:21:56]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[62]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1822]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 15:07:20]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:22:08]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[63]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1821]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 15:03:03]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:22:22]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[64]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1820]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 14:51:45]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:22:38]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[65]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1819]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 14:14:07]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:22:53]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[66]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[1818]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-11-12 14:12:42]]></date_add>
+<date_upd><![CDATA[2020-11-12 16:23:12]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[67]]></id_order_slip>
+<id_customer><![CDATA[302]]></id_customer>
+<id_order><![CDATA[1498]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[13.25]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-10-05 15:27:57]]></date_add>
+<date_upd><![CDATA[2021-02-03 12:52:09]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[68]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2101]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[70.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[80.480000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[70.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-05 14:35:34]]></date_add>
+<date_upd><![CDATA[2020-12-05 14:57:44]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[69]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2142]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[104.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[119.570000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[104.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-08 14:57:01]]></date_add>
+<date_upd><![CDATA[2020-12-10 14:59:32]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[70]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2242]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[110.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[126.470000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[110.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-15 13:28:31]]></date_add>
+<date_upd><![CDATA[2020-12-15 13:30:28]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[71]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2271]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[142.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[163.260000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[142.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-17 15:18:31]]></date_add>
+<date_upd><![CDATA[2020-12-18 13:14:58]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[72]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2364]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[25.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[28.740000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[25.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-21 13:25:22]]></date_add>
+<date_upd><![CDATA[2020-12-21 13:27:57]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[73]]></id_order_slip>
+<id_customer><![CDATA[6]]></id_customer>
+<id_order><![CDATA[2367]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[25.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[28.740000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[25.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-21 14:03:06]]></date_add>
+<date_upd><![CDATA[2020-12-22 15:44:11]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[74]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2401]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[21.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[24.140000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[21.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-23 11:35:11]]></date_add>
+<date_upd><![CDATA[2020-12-23 11:39:58]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[75]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2299]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[90.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[103.480000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[90.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-18 17:08:24]]></date_add>
+<date_upd><![CDATA[2020-12-23 14:12:45]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[76]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2398]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[101.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[116.120000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[101.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-22 16:26:46]]></date_add>
+<date_upd><![CDATA[2021-01-04 14:58:30]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[77]]></id_order_slip>
+<id_customer><![CDATA[148]]></id_customer>
+<id_order><![CDATA[2471]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[5.500000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.320000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[5.50]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-01-15 15:51:36]]></date_add>
+<date_upd><![CDATA[2021-01-15 16:29:22]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[78]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2473]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[18.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[20.700000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[18.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-01-19 12:12:42]]></date_add>
+<date_upd><![CDATA[2021-01-19 12:16:31]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[79]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2319]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[67.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[77.030000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[67.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2020-12-19 14:26:52]]></date_add>
+<date_upd><![CDATA[2021-02-08 15:05:10]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[80]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2502]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[132.20]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-02-03 18:19:06]]></date_add>
+<date_upd><![CDATA[2021-02-11 12:20:59]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[81]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2584]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[34.800000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[40.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[34.80]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-02-26 13:15:16]]></date_add>
+<date_upd><![CDATA[2021-02-26 13:21:56]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[82]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2565]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[96.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[110.380000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[96.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-02-20 14:37:02]]></date_add>
+<date_upd><![CDATA[2021-02-28 14:09:56]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[83]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2735]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[300.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[344.930000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[300.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-03-23 16:28:02]]></date_add>
+<date_upd><![CDATA[2021-03-23 16:33:53]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[84]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2743]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[23.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[26.440000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[23.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-03-23 16:42:48]]></date_add>
+<date_upd><![CDATA[2021-03-23 16:44:33]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[85]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2751]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[21.450000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[24.660000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[21.45]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-03-25 16:00:34]]></date_add>
+<date_upd><![CDATA[2021-03-25 16:17:29]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[86]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2765]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[11.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[12.650000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[11.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-03-28 10:37:17]]></date_add>
+<date_upd><![CDATA[2021-03-28 10:40:17]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[87]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2798]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[7.93]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-04-01 05:11:46]]></date_add>
+<date_upd><![CDATA[2021-04-01 09:24:49]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[88]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2798]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[0.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[0.000000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[0.00]]></amount>
+<shipping_cost><![CDATA[1]]></shipping_cost>
+<shipping_cost_amount><![CDATA[7.93]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-04-01 05:11:46]]></date_add>
+<date_upd><![CDATA[2021-04-01 09:24:49]]></date_upd>
+<order_slip_type><![CDATA[2]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[89]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2798]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[6.000000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[6.900000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[6.00]]></amount>
+<shipping_cost><![CDATA[0]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-04-01 05:11:46]]></date_add>
+<date_upd><![CDATA[2021-04-01 09:24:49]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+<order_slip><id_order_slip><![CDATA[90]]></id_order_slip>
+<id_customer><![CDATA[186]]></id_customer>
+<id_order><![CDATA[2805]]></id_order>
+<conversion_rate><![CDATA[1.000000]]></conversion_rate>
+<total_products_tax_excl><![CDATA[16.750000]]></total_products_tax_excl>
+<total_products_tax_incl><![CDATA[19.260000]]></total_products_tax_incl>
+<total_shipping_tax_excl><![CDATA[0.000000]]></total_shipping_tax_excl>
+<total_shipping_tax_incl><![CDATA[0.000000]]></total_shipping_tax_incl>
+<amount><![CDATA[16.75]]></amount>
+<shipping_cost><![CDATA[0]]></shipping_cost>
+<shipping_cost_amount><![CDATA[0.00]]></shipping_cost_amount>
+<partial><![CDATA[0]]></partial>
+<date_add><![CDATA[2021-04-01 17:09:29]]></date_add>
+<date_upd><![CDATA[2021-04-01 17:22:02]]></date_upd>
+<order_slip_type><![CDATA[0]]></order_slip_type>
+</order_slip>
+</entity_profile>

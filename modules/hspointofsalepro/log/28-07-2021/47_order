@@ -1,0 +1,784 @@
+*DEBUG* 	v1.7.7.5	2021/07/28 - 17:25:33: Property OrderPayment->amount is not valid
+*DEBUG* 	v1.7.7.5	2021/07/28 - 17:25:33: PosCart Object
+(
+    [id] => 47
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-07-28 17:25:26
+    [secure_key] => befb6f8063e4410d95f2cb6621156dbe
+    [id_carrier] => 25
+    [date_upd] => 2021-07-28 17:25:33
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => Array
+        (
+            [0] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 5918
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => test
+                    [is_virtual] => 0
+                    [description_short] => 
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 2
+                    [id_supplier] => 0
+                    [id_manufacturer] => 0
+                    [manufacturer_name] => 
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 1
+                    [active] => 0
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 1
+                    [width] => 0.000000
+                    [height] => 0.000000
+                    [depth] => 0.000000
+                    [out_of_stock] => 2
+                    [weight] => 0
+                    [available_date] => 0000-00-00
+                    [date_add] => 2021-07-28 17:25:25
+                    [date_upd] => 2021-07-28 17:25:27
+                    [quantity] => 1
+                    [link_rewrite] => test
+                    [category] => home
+                    [unique_id] => 00000059180000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => 
+                    [weight_attribute] => 
+                    [ean13] => 4000000011897
+                    [isbn] => 
+                    [upc] => 400000002750
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 0.000000
+                    [id_image] => en-default
+                    [legend] => 
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 1
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 1
+                    [price_without_reduction_tax_incl] => 1.1498
+                    [price_without_reduction_tax_excl] => 1
+                    [price_with_reduction_tax_incl] => 1.1498
+                    [price_with_reduction_tax_excl] => 1
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 1.1498
+                    [price_without_customer_discount_tax_excl] => 1
+                    [total] => 1
+                    [total_wt] => 1.1498
+                    [price_wt] => 1.1498
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+        )
+
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+
+*DEBUG* 	v1.7.7.5	2021/07/28 - 17:32:04: Property OrderPayment->amount is not valid
+*DEBUG* 	v1.7.7.5	2021/07/28 - 17:32:04: PosCart Object
+(
+    [id] => 47
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-07-28 17:25:26
+    [secure_key] => befb6f8063e4410d95f2cb6621156dbe
+    [id_carrier] => 25
+    [date_upd] => 2021-07-28 17:25:33
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => Array
+        (
+            [0] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 5918
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => test
+                    [is_virtual] => 0
+                    [description_short] => 
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 2
+                    [id_supplier] => 0
+                    [id_manufacturer] => 0
+                    [manufacturer_name] => 
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 1
+                    [active] => 0
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 0
+                    [width] => 0.000000
+                    [height] => 0.000000
+                    [depth] => 0.000000
+                    [out_of_stock] => 2
+                    [weight] => 0
+                    [available_date] => 0000-00-00
+                    [date_add] => 2021-07-28 17:25:25
+                    [date_upd] => 2021-07-28 17:25:27
+                    [quantity] => 1
+                    [link_rewrite] => test
+                    [category] => home
+                    [unique_id] => 00000059180000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => 
+                    [weight_attribute] => 
+                    [ean13] => 4000000011897
+                    [isbn] => 
+                    [upc] => 400000002750
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 0.000000
+                    [id_image] => en-default
+                    [legend] => 
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 1
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 0
+                    [price_without_reduction_tax_incl] => 1.1498
+                    [price_without_reduction_tax_excl] => 1
+                    [price_with_reduction_tax_incl] => 1.1498
+                    [price_with_reduction_tax_excl] => 1
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 1.1498
+                    [price_without_customer_discount_tax_excl] => 1
+                    [total] => 1
+                    [total_wt] => 1.1498
+                    [price_wt] => 1.1498
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+        )
+
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>rc_pgtagmanager</name>
+    <displayName><![CDATA[Premium Google Tag Manager]]></displayName>
+    <version><![CDATA[2.5.4]]></version>
+    <description><![CDATA[One tag for rule them all, GA Enhanced Ecommerce, Google Ads Bing, Facebook, Twitter, etc..]]></description>
+    <author><![CDATA[ReactionCode]]></author>
+    <tab><![CDATA[analytics_stats]]></tab>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>
