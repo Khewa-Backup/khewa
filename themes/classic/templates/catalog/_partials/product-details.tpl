@@ -67,15 +67,15 @@
   {* if product have specific references, a table will be added to product details section *}
   {block name='product_specific_references'}
     {if !empty($product.specific_references)}
-      <section class="product-features">
-        <p class="h6">{l s='Specific References' d='Shop.Theme.Catalog'}</p>
-          <dl class="data-sheet">
-            {foreach from=$product.specific_references item=reference key=key}
-              <dt class="name">{$key}</dt>
-              <dd class="value">{$reference}</dd>
-            {/foreach}
-          </dl>
-      </section>
+{*      <section class="product-features">*}
+{*        <p class="h6">{l s='Specific References' d='Shop.Theme.Catalog'}</p>*}
+{*          <dl class="data-sheet">*}
+{*            {foreach from=$product.specific_references item=reference key=key}*}
+{*              <dt class="name">{$key}</dt>*}
+{*              <dd class="value">{$reference}</dd>*}
+{*            {/foreach}*}
+{*          </dl>*}
+{*      </section>*}
     {/if}
   {/block}
 

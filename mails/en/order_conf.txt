@@ -4,7 +4,7 @@
 
 Hi {firstname} {lastname},
 
-Thank you for shopping on {shop_name}!
+Thank you for shopping on {shop_name}! . Please note that for pickup orders we will contact you when your order is ready.
 
 Order details
 

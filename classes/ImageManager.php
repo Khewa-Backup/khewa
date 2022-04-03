@@ -383,8 +383,12 @@ class ImageManagerCore
             finfo_close($finfo);
         }
         // Try with Mime
-        if (!$mimeType && function_exists('mime_content_type')) {
-            $mimeType = mime_content_type($filename);
+        if(file_exists($filename)){
+            if (!$mimeType && function_exists('mime_content_type')) {
+                $mimeType = mime_content_type($filename);
+            }
+        }else{
+            return false;
         }
         // Try with exec command and file binary
         if (!$mimeType && function_exists('exec')) {
