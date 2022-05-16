@@ -14,7 +14,9 @@ class AdminOrdersExportSalesReportProController extends ModuleAdminController
     public function init()
     {
 //        parent::init();
-        
+
+
+
         error_reporting(E_ERROR | E_PARSE);
         ini_set('max_execution_time', 0);
 //        ini_set('memory_limit', '-1');
@@ -22,6 +24,7 @@ class AdminOrdersExportSalesReportProController extends ModuleAdminController
         /*
          * If values have been submitted in the form, process.
          */
+
         if ((bool) Tools::isSubmit('ajax_action')) {
             $action = Tools::getValue('ajax_action');
             $type = Tools::getValue('type');
@@ -70,6 +73,9 @@ class AdminOrdersExportSalesReportProController extends ModuleAdminController
         $filePath = realpath(dirname(__FILE__) . '/../../output/' . $id . '.' . ($type === 'excel' ? 'xlsx' : $type));
         $size = filesize($filePath);
 
+
+//        var_dump($size);
+//        die("okman");
         if (file_exists($filePath)) {
             if ($type === 'excel') {
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

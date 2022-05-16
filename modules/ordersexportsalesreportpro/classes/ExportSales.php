@@ -122,6 +122,23 @@ class ExportSales
     public function run($auto = false, $orderState = null)
     {
 
+
+        if(isset($_GET['auto_export'])){
+            if($_GET['auto_export'] == 'true'){
+                $predefined_json = '{"orders_selectedColumns":"{\"order\":{\"date_add\":\"Ordered At\",\"id_order\":\"Order ID\",\"total_discounts_tax_incl\":\"Total Discounts (Tax included)\",\"payment\":\"Payment Method\",\"canada_shipping_tax.amount\":\"Shipping Tax (CA 5%)\",\"quebec_shipping_tax.amount\":\"Shipping Tax (CA-QC 9.975%)\",\"rock_total_paid_tax_incl\":\"Total Refunds ROCK (Tax included)\"},\"product\":{\"order_detail_lang.product_name\":\"Product Name\",\"total_price_tax_incl\":\"Total Price (Tax included)\",\"total_price_tax_excl\":\"Total Price (Tax excluded)\",\"canada_tax.total_amount\":\"Total Amount (CA 5%)\",\"quebec_tax.total_amount\":\"Total Amount (CA-QC 9.975%)\"},\"category\":{},\"manufacturer\":{},\"supplier\":{},\"payment\":{},\"customer\":{},\"carrier\":{},\"address\":{\"delivery_country_lang.name\":\"Delivery Country\",\"delivery_state.name\":\"Delivery State\"},\"shop\":{}}","orders_export_as":"excel","orders_doc_name":"Sales","orders_general_add_ts":"1","orders_target_action":"download","target_action_to_emails":"","orders_target_action_ftp_type":"ftp","orders_target_action_ftp_mode":"active","orders_target_action_ftp_url":"khewa.com","orders_target_action_ftp_port":"","orders_target_action_ftp_username":"","orders_target_action_ftp_password":"","orders_target_action_ftp_folder":"","orders_language":"1","orders_csv_delimiter":";","orders_csv_enclosure":"quot","orders_merge_helper":"1","orders_merge":"1","orders_sort":"order.date_add","orders_sort_asc":"0","orders_date_format":"Y-m-d","orders_time_format":"no_time","orders_image_type":"","orders_display_header":"1","orders_display_footer":"1","orders_display_totals":"1","orders_display_currency_symbol":"1","orders_display_explanations":"1","orders_decimal_separator":".","orders_round":"2","orders_creation_date":"today","orders_from_date":"2021-12-13 00:00:00","orders_to_date":"2021-12-20 23:00:00","orders_invoice_date":"no_date","orders_invoice_from_date":"2021-09-01 02:00:00","orders_invoice_to_date":"2021-09-01 23:00:00","orders_delivery_date":"no_date","orders_delivery_from_date":"","orders_delivery_to_date":"","orders_payment_date":"no_date","orders_payment_from_date":"","orders_payment_to_date":"","orders_shipping_date":"no_date","orders_shipping_from_date":"","orders_shipping_to_date":"","ctrl-show-selected-shops":"all","shops_table_length":"10","orders_group_without":"1","ctrl-show-selected-groups":"all","groups_table_length":"10","orders_customer_without":"1","ctrl-show-selected-customers":"all","customers_table_length":"10","ctrl-show-selected-orders":"all","orders_table_length":"10","ctrl-show-selected-orderStates":"all","orderStates_table_length":"100","ctrl-show-selected-paymentMethods":"all","paymentMethods_table_length":"10","orders_cart_rule_without":"1","ctrl-show-selected-cartRules":"all","cartRules_table_length":"10","orders_carrier_without":"1","ctrl-show-selected-carriers":"all","carriers_table_length":"10","ctrl-show-selected-products":"all","products_table_length":"10","orders_category_whether_filter":"0","orders_category_without":"1","products_categories":["2","302","264","275","276","266","267","278","305","295","262","289","290","291","292","17","76","59","64","77","78","80","309","310","311","35","303","304","45","47","48","49","50","46","39","43","42","41","40","44","34","272","271","269","270","55","54","16","125","124","120","121","122","123","18","277","279","296","287","286","69","67","66","65","251","56","273","274","258","259","260","261","306","285","299","288","283","282","281","257","73","280","308","75","74","252","253","82","81","79","83","301"],"orders_attribute_without":"1","ctrl-show-selected-attributes":"all","attributes_table_length":"10","orders_feature_without":"1","ctrl-show-selected-features":"all","features_table_length":"10","orders_manufacturer_without":"1","ctrl-show-selected-manufacturers":"all","manufacturers_table_length":"10","orders_supplier_without":"1","ctrl-show-selected-suppliers":"all","suppliers_table_length":"10","ctrl-show-selected-countries":"all","countries_table_length":"10","ctrl-show-selected-currencies":"all","currencies_table_length":"10","orders_display_main_sales":"1","orders_display_daily_sales":"0","orders_display_monthly_sales":"0","orders_display_bestsellers":"0","orders_display_product_combs":"0","orders_display_top_customers":"0","orders_display_payment_methods":"1","orders_display_taxes":"0","orders_display_category_sales":"0","orders_display_manufacturer_sales":"0","orders_display_supplier_sales":"0","orders_display_attribute_sales":"0","orders_display_feature_sales":"0","orders_display_shop_sales":"0","orders_autoexport":"1","orders_autoexport_order_states":{"0":"0","24":"0","10":"0","13":"0","1":"0","14":"0","40":"0","41":"0","39":"0","6":"0","54":"0","5":"0","38":"0","12":"0","9":"0","25":"0","2":"0","17":"0","8":"0","27":"0","3":"0","7":"0","11":"0","4":"0","56":"0","18":"0","28":"0","37":"0","55":"0","26":"0","22":"0","23":"0","21":"0","34":"0","42":"0"},"orders_autoexport_use_email":"1","autoexportEmails_table_length":"10","orders_autoexport_use_ftp":"1","autoexportFTPs_table_length":"10","orders_autoexport_dont_send_empty":"0","orders_schedule":"1","orders_schedule_use_email":"1","scheduleEmails_table_length":"10","orders_schedule_use_ftp":"1","scheduleFTPs_table_length":"10","orders_schedule_dont_send_empty":"0","shops_type":"unselected","shops_data":"","groups_type":"unselected","groups_data":"","customers_type":"unselected","customers_data":"","orders_type":"unselected","orders_data":"","order_states_type":"unselected","order_states_data":"","cart_rules_type":"unselected","cart_rules_data":"","carriers_type":"unselected","carriers_data":"","manufacturers_type":"unselected","manufacturers_data":"","suppliers_type":"unselected","suppliers_data":"","attributes_type":"unselected","attributes_data":"","features_type":"unselected","features_data":"","payment_methods_type":"unselected","payment_methods_data":"","countries_type":"unselected","countries_data":"","currencies_type":"unselected","currencies_data":"","products_type":"unselected","products_data":"","ajax":1,"ajaxMode":1,"catIds":"","specific_categories":"","tab":"AdminModules"}';
+
+                $predefined_json_arr = json_decode($predefined_json,true);
+
+                foreach($predefined_json_arr as $key => $predefined_json_value){
+                    $_POST[$key] = $predefined_json_value;
+                }
+
+            }
+        }
+
+
+
+
         $this->cleanOutputDir($this->outputDir);
 
         $this->auto = $auto;
@@ -132,6 +149,8 @@ class ExportSales
             $this->catImageTypeForFile = $this->getImagetype('small');
         }
         $this->catImageType = $this->getImagetype('category');
+
+
 
         if ($auto) {
             $this->selectedColumns = json_decode($this->config['orders_selectedColumns']);
@@ -145,6 +164,8 @@ class ExportSales
         }
 
         if (!$auto) {
+
+
             $this->selectedColumns = json_decode(Tools::getValue('orders_selectedColumns'));
             $this->fracPart = (int) Tools::getValue('orders_round');
             $this->dateFormat = pSQL(Tools::getValue('orders_date_format'));
@@ -180,6 +201,8 @@ class ExportSales
             if (Tools::getValue('orders_display_currency_symbol')) {
                 $this->setCurrencySymbol();
             }
+
+
 
             if ($fileType === 'excel') {
                 $this->generateExcel();
@@ -5634,6 +5657,14 @@ class ExportSales
                 'type' => 'excel',
                 'name' => $this->docName . (Tools::getValue('orders_general_add_ts') && $this->filteredDate ? '_' . $this->filteredDate : '')
             ));
+            if(isset($_GET['auto_export'])){
+                if($_GET['auto_export'] == 'true'){
+                    $file_name_exel =  $this->docName . (Tools::getValue('orders_general_add_ts') && $this->filteredDate ? '_' . $this->filteredDate : '');
+                    $AdminOrdersExportSalesReportProController = Context::getContext()->link->getAdminLink('AdminOrdersExportSalesReportPro', true).'&action=getFile&id='.$id.'&type=excel&name='.$file_name_exel;
+                    Tools::redirectAdmin($AdminOrdersExportSalesReportProController);
+                 }
+            }
+
         }
     }
 

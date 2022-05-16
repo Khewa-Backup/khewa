@@ -26614,7 +26614,7 @@
                                         c.default.forEach(u, function(t, n) { e.push([{ colSpan: 3, text: "" + t.name, alignment: "right" }, "", "", { text: (0, o.displayPrice)(t.amount, i), alignment: "right" }]) })
                                     } else c.default.forEach(t.payments, function(t, n) { e.push([{ colSpan: 3, text: "" + t.name, alignment: "right" }, "", "", { text: (0, o.displayPrice)(t.amount, i), alignment: "right" }]) })
                             }
-                        }), void 0 === t.voucherCode || c.default.isEmpty(t.voucherCode) || e.push([{ colSpan: 3, text: r.voucher + " (" + t.voucherCode.code + ")", alignment: "right" }, "", "", { text: "" + (0, o.displayPrice)(t.voucherCode.reductionAmount, i), alignment: "right" }])), e
+                        }), void 0 === t.voucherCode || c.default.isEmpty(t.voucherCode) || e.push([{ colSpan: 3, text: r.voucher_credit_slip + " (" + t.voucherCode.code + ")", alignment: "right" }, "", "", { text: "" + (0, o.displayPrice)(t.voucherCode.reductionAmount, i), alignment: "right" }])), e
                     }()
                 },
                 layout: "noBorders"
