@@ -111,6 +111,8 @@ class AccessCore extends ObjectModel
             WHERE a.`id_profile` = "' . $idProfile . '"
         ');
 
+
+       
         $accessesFromModules = Db::getInstance()->executeS('
             SELECT r.`slug`
             FROM `' . _DB_PREFIX_ . 'authorization_role` r

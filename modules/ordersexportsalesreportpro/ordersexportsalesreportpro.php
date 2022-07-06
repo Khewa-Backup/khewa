@@ -44,6 +44,34 @@ class OrdersExportSalesReportPro extends Module
      */
     public function install()
     {
+        
+        $langs    = Language::getLanguages();
+        $tabvalue = array(
+            array(
+                'class_name' => 'AdminReportExport',
+                'id_parent'  => (int)Db::getInstance()->getValue(
+                    'SELECT `id_tab`
+    FROM `'._DB_PREFIX_.'tab`
+    WHERE `class_name` = \'SELL\''
+                ),
+                'module'     => 'ordersexportsalesreportpro',
+                'name'       => 'Export on Click',
+            ),
+        );
+        foreach ( $tabvalue as $tab ) {
+            $newtab             = new Tab();
+            $newtab->class_name = $tab['class_name'];
+            $newtab->module     = $tab['module'];
+            $newtab->id_parent  = $tab['id_parent'];
+            foreach ( $langs as $l ) {
+                $newtab->name[ $l['id_lang'] ] = $this->l( $tab['name'] );
+            }
+//            $newtab->add( true, false );
+            $newtab->save();
+        }
+
+
+
         include dirname(__FILE__) . '/sql/install.php';
         $tab = new Tab();
         $tab->module = $this->name;
@@ -101,13 +129,35 @@ class OrdersExportSalesReportPro extends Module
      */
     public function getContent()
     {
+
+
         error_reporting(E_ERROR | E_PARSE);
         ini_set('max_execution_time', 0);
         
         /*
          * If values have been submitted in the form, process.
          */
+
+
+        if($this->context->employee->id_profile == '4'){
+            if(!isset($_GET['auto_export'])){
+
+                $AdminReportExportController = Context::getContext()->link->getAdminLink('AdminDashboard', true);
+                Tools::redirectAdmin($AdminReportExportController);
+            }
+        }
+
+        if(isset($_GET['auto_export'])){
+
+            if($_GET['auto_export'] == 'true'){
+
+                $do_export =  $this->doExport();
+
+                exit;
+            }
+        }
         if ((bool) Tools::isSubmit('orders_export_as')) {
+
             $this->doExport();
             exit;
         }
@@ -183,6 +233,7 @@ class OrdersExportSalesReportPro extends Module
      */
     public function hookBackOfficeHeader()
     {
+
         $this->context->controller->addCSS($this->_path . 'views/css/menu_tab_icon.css', 'all');
         if (Tools::getValue('configure') == $this->name) {
             if (version_compare(_PS_VERSION_, '1.6.0.5') === -1) {

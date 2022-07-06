@@ -2641,11 +2641,12 @@ class OrderCore extends ObjectModel
             }
         }
 
-        $i=0;
-        foreach($order_detail_tax_rows as $order_detail_tax_row){
-            $order_detail_tax_rows[$i]['total_amount'] = (($order_detail_tax_rows[$i]['tax_rate']/100) * $this->total_products) ;
-            $i++;
-        }
+//        $i=0;
+//        foreach($order_detail_tax_rows as $order_detail_tax_row){
+//            $order_detail_tax_rows[$i]['total_amount'] = (($order_detail_tax_rows[$i]['tax_rate']/100) * $this->total_products) ;
+//            $i++;
+//        }
+
 
         return $order_detail_tax_rows;
     }

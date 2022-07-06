@@ -316,21 +316,21 @@ class StockManager
                 $templateVars['{firstname}'] = $employee->firstname;
                 $templateVars['{lastname}'] = $employee->lastname;
 
-                Mail::Send(
-                    $idLang,
-                    'productoutofstock',
-                    Mail::l('Product out of stock', $idLang),
-                    $templateVars,
-                    $employee->email,
-                    null,
-                    (string) $configuration['PS_SHOP_EMAIL'],
-                    (string) $configuration['PS_SHOP_NAME'],
-                    null,
-                    null,
-                    __DIR__ . '/mails/',
-                    false,
-                    $idShop
-                );
+//                Mail::Send(
+//                    $idLang,
+//                    'productoutofstock',
+//                    Mail::l('Product out of stock', $idLang),
+//                    $templateVars,
+//                    $employee->email,
+//                    null,
+//                    (string) $configuration['PS_SHOP_EMAIL'],
+//                    (string) $configuration['PS_SHOP_NAME'],
+//                    null,
+//                    null,
+//                    __DIR__ . '/mails/',
+//                    false,
+//                    $idShop
+//                );
             }
         }
     }
