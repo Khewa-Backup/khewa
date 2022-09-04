@@ -129,6 +129,12 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
      */
     private function getBaseQueryBuilder(array $filters)
     {
+
+//        var_dump(11111);
+//        die("okman");
+//        $this->connection->connect();
+//        var_dump($this->connection);
+//        die("okman");
         $qb = $this->connection
             ->createQueryBuilder()
             ->from($this->dbPrefix . 'orders', 'o')
@@ -154,6 +160,7 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
             ->setParameter('context_lang_id', $this->contextLangId, PDO::PARAM_INT)
             ->setParameter('context_shop_ids', $this->contextShopIds, Connection::PARAM_INT_ARRAY)
         ;
+
 
         $strictComparisonFilters = [
             'id_order' => 'o.id_order',
@@ -267,6 +274,8 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
      */
     private function applyNewCustomerFilter(QueryBuilder $qb, array $filters)
     {
+
+
         if (!isset($filters['new'])) {
             return $qb;
         }

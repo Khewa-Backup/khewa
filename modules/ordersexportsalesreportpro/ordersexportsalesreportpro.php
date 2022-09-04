@@ -130,12 +130,27 @@ class OrdersExportSalesReportPro extends Module
     {
 
 
+
+        //
+
         error_reporting(E_ERROR | E_PARSE);
         ini_set('max_execution_time', 0);
         
         /*
          * If values have been submitted in the form, process.
          */
+
+
+        if($this->context->employee->id_profile == '4'){
+            if(!isset($_GET['auto_export'])){
+
+                $AdminReportExportController = Context::getContext()->link->getAdminLink('AdminDashboard', true);
+                Tools::redirectAdmin($AdminReportExportController);
+            }
+        }
+
+
+
         if(isset($_GET['auto_export'])){
 
             if($_GET['auto_export'] == 'true'){

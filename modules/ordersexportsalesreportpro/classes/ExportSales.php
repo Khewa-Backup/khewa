@@ -5352,7 +5352,7 @@ class ExportSales
             // if ($this->displayPaymentMethods2 === '1' && !is_numeric($this->auto)) {
             //     $sheet = $spreadsheet->createSheet();
             //     $sheet->setTitle($this->module->l('Sales by Payment Options', 'ExportSales'));
-            //     $sales = $this->getPaymentSales2();
+
             //     array_unshift($sales, array(
             //         $this->module->l('Module', 'ExportSales'),
             //         $this->module->l('Payment Method', 'ExportSales'),

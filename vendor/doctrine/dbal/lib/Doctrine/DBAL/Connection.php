@@ -1637,6 +1637,8 @@ class Connection implements DriverConnection
      */
     public function createQueryBuilder()
     {
+
+
         return new Query\QueryBuilder($this);
     }
 
