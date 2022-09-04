@@ -410,7 +410,7 @@ class ExportSales
                 if (Tools::isSubmit('email_ids')) {
                     $emails_limit = ' AND id_oxsrp_schdl_email IN (' . pSQL(Tools::getValue('email_ids')) . ') ';
                 }
-                
+
                 $sql = '
                     SELECT 
                         IFNULL(id_orders_export_srpro, 1) id_setting,
@@ -458,8 +458,8 @@ class ExportSales
                     $this->displaySalesByShops = $this->config['orders_display_shop_sales'];
                     $this->displayExplanations = $this->config['orders_display_explanations'];
                     if ($this->config['orders_display_currency_symbol']) {
-                            $this->setCurrencySymbol();
-                        }
+                        $this->setCurrencySymbol();
+                    }
 
                     if ($fileType === 'excel') {
                         $fileName = $this->generateExcel();
@@ -498,7 +498,7 @@ class ExportSales
                 if (Tools::isSubmit('ftp_ids')) {
                     $ftps_limit = ' AND id_oxsrp_schdl_ftp IN (' . pSQL(Tools::getValue('ftp_ids')) . ') ';
                 }
-                
+
                 $sql = '
                     SELECT 
                         IFNULL(id_orders_export_srpro, 1) id_setting, 
@@ -636,8 +636,8 @@ class ExportSales
         $dir_mail = dirname(__FILE__) . '/../mails/';
 
         $configuration = Configuration::getMultiple(array(
-                'PS_SHOP_EMAIL',
-                'PS_SHOP_NAME',
+            'PS_SHOP_EMAIL',
+            'PS_SHOP_NAME',
         ));
 
         $ext = pathinfo($attachment_path, PATHINFO_EXTENSION);
@@ -700,7 +700,7 @@ class ExportSales
                 Tools::dieOrLog(Tools::displayError('Error: invalid SMTP server or SMTP port'), false);
                 return false;
             }
-            
+
             if (version_compare(_PS_VERSION_, '1.7.7') === -1) {
                 $connection = Swift_SmtpTransport::newInstance(Configuration::get('PS_MAIL_SERVER'), Configuration::get('PS_MAIL_SMTP_PORT'), Configuration::get('PS_MAIL_SMTP_ENCRYPTION'))
                     ->setUsername(Configuration::get('PS_MAIL_USER'))
@@ -717,7 +717,7 @@ class ExportSales
                 $connection = new Swift_SendmailTransport();
             }
         }
-        
+
         // Create the message
         if (version_compare(_PS_VERSION_, '1.7.7') === -1) {
             $message = Swift_Message::newInstance();
@@ -761,7 +761,7 @@ class ExportSales
         $ext = '.' . pathinfo($file, PATHINFO_EXTENSION);
         $file_path = $ftp_file_add_ts ? $ftp_folder . '_' . date('Y-m-d His') . $ext : $ftp_folder . $ext;
 
-        
+
         if ($ftp_type === 'sftp') {
             set_include_path(dirname(__FILE__) . '/../vendor/phpseclib');
             include('Net/SFTP.php');
@@ -825,7 +825,7 @@ class ExportSales
             }
         }
     }
-    
+
     private function copyDir($src, $dst)
     {
         // open the source directory
@@ -1128,7 +1128,7 @@ class ExportSales
     private function getPaymentSales2()
     {
         $refund_state = Configuration::getGlobalValue('PS_OS_REFUND');
-        
+
         // $order_values = "
         //                 SELECT DISTINCT payment_method
         //                 FROM ps_order_payment
@@ -1190,9 +1190,9 @@ class ExportSales
         }
         $sum2 = $this->currencySymbol . $sum2;
 
-        
-        $this->nth_total['res1'] = 1 + count($res1);    
-        
+
+        $this->nth_total['res1'] = 1 + count($res1);
+
         $this->nth_total['res2'] = 1 + count($res1) + count($res2) + 1;
 
         $sql = "SELECT 
@@ -1470,14 +1470,16 @@ class ExportSales
                 FROM ' . _DB_PREFIX_ . 'order_slip_detail
                 GROUP BY id_order_detail) order_slip_detail ON `product`.id_order_detail = order_slip_detail.id_order_detail
             LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax canada_tax ON `product`.id_order_detail = canada_tax.id_order_detail AND canada_tax.id_tax = 1
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND quebec_tax.id_tax = 28
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34)
             LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax canada_shipping_tax ON `order`.invoice_number = canada_shipping_tax.id_order_invoice AND canada_shipping_tax.id_tax = 1 AND canada_shipping_tax.`type` = "shipping"
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND quebec_shipping_tax.id_tax = 28 AND quebec_shipping_tax.`type` = "shipping"
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34) AND quebec_shipping_tax.`type` = "shipping"
                 '
             . $this->cartRulesJoin . $this->cartRulesJoinForNull
             . $this->featureJoin . $this->featureJoinForNull
             . $this->attributeJoin . $this->attributeJoinForNull;
     }
+
+
 
     private function setMutualSql () {
         $this->mutualSql = '';
@@ -2351,7 +2353,7 @@ class ExportSales
                         AND (' . $groupCond . ') ';
                 }
             }
-            
+
             // Filter By Cart Rule 2
             $this->mutualSql .= $this->cartRulesCond;
 
@@ -2698,7 +2700,7 @@ class ExportSales
         $timeFormat = $this->timeFormat;
         $decimalSeparator = $this->decimalSeparator;
         $langId = $this->langId;
-        
+
         if (!(array) $this->selectedColumns->product &&
             !(array) $this->selectedColumns->category &&
             !(array) $this->selectedColumns->manufacturer &&
@@ -2840,14 +2842,14 @@ class ExportSales
                     if ($fracPart !== -1 &&
                         (
                             strpos($k, 'rate') !== false ||
-                        strpos($k, 'total') !== false ||
-                        strpos($k, 'weight') !== false ||
-                        strpos($k, 'price') !== false ||
-                        strpos($k, 'percent') !== false ||
-                        strpos($k, 'amount') !== false ||
-                        strpos($k, 'reduction') !== false ||
-                        strpos($k, 'discount') !== false ||
-                        strpos($k, 'ecotax') !== false
+                            strpos($k, 'total') !== false ||
+                            strpos($k, 'weight') !== false ||
+                            strpos($k, 'price') !== false ||
+                            strpos($k, 'percent') !== false ||
+                            strpos($k, 'amount') !== false ||
+                            strpos($k, 'reduction') !== false ||
+                            strpos($k, 'discount') !== false ||
+                            strpos($k, 'ecotax') !== false
                         )) {
                         $percSymb = $this->displayCurrSymbol ? '%' : '';
                         $kg = $this->displayCurrSymbol ? ' kg' : '';
@@ -2888,14 +2890,14 @@ class ExportSales
                     if ($fracPart !== -1 &&
                         (
                             strpos($k, 'rate') !== false ||
-                        strpos($k, 'total') !== false ||
-                        strpos($k, 'weight') !== false ||
-                        strpos($k, 'price') !== false ||
-                        strpos($k, 'percent') !== false ||
-                        strpos($k, 'amount') !== false ||
-                        strpos($k, 'reduction') !== false ||
-                        strpos($k, 'discount') !== false ||
-                        strpos($k, 'ecotax') !== false
+                            strpos($k, 'total') !== false ||
+                            strpos($k, 'weight') !== false ||
+                            strpos($k, 'price') !== false ||
+                            strpos($k, 'percent') !== false ||
+                            strpos($k, 'amount') !== false ||
+                            strpos($k, 'reduction') !== false ||
+                            strpos($k, 'discount') !== false ||
+                            strpos($k, 'ecotax') !== false
                         )) {
 //                        if ($decimalSeparator === ',') {
 //                            $this->sql .= "
@@ -3202,11 +3204,11 @@ class ExportSales
                 FROM ' . _DB_PREFIX_ . 'order_slip_detail
                 GROUP BY id_order_detail) order_slip_detail ON `product`.id_order_detail = order_slip_detail.id_order_detail
             LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax canada_tax ON `product`.id_order_detail = canada_tax.id_order_detail AND canada_tax.id_tax = 1
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND quebec_tax.id_tax = 28
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34)
             LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax canada_shipping_tax ON `order`.invoice_number = canada_shipping_tax.id_order_invoice AND canada_shipping_tax.id_tax = 1 AND canada_shipping_tax.`type` = "shipping"
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND quebec_shipping_tax.id_tax = 28 AND quebec_shipping_tax.`type` = "shipping"
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34) AND quebec_shipping_tax.`type` = "shipping"
             ';
-        
+
         // Filter By Cart Rule
         if (!$this->auto) {
             $cart_rules = pSQL(Tools::getValue('cart_rules_data'));
@@ -3267,7 +3269,7 @@ class ExportSales
         }
         $this->sql .= $this->cartRulesJoinForNull;
         // End Filter By Cart Rule
-        
+
 
         // Filter By Feature
         if (!$this->auto) {
@@ -3338,7 +3340,7 @@ class ExportSales
         }
         $this->sql .= $this->featureJoinForNull;
         // End Filter By Feature
-        
+
         // Filter By Attribute
         if (!$this->auto) {
             $attributes = pSQL(Tools::getValue('attributes_data'));
@@ -3491,11 +3493,11 @@ class ExportSales
                     IF(COUNT(product.id_order_detail)=0,1,COUNT(product.id_order_detail)) products
                 ' . $this->helperSql . ' 
                     WHERE 1 ';
-        
+
         if (is_numeric($this->auto)) {
             $mergeSql .= 'AND order.id_order = ' . $this->auto;
         }
-        
+
         $mergeSql .= $this->mutualSql . '
                     GROUP BY order.id_order
                     ORDER BY ' . $this->sort;
@@ -3544,236 +3546,617 @@ class ExportSales
 
         if ($this->displayMainSales) {
 
-        $orders = $this->getOrders();
-        
-        if (is_numeric($this->auto) && !$orders && $autoExportDoNotSend) {
-            return 0;
-        }
-        
-        if ($this->auto === 'schedule' && !$orders && $scheduleDoNotSend) {
-            return 0;
-        }
+            $orders = $this->getOrders();
 
-        $sheet = $spreadsheet->getActiveSheet();
+            if (is_numeric($this->auto) && !$orders && $autoExportDoNotSend) {
+                return 0;
+            }
 
-        $excelColumns = array();
-        //        d($orders);
-        if (!empty($orders)) {
-            $counter = count($orders[0]);
-            if ($this->orderId) {
-                $counter--;
+            if ($this->auto === 'schedule' && !$orders && $scheduleDoNotSend) {
+                return 0;
             }
-            if ($this->productId) {
-                $counter--;
-            }
-            if ($this->attributeId) {
-                $counter--;
-            }
-            if ($this->shopId) {
-                $counter--;
-            }
-            if ($this->categoryId) {
-                $counter--;
-            }
-            if ($this->manufacturerId) {
-                $counter--;
-            }
-            if ($this->supplierId) {
-                $counter--;
-            }
-            if ($this->productRewriteLink) {
-                $counter--;
-            }
-            if ($this->categoryRewriteLink) {
-                $counter--;
-            }
-            if ($this->currencyIsoCode) {
-                $counter--;
-            }
-            if ($this->currencyConversionRate) {
-                $counter--;
-            }
-            if ($this->totalProducts) {
-                $counter--;
-            }
-            if ($this->productQuantity) {
-                $counter--;
-            }
-            if ($this->totalPriceTaxExcl) {
-                $counter--;
-            }
-            if ($this->totalDiscountsTaxExcl) {
-                $counter--;
-            }
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $excelColumns = array();
+            //        d($orders);
+            if (!empty($orders)) {
+                $counter = count($orders[0]);
+                if ($this->orderId) {
+                    $counter--;
+                }
+                if ($this->productId) {
+                    $counter--;
+                }
+                if ($this->attributeId) {
+                    $counter--;
+                }
+                if ($this->shopId) {
+                    $counter--;
+                }
+                if ($this->categoryId) {
+                    $counter--;
+                }
+                if ($this->manufacturerId) {
+                    $counter--;
+                }
+                if ($this->supplierId) {
+                    $counter--;
+                }
+                if ($this->productRewriteLink) {
+                    $counter--;
+                }
+                if ($this->categoryRewriteLink) {
+                    $counter--;
+                }
+                if ($this->currencyIsoCode) {
+                    $counter--;
+                }
+                if ($this->currencyConversionRate) {
+                    $counter--;
+                }
+                if ($this->totalProducts) {
+                    $counter--;
+                }
+                if ($this->productQuantity) {
+                    $counter--;
+                }
+                if ($this->totalPriceTaxExcl) {
+                    $counter--;
+                }
+                if ($this->totalDiscountsTaxExcl) {
+                    $counter--;
+                }
 //            if ($this->purchaseSupplierPrice) {
 //                $counter--;
 //            }
 
-            $headers = array_keys($orders[0]);
-            $psp = 0;
-            if ($this->purchaseSupplierPrice) {
-                $psp++;
-            }
-
-            $excelColumns = SalesExportHelper::createColumnsArray($counter - $psp);
-            $sheet->getDefaultColumnDimension()->setWidth(21);
-
-            if (isset($this->productImage) ||
-                isset($this->attributeImage) ||
-                isset($this->categoryImage) ||
-                isset($this->manufacturerImage) ||
-                isset($this->supplierImage)) {
-                $sheet->getDefaultRowDimension()->setRowHeight(42);
-            } else {
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-            }
-
-            $sheet->getStyle('A1:' . end($excelColumns) . (count($orders) + 10))
-                ->getAlignment()->setWrapText(true);
-
-            if ($this->displayHeader) {
-                $sheet->getStyle('A1:' . end($excelColumns) . '1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:' . end($excelColumns) . '1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:' . end($excelColumns) . '1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-                for ($i = 0; $i < $counter - $psp; $i++) {
-                    $sheet->setCellValue($excelColumns[$i] . '1', $headers[$i]);
+                $headers = array_keys($orders[0]);
+                $psp = 0;
+                if ($this->purchaseSupplierPrice) {
+                    $psp++;
                 }
-            }
-            // Rename worksheet
-            $sheet->setTitle($this->module->l('Sales', 'ExportSales'));
-        } else {
-            $sheet->setTitle($this->module->l('Sales', 'ExportSales'));
-            $sheet->setCellValue('A1', $this->module->l('No Data', 'ExportSales'));
+
+                $excelColumns = SalesExportHelper::createColumnsArray($counter - $psp);
+                $sheet->getDefaultColumnDimension()->setWidth(21);
+
+                if (isset($this->productImage) ||
+                    isset($this->attributeImage) ||
+                    isset($this->categoryImage) ||
+                    isset($this->manufacturerImage) ||
+                    isset($this->supplierImage)) {
+                    $sheet->getDefaultRowDimension()->setRowHeight(42);
+                } else {
+                    $sheet->getDefaultRowDimension()->setRowHeight(30);
+                }
+
+                $sheet->getStyle('A1:' . end($excelColumns) . (count($orders) + 10))
+                    ->getAlignment()->setWrapText(true);
+
+                if ($this->displayHeader) {
+                    $sheet->getStyle('A1:' . end($excelColumns) . '1')
+                        ->getFont()->setBold(true);
+                    $sheet->getStyle('A1:' . end($excelColumns) . '1')
+                        ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('FFDCF0FF');
+                    $sheet->getStyle('A1:' . end($excelColumns) . '1')->getBorders()
+                        ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+                    for ($i = 0; $i < $counter - $psp; $i++) {
+                        $sheet->setCellValue($excelColumns[$i] . '1', $headers[$i]);
+                    }
+                }
+                // Rename worksheet
+                $sheet->setTitle($this->module->l('Sales', 'ExportSales'));
+            } else {
+                $sheet->setTitle($this->module->l('Sales', 'ExportSales'));
+                $sheet->setCellValue('A1', $this->module->l('No Data', 'ExportSales'));
 //            $sheet->setCellValue('A4', $this->module->l('Date', 'ExportSales') . ': ')
 //                ->getStyle('A4')->getFont()->setBold(true);
 //            $sheet->setCellValue('B4', date('Y-m-d H:i:s'));
-        }
-
-
-        if ($excelColumns) {
-            $font = $sheet->getStyle('A1')->getFont();
-
-            if (isset($this->selectedColumns->order->id_order)) {
-                $groupCount = $groupTotal = 0;
-                $groupOrder = $orders[0][$this->selectedColumns->order->id_order];
             }
 
-            if ($this->selectedColumns->order->profit_amount ||
-                $this->selectedColumns->order->profit_margin ||
-                $this->selectedColumns->order->profit_percentage) {
-                $profits = true;
-            } else {
-                $profits = false;
-            }
 
-            if ($this->selectedColumns->order->net_profit_amount ||
-                $this->selectedColumns->order->net_profit_margin ||
-                $this->selectedColumns->order->net_profit_percentage) {
-                $netProfits = true;
-            } else {
-                $netProfits = false;
-            }
+            if ($excelColumns) {
+                $font = $sheet->getStyle('A1')->getFont();
 
-            $totals = array();
-            $purchase = $sale = $netSale = 0;
-            $reductionTotals = array(
-                'full' => 0,
-                'reduced' => 0
-            );
-            $empty_rows = 0;
-            $groups = $this->getGroups();
-            if ($this->ordersMerge === '1') {
-                if (!$this->noProduct) {
-                    $header = current(
-                        $sheet->rangeToArray(
-                            'A1:' . end($excelColumns) . '1', // The worksheet range that we want to retrieve
-                            null, // Value that should be returned for empty cells
-                            true, // Should formulas be calculated (the equivalent of getCalculatedValue() for each cell)
-                            true, // Should values be formatted (the equivalent of getFormattedValue() for each cell)
-                            true // Should the array be indexed by cell row and cell column
-                        )
-                    );
-                    $nonProducts = array_diff(
-                        $header,
-                        array_merge(
-                            (array) $this->selectedColumns->product,
-                            (array) $this->selectedColumns->category,
-                            (array) $this->selectedColumns->manufacturer,
-                            (array) $this->selectedColumns->supplier
-                        )
-                    );
-                    foreach (array_keys($nonProducts) as $value) {
-                        $last = 2;
-                        foreach ($groups as $group) {
-                            if ((int) $group['products'] > 1) {
-                                $sheet->mergeCells("$value$last:$value" . ($last + (int) $group['products'] - 1));
-                                $last += (int) $group['products'];
-                            } else {
-                                ++$last;
+                if (isset($this->selectedColumns->order->id_order)) {
+                    $groupCount = $groupTotal = 0;
+                    $groupOrder = $orders[0][$this->selectedColumns->order->id_order];
+                }
+
+                if ($this->selectedColumns->order->profit_amount ||
+                    $this->selectedColumns->order->profit_margin ||
+                    $this->selectedColumns->order->profit_percentage) {
+                    $profits = true;
+                } else {
+                    $profits = false;
+                }
+
+                if ($this->selectedColumns->order->net_profit_amount ||
+                    $this->selectedColumns->order->net_profit_margin ||
+                    $this->selectedColumns->order->net_profit_percentage) {
+                    $netProfits = true;
+                } else {
+                    $netProfits = false;
+                }
+
+                $totals = array();
+                $purchase = $sale = $netSale = 0;
+                $reductionTotals = array(
+                    'full' => 0,
+                    'reduced' => 0
+                );
+                $empty_rows = 0;
+                $groups = $this->getGroups();
+                if ($this->ordersMerge === '1') {
+                    if (!$this->noProduct) {
+                        $header = current(
+                            $sheet->rangeToArray(
+                                'A1:' . end($excelColumns) . '1', // The worksheet range that we want to retrieve
+                                null, // Value that should be returned for empty cells
+                                true, // Should formulas be calculated (the equivalent of getCalculatedValue() for each cell)
+                                true, // Should values be formatted (the equivalent of getFormattedValue() for each cell)
+                                true // Should the array be indexed by cell row and cell column
+                            )
+                        );
+                        $nonProducts = array_diff(
+                            $header,
+                            array_merge(
+                                (array) $this->selectedColumns->product,
+                                (array) $this->selectedColumns->category,
+                                (array) $this->selectedColumns->manufacturer,
+                                (array) $this->selectedColumns->supplier
+                            )
+                        );
+                        foreach (array_keys($nonProducts) as $value) {
+                            $last = 2;
+                            foreach ($groups as $group) {
+                                if ((int) $group['products'] > 1) {
+                                    $sheet->mergeCells("$value$last:$value" . ($last + (int) $group['products'] - 1));
+                                    $last += (int) $group['products'];
+                                } else {
+                                    ++$last;
+                                }
                             }
                         }
                     }
-                }
 
-                $j = 0;
-                foreach ($groups as $gk => $group) {
-                    for ($i = 0; $i < (int) $group['products']; ++$i) {
-                        if ($this->noProduct && $i !== 0) {
-                            if ($profits || $netProfits) {
-                                $groupTotal += $orders[$j][$this->selectedColumns->product->purchase_supplier_price] * $orders[$j][$this->selectedColumns->product->product_quantity];
-                                if ($this->displayTotals === '1') {
-                                    $purchase += (float) $orders[$j][$this->selectedColumns->product->purchase_supplier_price] * $orders[$j][$this->selectedColumns->product->product_quantity] / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                }
-                            }
-                            $j++;
-                            $empty_rows++;
-                            continue;
-                        }
-                        $count = 0;
-                        foreach ($orders[$j] as $k => $val) {
-                            if ($count >= $counter) {
-                                break;
-                            }
-                            if (in_array($k, (array) $this->selectedColumns->product) ||
-                                in_array($k, (array) $this->selectedColumns->category) ||
-                                in_array($k, (array) $this->selectedColumns->manufacturer) ||
-                                in_array($k, (array) $this->selectedColumns->supplier)) {
-                                if (($val || $val === '0') && in_array($k, $this->moneyColumns)) {
-                                    $col = $excelColumns[$count];
-                                    $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
-                                    $sheet->setCellValue($col . ($j - $empty_rows + 2), $curr . str_replace('.', $this->decimalSeparator, $val));
+                    $j = 0;
+                    foreach ($groups as $gk => $group) {
+                        for ($i = 0; $i < (int) $group['products']; ++$i) {
+                            if ($this->noProduct && $i !== 0) {
+                                if ($profits || $netProfits) {
+                                    $groupTotal += $orders[$j][$this->selectedColumns->product->purchase_supplier_price] * $orders[$j][$this->selectedColumns->product->product_quantity];
                                     if ($this->displayTotals === '1') {
-                                        if (isset($totals[$col])) {
-                                            $totals[$col]['val'] += (float) $val / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                        } else {
-                                            $totals[$col]['val'] = (float) $val / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                            $totals[$col]['curr'] = (bool) $curr;
-                                        }
+                                        $purchase += (float) $orders[$j][$this->selectedColumns->product->purchase_supplier_price] * $orders[$j][$this->selectedColumns->product->product_quantity] / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
                                     }
-                                } elseif ($k === $this->selectedColumns->product->purchase_supplier_price) {
-                                    if (!$this->purchaseSupplierPrice) {
+                                }
+                                $j++;
+                                $empty_rows++;
+                                continue;
+                            }
+                            $count = 0;
+                            foreach ($orders[$j] as $k => $val) {
+                                if ($count >= $counter) {
+                                    break;
+                                }
+                                if (in_array($k, (array) $this->selectedColumns->product) ||
+                                    in_array($k, (array) $this->selectedColumns->category) ||
+                                    in_array($k, (array) $this->selectedColumns->manufacturer) ||
+                                    in_array($k, (array) $this->selectedColumns->supplier)) {
+                                    if (($val || $val === '0') && in_array($k, $this->moneyColumns)) {
                                         $col = $excelColumns[$count];
                                         $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
                                         $sheet->setCellValue($col . ($j - $empty_rows + 2), $curr . str_replace('.', $this->decimalSeparator, $val));
                                         if ($this->displayTotals === '1') {
                                             if (isset($totals[$col])) {
-                                                $totals[$col]['val'] += (float) $val * $orders[$j][$this->selectedColumns->product->product_quantity] / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                $totals[$col]['val'] += (float) $val / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
                                             } else {
-                                                $totals[$col]['val'] = (float) $val * $orders[$j][$this->selectedColumns->product->product_quantity] / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                $totals[$col]['val'] = (float) $val / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
                                                 $totals[$col]['curr'] = (bool) $curr;
                                             }
                                         }
+                                    } elseif ($k === $this->selectedColumns->product->purchase_supplier_price) {
+                                        if (!$this->purchaseSupplierPrice) {
+                                            $col = $excelColumns[$count];
+                                            $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
+                                            $sheet->setCellValue($col . ($j - $empty_rows + 2), $curr . str_replace('.', $this->decimalSeparator, $val));
+                                            if ($this->displayTotals === '1') {
+                                                if (isset($totals[$col])) {
+                                                    $totals[$col]['val'] += (float) $val * $orders[$j][$this->selectedColumns->product->product_quantity] / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                } else {
+                                                    $totals[$col]['val'] = (float) $val * $orders[$j][$this->selectedColumns->product->product_quantity] / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                    $totals[$col]['curr'] = (bool) $curr;
+                                                }
+                                            }
+                                        }
+                                        if ($profits || $netProfits) {
+                                            if ($groupOrder !== $orders[$j][$this->selectedColumns->order->id_order]) {
+                                                $totalProducts = $orders[$j - 1][$this->selectedColumns->order->total_products];
+                                                $totalDiscountsTaxExcl = $orders[$j - 1][$this->selectedColumns->order->total_discounts_tax_excl];
+                                                $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j - 1][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
+                                                if ($this->selectedColumns->order->profit_amount) {
+                                                    $col = $excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)];
+                                                    $profit_amount = $totalProducts - $groupTotal;
+                                                    $sheet->setCellValue($col . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
+                                                }
+                                                if ($this->selectedColumns->order->profit_margin) {
+                                                    $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
+                                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)] . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
+                                                }
+                                                if ($this->selectedColumns->order->profit_percentage) {
+                                                    $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
+                                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)] . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
+                                                }
+                                                if ($this->selectedColumns->order->net_profit_amount) {
+                                                    $col = $excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)];
+                                                    $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
+                                                    $sheet->setCellValue($col . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
+                                                }
+                                                if ($this->selectedColumns->order->net_profit_margin) {
+                                                    $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
+                                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)] . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
+                                                }
+                                                if ($this->selectedColumns->order->net_profit_percentage) {
+                                                    $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
+                                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)] . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
+                                                }
+                                                $groupTotal = 0;
+                                                $groupOrder = $orders[$j][$this->selectedColumns->order->id_order];
+                                                if ($this->displayTotals === '1') {
+                                                    if ($profits) {
+                                                        $sale += $totalProducts / $orders[$j - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                    }
+                                                    if ($netProfits) {
+                                                        $netSale += ($totalProducts - $totalDiscountsTaxExcl)  / $orders[$j - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                    }
+                                                }
+                                            }
+                                            $groupTotal += $val * $orders[$j][$this->selectedColumns->product->product_quantity];
+                                            if ($this->displayTotals === '1') {
+                                                $purchase += (float) $val * $orders[$j][$this->selectedColumns->product->product_quantity] / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                            }
+                                        }
+                                    } elseif ($k === $this->selectedColumns->product->product_quantity) {
+                                        $col = $excelColumns[$count];
+                                        $sheet->setCellValue($col . ($j - $empty_rows + 2), $val);
+                                        if ($this->displayTotals === '1') {
+                                            if (isset($totals[$col])) {
+                                                $totals[$col]['val'] +=  $val;
+                                            } else {
+                                                $totals[$col]['val'] = $val;
+                                                $totals[$col]['curr'] = 0;
+                                            }
+                                        }
+                                    } elseif ($k === $this->selectedColumns->product->reduction_percent) {
+                                        $reductionPercentCol = $excelColumns[$count];
+                                        $sheet->setCellValue($reductionPercentCol . ($j - $empty_rows + 2), str_replace('.', $this->decimalSeparator, $val));
+                                        if ($this->displayTotals === '1') {
+                                            $reductionTotals['reduced'] += $orders[$j][$this->selectedColumns->product->total_price_tax_excl];
+                                            $reductionTotals['full'] += 100 * $orders[$j][$this->selectedColumns->product->total_price_tax_excl] / (100 - $val);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->product->product_image) {
+                                        // Get image data of the given product id
+                                        $image = Image::getCover($orders[$j][$this->selectedColumns->product->product_id]);
+                                        if ($image) {
+                                            $img = new Image($image['id_image']);
+                                            $image_path = realpath(_PS_PROD_IMG_DIR_ . $img->getImgPath() . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
+                                            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                            // $drawing->setName('Product_' . $value['Product ID']);
+                                            $drawing->setPath(realpath($image_path));
+
+                                            $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+
+                                            $drawing->setHeight($height);
+
+                                            $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+
+                                            $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
+
+                                            $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
+                                            $drawing->setWorksheet($sheet);
+                                            $drawing->getShadow()->setVisible(true);
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)
+                                                ->getFont()->setBold(true);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->product->attribute_image) {
+                                        if (method_exists('Image', 'getBestImageAttribute')) {
+                                            // Get image data of the given product id
+                                            $image = Image::getBestImageAttribute(
+                                                $orders[$j][$this->selectedColumns->shop->id_shop],
+                                                $this->langId,
+                                                $orders[$j][$this->selectedColumns->product->product_id],
+                                                $orders[$j][$this->selectedColumns->product->product_attribute_id]
+                                            );
+                                        } else {
+                                            $image = Image::getImages(
+                                                $this->langId,
+                                                $orders[$j][$this->selectedColumns->product->product_id],
+                                                $orders[$j][$this->selectedColumns->product->product_attribute_id]
+                                            );
+                                            $image = isset($image[0]) ? $image[0] : null;
+                                        }
+                                        if ($image) {
+                                            $img = new Image($image['id_image']);
+                                            $image_path = realpath(_PS_PROD_IMG_DIR_ . $img->getImgPath() . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
+                                            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                            // $drawing->setName('Product_' . $value['Product ID']);
+                                            $drawing->setPath(realpath($image_path));
+
+                                            $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+
+                                            $drawing->setHeight($height);
+
+                                            $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+
+                                            $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
+
+                                            $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
+                                            $drawing->setWorksheet($sheet);
+                                            $drawing->getShadow()->setVisible(true);
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)
+                                                ->getFont()->setBold(true);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->product->product_link) {
+                                        $link = $this->context->link->getProductLink((int) $orders[$j][$this->selectedColumns->product->product_id], null, null, null, $this->langId);
+                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                        $sheet->setCellValue($cell, $link);
+                                        $sheet->getCell($cell)->getHyperlink()->setUrl($link);
+                                        $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                    } elseif ($k === $this->selectedColumns->product->product_image_link) {
+                                        // Get image data of the given product id
+                                        $image = Image::getCover($orders[$j][$this->selectedColumns->product->product_id]);
+                                        if ($image) {
+                                            $img_link = $this->context->link->getImageLink($orders[$j][$this->selectedColumns->product->{'order_detail_lang.product_link_rewrite'}], $image['id_image'], $this->imageType);
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue($cell, $img_link);
+                                            $sheet->getCell($cell)->getHyperlink()->setUrl($img_link);
+                                            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image Link', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)->getFont()->setBold(true);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->product->attribute_image_link) {
+                                        if (method_exists('Image', 'getBestImageAttribute')) {
+                                            // Get image data of the given product id
+                                            $image = Image::getBestImageAttribute(
+                                                $orders[$j][$this->selectedColumns->shop->id_shop],
+                                                $this->langId,
+                                                $orders[$j][$this->selectedColumns->product->product_id],
+                                                $orders[$j][$this->selectedColumns->product->product_attribute_id]
+                                            );
+                                        } else {
+                                            $image = Image::getImages(
+                                                $this->langId,
+                                                $orders[$j][$this->selectedColumns->product->product_id],
+                                                $orders[$j][$this->selectedColumns->product->product_attribute_id]
+                                            );
+                                            $image = isset($image[0]) ? $image[0] : null;
+                                        }
+                                        if ($image) {
+                                            $img_link = $this->context->link->getImageLink($orders[$j][$this->selectedColumns->product->{'order_detail_lang.product_link_rewrite'}], $image['id_image'], $this->imageType);
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue($cell, $img_link);
+                                            $sheet->getCell($cell)->getHyperlink()->setUrl($img_link);
+                                            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image Link', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)->getFont()->setBold(true);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->category->category_image) {
+                                        $cat_img_path = realpath(_PS_CAT_IMG_DIR_ . $orders[$j][$this->selectedColumns->category->id_category] . ($this->catImageTypeForFile ? '-' . $this->catImageTypeForFile : '') . '.jpg');
+                                        if (file_exists($cat_img_path)) {
+                                            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                            $drawing->setPath(realpath($cat_img_path));
+
+                                            $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+
+                                            $drawing->setHeight($height);
+
+                                            $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+
+                                            $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
+
+                                            $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
+                                            $drawing->setWorksheet($sheet);
+                                            $drawing->getShadow()->setVisible(true);
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)->getFont()->setBold(true);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->category->category_link) {
+                                        if ((int) $orders[$j][$this->selectedColumns->category->id_category]) {
+                                            $link = $this->context->link->getCategoryLink((int) $orders[$j][$this->selectedColumns->category->id_category], null, $this->langId);
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue($cell, $link);
+                                            $sheet->getCell($cell)->getHyperlink()->setUrl($link);
+                                            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                        }
+                                    } elseif ($k === $this->selectedColumns->category->category_image_link) {
+                                        $cat_img_path = realpath(_PS_CAT_IMG_DIR_ . $orders[$j][$this->selectedColumns->category->id_category] . ($this->catImageType ? '-' . $this->catImageType : '') . '.jpg');
+                                        if (file_exists($cat_img_path)) {
+                                            if (method_exists($this->context->link, 'getCatImageLink')) {
+                                                // Get image data of the given product id
+                                                $cat_img_link = $this->context->link->getCatImageLink(
+                                                    $orders[$j][$this->selectedColumns->category->link_rewrite],
+                                                    $orders[$j][$this->selectedColumns->category->id_category],
+                                                    $this->imageType
+                                                );
+                                            } else {
+                                                $cat_img_link = $this->context->link->getBaseLink() . 'c/'
+                                                    . $orders[$j][$this->selectedColumns->category->id_category] . ($this->imageType ? '-' . $this->imageType : '') . '/'
+                                                    . $orders[$j][$this->selectedColumns->category->link_rewrite] . '.jpg';
+                                            }
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue($cell, $cat_img_link);
+                                            $sheet->getCell($cell)->getHyperlink()->setUrl($cat_img_link);
+                                            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image Link', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)->getFont()->setBold(true);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_link) {
+                                        if ((int) $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer]) {
+                                            $link = $this->context->link->getManufacturerLink((int) $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer], null, $this->langId);
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue($cell, $link);
+                                            $sheet->getCell($cell)->getHyperlink()->setUrl($link);
+                                            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                        }
+                                    } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_image) {
+                                        $man_img_path = realpath(_PS_MANU_IMG_DIR_ . $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
+                                        if (file_exists($man_img_path)) {
+                                            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                            $drawing->setPath(realpath($man_img_path));
+
+                                            $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+
+                                            $drawing->setHeight($height);
+
+                                            $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+
+                                            $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
+
+                                            $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
+                                            $drawing->setWorksheet($sheet);
+                                            $drawing->getShadow()->setVisible(true);
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)->getFont()->setBold(true);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_image_link) {
+                                        $man_img_path = realpath(_PS_MANU_IMG_DIR_ . $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg');
+                                        if (file_exists($man_img_path)) {
+                                            $man_img_link = $this->context->link->getBaseLink() . 'img/m/'
+                                                . $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg';
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue($cell, $man_img_link);
+                                            $sheet->getCell($cell)->getHyperlink()->setUrl($man_img_link);
+                                            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image Link', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)->getFont()->setBold(true);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->supplier->supplier_link) {
+                                        if ((int) $orders[$j][$this->selectedColumns->supplier->id_supplier]) {
+                                            $link = $this->context->link->getSupplierLink((int) $orders[$j][$this->selectedColumns->supplier->id_supplier], null, $this->langId);
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue($cell, $link);
+                                            $sheet->getCell($cell)->getHyperlink()->setUrl($link);
+                                            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                        }
+                                    } elseif ($k === $this->selectedColumns->supplier->supplier_image) {
+                                        $supp_img_path = realpath(_PS_SUPP_IMG_DIR_ . $orders[$j][$this->selectedColumns->supplier->id_supplier] . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
+                                        if (file_exists($supp_img_path)) {
+                                            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                            $drawing->setPath(realpath($supp_img_path));
+
+                                            $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+
+                                            $drawing->setHeight($height);
+
+                                            $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+
+                                            $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
+
+                                            $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
+                                            $drawing->setWorksheet($sheet);
+                                            $drawing->getShadow()->setVisible(true);
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)->getFont()->setBold(true);
+                                        }
+                                    } elseif ($k === $this->selectedColumns->supplier->supplier_image_link) {
+                                        $supp_img_path = realpath(_PS_SUPP_IMG_DIR_ . $orders[$j][$this->selectedColumns->supplier->id_supplier] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg');
+                                        if (file_exists($supp_img_path)) {
+                                            $supp_img_link = $this->context->link->getBaseLink() . 'img/su/'
+                                                . $orders[$j][$this->selectedColumns->supplier->id_supplier] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg';
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue($cell, $supp_img_link);
+                                            $sheet->getCell($cell)->getHyperlink()->setUrl($supp_img_link);
+                                            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                        } else {
+                                            $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
+                                            $sheet->setCellValue(
+                                                $cell,
+                                                $this->module->l('No Image Link', 'ExportSales')
+                                            );
+                                            $sheet->getStyle($cell)->getFont()->setBold(true);
+                                        }
+                                    } else {
+                                        $col = $excelColumns[$count];
+                                        $sheet->setCellValue($col . ($j - $empty_rows + 2), $val);
+                                        if (Tools::strlen($val) <= 8) {
+                                            $sheet->getColumnDimension($col)->setWidth(15);
+                                        }
                                     }
-                                    if ($profits || $netProfits) {
-                                        if ($groupOrder !== $orders[$j][$this->selectedColumns->order->id_order]) {
+                                } elseif ($i === 0) {
+                                    if (($val || $val === '0') && in_array($k, $this->moneyColumns)) {
+                                        $col = $excelColumns[$count];
+                                        $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
+                                        $sheet->setCellValue($col . ($j - $empty_rows + 2), $curr . str_replace('.', $this->decimalSeparator, $val));
+                                        if ($this->displayTotals === '1') {
+                                            if (isset($totals[$col])) {
+                                                $totals[$col]['val'] += (float) $val / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                            } else {
+                                                $totals[$col]['val'] = (float) $val / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                $totals[$col]['curr'] = (bool) $curr;
+                                            }
+                                        }
+                                    } else {
+                                        if (($profits || $netProfits) &&
+                                            $groupOrder !== $orders[$j][$this->selectedColumns->order->id_order] && (
+                                                $k === $this->selectedColumns->order->profit_amount ||
+                                                $k === $this->selectedColumns->order->profit_margin ||
+                                                $k === $this->selectedColumns->order->profit_percentage ||
+                                                $k === $this->selectedColumns->order->net_profit_amount ||
+                                                $k === $this->selectedColumns->order->net_profit_margin ||
+                                                $k === $this->selectedColumns->order->net_profit_percentage
+                                            )) {
+                                            $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j - 1][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
                                             $totalProducts = $orders[$j - 1][$this->selectedColumns->order->total_products];
                                             $totalDiscountsTaxExcl = $orders[$j - 1][$this->selectedColumns->order->total_discounts_tax_excl];
-                                            $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j - 1][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
                                             if ($this->selectedColumns->order->profit_amount) {
                                                 $col = $excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)];
                                                 $profit_amount = $totalProducts - $groupTotal;
@@ -3807,1120 +4190,739 @@ class ExportSales
                                                     $sale += $totalProducts / $orders[$j - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
                                                 }
                                                 if ($netProfits) {
-                                                    $netSale += ($totalProducts - $totalDiscountsTaxExcl)  / $orders[$j - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                    $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$j - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
                                                 }
                                             }
-                                        }
-                                        $groupTotal += $val * $orders[$j][$this->selectedColumns->product->product_quantity];
-                                        if ($this->displayTotals === '1') {
-                                            $purchase += (float) $val * $orders[$j][$this->selectedColumns->product->product_quantity] / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                        }
-                                    }
-                                } elseif ($k === $this->selectedColumns->product->product_quantity) {
-                                    $col = $excelColumns[$count];
-                                    $sheet->setCellValue($col . ($j - $empty_rows + 2), $val);
-                                    if ($this->displayTotals === '1') {
-                                        if (isset($totals[$col])) {
-                                            $totals[$col]['val'] +=  $val;
                                         } else {
-                                            $totals[$col]['val'] = $val;
-                                            $totals[$col]['curr'] = 0;
-                                        }
-                                    }
-                                } elseif ($k === $this->selectedColumns->product->reduction_percent) {
-                                    $reductionPercentCol = $excelColumns[$count];
-                                    $sheet->setCellValue($reductionPercentCol . ($j - $empty_rows + 2), str_replace('.', $this->decimalSeparator, $val));
-                                    if ($this->displayTotals === '1') {
-                                        $reductionTotals['reduced'] += $orders[$j][$this->selectedColumns->product->total_price_tax_excl];
-                                        $reductionTotals['full'] += 100 * $orders[$j][$this->selectedColumns->product->total_price_tax_excl] / (100 - $val);
-                                    }
-                                } elseif ($k === $this->selectedColumns->product->product_image) {
-                                    // Get image data of the given product id
-                                    $image = Image::getCover($orders[$j][$this->selectedColumns->product->product_id]);
-                                    if ($image) {
-                                        $img = new Image($image['id_image']);
-                                        $image_path = realpath(_PS_PROD_IMG_DIR_ . $img->getImgPath() . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
-                                        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                        // $drawing->setName('Product_' . $value['Product ID']);
-                                        $drawing->setPath(realpath($image_path));
-
-                                        $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
-
-                                        $drawing->setHeight($height);
-
-                                        $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
-
-                                        $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
-
-                                        $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
-                                        $drawing->setWorksheet($sheet);
-                                        $drawing->getShadow()->setVisible(true);
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)
-                                            ->getFont()->setBold(true);
-                                    }
-                                } elseif ($k === $this->selectedColumns->product->attribute_image) {
-                                    if (method_exists('Image', 'getBestImageAttribute')) {
-                                        // Get image data of the given product id
-                                        $image = Image::getBestImageAttribute(
-                                            $orders[$j][$this->selectedColumns->shop->id_shop],
-                                            $this->langId,
-                                            $orders[$j][$this->selectedColumns->product->product_id],
-                                            $orders[$j][$this->selectedColumns->product->product_attribute_id]
-                                        );
-                                    } else {
-                                        $image = Image::getImages(
-                                            $this->langId,
-                                            $orders[$j][$this->selectedColumns->product->product_id],
-                                            $orders[$j][$this->selectedColumns->product->product_attribute_id]
-                                        );
-                                        $image = isset($image[0]) ? $image[0] : null;
-                                    }
-                                    if ($image) {
-                                        $img = new Image($image['id_image']);
-                                        $image_path = realpath(_PS_PROD_IMG_DIR_ . $img->getImgPath() . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
-                                        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                        // $drawing->setName('Product_' . $value['Product ID']);
-                                        $drawing->setPath(realpath($image_path));
-
-                                        $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
-
-                                        $drawing->setHeight($height);
-
-                                        $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
-
-                                        $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
-
-                                        $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
-                                        $drawing->setWorksheet($sheet);
-                                        $drawing->getShadow()->setVisible(true);
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)
-                                            ->getFont()->setBold(true);
-                                    }
-                                } elseif ($k === $this->selectedColumns->product->product_link) {
-                                    $link = $this->context->link->getProductLink((int) $orders[$j][$this->selectedColumns->product->product_id], null, null, null, $this->langId);
-                                    $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                    $sheet->setCellValue($cell, $link);
-                                    $sheet->getCell($cell)->getHyperlink()->setUrl($link);
-                                    $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                                } elseif ($k === $this->selectedColumns->product->product_image_link) {
-                                    // Get image data of the given product id
-                                    $image = Image::getCover($orders[$j][$this->selectedColumns->product->product_id]);
-                                    if ($image) {
-                                        $img_link = $this->context->link->getImageLink($orders[$j][$this->selectedColumns->product->{'order_detail_lang.product_link_rewrite'}], $image['id_image'], $this->imageType);
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue($cell, $img_link);
-                                        $sheet->getCell($cell)->getHyperlink()->setUrl($img_link);
-                                        $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image Link', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)->getFont()->setBold(true);
-                                    }
-                                } elseif ($k === $this->selectedColumns->product->attribute_image_link) {
-                                    if (method_exists('Image', 'getBestImageAttribute')) {
-                                        // Get image data of the given product id
-                                        $image = Image::getBestImageAttribute(
-                                            $orders[$j][$this->selectedColumns->shop->id_shop],
-                                            $this->langId,
-                                            $orders[$j][$this->selectedColumns->product->product_id],
-                                            $orders[$j][$this->selectedColumns->product->product_attribute_id]
-                                        );
-                                    } else {
-                                        $image = Image::getImages(
-                                            $this->langId,
-                                            $orders[$j][$this->selectedColumns->product->product_id],
-                                            $orders[$j][$this->selectedColumns->product->product_attribute_id]
-                                        );
-                                        $image = isset($image[0]) ? $image[0] : null;
-                                    }
-                                    if ($image) {
-                                        $img_link = $this->context->link->getImageLink($orders[$j][$this->selectedColumns->product->{'order_detail_lang.product_link_rewrite'}], $image['id_image'], $this->imageType);
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue($cell, $img_link);
-                                        $sheet->getCell($cell)->getHyperlink()->setUrl($img_link);
-                                        $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image Link', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)->getFont()->setBold(true);
-                                    }
-                                } elseif ($k === $this->selectedColumns->category->category_image) {
-                                    $cat_img_path = realpath(_PS_CAT_IMG_DIR_ . $orders[$j][$this->selectedColumns->category->id_category] . ($this->catImageTypeForFile ? '-' . $this->catImageTypeForFile : '') . '.jpg');
-                                    if (file_exists($cat_img_path)) {
-                                        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                        $drawing->setPath(realpath($cat_img_path));
-
-                                        $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
-
-                                        $drawing->setHeight($height);
-
-                                        $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
-
-                                        $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
-
-                                        $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
-                                        $drawing->setWorksheet($sheet);
-                                        $drawing->getShadow()->setVisible(true);
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)->getFont()->setBold(true);
-                                    }
-                                } elseif ($k === $this->selectedColumns->category->category_link) {
-                                    if ((int) $orders[$j][$this->selectedColumns->category->id_category]) {
-                                        $link = $this->context->link->getCategoryLink((int) $orders[$j][$this->selectedColumns->category->id_category], null, $this->langId);
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue($cell, $link);
-                                        $sheet->getCell($cell)->getHyperlink()->setUrl($link);
-                                        $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                                    }
-                                } elseif ($k === $this->selectedColumns->category->category_image_link) {
-                                    $cat_img_path = realpath(_PS_CAT_IMG_DIR_ . $orders[$j][$this->selectedColumns->category->id_category] . ($this->catImageType ? '-' . $this->catImageType : '') . '.jpg');
-                                    if (file_exists($cat_img_path)) {
-                                        if (method_exists($this->context->link, 'getCatImageLink')) {
-                                            // Get image data of the given product id
-                                            $cat_img_link = $this->context->link->getCatImageLink(
-                                                $orders[$j][$this->selectedColumns->category->link_rewrite],
-                                                $orders[$j][$this->selectedColumns->category->id_category],
-                                                $this->imageType
-                                            );
-                                        } else {
-                                            $cat_img_link = $this->context->link->getBaseLink() . 'c/'
-                                                . $orders[$j][$this->selectedColumns->category->id_category] . ($this->imageType ? '-' . $this->imageType : '') . '/'
-                                                . $orders[$j][$this->selectedColumns->category->link_rewrite] . '.jpg';
-                                        }
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue($cell, $cat_img_link);
-                                        $sheet->getCell($cell)->getHyperlink()->setUrl($cat_img_link);
-                                        $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image Link', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)->getFont()->setBold(true);
-                                    }
-                                } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_link) {
-                                    if ((int) $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer]) {
-                                        $link = $this->context->link->getManufacturerLink((int) $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer], null, $this->langId);
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue($cell, $link);
-                                        $sheet->getCell($cell)->getHyperlink()->setUrl($link);
-                                        $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                                    }
-                                } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_image) {
-                                    $man_img_path = realpath(_PS_MANU_IMG_DIR_ . $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
-                                    if (file_exists($man_img_path)) {
-                                        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                        $drawing->setPath(realpath($man_img_path));
-
-                                        $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
-
-                                        $drawing->setHeight($height);
-
-                                        $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
-
-                                        $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
-
-                                        $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
-                                        $drawing->setWorksheet($sheet);
-                                        $drawing->getShadow()->setVisible(true);
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)->getFont()->setBold(true);
-                                    }
-                                } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_image_link) {
-                                    $man_img_path = realpath(_PS_MANU_IMG_DIR_ . $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg');
-                                    if (file_exists($man_img_path)) {
-                                        $man_img_link = $this->context->link->getBaseLink() . 'img/m/'
-                                            . $orders[$j][$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg';
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue($cell, $man_img_link);
-                                        $sheet->getCell($cell)->getHyperlink()->setUrl($man_img_link);
-                                        $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image Link', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)->getFont()->setBold(true);
-                                    }
-                                } elseif ($k === $this->selectedColumns->supplier->supplier_link) {
-                                    if ((int) $orders[$j][$this->selectedColumns->supplier->id_supplier]) {
-                                        $link = $this->context->link->getSupplierLink((int) $orders[$j][$this->selectedColumns->supplier->id_supplier], null, $this->langId);
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue($cell, $link);
-                                        $sheet->getCell($cell)->getHyperlink()->setUrl($link);
-                                        $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                                    }
-                                } elseif ($k === $this->selectedColumns->supplier->supplier_image) {
-                                    $supp_img_path = realpath(_PS_SUPP_IMG_DIR_ . $orders[$j][$this->selectedColumns->supplier->id_supplier] . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
-                                    if (file_exists($supp_img_path)) {
-                                        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                        $drawing->setPath(realpath($supp_img_path));
-
-                                        $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
-
-                                        $drawing->setHeight($height);
-
-                                        $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
-
-                                        $sheet->getColumnDimension($excelColumns[$count])->setWidth($width);
-
-                                        $drawing->setCoordinates($excelColumns[$count] . ($j - $empty_rows + 2));
-                                        $drawing->setWorksheet($sheet);
-                                        $drawing->getShadow()->setVisible(true);
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)->getFont()->setBold(true);
-                                    }
-                                } elseif ($k === $this->selectedColumns->supplier->supplier_image_link) {
-                                    $supp_img_path = realpath(_PS_SUPP_IMG_DIR_ . $orders[$j][$this->selectedColumns->supplier->id_supplier] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg');
-                                    if (file_exists($supp_img_path)) {
-                                        $supp_img_link = $this->context->link->getBaseLink() . 'img/su/'
-                                            . $orders[$j][$this->selectedColumns->supplier->id_supplier] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg';
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue($cell, $supp_img_link);
-                                        $sheet->getCell($cell)->getHyperlink()->setUrl($supp_img_link);
-                                        $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                                    } else {
-                                        $cell = $excelColumns[$count] . ($j - $empty_rows + 2);
-                                        $sheet->setCellValue(
-                                            $cell,
-                                            $this->module->l('No Image Link', 'ExportSales')
-                                        );
-                                        $sheet->getStyle($cell)->getFont()->setBold(true);
-                                    }
-                                } else {
-                                    $col = $excelColumns[$count];
-                                    $sheet->setCellValue($col . ($j - $empty_rows + 2), $val);
-                                    if (Tools::strlen($val) <= 8) {
-                                        $sheet->getColumnDimension($col)->setWidth(15);
-                                    }
-                                }
-                            } elseif ($i === 0) {
-                                if (($val || $val === '0') && in_array($k, $this->moneyColumns)) {
-                                    $col = $excelColumns[$count];
-                                    $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
-                                    $sheet->setCellValue($col . ($j - $empty_rows + 2), $curr . str_replace('.', $this->decimalSeparator, $val));
-                                    if ($this->displayTotals === '1') {
-                                        if (isset($totals[$col])) {
-                                            $totals[$col]['val'] += (float) $val / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                        } else {
-                                            $totals[$col]['val'] = (float) $val / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                            $totals[$col]['curr'] = (bool) $curr;
-                                        }
-                                    }
-                                } else {
-                                    if (($profits || $netProfits) &&
-                                        $groupOrder !== $orders[$j][$this->selectedColumns->order->id_order] && (
-                                            $k === $this->selectedColumns->order->profit_amount ||
-                                        $k === $this->selectedColumns->order->profit_margin ||
-                                        $k === $this->selectedColumns->order->profit_percentage ||
-                                        $k === $this->selectedColumns->order->net_profit_amount ||
-                                        $k === $this->selectedColumns->order->net_profit_margin ||
-                                        $k === $this->selectedColumns->order->net_profit_percentage
-                                        )) {
-                                        $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j - 1][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
-                                        $totalProducts = $orders[$j - 1][$this->selectedColumns->order->total_products];
-                                        $totalDiscountsTaxExcl = $orders[$j - 1][$this->selectedColumns->order->total_discounts_tax_excl];
-                                        if ($this->selectedColumns->order->profit_amount) {
-                                            $col = $excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)];
-                                            $profit_amount = $totalProducts - $groupTotal;
-                                            $sheet->setCellValue($col . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
-                                        }
-                                        if ($this->selectedColumns->order->profit_margin) {
-                                            $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)] . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
-                                        }
-                                        if ($this->selectedColumns->order->profit_percentage) {
-                                            $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)] . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
-                                        }
-                                        if ($this->selectedColumns->order->net_profit_amount) {
-                                            $col = $excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)];
-                                            $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
-                                            $sheet->setCellValue($col . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
-                                        }
-                                        if ($this->selectedColumns->order->net_profit_margin) {
-                                            $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)] . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
-                                        }
-                                        if ($this->selectedColumns->order->net_profit_percentage) {
-                                            $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)] . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $groups[$gk - 1]['products'])), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
-                                        }
-                                        $groupTotal = 0;
-                                        $groupOrder = $orders[$j][$this->selectedColumns->order->id_order];
-                                        if ($this->displayTotals === '1') {
-                                            if ($profits) {
-                                                $sale += $totalProducts / $orders[$j - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                            if ($k === $this->selectedColumns->order->{'order_messages.message'}) {
+                                                $val = html_entity_decode($val);
                                             }
-                                            if ($netProfits) {
-                                                $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$j - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                            $col = $excelColumns[$count];
+                                            $sheet->setCellValue($col . ($j - $empty_rows + 2), $val);
+                                            if (Tools::strlen($val) <= 8) {
+                                                $sheet->getColumnDimension($col)->setWidth(15);
                                             }
                                         }
-                                    } else {
-                                        if ($k === $this->selectedColumns->order->{'order_messages.message'}) {
-                                            $val = html_entity_decode($val);
-                                        }
-                                        $col = $excelColumns[$count];
-                                        $sheet->setCellValue($col . ($j - $empty_rows + 2), $val);
-                                        if (Tools::strlen($val) <= 8) {
-                                            $sheet->getColumnDimension($col)->setWidth(15);
-                                        }
                                     }
                                 }
+                                $count++;
                             }
-                            $count++;
+                            ++$j;
                         }
-                        ++$j;
                     }
-                }
-                $key = $j - 1;
-                if ($profits || $netProfits) {
-                    $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$key][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
-                    $totalProducts = $orders[$key][$this->selectedColumns->order->total_products];
-                    $totalDiscountsTaxExcl = $orders[$key][$this->selectedColumns->order->total_discounts_tax_excl];
+                    $key = $j - 1;
+                    if ($profits || $netProfits) {
+                        $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$key][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
+                        $totalProducts = $orders[$key][$this->selectedColumns->order->total_products];
+                        $totalDiscountsTaxExcl = $orders[$key][$this->selectedColumns->order->total_discounts_tax_excl];
 
-                    if (isset($this->selectedColumns->order->profit_amount)) {
-                        $profit_amount = $totalProducts - $groupTotal;
-                        $profitAmountCol = $excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)];
-                        $sheet->setCellValue($profitAmountCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
-                    }
-                    if (isset($this->selectedColumns->order->profit_margin)) {
-                        $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
-                        $profitMarginCol = $excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)];
-                        $sheet->setCellValue($profitMarginCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
-                    }
-                    if (isset($this->selectedColumns->order->profit_percentage)) {
-                        $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
-                        $profitPercentageCol = $excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)];
-                        $sheet->setCellValue($profitPercentageCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
-                    }
-                    if (isset($this->selectedColumns->order->net_profit_amount)) {
-                        $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
-                        $netProfitAmountCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)];
-                        $sheet->setCellValue($netProfitAmountCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
-                    }
-                    if (isset($this->selectedColumns->order->net_profit_margin)) {
-                        $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
-                        $netProfitMarginCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)];
-                        $sheet->setCellValue($netProfitMarginCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
-                    }
-                    if (isset($this->selectedColumns->order->net_profit_percentage)) {
-                        $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
-                        $netProfitPercentageCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)];
-                        $sheet->setCellValue($netProfitPercentageCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
-                    }
-                    if ($this->displayTotals === '1') {
-                        if ($profits) {
-                            $sale += $totalProducts / $orders[$key][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                        if (isset($this->selectedColumns->order->profit_amount)) {
+                            $profit_amount = $totalProducts - $groupTotal;
+                            $profitAmountCol = $excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)];
+                            $sheet->setCellValue($profitAmountCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
                         }
-                        if ($netProfits) {
-                            $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$key][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                        if (isset($this->selectedColumns->order->profit_margin)) {
+                            $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
+                            $profitMarginCol = $excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)];
+                            $sheet->setCellValue($profitMarginCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
                         }
-                    }
-                }
-            } else {
-                if ($this->noProduct) {
-                    $break_points = $this->getBreakPoints($groups);
-                }
-                foreach ($orders as $key => $value) {
-                    if ($this->noProduct && !in_array($key, $break_points)) {
-                        if ($profits || $netProfits) {
-                            $groupTotal += $value[$this->selectedColumns->product->purchase_supplier_price] * $value[$this->selectedColumns->product->product_quantity];
-                            if ($this->displayTotals === '1') {
-                                $purchase += (float) $value[$this->selectedColumns->product->purchase_supplier_price] * $value[$this->selectedColumns->product->product_quantity] / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
+                        if (isset($this->selectedColumns->order->profit_percentage)) {
+                            $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
+                            $profitPercentageCol = $excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)];
+                            $sheet->setCellValue($profitPercentageCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
+                        }
+                        if (isset($this->selectedColumns->order->net_profit_amount)) {
+                            $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
+                            $netProfitAmountCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)];
+                            $sheet->setCellValue($netProfitAmountCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
+                        }
+                        if (isset($this->selectedColumns->order->net_profit_margin)) {
+                            $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
+                            $netProfitMarginCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)];
+                            $sheet->setCellValue($netProfitMarginCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
+                        }
+                        if (isset($this->selectedColumns->order->net_profit_percentage)) {
+                            $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
+                            $netProfitPercentageCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)];
+                            $sheet->setCellValue($netProfitPercentageCol . ($j - $empty_rows + 2 - ($this->noProduct ? 1 : $group['products'])), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
+                        }
+                        if ($this->displayTotals === '1') {
+                            if ($profits) {
+                                $sale += $totalProducts / $orders[$key][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                            }
+                            if ($netProfits) {
+                                $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$key][$this->selectedColumns->order->{'currency.conversion_rate'}];
                             }
                         }
-                        $empty_rows++;
-                        continue;
                     }
-                    $i = 0;
-                    $totaler = true;
-                    foreach ($value as $k => $val) {
-                        if ($i >= $counter) {
-                            break;
+                } else {
+                    if ($this->noProduct) {
+                        $break_points = $this->getBreakPoints($groups);
+                    }
+                    foreach ($orders as $key => $value) {
+                        if ($this->noProduct && !in_array($key, $break_points)) {
+                            if ($profits || $netProfits) {
+                                $groupTotal += $value[$this->selectedColumns->product->purchase_supplier_price] * $value[$this->selectedColumns->product->product_quantity];
+                                if ($this->displayTotals === '1') {
+                                    $purchase += (float) $value[$this->selectedColumns->product->purchase_supplier_price] * $value[$this->selectedColumns->product->product_quantity] / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                }
+                            }
+                            $empty_rows++;
+                            continue;
                         }
-                        if (($val || $val === '0') && in_array($k, $this->moneyColumns)) {
-                            $col = $excelColumns[$i];
-                            $curr = $this->displayCurrSymbol ? $this->curs->{$value[$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
-                            $sheet->setCellValue($col . ($key - $empty_rows + 2), $curr . str_replace('.', $this->decimalSeparator, $val));
-                            if ($this->displayTotals === '1') {
-                                if (!isset($totals[$col])) {
-                                    $totals[$col]['val'] = (float) $val / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                    $totals[$col]['curr'] = (bool) $curr;
-                                    $groupOrder2 = $groupOrder3 = $value[$this->selectedColumns->order->id_order];
-                                } else {
-                                    if (in_array($k, $this->orderMoneyColumns)) {
-                                        if ($groupOrder2 !== $value[$this->selectedColumns->order->id_order]) {
-                                            if ($totaler) {
-                                                if ($groupOrder3 !== $value[$this->selectedColumns->order->id_order]) {
-                                                    $totals[$col]['val'] += (float) $val / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                                    $groupOrder3 = $value[$this->selectedColumns->order->id_order];
-                                                } else {
-                                                    $groupOrder2 = $value[$this->selectedColumns->order->id_order];
-                                                }
-                                                $totaler = false;
-                                            } else {
-                                                $totals[$col]['val'] += (float) $val / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                            }
-                                        }
-                                    } else {
-                                        $totals[$col]['val'] += (float) $val / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                    }
-                                }
+                        $i = 0;
+                        $totaler = true;
+                        foreach ($value as $k => $val) {
+                            if ($i >= $counter) {
+                                break;
                             }
-                        } elseif (($profits || $netProfits) &&
-                            $value[$this->selectedColumns->order->id_order] !== $groupOrder &&
-                            ($k === $this->selectedColumns->order->profit_amount ||
-                            $k === $this->selectedColumns->order->profit_margin ||
-                            $k === $this->selectedColumns->order->profit_percentage ||
-                            $k === $this->selectedColumns->order->net_profit_amount ||
-                            $k === $this->selectedColumns->order->net_profit_margin ||
-                            $k === $this->selectedColumns->order->net_profit_percentage)) {
-                            $totalProducts = $orders[$key - 1][$this->selectedColumns->order->total_products];
-                            $totalDiscountsTaxExcl = $orders[$key - 1][$this->selectedColumns->order->total_discounts_tax_excl];
-                            $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$key - 1][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
-                            if ($this->selectedColumns->order->profit_amount) {
-                                $profit_amount = $totalProducts - $groupTotal;
-                                for ($l = 0; $l < $groupCount; $l++) {
-                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)] . ($key - $empty_rows + 1 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
-                                }
-                            }
-                            if ($this->selectedColumns->order->profit_margin) {
-                                $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
-                                for ($l = 0; $l < $groupCount; $l++) {
-                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
-                                }
-                            }
-                            if ($this->selectedColumns->order->profit_percentage) {
-                                $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
-                                for ($l = 0; $l < $groupCount; $l++) {
-                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
-                                }
-                            }
-                            if ($this->selectedColumns->order->net_profit_amount) {
-                                $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
-                                for ($l = 0; $l < $groupCount; $l++) {
-                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)] . ($key - $empty_rows + 1 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
-                                }
-                            }
-                            if ($this->selectedColumns->order->net_profit_margin) {
-                                $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
-                                for ($l = 0; $l < $groupCount; $l++) {
-                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
-                                }
-                            }
-                            if ($this->selectedColumns->order->net_profit_percentage) {
-                                $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
-                                for ($l = 0; $l < $groupCount; $l++) {
-                                    $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
-                                }
-                            }
-                            $groupTotal = $groupCount = 0;
-                            $groupOrder = $value[$this->selectedColumns->order->id_order];
-                            if ($this->displayTotals === '1') {
-                                if ($profits) {
-                                    $sale += $totalProducts / $orders[$key - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                }
-                                if ($netProfits) {
-                                    $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$key - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                }
-                            }
-                        } elseif ($k === $this->selectedColumns->product->purchase_supplier_price) {
-                            if (!$this->purchaseSupplierPrice) {
+                            if (($val || $val === '0') && in_array($k, $this->moneyColumns)) {
                                 $col = $excelColumns[$i];
                                 $curr = $this->displayCurrSymbol ? $this->curs->{$value[$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
                                 $sheet->setCellValue($col . ($key - $empty_rows + 2), $curr . str_replace('.', $this->decimalSeparator, $val));
                                 if ($this->displayTotals === '1') {
-                                    if (isset($totals[$col])) {
-                                        $totals[$col]['val'] += (float) $val * $value[$this->selectedColumns->product->product_quantity] / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                    } else {
-                                        $totals[$col]['val'] = (float) $val * $value[$this->selectedColumns->product->product_quantity] / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                    if (!isset($totals[$col])) {
+                                        $totals[$col]['val'] = (float) $val / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
                                         $totals[$col]['curr'] = (bool) $curr;
-                                    }
-                                }
-                            }
-                            if ($profits || $netProfits) {
-                                if ($groupOrder !== $value[$this->selectedColumns->order->id_order]) {
-                                    $totalProducts = $orders[$key - 1][$this->selectedColumns->order->total_products];
-                                    $totalDiscountsTaxExcl = $orders[$key - 1][$this->selectedColumns->order->total_discounts_tax_excl];
-                                    $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$key - 1][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
-                                    if ($this->selectedColumns->order->profit_amount) {
-                                        $profit_amount = $totalProducts - $groupTotal;
-                                        for ($l = 0; $l < $groupCount; $l++) {
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)] . ($key - $empty_rows + 1 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
-                                        }
-                                    }
-                                    if ($this->selectedColumns->order->profit_margin) {
-                                        $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
-                                        for ($l = 0; $l < $groupCount; $l++) {
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
-                                        }
-                                    }
-                                    if ($this->selectedColumns->order->profit_percentage) {
-                                        $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
-                                        for ($l = 0; $l < $groupCount; $l++) {
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
-                                        }
-                                    }
-                                    if ($this->selectedColumns->order->net_profit_amount) {
-                                        $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
-                                        for ($l = 0; $l < $groupCount; $l++) {
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)] . ($key - $empty_rows + 1 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
-                                        }
-                                    }
-                                    if ($this->selectedColumns->order->net_profit_margin) {
-                                        $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
-                                        for ($l = 0; $l < $groupCount; $l++) {
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
-                                        }
-                                    }
-                                    if ($this->selectedColumns->order->net_profit_percentage) {
-                                        $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
-                                        for ($l = 0; $l < $groupCount; $l++) {
-                                            $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
-                                        }
-                                    }
-                                    $groupTotal = $groupCount = 0;
-                                    $groupOrder = $value[$this->selectedColumns->order->id_order];
-                                    if ($this->displayTotals === '1') {
-                                        if ($profits) {
-                                            $sale += $totalProducts / $orders[$key - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                                        }
-                                        if ($netProfits) {
-                                            $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$key - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                        $groupOrder2 = $groupOrder3 = $value[$this->selectedColumns->order->id_order];
+                                    } else {
+                                        if (in_array($k, $this->orderMoneyColumns)) {
+                                            if ($groupOrder2 !== $value[$this->selectedColumns->order->id_order]) {
+                                                if ($totaler) {
+                                                    if ($groupOrder3 !== $value[$this->selectedColumns->order->id_order]) {
+                                                        $totals[$col]['val'] += (float) $val / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                        $groupOrder3 = $value[$this->selectedColumns->order->id_order];
+                                                    } else {
+                                                        $groupOrder2 = $value[$this->selectedColumns->order->id_order];
+                                                    }
+                                                    $totaler = false;
+                                                } else {
+                                                    $totals[$col]['val'] += (float) $val / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                                }
+                                            }
+                                        } else {
+                                            $totals[$col]['val'] += (float) $val / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
                                         }
                                     }
                                 }
-                                $groupTotal += $val * $value[$this->selectedColumns->product->product_quantity];
-                                $groupCount++;
+                            } elseif (($profits || $netProfits) &&
+                                $value[$this->selectedColumns->order->id_order] !== $groupOrder &&
+                                ($k === $this->selectedColumns->order->profit_amount ||
+                                    $k === $this->selectedColumns->order->profit_margin ||
+                                    $k === $this->selectedColumns->order->profit_percentage ||
+                                    $k === $this->selectedColumns->order->net_profit_amount ||
+                                    $k === $this->selectedColumns->order->net_profit_margin ||
+                                    $k === $this->selectedColumns->order->net_profit_percentage)) {
+                                $totalProducts = $orders[$key - 1][$this->selectedColumns->order->total_products];
+                                $totalDiscountsTaxExcl = $orders[$key - 1][$this->selectedColumns->order->total_discounts_tax_excl];
+                                $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$key - 1][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
+                                if ($this->selectedColumns->order->profit_amount) {
+                                    $profit_amount = $totalProducts - $groupTotal;
+                                    for ($l = 0; $l < $groupCount; $l++) {
+                                        $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)] . ($key - $empty_rows + 1 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
+                                    }
+                                }
+                                if ($this->selectedColumns->order->profit_margin) {
+                                    $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
+                                    for ($l = 0; $l < $groupCount; $l++) {
+                                        $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
+                                    }
+                                }
+                                if ($this->selectedColumns->order->profit_percentage) {
+                                    $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
+                                    for ($l = 0; $l < $groupCount; $l++) {
+                                        $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
+                                    }
+                                }
+                                if ($this->selectedColumns->order->net_profit_amount) {
+                                    $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
+                                    for ($l = 0; $l < $groupCount; $l++) {
+                                        $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)] . ($key - $empty_rows + 1 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
+                                    }
+                                }
+                                if ($this->selectedColumns->order->net_profit_margin) {
+                                    $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
+                                    for ($l = 0; $l < $groupCount; $l++) {
+                                        $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
+                                    }
+                                }
+                                if ($this->selectedColumns->order->net_profit_percentage) {
+                                    $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
+                                    for ($l = 0; $l < $groupCount; $l++) {
+                                        $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
+                                    }
+                                }
+                                $groupTotal = $groupCount = 0;
+                                $groupOrder = $value[$this->selectedColumns->order->id_order];
                                 if ($this->displayTotals === '1') {
-                                    $purchase += (float) $val * $value[$this->selectedColumns->product->product_quantity] / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                    if ($profits) {
+                                        $sale += $totalProducts / $orders[$key - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                    }
+                                    if ($netProfits) {
+                                        $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$key - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                    }
                                 }
-                            }
-                        } elseif ($k === $this->selectedColumns->product->product_quantity) {
-                            $col = $excelColumns[$i];
-                            $sheet->setCellValue($col . ($key - $empty_rows + 2), $val);
-                            if ($this->displayTotals === '1') {
-                                if (isset($totals[$col])) {
-                                    $totals[$col]['val'] += $val;
+                            } elseif ($k === $this->selectedColumns->product->purchase_supplier_price) {
+                                if (!$this->purchaseSupplierPrice) {
+                                    $col = $excelColumns[$i];
+                                    $curr = $this->displayCurrSymbol ? $this->curs->{$value[$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
+                                    $sheet->setCellValue($col . ($key - $empty_rows + 2), $curr . str_replace('.', $this->decimalSeparator, $val));
+                                    if ($this->displayTotals === '1') {
+                                        if (isset($totals[$col])) {
+                                            $totals[$col]['val'] += (float) $val * $value[$this->selectedColumns->product->product_quantity] / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                        } else {
+                                            $totals[$col]['val'] = (float) $val * $value[$this->selectedColumns->product->product_quantity] / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                            $totals[$col]['curr'] = (bool) $curr;
+                                        }
+                                    }
+                                }
+                                if ($profits || $netProfits) {
+                                    if ($groupOrder !== $value[$this->selectedColumns->order->id_order]) {
+                                        $totalProducts = $orders[$key - 1][$this->selectedColumns->order->total_products];
+                                        $totalDiscountsTaxExcl = $orders[$key - 1][$this->selectedColumns->order->total_discounts_tax_excl];
+                                        $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$key - 1][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
+                                        if ($this->selectedColumns->order->profit_amount) {
+                                            $profit_amount = $totalProducts - $groupTotal;
+                                            for ($l = 0; $l < $groupCount; $l++) {
+                                                $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)] . ($key - $empty_rows + 1 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
+                                            }
+                                        }
+                                        if ($this->selectedColumns->order->profit_margin) {
+                                            $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
+                                            for ($l = 0; $l < $groupCount; $l++) {
+                                                $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
+                                            }
+                                        }
+                                        if ($this->selectedColumns->order->profit_percentage) {
+                                            $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
+                                            for ($l = 0; $l < $groupCount; $l++) {
+                                                $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
+                                            }
+                                        }
+                                        if ($this->selectedColumns->order->net_profit_amount) {
+                                            $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
+                                            for ($l = 0; $l < $groupCount; $l++) {
+                                                $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)] . ($key - $empty_rows + 1 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
+                                            }
+                                        }
+                                        if ($this->selectedColumns->order->net_profit_margin) {
+                                            $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
+                                            for ($l = 0; $l < $groupCount; $l++) {
+                                                $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
+                                            }
+                                        }
+                                        if ($this->selectedColumns->order->net_profit_percentage) {
+                                            $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
+                                            for ($l = 0; $l < $groupCount; $l++) {
+                                                $sheet->setCellValue($excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)] . ($key - $empty_rows + 1 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
+                                            }
+                                        }
+                                        $groupTotal = $groupCount = 0;
+                                        $groupOrder = $value[$this->selectedColumns->order->id_order];
+                                        if ($this->displayTotals === '1') {
+                                            if ($profits) {
+                                                $sale += $totalProducts / $orders[$key - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                            }
+                                            if ($netProfits) {
+                                                $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$key - 1][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                            }
+                                        }
+                                    }
+                                    $groupTotal += $val * $value[$this->selectedColumns->product->product_quantity];
+                                    $groupCount++;
+                                    if ($this->displayTotals === '1') {
+                                        $purchase += (float) $val * $value[$this->selectedColumns->product->product_quantity] / $value[$this->selectedColumns->order->{'currency.conversion_rate'}];
+                                    }
+                                }
+                            } elseif ($k === $this->selectedColumns->product->product_quantity) {
+                                $col = $excelColumns[$i];
+                                $sheet->setCellValue($col . ($key - $empty_rows + 2), $val);
+                                if ($this->displayTotals === '1') {
+                                    if (isset($totals[$col])) {
+                                        $totals[$col]['val'] += $val;
+                                    } else {
+                                        $totals[$col]['val'] = $val;
+                                        $totals[$col]['curr'] = 0;
+                                    }
+                                }
+                            } elseif ($k === $this->selectedColumns->product->reduction_percent) {
+                                $reductionPercentCol = $excelColumns[$i];
+                                $sheet->setCellValue($reductionPercentCol . ($key - $empty_rows + 2), str_replace('.', $this->decimalSeparator, $val));
+                                if ($this->displayTotals === '1') {
+                                    $reductionTotals['reduced'] += $value[$this->selectedColumns->product->total_price_tax_excl];
+                                    $reductionTotals['full'] += 100 * $value[$this->selectedColumns->product->total_price_tax_excl] / (100 - $val);
+                                }
+                            } elseif ($k === $this->selectedColumns->product->product_image) {
+                                // Get image data of the given product id
+                                $image = Image::getCover($value[$this->selectedColumns->product->product_id]);
+                                if ($image) {
+                                    $img = new Image($image['id_image']);
+                                    $image_path = realpath(_PS_PROD_IMG_DIR_ . $img->getImgPath() . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
+                                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                    // $drawing->setName('Product_' . $value['Product ID']);
+                                    $drawing->setPath(realpath($image_path));
+
+                                    $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+
+                                    $drawing->setHeight($height);
+
+                                    $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+
+                                    $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
+
+                                    $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
+                                    $drawing->setWorksheet($sheet);
+                                    $drawing->getShadow()->setVisible(true);
                                 } else {
-                                    $totals[$col]['val'] = $val;
-                                    $totals[$col]['curr'] = 0;
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)
+                                        ->getFont()->setBold(true);
                                 }
-                            }
-                        } elseif ($k === $this->selectedColumns->product->reduction_percent) {
-                            $reductionPercentCol = $excelColumns[$i];
-                            $sheet->setCellValue($reductionPercentCol . ($key - $empty_rows + 2), str_replace('.', $this->decimalSeparator, $val));
-                            if ($this->displayTotals === '1') {
-                                $reductionTotals['reduced'] += $value[$this->selectedColumns->product->total_price_tax_excl];
-                                $reductionTotals['full'] += 100 * $value[$this->selectedColumns->product->total_price_tax_excl] / (100 - $val);
-                            }
-                        } elseif ($k === $this->selectedColumns->product->product_image) {
-                            // Get image data of the given product id
-                            $image = Image::getCover($value[$this->selectedColumns->product->product_id]);
-                            if ($image) {
-                                $img = new Image($image['id_image']);
-                                $image_path = realpath(_PS_PROD_IMG_DIR_ . $img->getImgPath() . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
-                                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                // $drawing->setName('Product_' . $value['Product ID']);
-                                $drawing->setPath(realpath($image_path));
-
-                                $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
-
-                                $drawing->setHeight($height);
-
-                                $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
-
-                                $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
-
-                                $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
-                                $drawing->setWorksheet($sheet);
-                                $drawing->getShadow()->setVisible(true);
-                            } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)
-                                    ->getFont()->setBold(true);
-                            }
-                        } elseif ($k === $this->selectedColumns->product->attribute_image) {
-                            // Get image data of the given product id
-                            if (method_exists('Image', 'getBestImageAttribute')) {
+                            } elseif ($k === $this->selectedColumns->product->attribute_image) {
                                 // Get image data of the given product id
-                                $image = Image::getBestImageAttribute(
-                                    $value[$this->selectedColumns->shop->id_shop],
-                                    $this->langId,
-                                    $value[$this->selectedColumns->product->product_id],
-                                    $value[$this->selectedColumns->product->product_attribute_id]
-                                );
-                            } else {
-                                $image = Image::getImages(
-                                    $this->langId,
-                                    $value[$this->selectedColumns->product->product_id],
-                                    $value[$this->selectedColumns->product->product_attribute_id]
-                                );
-                                $image = isset($image[0]) ? $image[0] : null;
-                            }
-                            if ($image) {
-                                $img = new Image($image['id_image']);
-                                $image_path = realpath(_PS_PROD_IMG_DIR_ . $img->getImgPath() . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
-                                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                // $drawing->setName('Product_' . $value['Product ID']);
-                                $drawing->setPath(realpath($image_path));
-
-                                $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
-
-                                $drawing->setHeight($height);
-
-                                $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
-
-                                $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
-
-                                $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
-                                $drawing->setWorksheet($sheet);
-                                $drawing->getShadow()->setVisible(true);
-                            } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)
-                                    ->getFont()->setBold(true);
-                            }
-                        } elseif ($k === $this->selectedColumns->product->product_link) {
-                            $link = $this->context->link->getProductLink((int) $value[$this->selectedColumns->product->product_id], null, null, null, $this->langId);
-                            $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                            $sheet->setCellValue($cell, $link);
-                            $sheet->getCell($cell)->getHyperlink()->setUrl($link);
-                            $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                        } elseif ($k === $this->selectedColumns->product->product_image_link) {
-                            // Get image data of the given product id
-                            $image = Image::getCover($value[$j][$this->selectedColumns->product->product_id]);
-                            if ($image) {
-                                $img_link = $this->context->link->getImageLink($value[$this->selectedColumns->product->{'order_detail_lang.product_link_rewrite'}], $image['id_image'], $this->imageType);
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue($cell, $img_link);
-                                $sheet->getCell($cell)->getHyperlink()->setUrl($img_link);
-                                $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                            } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image Link', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)->getFont()->setBold(true);
-                            }
-                        } elseif ($k === $this->selectedColumns->product->attribute_image_link) {
-                            if (method_exists('Image', 'getBestImageAttribute')) {
-                                // Get image data of the given product id
-                                $image = Image::getBestImageAttribute(
-                                    $value[$this->selectedColumns->shop->id_shop],
-                                    $this->langId,
-                                    $value[$this->selectedColumns->product->product_id],
-                                    $value[$this->selectedColumns->product->product_attribute_id]
-                                );
-                            } else {
-                                $image = Image::getImages(
-                                    $this->langId,
-                                    $value[$this->selectedColumns->product->product_id],
-                                    $value[$this->selectedColumns->product->product_attribute_id]
-                                );
-                                $image = isset($image[0]) ? $image[0] : null;
-                            }
-                            if ($image) {
-                                $img_link = $this->context->link->getImageLink($value[$this->selectedColumns->product->{'order_detail_lang.product_link_rewrite'}], $image['id_image'], $this->imageType);
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue($cell, $img_link);
-                                $sheet->getCell($cell)->getHyperlink()->setUrl($img_link);
-                                $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                            } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image Link', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)->getFont()->setBold(true);
-                            }
-                        } elseif ($k === $this->selectedColumns->category->category_image) {
-                            $cat_img_path = realpath(_PS_CAT_IMG_DIR_ . $value[$this->selectedColumns->category->id_category] . ($this->catImageTypeForFile ? '-' . $this->catImageTypeForFile : '') . '.jpg');
-                            if (file_exists($cat_img_path)) {
-                                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                $drawing->setPath(realpath($cat_img_path));
-
-                                $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
-
-                                $drawing->setHeight($height);
-
-                                $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
-
-                                $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
-
-                                $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
-                                $drawing->setWorksheet($sheet);
-                                $drawing->getShadow()->setVisible(true);
-                            } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)
-                                    ->getFont()->setBold(true);
-                            }
-                        } elseif ($k === $this->selectedColumns->category->category_link) {
-                            if ((int) $value[$this->selectedColumns->category->id_category]) {
-                                $link = $this->context->link->getCategoryLink((int) $value[$this->selectedColumns->category->id_category], null, $this->langId);
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue($cell, $link);
-                                $sheet->getCell($cell)->getHyperlink()->setUrl($link);
-                                $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                            }
-                        } elseif ($k === $this->selectedColumns->category->category_image_link) {
-                            $cat_img_path = realpath(_PS_CAT_IMG_DIR_ . $value[$this->selectedColumns->category->id_category] . ($this->catImageType ? '-' . $this->catImageType : '') . '.jpg');
-                            if (file_exists($cat_img_path)) {
-                                if (method_exists($this->context->link, 'getCatImageLink')) {
+                                if (method_exists('Image', 'getBestImageAttribute')) {
                                     // Get image data of the given product id
-                                    $cat_img_link = $this->context->link->getCatImageLink(
-                                        $value[$this->selectedColumns->category->link_rewrite],
-                                        $value[$this->selectedColumns->category->id_category],
-                                        $this->imageType
+                                    $image = Image::getBestImageAttribute(
+                                        $value[$this->selectedColumns->shop->id_shop],
+                                        $this->langId,
+                                        $value[$this->selectedColumns->product->product_id],
+                                        $value[$this->selectedColumns->product->product_attribute_id]
                                     );
                                 } else {
-                                    $cat_img_link = $this->context->link->getBaseLink() . 'c/'
-                                        . $value[$this->selectedColumns->category->id_category] . ($this->imageType ? '-' . $this->imageType : '') . '/'
-                                        . $value[$this->selectedColumns->category->link_rewrite] . '.jpg';
+                                    $image = Image::getImages(
+                                        $this->langId,
+                                        $value[$this->selectedColumns->product->product_id],
+                                        $value[$this->selectedColumns->product->product_attribute_id]
+                                    );
+                                    $image = isset($image[0]) ? $image[0] : null;
                                 }
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue($cell, $cat_img_link);
-                                $sheet->getCell($cell)->getHyperlink()->setUrl($cat_img_link);
-                                $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                            } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image Link', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)->getFont()->setBold(true);
-                            }
-                        } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_link) {
-                            if ((int) $value[$this->selectedColumns->manufacturer->id_manufacturer]) {
-                                $link = $this->context->link->getManufacturerLink((int) $value[$this->selectedColumns->manufacturer->id_manufacturer], null, $this->langId);
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue($cell, $link);
-                                $sheet->getCell($cell)->getHyperlink()->setUrl($link);
-                                $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                            }
-                        } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_image) {
-                            $man_img_path = realpath(_PS_MANU_IMG_DIR_ . $value[$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
-                            if (file_exists($man_img_path)) {
-                                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                $drawing->setPath(realpath($man_img_path));
+                                if ($image) {
+                                    $img = new Image($image['id_image']);
+                                    $image_path = realpath(_PS_PROD_IMG_DIR_ . $img->getImgPath() . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
+                                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                    // $drawing->setName('Product_' . $value['Product ID']);
+                                    $drawing->setPath(realpath($image_path));
 
-                                $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+                                    $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
 
-                                $drawing->setHeight($height);
+                                    $drawing->setHeight($height);
 
-                                $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+                                    $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
 
-                                $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
+                                    $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
 
-                                $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
-                                $drawing->setWorksheet($sheet);
-                                $drawing->getShadow()->setVisible(true);
-                            } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)
-                                    ->getFont()->setBold(true);
-                            }
-                        } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_image_link) {
-                            $man_img_path = realpath(_PS_MANU_IMG_DIR_ . $value[$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg');
-                            if (file_exists($man_img_path)) {
-                                $man_img_link = $this->context->link->getBaseLink() . 'img/m/'
-                                    . $value[$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg';
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue($cell, $man_img_link);
-                                $sheet->getCell($cell)->getHyperlink()->setUrl($man_img_link);
-                                $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                            } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image Link', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)->getFont()->setBold(true);
-                            }
-                        } elseif ($k === $this->selectedColumns->supplier->supplier_link) {
-                            if ((int) $value[$this->selectedColumns->supplier->id_supplier]) {
-                                $link = $this->context->link->getSupplierLink((int) $value[$this->selectedColumns->supplier->id_supplier], null, $this->langId);
+                                    $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
+                                    $drawing->setWorksheet($sheet);
+                                    $drawing->getShadow()->setVisible(true);
+                                } else {
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)
+                                        ->getFont()->setBold(true);
+                                }
+                            } elseif ($k === $this->selectedColumns->product->product_link) {
+                                $link = $this->context->link->getProductLink((int) $value[$this->selectedColumns->product->product_id], null, null, null, $this->langId);
                                 $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
                                 $sheet->setCellValue($cell, $link);
                                 $sheet->getCell($cell)->getHyperlink()->setUrl($link);
                                 $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                            }
-                        } elseif ($k === $this->selectedColumns->supplier->supplier_image) {
-                            $supp_img_path = realpath(_PS_SUPP_IMG_DIR_ . $value[$this->selectedColumns->supplier->id_supplier] . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
-                            if (file_exists($supp_img_path)) {
-                                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                                $drawing->setPath(realpath($supp_img_path));
+                            } elseif ($k === $this->selectedColumns->product->product_image_link) {
+                                // Get image data of the given product id
+                                $image = Image::getCover($value[$j][$this->selectedColumns->product->product_id]);
+                                if ($image) {
+                                    $img_link = $this->context->link->getImageLink($value[$this->selectedColumns->product->{'order_detail_lang.product_link_rewrite'}], $image['id_image'], $this->imageType);
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue($cell, $img_link);
+                                    $sheet->getCell($cell)->getHyperlink()->setUrl($img_link);
+                                    $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                } else {
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image Link', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)->getFont()->setBold(true);
+                                }
+                            } elseif ($k === $this->selectedColumns->product->attribute_image_link) {
+                                if (method_exists('Image', 'getBestImageAttribute')) {
+                                    // Get image data of the given product id
+                                    $image = Image::getBestImageAttribute(
+                                        $value[$this->selectedColumns->shop->id_shop],
+                                        $this->langId,
+                                        $value[$this->selectedColumns->product->product_id],
+                                        $value[$this->selectedColumns->product->product_attribute_id]
+                                    );
+                                } else {
+                                    $image = Image::getImages(
+                                        $this->langId,
+                                        $value[$this->selectedColumns->product->product_id],
+                                        $value[$this->selectedColumns->product->product_attribute_id]
+                                    );
+                                    $image = isset($image[0]) ? $image[0] : null;
+                                }
+                                if ($image) {
+                                    $img_link = $this->context->link->getImageLink($value[$this->selectedColumns->product->{'order_detail_lang.product_link_rewrite'}], $image['id_image'], $this->imageType);
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue($cell, $img_link);
+                                    $sheet->getCell($cell)->getHyperlink()->setUrl($img_link);
+                                    $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                } else {
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image Link', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)->getFont()->setBold(true);
+                                }
+                            } elseif ($k === $this->selectedColumns->category->category_image) {
+                                $cat_img_path = realpath(_PS_CAT_IMG_DIR_ . $value[$this->selectedColumns->category->id_category] . ($this->catImageTypeForFile ? '-' . $this->catImageTypeForFile : '') . '.jpg');
+                                if (file_exists($cat_img_path)) {
+                                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                    $drawing->setPath(realpath($cat_img_path));
 
-                                $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+                                    $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
 
-                                $drawing->setHeight($height);
+                                    $drawing->setHeight($height);
 
-                                $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+                                    $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
 
-                                $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
+                                    $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
 
-                                $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
-                                $drawing->setWorksheet($sheet);
-                                $drawing->getShadow()->setVisible(true);
+                                    $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
+                                    $drawing->setWorksheet($sheet);
+                                    $drawing->getShadow()->setVisible(true);
+                                } else {
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)
+                                        ->getFont()->setBold(true);
+                                }
+                            } elseif ($k === $this->selectedColumns->category->category_link) {
+                                if ((int) $value[$this->selectedColumns->category->id_category]) {
+                                    $link = $this->context->link->getCategoryLink((int) $value[$this->selectedColumns->category->id_category], null, $this->langId);
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue($cell, $link);
+                                    $sheet->getCell($cell)->getHyperlink()->setUrl($link);
+                                    $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                }
+                            } elseif ($k === $this->selectedColumns->category->category_image_link) {
+                                $cat_img_path = realpath(_PS_CAT_IMG_DIR_ . $value[$this->selectedColumns->category->id_category] . ($this->catImageType ? '-' . $this->catImageType : '') . '.jpg');
+                                if (file_exists($cat_img_path)) {
+                                    if (method_exists($this->context->link, 'getCatImageLink')) {
+                                        // Get image data of the given product id
+                                        $cat_img_link = $this->context->link->getCatImageLink(
+                                            $value[$this->selectedColumns->category->link_rewrite],
+                                            $value[$this->selectedColumns->category->id_category],
+                                            $this->imageType
+                                        );
+                                    } else {
+                                        $cat_img_link = $this->context->link->getBaseLink() . 'c/'
+                                            . $value[$this->selectedColumns->category->id_category] . ($this->imageType ? '-' . $this->imageType : '') . '/'
+                                            . $value[$this->selectedColumns->category->link_rewrite] . '.jpg';
+                                    }
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue($cell, $cat_img_link);
+                                    $sheet->getCell($cell)->getHyperlink()->setUrl($cat_img_link);
+                                    $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                } else {
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image Link', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)->getFont()->setBold(true);
+                                }
+                            } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_link) {
+                                if ((int) $value[$this->selectedColumns->manufacturer->id_manufacturer]) {
+                                    $link = $this->context->link->getManufacturerLink((int) $value[$this->selectedColumns->manufacturer->id_manufacturer], null, $this->langId);
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue($cell, $link);
+                                    $sheet->getCell($cell)->getHyperlink()->setUrl($link);
+                                    $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                }
+                            } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_image) {
+                                $man_img_path = realpath(_PS_MANU_IMG_DIR_ . $value[$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
+                                if (file_exists($man_img_path)) {
+                                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                    $drawing->setPath(realpath($man_img_path));
+
+                                    $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+
+                                    $drawing->setHeight($height);
+
+                                    $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+
+                                    $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
+
+                                    $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
+                                    $drawing->setWorksheet($sheet);
+                                    $drawing->getShadow()->setVisible(true);
+                                } else {
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)
+                                        ->getFont()->setBold(true);
+                                }
+                            } elseif ($k === $this->selectedColumns->manufacturer->manufacturer_image_link) {
+                                $man_img_path = realpath(_PS_MANU_IMG_DIR_ . $value[$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg');
+                                if (file_exists($man_img_path)) {
+                                    $man_img_link = $this->context->link->getBaseLink() . 'img/m/'
+                                        . $value[$this->selectedColumns->manufacturer->id_manufacturer] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg';
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue($cell, $man_img_link);
+                                    $sheet->getCell($cell)->getHyperlink()->setUrl($man_img_link);
+                                    $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                } else {
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image Link', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)->getFont()->setBold(true);
+                                }
+                            } elseif ($k === $this->selectedColumns->supplier->supplier_link) {
+                                if ((int) $value[$this->selectedColumns->supplier->id_supplier]) {
+                                    $link = $this->context->link->getSupplierLink((int) $value[$this->selectedColumns->supplier->id_supplier], null, $this->langId);
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue($cell, $link);
+                                    $sheet->getCell($cell)->getHyperlink()->setUrl($link);
+                                    $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                }
+                            } elseif ($k === $this->selectedColumns->supplier->supplier_image) {
+                                $supp_img_path = realpath(_PS_SUPP_IMG_DIR_ . $value[$this->selectedColumns->supplier->id_supplier] . ($this->imageTypeForFile ? '-' . $this->imageTypeForFile : '') . '.jpg');
+                                if (file_exists($supp_img_path)) {
+                                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                                    $drawing->setPath(realpath($supp_img_path));
+
+                                    $height = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pointsToPixels(42, $font);
+
+                                    $drawing->setHeight($height);
+
+                                    $width = \PhpOffice\PhpSpreadsheet\Shared\Drawing::pixelsToCellDimension($drawing->getWidth(), $font);
+
+                                    $sheet->getColumnDimension($excelColumns[$i])->setWidth($width);
+
+                                    $drawing->setCoordinates($excelColumns[$i] . ($key - $empty_rows + 2));
+                                    $drawing->setWorksheet($sheet);
+                                    $drawing->getShadow()->setVisible(true);
+                                } else {
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)
+                                        ->getFont()->setBold(true);
+                                }
+                            } elseif ($k === $this->selectedColumns->supplier->supplier_image_link) {
+                                $supp_img_path = realpath(_PS_SUPP_IMG_DIR_ . $value[$this->selectedColumns->supplier->id_supplier] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg');
+                                if (file_exists($supp_img_path)) {
+                                    $supp_img_link = $this->context->link->getBaseLink() . 'img/su/'
+                                        . $value[$this->selectedColumns->supplier->id_supplier] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg';
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue($cell, $supp_img_link);
+                                    $sheet->getCell($cell)->getHyperlink()->setUrl($supp_img_link);
+                                    $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
+                                } else {
+                                    $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
+                                    $sheet->setCellValue(
+                                        $cell,
+                                        $this->module->l('No Image Link', 'ExportSales')
+                                    );
+                                    $sheet->getStyle($cell)->getFont()->setBold(true);
+                                }
                             } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)
-                                    ->getFont()->setBold(true);
+                                if ($k === $this->selectedColumns->order->{'order_messages.message'}) {
+                                    $val = html_entity_decode($val);
+                                }
+                                $sheet->setCellValue($excelColumns[$i] . ($key - $empty_rows + 2), $val);
+                                if (Tools::strlen($val) <= 8) {
+                                    $sheet->getColumnDimension($excelColumns[$i])->setWidth(15);
+                                }
                             }
-                        } elseif ($k === $this->selectedColumns->supplier->supplier_image_link) {
-                            $supp_img_path = realpath(_PS_SUPP_IMG_DIR_ . $value[$this->selectedColumns->supplier->id_supplier] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg');
-                            if (file_exists($supp_img_path)) {
-                                $supp_img_link = $this->context->link->getBaseLink() . 'img/su/'
-                                    . $value[$this->selectedColumns->supplier->id_supplier] . ($this->imageType ? '-' . $this->imageType : '') . '.jpg';
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue($cell, $supp_img_link);
-                                $sheet->getCell($cell)->getHyperlink()->setUrl($supp_img_link);
-                                $sheet->getStyle($cell)->getFont()->getColor()->setARGB('FF0000FF');
-                            } else {
-                                $cell = $excelColumns[$i] . ($key - $empty_rows + 2);
-                                $sheet->setCellValue(
-                                    $cell,
-                                    $this->module->l('No Image Link', 'ExportSales')
-                                );
-                                $sheet->getStyle($cell)->getFont()->setBold(true);
-                            }
-                        } else {
-                            if ($k === $this->selectedColumns->order->{'order_messages.message'}) {
-                                $val = html_entity_decode($val);
-                            }
-                            $sheet->setCellValue($excelColumns[$i] . ($key - $empty_rows + 2), $val);
-                            if (Tools::strlen($val) <= 8) {
-                                $sheet->getColumnDimension($excelColumns[$i])->setWidth(15);
-                            }
+                            ++$i;
                         }
-                        ++$i;
                     }
-                }
-                if ($profits || $netProfits) {
-                    $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$key][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
-                    $totalProducts = $orders[$key][$this->selectedColumns->order->total_products];
-                    $totalDiscountsTaxExcl = $orders[$key][$this->selectedColumns->order->total_discounts_tax_excl];
+                    if ($profits || $netProfits) {
+                        $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$key][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
+                        $totalProducts = $orders[$key][$this->selectedColumns->order->total_products];
+                        $totalDiscountsTaxExcl = $orders[$key][$this->selectedColumns->order->total_discounts_tax_excl];
 
-                    if (isset($this->selectedColumns->order->profit_amount)) {
-                        $profit_amount = $totalProducts - $groupTotal;
-                        $profitAmountCol = $excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)];
-                        for ($l = 0; $l < $groupCount; $l++) {
-                            $sheet->setCellValue($profitAmountCol . ($key - $empty_rows + 2 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
+                        if (isset($this->selectedColumns->order->profit_amount)) {
+                            $profit_amount = $totalProducts - $groupTotal;
+                            $profitAmountCol = $excelColumns[array_search($this->selectedColumns->order->profit_amount, $headers)];
+                            for ($l = 0; $l < $groupCount; $l++) {
+                                $sheet->setCellValue($profitAmountCol . ($key - $empty_rows + 2 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($profit_amount, $this->fracPart)));
+                            }
                         }
-                    }
-                    if (isset($this->selectedColumns->order->profit_margin)) {
-                        $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
-                        $profitMarginCol = $excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)];
-                        for ($l = 0; $l < $groupCount; $l++) {
-                            $sheet->setCellValue($profitMarginCol . ($key - $empty_rows + 2 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
+                        if (isset($this->selectedColumns->order->profit_margin)) {
+                            $profit_margin = 100 * ($totalProducts - $groupTotal) / $totalProducts;
+                            $profitMarginCol = $excelColumns[array_search($this->selectedColumns->order->profit_margin, $headers)];
+                            for ($l = 0; $l < $groupCount; $l++) {
+                                $sheet->setCellValue($profitMarginCol . ($key - $empty_rows + 2 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_margin, $this->fracPart)) . '%');
+                            }
                         }
-                    }
-                    if (isset($this->selectedColumns->order->profit_percentage)) {
-                        $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
-                        $profitPercentageCol = $excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)];
-                        for ($l = 0; $l < $groupCount; $l++) {
-                            $sheet->setCellValue($profitPercentageCol . ($key - $empty_rows + 2 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
+                        if (isset($this->selectedColumns->order->profit_percentage)) {
+                            $profit_percentage = 100 * ($totalProducts - $groupTotal) / $groupTotal;
+                            $profitPercentageCol = $excelColumns[array_search($this->selectedColumns->order->profit_percentage, $headers)];
+                            for ($l = 0; $l < $groupCount; $l++) {
+                                $sheet->setCellValue($profitPercentageCol . ($key - $empty_rows + 2 - $l), str_replace('.', $this->decimalSeparator, (string) round($profit_percentage, $this->fracPart)) . '%');
+                            }
                         }
-                    }
-                    if (isset($this->selectedColumns->order->net_profit_amount)) {
-                        $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
-                        $netProfitAmountCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)];
-                        for ($l = 0; $l < $groupCount; $l++) {
-                            $sheet->setCellValue($netProfitAmountCol . ($key - $empty_rows + 2 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
+                        if (isset($this->selectedColumns->order->net_profit_amount)) {
+                            $net_profit_amount = $totalProducts - $totalDiscountsTaxExcl - $groupTotal;
+                            $netProfitAmountCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_amount, $headers)];
+                            for ($l = 0; $l < $groupCount; $l++) {
+                                $sheet->setCellValue($netProfitAmountCol . ($key - $empty_rows + 2 - $l), $curr . str_replace('.', $this->decimalSeparator, (string) round($net_profit_amount, $this->fracPart)));
+                            }
                         }
-                    }
-                    if (isset($this->selectedColumns->order->net_profit_margin)) {
-                        $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
-                        $netProfitMarginCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)];
-                        for ($l = 0; $l < $groupCount; $l++) {
-                            $sheet->setCellValue($netProfitMarginCol . ($key - $empty_rows + 2 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
+                        if (isset($this->selectedColumns->order->net_profit_margin)) {
+                            $net_profit_margin = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / ($totalProducts - $totalDiscountsTaxExcl);
+                            $netProfitMarginCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_margin, $headers)];
+                            for ($l = 0; $l < $groupCount; $l++) {
+                                $sheet->setCellValue($netProfitMarginCol . ($key - $empty_rows + 2 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_margin, $this->fracPart)) . '%');
+                            }
                         }
-                    }
-                    if (isset($this->selectedColumns->order->net_profit_percentage)) {
-                        $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
-                        $netProfitPercentageCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)];
-                        for ($l = 0; $l < $groupCount; $l++) {
-                            $sheet->setCellValue($netProfitPercentageCol . ($key - $empty_rows + 2 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
+                        if (isset($this->selectedColumns->order->net_profit_percentage)) {
+                            $net_profit_percentage = 100 * ($totalProducts - $totalDiscountsTaxExcl - $groupTotal) / $groupTotal;
+                            $netProfitPercentageCol = $excelColumns[array_search($this->selectedColumns->order->net_profit_percentage, $headers)];
+                            for ($l = 0; $l < $groupCount; $l++) {
+                                $sheet->setCellValue($netProfitPercentageCol . ($key - $empty_rows + 2 - $l), str_replace('.', $this->decimalSeparator, (string) round($net_profit_percentage, $this->fracPart)) . '%');
+                            }
                         }
-                    }
-                    if ($this->displayTotals === '1') {
-                        if ($profits) {
-                            $sale += $totalProducts / $orders[$key][$this->selectedColumns->order->{'currency.conversion_rate'}];
-                        }
-                        if ($netProfits) {
-                            $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$key][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                        if ($this->displayTotals === '1') {
+                            if ($profits) {
+                                $sale += $totalProducts / $orders[$key][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                            }
+                            if ($netProfits) {
+                                $netSale += ($totalProducts - $totalDiscountsTaxExcl) / $orders[$key][$this->selectedColumns->order->{'currency.conversion_rate'}];
+                            }
                         }
                     }
                 }
-            }
 
-            $key += 3;
+                $key += 3;
 
-            if ($this->displayTotals === '1') {
-                $styleArray = [
-                    'font' => [
-                        'bold' => true,
-                        'color' => ['argb' => 'FF3C763D'],
-                    ],
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM,
-                            'color' => ['argb' => 'FF7CC67C'],
+                if ($this->displayTotals === '1') {
+                    $styleArray = [
+                        'font' => [
+                            'bold' => true,
+                            'color' => ['argb' => 'FF3C763D'],
                         ],
-                    ],
-                    'fill' => [
-                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                        'startColor' => [
-                            'argb' => 'FFE7FFD9',
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM,
+                                'color' => ['argb' => 'FF7CC67C'],
+                            ],
                         ],
-                    ],
-                ];
+                        'fill' => [
+                            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                            'startColor' => [
+                                'argb' => 'FFE7FFD9',
+                            ],
+                        ],
+                    ];
 
-                $sheet->getStyle('A' . ($key - $empty_rows) . ':' . end($excelColumns) . ($key - $empty_rows))->applyFromArray($styleArray);
+                    $sheet->getStyle('A' . ($key - $empty_rows) . ':' . end($excelColumns) . ($key - $empty_rows))->applyFromArray($styleArray);
 
-                $def_curr = Configuration::get('OXSRP_DEF_CURR_SMBL') . ' ';
-                
-                foreach ($totals as $k => $v) {
-                    $sheet->setCellValue($k . ($key - $empty_rows), ((isset($v['curr']) && $v['curr']) ? $def_curr : '') . str_replace('.', $this->decimalSeparator, (string) round($v['val'], $this->fracPart)));
-                }
-                if (isset($profitAmountCol)) {
-                    $val = str_replace('.', $this->decimalSeparator, (string) round($sale - $purchase, $this->fracPart));
-                    $sheet->setCellValue($profitAmountCol . ($key - $empty_rows), $def_curr . $val);
-                }
-                if (isset($profitMarginCol)) {
-                    $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($sale - $purchase) / $sale, $this->fracPart));
-                    $sheet->setCellValue($profitMarginCol . ($key - $empty_rows), $val . '%');
-                }
-                if (isset($profitPercentageCol)) {
-                    $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($sale - $purchase) / $purchase, $this->fracPart));
-                    $sheet->setCellValue($profitPercentageCol . ($key - $empty_rows), $val . '%');
-                }
-                if (isset($netProfitAmountCol)) {
-                    $val = str_replace('.', $this->decimalSeparator, (string) round($netSale - $purchase, $this->fracPart));
-                    $sheet->setCellValue($netProfitAmountCol . ($key - $empty_rows), $def_curr . $val);
-                }
-                if (isset($netProfitMarginCol)) {
-                    $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($netSale - $purchase) / $netSale, $this->fracPart));
-                    $sheet->setCellValue($netProfitMarginCol . ($key - $empty_rows), $val . '%');
-                }
-                if (isset($netProfitPercentageCol)) {
-                    $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($netSale - $purchase) / $purchase, $this->fracPart));
-                    $sheet->setCellValue($netProfitPercentageCol . ($key - $empty_rows), $val . '%');
-                }
-                if (isset($reductionPercentCol)) {
-                    $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($reductionTotals['full'] - $reductionTotals['reduced']) / $reductionTotals['full'], $this->fracPart));
-                    $sheet->setCellValue($reductionPercentCol . ($key - $empty_rows), $val . '%');
-                }
-                $key++;
-            }
-            if ($this->displayFooter === '1') {
-                $sheet->getStyle('A' . ($key - $empty_rows) . ':' . end($excelColumns) . ($key - $empty_rows))
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A' . ($key - $empty_rows) . ':' . end($excelColumns) . ($key - $empty_rows))
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A' . ($key - $empty_rows) . ':' . end($excelColumns) . ($key - $empty_rows))->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                    $def_curr = Configuration::get('OXSRP_DEF_CURR_SMBL') . ' ';
 
-                for ($i = 0; $i < $counter - $psp; $i++) {
-                    $sheet->setCellValue($excelColumns[$i] . ($key - $empty_rows), $headers[$i]);
+                    foreach ($totals as $k => $v) {
+                        $sheet->setCellValue($k . ($key - $empty_rows), ((isset($v['curr']) && $v['curr']) ? $def_curr : '') . str_replace('.', $this->decimalSeparator, (string) round($v['val'], $this->fracPart)));
+                    }
+                    if (isset($profitAmountCol)) {
+                        $val = str_replace('.', $this->decimalSeparator, (string) round($sale - $purchase, $this->fracPart));
+                        $sheet->setCellValue($profitAmountCol . ($key - $empty_rows), $def_curr . $val);
+                    }
+                    if (isset($profitMarginCol)) {
+                        $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($sale - $purchase) / $sale, $this->fracPart));
+                        $sheet->setCellValue($profitMarginCol . ($key - $empty_rows), $val . '%');
+                    }
+                    if (isset($profitPercentageCol)) {
+                        $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($sale - $purchase) / $purchase, $this->fracPart));
+                        $sheet->setCellValue($profitPercentageCol . ($key - $empty_rows), $val . '%');
+                    }
+                    if (isset($netProfitAmountCol)) {
+                        $val = str_replace('.', $this->decimalSeparator, (string) round($netSale - $purchase, $this->fracPart));
+                        $sheet->setCellValue($netProfitAmountCol . ($key - $empty_rows), $def_curr . $val);
+                    }
+                    if (isset($netProfitMarginCol)) {
+                        $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($netSale - $purchase) / $netSale, $this->fracPart));
+                        $sheet->setCellValue($netProfitMarginCol . ($key - $empty_rows), $val . '%');
+                    }
+                    if (isset($netProfitPercentageCol)) {
+                        $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($netSale - $purchase) / $purchase, $this->fracPart));
+                        $sheet->setCellValue($netProfitPercentageCol . ($key - $empty_rows), $val . '%');
+                    }
+                    if (isset($reductionPercentCol)) {
+                        $val = str_replace('.', $this->decimalSeparator, (string) round(100 * ($reductionTotals['full'] - $reductionTotals['reduced']) / $reductionTotals['full'], $this->fracPart));
+                        $sheet->setCellValue($reductionPercentCol . ($key - $empty_rows), $val . '%');
+                    }
+                    $key++;
                 }
-                $key++;
-            }
-            if (!$this->displayHeader) {
-                $sheet->removeRow(1);
-            }
-            if ($this->displayExplanations === '1') {
-                $key++;
-                if (isset($profitAmountCol)) {
-                    $sheet->setCellValue($profitAmountCol . ($key - $empty_rows), '*' . $this->module->l(' Gross Profit Amount = S - P. Sale price of an order minus total purchase price of products in that order (taxes excluded).', 'ExportSales'));
-                    $sheet->getStyle($profitAmountCol . ($key - $empty_rows))->getFont()->setSize(10);
+                if ($this->displayFooter === '1') {
+                    $sheet->getStyle('A' . ($key - $empty_rows) . ':' . end($excelColumns) . ($key - $empty_rows))
+                        ->getFont()->setBold(true);
+                    $sheet->getStyle('A' . ($key - $empty_rows) . ':' . end($excelColumns) . ($key - $empty_rows))
+                        ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('FFDCF0FF');
+                    $sheet->getStyle('A' . ($key - $empty_rows) . ':' . end($excelColumns) . ($key - $empty_rows))->getBorders()
+                        ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+                    for ($i = 0; $i < $counter - $psp; $i++) {
+                        $sheet->setCellValue($excelColumns[$i] . ($key - $empty_rows), $headers[$i]);
+                    }
+                    $key++;
                 }
-                if (isset($profitMarginCol)) {
-                    $sheet->setCellValue($profitMarginCol . ($key - $empty_rows), '*' . $this->module->l(' Gross Profit Margin = 100 * (S - P) / S. Sale price of an order minus total purchase price of products in that order divided by the sale price multiplied by 100 (taxes excluded).', 'ExportSales'));
-                    $sheet->getStyle($profitMarginCol . ($key - $empty_rows))->getFont()->setSize(10);
+                if (!$this->displayHeader) {
+                    $sheet->removeRow(1);
                 }
-                if (isset($profitPercentageCol)) {
-                    $sheet->setCellValue($profitPercentageCol . ($key - $empty_rows), '*' . $this->module->l(' Gross Profit Percentage = 100 * (S - P) / P. Sale price of an order minus total purchase price of products in that order divided by the purchase price multiplied by 100 (taxes excluded).', 'ExportSales'));
-                    $sheet->getStyle($profitPercentageCol . ($key - $empty_rows))->getFont()->setSize(10);
-                }
-                if (isset($netProfitAmountCol)) {
-                    $sheet->setCellValue($netProfitAmountCol . ($key - $empty_rows), '*' . $this->module->l(' Net Profit Amount = S - D - P. Sale price of an order minus the discount of that order minus total purchase price of products in that order (taxes excluded).', 'ExportSales'));
-                    $sheet->getStyle($netProfitAmountCol . ($key - $empty_rows))->getFont()->setSize(10);
-                }
-                if (isset($netProfitMarginCol)) {
-                    $sheet->setCellValue($netProfitMarginCol . ($key - $empty_rows), '*' . $this->module->l(' Net Profit Margin = 100 * (S - D - P) / (S - D). Sale price of an order minus the discount of that order minus total purchase price of products in that order divided by the sale price minus the discount of that order multiplied by 100 (taxes excluded).', 'ExportSales'));
-                    $sheet->getStyle($netProfitMarginCol . ($key - $empty_rows))->getFont()->setSize(10);
-                }
-                if (isset($netProfitPercentageCol)) {
-                    $sheet->setCellValue($netProfitPercentageCol . ($key - $empty_rows), '*' . $this->module->l(' Net Profit Percentage = 100 * (S - D - P) / P. Sale price of an order minus the discount of that order minus total purchase price of products in that order divided by the purchase price multiplied by 100 (taxes excluded).', 'ExportSales'));
-                    $sheet->getStyle($netProfitPercentageCol . ($key - $empty_rows))->getFont()->setSize(10);
-                }
-                if (!$this->purchaseSupplierPrice && $this->selectedColumns->product->purchase_supplier_price) {
-                    $col = $excelColumns[array_search($this->selectedColumns->product->purchase_supplier_price, $headers)];
-                    $sheet->setCellValue($col . ($key - $empty_rows), '*' . $this->module->l(' Product Quantity = Product purchase price multiplied by product purchased quantity, then summed.', 'ExportSales'));
-                    $sheet->getStyle($col . ($key - $empty_rows))->getFont()->setSize(10);
-                }
+                if ($this->displayExplanations === '1') {
+                    $key++;
+                    if (isset($profitAmountCol)) {
+                        $sheet->setCellValue($profitAmountCol . ($key - $empty_rows), '*' . $this->module->l(' Gross Profit Amount = S - P. Sale price of an order minus total purchase price of products in that order (taxes excluded).', 'ExportSales'));
+                        $sheet->getStyle($profitAmountCol . ($key - $empty_rows))->getFont()->setSize(10);
+                    }
+                    if (isset($profitMarginCol)) {
+                        $sheet->setCellValue($profitMarginCol . ($key - $empty_rows), '*' . $this->module->l(' Gross Profit Margin = 100 * (S - P) / S. Sale price of an order minus total purchase price of products in that order divided by the sale price multiplied by 100 (taxes excluded).', 'ExportSales'));
+                        $sheet->getStyle($profitMarginCol . ($key - $empty_rows))->getFont()->setSize(10);
+                    }
+                    if (isset($profitPercentageCol)) {
+                        $sheet->setCellValue($profitPercentageCol . ($key - $empty_rows), '*' . $this->module->l(' Gross Profit Percentage = 100 * (S - P) / P. Sale price of an order minus total purchase price of products in that order divided by the purchase price multiplied by 100 (taxes excluded).', 'ExportSales'));
+                        $sheet->getStyle($profitPercentageCol . ($key - $empty_rows))->getFont()->setSize(10);
+                    }
+                    if (isset($netProfitAmountCol)) {
+                        $sheet->setCellValue($netProfitAmountCol . ($key - $empty_rows), '*' . $this->module->l(' Net Profit Amount = S - D - P. Sale price of an order minus the discount of that order minus total purchase price of products in that order (taxes excluded).', 'ExportSales'));
+                        $sheet->getStyle($netProfitAmountCol . ($key - $empty_rows))->getFont()->setSize(10);
+                    }
+                    if (isset($netProfitMarginCol)) {
+                        $sheet->setCellValue($netProfitMarginCol . ($key - $empty_rows), '*' . $this->module->l(' Net Profit Margin = 100 * (S - D - P) / (S - D). Sale price of an order minus the discount of that order minus total purchase price of products in that order divided by the sale price minus the discount of that order multiplied by 100 (taxes excluded).', 'ExportSales'));
+                        $sheet->getStyle($netProfitMarginCol . ($key - $empty_rows))->getFont()->setSize(10);
+                    }
+                    if (isset($netProfitPercentageCol)) {
+                        $sheet->setCellValue($netProfitPercentageCol . ($key - $empty_rows), '*' . $this->module->l(' Net Profit Percentage = 100 * (S - D - P) / P. Sale price of an order minus the discount of that order minus total purchase price of products in that order divided by the purchase price multiplied by 100 (taxes excluded).', 'ExportSales'));
+                        $sheet->getStyle($netProfitPercentageCol . ($key - $empty_rows))->getFont()->setSize(10);
+                    }
+                    if (!$this->purchaseSupplierPrice && $this->selectedColumns->product->purchase_supplier_price) {
+                        $col = $excelColumns[array_search($this->selectedColumns->product->purchase_supplier_price, $headers)];
+                        $sheet->setCellValue($col . ($key - $empty_rows), '*' . $this->module->l(' Product Quantity = Product purchase price multiplied by product purchased quantity, then summed.', 'ExportSales'));
+                        $sheet->getStyle($col . ($key - $empty_rows))->getFont()->setSize(10);
+                    }
 //                $sheet->getRowDimension($key - $empty_rows)->setRowHeight(100);
-            }
+                }
 
 //            $sheet->setCellValue('A' . ++$key, $this->module->l('Date', 'ExportSales') . ': ')
 //                ->getStyle('A' . $key)->getFont()->setBold(true);
@@ -4971,14 +4973,14 @@ class ExportSales
 //            }
 
 
-            $sheet->setSelectedCell('A1');
+                $sheet->setSelectedCell('A1');
+            }
+        } else {
+            $spreadsheet->removeSheetByIndex(0);
         }
-    } else {
-        $spreadsheet->removeSheetByIndex(0);
-    }
 
         if ($this->displayBestSellers === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getBestSellers();
+            $sales = $this->getBestSellers();
             if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
@@ -4986,625 +4988,675 @@ class ExportSales
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Products', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Product ID', 'ExportSales'),
-                    $this->module->l('Product Reference', 'ExportSales'),
-                    $this->module->l('Product Name', 'ExportSales'),
-                    $this->module->l('Sold Quantity', 'ExportSales'),
-                    $this->module->l('Total Profit (Tax Excl.)', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Incl.)', 'ExportSales'),
-                    $this->module->l('Total Paid (Tax Excl.)', 'ExportSales'),
-                    $this->module->l('Total Paid (Tax Incl.)', 'ExportSales'),
-                    $this->module->l('Total Really Paid', 'ExportSales'),
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(13);
-                $sheet->getColumnDimension('B')->setWidth(20);
-                $sheet->getColumnDimension('C')->setWidth(25);
-                $sheet->getColumnDimension('D')->setWidth(20);
-                $sheet->getColumnDimension('E')->setWidth(20);
-                $sheet->getColumnDimension('F')->setWidth(20);
-                $sheet->getColumnDimension('G')->setWidth(20);
-                $sheet->getColumnDimension('H')->setWidth(20);
-                $sheet->getColumnDimension('I')->setWidth(20);
-                $sheet->getColumnDimension('J')->setWidth(20);
-                $sheet->getStyle('A:J')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:J' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:J1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:J1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:J1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
-            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Products', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Product ID', 'ExportSales'),
+                $this->module->l('Product Reference', 'ExportSales'),
+                $this->module->l('Product Name', 'ExportSales'),
+                $this->module->l('Sold Quantity', 'ExportSales'),
+                $this->module->l('Total Profit (Tax Excl.)', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales'),
+                $this->module->l('Total Price (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Total Paid (Tax Excl.)', 'ExportSales'),
+                $this->module->l('Total Paid (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Total Really Paid', 'ExportSales'),
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(25);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(20);
+            $sheet->getColumnDimension('F')->setWidth(20);
+            $sheet->getColumnDimension('G')->setWidth(20);
+            $sheet->getColumnDimension('H')->setWidth(20);
+            $sheet->getColumnDimension('I')->setWidth(20);
+            $sheet->getColumnDimension('J')->setWidth(20);
+            $sheet->getStyle('A:J')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:J' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:J1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:J1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:J1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
 
-            if ($this->displayProductCombs === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getProductCombs();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+        if ($this->displayProductCombs === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getProductCombs();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
 
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Combinations', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Product ID', 'ExportSales'),
-                    $this->module->l('Product Name', 'ExportSales'),
-                    $this->module->l('Combination ID', 'ExportSales'),
-                    $this->module->l('Combination', 'ExportSales'),
-                    $this->module->l('Sold Quantity', 'ExportSales'),
-                    $this->module->l('Total Profit (Tax Excl.)', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(13);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(20);
-                $sheet->getColumnDimension('D')->setWidth(25);
-                $sheet->getColumnDimension('E')->setWidth(18);
-                $sheet->getColumnDimension('F')->setWidth(18);
-                $sheet->getColumnDimension('G')->setWidth(18);
-                $sheet->getStyle('A:G')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:G' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:G1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:G1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:G1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
-            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Combinations', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Product ID', 'ExportSales'),
+                $this->module->l('Product Name', 'ExportSales'),
+                $this->module->l('Combination ID', 'ExportSales'),
+                $this->module->l('Combination', 'ExportSales'),
+                $this->module->l('Sold Quantity', 'ExportSales'),
+                $this->module->l('Total Profit (Tax Excl.)', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(25);
+            $sheet->getColumnDimension('E')->setWidth(18);
+            $sheet->getColumnDimension('F')->setWidth(18);
+            $sheet->getColumnDimension('G')->setWidth(18);
+            $sheet->getStyle('A:G')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:G' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:G1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:G1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:G1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
 
-            if ($this->displayDailySales === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getDailySales();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+        if ($this->displayDailySales === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getDailySales();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
 
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Daily Sales', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Date', 'ExportSales'),
-                    $this->module->l('Sold Quantity', 'ExportSales'),
-                    $this->module->l('Total Profit (Tax Excl.)', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(13);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(20);
-                $sheet->getColumnDimension('D')->setWidth(25);
-                $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:D' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:D1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:D1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:D1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
-            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Daily Sales', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Date', 'ExportSales'),
+                $this->module->l('Sold Quantity', 'ExportSales'),
+                $this->module->l('Total Profit (Tax Excl.)', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(25);
+            $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:D' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:D1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:D1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:D1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
 
-            if ($this->displayMonthlySales === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getMonthlySales();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+        if ($this->displayMonthlySales === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getMonthlySales();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
 
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Monthly Sales', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Date', 'ExportSales'),
-                    $this->module->l('Sold Quantity', 'ExportSales'),
-                    $this->module->l('Total Profit (Tax Excl.)', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(13);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(20);
-                $sheet->getColumnDimension('D')->setWidth(25);
-                $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:D' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:D1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:D1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:D1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Monthly Sales', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Date', 'ExportSales'),
+                $this->module->l('Sold Quantity', 'ExportSales'),
+                $this->module->l('Total Profit (Tax Excl.)', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(25);
+            $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:D' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:D1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:D1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:D1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
+
+        if ($this->displayTopCustomers === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getTopCustomers();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+                return 0;
             }
 
-            if ($this->displayTopCustomers === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getTopCustomers();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
-                    return 0;
+            if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
+                return 0;
+            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Customers', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Customer ID', 'ExportSales'),
+                $this->module->l('Customer Email', 'ExportSales'),
+                $this->module->l('Customer Firstname', 'ExportSales'),
+                $this->module->l('Customer Lastname', 'ExportSales'),
+                $this->module->l('Number of Orders', 'ExportSales'),
+                $this->module->l('Total Orders (Tax Excl.)', 'ExportSales'),
+                $this->module->l('Total Orders with Discount (Tax Excl.)', 'ExportSales'),
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(13);
+            $sheet->getColumnDimension('F')->setWidth(23);
+            $sheet->getColumnDimension('G')->setWidth(25);
+            $sheet->getStyle('A:G')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:G' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:G1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:G1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:G1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
+
+        if ($this->displayPaymentMethods === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getPaymentSales();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+                return 0;
+            }
+
+            if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
+                return 0;
+            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Payment Methods', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Combined Payment', 'ExportSales'),
+                $this->module->l('Module', 'ExportSales'),
+                $this->module->l('Confirmed Orders', 'ExportSales'),
+                $this->module->l('Total Products (Tax Excl.)', 'ExportSales'),
+                $this->module->l('Total Products (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Total Discounts (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Total Paid (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Refunded Amount (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Total Tax (CA 5%)', 'ExportSales'),
+                $this->module->l('Total Tax (CA-QC 9.975%)', 'ExportSales'),
+                $this->module->l('Refunds ROCK (Tax Incl.)', 'ExportSales'),
+            ));
+
+            $count = count($sales) + 1;
+
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(20);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(13);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(20);
+            $sheet->getColumnDimension('F')->setWidth(20);
+            $sheet->getColumnDimension('G')->setWidth(20);
+            $sheet->getColumnDimension('H')->setWidth(20);
+            $sheet->getColumnDimension('I')->setWidth(20);
+            $sheet->getColumnDimension('J')->setWidth(20);
+            $sheet->getColumnDimension('K')->setWidth(20);
+            $sheet->getStyle('A:K')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:K' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:K1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:K1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:K1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+            $sheet->setCellValue('A'.$count, $this->module->l('TOTALS', 'ExportSales'));
+
+            array_shift($sales);
+
+            // print_r($sales);
+            // die;
+
+            if (!empty($sales)) {
+
+                $sheet->setCellValue('C'.$count, '=SUM(C2:C'.($count - 1).')');
+
+                $sum = array(
+                    'total_products' => 0,
+                    'total_products_wt' => 0,
+                    'total_discounts_wt' => 0,
+                    'total_paid_tax_incl' => 0,
+                    'order_slip_amount_tax_incl' => 0,
+                    'canada_tax_total_amount' => 0,
+                    'quebec_tax_total_amount' => 0,
+                    'rock_refund_tax_incl' => 0
+                );
+
+                foreach ($sales as $res) {
+                    $sum['total_products'] += (float) trim($res['total_products'], $this->currencySymbol);
+                    $sum['total_products_wt'] += (float) trim($res['total_products_wt'], $this->currencySymbol);
+                    $sum['total_discounts_wt'] += (float) trim($res['total_discounts_wt'], $this->currencySymbol);
+                    $sum['total_paid_tax_incl'] += (float) trim($res['total_paid_tax_incl'], $this->currencySymbol);
+                    $sum['order_slip_amount_tax_incl'] += (float) trim($res['order_slip_amount_tax_incl'], $this->currencySymbol);
+                    $sum['canada_tax_total_amount'] += (float) trim($res['canada_tax_total_amount'], $this->currencySymbol);
+                    $sum['quebec_tax_total_amount'] += (float) trim($res['quebec_tax_total_amount'], $this->currencySymbol);
+                    $sum['rock_refund_tax_incl'] += (float) trim($res['rock_refund_tax_incl'], $this->currencySymbol);
                 }
 
-                if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
-                    return 0;
+                foreach ($sum as $k => $s) {
+                    $sum[$k] = $this->currencySymbol . $s;
                 }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Customers', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Customer ID', 'ExportSales'),
-                    $this->module->l('Customer Email', 'ExportSales'),
-                    $this->module->l('Customer Firstname', 'ExportSales'),
-                    $this->module->l('Customer Lastname', 'ExportSales'),
-                    $this->module->l('Number of Orders', 'ExportSales'),
-                    $this->module->l('Total Orders (Tax Excl.)', 'ExportSales'),
-                    $this->module->l('Total Orders with Discount (Tax Excl.)', 'ExportSales'),
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(13);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(20);
-                $sheet->getColumnDimension('D')->setWidth(20);
-                $sheet->getColumnDimension('E')->setWidth(13);
-                $sheet->getColumnDimension('F')->setWidth(23);
-                $sheet->getColumnDimension('G')->setWidth(25);
-                $sheet->getStyle('A:G')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:G' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:G1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:G1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:G1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
+
+                $sheet->fromArray(array($sum), null, 'D' . $count);
             }
 
-            if ($this->displayPaymentMethods === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getPaymentSales();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
-                    return 0;
+            $sheet->getStyle('A'.$count.':K'.$count)->getFont()->setBold(true);
+
+            // $sheet->setSelectedCell('A1');
+
+            ///////////////////////////////////////////////
+
+            $count += 2;
+
+            $sales = $this->getPaymentSales2();
+
+
+
+
+
+
+
+            $newsales = array();
+            $vr_and_gc = array();
+
+            $vr_gc_total = 0;
+            $sales_counter = 0;
+            foreach($sales as $sale){
+                if($sale['payment_method'] != 'Voucher' && $sale['payment_method'] != 'InStore Gift Card'){
+                    $newsales[] = $sale;
+                }else{
+
+                    $payment_amount_arr = explode('$ ', $sale['payment_amount']);
+                    $vr_gc_total = $vr_gc_total + $payment_amount_arr[1];
+
+                    $minus_figure = -1 * $payment_amount_arr[1];
+                    $sales[$sales_counter]['payment_amount'] = '$ '. $minus_figure;
+                    $vr_and_gc[] =$sales[$sales_counter];
                 }
 
-                if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
-                    return 0;
-                }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Payment Methods', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Combined Payment', 'ExportSales'),
-                    $this->module->l('Module', 'ExportSales'),
-                    $this->module->l('Confirmed Orders', 'ExportSales'),
-                    $this->module->l('Total Products (Tax Excl.)', 'ExportSales'),
-                    $this->module->l('Total Products (Tax Incl.)', 'ExportSales'),
-                    $this->module->l('Total Discounts (Tax Incl.)', 'ExportSales'),
-                    $this->module->l('Total Paid (Tax Incl.)', 'ExportSales'),
-                    $this->module->l('Refunded Amount (Tax Incl.)', 'ExportSales'),
-                    $this->module->l('Total Tax (CA 5%)', 'ExportSales'),
-                    $this->module->l('Total Tax (CA-QC 9.975%)', 'ExportSales'),
-                    $this->module->l('Refunds ROCK (Tax Incl.)', 'ExportSales'),
-                ));
-
-                $count = count($sales) + 1;
-
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(20);
-                $sheet->getColumnDimension('B')->setWidth(20);
-                $sheet->getColumnDimension('C')->setWidth(13);
-                $sheet->getColumnDimension('D')->setWidth(20);
-                $sheet->getColumnDimension('E')->setWidth(20);
-                $sheet->getColumnDimension('F')->setWidth(20);
-                $sheet->getColumnDimension('G')->setWidth(20);
-                $sheet->getColumnDimension('H')->setWidth(20);
-                $sheet->getColumnDimension('I')->setWidth(20);
-                $sheet->getColumnDimension('J')->setWidth(20);
-                $sheet->getColumnDimension('K')->setWidth(20);
-                $sheet->getStyle('A:K')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:K' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:K1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:K1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:K1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-                $sheet->setCellValue('A'.$count, $this->module->l('TOTALS', 'ExportSales'));
-
-                array_shift($sales);
-
-                // print_r($sales);
-                // die;
-
-                if (!empty($sales)) {
-
-                    $sheet->setCellValue('C'.$count, '=SUM(C2:C'.($count - 1).')');
-
-                    $sum = array(
-                        'total_products' => 0,
-                        'total_products_wt' => 0,
-                        'total_discounts_wt' => 0,
-                        'total_paid_tax_incl' => 0,
-                        'order_slip_amount_tax_incl' => 0,
-                        'canada_tax_total_amount' => 0,
-                        'quebec_tax_total_amount' => 0,
-                        'rock_refund_tax_incl' => 0
-                    );
-
-                    foreach ($sales as $res) {
-                        $sum['total_products'] += (float) trim($res['total_products'], $this->currencySymbol);
-                        $sum['total_products_wt'] += (float) trim($res['total_products_wt'], $this->currencySymbol);
-                        $sum['total_discounts_wt'] += (float) trim($res['total_discounts_wt'], $this->currencySymbol);
-                        $sum['total_paid_tax_incl'] += (float) trim($res['total_paid_tax_incl'], $this->currencySymbol);
-                        $sum['order_slip_amount_tax_incl'] += (float) trim($res['order_slip_amount_tax_incl'], $this->currencySymbol);
-                        $sum['canada_tax_total_amount'] += (float) trim($res['canada_tax_total_amount'], $this->currencySymbol);
-                        $sum['quebec_tax_total_amount'] += (float) trim($res['quebec_tax_total_amount'], $this->currencySymbol);
-                        $sum['rock_refund_tax_incl'] += (float) trim($res['rock_refund_tax_incl'], $this->currencySymbol);
-                    }
-
-                    foreach ($sum as $k => $s) {
-                        $sum[$k] = $this->currencySymbol . $s;
-                    }
-
-                    $sheet->fromArray(array($sum), null, 'D' . $count);
-                }
-
-                $sheet->getStyle('A'.$count.':K'.$count)->getFont()->setBold(true);
-
-                // $sheet->setSelectedCell('A1');
-
-                ///////////////////////////////////////////////
-
-                $count += 2;
-
-                $sales = $this->getPaymentSales2();
-                array_unshift($sales, array(
-                    $this->module->l('Specific Payment', 'ExportSales'),
-                    $this->module->l('Module', 'ExportSales'),
-                    $this->module->l('Payment Amount', 'ExportSales'),
-                    // $this->module->l('Number of Orders', 'ExportSales')
-                ));
-
-                $sheet->fromArray($sales, null, 'A' . $count);
-
-                // $sheet->getDefaultRowDimension()->setRowHeight(30);
-                // $sheet->getColumnDimension('A')->setWidth(25);
-                // $sheet->getColumnDimension('B')->setWidth(25);
-                // $sheet->getColumnDimension('C')->setWidth(13);
-                // $sheet->getColumnDimension('D')->setWidth(13);
-                // $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A'.$count.':C' . ($count + count($sales)))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A'.$count.':C'.$count)
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A'.$count.':C'.$count)
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A'.$count.':C'.$count)->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-                $sheet->getStyle('A'.($count + $this->nth_total['res1']).':C'.($count + $this->nth_total['res1']))
-                    ->getFont()->setBold(true);
-
-                $sheet->getStyle('A'.($count + $this->nth_total['res2']).':C'.($count + $this->nth_total['res2']))
-                    ->getFont()->setBold(true);
-
-
-                $sheet->setSelectedCell('A1');
+                $sales_counter++;
             }
-
-            if ($this->displayTaxes === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getTaxes();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
-                    return 0;
-                }
-
-                if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
-                    return 0;
-                }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Taxes', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Tax Name', 'ExportSales'),
-                    $this->module->l('Tax Amount', 'ExportSales'),
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(25);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getStyle('A:B')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:B' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:B1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:B1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:B1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
+            $sales = $newsales;
+            foreach($vr_and_gc as $vr_and_gc_single){
+                $sales[] = $vr_and_gc_single;
             }
 
 
-            // if ($this->displayPaymentMethods2 === '1' && !is_numeric($this->auto)) {
-            //     $sheet = $spreadsheet->createSheet();
-            //     $sheet->setTitle($this->module->l('Sales by Payment Options', 'ExportSales'));
-            //     $sales = $this->getPaymentSales2();
-            //     array_unshift($sales, array(
-            //         $this->module->l('Module', 'ExportSales'),
-            //         $this->module->l('Payment Method', 'ExportSales'),
-            //         $this->module->l('Payment Amount', 'ExportSales'),
-            //         $this->module->l('Number of Orders', 'ExportSales'),
-            //         $this->module->l('Total Orders (Tax Excl.)', 'ExportSales'),
-            //         $this->module->l('Total Orders with Discount (Tax Excl.)', 'ExportSales'),
-            //         $this->module->l('Refunded Amount ROCK (Tax Excl.)', 'ExportSales'),
-            //         $this->module->l('Refunded Amount ROCK (Tax Incl.)', 'ExportSales'),
-            //     ));
-            //     $sheet->fromArray($sales, null);
-            //     $sheet->getDefaultRowDimension()->setRowHeight(30);
-            //     $sheet->getColumnDimension('A')->setWidth(25);
-            //     $sheet->getColumnDimension('B')->setWidth(25);
-            //     $sheet->getColumnDimension('C')->setWidth(13);
-            //     $sheet->getColumnDimension('D')->setWidth(13);
-            //     $sheet->getColumnDimension('E')->setWidth(20);
-            //     $sheet->getColumnDimension('F')->setWidth(20);
-            //     $sheet->getColumnDimension('G')->setWidth(20);
-            //     $sheet->getColumnDimension('H')->setWidth(20);
-            //     $sheet->getStyle('A:H')->getAlignment()->setVertical('center')->setHorizontal('center');
-            //     $sheet->getStyle('A1:H' . count($sales))
-            //         ->getAlignment()->setWrapText(true);
-            //     $sheet->getStyle('A1:H1')
-            //         ->getFont()->setBold(true);
-            //     $sheet->getStyle('A1:H1')
-            //         ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-            //         ->getStartColor()->setARGB('FFDCF0FF');
-            //     $sheet->getStyle('A1:H1')->getBorders()
-            //         ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                
-            //     // if (isset($this->nth_total['res1'])) {
-            //         $sheet->getStyle('A'.$this->nth_total['res1'].':H'.$this->nth_total['res1'])
-            //         ->getFont()->setBold(true);
-            //     // }
-            //     // if (isset($this->nth_total['res2'])) {
-            //         $sheet->getStyle('A'.$this->nth_total['res2'].':H'.$this->nth_total['res2'])
-            //         ->getFont()->setBold(true);
-            //     // }
+            $sales_counter = 0;
 
-            //     $sheet->setSelectedCell('A1');
-            // }
 
-            if ($this->displaySalesByCategories === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getSalesByCategories();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+            foreach($sales as $sale){
+                if($sale['module'] == 'TOTAL FOR IN-STORE'){
+
+                    $payment_amount_arr = explode('$ ', $sale['payment_amount']);
+
+                    $figure =  $payment_amount_arr[1] - $vr_gc_total;
+                    $sales[$sales_counter]['payment_amount'] = '$ '. $figure;
+
+                }
+
+                $sales_counter++;
+            }
+
+
+            array_unshift($sales, array(
+                $this->module->l('Specific Payment', 'ExportSales'),
+                $this->module->l('Module', 'ExportSales'),
+                $this->module->l('Payment Amount', 'ExportSales'),
+                // $this->module->l('Number of Orders', 'ExportSales')
+            ));
+
+            $sheet->fromArray($sales, null, 'A' . $count);
+
+            // $sheet->getDefaultRowDimension()->setRowHeight(30);
+            // $sheet->getColumnDimension('A')->setWidth(25);
+            // $sheet->getColumnDimension('B')->setWidth(25);
+            // $sheet->getColumnDimension('C')->setWidth(13);
+            // $sheet->getColumnDimension('D')->setWidth(13);
+            // $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A'.$count.':C' . ($count + count($sales)))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A'.$count.':C'.$count)
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A'.$count.':C'.$count)
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A'.$count.':C'.$count)->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+            $sheet->getStyle('A'.($count + $this->nth_total['res1']).':C'.($count + $this->nth_total['res1']))
+                ->getFont()->setBold(true);
+
+            $sheet->getStyle('A'.($count + $this->nth_total['res2']).':C'.($count + $this->nth_total['res2']))
+                ->getFont()->setBold(true);
+
+
+            $sheet->setSelectedCell('A1');
+        }
+
+        if ($this->displayTaxes === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getTaxes();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
 
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Categories', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Category ID', 'ExportSales'),
-                    $this->module->l('Category Name', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(13);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(18);
-                $sheet->getStyle('A:C')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:C' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:C1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:C1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:C1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
-            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Taxes', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Tax Name', 'ExportSales'),
+                $this->module->l('Tax Amount', 'ExportSales'),
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(25);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getStyle('A:B')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:B' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:B1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:B1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:B1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
 
-            if ($this->displaySalesByBrands === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getSalesByBrands();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+
+        // if ($this->displayPaymentMethods2 === '1' && !is_numeric($this->auto)) {
+        //     $sheet = $spreadsheet->createSheet();
+        //     $sheet->setTitle($this->module->l('Sales by Payment Options', 'ExportSales'));
+        //     $sales = $this->getPaymentSales2();
+        //     array_unshift($sales, array(
+        //         $this->module->l('Module', 'ExportSales'),
+        //         $this->module->l('Payment Method', 'ExportSales'),
+        //         $this->module->l('Payment Amount', 'ExportSales'),
+        //         $this->module->l('Number of Orders', 'ExportSales'),
+        //         $this->module->l('Total Orders (Tax Excl.)', 'ExportSales'),
+        //         $this->module->l('Total Orders with Discount (Tax Excl.)', 'ExportSales'),
+        //         $this->module->l('Refunded Amount ROCK (Tax Excl.)', 'ExportSales'),
+        //         $this->module->l('Refunded Amount ROCK (Tax Incl.)', 'ExportSales'),
+        //     ));
+        //     $sheet->fromArray($sales, null);
+        //     $sheet->getDefaultRowDimension()->setRowHeight(30);
+        //     $sheet->getColumnDimension('A')->setWidth(25);
+        //     $sheet->getColumnDimension('B')->setWidth(25);
+        //     $sheet->getColumnDimension('C')->setWidth(13);
+        //     $sheet->getColumnDimension('D')->setWidth(13);
+        //     $sheet->getColumnDimension('E')->setWidth(20);
+        //     $sheet->getColumnDimension('F')->setWidth(20);
+        //     $sheet->getColumnDimension('G')->setWidth(20);
+        //     $sheet->getColumnDimension('H')->setWidth(20);
+        //     $sheet->getStyle('A:H')->getAlignment()->setVertical('center')->setHorizontal('center');
+        //     $sheet->getStyle('A1:H' . count($sales))
+        //         ->getAlignment()->setWrapText(true);
+        //     $sheet->getStyle('A1:H1')
+        //         ->getFont()->setBold(true);
+        //     $sheet->getStyle('A1:H1')
+        //         ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+        //         ->getStartColor()->setARGB('FFDCF0FF');
+        //     $sheet->getStyle('A1:H1')->getBorders()
+        //         ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+        //     // if (isset($this->nth_total['res1'])) {
+        //         $sheet->getStyle('A'.$this->nth_total['res1'].':H'.$this->nth_total['res1'])
+        //         ->getFont()->setBold(true);
+        //     // }
+        //     // if (isset($this->nth_total['res2'])) {
+        //         $sheet->getStyle('A'.$this->nth_total['res2'].':H'.$this->nth_total['res2'])
+        //         ->getFont()->setBold(true);
+        //     // }
+
+        //     $sheet->setSelectedCell('A1');
+        // }
+
+        if ($this->displaySalesByCategories === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getSalesByCategories();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
 
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Brands', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Brand ID', 'ExportSales'),
-                    $this->module->l('Brand Name', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(13);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(18);
-                $sheet->getStyle('A:C')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:C' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:C1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:C1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:C1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
-            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Categories', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Category ID', 'ExportSales'),
+                $this->module->l('Category Name', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(18);
+            $sheet->getStyle('A:C')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:C' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:C1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:C1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:C1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
 
-            if ($this->displaySalesBySuppliers === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getSalesBySuppliers();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+        if ($this->displaySalesByBrands === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getSalesByBrands();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
 
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Suppliers', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Supplier ID', 'ExportSales'),
-                    $this->module->l('Supplier Name', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(13);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(18);
-                $sheet->getStyle('A:C')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:C' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:C1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:C1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:C1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
-            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Brands', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Brand ID', 'ExportSales'),
+                $this->module->l('Brand Name', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(18);
+            $sheet->getStyle('A:C')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:C' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:C1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:C1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:C1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
 
-            if ($this->displaySalesByAttributes === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getSalesByAttributes();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+        if ($this->displaySalesBySuppliers === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getSalesBySuppliers();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
 
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Attributes', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Attribute Group Name', 'ExportSales'),
-                    $this->module->l('Attribute Name', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(25);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(18);
-                $sheet->getStyle('A:C')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:C' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:C1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:C1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:C1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
-            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Suppliers', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Supplier ID', 'ExportSales'),
+                $this->module->l('Supplier Name', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(18);
+            $sheet->getStyle('A:C')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:C' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:C1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:C1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:C1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
 
-            if ($this->displaySalesByFeatures === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getSalesByFeatures();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+        if ($this->displaySalesByAttributes === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getSalesByAttributes();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
 
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Features', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Feature Name', 'ExportSales'),
-                    $this->module->l('Feature Value', 'ExportSales'),
-                    $this->module->l('Is Custom', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(25);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(13);
-                $sheet->getColumnDimension('D')->setWidth(18);
-                $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:D' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:D1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:D1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:D1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
-            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Attributes', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Attribute Group Name', 'ExportSales'),
+                $this->module->l('Attribute Name', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(25);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(18);
+            $sheet->getStyle('A:C')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:C' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:C1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:C1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:C1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
 
-            if ($this->displaySalesByShops === '1' && !is_numeric($this->auto)) {
-                $sales = $this->getSalesByShops();
-                if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+        if ($this->displaySalesByFeatures === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getSalesByFeatures();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
 
             if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
                 return 0;
             }
-                $sheet = $spreadsheet->createSheet();
-                $sheet->setTitle($this->module->l('Sales by Shops', 'ExportSales'));
-                array_unshift($sales, array(
-                    $this->module->l('Shop ID', 'ExportSales'),
-                    $this->module->l('Shop Name', 'ExportSales'),
-                    $this->module->l('Shop Group Name', 'ExportSales'),
-                    $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
-                ));
-                $sheet->fromArray($sales, null);
-                $sheet->getDefaultRowDimension()->setRowHeight(30);
-                $sheet->getColumnDimension('A')->setWidth(13);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(25);
-                $sheet->getColumnDimension('D')->setWidth(18);
-                $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
-                $sheet->getStyle('A1:D' . count($sales))
-                    ->getAlignment()->setWrapText(true);
-                $sheet->getStyle('A1:D1')
-                    ->getFont()->setBold(true);
-                $sheet->getStyle('A1:D1')
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFDCF0FF');
-                $sheet->getStyle('A1:D1')->getBorders()
-                    ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-                $sheet->setSelectedCell('A1');
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Features', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Feature Name', 'ExportSales'),
+                $this->module->l('Feature Value', 'ExportSales'),
+                $this->module->l('Is Custom', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(25);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(13);
+            $sheet->getColumnDimension('D')->setWidth(18);
+            $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:D' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:D1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:D1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:D1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
+
+        if ($this->displaySalesByShops === '1' && !is_numeric($this->auto)) {
+            $sales = $this->getSalesByShops();
+            if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
+                return 0;
             }
 
-            $spreadsheet->setActiveSheetIndex(0);
+            if ($this->auto === 'schedule' && !$sales && $scheduleDoNotSend) {
+                return 0;
+            }
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($this->module->l('Sales by Shops', 'ExportSales'));
+            array_unshift($sales, array(
+                $this->module->l('Shop ID', 'ExportSales'),
+                $this->module->l('Shop Name', 'ExportSales'),
+                $this->module->l('Shop Group Name', 'ExportSales'),
+                $this->module->l('Total Price (Tax Excl.)', 'ExportSales')
+            ));
+            $sheet->fromArray($sales, null);
+            $sheet->getDefaultRowDimension()->setRowHeight(30);
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(25);
+            $sheet->getColumnDimension('D')->setWidth(18);
+            $sheet->getStyle('A:D')->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A1:D' . count($sales))
+                ->getAlignment()->setWrapText(true);
+            $sheet->getStyle('A1:D1')
+                ->getFont()->setBold(true);
+            $sheet->getStyle('A1:D1')
+                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDCF0FF');
+            $sheet->getStyle('A1:D1')->getBorders()
+                ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->setSelectedCell('A1');
+        }
+
+        $spreadsheet->setActiveSheetIndex(0);
 
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
 
@@ -5662,7 +5714,7 @@ class ExportSales
                     $file_name_exel =  $this->docName . (Tools::getValue('orders_general_add_ts') && $this->filteredDate ? '_' . $this->filteredDate : '');
                     $AdminOrdersExportSalesReportProController = Context::getContext()->link->getAdminLink('AdminOrdersExportSalesReportPro', true).'&action=getFile&id='.$id.'&type=excel&name='.$file_name_exel;
                     Tools::redirectAdmin($AdminOrdersExportSalesReportProController);
-                 }
+                }
             }
 
         }
@@ -5672,11 +5724,11 @@ class ExportSales
     public function generateCSV()
     {
         $orders = $this->getOrders();
-        
+
         if (is_numeric($this->auto) && !$orders && Configuration::get('OXSRP_AUTOEXP_DNSEM')) {
             return 0;
         }
-        
+
         if ($this->auto === 'schedule' && !$orders && Configuration::get('OXSRP_SCHDL_DNSEM')) {
             return 0;
         }
@@ -6033,13 +6085,13 @@ class ExportSales
                                     }
                                 } else {
                                     if (($profits || $netProfits) && (
-                                        $k === $this->selectedColumns->order->profit_amount ||
-                                        $k === $this->selectedColumns->order->profit_margin ||
-                                        $k === $this->selectedColumns->order->profit_percentage ||
-                                        $k === $this->selectedColumns->order->net_profit_amount ||
-                                        $k === $this->selectedColumns->order->net_profit_margin ||
-                                        $k === $this->selectedColumns->order->net_profit_percentage
-                                    )) {
+                                            $k === $this->selectedColumns->order->profit_amount ||
+                                            $k === $this->selectedColumns->order->profit_margin ||
+                                            $k === $this->selectedColumns->order->profit_percentage ||
+                                            $k === $this->selectedColumns->order->net_profit_amount ||
+                                            $k === $this->selectedColumns->order->net_profit_margin ||
+                                            $k === $this->selectedColumns->order->net_profit_percentage
+                                        )) {
                                         if ($groupOrder !== $orders[$j][$this->selectedColumns->order->id_order]) {
                                             $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j - 1][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
                                             $totalProducts = $orders[$j - 1][$this->selectedColumns->order->total_products];
@@ -6177,13 +6229,13 @@ class ExportSales
                                 }
                             }
                         } elseif (($profits || $netProfits) && (
-                            $k === $this->selectedColumns->order->profit_amount ||
-                            $k === $this->selectedColumns->order->profit_margin ||
-                            $k === $this->selectedColumns->order->profit_percentage ||
-                            $k === $this->selectedColumns->order->net_profit_amount ||
-                            $k === $this->selectedColumns->order->net_profit_margin ||
-                            $k === $this->selectedColumns->order->net_profit_percentage
-                        )) {
+                                $k === $this->selectedColumns->order->profit_amount ||
+                                $k === $this->selectedColumns->order->profit_margin ||
+                                $k === $this->selectedColumns->order->profit_percentage ||
+                                $k === $this->selectedColumns->order->net_profit_amount ||
+                                $k === $this->selectedColumns->order->net_profit_margin ||
+                                $k === $this->selectedColumns->order->net_profit_percentage
+                            )) {
                             if ($value[$this->selectedColumns->order->id_order] !== $groupOrder) {
                                 $totalProducts = $orders[$key - 1][$this->selectedColumns->order->total_products];
                                 $totalDiscountsTaxExcl = $orders[$key - 1][$this->selectedColumns->order->total_discounts_tax_excl];
@@ -6520,7 +6572,7 @@ class ExportSales
                     $val = 100 * ($reductionTotals['full'] - $reductionTotals['reduced']) / $reductionTotals['full'];
                     $totals[$rPNumber]['val'] = $val . '%';
                 }
-                
+
                 $def_curr = Configuration::get('OXSRP_DEF_CURR_SMBL') . ' ';
 
                 for ($i = 0; $i < $counter - $psp; $i++) {
@@ -6866,7 +6918,7 @@ class ExportSales
 //        $csv .= "\r\n\r\n";
 //        $csv .= $encl . $this->module->l('Date', 'ExportSales') . ': ' . $encl . $dlm;
 //        $csv .= $encl . date('Y-m-d H:i:s') . $encl;
-        
+
         $id = Tools::getAdminToken($this->context->employee->id);
         $target_action = Tools::getValue('orders_target_action');
 
@@ -6922,11 +6974,11 @@ class ExportSales
     public function generateHTML()
     {
         $orders = $this->getOrders();
-        
+
         if (is_numeric($this->auto) && !$orders && Configuration::get('OXSRP_AUTOEXP_DNSEM')) {
             return 0;
         }
-        
+
         if ($this->auto === 'schedule' && !$orders && Configuration::get('OXSRP_SCHDL_DNSEM')) {
             return 0;
         }
@@ -7091,7 +7143,7 @@ class ExportSales
             );
 
             $profitAmountNumber = $profitMarginNumber = $profitPercentageNumber = $netProfitAmountNumber = $netProfitMarginNumber = $netProfitPercentageNumber = $rPNumber = null;
-                
+
             $groups = $this->getGroups();
             if ($this->ordersMerge === '1') {
                 $j = 0;
@@ -7415,13 +7467,13 @@ class ExportSales
                                         }
                                     }
                                 } elseif (($profits || $netProfits) && (
-                                    $k === $this->selectedColumns->order->profit_amount ||
-                                    $k === $this->selectedColumns->order->profit_margin ||
-                                    $k === $this->selectedColumns->order->profit_percentage ||
-                                    $k === $this->selectedColumns->order->net_profit_amount ||
-                                    $k === $this->selectedColumns->order->net_profit_margin ||
-                                    $k === $this->selectedColumns->order->net_profit_percentage
-                                )) {
+                                        $k === $this->selectedColumns->order->profit_amount ||
+                                        $k === $this->selectedColumns->order->profit_margin ||
+                                        $k === $this->selectedColumns->order->profit_percentage ||
+                                        $k === $this->selectedColumns->order->net_profit_amount ||
+                                        $k === $this->selectedColumns->order->net_profit_margin ||
+                                        $k === $this->selectedColumns->order->net_profit_percentage
+                                    )) {
                                     if ($orders[$j][$this->selectedColumns->order->id_order] !== $groupOrder) {
                                         $totalProducts = $orders[$j - 1][$this->selectedColumns->order->total_products];
                                         $totalDiscountsTaxExcl = $orders[$j - 1][$this->selectedColumns->order->total_discounts_tax_excl];
@@ -7556,13 +7608,13 @@ class ExportSales
                                 }
                             }
                         } elseif (($profits || $netProfits) && (
-                            $k === $this->selectedColumns->order->profit_amount ||
-                            $k === $this->selectedColumns->order->profit_margin ||
-                            $k === $this->selectedColumns->order->profit_percentage ||
-                            $k === $this->selectedColumns->order->net_profit_amount ||
-                            $k === $this->selectedColumns->order->net_profit_margin ||
-                            $k === $this->selectedColumns->order->net_profit_percentage
-                        )) {
+                                $k === $this->selectedColumns->order->profit_amount ||
+                                $k === $this->selectedColumns->order->profit_margin ||
+                                $k === $this->selectedColumns->order->profit_percentage ||
+                                $k === $this->selectedColumns->order->net_profit_amount ||
+                                $k === $this->selectedColumns->order->net_profit_margin ||
+                                $k === $this->selectedColumns->order->net_profit_percentage
+                            )) {
                             if ($value[$this->selectedColumns->order->id_order] !== $groupOrder) {
                                 $totalProducts = $orders[$key - 1][$this->selectedColumns->order->total_products];
                                 $totalDiscountsTaxExcl = $orders[$key - 1][$this->selectedColumns->order->total_discounts_tax_excl];
@@ -7983,9 +8035,9 @@ class ExportSales
                     $val = 100 * ($reductionTotals['full'] - $reductionTotals['reduced']) / $reductionTotals['full'];
                     $totals[$rPNumber]['val'] = $val . '%';
                 }
-                
+
                 $def_curr = Configuration::get('OXSRP_DEF_CURR_SMBL') . ' ';
-                
+
                 $html .= '<tr class="totals">';
                 for ($i = 0; $i < $counter - $psp; $i++) {
                     if (isset($totals[$i])) {
@@ -8073,7 +8125,7 @@ class ExportSales
                 }
                 $html .= '</table>';
             }
-            
+
             if ($this->displayProductCombs === '1' && !is_numeric($this->auto)) {
                 $html .= '<br /><br /><br />';
                 if ($this->displayHeader === '1') {
@@ -8099,7 +8151,7 @@ class ExportSales
                 }
                 $html .= '</table>';
             }
-            
+
             if ($this->displayDailySales === '1' && !is_numeric($this->auto)) {
                 $html .= '<br /><br /><br />';
                 if ($this->displayHeader === '1') {
@@ -8122,7 +8174,7 @@ class ExportSales
                 }
                 $html .= '</table>';
             }
-            
+
             if ($this->displayMonthlySales === '1' && !is_numeric($this->auto)) {
                 $html .= '<br /><br /><br />';
                 if ($this->displayHeader === '1') {
@@ -8422,11 +8474,11 @@ class ExportSales
     public function generatePDF()
     {
         $orders = $this->getOrders();
-        
+
         if (is_numeric($this->auto) && !$orders && Configuration::get('OXSRP_AUTOEXP_DNSEM')) {
             return 0;
         }
-        
+
         if ($this->auto === 'schedule' && !$orders && Configuration::get('OXSRP_SCHDL_DNSEM')) {
             return 0;
         }
@@ -8928,13 +8980,13 @@ class ExportSales
                                         }
                                     }
                                 } elseif (($profits || $netProfits) && (
-                                    $k === $this->selectedColumns->order->profit_amount ||
-                                    $k === $this->selectedColumns->order->profit_margin ||
-                                    $k === $this->selectedColumns->order->profit_percentage ||
-                                    $k === $this->selectedColumns->order->net_profit_amount ||
-                                    $k === $this->selectedColumns->order->net_profit_margin ||
-                                    $k === $this->selectedColumns->order->net_profit_percentage
-                                )) {
+                                        $k === $this->selectedColumns->order->profit_amount ||
+                                        $k === $this->selectedColumns->order->profit_margin ||
+                                        $k === $this->selectedColumns->order->profit_percentage ||
+                                        $k === $this->selectedColumns->order->net_profit_amount ||
+                                        $k === $this->selectedColumns->order->net_profit_margin ||
+                                        $k === $this->selectedColumns->order->net_profit_percentage
+                                    )) {
                                     if ($orders[$j][$this->selectedColumns->order->id_order] !== $groupOrder) {
                                         $totalProducts = $orders[$j - 1][$this->selectedColumns->order->total_products];
                                         $totalDiscountsTaxExcl = $orders[$j - 1][$this->selectedColumns->order->total_discounts_tax_excl];
@@ -9067,13 +9119,13 @@ class ExportSales
                                 }
                             }
                         } elseif (($profits || $netProfits) && (
-                            $k === $this->selectedColumns->order->profit_amount ||
-                            $k === $this->selectedColumns->order->profit_margin ||
-                            $k === $this->selectedColumns->order->profit_percentage ||
-                            $k === $this->selectedColumns->order->net_profit_amount ||
-                            $k === $this->selectedColumns->order->net_profit_margin ||
-                            $k === $this->selectedColumns->order->net_profit_percentage
-                        )) {
+                                $k === $this->selectedColumns->order->profit_amount ||
+                                $k === $this->selectedColumns->order->profit_margin ||
+                                $k === $this->selectedColumns->order->profit_percentage ||
+                                $k === $this->selectedColumns->order->net_profit_amount ||
+                                $k === $this->selectedColumns->order->net_profit_margin ||
+                                $k === $this->selectedColumns->order->net_profit_percentage
+                            )) {
                             if ($value[$this->selectedColumns->order->id_order] !== $groupOrder) {
                                 $totalProducts = $orders[$key - 1][$this->selectedColumns->order->total_products];
                                 $totalDiscountsTaxExcl = $orders[$key - 1][$this->selectedColumns->order->total_discounts_tax_excl];
@@ -9483,9 +9535,9 @@ class ExportSales
                     $val = 100 * ($reductionTotals['full'] - $reductionTotals['reduced']) / $reductionTotals['full'];
                     $totals[$rPNumber]['val'] = $val . '%';
                 }
-                
+
                 $def_curr = Configuration::get('OXSRP_DEF_CURR_SMBL') . ' ';
-                
+
                 $html .= '<tr class="totals">';
                 for ($i = 0; $i < $counter - $psp; $i++) {
                     if (isset($totals[$i])) {
@@ -9722,7 +9774,7 @@ class ExportSales
                 $html .= '<th style = "width: ' . $lngh[5] . 'mm; background-color: #DCF0FF;"><b>' . $this->module->l('Refunded Amount', 'ExportSales') . '</b></th>';
                 $html .= '<th style = "width: ' . $lngh[6] . 'mm; background-color: #DCF0FF;"><b>' . $this->module->l('Refunded Amount ROCK (Tax Excl.)', 'ExportSales') . '</b></th>';
                 $html .= '<th style = "width: ' . $lngh[7] . 'mm; background-color: #DCF0FF;"><b>' . $this->module->l('Refunded Amount ROCK (Tax Incl.)', 'ExportSales') . '</b></th>';
-                
+
                 $html .= '</tr>';
                 foreach ($sales as $val) {
                     $html .= '<tr>';
@@ -9752,7 +9804,7 @@ class ExportSales
                 $html .= '<th style = "width: ' . $lngh[5] . 'mm; background-color: #DCF0FF;"><b>' . $this->module->l('Refunded Amount', 'ExportSales') . '</b></th>';
                 $html .= '<th style = "width: ' . $lngh[6] . 'mm; background-color: #DCF0FF;"><b>' . $this->module->l('Refunded Amount ROCK (Tax Excl.)', 'ExportSales') . '</b></th>';
                 $html .= '<th style = "width: ' . $lngh[7] . 'mm; background-color: #DCF0FF;"><b>' . $this->module->l('Refunded Amount ROCK (Tax Incl.)', 'ExportSales') . '</b></th>';
-                
+
                 $html .= '</tr>';
                 foreach ($sales as $val) {
                     $html .= '<tr>';
