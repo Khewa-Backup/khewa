@@ -1158,11 +1158,60 @@ class ExportSales
                     ORDER BY FIELD(payment_method, "Stripe Payment Pro","PayPal","Payment by Stripe","Card via Stripe","Gift card","Carte Cadeau","Credit Slip","Voucher");';
         $res1 =  Db::getInstance()->executeS($sql);
 
+
+        $order_date_range = str_replace('order.','ord.',$this->mutualSql);
+
+        $gift_res = array();
+        $sql_custom = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%gift%" AND ord.valid = 1 AND ord.module != "hspointofsalepro" ' .$order_date_range;
+
+        $gift_res = Db::getInstance()->executeS($sql_custom);
+
+        $gift_res[0]['payment_amount']= '$ '. number_format($gift_res[0]['payment_amount'],2);
+
+
+
+        $voucher_res = array();
+        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%voucher%" AND ord.valid = 1 AND ord.module != "hspointofsalepro" ' .$order_date_range;
+
+        $voucher_res = Db::getInstance()->executeS($sql_custom);
+
+        $voucher_res[0]['payment_amount']= '$ '. number_format($voucher_res[0]['payment_amount'],2);
+
+        $credit_res = array();
+        $sql_custom = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr, ' . _DB_PREFIX_. 'cart_rule as cr WHERE ord.id_order = ocr.id_order AND cr.id_cart_rule = ocr.id_cart_rule AND cr.description LIKE "%slip%" AND ord.valid = 1 AND ord.module != "hspointofsalepro" ' .$order_date_range;
+
+        $credit_res = Db::getInstance()->executeS($sql_custom);
+        $credit_res[0]['payment_amount']= '$ '. number_format($credit_res[0]['payment_amount'],2);
+
+
+        $new_element = array('payment_method' => "Online Gift Cart");
+        $gift_res[0] = $new_element+$gift_res[0];
+
+        $new_element = array('payment_method' => "Online Voucher");
+        $voucher_res[0] = $new_element+$voucher_res[0];
+
+        $new_element = array('payment_method' => "Online Credit Slip");
+        $credit_res[0] = $new_element+$credit_res[0];
+
+
+
+        $res1[] = $gift_res[0];
+        $res1[] = $voucher_res[0];
+        $res1[] = $credit_res[0];
+
+
+
+
+
+
         $sum1 = $sum2 = 0;
 
         $this->nth_total = array();
 
         foreach ($res1 as $res) {
+            if($res['payment_method'] == 'Online Gift Cart' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
+                continue;
+            }
             $sum1 += trim($res['payment_amount'], $this->currencySymbol);
         }
         $sum1 = $this->currencySymbol . $sum1;
@@ -1220,15 +1269,26 @@ class ExportSales
         //     'order_count' => '')), $res2));
         // die;
 
-        return array_merge($res1, array(array(
+ 
+        return array_merge( array(array(
             'module' => $this->module->l('TOTAL FOR ONLINE SALES', 'ExportSales'),
             'payment_method' => '',
             'payment_amount' => $sum1,
-            'order_count' => '')), $res2, array(array(
+            'order_count' => '')),$res1,  array(array(
             'module' => $this->module->l('TOTAL FOR IN-STORE', 'ExportSales'),
             'payment_method' => '',
             'payment_amount' => $sum2,
-            'order_count' => '')), $res3);
+            'order_count' => '')),$res2, $res3);
+
+//        return array_merge($res1, array(array(
+//            'module' => $this->module->l('TOTAL FOR ONLINE SALES', 'ExportSales'),
+//            'payment_method' => '',
+//            'payment_amount' => $sum1,
+//            'order_count' => '')), $res2, array(array(
+//            'module' => $this->module->l('TOTAL FOR IN-STORE', 'ExportSales'),
+//            'payment_method' => '',
+//            'payment_amount' => $sum2,
+//            'order_count' => '')), $res3);
     }
 
     private function getSalesByCategories()
@@ -1470,9 +1530,9 @@ class ExportSales
                 FROM ' . _DB_PREFIX_ . 'order_slip_detail
                 GROUP BY id_order_detail) order_slip_detail ON `product`.id_order_detail = order_slip_detail.id_order_detail
             LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax canada_tax ON `product`.id_order_detail = canada_tax.id_order_detail AND canada_tax.id_tax = 1
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34)
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34 OR quebec_tax.id_tax = 32)
             LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax canada_shipping_tax ON `order`.invoice_number = canada_shipping_tax.id_order_invoice AND canada_shipping_tax.id_tax = 1 AND canada_shipping_tax.`type` = "shipping"
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34) AND quebec_shipping_tax.`type` = "shipping"
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34 OR quebec_tax.id_tax = 32) AND quebec_shipping_tax.`type` = "shipping"
                 '
             . $this->cartRulesJoin . $this->cartRulesJoinForNull
             . $this->featureJoin . $this->featureJoinForNull
@@ -3204,9 +3264,9 @@ class ExportSales
                 FROM ' . _DB_PREFIX_ . 'order_slip_detail
                 GROUP BY id_order_detail) order_slip_detail ON `product`.id_order_detail = order_slip_detail.id_order_detail
             LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax canada_tax ON `product`.id_order_detail = canada_tax.id_order_detail AND canada_tax.id_tax = 1
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34)
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34 OR quebec_tax.id_tax = 32)
             LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax canada_shipping_tax ON `order`.invoice_number = canada_shipping_tax.id_order_invoice AND canada_shipping_tax.id_tax = 1 AND canada_shipping_tax.`type` = "shipping"
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34) AND quebec_shipping_tax.`type` = "shipping"
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34 OR quebec_tax.id_tax = 32) AND quebec_shipping_tax.`type` = "shipping"
             ';
 
         // Filter By Cart Rule
@@ -5185,6 +5245,9 @@ class ExportSales
 
         if ($this->displayPaymentMethods === '1' && !is_numeric($this->auto)) {
             $sales = $this->getPaymentSales();
+
+
+//            array_pop($sales);
             if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
@@ -5202,7 +5265,7 @@ class ExportSales
                 $this->module->l('Total Products (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Discounts (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Paid (Tax Incl.)', 'ExportSales'),
-                $this->module->l('Refunded Amount (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Refunded Instore (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Tax (CA 5%)', 'ExportSales'),
                 $this->module->l('Total Tax (CA-QC 9.975%)', 'ExportSales'),
                 $this->module->l('Refunds ROCK (Tax Incl.)', 'ExportSales'),
