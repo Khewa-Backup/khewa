@@ -1151,14 +1151,18 @@ class ExportSales
                     order.reference,
                     `order`.module
                     " . $this->helperSql . '
-                    WHERE 1 ' . $this->mutualSql . ') tmp
+                    WHERE 1 AND order.current_state !=7 ' . $this->mutualSql . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
                     WHERE order_payment.payment_method LIKE "%Paypal%" OR order_payment.payment_method LIKE "%Stripe%"
                     GROUP BY module, payment_method
                     ORDER BY FIELD(payment_method, "Stripe Payment Pro","PayPal","Payment by Stripe","Card via Stripe","Gift card","Carte Cadeau","Credit Slip","Voucher");';
+
+
+
         $res1 =  Db::getInstance()->executeS($sql);
 
 
+        
         $order_date_range = str_replace('order.','ord.',$this->mutualSql);
 
         $gift_res = array();
@@ -1183,6 +1187,7 @@ class ExportSales
         $credit_res = Db::getInstance()->executeS($sql_custom);
         $credit_res[0]['payment_amount']= '$ '. number_format($credit_res[0]['payment_amount'],2);
 
+        $total_discount_online = str_replace('$ ','',$credit_res[0]['payment_amount'] )+ str_replace('$ ','',$voucher_res[0]['payment_amount']) +str_replace('$ ','',$gift_res[0]['payment_amount']);
 
         $new_element = array('payment_method' => "Online Gift Cart");
         $gift_res[0] = $new_element+$gift_res[0];
@@ -1262,13 +1267,24 @@ class ExportSales
                     ORDER BY FIELD(payment_method, "Gift card","Credit Slip");';
         $res3 =  Db::getInstance()->executeS($sql);
 
-        // print_r(array_merge($res1, array(array(
-        //     'module' => '',
-        //     'payment_method' => '',
-        //     'payment_amount' => '',
-        //     'order_count' => '')), $res2));
-        // die;
+        $new_rows = array();
+        $gap = array();
+        $gap['payment_method'] = null;
+        $gap['module'] = null;
+        $gap['payment_amount'] = null;
 
+        $discount_for_online = array();
+        $discount_for_online['payment_method'] = 'Discount Online';
+        $discount_for_online['module'] = ' ';
+        $discount_for_online['payment_amount'] = '$ '.$total_discount_online;
+        $discount_for_instore = array();
+        $discount_for_instore['payment_method'] = 'Discount Offline';
+        $discount_for_instore['module'] = '';
+        $discount_for_instore['payment_amount'] = '0000';
+
+        $new_rows[] = $gap;
+        $new_rows[] = $discount_for_online;
+        $new_rows[] = $discount_for_instore;
  
         return array_merge( array(array(
             'module' => $this->module->l('TOTAL FOR ONLINE SALES', 'ExportSales'),
@@ -1278,7 +1294,7 @@ class ExportSales
             'module' => $this->module->l('TOTAL FOR IN-STORE', 'ExportSales'),
             'payment_method' => '',
             'payment_amount' => $sum2,
-            'order_count' => '')),$res2, $res3);
+            'order_count' => '')),$res2, $res3,$new_rows);
 
 //        return array_merge($res1, array(array(
 //            'module' => $this->module->l('TOTAL FOR ONLINE SALES', 'ExportSales'),
@@ -1530,9 +1546,9 @@ class ExportSales
                 FROM ' . _DB_PREFIX_ . 'order_slip_detail
                 GROUP BY id_order_detail) order_slip_detail ON `product`.id_order_detail = order_slip_detail.id_order_detail
             LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax canada_tax ON `product`.id_order_detail = canada_tax.id_order_detail AND canada_tax.id_tax = 1
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34 OR quebec_tax.id_tax = 32)
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34 OR quebec_tax.id_tax = 32 OR quebec_tax.id_tax = 31 OR quebec_tax.id_tax = 28)
             LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax canada_shipping_tax ON `order`.invoice_number = canada_shipping_tax.id_order_invoice AND canada_shipping_tax.id_tax = 1 AND canada_shipping_tax.`type` = "shipping"
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34 OR quebec_tax.id_tax = 32) AND quebec_shipping_tax.`type` = "shipping"
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34 OR quebec_tax.id_tax = 32 OR quebec_tax.id_tax = 31 OR quebec_tax.id_tax = 28) AND quebec_shipping_tax.`type` = "shipping"
                 '
             . $this->cartRulesJoin . $this->cartRulesJoinForNull
             . $this->featureJoin . $this->featureJoinForNull
@@ -3264,9 +3280,9 @@ class ExportSales
                 FROM ' . _DB_PREFIX_ . 'order_slip_detail
                 GROUP BY id_order_detail) order_slip_detail ON `product`.id_order_detail = order_slip_detail.id_order_detail
             LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax canada_tax ON `product`.id_order_detail = canada_tax.id_order_detail AND canada_tax.id_tax = 1
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34 OR quebec_tax.id_tax = 32)
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34 OR quebec_tax.id_tax = 32 OR quebec_tax.id_tax = 31 OR quebec_tax.id_tax = 28)
             LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax canada_shipping_tax ON `order`.invoice_number = canada_shipping_tax.id_order_invoice AND canada_shipping_tax.id_tax = 1 AND canada_shipping_tax.`type` = "shipping"
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34 OR quebec_tax.id_tax = 32) AND quebec_shipping_tax.`type` = "shipping"
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34 OR quebec_tax.id_tax = 32 OR quebec_tax.id_tax = 31 OR quebec_tax.id_tax = 28) AND quebec_shipping_tax.`type` = "shipping"
             ';
 
         // Filter By Cart Rule
@@ -5268,7 +5284,7 @@ class ExportSales
                 $this->module->l('Refunded Instore (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Tax (CA 5%)', 'ExportSales'),
                 $this->module->l('Total Tax (CA-QC 9.975%)', 'ExportSales'),
-                $this->module->l('Refunds ROCK (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Refunds (Tax Incl.)', 'ExportSales'),
             ));
 
             $count = count($sales) + 1;
@@ -5391,7 +5407,11 @@ class ExportSales
                     $sales[$sales_counter]['payment_amount'] = '$ '. $figure;
 
                 }
+                if($sale['payment_method'] == 'Discount Offline'){
 
+                    $sales[$sales_counter]['payment_amount'] = '$ '. $vr_gc_total;
+
+                }
                 $sales_counter++;
             }
 
