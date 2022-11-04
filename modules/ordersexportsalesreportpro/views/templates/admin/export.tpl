@@ -146,4 +146,20 @@
         manufacturer: "{l s='Brand' mod='ordersexportsalesreportpro'}",
         supplier: "{l s='Supplier' mod='ordersexportsalesreportpro'}"
     };
+
+
+
+
+
+    // $("#data_export_orders_panel ul.nav li:nth-child(2) a").click();
+    //
+    // document.addEventListener("DOMContentLoaded", function(event) {
+    //     // $("#data_export_form_submit_btn").trigger('click');
+    //     $("#data_export_form_submit_btn").click(function(){
+    //         alert("The paragraph was clicked.");
+    //     });
+    //
+    // });
+
+    // alert('sdfsdf');
 </script>

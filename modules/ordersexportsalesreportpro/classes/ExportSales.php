@@ -5797,7 +5797,8 @@ class ExportSales
                     $file_name_exel =  $this->docName . (Tools::getValue('orders_general_add_ts') && $this->filteredDate ? '_' . $this->filteredDate : '');
                     $AdminOrdersExportSalesReportProController = Context::getContext()->link->getAdminLink('AdminOrdersExportSalesReportPro', true).'&action=getFile&id='.$id.'&type=excel&name='.$file_name_exel;
                     Tools::redirectAdmin($AdminOrdersExportSalesReportProController);
-                }
+
+                 }
             }
 
         }

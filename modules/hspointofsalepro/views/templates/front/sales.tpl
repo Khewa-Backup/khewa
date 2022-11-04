@@ -27,7 +27,7 @@
 </body>
 <script src="{$js_path|escape:'htmlall':'UTF-8'}apps/qzTrayKey.js?v={$file_version|escape:'htmlall':'UTF-8'}"></script>
 {*<script src="{$js_path|escape:'htmlall':'UTF-8'}apps/sales.js?v={$file_version|escape:'htmlall':'UTF-8'}"></script>*}
-<script src="{$js_path|escape:'htmlall':'UTF-8'}apps/sales.js?v=4.2.111"></script>
+ <script src="{$js_path|escape:'htmlall':'UTF-8'}apps/sales.js?v=4.2.111"></script>
 <script src="{$js_path|escape:'htmlall':'UTF-8'}rsvp-3.1.0.min.js"></script>
 <script src="{$js_path|escape:'htmlall':'UTF-8'}sha-256.min.js"></script>
 <script src="{$js_path|escape:'htmlall':'UTF-8'}qz-tray.js"></script>

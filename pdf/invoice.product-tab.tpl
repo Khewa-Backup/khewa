@@ -163,7 +163,6 @@
 			<td class="right white">
 {*				- {displayPrice currency=$order->id_currency price=$cart_rule.value_tax_excl}*}
 				- {displayPrice currency=$order->id_currency price=$cart_rule.value}
-
 			</td>
 		</tr>
 	{/foreach}
