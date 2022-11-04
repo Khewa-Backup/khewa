@@ -33,6 +33,7 @@ class AdminReportExportController extends ModuleAdminController{
 //        $AdminOrdersExportSalesReportProController = Context::getContext()->link->getAdminLink('AdminOrdersExportSalesReportPro', true).'&auto_export=true';
 //        Tools::redirectAdmin($AdminOrdersExportSalesReportProController);
 
+
         Tools::redirectAdmin(Context::getContext()->link->getAdminLink('AdminModules').'&configure=ordersexportsalesreportpro'.'&auto_export=true');
         parent::initContent();
     }

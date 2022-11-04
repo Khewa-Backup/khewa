@@ -113,8 +113,7 @@ class AccessCore extends ObjectModel
         ');
 
 
-//        var_dump($accesses);
-//        die("okman");
+
         $accessesFromModules = Db::getInstance()->executeS('
             SELECT r.`slug`
             FROM `' . _DB_PREFIX_ . 'authorization_role` r

@@ -148,6 +148,7 @@ class HsPointOfSalePro extends PosPaymentModule
      *               )
      *               )
      */
+
     protected function initAdminTabs()
     {
         return array(
@@ -180,6 +181,7 @@ class HsPointOfSalePro extends PosPaymentModule
      * - module admin controller: $this->lang[key]
      * NOTE: PLEASE CHECK IF THIS KEY ALREADY EXISTS.
      */
+
     protected function initTranslations()
     {
         $source = basename(__FILE__, '.php');

@@ -2640,12 +2640,13 @@ class OrderCore extends ObjectModel
                 Tools::spreadAmount($base_rounding_error, Context::getContext()->getComputingPrecision(), $order_detail_tax_rows, 'total_tax_base');
             }
         }
- 
+
 //        $i=0;
 //        foreach($order_detail_tax_rows as $order_detail_tax_row){
 //            $order_detail_tax_rows[$i]['total_amount'] = (($order_detail_tax_rows[$i]['tax_rate']/100) * $this->total_products) ;
 //            $i++;
 //        }
+
 
         return $order_detail_tax_rows;
     }

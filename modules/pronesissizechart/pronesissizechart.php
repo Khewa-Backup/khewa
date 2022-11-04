@@ -296,28 +296,32 @@ class PronesisSizeChart extends Module
 		$image = '';
 		$get_groupchart = array();
 		$sizechart = array();
-		if (count($sizechartproduct) && ((int)$sizechartproduct[0]['psc_group_id'] != 0 || $sizechartproduct[0]['value'] != $this->set_pempty))
-		{
-			if ((int)$sizechartproduct[0]['psc_group_id'] != 0)
-			{
-				$get_groupchart[] = PronesisSizeChartGroups::getSizeChartByIdGroup($sizechartproduct[0]['psc_group_id']);
-				if (count($get_groupchart))
-					$get_groupchart[0]['value'] = Tools::unSerialize(urldecode($get_groupchart[0]['value']));
-				if ($get_groupchart[0]['image'] != '' && file_exists($this->image_folder.'/'.$get_groupchart[0]['image']))
-					$image = $this->path.'uploads/'.$get_groupchart[0]['image'];
-				else
-					$image = '';
-				$get_groupchart[0]['description'] = Tools::unSerialize(urldecode($get_groupchart[0]['description']));
-			}
-			$get_groupchart[0]['image'] = $image;
-			if ($sizechartproduct[0]['value'] != $this->set_pempty)
-				$get_groupchart[0]['value'] = Tools::unSerialize(urldecode($sizechartproduct[0]['value']));
-			if ($sizechartproduct[0]['description'] != $this->set_pempty)
-				$get_groupchart[0]['description'] = Tools::unSerialize(urldecode($sizechartproduct[0]['description']));
-			$sizechart = $get_groupchart;
-		}
-		else
-		{
+//		if (count($sizechartproduct) && ((int)$sizechartproduct[0]['psc_group_id'] != 0 || $sizechartproduct[0]['value'] != $this->set_pempty))
+//		{
+//
+//            var_dump(11111);
+//            die("okman");
+//			if ((int)$sizechartproduct[0]['psc_group_id'] != 0)
+//			{
+//				$get_groupchart[] = PronesisSizeChartGroups::getSizeChartByIdGroup($sizechartproduct[0]['psc_group_id']);
+//				if (count($get_groupchart))
+//					$get_groupchart[0]['value'] = Tools::unSerialize(urldecode($get_groupchart[0]['value']));
+//				if ($get_groupchart[0]['image'] != '' && file_exists($this->image_folder.'/'.$get_groupchart[0]['image']))
+//					$image = $this->path.'uploads/'.$get_groupchart[0]['image'];
+//				else
+//					$image = '';
+//				$get_groupchart[0]['description'] = Tools::unSerialize(urldecode($get_groupchart[0]['description']));
+//			}
+//			$get_groupchart[0]['image'] = $image;
+//			if ($sizechartproduct[0]['value'] != $this->set_pempty)
+//				$get_groupchart[0]['value'] = Tools::unSerialize(urldecode($sizechartproduct[0]['value']));
+//			if ($sizechartproduct[0]['description'] != $this->set_pempty)
+//				$get_groupchart[0]['description'] = Tools::unSerialize(urldecode($sizechartproduct[0]['description']));
+//			$sizechart = $get_groupchart;
+//		}
+//		else
+//		{
+
 			$default_sizecharts = PronesisSizeChartGroups::getSizeChartByIdCategory((int)$product->id_category_default);
 			if (count($default_sizecharts))
 				foreach ($default_sizecharts as $k => $val)
@@ -331,7 +335,7 @@ class PronesisSizeChart extends Module
 					$default_sizecharts[$k]['description'] = Tools::unSerialize(urldecode($val['description']));
 				}
 			$sizechart = $default_sizecharts;
-		}
+//		}
 		if(version_compare(_PS_VERSION_,'1.7','>')) 
 		{
 			$template_path = dirname(__FILE__).'/views/templates/hook/product_page17.tpl';

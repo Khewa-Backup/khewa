@@ -302,7 +302,8 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
      */
     private function getCustomerCarts(Customer $customer)
     {
-        $carts = Cart::getCustomerCarts($customer->id);
+//        $carts = Cart::getCustomerCarts($customer->id);
+        $carts = array();
         $customerCarts = [];
 
         foreach ($carts as $cart) {

@@ -44,6 +44,7 @@ class OrdersExportSalesReportPro extends Module
      */
     public function install()
     {
+
         $langs    = Language::getLanguages();
         $tabvalue = array(
             array(
@@ -132,13 +133,15 @@ class OrdersExportSalesReportPro extends Module
 
 
         //
-
-        error_reporting(E_ERROR | E_PARSE);
-        ini_set('max_execution_time', 0);
+//
+//        error_reporting(E_ERROR | E_PARSE);
+//        ini_set('max_execution_time', 0);
         
         /*
          * If values have been submitted in the form, process.
          */
+
+
 
 
         if($this->context->employee->id_profile == '4'){
@@ -148,7 +151,6 @@ class OrdersExportSalesReportPro extends Module
                 Tools::redirectAdmin($AdminReportExportController);
             }
         }
-
 
 
         if(isset($_GET['auto_export'])){
@@ -237,6 +239,7 @@ class OrdersExportSalesReportPro extends Module
      */
     public function hookBackOfficeHeader()
     {
+
         $this->context->controller->addCSS($this->_path . 'views/css/menu_tab_icon.css', 'all');
         if (Tools::getValue('configure') == $this->name) {
             if (version_compare(_PS_VERSION_, '1.6.0.5') === -1) {

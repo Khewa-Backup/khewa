@@ -1163,11 +1163,10 @@ class ExportSales
 
 
 
-
         $order_date_range = str_replace('order.','ord.',$this->mutualSql);
 
         $gift_res = array();
-        $sql_custom = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%gift%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
+        $sql_custom = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%gift%" AND ord.valid = 1 AND ord.module != "hspointofsalepro" ' .$order_date_range;
 
         $gift_res = Db::getInstance()->executeS($sql_custom);
 
@@ -1176,14 +1175,14 @@ class ExportSales
 
 
         $voucher_res = array();
-        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%voucher%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
+        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%voucher%" AND ord.valid = 1 AND ord.module != "hspointofsalepro" ' .$order_date_range;
 
         $voucher_res = Db::getInstance()->executeS($sql_custom);
 
         $voucher_res[0]['payment_amount']= '$ '. number_format($voucher_res[0]['payment_amount'],2);
 
         $credit_res = array();
-        $sql_custom = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr, ' . _DB_PREFIX_. 'cart_rule as cr WHERE ord.id_order = ocr.id_order AND cr.id_cart_rule = ocr.id_cart_rule AND cr.description LIKE "%slip%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
+        $sql_custom = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr, ' . _DB_PREFIX_. 'cart_rule as cr WHERE ord.id_order = ocr.id_order AND cr.id_cart_rule = ocr.id_cart_rule AND cr.description LIKE "%slip%" AND ord.valid = 1 AND ord.module != "hspointofsalepro" ' .$order_date_range;
 
         $credit_res = Db::getInstance()->executeS($sql_custom);
         $credit_res[0]['payment_amount']= '$ '. number_format($credit_res[0]['payment_amount'],2);
@@ -1201,6 +1200,14 @@ class ExportSales
 
 
 
+        $res1[] = $gift_res[0];
+        $res1[] = $voucher_res[0];
+        $res1[] = $credit_res[0];
+
+
+
+
+
 
         $sum1 = $sum2 = 0;
 
@@ -1212,17 +1219,6 @@ class ExportSales
             }
             $sum1 += trim($res['payment_amount'], $this->currencySymbol);
         }
-
-
-
-
-        $res1[] = $gift_res[0];
-        $res1[] = $voucher_res[0];
-        $res1[] = $credit_res[0];
-
-
-
-
         $sum1 = $this->currencySymbol . $sum1;
 
         $sql = "SELECT 
@@ -1277,45 +1273,38 @@ class ExportSales
         $gap['module'] = null;
         $gap['payment_amount'] = null;
 
-
-        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%promocode%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
-        $dis_online_res = Db::getInstance()->executeS($sql_custom);
-        $total_discount_online = '$ '. number_format($dis_online_res[0]['payment_amount'],2);
-
-
-        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%Point of Sale%"   ' .$order_date_range;
-        $dis_offline_res = Db::getInstance()->executeS($sql_custom);
-        $total_discount_offline = '$ '. number_format($dis_offline_res[0]['payment_amount'],2);
-
-
-        
-
-
         $discount_for_online = array();
         $discount_for_online['payment_method'] = 'Discount Online';
         $discount_for_online['module'] = ' ';
-        $discount_for_online['payment_amount'] = $total_discount_online;
+        $discount_for_online['payment_amount'] = '$ '.$total_discount_online;
         $discount_for_instore = array();
-        $discount_for_instore['payment_method'] = 'Discount InStore';
+        $discount_for_instore['payment_method'] = 'Discount Offline';
         $discount_for_instore['module'] = '';
-        $discount_for_instore['payment_amount'] = $total_discount_offline;
+        $discount_for_instore['payment_amount'] = '0000';
 
         $new_rows[] = $gap;
-        $new_rows_online[] = $discount_for_online;
-        $new_rows_offline[] = $discount_for_instore;
-
-
+        $new_rows[] = $discount_for_online;
+        $new_rows[] = $discount_for_instore;
 
         return array_merge( array(array(
             'module' => $this->module->l('TOTAL FOR ONLINE SALES', 'ExportSales'),
             'payment_method' => '',
             'payment_amount' => $sum1,
-            'order_count' => '')),$res1,$new_rows_online,  array(array(
+            'order_count' => '')),$res1,  array(array(
             'module' => $this->module->l('TOTAL FOR IN-STORE', 'ExportSales'),
             'payment_method' => '',
             'payment_amount' => $sum2,
-            'order_count' => '')),$res2, $res3,$new_rows_offline);
+            'order_count' => '')),$res2, $res3,$new_rows);
 
+//        return array_merge($res1, array(array(
+//            'module' => $this->module->l('TOTAL FOR ONLINE SALES', 'ExportSales'),
+//            'payment_method' => '',
+//            'payment_amount' => $sum1,
+//            'order_count' => '')), $res2, array(array(
+//            'module' => $this->module->l('TOTAL FOR IN-STORE', 'ExportSales'),
+//            'payment_method' => '',
+//            'payment_amount' => $sum2,
+//            'order_count' => '')), $res3);
     }
 
     private function getSalesByCategories()
@@ -5409,8 +5398,6 @@ class ExportSales
             $sales_counter = 0;
 
 
-
-
             foreach($sales as $sale){
                 if($sale['module'] == 'TOTAL FOR IN-STORE'){
 
@@ -5420,28 +5407,13 @@ class ExportSales
                     $sales[$sales_counter]['payment_amount'] = '$ '. $figure;
 
                 }
+                if($sale['payment_method'] == 'Discount Offline'){
+
+                    $sales[$sales_counter]['payment_amount'] = '$ '. $vr_gc_total;
+
+                }
                 $sales_counter++;
             }
-
-
-            $final_sales = array();
-
-
-
-            $discount_sales = array();
-            foreach ($sales as $sale){
-//                if($sale['payment_method'] == 'Discount Online' || $sale['payment_method'] == 'Discount InStore'){
-                if( $sale['payment_method'] == 'Discount InStore'){
-                    $discount_sales[]=$sale;
-                }else{
-                    $final_sales[]=$sale;
-                }
-            }
-
-
-
-            $sales =array_merge($final_sales,$discount_sales)  ;
-
 
 
             array_unshift($sales, array(
@@ -5825,6 +5797,7 @@ class ExportSales
                     $file_name_exel =  $this->docName . (Tools::getValue('orders_general_add_ts') && $this->filteredDate ? '_' . $this->filteredDate : '');
                     $AdminOrdersExportSalesReportProController = Context::getContext()->link->getAdminLink('AdminOrdersExportSalesReportPro', true).'&action=getFile&id='.$id.'&type=excel&name='.$file_name_exel;
                     Tools::redirectAdmin($AdminOrdersExportSalesReportProController);
+
                 }
             }
 
