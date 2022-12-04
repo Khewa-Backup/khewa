@@ -51,6 +51,17 @@ class ThegiftcardPageModuleFrontController extends ModuleFrontController
 
     public function initContent()
     {
+        $module  = Module::getInstanceByName( 'thegiftcard' );
+
+
+        if(Tools::getValue('cron')=='true'){
+            $module->hookActionCronJob();
+
+
+            die('done');
+        }
+
+
         $id_currency = (int)$this->context->currency->id;
         $this->product = new Product((int)Configuration::get('GIFTCARD_PROD_'.$id_currency), false, $this->context->language->id, $this->context->shop->id);
 

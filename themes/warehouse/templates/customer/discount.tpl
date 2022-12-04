@@ -25,7 +25,7 @@
 {extends file='customer/page.tpl'}
 
 {block name='page_title'}
-  {l s='Your vouchers' d='Shop.Theme.Customeraccount'}
+  {l s='Your credit slip codes' d='Shop.Theme.Customeraccount'}
 {/block}
 
 {block name='page_content'}

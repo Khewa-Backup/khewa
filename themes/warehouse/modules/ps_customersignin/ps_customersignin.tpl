@@ -41,7 +41,7 @@
                 {if $configuration.voucher_enabled && !$configuration.is_catalog}
                     <a class="dropdown-item" href="{$urls.pages.discount}">
                         <i class="fa fa-tags fa-fw" aria-hidden="true"></i>
-                        {l s='Vouchers' d='Shop.Theme.Customeraccount'}
+                        {l s='Credit slip codes' d='Shop.Theme.Customeraccount'}
                     </a>
                 {/if}
 

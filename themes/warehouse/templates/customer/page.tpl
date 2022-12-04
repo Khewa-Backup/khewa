@@ -85,7 +85,7 @@
             <a class="col-lg-4 col-md-6 col-sm-6 col-xs-12" id="discounts-link" href="{$urls.pages.discount}">
           <span class="link-item">
             <i class="fa fa-tags fa-fw" aria-hidden="true"></i>
-            {l s='Vouchers' d='Shop.Theme.Customeraccount'}
+            {l s='Credit slip codes' d='Shop.Theme.Customeraccount'}
           </span>
             </a>
           {/if}
