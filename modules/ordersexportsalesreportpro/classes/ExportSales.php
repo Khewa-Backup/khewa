@@ -1156,7 +1156,7 @@ class ExportSales
                     " . $this->helperSql . '
                     WHERE 1 ' . $this->mutualSql . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
-                    WHERE order_payment.amount < 0 AND order_payment.payment_method LIKE "%Paypal%" OR order_payment.payment_method LIKE "%Stripe%"
+                    WHERE order_payment.amount < 0 
                     GROUP BY module, payment_method
                     ORDER BY FIELD(payment_method, "Stripe Payment Pro","PayPal","Payment by Stripe","Card via Stripe","Gift card","Carte Cadeau","Credit Slip","Voucher");';
 
@@ -1197,12 +1197,11 @@ class ExportSales
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
                     WHERE order_payment.payment_method LIKE "%Paypal%" OR order_payment.payment_method LIKE "%Stripe%"
                     GROUP BY module, payment_method
-                    ORDER BY FIELD(payment_method, "Stripe Payment Pro","PayPal","Payment by Stripe","Card via Stripe","Gift card","Carte Cadeau","Credit Slip","Voucher");';
+                    ORDER BY FIELD(payment_method, "Stripe Payment Pro","Paypal","Payment by Stripe","Card via Stripe","Gift card","Carte Cadeau","Credit Slip","Voucher");';
 
 
 
         $res1 =  Db::getInstance()->executeS($sql);
-
 
 
 
@@ -1261,15 +1260,29 @@ class ExportSales
                 $new_res1[$res_count]['payment_method']=$res['payment_method'];
                 $new_res1[$res_count]['module']=$res['module'];
                 $new_res1[$res_count]['payment_amount']=$res['payment_amount'];
-            }else{
-                $new_res1[$res_count]['payment_method']=$res['payment_method'];
-                $new_res1[$res_count]['module']=$res['module'];
-                $new_res1[$res_count]['payment_amount']= '-'.$res['payment_amount'];
+                $res_count++;
             }
 
         }
 
-        $res1 = $new_res1;
+        $new_res2 = array();
+
+        $res_count = 0;
+        foreach ($refunds_online as $res) {
+            if($res['payment_method'] == 'Online Gift Cart' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
+                continue;
+            }
+            if(in_array($res['order_reference'],$refund_refs)){
+                $new_res2[$res_count]['payment_method']=$res['payment_method'];
+                $new_res2[$res_count]['module']=$res['module'];
+                $new_res2[$res_count]['payment_amount']=$res['payment_amount'];
+                $res_count++;
+            }
+
+        }
+
+        $res1 = array_merge($new_res1,$new_res2) ;
+
 
 
 
