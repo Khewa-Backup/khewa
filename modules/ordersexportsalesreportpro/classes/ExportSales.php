@@ -1154,7 +1154,7 @@ class ExportSales
                     order.reference,
                     `order`.module
                     " . $this->helperSql . '
-                    WHERE 1 ' . $this->mutualSql . ') tmp
+                    WHERE 1 AND `order`.module != "hspointofsalepro" ' . $this->mutualSql . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
                     WHERE order_payment.amount < 0 
                     GROUP BY module, payment_method
@@ -1273,7 +1273,7 @@ class ExportSales
                 continue;
             }
             if(in_array($res['order_reference'],$refund_refs)){
-                $new_res2[$res_count]['payment_method']=$res['payment_method'];
+                $new_res2[$res_count]['payment_method']=$res['payment_method'].' (refund) ';
                 $new_res2[$res_count]['module']=$res['module'];
                 $new_res2[$res_count]['payment_amount']=$res['payment_amount'];
                 $res_count++;
