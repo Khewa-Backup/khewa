@@ -71,7 +71,7 @@
 						<div class="col-sm-6">
 							<p>
 							{if $count_ok}
-								{l s='[1]%count%[/1] order(s) validated for a total amount of [2]%total%[/2]' html=true sprintf=['%count%' => $count_ok, '%total%' => $total_ok, '[1]' => '<span class="badge">', '[/1]' => '</span>', '[2]' => '<span class="badge badge-success">', '[/2]' => '</span>'] d='Admin.Orderscustomers.Feature'}
+								{l s='[1]%count%[/1] order(s) validated for a total amount of [2]%total%[/2]' html=true sprintf=['%count%' => $count_ok, '%total%' => ' ', '[1]' => '<span class="badge">', '[/1]' => '</span>', '[2]' => '<span class="badge badge-success">', '[/2]' => '</span>'] d='Admin.Orderscustomers.Feature'}
 							{else}
 								{l s="No orders validated for the moment" d='Admin.Orderscustomers.Feature'}
 							{/if}
