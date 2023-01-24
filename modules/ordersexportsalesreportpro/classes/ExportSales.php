@@ -1307,7 +1307,7 @@ class ExportSales
                     " . $this->helperSql . '
                     WHERE order.module = "hspointofsalepro"  ' . $this->mutualSql . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
-                    WHERE order_payment.payment_method NOT LIKE "%Paypal%" AND order_payment.payment_method NOT LIKE "%Stripe%" AND order_payment.payment_method NOT IN ("Gift card","Carte Cadeau","Credit Slip")
+                    WHERE order_payment.payment_method NOT LIKE "%Paypal%" AND order_payment.payment_method NOT LIKE "%Stripe%" AND order_payment.amount > 0 AND order_payment.payment_method NOT IN ("Gift card","Carte Cadeau","Credit Slip")
                     GROUP BY module, IF (payment_method = "Carte de crédit", "Credit Card", payment_method)
                     ORDER BY FIELD(payment_method, "Credit Card","Cash","Cheque","Free order","unknown","Interac","InStore Gift Card","RockPOS","Installment","Gift Certificate ","Carte de crédit","Comptant","Deposit","Credit Card(instore)");';
         $res2 =  Db::getInstance()->executeS($sql);

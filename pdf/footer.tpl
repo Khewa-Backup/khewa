@@ -50,6 +50,12 @@
 			{if isset($free_text)}
 				{$free_text|escape:'html':'UTF-8'}<br />
 			{/if}
+			TPS 143581395RT0001
+			TVQ 1023112902TQ0001
+
+			Pour échange seulement avec le reçu.
+			For exchange only with receipt.
+			Merci! Thank you!
 		</td>
 	</tr>
 </table>
