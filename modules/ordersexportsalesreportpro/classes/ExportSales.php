@@ -1140,6 +1140,7 @@ class ExportSales
         //                 FROM ps_order_payment
         //                 WHERE payment_method NOT LIKE '%Paypal%' AND payment_method NOT LIKE '%Stripe%'";
 
+        $this->mutualSql = str_replace("IN (6,7","IN (6",$this->mutualSql);
 
         //---------------refund online------------------
         $sql = "SELECT 
@@ -1305,7 +1306,7 @@ class ExportSales
                     order.reference,
                     `order`.module
                     " . $this->helperSql . '
-                    WHERE order.module = "hspointofsalepro"  ' . $this->mutualSql . ') tmp
+                    WHERE order.valid =1 AND order.module = "hspointofsalepro"  ' . $this->mutualSql . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
                     WHERE order_payment.payment_method NOT LIKE "%Paypal%" AND order_payment.payment_method NOT LIKE "%Stripe%" AND order_payment.amount > 0 AND order_payment.payment_method NOT IN ("Gift card","Carte Cadeau","Credit Slip")
                     GROUP BY module, IF (payment_method = "Carte de crédit", "Credit Card", payment_method)
