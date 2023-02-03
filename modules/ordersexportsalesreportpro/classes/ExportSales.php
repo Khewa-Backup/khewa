@@ -1172,7 +1172,7 @@ class ExportSales
 
         $refund_refs = array();
         foreach ($refunds_online as $res) {
-            if($res['payment_method'] == 'Online Gift Cart' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
+            if($res['payment_method'] == 'Online Gift Card' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
                 continue;
             }
             $refund_refs[] = $res['order_reference'];
@@ -1232,7 +1232,7 @@ class ExportSales
 
         $total_discount_online = str_replace('$ ','',$credit_res[0]['payment_amount'] )+ str_replace('$ ','',$voucher_res[0]['payment_amount']) +str_replace('$ ','',$gift_res[0]['payment_amount']);
 
-        $new_element = array('payment_method' => "Online Gift Cart");
+        $new_element = array('payment_method' => "Online Gift Card");
         $gift_res[0] = $new_element+$gift_res[0];
 
         $new_element = array('payment_method' => "Online Voucher");
@@ -1253,7 +1253,7 @@ class ExportSales
         $res_count = 0;
 
         foreach ($res1 as $res) {
-            if($res['payment_method'] == 'Online Gift Cart' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
+            if($res['payment_method'] == 'Online Gift Card' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
                 continue;
             }
             if(!in_array($res['order_reference'],$refund_refs)){
@@ -1269,8 +1269,10 @@ class ExportSales
         $new_res2 = array();
 
         $res_count = 0;
+
+        $refund_online_total = 0;
         foreach ($refunds_online as $res) {
-            if($res['payment_method'] == 'Online Gift Cart' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
+            if($res['payment_method'] == 'Online Gift Card' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
                 continue;
             }
             if(in_array($res['order_reference'],$refund_refs)){
@@ -1278,10 +1280,13 @@ class ExportSales
                 $new_res2[$res_count]['module']=$res['module'];
                 $new_res2[$res_count]['payment_amount']=$res['payment_amount'];
                 $res_count++;
+
+                //---getting total becuase from order slip it returns wrong value with discounted amount also
+                $current_refund = str_replace('$ -','',$res['payment_amount']);
+                $refund_online_total += $refund_online_total + $current_refund;
             }
 
         }
-
         $res1 = array_merge($new_res1,$new_res2) ;
 
 
@@ -1343,20 +1348,21 @@ class ExportSales
         $gap['payment_amount'] = null;
 
 
-        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%promocode%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
+        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ord.valid = 1 AND ocr.name LIKE "%promocode%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
         $dis_online_res = Db::getInstance()->executeS($sql_custom);
         $total_discount_online = '$ '. number_format($dis_online_res[0]['payment_amount'],2);
 
 
-        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%Point of Sale%"   ' .$order_date_range;
+        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ord.valid = 1 AND ocr.name LIKE "%Point of Sale%"   ' .$order_date_range;
         $dis_offline_res = Db::getInstance()->executeS($sql_custom);
         $total_discount_offline = '$ '. number_format($dis_offline_res[0]['payment_amount'],2);
 
 
 
-        $sql_custom = 'SELECT SUM(ocr.total_products_tax_incl) refund_online FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_slip as ocr WHERE ord.id_order = ocr.id_order  AND ord.module != "hspointofsalepro" ' .$order_date_range;
-        $refund_online_res = Db::getInstance()->executeS($sql_custom);
-        $total_refund_online = '$ '. number_format($refund_online_res[0]['refund_online'],2);
+//        $sql_custom = 'SELECT SUM(ocr.total_products_tax_incl) refund_online FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_slip as ocr WHERE ord.id_order = ocr.id_order  AND ord.module != "hspointofsalepro" ' .$order_date_range;
+//        $refund_online_res = Db::getInstance()->executeS($sql_custom);
+//        $total_refund_online = '$ '. number_format($refund_online_res[0]['refund_online'],2);
+        $total_refund_online = '$ '. number_format($refund_online_total,2);
 
 
         $sql_custom = 'SELECT SUM(ocr.total_products_tax_incl) refund_offline FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_slip as ocr WHERE ord.id_order = ocr.id_order  AND ord.module = "hspointofsalepro" ' .$order_date_range;
