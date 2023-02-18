@@ -31,7 +31,7 @@
             <div class="cart-summary-line cart-summary-subtotals" id="cart-subtotal-{$subtotal.type}">
                 <span class="label">{$subtotal.label}</span>
                 <span class="value">
-                    {if 'discount' == $subtotal.type}-&nbsp;{/if}{$subtotal.value}
+                    {if 'discount' == $subtotal.type}-&nbsp;{/if}{if $subtotal.type == 'shipping' && !preg_match('/[\d]+/', $subtotal.value)}{else}{$subtotal.value}{/if}
                 </span>
             </div>
         {/if}
