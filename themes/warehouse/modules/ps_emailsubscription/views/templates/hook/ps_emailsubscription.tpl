@@ -24,6 +24,7 @@
 *}
 
 <div class="ps-emailsubscription-block">
+    <h4>Subscribe to Newsletter</h4>
     <form action="{url entity=index params=['fc' => 'module', 'module' => 'iqitemailsubscriptionconf', 'controller' => 'subscription']}"
           method="post">
                 <div class="input-group newsletter-input-group ">
