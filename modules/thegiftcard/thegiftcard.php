@@ -2397,12 +2397,40 @@ class Thegiftcard extends Module
         $email = $customer->email;
         $name = $customer->firstname.' '.$customer->lastname;
 
+        // modification rkb feb-17,2023
+
+        $context = $this->context ? $this->context : Context::getContext();
+        $currency = $context->currency;
+
+        if (is_int($currency)) {
+            $currency = Currency::getCurrencyInstance($currency);
+        }
+
+        // $locale = Tools::getContextLocale($context);
+        $containerFinder = new PrestaShop\PrestaShop\Adapter\ContainerFinder($context);
+        $container = $containerFinder->getContainer();
+        if (null === $context->container) {
+            $context->container = $container;
+        }
+
+        $language = new Language((int)Language::getIdByLocale('fr-ca')); //french locale
+
+        /** @var LocaleRepository $localeRepository */
+        $localeRepository = $container->get(Tools::SERVICE_LOCALE_REPOSITORY);
+        $locale = $localeRepository->getLocale(
+            $language->getLocale()
+        );
+
+        $currencyCode = is_array($currency) ? $currency['iso_code'] : $currency->iso_code;
+        $price_amount = $locale->formatPrice($cart_rule->reduction_amount, $currencyCode);
+        //end
         $template_vars = array(
             '{customer}' => $customer->firstname.' '.$customer->lastname,
             '{image_url}' => $image_url,
             '{image_width}' => Configuration::get('GIFTCARD_EMAIL_IMG_WIDTH'),
             '{image_height}' => Configuration::get('GIFTCARD_EMAIL_IMG_HEIGHT'),
-            '{giftcard_amount}' => Tools::displayPrice((float)$cart_rule->reduction_amount, (int)$cart_rule->reduction_currency),
+            // '{giftcard_amount}' => Tools::displayPrice((float)$cart_rule->reduction_amount, (int)$cart_rule->reduction_currency),
+            '{giftcard_amount}' => $price_amount,
             '{giftcard_code}' => $cart_rule->code,
             '{giftcard_expiration}' => Tools::displayDate($cart_rule->date_to),
             '{giftcard_expiration_date}' =>  Configuration::get('GIFTCARD_EXPIRATION_TIME').' '.$expiration_date
