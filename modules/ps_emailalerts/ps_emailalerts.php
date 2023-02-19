@@ -760,7 +760,7 @@ class Ps_EmailAlerts extends Module
         }
     }
 
-    public function hookDisplayHeader()
+    public function hookHeader()
     {
         $this->page_name = Dispatcher::getInstance()->getController();
         if (in_array($this->page_name, ['product', 'account'])) {
