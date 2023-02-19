@@ -18,11 +18,20 @@
  *}
 
 {block name='ps_social_follow'}
+  <style>
+  .ps-social-follow ul li {
+      display: inline;
+      padding: 0 3px;
+  }
+  </style>
   <div class="ps-social-follow">
     <h4>{l s='Follow us' d='Modules.Socialfollow.Shop'}</h4>
     <ul>
       {foreach from=$social_links item='social_link'}
-        <li class="{$social_link.class}"><a href="{$social_link.url}">{$social_link.label}</a></li>
+        <li class="{$social_link.class}"><a href="{$social_link.url}">
+          {* {$social_link.label} *}
+          <i class="fa fa-{$social_link.label|lower}"></i>
+        </a></li>
       {/foreach}
     </ul>
   </div>
