@@ -2832,7 +2832,7 @@ class CanadaPostLabels extends CarrierModule
      * */
     public function hookActionCartSave($params)
     {
-        if (!$this->isVerified() || !$this->isConnected()) {
+        if (!$this->isVerified() || !$this->isConnected() || !isset($this->context->cart)) {
             return false;
         }
 
