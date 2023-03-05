@@ -6,7 +6,7 @@
 
     <div class="mpm-featuredproducts-slider-navigation-status"></div>
 
-    <div class="mpm-featuredproducts-slider-wrapper {if !$settings->use_custom_design}mpm-featuredproducts-default-miniature-design{/if}"
+    <div class="mpm-featuredproducts-slider-wrapper products row products-grid {if !$settings->use_custom_design}mpm-featuredproducts-default-miniature-design{/if}"
          data-pause="{$settings->pause|escape:'htmlall':'UTF-8'}"
          data-speed="{$settings->speed|escape:'htmlall':'UTF-8'}"
          data-show="{$settings->number_of_visible_slides|escape:'htmlall':'UTF-8'}"
@@ -36,6 +36,7 @@
          data-product-availability-status-icon-color="{$settings->product_availability_status_icon_color|escape:'htmlall':'UTF-8'}"
          data-ps-version="{$ps_version|escape:'htmlall':'UTF-8'}">
 
+        
         {foreach from=$products item="product"}
             {include file=$path_to_product_min product=$product}
         {/foreach}

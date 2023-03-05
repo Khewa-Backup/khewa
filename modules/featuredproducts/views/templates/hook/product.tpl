@@ -1,7 +1,8 @@
 
 {if $settings->use_custom_design}
+
     <article class="mpm-featuredproducts-product-miniature product-miniature product-miniature-slider js-product-miniature" data-id-product="{$product.id_product}" data-id-product-attribute="{$product.id_product_attribute}" itemscope itemtype="http://schema.org/Product">
-        <div class="mpm-featuredproducts-img-container" >
+        <div class="mpm-featuredproducts-img-container">
             {if $settings->show_product_flags}
                 <ul class="product-flags">
                     {if !empty($product.specific_prices) && isset($product.specific_prices.reduction_type) && $product.specific_prices.reduction_type === 'percentage'}
