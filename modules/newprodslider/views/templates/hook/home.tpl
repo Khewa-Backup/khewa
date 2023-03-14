@@ -21,6 +21,9 @@
     width: 100%;
     display: inline;
 }
+section.new-products-slider img {
+    max-width: 200px;
+}
 </style>
 
 <section class="new-products-slider">
@@ -41,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function(){
         nav: true,
         autoplay: true,
         dots: false,
+        margin: 8,
         responsive: {
             0: {
                 items: 1
