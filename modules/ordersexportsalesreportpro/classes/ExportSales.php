@@ -1172,7 +1172,7 @@ class ExportSales
 
         $refund_refs = array();
         foreach ($refunds_online as $res) {
-            if($res['payment_method'] == 'Online Gift Card' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
+            if($res['payment_method'] == 'Redeem Gift Card' || $res['payment_method'] == 'Redeem Voucher' || $res['payment_method'] == 'Redeem Credit Slip'){
                 continue;
             }
             $refund_refs[] = $res['order_reference'];
@@ -1232,13 +1232,13 @@ class ExportSales
 
         $total_discount_online = str_replace('$ ','',$credit_res[0]['payment_amount'] )+ str_replace('$ ','',$voucher_res[0]['payment_amount']) +str_replace('$ ','',$gift_res[0]['payment_amount']);
 
-        $new_element = array('payment_method' => "Online Gift Card");
+        $new_element = array('payment_method' => "Redeem Gift Card");
         $gift_res[0] = $new_element+$gift_res[0];
 
-        $new_element = array('payment_method' => "Online Voucher");
+        $new_element = array('payment_method' => "Redeem Voucher");
         $voucher_res[0] = $new_element+$voucher_res[0];
 
-        $new_element = array('payment_method' => "Online Credit Slip");
+        $new_element = array('payment_method' => "Redeem Credit Slip");
         $credit_res[0] = $new_element+$credit_res[0];
 
 
@@ -1253,7 +1253,7 @@ class ExportSales
         $res_count = 0;
 
         foreach ($res1 as $res) {
-            if($res['payment_method'] == 'Online Gift Card' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
+            if($res['payment_method'] == 'Redeem Gift Card' || $res['payment_method'] == 'Redeem Voucher' || $res['payment_method'] == 'Redeem Credit Slip'){
                 continue;
             }
             if(!in_array($res['order_reference'],$refund_refs)){
@@ -1272,7 +1272,7 @@ class ExportSales
 
         $refund_online_total = 0;
         foreach ($refunds_online as $res) {
-            if($res['payment_method'] == 'Online Gift Card' || $res['payment_method'] == 'Online Voucher' || $res['payment_method'] == 'Online Credit Slip'){
+            if($res['payment_method'] == 'Redeem Gift Card' || $res['payment_method'] == 'Redeem Voucher' || $res['payment_method'] == 'Redeem Credit Slip'){
                 continue;
             }
             if(in_array($res['order_reference'],$refund_refs)){
