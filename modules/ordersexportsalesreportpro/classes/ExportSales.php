@@ -1172,7 +1172,7 @@ class ExportSales
 
         $refund_refs = array();
         foreach ($refunds_online as $res) {
-            if($res['payment_method'] == 'Redeem Gift Card' || $res['payment_method'] == 'Redeem Voucher' || $res['payment_method'] == 'Redeem Credit Slip'){
+            if($res['payment_method'] == 'Paid with Gift Card' || $res['payment_method'] == 'Paid with Voucher' || $res['payment_method'] == 'Paid with Credit Slip'){
                 continue;
             }
             $refund_refs[] = $res['order_reference'];
@@ -1232,13 +1232,13 @@ class ExportSales
 
         $total_discount_online = str_replace('$ ','',$credit_res[0]['payment_amount'] )+ str_replace('$ ','',$voucher_res[0]['payment_amount']) +str_replace('$ ','',$gift_res[0]['payment_amount']);
 
-        $new_element = array('payment_method' => "Redeem Gift Card");
+        $new_element = array('payment_method' => "Paid with Gift Card");
         $gift_res[0] = $new_element+$gift_res[0];
 
-        $new_element = array('payment_method' => "Redeem Voucher");
+        $new_element = array('payment_method' => "Paid with Voucher");
         $voucher_res[0] = $new_element+$voucher_res[0];
 
-        $new_element = array('payment_method' => "Redeem Credit Slip");
+        $new_element = array('payment_method' => "Paid with Credit Slip");
         $credit_res[0] = $new_element+$credit_res[0];
 
 
@@ -1253,7 +1253,7 @@ class ExportSales
         $res_count = 0;
 
         foreach ($res1 as $res) {
-            if($res['payment_method'] == 'Redeem Gift Card' || $res['payment_method'] == 'Redeem Voucher' || $res['payment_method'] == 'Redeem Credit Slip'){
+            if($res['payment_method'] == 'Paid with Gift Card' || $res['payment_method'] == 'Paid with Voucher' || $res['payment_method'] == 'Paid with Credit Slip'){
                 continue;
             }
             if(!in_array($res['order_reference'],$refund_refs)){
@@ -1272,7 +1272,7 @@ class ExportSales
 
         $refund_online_total = 0;
         foreach ($refunds_online as $res) {
-            if($res['payment_method'] == 'Redeem Gift Card' || $res['payment_method'] == 'Redeem Voucher' || $res['payment_method'] == 'Redeem Credit Slip'){
+            if($res['payment_method'] == 'Paid with Gift Card' || $res['payment_method'] == 'Paid with Voucher' || $res['payment_method'] == 'Paid with Credit Slip'){
                 continue;
             }
             if(in_array($res['order_reference'],$refund_refs)){
@@ -1318,6 +1318,60 @@ class ExportSales
                     ORDER BY FIELD(payment_method, "Credit Card","Cash","Cheque","Free order","unknown","Interac","InStore Gift Card","RockPOS","Installment","Gift Certificate ","Carte de crédit","Comptant","Deposit","Credit Card(instore)");';
         $res2 =  Db::getInstance()->executeS($sql);
 
+
+        $credit_card_is_empty = true;
+        $cash_is_empty = true;
+        $Interac_is_empty = true;
+
+
+
+        $empty_credit_card = array(
+            'payment_method' => 'Paid with Credit Card',
+            'module' => '',
+            'payment_amount' => '$ 0',
+        );
+        $empty_cash = array(
+            'payment_method' => 'Paid with Cash',
+            'module' => '',
+            'payment_amount' => '$ 0',
+        );
+        $empty_interac = array(
+            'payment_method' => 'Paid with Interac',
+            'module' => '',
+            'payment_amount' => '$ 0',
+        );
+
+
+        $count = 0;
+        foreach($res2 as $res){
+            $res2[$count]['payment_method'] = 'Paid with '.$res['payment_method'];
+            $count++;
+
+            if(strpos($res['payment_method'], "Credit Card") !== false){
+                $credit_card_is_empty = false;
+            }
+            if(strpos($res['payment_method'], "Credit Card") !== false){
+                $cash_is_empty = false;
+            }
+            if(strpos($res['payment_method'], "Credit Card") !== false){
+                $Interac_is_empty = false;
+            }
+
+
+        }
+
+
+        if($credit_card_is_empty){
+            $res2[] = $empty_credit_card;
+        }
+
+        if($cash_is_empty){
+            $res2[] = $empty_cash;
+        }
+
+        if($Interac_is_empty){
+            $res2[] = $empty_interac;
+        }
         foreach ($res2 as $res) {
             $sum2 += trim($res['payment_amount'], $this->currencySymbol);
         }
@@ -1388,7 +1442,7 @@ class ExportSales
         $discount_for_instore['payment_amount'] = $total_discount_offline;
 
         $refund_for_offline = array();
-        $refund_for_offline['payment_method'] = 'Instore Refund';
+        $refund_for_offline['payment_method'] = 'Refund Instore';
         $refund_for_offline['module'] = ' ';
         $refund_for_offline['payment_amount'] = $total_refund_offline;
 
