@@ -3723,8 +3723,41 @@ class ExportSales
             $this->sql .= ', order.id_order DESC';
         }
 
-//        die($this->sql);
-        return Db::getInstance()->executeS($this->sql);
+    //    die($this->sql);
+        // return Db::getInstance()->executeS($this->sql);
+
+        $orders = Db::getInstance()->executeS($this->sql);
+
+
+         if($orders){
+
+             $gift_payment_title = 'Gift Card Payment';
+
+             foreach($orders as $k => $order){
+                 $norder = new Order($order[$this->selectedColumns->order->id_order]);
+                 // $payments = $norder->getOrderPaymentCollection();
+                 $credit_slip = Db::getInstance()->getRow('SELECT * FROM '._DB_PREFIX_.'order_payment 
+                 WHERE order_reference="'.$norder->reference.'" 
+                 AND payment_method LIKE "%Gift card%"');
+
+                 $orderprev = $ordernext = $order;
+                 array_splice($orderprev, 3);
+                 array_splice($ordernext, 0, 3 - count($ordernext));
+
+                 if($credit_slip && $credit_slip['amount'] > 0){
+//                     $orders[$k][$gift_payment_title] = $credit_slip['amount'];
+                     $orderprev[$gift_payment_title] = $credit_slip['amount'];
+
+                 }else{
+//                     $orders[$k][$gift_payment_title] = 0;
+                     $orderprev[$gift_payment_title] = 0;
+                 }
+                 $orders[$k] = array_merge($orderprev, $ordernext);
+
+             }
+         }
+
+        return $orders;
     }
 
     private function getGroups()
@@ -3858,7 +3891,9 @@ class ExportSales
                 if ($this->purchaseSupplierPrice) {
                     $psp++;
                 }
-
+                // new change
+                $counter = count($orders[0]) > $counter ? $counter + (count($orders[0]) - $counter) : $counter;
+                //end
                 $excelColumns = SalesExportHelper::createColumnsArray($counter - $psp);
                 $sheet->getDefaultColumnDimension()->setWidth(21);
 
