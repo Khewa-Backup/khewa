@@ -803,7 +803,8 @@ class ValidationOrderActions extends DefaultActions
                             'ValidationOrderActions - chargeWebhook'
                         );
                     } else {
-                        $order->setCurrentState(Configuration::get('PS_OS_REFUND'));
+//                        $order->setCurrentState(Configuration::get('PS_OS_REFUND'));
+                        $order->setCurrentState('56');
                         ProcessLoggerHandler::logInfo(
                             'Full refund of payment => ' . $this->conveyor['event_json']->data->object->id,
                             null,

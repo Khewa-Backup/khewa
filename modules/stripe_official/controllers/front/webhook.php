@@ -496,7 +496,8 @@ class stripe_officialWebhookModuleFrontController extends ModuleFrontController
             'charge.failed' => Configuration::get('PS_OS_ERROR'),
             'charge.succeeded' => Configuration::get('PS_OS_PAYMENT'),
             'charge.captured' => Configuration::get('PS_OS_PAYMENT'),
-            'charge.refunded' => Configuration::get('PS_OS_REFUND'),
+//            'charge.refunded' => Configuration::get('PS_OS_REFUND'),
+            'charge.refunded' => '56',
             'charge.dispute.created' => Configuration::get(Stripe_official::SEPA_DISPUTE)
         );
 

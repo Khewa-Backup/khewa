@@ -1213,7 +1213,14 @@ class ExportSales
 
         $gift_res = Db::getInstance()->executeS($sql_custom);
 
-        $gift_res[0]['payment_amount']= '$ '. number_format($gift_res[0]['payment_amount'],2);
+
+        $sql_custom_fr = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%cadeau%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
+
+        $gift_res_fr = Db::getInstance()->executeS($sql_custom_fr);
+
+        $total_gift_cart_amount = number_format($gift_res[0]['payment_amount'],2) + number_format($gift_res_fr[0]['payment_amount'],2);
+
+        $gift_res[0]['payment_amount']= '$ '. $total_gift_cart_amount;
 
 
 
@@ -1283,7 +1290,7 @@ class ExportSales
 
                 //---getting total becuase from order slip it returns wrong value with discounted amount also
                 $current_refund = str_replace('$ -','',$res['payment_amount']);
-                $refund_online_total += $refund_online_total + $current_refund;
+                $refund_online_total = $refund_online_total + $current_refund;
             }
 
         }
@@ -1462,11 +1469,11 @@ class ExportSales
 
 
         return array_merge( array(array(
-            'module' => $this->module->l('TOTAL FOR ONLINE SALES', 'ExportSales'),
+            'module' => $this->module->l('TOTAL ONLINE', 'ExportSales'),
             'payment_method' => '',
             'payment_amount' => $sum1,
             'order_count' => '')),$res1,$new_rows_online,  array(array(
-            'module' => $this->module->l('TOTAL FOR IN-STORE', 'ExportSales'),
+            'module' => $this->module->l('TOTAL IN-STORE', 'ExportSales'),
             'payment_method' => '',
             'payment_amount' => $sum2,
             'order_count' => '')),$res2, $res3,$new_rows_offline);
@@ -3729,33 +3736,33 @@ class ExportSales
         $orders = Db::getInstance()->executeS($this->sql);
 
 
-         if($orders){
+        if($orders){
 
-             $gift_payment_title = 'Gift Card Payment';
+            $gift_payment_title = 'Gift Card Payment';
 
-             foreach($orders as $k => $order){
-                 $norder = new Order($order[$this->selectedColumns->order->id_order]);
-                 // $payments = $norder->getOrderPaymentCollection();
-                 $credit_slip = Db::getInstance()->getRow('SELECT * FROM '._DB_PREFIX_.'order_payment 
-                 WHERE order_reference="'.$norder->reference.'" 
-                 AND payment_method LIKE "%Gift card%"');
+            foreach($orders as $k => $order){
+                $norder = new Order($order[$this->selectedColumns->order->id_order]);
+                $gift_card = Db::getInstance()->getRow('SELECT sum(value) as gift_card_amount FROM `'._DB_PREFIX_.'order_cart_rule` WHERE id_order = '.$order[$this->selectedColumns->order->id_order].' AND name like "%gift%"');
+                $gift_card_fr = Db::getInstance()->getRow('SELECT sum(value) as gift_card_amount FROM `'._DB_PREFIX_.'order_cart_rule` WHERE id_order = '.$order[$this->selectedColumns->order->id_order].' AND name like "%cadeau%"');
 
-                 $orderprev = $ordernext = $order;
-                 array_splice($orderprev, 3);
-                 array_splice($ordernext, 0, 3 - count($ordernext));
+                $orderprev = $ordernext = $order;
+                array_splice($orderprev, 3);
+                array_splice($ordernext, 0, 3 - count($ordernext));
 
-                 if($credit_slip && $credit_slip['amount'] > 0){
-//                     $orders[$k][$gift_payment_title] = $credit_slip['amount'];
-                     $orderprev[$gift_payment_title] = $credit_slip['amount'];
+                if($gift_card && ($gift_card['gift_card_amount'] > 0 || $gift_card_fr['gift_card_amount'] > 0)){
+                    $gift_card_value = (int)$gift_card['gift_card_amount'] +(int)$gift_card_fr['gift_card_amount'];
+                    $orderprev[$gift_payment_title] = $gift_card_value;
 
-                 }else{
-//                     $orders[$k][$gift_payment_title] = 0;
-                     $orderprev[$gift_payment_title] = 0;
-                 }
-                 $orders[$k] = array_merge($orderprev, $ordernext);
+                }else{
+                    $orderprev[$gift_payment_title] = 0;
+                }
+                $orders[$k] = array_merge($orderprev, $ordernext);
 
-             }
-         }
+                if($gift_card_value > 0 && $orders[$k]['Total Discounts (Tax included)']>0 ){
+                    $orders[$k]['Total Discounts (Tax included)'] = $orders[$k]['Total Discounts (Tax included)'] - $gift_card_value;
+                }
+            }
+        }
 
         return $orders;
     }
@@ -5485,13 +5492,27 @@ class ExportSales
                 $this->module->l('Total Products (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Discounts (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Paid (Tax Incl.)', 'ExportSales'),
-                $this->module->l('Refunded Instore (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Refund Online (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Tax (CA 5%)', 'ExportSales'),
                 $this->module->l('Total Tax (CA-QC 9.975%)', 'ExportSales'),
-                $this->module->l('Refunds (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Refund Instore (Tax Incl.)', 'ExportSales'),
             ));
 
             $count = count($sales) + 1;
+
+
+
+//            foreach($sales as $kk => $sale){
+//
+//                $salep = $salen = $sale;
+//                array_splice($salep, 8);
+//                array_splice($salen, 0, 8 - count($sale));
+//                $onlylast = $salen;
+//                array_splice($onlylast, 0, -1);
+//                array_splice($salen, 2);
+//
+//                $sales[$kk] = array_merge($salep, $onlylast, $salen);
+//            }
 
             $sheet->fromArray($sales, null);
             $sheet->getDefaultRowDimension()->setRowHeight(30);
@@ -5548,6 +5569,8 @@ class ExportSales
                     $sum['canada_tax_total_amount'] += (float) trim($res['canada_tax_total_amount'], $this->currencySymbol);
                     $sum['quebec_tax_total_amount'] += (float) trim($res['quebec_tax_total_amount'], $this->currencySymbol);
                     $sum['rock_refund_tax_incl'] += (float) trim($res['rock_refund_tax_incl'], $this->currencySymbol);
+                    $sum['canada_tax_total_amount'] += (float) trim($res['canada_tax_total_amount'], $this->currencySymbol);
+
                 }
 
                 foreach ($sum as $k => $s) {
