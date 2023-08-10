@@ -1100,9 +1100,10 @@ class ExportSales
                     SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, canada_tax.total_amount)) canada_tax_total_amount,
                     SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, quebec_tax.total_amount)) quebec_tax_total_amount,
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
-                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl,
-                    IF(`order`.current_state = $refund_state, total_paid_tax_excl, 0) rock_refund_tax_excl,
-                    IF(`order`.current_state = $refund_state, total_paid_tax_incl, 0) rock_refund_tax_incl
+                	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
+                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old,
+                    IF(`order`.current_state = 7, total_paid_tax_excl, 0) rock_refund_tax_excl,
+                    IF(`order`.module = 'hspointofsalepro', order_slip.total_products_tax_incl, 0) rock_refund_tax_incl
                     " . $this->helperSql . '
                     WHERE 1 ' . $this->mutualSql . '
                     GROUP BY order.id_order
@@ -1379,10 +1380,7 @@ class ExportSales
         if($Interac_is_empty){
             $res2[] = $empty_interac;
         }
-        foreach ($res2 as $res) {
-            $sum2 += trim($res['payment_amount'], $this->currencySymbol);
-        }
-        $sum2 = $this->currencySymbol . $sum2;
+
 
         $sql = "SELECT 
                 order_payment.payment_method,
@@ -1428,6 +1426,7 @@ class ExportSales
 
         $sql_custom = 'SELECT SUM(ocr.total_products_tax_incl) refund_offline FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_slip as ocr WHERE ord.id_order = ocr.id_order  AND ord.module = "hspointofsalepro" ' .$order_date_range;
         $refund_offline_res = Db::getInstance()->executeS($sql_custom);
+        $refund_offline_value_temp = number_format($refund_offline_res[0]['refund_offline'],2);
         $total_refund_offline = '$ '. number_format($refund_offline_res[0]['refund_offline'],2);
 
 
@@ -1451,10 +1450,15 @@ class ExportSales
         $refund_for_offline = array();
         $refund_for_offline['payment_method'] = 'Refund Instore';
         $refund_for_offline['module'] = ' ';
-        $refund_for_offline['payment_amount'] = $total_refund_offline;
+        $refund_for_offline['payment_amount'] = '- '. $total_refund_offline;
 
 
+        foreach ($res2 as $res) {
+            $sum2 += trim($res['payment_amount'], $this->currencySymbol);
+        }
 
+        $sum2 = $sum2 - $refund_offline_value_temp;
+        $sum2 = $this->currencySymbol . $sum2;
 
         $new_rows[] = $gap;
         $new_rows_online[] = $discount_for_online;
@@ -3739,6 +3743,10 @@ class ExportSales
         if($orders){
 
             $gift_payment_title = 'Gift Card Payment';
+            // new change
+            $credit_slip_title = 'Credit Slip';
+            $voucher_title = 'Voucher';
+            //end
 
             foreach($orders as $k => $order){
                 $norder = new Order($order[$this->selectedColumns->order->id_order]);
@@ -3755,7 +3763,33 @@ class ExportSales
 
                 }else{
                     $orderprev[$gift_payment_title] = 0;
+
                 }
+
+                $credit_slip_amount = Db::getInstance()->getRow("SELECT sum(op.amount) as credit_slip_amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = 0 AND op.payment_method = 'Credit Slip'");
+                $voucher_amount = Db::getInstance()->getRow("SELECT sum(op.amount) as voucher_amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = 0 AND op.payment_method = 'Voucher'");
+
+
+
+                //-----------------------------------------------
+                if($credit_slip_amount && ($credit_slip_amount['credit_slip_amount'] > 0 )){
+                    $credit_slip_value = (int)$credit_slip_amount['credit_slip_amount'] ;
+                    $orderprev[$credit_slip_title] = $credit_slip_value;
+                }else{
+                    $orderprev[$credit_slip_title] = 0;
+                }
+                //-----------------------------------------------
+                if($voucher_amount && ($voucher_amount['voucher_amount'] > 0 )){
+                    $voucher_value = (int)$gift_card['voucher_amount'];
+                    $orderprev[$voucher_title] = $voucher_value;
+                    // end
+
+                }else{
+                    $orderprev[$voucher_title] = 0;
+                    // end
+                }
+
+
                 $orders[$k] = array_merge($orderprev, $ordernext);
 
                 if($gift_card_value > 0 && $orders[$k]['Total Discounts (Tax included)']>0 ){
