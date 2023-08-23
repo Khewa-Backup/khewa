@@ -1450,7 +1450,13 @@ class ExportSales
         $refund_for_offline = array();
         $refund_for_offline['payment_method'] = 'Refund Instore';
         $refund_for_offline['module'] = ' ';
-        $refund_for_offline['payment_amount'] = '- '. $total_refund_offline;
+        if($total_refund_offline>0){
+            $refund_for_offline['payment_amount'] = '- '. $total_refund_offline;
+
+        }else{
+            $refund_for_offline['payment_amount'] =  $total_refund_offline;
+
+        }
 
 
         foreach ($res2 as $res) {
@@ -1472,7 +1478,7 @@ class ExportSales
         // $this->nth_total['res2'] = count($res2) + count($res3) + count($new_rows_offline);
 
 
-        return array_merge( array(array(
+        $whole_arr =  array_merge( array(array(
             'module' => $this->module->l('TOTAL ONLINE', 'ExportSales'),
             'payment_method' => '',
             'payment_amount' => $sum1,
@@ -1481,7 +1487,66 @@ class ExportSales
             'payment_method' => '',
             'payment_amount' => $sum2,
             'order_count' => '')),$res2, $res3,$new_rows_offline);
+/*
+        $new_result = array();
+        foreach($whole_arr as $row){
+            if($row['payment_method']== 'TOTAL ONLINE'){
+                $new_result[0] = $row;
+            }
 
+            if($row['payment_method']== 'Paid with Gift Card'){
+                $new_result[2] = $row;
+            }
+            if($row['payment_method']== 'Paid with Voucher'){
+                $new_result[3] = $row;
+            }
+            if($row['payment_method']== 'Paid with Credit Slip'){
+                $new_result[4] = $row;
+            }
+            if($row['payment_method']== 'Card via Stripe'){
+                $new_result[1] = $row;
+            }
+            if($row['payment_method']== 'Discount Online'){
+                $new_result[5] = $row;
+            }
+            if($row['payment_method']== 'Refund Online'){
+                $new_result[6] = $row;
+            }
+            if($row['payment_method']== 'TOTAL IN-STORE'){
+                $new_result[7] = $row;
+            }
+            //Paid with Credit Card
+            //Paid with Cash
+            //Paid with Intera
+            //Paid with InStore Gift Card
+            //Discount InStore
+            //Refund Instore
+            //
+            //
+            //
+            //
+            if($row['payment_method']== ''){
+                $new_result[8] = $row;
+            }
+            if($row['payment_method']== ''){
+                $new_result[9] = $row;
+            }
+            if($row['payment_method']== ''){
+                $new_result[10] = $row;
+            }
+            if($row['payment_method']== ''){
+                $new_result[10] = $row;
+            }
+            if($row['payment_method']== ''){
+                $new_result[10] = $row;
+            }
+            if($row['payment_method']== ''){
+                $new_result[10] = $row;
+            }
+        }
+        var_dump($whole_arr);
+        die();*/
+        return $whole_arr;
     }
 
     private function getSalesByCategories()
