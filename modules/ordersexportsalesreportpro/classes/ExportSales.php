@@ -1080,10 +1080,11 @@ class ExportSales
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_products), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_products,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_products_wt), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_products_wt,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_discounts_wt), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_discounts_wt,
+                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_shipping_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_shipping_tax_incl,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_paid_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_paid_tax_incl,
-                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(amount_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) order_slip_amount_tax_incl,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(canada_tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) canada_tax_total_amount,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(quebec_tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) quebec_tax_total_amount,
+                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(amount_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) order_slip_amount_tax_incl,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(rock_refund_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) rock_refund_tax_incl
             FROM(
             SELECT
@@ -1097,6 +1098,7 @@ class ExportSales
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_discounts_tax_incl) total_discounts_wt,
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_paid_tax_excl) total_paid_tax_excl,
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_paid_tax_incl) total_paid_tax_incl,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_shipping_tax_incl) total_shipping_tax_incl,
                     SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, canada_tax.total_amount)) canada_tax_total_amount,
                     SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, quebec_tax.total_amount)) quebec_tax_total_amount,
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
@@ -1358,10 +1360,10 @@ class ExportSales
             if(strpos($res['payment_method'], "Credit Card") !== false){
                 $credit_card_is_empty = false;
             }
-            if(strpos($res['payment_method'], "Credit Card") !== false){
+            if(strpos($res['payment_method'], "Cash") !== false){
                 $cash_is_empty = false;
             }
-            if(strpos($res['payment_method'], "Credit Card") !== false){
+            if(strpos($res['payment_method'], "Interac") !== false){
                 $Interac_is_empty = false;
             }
 
@@ -1414,7 +1416,8 @@ class ExportSales
 
         $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ord.valid = 1 AND ocr.name LIKE "%Point of Sale%"   ' .$order_date_range;
         $dis_offline_res = Db::getInstance()->executeS($sql_custom);
-        $total_discount_offline = '$ '. number_format($dis_offline_res[0]['payment_amount'],2);
+        $dis_offline_res = number_format($dis_offline_res[0]['payment_amount'],2);
+        $total_discount_offline = '$ '. $dis_offline_res;
 
 
 
@@ -1460,10 +1463,15 @@ class ExportSales
 
 
         foreach ($res2 as $res) {
+            if(strpos($res['payment_method'], "Voucher") !== false){
+                continue;
+            }
             $sum2 += trim($res['payment_amount'], $this->currencySymbol);
         }
 
         $sum2 = $sum2 - $refund_offline_value_temp;
+        $sum2 = $sum2 - $dis_offline_res;
+        $sum2 = $sum2 - $dis_offline_res;
         $sum2 = $this->currencySymbol . $sum2;
 
         $new_rows[] = $gap;
@@ -1487,65 +1495,58 @@ class ExportSales
             'payment_method' => '',
             'payment_amount' => $sum2,
             'order_count' => '')),$res2, $res3,$new_rows_offline);
-/*
+
         $new_result = array();
         foreach($whole_arr as $row){
             if($row['payment_method']== 'TOTAL ONLINE'){
                 $new_result[0] = $row;
             }
-
-            if($row['payment_method']== 'Paid with Gift Card'){
-                $new_result[2] = $row;
-            }
-            if($row['payment_method']== 'Paid with Voucher'){
-                $new_result[3] = $row;
-            }
-            if($row['payment_method']== 'Paid with Credit Slip'){
-                $new_result[4] = $row;
-            }
-            if($row['payment_method']== 'Card via Stripe'){
+            if($row['payment_method']== 'Paid with Paypal' || $row['payment_method']== 'Paid with PayPal'){
                 $new_result[1] = $row;
             }
-            if($row['payment_method']== 'Discount Online'){
+            if($row['payment_method']== 'Card via Stripe'){
+                $new_result[2] = $row;
+            }
+            if($row['payment_method']== 'Paid with Gift Card'){
+                $new_result[3] = $row;
+            }
+            if($row['payment_method']== 'Paid with Voucher'){
+                $new_result[4] = $row;
+            }
+
+            if($row['payment_method']== 'Paid with Credit Slip'){
                 $new_result[5] = $row;
             }
-            if($row['payment_method']== 'Refund Online'){
+            if($row['payment_method']== 'Discount Online'){
                 $new_result[6] = $row;
             }
-            if($row['payment_method']== 'TOTAL IN-STORE'){
+            if($row['payment_method']== 'Refund Online'){
                 $new_result[7] = $row;
             }
-            //Paid with Credit Card
-            //Paid with Cash
-            //Paid with Intera
-            //Paid with InStore Gift Card
-            //Discount InStore
-            //Refund Instore
-            //
-            //
-            //
-            //
-            if($row['payment_method']== ''){
+            if($row['payment_method']== 'TOTAL IN-STORE'){
                 $new_result[8] = $row;
             }
-            if($row['payment_method']== ''){
+
+            if($row['payment_method']== 'Paid with Cash'){
                 $new_result[9] = $row;
             }
-            if($row['payment_method']== ''){
+            if($row['payment_method']== 'Paid with Credit Card'){
                 $new_result[10] = $row;
             }
-            if($row['payment_method']== ''){
-                $new_result[10] = $row;
+            if($row['payment_method']== 'Paid with Intera'){
+                $new_result[11] = $row;
             }
-            if($row['payment_method']== ''){
-                $new_result[10] = $row;
+            if($row['payment_method']== 'Paid with InStore Gift Card'){
+                $new_result[12] = $row;
             }
-            if($row['payment_method']== ''){
-                $new_result[10] = $row;
+            if($row['payment_method']== 'Discount InStore'){
+                $new_result[13] = $row;
+            }
+            if($row['payment_method']== 'Refund Instore'){
+                $new_result[14] = $row;
             }
         }
-        var_dump($whole_arr);
-        die();*/
+
         return $whole_arr;
     }
 
@@ -5590,10 +5591,12 @@ class ExportSales
                 $this->module->l('Total Products (Tax Excl.)', 'ExportSales'),
                 $this->module->l('Total Products (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Discounts (Tax Incl.)', 'ExportSales'),
+                $this->module->l('Total Shipping (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Paid (Tax Incl.)', 'ExportSales'),
-                $this->module->l('Refund Online (Tax Incl.)', 'ExportSales'),
+//                $this->module->l('Refund Online (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Tax (CA 5%)', 'ExportSales'),
                 $this->module->l('Total Tax (CA-QC 9.975%)', 'ExportSales'),
+                $this->module->l('Refund Online (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Refund Instore (Tax Incl.)', 'ExportSales'),
             ));
 
@@ -5626,6 +5629,7 @@ class ExportSales
             $sheet->getColumnDimension('I')->setWidth(20);
             $sheet->getColumnDimension('J')->setWidth(20);
             $sheet->getColumnDimension('K')->setWidth(20);
+            $sheet->getColumnDimension('L')->setWidth(20);
             $sheet->getStyle('A:K')->getAlignment()->setVertical('center')->setHorizontal('center');
             $sheet->getStyle('A1:K' . count($sales))
                 ->getAlignment()->setWrapText(true);
@@ -5652,25 +5656,31 @@ class ExportSales
                     'total_products' => 0,
                     'total_products_wt' => 0,
                     'total_discounts_wt' => 0,
+                    'total_shipping_tax_incl' => 0,
                     'total_paid_tax_incl' => 0,
-                    'order_slip_amount_tax_incl' => 0,
                     'canada_tax_total_amount' => 0,
                     'quebec_tax_total_amount' => 0,
-                    'rock_refund_tax_incl' => 0
+                    'order_slip_amount_tax_incl' => 0,
+                    'rock_refund_tax_incl' => 0,
                 );
+
 
                 foreach ($sales as $res) {
                     $sum['total_products'] += (float) trim($res['total_products'], $this->currencySymbol);
                     $sum['total_products_wt'] += (float) trim($res['total_products_wt'], $this->currencySymbol);
                     $sum['total_discounts_wt'] += (float) trim($res['total_discounts_wt'], $this->currencySymbol);
+                    $sum['total_shipping_tax_incl'] += (float) trim($res['total_shipping_tax_incl'], $this->currencySymbol);
                     $sum['total_paid_tax_incl'] += (float) trim($res['total_paid_tax_incl'], $this->currencySymbol);
                     $sum['order_slip_amount_tax_incl'] += (float) trim($res['order_slip_amount_tax_incl'], $this->currencySymbol);
-                    $sum['canada_tax_total_amount'] += (float) trim($res['canada_tax_total_amount'], $this->currencySymbol);
                     $sum['quebec_tax_total_amount'] += (float) trim($res['quebec_tax_total_amount'], $this->currencySymbol);
                     $sum['rock_refund_tax_incl'] += (float) trim($res['rock_refund_tax_incl'], $this->currencySymbol);
                     $sum['canada_tax_total_amount'] += (float) trim($res['canada_tax_total_amount'], $this->currencySymbol);
 
                 }
+
+//                var_dump($sum);
+//                die();
+
 
                 foreach ($sum as $k => $s) {
                     $sum[$k] = $this->currencySymbol . $s;
@@ -5679,7 +5689,7 @@ class ExportSales
                 $sheet->fromArray(array($sum), null, 'D' . $count);
             }
 
-            $sheet->getStyle('A'.$count.':K'.$count)->getFont()->setBold(true);
+            $sheet->getStyle('A'.$count.':L'.$count)->getFont()->setBold(true);
 
             // $sheet->setSelectedCell('A1');
 
@@ -5690,7 +5700,8 @@ class ExportSales
             $sales = $this->getPaymentSales2();
 
 
-
+//            print_r($sales);
+//            die;
 
 
 
