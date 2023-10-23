@@ -1082,7 +1082,6 @@ class ExportSales
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_discounts_wt), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_discounts_wt,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_shipping_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_shipping_tax_incl,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_paid_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_paid_tax_incl,
-                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_shipping_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_shipping_tax_incl,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(canada_tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) canada_tax_total_amount,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(quebec_tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) quebec_tax_total_amount,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(amount_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) order_slip_amount_tax_incl,
@@ -1098,10 +1097,10 @@ class ExportSales
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_discounts_tax_excl) total_discounts,
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_discounts_tax_incl) total_discounts_wt,
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_paid_tax_excl) total_paid_tax_excl,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_paid_tax_incl) total_paid_tax_incl,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, (order.total_paid_tax_incl)) total_paid_tax_incl,
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_shipping_tax_incl) total_shipping_tax_incl,
-                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, canada_tax.total_amount)) canada_tax_total_amount,
-                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, quebec_tax.total_amount)) quebec_tax_total_amount,
+                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, canada_tax.total_amount + (IFNULL(canada_shipping_tax.amount, 0))  )) canada_tax_total_amount,
+                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, quebec_tax.total_amount + (IFNULL(quebec_shipping_tax.amount, 0))  )) quebec_tax_total_amount,
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
                 	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
                     IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old,
@@ -1118,12 +1117,25 @@ class ExportSales
 
     private function getTaxes()
     {
-        $sql = "SELECT 
+//        $sql = "SELECT
+//                    tax_lang.`name`,
+//                    CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(odt.total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_price_tax_excl
+//            " . $this->helperSql . '
+//                    LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON `product`.id_order_detail = odt.id_order_detail
+//                    LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tax_lang ON tax_lang.id_tax = odt.id_tax AND tax_lang.id_lang = ' . $this->langId . '
+//
+//                    WHERE odt.id_tax IS NOT NULL AND odt.id_tax <> 0 ' . $this->mutualSql . ' GROUP BY odt.id_tax
+//                    ORDER BY odt.id_tax;';
+
+
+        $sql = "SELECT
                     tax_lang.`name`,
-                    CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(odt.total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_price_tax_excl
+                    CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(odt.unit_amount*(od.product_quantity - od.product_quantity_refunded)), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_price_tax_excl
             " . $this->helperSql . '
                     LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON `product`.id_order_detail = odt.id_order_detail
+                    LEFT JOIN ps_order_detail od ON od.id_order_detail = odt.id_order_detail
                     LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tax_lang ON tax_lang.id_tax = odt.id_tax AND tax_lang.id_lang = ' . $this->langId . '
+                    
                     WHERE odt.id_tax IS NOT NULL AND odt.id_tax <> 0 ' . $this->mutualSql . ' GROUP BY odt.id_tax
                     ORDER BY odt.id_tax;';
         return DB::getInstance()->executeS($sql);
@@ -1280,8 +1292,8 @@ class ExportSales
         $new_res2 = array();
 
         $res_count = 0;
-
         $refund_online_total = 0;
+
         foreach ($refunds_online as $res) {
             if($res['payment_method'] == 'Paid with Gift Card' || $res['payment_method'] == 'Paid with Voucher' || $res['payment_method'] == 'Paid with Credit Slip'){
                 continue;
@@ -1291,13 +1303,13 @@ class ExportSales
                 $new_res2[$res_count]['module']=$res['module'];
                 $new_res2[$res_count]['payment_amount']=$res['payment_amount'];
                 $res_count++;
-
                 //---getting total becuase from order slip it returns wrong value with discounted amount also
                 $current_refund = str_replace('$ -','',$res['payment_amount']);
                 $refund_online_total = $refund_online_total + $current_refund;
             }
 
         }
+
         $res1 = array_merge($new_res1,$new_res2) ;
 
 
@@ -1428,7 +1440,9 @@ class ExportSales
         $total_refund_online = '$ '. number_format($refund_online_total,2);
 
 
-        $sql_custom = 'SELECT SUM(ocr.total_products_tax_incl) refund_offline FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_slip as ocr WHERE ord.id_order = ocr.id_order  AND ord.module = "hspointofsalepro" ' .$order_date_range;
+        $sql_custom = 'SELECT SUM(ocr.total_products_tax_incl) refund_offline FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_slip as ocr WHERE ord.id_order = ocr.id_order  AND ord.current_state NOT in(52,54)  AND ord.module = "hspointofsalepro" ' .$order_date_range;
+//        var_dump($sql_custom);
+//        die();
         $refund_offline_res = Db::getInstance()->executeS($sql_custom);
         $refund_offline_value_temp = number_format($refund_offline_res[0]['refund_offline'],2);
         $total_refund_offline = '$ '. number_format($refund_offline_res[0]['refund_offline'],2);
@@ -1471,8 +1485,7 @@ class ExportSales
         }
 
         $sum2 = $sum2 - $refund_offline_value_temp;
-        $sum2 = $sum2 - $dis_offline_res;
-        $sum2 = $sum2 - $dis_offline_res;
+//        $sum2 = $sum2 - $dis_offline_res;
         $sum2 = $this->currencySymbol . $sum2;
 
         $new_rows[] = $gap;
@@ -1792,7 +1805,7 @@ class ExportSales
             LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax canada_tax ON `product`.id_order_detail = canada_tax.id_order_detail AND canada_tax.id_tax = 1
             LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax quebec_tax ON `product`.id_order_detail = quebec_tax.id_order_detail AND (quebec_tax.id_tax = 25 OR quebec_tax.id_tax = 34 OR quebec_tax.id_tax = 32 OR quebec_tax.id_tax = 31 OR quebec_tax.id_tax = 28)
             LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax canada_shipping_tax ON `order`.invoice_number = canada_shipping_tax.id_order_invoice AND canada_shipping_tax.id_tax = 1 AND canada_shipping_tax.`type` = "shipping"
-            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34 OR quebec_tax.id_tax = 32 OR quebec_tax.id_tax = 31 OR quebec_tax.id_tax = 28) AND quebec_shipping_tax.`type` = "shipping"
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_invoice_tax quebec_shipping_tax ON `order`.invoice_number = quebec_shipping_tax.id_order_invoice AND (quebec_shipping_tax.id_tax = 25 OR quebec_shipping_tax.id_tax = 34 OR quebec_shipping_tax.id_tax = 32 OR quebec_shipping_tax.id_tax = 31 OR quebec_shipping_tax.id_tax = 28) AND quebec_shipping_tax.`type` = "shipping"
                 '
             . $this->cartRulesJoin . $this->cartRulesJoinForNull
             . $this->featureJoin . $this->featureJoinForNull
@@ -3999,9 +4012,7 @@ class ExportSales
                 if ($this->purchaseSupplierPrice) {
                     $psp++;
                 }
-                // new change
-                $counter = count($orders[0]) > $counter ? $counter + (count($orders[0]) - $counter) : $counter;
-                //end
+
                 $excelColumns = SalesExportHelper::createColumnsArray($counter - $psp);
                 $sheet->getDefaultColumnDimension()->setWidth(21);
 
@@ -5659,7 +5670,6 @@ class ExportSales
                     'total_discounts_wt' => 0,
                     'total_shipping_tax_incl' => 0,
                     'total_paid_tax_incl' => 0,
-                    'total_shipping_tax_incl' => 0,
                     'canada_tax_total_amount' => 0,
                     'quebec_tax_total_amount' => 0,
                     'order_slip_amount_tax_incl' => 0,
