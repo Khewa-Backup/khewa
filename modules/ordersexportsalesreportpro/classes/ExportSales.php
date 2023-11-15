@@ -1072,7 +1072,7 @@ class ExportSales
         $refund_state = Configuration::getGlobalValue('PS_OS_REFUND');
         $canceled_state = Configuration::getGlobalValue('PS_OS_CANCELED');
         $error_state = Configuration::getGlobalValue('PS_OS_ERROR');
-
+        $refund_state2 = 56;
         $sql = "SELECT 
                 payment,
                 module,
@@ -1083,7 +1083,46 @@ class ExportSales
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_shipping_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_shipping_tax_incl,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_paid_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_paid_tax_incl,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(canada_tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) canada_tax_total_amount,
-                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(quebec_tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) quebec_tax_total_amount,
+                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(quebec_tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) quebec_tax_total_amount
+            FROM(
+            SELECT
+                    order.id_order,
+                    payment,
+                    module,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, 1) valid,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_products) total_products,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_products_wt) total_products_wt,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_discounts_tax_excl) total_discounts,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_discounts_tax_incl) total_discounts_wt,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_paid_tax_excl) total_paid_tax_excl,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, (order.total_paid_tax_incl)) total_paid_tax_incl,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_shipping_tax_incl) total_shipping_tax_incl, 
+                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, canada_tax.total_amount  )) canada_tax_total_amount,
+                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, quebec_tax.total_amount  )) quebec_tax_total_amount,
+                    IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
+                	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
+                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old,
+                    IF(`order`.current_state = 7, total_paid_tax_excl, 0) rock_refund_tax_excl,
+                    IF(`order`.module = 'hspointofsalepro', order_slip.total_products_tax_incl, 0) rock_refund_tax_incl
+                    " . $this->helperSql . '
+                    WHERE order.valid = 1 ' . $this->mutualSql . '
+                    GROUP BY order.id_order
+                    ) tmp
+                    GROUP BY module, IF (payment = "Carte de crédit" OR payment = "Credit Card(instore)", "Credit Card", payment)
+                    ORDER BY SUM(total_products) DESC;';
+
+        $result_without_refund = DB::getInstance()->executeS($sql);
+
+        //this means we are including the refunds;
+        $refund_state = -1;
+        $canceled_state = Configuration::getGlobalValue('PS_OS_CANCELED');
+        $error_state = Configuration::getGlobalValue('PS_OS_ERROR');
+        $refund_state2 = -2;
+        $mutualSql_include_refunds = str_replace("IN (6,7,56","IN (6",$this->mutualSql);
+        $sql = "SELECT 
+                payment,
+                module,
+                SUM(valid) valid,    
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(amount_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) order_slip_amount_tax_incl,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(rock_refund_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) rock_refund_tax_incl
             FROM(
@@ -1091,28 +1130,66 @@ class ExportSales
                     order.id_order,
                     payment,
                     module,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, 1) valid,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_products) total_products,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_products_wt) total_products_wt,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_discounts_tax_excl) total_discounts,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_discounts_tax_incl) total_discounts_wt,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_paid_tax_excl) total_paid_tax_excl,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, (order.total_paid_tax_incl)) total_paid_tax_incl,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, order.total_shipping_tax_incl) total_shipping_tax_incl,
-                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, canada_tax.total_amount + (IFNULL(canada_shipping_tax.amount, 0))  )) canada_tax_total_amount,
-                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $error_state, 0, quebec_tax.total_amount + (IFNULL(quebec_shipping_tax.amount, 0))  )) quebec_tax_total_amount,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, 1) valid,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_products) total_products,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_products_wt) total_products_wt,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_discounts_tax_excl) total_discounts,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_discounts_tax_incl) total_discounts_wt,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_paid_tax_excl) total_paid_tax_excl,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, (order.total_paid_tax_incl)) total_paid_tax_incl,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_shipping_tax_incl) total_shipping_tax_incl,
+                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, canada_tax.total_amount + (IFNULL(canada_shipping_tax.amount, 0))  )) canada_tax_total_amount,
+                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, quebec_tax.total_amount + (IFNULL(quebec_shipping_tax.amount, 0))  )) quebec_tax_total_amount,
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
                 	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
                     IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old,
                     IF(`order`.current_state = 7, total_paid_tax_excl, 0) rock_refund_tax_excl,
                     IF(`order`.module = 'hspointofsalepro', order_slip.total_products_tax_incl, 0) rock_refund_tax_incl
                     " . $this->helperSql . '
-                    WHERE 1 ' . $this->mutualSql . '
+                    WHERE 1 ' . $mutualSql_include_refunds . '
                     GROUP BY order.id_order
                     ) tmp
                     GROUP BY module, IF (payment = "Carte de crédit" OR payment = "Credit Card(instore)", "Credit Card", payment)
                     ORDER BY SUM(total_products) DESC;';
-        return DB::getInstance()->executeS($sql);
+        $result_with_refund = DB::getInstance()->executeS($sql);
+
+
+        $final_result = array();
+
+        foreach($result_with_refund as $key => $result_with_refund_single){
+            if(!isset($result_without_refund[$key])){
+                $result_without_refund[$key] = array(
+                    'total_products' => '$ 0',
+                    'total_products_wt' => '$ 0',
+                    'total_discounts_wt' => '$ 0',
+                    'total_shipping_tax_incl' => '$ 0',
+                    'total_paid_tax_incl' => '$ 0',
+                    'canada_tax_total_amount' => '$ 0',
+                    'quebec_tax_total_amount' => '$ 0',
+                );
+            }
+
+            $final_result[$key] = array_merge($result_with_refund[$key],$result_without_refund[$key]);
+            $arranged['payment'] = $final_result[$key]['payment'];
+            $arranged['module'] = $final_result[$key]['module'];
+            $arranged['valid'] = $final_result[$key]['valid'];
+            $arranged['total_products'] = $final_result[$key]['total_products'];
+            $arranged['total_products_wt'] = $final_result[$key]['total_products_wt'];
+            $arranged['total_discounts_wt'] = $final_result[$key]['total_discounts_wt'];
+            $arranged['total_shipping_tax_incl'] = $final_result[$key]['total_shipping_tax_incl'];
+            $arranged['total_paid_tax_incl'] = $final_result[$key]['total_paid_tax_incl'];
+            $arranged['canada_tax_total_amount'] = $final_result[$key]['canada_tax_total_amount'];
+            $arranged['quebec_tax_total_amount'] = $final_result[$key]['quebec_tax_total_amount'];
+            $arranged['order_slip_amount_tax_incl'] = $final_result[$key]['order_slip_amount_tax_incl'];
+            $arranged['rock_refund_tax_incl'] = $final_result[$key]['rock_refund_tax_incl'];
+            $final_result[$key] = $arranged;
+        }
+//        var_dump($final_result);
+//        var_dump($result_with_refund);
+//        var_dump($result_without_refund);
+//        die();
+        return $final_result;
+//        return DB::getInstance()->executeS($sql);
     }
 
     private function getTaxes()
@@ -1143,25 +1220,15 @@ class ExportSales
 
     private function getPaymentSales2()
     {
-        $refund_state = Configuration::getGlobalValue('PS_OS_REFUND');
 
-        // $order_values = "
-        //                 SELECT DISTINCT payment_method
-        //                 FROM ps_order_payment
-        //                 WHERE payment_method LIKE '%Paypal%' OR payment_method LIKE '%Stripe%'
-        //                 UNION
-        //                 SELECT ''
-        //                 UNION
-        //                 SELECT DISTINCT payment_method
-        //                 FROM ps_order_payment
-        //                 WHERE payment_method NOT LIKE '%Paypal%' AND payment_method NOT LIKE '%Stripe%'";
 
-        $this->mutualSql = str_replace("IN (6,7","IN (6",$this->mutualSql);
 
         //---------------refund online------------------
+        $mutualSql_include_refunds = str_replace("IN (6,7,56","IN (6",$this->mutualSql);
         $sql = "SELECT 
                 order_payment.payment_method,
                 order_payment.order_reference,
+                current_state,
                 module,
                 CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(order_payment.amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) payment_amount
                 #COUNT(id_order) order_count
@@ -1169,9 +1236,10 @@ class ExportSales
             SELECT DISTINCT
                     order.id_order,
                     order.reference,
+                    order.current_state,
                     `order`.module
                     " . $this->helperSql . '
-                    WHERE 1 AND `order`.module != "hspointofsalepro" ' . $this->mutualSql . ') tmp
+                    WHERE 1 AND `order`.module != "hspointofsalepro" ' . $mutualSql_include_refunds . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
                     WHERE order_payment.amount < 0 
                     GROUP BY module, payment_method
@@ -1181,22 +1249,22 @@ class ExportSales
 
         $refunds_online =  Db::getInstance()->executeS($sql);
 
+
         $refund_sum = 0;
 
         $this->nth_total = array();
 
+        $refund_state = Configuration::getGlobalValue('PS_OS_REFUND');
+        $refund_state2 = 56;
 
         $refund_refs = array();
         foreach ($refunds_online as $res) {
-            if($res['payment_method'] == 'Paid with Gift Card' || $res['payment_method'] == 'Paid with Voucher' || $res['payment_method'] == 'Paid with Credit Slip'){
-                continue;
+            if($res['current_state'] == $refund_state || $res['current_state'] == $refund_state2){
+                $refund_refs[] = $res['order_reference'];
             }
-            $refund_refs[] = $res['order_reference'];
         }
 
 
-
-        //---------------refund online------------------
 
         $sql = "SELECT 
                 order_payment.payment_method,
@@ -1210,7 +1278,7 @@ class ExportSales
                     order.reference,
                     `order`.module
                     " . $this->helperSql . '
-                    WHERE 1 AND order.current_state !=7 ' . $this->mutualSql . ') tmp
+                    WHERE 1 ' . $this->mutualSql . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
                     WHERE order_payment.payment_method LIKE "%Paypal%" OR order_payment.payment_method LIKE "%Stripe%"
                     GROUP BY module, payment_method
@@ -1226,16 +1294,13 @@ class ExportSales
 
         $gift_res = array();
         $sql_custom = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%gift%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
-
         $gift_res = Db::getInstance()->executeS($sql_custom);
 
 
         $sql_custom_fr = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%cadeau%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
-
         $gift_res_fr = Db::getInstance()->executeS($sql_custom_fr);
 
         $total_gift_cart_amount = number_format($gift_res[0]['payment_amount'],2) + number_format($gift_res_fr[0]['payment_amount'],2);
-
         $gift_res[0]['payment_amount']= '$ '. $total_gift_cart_amount;
 
 
@@ -1476,15 +1541,23 @@ class ExportSales
 
         }
 
+        //voucher-------------
+        $sql_custom = 'SELECT ord.module, SUM(ord.total_discounts_tax_incl) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_payment as orp WHERE ord.reference = orp.order_reference AND ord.valid = 1 AND orp.payment_method = "Voucher"  AND ord.module = "hspointofsalepro" ' .$order_date_range;
+//        var_dump($sql_custom);
+//        die();
+        $total_voucher = Db::getInstance()->executeS($sql_custom);
+        $total_voucher = '$ '. number_format($total_voucher[0]['payment_amount'],2);
 
-        foreach ($res2 as $res) {
+        //voucher-------------
+
+        foreach ($res2 as $key => $res) {
             if(strpos($res['payment_method'], "Voucher") !== false){
-                continue;
+                $res2[$key]['payment_amount'] = $total_voucher;
             }
             $sum2 += trim($res['payment_amount'], $this->currencySymbol);
         }
 
-        $sum2 = $sum2 - $refund_offline_value_temp;
+//        $sum2 = $sum2 - $refund_offline_value_temp;
 //        $sum2 = $sum2 - $dis_offline_res;
         $sum2 = $this->currencySymbol . $sum2;
 
@@ -2997,6 +3070,7 @@ class ExportSales
 
     private function getOrders()
     {
+        $refund_state2 = 56;
         $absentColumns = array(
             'product_link',
             'product_image',
@@ -3159,6 +3233,9 @@ class ExportSales
                 } elseif (in_array($k, $rockColumns)) {
                     $this->sql .= "
                         (TRIM(ROUND(IF(`order`.current_state = ".Configuration::getGlobalValue('PS_OS_REFUND').', `order`.'.ltrim($k, 'rock_').", NULL), $fracPart)) + 0) `$v`, ";
+
+                    $this->sql .= "
+                        (TRIM(ROUND(IF(`order`.current_state = ".$refund_state2.', `order`.'.ltrim($k, 'rock_').", NULL), $fracPart)) + 0) `$v`, ";
                 } elseif ($k === 'new_client') {
                     $this->sql .= "
                         IF((SELECT so.id_order FROM `" . _DB_PREFIX_ . "orders` so WHERE so.id_customer = order.id_customer AND so.id_order < order.id_order LIMIT 1) > 0, '" . $no . "', '" . $yes . "') `$v`, ";
@@ -3911,7 +3988,9 @@ class ExportSales
     public function generateExcel()
     {
         $this->setMutualSql();
-
+        $this->mutualSql = str_replace("IN (6,7","IN (6,7,56",$this->mutualSql);
+//        var_dump($this->mutualSql);
+//        die();
         $autoExportDoNotSend = Configuration::getGlobalValue('OXSRP_AUTOEXP_DNSEM');
         $scheduleDoNotSend = Configuration::getGlobalValue('OXSRP_SCHDL_DNSEM');
 
@@ -5585,7 +5664,29 @@ class ExportSales
         if ($this->displayPaymentMethods === '1' && !is_numeric($this->auto)) {
             $sales = $this->getPaymentSales();
 
+//            print_r($sales);
+//            die();
+//
+            $modified_sales = array();
+            $order_date_range = str_replace('order.','ord.',$this->mutualSql);
 
+            foreach($sales as $key => $sale){
+                //voucher-------------
+                $payment_column = $sale['payment'];
+                $sql_custom = 'SELECT ord.module, SUM(ord.total_discounts_tax_incl) payment_amount_incl , SUM(ord.total_discounts_tax_excl) payment_amount_excl  FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_payment as orp WHERE ord.reference = orp.order_reference AND ord.valid = 1 AND ord.payment = "'. $payment_column.'" AND orp.payment_method = "Voucher" ' .$order_date_range;
+                $total_voucher = Db::getInstance()->executeS($sql_custom);
+
+                //voucher-------------
+                $modified_sales[$key] = $sale;
+                $total_products = str_replace('$ ','',$modified_sales[$key]['total_products']) - number_format($total_voucher[0]['payment_amount_excl'],2);
+                $total_products_wt = str_replace('$ ','',$modified_sales[$key]['total_products_wt']) - number_format($total_voucher[0]['payment_amount_incl'],2);
+                $total_discounts_wt = str_replace('$ ','',$modified_sales[$key]['total_discounts_wt']) - number_format($total_voucher[0]['payment_amount_incl'],2);
+
+                $modified_sales[$key]['total_products'] = '$ '. $total_products;
+                $modified_sales[$key]['total_products_wt'] = '$ '. $total_products_wt;
+                $modified_sales[$key]['total_discounts_wt'] = '$ '. $total_discounts_wt;
+            }
+            $sales = $modified_sales;
 //            array_pop($sales);
             if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
