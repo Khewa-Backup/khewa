@@ -1101,8 +1101,7 @@ class ExportSales
                     SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, quebec_tax.total_amount  )) quebec_tax_total_amount,
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
                 	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
-                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old,
-                    IF(`order`.current_state = 7, total_paid_tax_excl, 0) rock_refund_tax_excl,
+                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old, 
                     IF(`order`.module = 'hspointofsalepro', order_slip.total_products_tax_incl, 0) rock_refund_tax_incl
                     " . $this->helperSql . '
                     WHERE order.valid = 1 ' . $this->mutualSql . '
@@ -1112,6 +1111,9 @@ class ExportSales
                     ORDER BY SUM(total_products) DESC;';
 
         $result_without_refund = DB::getInstance()->executeS($sql);
+
+//        var_dump($result_without_refund);
+//        die();
 
         //this means we are including the refunds;
         $refund_state = -1;
@@ -1142,8 +1144,7 @@ class ExportSales
                     SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, quebec_tax.total_amount + (IFNULL(quebec_shipping_tax.amount, 0))  )) quebec_tax_total_amount,
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
                 	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
-                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old,
-                    IF(`order`.current_state = 7, total_paid_tax_excl, 0) rock_refund_tax_excl,
+                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old, 
                     IF(`order`.module = 'hspointofsalepro', order_slip.total_products_tax_incl, 0) rock_refund_tax_incl
                     " . $this->helperSql . '
                     WHERE 1 ' . $mutualSql_include_refunds . '
@@ -1152,38 +1153,38 @@ class ExportSales
                     GROUP BY module, IF (payment = "Carte de crédit" OR payment = "Credit Card(instore)", "Credit Card", payment)
                     ORDER BY SUM(total_products) DESC;';
         $result_with_refund = DB::getInstance()->executeS($sql);
+//        IF(`order`.module = 'hspointofsalepro' AND `order`.current_state NOT IN(52,54), order_slip.total_products_tax_incl, 0) rock_refund_tax_incl // we may need this line in future
 
 
         $final_result = array();
 
-        foreach($result_with_refund as $key => $result_with_refund_single){
-            if(!isset($result_without_refund[$key])){
-                $result_without_refund[$key] = array(
-                    'total_products' => '$ 0',
-                    'total_products_wt' => '$ 0',
-                    'total_discounts_wt' => '$ 0',
-                    'total_shipping_tax_incl' => '$ 0',
-                    'total_paid_tax_incl' => '$ 0',
-                    'canada_tax_total_amount' => '$ 0',
-                    'quebec_tax_total_amount' => '$ 0',
-                );
-            }
 
-            $final_result[$key] = array_merge($result_with_refund[$key],$result_without_refund[$key]);
-            $arranged['payment'] = $final_result[$key]['payment'];
-            $arranged['module'] = $final_result[$key]['module'];
-            $arranged['valid'] = $final_result[$key]['valid'];
-            $arranged['total_products'] = $final_result[$key]['total_products'];
-            $arranged['total_products_wt'] = $final_result[$key]['total_products_wt'];
-            $arranged['total_discounts_wt'] = $final_result[$key]['total_discounts_wt'];
-            $arranged['total_shipping_tax_incl'] = $final_result[$key]['total_shipping_tax_incl'];
-            $arranged['total_paid_tax_incl'] = $final_result[$key]['total_paid_tax_incl'];
-            $arranged['canada_tax_total_amount'] = $final_result[$key]['canada_tax_total_amount'];
-            $arranged['quebec_tax_total_amount'] = $final_result[$key]['quebec_tax_total_amount'];
-            $arranged['order_slip_amount_tax_incl'] = $final_result[$key]['order_slip_amount_tax_incl'];
-            $arranged['rock_refund_tax_incl'] = $final_result[$key]['rock_refund_tax_incl'];
+        foreach($result_without_refund as $key => $result_without_refund_single){
+
+            $arranged['payment'] = $result_without_refund_single['payment'];
+            $arranged['module'] = $result_without_refund_single['module'];
+            $arranged['valid'] = $result_without_refund_single['valid'];
+            $arranged['total_products'] = $result_without_refund_single['total_products'];
+            $arranged['total_products_wt'] = $result_without_refund_single['total_products_wt'];
+            $arranged['total_discounts_wt'] = $result_without_refund_single['total_discounts_wt'];
+            $arranged['total_shipping_tax_incl'] = $result_without_refund_single['total_shipping_tax_incl'];
+            $arranged['total_paid_tax_incl'] = $result_without_refund_single['total_paid_tax_incl'];
+            $arranged['canada_tax_total_amount'] = $result_without_refund_single['canada_tax_total_amount'];
+            $arranged['quebec_tax_total_amount'] = $result_without_refund_single['quebec_tax_total_amount'];
+
+
+
+
+            foreach($result_with_refund as $result_with_refund_single){
+                    if($result_without_refund_single['payment'] == $result_with_refund_single['payment']){
+                        $arranged['order_slip_amount_tax_incl'] = $result_with_refund_single['order_slip_amount_tax_incl'];
+                        $arranged['rock_refund_tax_incl'] = $result_with_refund_single['rock_refund_tax_incl'];
+                    }
+            }
             $final_result[$key] = $arranged;
         }
+
+
 //        var_dump($final_result);
 //        var_dump($result_with_refund);
 //        var_dump($result_without_refund);
@@ -1406,12 +1407,13 @@ class ExportSales
                     ORDER BY FIELD(payment_method, "Credit Card","Cash","Cheque","Free order","unknown","Interac","InStore Gift Card","RockPOS","Installment","Gift Certificate ","Carte de crédit","Comptant","Deposit","Credit Card(instore)");';
         $res2 =  Db::getInstance()->executeS($sql);
 
-
         $credit_card_is_empty = true;
         $cash_is_empty = true;
         $Interac_is_empty = true;
 
-
+//        var_dump($sql);
+//        var_dump($res2);
+//        die();
 
         $empty_credit_card = array(
             'payment_method' => 'Paid with Credit Card',
@@ -1487,6 +1489,7 @@ class ExportSales
         $gap['payment_amount'] = null;
 
 
+
         $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ord.valid = 1 AND ocr.name LIKE "%promocode%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
         $dis_online_res = Db::getInstance()->executeS($sql_custom);
         $total_discount_online = '$ '. number_format($dis_online_res[0]['payment_amount'],2);
@@ -1505,10 +1508,14 @@ class ExportSales
         $total_refund_online = '$ '. number_format($refund_online_total,2);
 
 
-        $sql_custom = 'SELECT SUM(ocr.total_products_tax_incl) refund_offline FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_slip as ocr WHERE ord.id_order = ocr.id_order  AND ord.current_state NOT in(52,54)  AND ord.module = "hspointofsalepro" ' .$order_date_range;
-//        var_dump($sql_custom);
-//        die();
+        $mutualSql_include_refunds_offline = str_replace("IN (6,7,56","IN (6",$order_date_range);
+
+
+
+        $sql_custom = 'SELECT SUM(ocr.total_products_tax_incl) refund_offline FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_slip as ocr WHERE ord.id_order = ocr.id_order  AND ord.current_state NOT in(52,54)  AND ord.module = "hspointofsalepro" ' .$mutualSql_include_refunds_offline;
+
         $refund_offline_res = Db::getInstance()->executeS($sql_custom);
+
         $refund_offline_value_temp = number_format($refund_offline_res[0]['refund_offline'],2);
         $total_refund_offline = '$ '. number_format($refund_offline_res[0]['refund_offline'],2);
 
@@ -1583,6 +1590,8 @@ class ExportSales
             'payment_amount' => $sum2,
             'order_count' => '')),$res2, $res3,$new_rows_offline);
 
+//        var_dump($res3);
+//        die();
         $new_result = array();
         foreach($whole_arr as $row){
             if($row['payment_method']== 'TOTAL ONLINE'){
@@ -3891,9 +3900,14 @@ class ExportSales
             $this->sql .= ', order.id_order DESC';
         }
 
-    //    die($this->sql);
-        // return Db::getInstance()->executeS($this->sql);
-
+//        die($this->sql);
+//         return Db::getInstance()->executeS($this->sql);
+        $this->sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8))',$this->sql);
+        $this->sql = str_replace('AND order.date_add >=','AND order.invoice_date >=',$this->sql);
+        $this->sql = str_replace('AND order.date_add <','AND order.invoice_date <',$this->sql);
+        $this->sql = str_replace("DATE_FORMAT(order.date_add, '%Y-%m-%d')","DATE_FORMAT(order.invoice_date, '%Y-%m-%d')",$this->sql);
+        $this->sql = str_replace("ORDER BY order.date_add DESC, order.id_order DESC","ORDER BY order.invoice_date DESC, order.id_order DESC",$this->sql);
+//        die($this->sql);
         $orders = Db::getInstance()->executeS($this->sql);
 
 
@@ -3917,7 +3931,6 @@ class ExportSales
                 if($gift_card && ($gift_card['gift_card_amount'] > 0 || $gift_card_fr['gift_card_amount'] > 0)){
                     $gift_card_value = (int)$gift_card['gift_card_amount'] +(int)$gift_card_fr['gift_card_amount'];
                     $orderprev[$gift_payment_title] = $gift_card_value;
-
                 }else{
                     $orderprev[$gift_payment_title] = 0;
 
@@ -3955,8 +3968,10 @@ class ExportSales
             }
         }
 
+
         return $orders;
     }
+
 
     private function getGroups()
     {
@@ -5758,8 +5773,7 @@ class ExportSales
 
             array_shift($sales);
 
-            // print_r($sales);
-            // die;
+
 
             if (!empty($sales)) {
 
@@ -5926,7 +5940,23 @@ class ExportSales
         }
 
         if ($this->displayTaxes === '1' && !is_numeric($this->auto)) {
+//        if (1==1) {
             $sales = $this->getTaxes();
+//            var_dump($this->mutualSql);
+//            die();
+            //debug
+//            if(empty($sales)){
+//                echo "SELECT
+//                    tax_lang.`name`,
+//                    CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(odt.total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_price_tax_excl
+//            " . $this->helperSql . '
+//                    LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON `product`.id_order_detail = odt.id_order_detail
+//                    LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tax_lang ON tax_lang.id_tax = odt.id_tax AND tax_lang.id_lang = ' . $this->langId . '
+//                    WHERE odt.id_tax IS NOT NULL AND odt.id_tax <> 0 ' . $this->mutualSql . ' GROUP BY odt.id_tax
+//                    ORDER BY odt.id_tax;';
+//            }
+            //end
+
             if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
             }
