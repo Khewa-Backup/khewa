@@ -73,6 +73,8 @@ class ExportSales
     private $displayCurrSymbol;
     private $helperSql;
     private $tempDir;
+    public $fromDate;
+    public $toDate;
     private $sort;
     private $sortAsc;
 
@@ -1073,7 +1075,12 @@ class ExportSales
         $canceled_state = Configuration::getGlobalValue('PS_OS_CANCELED');
         $error_state = Configuration::getGlobalValue('PS_OS_ERROR');
         $refund_state2 = 56;
-        $sql = "SELECT 
+
+        //---- new code-----
+        $fromDate = pSQL(Tools::getValue('orders_from_date'));
+        $toDate = pSQL(Tools::getValue('orders_to_date'));
+
+        $sql = "SELECT
                 payment,
                 module,
                 SUM(valid) valid,
@@ -1089,31 +1096,158 @@ class ExportSales
                     order.id_order,
                     payment,
                     module,
+
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, 1) valid,
+
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_products) total_products,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_products_wt) total_products_wt,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_discounts_tax_excl) total_discounts,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_discounts_tax_incl) total_discounts_wt,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_paid_tax_excl) total_paid_tax_excl,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, (order.total_paid_tax_incl)) total_paid_tax_incl,
-                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_shipping_tax_incl) total_shipping_tax_incl, 
-                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, canada_tax.total_amount  )) canada_tax_total_amount,
-                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, quebec_tax.total_amount  )) quebec_tax_total_amount,
+                    CASE
+                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN 0
+                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
+                           CASE
+                               WHEN (`order`.`invoice_date` >= '$fromDate' AND `order`.`invoice_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN 0
+                               ELSE order.total_products_wt
+                           END
+                       ELSE order.total_products_wt
+                    END
+                    AS total_products_wt,
+                    CASE
+                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN 0
+                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
+                           CASE
+                               WHEN (`order`.`invoice_date` >= '$fromDate' AND `order`.`invoice_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN 0
+                               ELSE order.total_discounts_tax_excl
+                           END
+                       ELSE order.total_discounts_tax_excl
+                    END
+                    AS total_discounts,
+                    CASE
+                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN 0
+                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
+                           CASE
+                               WHEN (`order`.`invoice_date` >= '$fromDate' AND `order`.`invoice_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN 0
+                               ELSE order.total_discounts_tax_incl
+                           END
+                       ELSE order.total_discounts_tax_incl
+                    END
+                    AS total_discounts_wt,
+                    CASE
+                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN 0
+                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
+                           CASE
+                               WHEN (`order`.`invoice_date` >= '$fromDate' AND `order`.`invoice_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN 0
+                               ELSE order.total_paid_tax_excl
+                           END
+                       ELSE order.total_paid_tax_excl
+                    END
+                    AS total_paid_tax_excl,
+
+                    CASE
+                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN 0
+                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
+                           CASE
+                               WHEN (`order`.`invoice_date` >= '$fromDate' AND `order`.`invoice_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN 0
+                               ELSE order.total_paid_tax_incl
+                           END
+                       ELSE order.total_paid_tax_incl
+                    END
+                    AS total_paid_tax_incl,
+
+                    CASE
+                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN 0
+                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
+                           CASE
+                               WHEN (`order`.`invoice_date` >= '$fromDate' AND `order`.`invoice_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN 0
+                               ELSE order.total_shipping_tax_incl
+                           END
+                       ELSE order.total_shipping_tax_incl
+                    END
+                    AS total_shipping_tax_incl,
+
+                    CASE
+                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN SUM(0)
+                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
+                           CASE
+                               WHEN (`order`.`invoice_date` >= '$fromDate' AND `order`.`invoice_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN SUM(0)
+                               ELSE SUM(canada_tax.total_amount)
+                           END
+                       ELSE SUM(canada_tax.total_amount)
+                    END
+                    AS canada_tax_total_amount,
+
+                    CASE
+                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN SUM(0)
+                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
+                           CASE
+                               WHEN (`order`.`invoice_date` >= '$fromDate' AND `order`.`invoice_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN SUM(0)
+                               ELSE SUM(quebec_tax.total_amount)
+                           END
+                       ELSE SUM(quebec_tax.total_amount)
+                    END
+                    AS quebec_tax_total_amount,
+
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
                 	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
-                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old, 
+                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old,
                     IF(`order`.module = 'hspointofsalepro', order_slip.total_products_tax_incl, 0) rock_refund_tax_incl
                     " . $this->helperSql . '
-                    WHERE order.valid = 1 ' . $this->mutualSql . '
+                    WHERE 1 ' . $this->mutualSql . '
                     GROUP BY order.id_order
                     ) tmp
                     GROUP BY module, IF (payment = "Carte de crédit" OR payment = "Credit Card(instore)", "Credit Card", payment)
                     ORDER BY SUM(total_products) DESC;';
 
+
+
+        $sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8))',$sql);
+        $sql = str_replace('AND order.date_add >=','AND order.invoice_date >=',$sql);
+        $sql = str_replace('AND order.date_add <','AND order.invoice_date <',$sql);
+
         $result_without_refund = DB::getInstance()->executeS($sql);
 
+//
 //        var_dump($result_without_refund);
 //        die();
+        //-------------------old code----------------------
+//        $sql = "SELECT
+//                payment,
+//                module,
+//                SUM(valid) valid,
+//                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_products), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_products,
+//                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_products_wt), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_products_wt,
+//                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_discounts_wt), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_discounts_wt,
+//                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_shipping_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_shipping_tax_incl,
+//                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(total_paid_tax_incl), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_paid_tax_incl,
+//                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(canada_tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) canada_tax_total_amount,
+//                CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(quebec_tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) quebec_tax_total_amount
+//            FROM(
+//            SELECT
+//                    order.id_order,
+//                    payment,
+//                    module,
+//                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, 1) valid,
+//                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_products) total_products,
+//                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_products_wt) total_products_wt,
+//                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_discounts_tax_excl) total_discounts,
+//                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_discounts_tax_incl) total_discounts_wt,
+//                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_paid_tax_excl) total_paid_tax_excl,
+//                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, (order.total_paid_tax_incl)) total_paid_tax_incl,
+//                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_shipping_tax_incl) total_shipping_tax_incl,
+//                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, canada_tax.total_amount  )) canada_tax_total_amount,
+//                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, quebec_tax.total_amount  )) quebec_tax_total_amount,
+//                    IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
+//                	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
+//                    IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old,
+//                    IF(`order`.module = 'hspointofsalepro', order_slip.total_products_tax_incl, 0) rock_refund_tax_incl
+//                    " . $this->helperSql . '
+//                    WHERE order.valid = 1 ' . $this->mutualSql . '
+//                    GROUP BY order.id_order
+//                    ) tmp
+//                    GROUP BY module, IF (payment = "Carte de crédit" OR payment = "Credit Card(instore)", "Credit Card", payment)
+//                    ORDER BY SUM(total_products) DESC;';
+//
+//        $result_without_refund = DB::getInstance()->executeS($sql);
+
+
 
         //this means we are including the refunds;
         $refund_state = -1;
@@ -1145,7 +1279,7 @@ class ExportSales
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
                 	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
                     IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old, 
-                    IF(`order`.module = 'hspointofsalepro', order_slip.total_products_tax_incl, 0) rock_refund_tax_incl
+                    IF(`order`.module = 'hspointofsalepro' AND `order`.current_state != 54, order_slip.total_products_tax_incl, 0) rock_refund_tax_incl
                     " . $this->helperSql . '
                     WHERE 1 ' . $mutualSql_include_refunds . '
                     GROUP BY order.id_order
@@ -1157,6 +1291,7 @@ class ExportSales
 
 
         $final_result = array();
+
 
 
         foreach($result_without_refund as $key => $result_without_refund_single){
@@ -1185,10 +1320,6 @@ class ExportSales
         }
 
 
-//        var_dump($final_result);
-//        var_dump($result_with_refund);
-//        var_dump($result_without_refund);
-//        die();
         return $final_result;
 //        return DB::getInstance()->executeS($sql);
     }
@@ -1222,10 +1353,16 @@ class ExportSales
     private function getPaymentSales2()
     {
 
-
+        $fromDate = pSQL(Tools::getValue('orders_from_date'));
+        $toDate = pSQL(Tools::getValue('orders_to_date'));
 
         //---------------refund online------------------
-        $mutualSql_include_refunds = str_replace("IN (6,7,56","IN (6",$this->mutualSql);
+//        $mutualSql_include_refunds = str_replace("IN (6,7,56","IN (6",$this->mutualSql);
+
+        $mutualSql_include = $mutualSql_include_refunds = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8))',$this->mutualSql);
+
+        $mutualSql_include = str_replace('AND order.date_add >=','AND order.invoice_date >=',$mutualSql_include);
+        $mutualSql_include = str_replace('AND order.date_add <','AND order.invoice_date <',$mutualSql_include);
         $sql = "SELECT 
                 order_payment.payment_method,
                 order_payment.order_reference,
@@ -1279,7 +1416,19 @@ class ExportSales
                     order.reference,
                     `order`.module
                     " . $this->helperSql . '
-                    WHERE 1 ' . $this->mutualSql . ') tmp
+                    WHERE 1 AND (
+                                    !(
+                                        (`order`.`invoice_date` >= "'.$fromDate.'" AND `order`.`invoice_date` < "'.$toDate.'")
+                                        AND (`order`.`date_add` >= "'.$fromDate.'" AND `order`.`date_add` < "'.$toDate.'")
+                                    )
+                                    OR (
+                                        (
+                                            (`order`.`invoice_date` >= "'.$fromDate.'" AND `order`.`invoice_date` < "'.$toDate.'")
+                                            AND (`order`.`date_add` >= "'.$fromDate.'" AND `order`.`date_add` < "'.$toDate.'")
+                                        )
+                                        AND `order`.current_state NOT IN (7, 56)
+                                    )
+                                ) ' . $mutualSql_include . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
                     WHERE order_payment.payment_method LIKE "%Paypal%" OR order_payment.payment_method LIKE "%Stripe%"
                     GROUP BY module, payment_method
@@ -1290,8 +1439,9 @@ class ExportSales
         $res1 =  Db::getInstance()->executeS($sql);
 
 
-
-        $order_date_range = str_replace('order.','ord.',$this->mutualSql);
+        $order_date_range = str_replace('AND order.date_add >=','AND order.invoice_date >=',$this->mutualSql);
+        $order_date_range = str_replace('AND order.date_add <','AND order.invoice_date <',$order_date_range);
+        $order_date_range = str_replace('order.','ord.',$order_date_range);
 
         $gift_res = array();
         $sql_custom = 'SELECT ord.module,SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ocr.name LIKE "%gift%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
@@ -1400,20 +1550,30 @@ class ExportSales
                     order.reference,
                     `order`.module
                     " . $this->helperSql . '
-                    WHERE order.valid =1 AND order.module = "hspointofsalepro"  ' . $this->mutualSql . ') tmp
+                    WHERE 1 AND (
+                                    !(
+                                        (`order`.`invoice_date` >= "'.$fromDate.'" AND `order`.`invoice_date` < "'.$toDate.'")
+                                        AND (`order`.`date_add` >= "'.$fromDate.'" AND `order`.`date_add` < "'.$toDate.'")
+                                    )
+                                    OR (
+                                        (
+                                            (`order`.`invoice_date` >= "'.$fromDate.'" AND `order`.`invoice_date` < "'.$toDate.'")
+                                            AND (`order`.`date_add` >= "'.$fromDate.'" AND `order`.`date_add` < "'.$toDate.'")
+                                        )
+                                        AND `order`.current_state NOT IN (7, 56)
+                                    )
+                                ) AND order.module = "hspointofsalepro"  ' . $mutualSql_include . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
-                    WHERE order_payment.payment_method NOT LIKE "%Paypal%" AND order_payment.payment_method NOT LIKE "%Stripe%" AND order_payment.amount > 0 AND order_payment.payment_method NOT IN ("Gift card","Carte Cadeau","Credit Slip")
+                    WHERE order_payment.payment_method NOT LIKE "%Paypal%" AND order_payment.payment_method NOT LIKE "%Stripe%" AND order_payment.payment_method NOT IN ("Gift card","Carte Cadeau","Credit Slip")
                     GROUP BY module, IF (payment_method = "Carte de crédit", "Credit Card", payment_method)
                     ORDER BY FIELD(payment_method, "Credit Card","Cash","Cheque","Free order","unknown","Interac","InStore Gift Card","RockPOS","Installment","Gift Certificate ","Carte de crédit","Comptant","Deposit","Credit Card(instore)");';
+
         $res2 =  Db::getInstance()->executeS($sql);
 
         $credit_card_is_empty = true;
         $cash_is_empty = true;
         $Interac_is_empty = true;
 
-//        var_dump($sql);
-//        var_dump($res2);
-//        die();
 
         $empty_credit_card = array(
             'payment_method' => 'Paid with Credit Card',
@@ -1475,7 +1635,19 @@ class ExportSales
                     order.reference,
                     `order`.module
                     " . $this->helperSql . '
-                    WHERE 1 ' . $this->mutualSql . ') tmp
+                    WHERE 1 AND (
+                                    !(
+                                        (`order`.`invoice_date` >= "'.$fromDate.'" AND `order`.`invoice_date` < "'.$toDate.'")
+                                        AND (`order`.`date_add` >= "'.$fromDate.'" AND `order`.`date_add` < "'.$toDate.'")
+                                    )
+                                    OR (
+                                        (
+                                            (`order`.`invoice_date` >= "'.$fromDate.'" AND `order`.`invoice_date` < "'.$toDate.'")
+                                            AND (`order`.`date_add` >= "'.$fromDate.'" AND `order`.`date_add` < "'.$toDate.'")
+                                        )
+                                        AND `order`.current_state NOT IN (7, 56)
+                                    )
+                                ) ' . $mutualSql_include . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
                     WHERE order_payment.payment_method IN ("Gift card","Carte Cadeau","Credit Slip")
                     GROUP BY module, IF (payment_method = "Carte Cadeau", "Gift Card", payment_method)
@@ -1490,15 +1662,48 @@ class ExportSales
 
 
 
-        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ord.valid = 1 AND ocr.name LIKE "%promocode%"  AND ord.module != "hspointofsalepro" ' .$order_date_range;
+        $order_date_range_disc = str_replace('AND order.date_add >=','AND order.invoice_date >=',$this->mutualSql);
+        $order_date_range_disc = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8))',$order_date_range_disc);
+        $order_date_range_disc = str_replace('AND order.date_add <','AND order.invoice_date <',$order_date_range_disc);
+        $order_date_range_disc = str_replace('order.','ord.',$order_date_range_disc);
+
+        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND  ord.current_state NOT IN(6,8)  AND ocr.name LIKE "%promocode%"  AND ord.module != "hspointofsalepro" AND (
+        !(
+            (ord.invoice_date >= "$fromDate" AND ord.invoice_date < "$toDate")
+            AND (ord.date_add >= "$fromDate" AND ord.date_add < "$toDate")
+        )
+        OR (
+            (
+                (ord.invoice_date >= "$fromDate" AND ord.invoice_date < "$toDate")
+                AND (ord.date_add >= "$fromDate" AND ord.date_add < "$toDate")
+            )
+            AND ord.current_state NOT IN (7,56)
+        )
+    ) ' .$order_date_range_disc;
+
         $dis_online_res = Db::getInstance()->executeS($sql_custom);
         $total_discount_online = '$ '. number_format($dis_online_res[0]['payment_amount'],2);
 
 
-        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND ord.valid = 1 AND ocr.name LIKE "%Point of Sale%"   ' .$order_date_range;
+        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND  ord.current_state NOT IN(6,8) AND ocr.name LIKE "%Point of Sale%" AND (
+        !(
+            (ord.invoice_date >= "$fromDate" AND ord.invoice_date < "$toDate")
+            AND (ord.date_add >= "$fromDate" AND ord.date_add < "$toDate")
+        )
+        OR (
+            (
+                (ord.invoice_date >= "$fromDate" AND ord.invoice_date < "$toDate")
+                AND (ord.date_add >= "$fromDate" AND ord.date_add < "$toDate")
+            )
+            AND ord.current_state NOT IN (7,56)
+        )
+    )  ' .$order_date_range_disc;
         $dis_offline_res = Db::getInstance()->executeS($sql_custom);
+
+
         $dis_offline_res = number_format($dis_offline_res[0]['payment_amount'],2);
         $total_discount_offline = '$ '. $dis_offline_res;
+
 
 
 
@@ -1510,10 +1715,14 @@ class ExportSales
 
         $mutualSql_include_refunds_offline = str_replace("IN (6,7,56","IN (6",$order_date_range);
 
+        $mutualSql_include_refunds_offline = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8))',$this->mutualSql);
+        $mutualSql_include_refunds_offline = str_replace('order.','ord.',$mutualSql_include_refunds_offline);
 
 
         $sql_custom = 'SELECT SUM(ocr.total_products_tax_incl) refund_offline FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_slip as ocr WHERE ord.id_order = ocr.id_order  AND ord.current_state NOT in(52,54)  AND ord.module = "hspointofsalepro" ' .$mutualSql_include_refunds_offline;
 
+//        var_dump($sql_custom);
+//        die();
         $refund_offline_res = Db::getInstance()->executeS($sql_custom);
 
         $refund_offline_value_temp = number_format($refund_offline_res[0]['refund_offline'],2);
@@ -1549,7 +1758,7 @@ class ExportSales
         }
 
         //voucher-------------
-        $sql_custom = 'SELECT ord.module, SUM(ord.total_discounts_tax_incl) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_payment as orp WHERE ord.reference = orp.order_reference AND ord.valid = 1 AND orp.payment_method = "Voucher"  AND ord.module = "hspointofsalepro" ' .$order_date_range;
+        $sql_custom = 'SELECT ord.module, SUM(ord.total_discounts_tax_incl) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_payment as orp WHERE ord.reference = orp.order_reference AND  ord.current_state NOT IN(6,8) AND orp.payment_method = "Voucher"  AND ord.module = "hspointofsalepro" ' .$order_date_range;
 //        var_dump($sql_custom);
 //        die();
         $total_voucher = Db::getInstance()->executeS($sql_custom);
@@ -1944,6 +2153,7 @@ class ExportSales
             } elseif ($orders_creation_date === 'select_date') {
                 $fromDate = pSQL($this->config['orders_from_date']);
                 $toDate = pSQL($this->config['orders_to_date']);
+
                 if ($fromDate) {
                     $this->mutualSql .= " 
                             AND order.date_add >= '" . $fromDate . "'";
@@ -3900,7 +4110,7 @@ class ExportSales
             $this->sql .= ', order.id_order DESC';
         }
 
-//        die($this->sql);
+
 //         return Db::getInstance()->executeS($this->sql);
         $this->sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8))',$this->sql);
         $this->sql = str_replace('AND order.date_add >=','AND order.invoice_date >=',$this->sql);
@@ -3918,9 +4128,11 @@ class ExportSales
             $credit_slip_title = 'Credit Slip';
             $voucher_title = 'Voucher';
             //end
-
+            $fromDate = pSQL(Tools::getValue('orders_from_date'));
+            $toDate = pSQL(Tools::getValue('orders_to_date'));
             foreach($orders as $k => $order){
                 $norder = new Order($order[$this->selectedColumns->order->id_order]);
+
                 $gift_card = Db::getInstance()->getRow('SELECT sum(value) as gift_card_amount FROM `'._DB_PREFIX_.'order_cart_rule` WHERE id_order = '.$order[$this->selectedColumns->order->id_order].' AND name like "%gift%"');
                 $gift_card_fr = Db::getInstance()->getRow('SELECT sum(value) as gift_card_amount FROM `'._DB_PREFIX_.'order_cart_rule` WHERE id_order = '.$order[$this->selectedColumns->order->id_order].' AND name like "%cadeau%"');
 
@@ -3965,9 +4177,21 @@ class ExportSales
                 if($gift_card_value > 0 && $orders[$k]['Total Discounts (Tax included)']>0 ){
                     $orders[$k]['Total Discounts (Tax included)'] = $orders[$k]['Total Discounts (Tax included)'] - $gift_card_value;
                 }
+
+
+                if($norder->date_add >= $fromDate && $norder->date_add <= $toDate){
+                    // do nothing
+                }else{
+                    $orders[$k]['Refunded Total Price (Tax included)'] = 0;
+                    $orders[$k]['Refunded Total Price (Tax excluded)'] = 0;
+                    $orders[$k]['Refunded Product Quantity'] = 0;
+                }
+
+
             }
         }
-
+//        var_dump($orders);
+//        die();
 
         return $orders;
     }
@@ -5688,7 +5912,7 @@ class ExportSales
             foreach($sales as $key => $sale){
                 //voucher-------------
                 $payment_column = $sale['payment'];
-                $sql_custom = 'SELECT ord.module, SUM(ord.total_discounts_tax_incl) payment_amount_incl , SUM(ord.total_discounts_tax_excl) payment_amount_excl  FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_payment as orp WHERE ord.reference = orp.order_reference AND ord.valid = 1 AND ord.payment = "'. $payment_column.'" AND orp.payment_method = "Voucher" ' .$order_date_range;
+                $sql_custom = 'SELECT ord.module, SUM(ord.total_discounts_tax_incl) payment_amount_incl , SUM(ord.total_discounts_tax_excl) payment_amount_excl  FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_payment as orp WHERE ord.reference = orp.order_reference AND  ord.current_state NOT IN(6,8) AND ord.payment = "'. $payment_column.'" AND orp.payment_method = "Voucher" ' .$order_date_range;
                 $total_voucher = Db::getInstance()->executeS($sql_custom);
 
                 //voucher-------------
