@@ -4341,7 +4341,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                 $status =  Db::getInstance()->update(
                     'orders',
                     array(
-                        'date_add' => $time_now,
+                        'possible_refund_date' => $time_now,
                     ),
                     'id_order ='.(int) Tools::getValue('id_order', 0)
                 );
