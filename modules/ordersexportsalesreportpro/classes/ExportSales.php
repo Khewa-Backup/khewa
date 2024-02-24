@@ -1274,10 +1274,10 @@ class ExportSales
 
 
             foreach($result_with_refund as $result_with_refund_single){
-                    if($result_without_refund_single['payment'] === $result_with_refund_single['payment']){
-                        $arranged['order_slip_amount_tax_incl'] = $result_with_refund_single['order_slip_amount_tax_incl'];
-                        $arranged['rock_refund_tax_incl'] = $result_with_refund_single['rock_refund_tax_incl'];
-                    }
+                if($result_without_refund_single['payment'] === $result_with_refund_single['payment']){
+                    $arranged['order_slip_amount_tax_incl'] = $result_with_refund_single['order_slip_amount_tax_incl'];
+                    $arranged['rock_refund_tax_incl'] = $result_with_refund_single['rock_refund_tax_incl'];
+                }
             }
             $final_result[$key] = $arranged;
         }
@@ -1472,6 +1472,21 @@ class ExportSales
 
 
 
+        // ------------ refund offline
+
+        $total_instore_gift_card = array();
+        $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND (ocr.name LIKE "%cadeau%" OR ocr.name LIKE "%gift%" OR ocr.name LIKE "%Gift%")  AND ord.module = "hspointofsalepro" ' .$order_date_range;
+
+        $total_instore_gift_card = Db::getInstance()->executeS($sql_custom);
+
+        $total_instore_gift_card= '$ '. number_format($total_instore_gift_card[0]['payment_amount'],2);
+
+
+        // -------------refund offline
+
+
+
+
 
         $sum1 = $sum2 = 0;
 
@@ -1561,7 +1576,8 @@ class ExportSales
                     ORDER BY FIELD(payment_method, "Credit Card","Cash","Cheque","Free order","unknown","Interac","InStore Gift Card","RockPOS","Installment","Gift Certificate ","Carte de crédit","Comptant","Deposit","Credit Card(instore)");';
 
         $res2 =  Db::getInstance()->executeS($sql);
-
+//        var_dump($res2);
+//        die();
         $credit_card_is_empty = true;
         $cash_is_empty = true;
         $Interac_is_empty = true;
@@ -1767,6 +1783,11 @@ class ExportSales
             if(strpos($res['payment_method'], "Voucher") !== false){
                 $res2[$key]['payment_amount'] = $total_voucher;
             }
+            if(strpos($res['payment_method'], "Paid with InStore Gift Card") !== false){
+                $res2[$key]['payment_amount'] = $total_instore_gift_card;
+                continue;
+            }
+
             $sum2 += trim($res['payment_amount'], $this->currencySymbol);
         }
 
@@ -1796,8 +1817,7 @@ class ExportSales
             'payment_amount' => $sum2,
             'order_count' => '')),$res2, $res3,$new_rows_offline);
 
-//        var_dump($res3);
-//        die();
+
         $new_result = array();
         foreach($whole_arr as $row){
             if($row['payment_method']== 'TOTAL ONLINE'){
@@ -4124,7 +4144,7 @@ class ExportSales
 //         return Db::getInstance()->executeS($this->sql);
 //        $this->sql = str_replace("DATE_FORMAT(order.date_add, '%Y-%m-%d')","DATE_FORMAT(order.invoice_date, '%Y-%m-%d')",$this->sql);
 //        $this->sql = str_replace("ORDER BY order.date_add DESC, order.id_order DESC","ORDER BY order.invoice_date DESC, order.id_order DESC",$this->sql);
-         $orders = Db::getInstance()->executeS($this->sql);
+        $orders = Db::getInstance()->executeS($this->sql);
 
 
         if($orders){
@@ -4204,14 +4224,14 @@ class ExportSales
 //                        $refunded_orders[$k]['Product Name'] = $orders[$k]['Product Name'] ;
 //                        $refunded_orders[$k]['Total Price (Tax included)'] = $orders[$k]['Total Price (Tax included)'] ;
 
-                        foreach($orders[$k] as $key_index => $key_value){
-                            if(!empty($order_slip_available)){
-                                $refunded_orders[$k][$key_index]=$key_value;
-                            }else{
+                    foreach($orders[$k] as $key_index => $key_value){
+                        if(!empty($order_slip_available)){
+                            $refunded_orders[$k][$key_index]=$key_value;
+                        }else{
 
-                                $refunded_orders[$k][$key_index] = '';
-                            }
+                            $refunded_orders[$k][$key_index] = '';
                         }
+                    }
 
 
                 }else{
