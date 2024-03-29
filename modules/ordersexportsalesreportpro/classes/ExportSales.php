@@ -1207,7 +1207,6 @@ class ExportSales
 
 //
 
-
         //this means we are including the refunds;
         $refund_state = -1;
         $canceled_state = Configuration::getGlobalValue('PS_OS_CANCELED');
@@ -1263,7 +1262,7 @@ class ExportSales
             $arranged['valid'] = $result_without_refund_single['valid'];
             $arranged['total_products'] = $result_without_refund_single['total_products'];
             $arranged['total_products_wt'] = $result_without_refund_single['total_products_wt'];
-            $arranged['total_discounts_wt'] = $result_without_refund_single['total_discounts_wt'];
+//            $arranged['total_discounts_wt'] = $result_without_refund_single['total_discounts_wt'];
             $arranged['total_shipping_tax_incl'] = $result_without_refund_single['total_shipping_tax_incl'];
             $arranged['total_paid_tax_incl'] = $result_without_refund_single['total_paid_tax_incl'];
             $arranged['canada_tax_total_amount'] = $result_without_refund_single['canada_tax_total_amount'];
@@ -1274,13 +1273,14 @@ class ExportSales
 
 
             foreach($result_with_refund as $result_with_refund_single){
-                if($result_without_refund_single['payment'] === $result_with_refund_single['payment']){
-                    $arranged['order_slip_amount_tax_incl'] = $result_with_refund_single['order_slip_amount_tax_incl'];
-                    $arranged['rock_refund_tax_incl'] = $result_with_refund_single['rock_refund_tax_incl'];
-                }
+                    if($result_without_refund_single['payment'] === $result_with_refund_single['payment']){
+                        $arranged['order_slip_amount_tax_incl'] = $result_with_refund_single['order_slip_amount_tax_incl'];
+                        $arranged['rock_refund_tax_incl'] = $result_with_refund_single['rock_refund_tax_incl'];
+                    }
             }
             $final_result[$key] = $arranged;
         }
+
 
 
         return $final_result;
@@ -1422,7 +1422,7 @@ class ExportSales
                                     )
                                 ) ' . $mutualSql_include . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
-                    WHERE order_payment.payment_method LIKE "%Paypal%" OR order_payment.payment_method LIKE "%Stripe%"
+                    WHERE order_payment.payment_method LIKE "%Paypal%" OR order_payment.payment_method LIKE "%Stripe%" AND (`order_payment`.`date_add` >= "'.$fromDate.'" AND `order_payment`.`date_add` < "'.$toDate.'")
                     GROUP BY module, payment_method
                     ORDER BY FIELD(payment_method, "Stripe Payment Pro","Paypal","Payment by Stripe","Card via Stripe","Gift card","Carte Cadeau","Credit Slip","Voucher");';
 
@@ -1571,13 +1571,12 @@ class ExportSales
                                     )
                                 ) AND order.module = "hspointofsalepro"  ' . $mutualSql_include . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
-                    WHERE order_payment.payment_method NOT LIKE "%Paypal%" AND order_payment.payment_method NOT LIKE "%Stripe%" AND order_payment.payment_method NOT IN ("Gift card","Carte Cadeau","Credit Slip")
+                    WHERE order_payment.payment_method NOT LIKE "%Paypal%" AND order_payment.payment_method NOT LIKE "%Stripe%"  AND (`order_payment`.`date_add` >= "'.$fromDate.'" AND `order_payment`.`date_add` < "'.$toDate.'") AND order_payment.payment_method NOT IN ("Gift card","Carte Cadeau","Credit Slip")
                     GROUP BY module, IF (payment_method = "Carte de crédit", "Credit Card", payment_method)
                     ORDER BY FIELD(payment_method, "Credit Card","Cash","Cheque","Free order","unknown","Interac","InStore Gift Card","RockPOS","Installment","Gift Certificate ","Carte de crédit","Comptant","Deposit","Credit Card(instore)");';
 
         $res2 =  Db::getInstance()->executeS($sql);
-//        var_dump($res2);
-//        die();
+
         $credit_card_is_empty = true;
         $cash_is_empty = true;
         $Interac_is_empty = true;
@@ -1782,6 +1781,7 @@ class ExportSales
         foreach ($res2 as $key => $res) {
             if(strpos($res['payment_method'], "Voucher") !== false){
                 $res2[$key]['payment_amount'] = $total_voucher;
+                continue;
             }
             if(strpos($res['payment_method'], "Paid with InStore Gift Card") !== false){
                 $res2[$key]['payment_amount'] = $total_instore_gift_card;
@@ -4144,7 +4144,7 @@ class ExportSales
 //         return Db::getInstance()->executeS($this->sql);
 //        $this->sql = str_replace("DATE_FORMAT(order.date_add, '%Y-%m-%d')","DATE_FORMAT(order.invoice_date, '%Y-%m-%d')",$this->sql);
 //        $this->sql = str_replace("ORDER BY order.date_add DESC, order.id_order DESC","ORDER BY order.invoice_date DESC, order.id_order DESC",$this->sql);
-        $orders = Db::getInstance()->executeS($this->sql);
+         $orders = Db::getInstance()->executeS($this->sql);
 
 
         if($orders){
@@ -4166,30 +4166,40 @@ class ExportSales
                 $orderprev = $ordernext = $order;
                 array_splice($orderprev, 3);
                 array_splice($ordernext, 0, 3 - count($ordernext));
-
+                $gift_card_value =0;
                 if($gift_card && ($gift_card['gift_card_amount'] > 0 || $gift_card_fr['gift_card_amount'] > 0)){
-                    $gift_card_value = (int)$gift_card['gift_card_amount'] +(int)$gift_card_fr['gift_card_amount'];
+                    $gift_card_value = abs($gift_card['gift_card_amount'] +(int)$gift_card_fr['gift_card_amount']);
+                    $gift_card_value = number_format($gift_card_value, 2, '.', '');
+
                     $orderprev[$gift_payment_title] = $gift_card_value;
                 }else{
                     $orderprev[$gift_payment_title] = 0;
 
                 }
 
-                $credit_slip_amount = Db::getInstance()->getRow("SELECT sum(op.amount) as credit_slip_amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = 0 AND op.payment_method = 'Credit Slip'");
-                $voucher_amount = Db::getInstance()->getRow("SELECT sum(op.amount) as voucher_amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = 0 AND op.payment_method = 'Voucher'");
+                $credit_slip_amount = Db::getInstance()->getRow("SELECT sum(op.amount) as credit_slip_amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = ".$order[$this->selectedColumns->order->id_order]." AND op.payment_method = 'Credit Slip'");
+                $voucher_amount = Db::getInstance()->getRow("SELECT sum(op.amount) as voucher_amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = ".$order[$this->selectedColumns->order->id_order]." AND op.payment_method = 'Voucher'");
 
 
 
                 //-----------------------------------------------
-                if($credit_slip_amount && ($credit_slip_amount['credit_slip_amount'] > 0 )){
-                    $credit_slip_value = (int)$credit_slip_amount['credit_slip_amount'] ;
+                $credit_slip_value =0;
+//                if($credit_slip_amount && ($credit_slip_amount['credit_slip_amount'] > 0 )){
+                if($credit_slip_amount ){
+                    $credit_slip_value = abs($credit_slip_amount['credit_slip_amount'] );
+                    $credit_slip_value = number_format($credit_slip_value, 2, '.', '');
+
                     $orderprev[$credit_slip_title] = $credit_slip_value;
                 }else{
                     $orderprev[$credit_slip_title] = 0;
                 }
                 //-----------------------------------------------
-                if($voucher_amount && ($voucher_amount['voucher_amount'] > 0 )){
-                    $voucher_value = (int)$gift_card['voucher_amount'];
+                $voucher_value =0;
+//                if($voucher_amount && ($voucher_amount['voucher_amount'] > 0 )){
+                if($voucher_amount ){
+                    $voucher_value = $voucher_amount['voucher_amount'];
+                    $voucher_value = number_format($voucher_value, 2, '.', '');
+
                     $orderprev[$voucher_title] = $voucher_value;
                     // end
 
@@ -4201,8 +4211,10 @@ class ExportSales
 
                 $orders[$k] = array_merge($orderprev, $ordernext);
 
-                if($gift_card_value > 0 && $orders[$k]['Total Discounts (Tax included)']>0 ){
+                if( $orders[$k]['Total Discounts (Tax included)']>0  ){
                     $orders[$k]['Total Discounts (Tax included)'] = $orders[$k]['Total Discounts (Tax included)'] - $gift_card_value;
+                    $orders[$k]['Total Discounts (Tax included)'] = $orders[$k]['Total Discounts (Tax included)'] - $credit_slip_value;
+                    $orders[$k]['Total Discounts (Tax included)'] = $orders[$k]['Total Discounts (Tax included)'] - $voucher_value;
                 }
 
 
@@ -4224,14 +4236,14 @@ class ExportSales
 //                        $refunded_orders[$k]['Product Name'] = $orders[$k]['Product Name'] ;
 //                        $refunded_orders[$k]['Total Price (Tax included)'] = $orders[$k]['Total Price (Tax included)'] ;
 
-                    foreach($orders[$k] as $key_index => $key_value){
-                        if(!empty($order_slip_available)){
-                            $refunded_orders[$k][$key_index]=$key_value;
-                        }else{
+                        foreach($orders[$k] as $key_index => $key_value){
+                            if(!empty($order_slip_available)){
+                                $refunded_orders[$k][$key_index]=$key_value;
+                            }else{
 
-                            $refunded_orders[$k][$key_index] = '';
+                                $refunded_orders[$k][$key_index] = '';
+                            }
                         }
-                    }
 
 
                 }else{
@@ -5762,7 +5774,23 @@ class ExportSales
         //-----------------------------------custom refund------------
         if ($this->displayMainSales) {
 
+            $removed_arrays = array('Gift Card Payment','Credit Slip','Voucher','Total Discounts (Tax included)','currency_conversion_rate');
             $orders = $this->getOrders(true);
+
+
+            $new_orders = array();
+            foreach($orders as $key => $orders_single){
+
+                if($orders_single['Order ID'] == ""){
+                    continue;
+                }
+                foreach($orders_single as $key_fields => $field_values){
+                    if(!in_array($key_fields,$removed_arrays)){
+                        $new_orders[$key][$key_fields]=$field_values;
+                    }
+                }
+            }
+            $orders=  array_values($new_orders);
 
             if (is_numeric($this->auto) && !$orders && $autoExportDoNotSend) {
                 return 0;
@@ -7420,16 +7448,30 @@ class ExportSales
                 $total_voucher = Db::getInstance()->executeS($sql_custom);
 
                 //voucher-------------
-                $modified_sales[$key] = $sale;
-                $total_products = str_replace('$ ','',$modified_sales[$key]['total_products']) - number_format($total_voucher[0]['payment_amount_excl'],2);
-                $total_products_wt = str_replace('$ ','',$modified_sales[$key]['total_products_wt']) - number_format($total_voucher[0]['payment_amount_incl'],2);
-                $total_discounts_wt = str_replace('$ ','',$modified_sales[$key]['total_discounts_wt']) - number_format($total_voucher[0]['payment_amount_incl'],2);
 
-                $modified_sales[$key]['total_products'] = '$ '. $total_products;
-                $modified_sales[$key]['total_products_wt'] = '$ '. $total_products_wt;
+                //credit slip-------------
+                $payment_column = $sale['payment'];
+                $sql_custom = 'SELECT ord.module, SUM(ord.total_discounts_tax_incl) payment_amount_incl , SUM(ord.total_discounts_tax_excl) payment_amount_excl  FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_payment as orp WHERE ord.reference = orp.order_reference AND  ord.current_state NOT IN(6,8) AND ord.payment = "'. $payment_column.'" AND orp.payment_method = "Credit Slip" ' .$order_date_range;
+                $total_credit_slip = Db::getInstance()->executeS($sql_custom);
+
+                //credit slip-------------
+
+
+                $modified_sales[$key] = $sale;
+                $current_total_discounts = 1* number_format(str_replace('$ ','',$modified_sales[$key]['total_discounts_wt']),2);
+                $total_voucher = 1*number_format($total_voucher[0]['payment_amount_incl'],2);
+                $total_credit_slip = 1*number_format($total_credit_slip[0]['payment_amount_incl'],2);
+//                $total_products = str_replace('$ ','',$modified_sales[$key]['total_products']) - (number_format($total_voucher[0]['payment_amount_excl'],2)+ number_format($total_credit_slip[0]['payment_amount_excl'],2));
+//                $total_products_wt = str_replace('$ ','',$modified_sales[$key]['total_products_wt']) - (number_format($total_voucher[0]['payment_amount_incl'],2) + number_format($total_credit_slip[0]['payment_amount_incl'],2));
+                  $total_discounts_wt =   round($current_total_discounts -($total_voucher +$total_credit_slip));
+
+//                var_dump($total_products_wt);
+//                die();
+//              $modified_sales[$key]['total_products'] = '$ '. $total_products;
+//              $modified_sales[$key]['total_products_wt'] = '$ '. $total_products_wt;
                 $modified_sales[$key]['total_discounts_wt'] = '$ '. $total_discounts_wt;
             }
-            $sales = $modified_sales;
+//            $sales = $modified_sales; // commenitng this line because discount column is removed for now but we should not remove the above code.
 //            array_pop($sales);
             if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;
@@ -7446,7 +7488,7 @@ class ExportSales
                 $this->module->l('Confirmed Orders', 'ExportSales'),
                 $this->module->l('Total Products (Tax Excl.)', 'ExportSales'),
                 $this->module->l('Total Products (Tax Incl.)', 'ExportSales'),
-                $this->module->l('Total Discounts (Tax Incl.)', 'ExportSales'),
+//                $this->module->l('Total Discounts (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Shipping (Tax Incl.)', 'ExportSales'),
                 $this->module->l('Total Paid (Tax Incl.)', 'ExportSales'),
 //                $this->module->l('Refund Online (Tax Incl.)', 'ExportSales'),
@@ -7485,7 +7527,7 @@ class ExportSales
             $sheet->getColumnDimension('I')->setWidth(20);
             $sheet->getColumnDimension('J')->setWidth(20);
             $sheet->getColumnDimension('K')->setWidth(20);
-            $sheet->getColumnDimension('L')->setWidth(20);
+//            $sheet->getColumnDimension('L')->setWidth(20);
             $sheet->getStyle('A:K')->getAlignment()->setVertical('center')->setHorizontal('center');
             $sheet->getStyle('A1:K' . count($sales))
                 ->getAlignment()->setWrapText(true);
@@ -7510,7 +7552,7 @@ class ExportSales
                 $sum = array(
                     'total_products' => 0,
                     'total_products_wt' => 0,
-                    'total_discounts_wt' => 0,
+//                    'total_discounts_wt' => 0,
                     'total_shipping_tax_incl' => 0,
                     'total_paid_tax_incl' => 0,
                     'canada_tax_total_amount' => 0,
@@ -7523,7 +7565,7 @@ class ExportSales
                 foreach ($sales as $res) {
                     $sum['total_products'] += (float) trim($res['total_products'], $this->currencySymbol);
                     $sum['total_products_wt'] += (float) trim($res['total_products_wt'], $this->currencySymbol);
-                    $sum['total_discounts_wt'] += (float) trim($res['total_discounts_wt'], $this->currencySymbol);
+//                    $sum['total_discounts_wt'] += (float) trim($res['total_discounts_wt'], $this->currencySymbol);
                     $sum['total_shipping_tax_incl'] += (float) trim($res['total_shipping_tax_incl'], $this->currencySymbol);
                     $sum['total_paid_tax_incl'] += (float) trim($res['total_paid_tax_incl'], $this->currencySymbol);
                     $sum['order_slip_amount_tax_incl'] += (float) trim($res['order_slip_amount_tax_incl'], $this->currencySymbol);

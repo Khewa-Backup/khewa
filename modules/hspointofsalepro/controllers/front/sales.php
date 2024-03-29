@@ -886,6 +886,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
 
     protected function clear()
     {
+        return true;
         if (date('Y-m-d') != date('Y-m-d', (int) Configuration::get('CUSTOM_PRODUCT_CRON_LAST_RUN'))) {
             PosCustomProduct::deleteOutOfDateProducts();
             Configuration::updateValue('CUSTOM_PRODUCT_CRON_LAST_RUN', strtotime(date('Y-m-d')));
