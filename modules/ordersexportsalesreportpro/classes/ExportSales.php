@@ -77,7 +77,7 @@ class ExportSales
     public $toDate;
     private $sort;
     private $sortAsc;
-
+    public static $custom_totals;
     public function __construct($module)
     {
         $this->module = $module;
@@ -127,11 +127,20 @@ class ExportSales
 
         if(isset($_GET['auto_export'])){
             if($_GET['auto_export'] == 'true'){
-                $predefined_json = '{"orders_selectedColumns":"{\"order\":{\"date_add\":\"Ordered At\",\"id_order\":\"Order ID\",\"total_discounts_tax_incl\":\"Total Discounts (Tax included)\",\"payment\":\"Payment Method\",\"canada_shipping_tax.amount\":\"Shipping Tax (CA 5%)\",\"quebec_shipping_tax.amount\":\"Shipping Tax (CA-QC 9.975%)\",\"rock_total_paid_tax_incl\":\"Total Refunds ROCK (Tax included)\"},\"product\":{\"order_detail_lang.product_name\":\"Product Name\",\"total_price_tax_incl\":\"Total Price (Tax included)\",\"total_price_tax_excl\":\"Total Price (Tax excluded)\",\"canada_tax.total_amount\":\"Total Amount (CA 5%)\",\"quebec_tax.total_amount\":\"Total Amount (CA-QC 9.975%)\"},\"category\":{},\"manufacturer\":{},\"supplier\":{},\"payment\":{},\"customer\":{},\"carrier\":{},\"address\":{\"delivery_country_lang.name\":\"Delivery Country\",\"delivery_state.name\":\"Delivery State\"},\"shop\":{}}","orders_export_as":"excel","orders_doc_name":"Sales","orders_general_add_ts":"1","orders_target_action":"download","target_action_to_emails":"","orders_target_action_ftp_type":"ftp","orders_target_action_ftp_mode":"active","orders_target_action_ftp_url":"khewa.com","orders_target_action_ftp_port":"","orders_target_action_ftp_username":"","orders_target_action_ftp_password":"","orders_target_action_ftp_folder":"","orders_language":"1","orders_csv_delimiter":";","orders_csv_enclosure":"quot","orders_merge_helper":"1","orders_merge":"1","orders_sort":"order.date_add","orders_sort_asc":"0","orders_date_format":"Y-m-d","orders_time_format":"no_time","orders_image_type":"","orders_display_header":"1","orders_display_footer":"1","orders_display_totals":"1","orders_display_currency_symbol":"1","orders_display_explanations":"1","orders_decimal_separator":".","orders_round":"2","orders_creation_date":"today","orders_from_date":"2021-12-13 00:00:00","orders_to_date":"2021-12-20 23:00:00","orders_invoice_date":"no_date","orders_invoice_from_date":"2021-09-01 02:00:00","orders_invoice_to_date":"2021-09-01 23:00:00","orders_delivery_date":"no_date","orders_delivery_from_date":"","orders_delivery_to_date":"","orders_payment_date":"no_date","orders_payment_from_date":"","orders_payment_to_date":"","orders_shipping_date":"no_date","orders_shipping_from_date":"","orders_shipping_to_date":"","ctrl-show-selected-shops":"all","shops_table_length":"10","orders_group_without":"1","ctrl-show-selected-groups":"all","groups_table_length":"10","orders_customer_without":"1","ctrl-show-selected-customers":"all","customers_table_length":"10","ctrl-show-selected-orders":"all","orders_table_length":"10","ctrl-show-selected-orderStates":"all","orderStates_table_length":"100","ctrl-show-selected-paymentMethods":"all","paymentMethods_table_length":"10","orders_cart_rule_without":"1","ctrl-show-selected-cartRules":"all","cartRules_table_length":"10","orders_carrier_without":"1","ctrl-show-selected-carriers":"all","carriers_table_length":"10","ctrl-show-selected-products":"all","products_table_length":"10","orders_category_whether_filter":"0","orders_category_without":"1","products_categories":["2","302","264","275","276","266","267","278","305","295","262","289","290","291","292","17","76","59","64","77","78","80","309","310","311","35","303","304","45","47","48","49","50","46","39","43","42","41","40","44","34","272","271","269","270","55","54","16","125","124","120","121","122","123","18","277","279","296","287","286","69","67","66","65","251","56","273","274","258","259","260","261","306","285","299","288","283","282","281","257","73","280","308","75","74","252","253","82","81","79","83","301"],"orders_attribute_without":"1","ctrl-show-selected-attributes":"all","attributes_table_length":"10","orders_feature_without":"1","ctrl-show-selected-features":"all","features_table_length":"10","orders_manufacturer_without":"1","ctrl-show-selected-manufacturers":"all","manufacturers_table_length":"10","orders_supplier_without":"1","ctrl-show-selected-suppliers":"all","suppliers_table_length":"10","ctrl-show-selected-countries":"all","countries_table_length":"10","ctrl-show-selected-currencies":"all","currencies_table_length":"10","orders_display_main_sales":"1","orders_display_daily_sales":"0","orders_display_monthly_sales":"0","orders_display_bestsellers":"0","orders_display_product_combs":"0","orders_display_top_customers":"0","orders_display_payment_methods":"1","orders_display_taxes":"0","orders_display_category_sales":"0","orders_display_manufacturer_sales":"0","orders_display_supplier_sales":"0","orders_display_attribute_sales":"0","orders_display_feature_sales":"0","orders_display_shop_sales":"0","orders_autoexport":"1","orders_autoexport_order_states":{"0":"0","24":"0","10":"0","13":"0","1":"0","14":"0","40":"0","41":"0","39":"0","6":"0","54":"0","5":"0","38":"0","12":"0","9":"0","25":"0","2":"0","17":"0","8":"0","27":"0","3":"0","7":"0","11":"0","4":"0","56":"0","18":"0","28":"0","37":"0","55":"0","26":"0","22":"0","23":"0","21":"0","34":"0","42":"0"},"orders_autoexport_use_email":"1","autoexportEmails_table_length":"10","orders_autoexport_use_ftp":"1","autoexportFTPs_table_length":"10","orders_autoexport_dont_send_empty":"0","orders_schedule":"1","orders_schedule_use_email":"1","scheduleEmails_table_length":"10","orders_schedule_use_ftp":"1","scheduleFTPs_table_length":"10","orders_schedule_dont_send_empty":"0","shops_type":"unselected","shops_data":"","groups_type":"unselected","groups_data":"","customers_type":"unselected","customers_data":"","orders_type":"unselected","orders_data":"","order_states_type":"unselected","order_states_data":"","cart_rules_type":"unselected","cart_rules_data":"","carriers_type":"unselected","carriers_data":"","manufacturers_type":"unselected","manufacturers_data":"","suppliers_type":"unselected","suppliers_data":"","attributes_type":"unselected","attributes_data":"","features_type":"unselected","features_data":"","payment_methods_type":"unselected","payment_methods_data":"","countries_type":"unselected","countries_data":"","currencies_type":"unselected","currencies_data":"","products_type":"unselected","products_data":"","ajax":1,"ajaxMode":1,"catIds":"","specific_categories":"","tab":"AdminModules"}';
 
-                $predefined_json_arr = json_decode($predefined_json,true);
+//                $predefined_json = '{"orders_selectedColumns":"{\"order\":{\"date_add\":\"Ordered At\",\"id_order\":\"Order ID\",\"total_discounts_tax_incl\":\"Total Discounts (Tax included)\",\"payment\":\"Payment Method\",\"canada_shipping_tax.amount\":\"Shipping Tax (CA 5%)\",\"quebec_shipping_tax.amount\":\"Shipping Tax (CA-QC 9.975%)\",\"rock_total_paid_tax_incl\":\"Total Refunds ROCK (Tax included)\"},\"product\":{\"order_detail_lang.product_name\":\"Product Name\",\"total_price_tax_incl\":\"Total Price (Tax included)\",\"total_price_tax_excl\":\"Total Price (Tax excluded)\",\"canada_tax.total_amount\":\"Total Amount (CA 5%)\",\"quebec_tax.total_amount\":\"Total Amount (CA-QC 9.975%)\"},\"category\":{},\"manufacturer\":{},\"supplier\":{},\"payment\":{},\"customer\":{},\"carrier\":{},\"address\":{\"delivery_country_lang.name\":\"Delivery Country\",\"delivery_state.name\":\"Delivery State\"},\"shop\":{}}","orders_export_as":"excel","orders_doc_name":"Sales","orders_general_add_ts":"1","orders_target_action":"download","target_action_to_emails":"","orders_target_action_ftp_type":"ftp","orders_target_action_ftp_mode":"active","orders_target_action_ftp_url":"khewa.com","orders_target_action_ftp_port":"","orders_target_action_ftp_username":"","orders_target_action_ftp_password":"","orders_target_action_ftp_folder":"","orders_language":"1","orders_csv_delimiter":";","orders_csv_enclosure":"quot","orders_merge_helper":"1","orders_merge":"1","orders_sort":"order.date_add","orders_sort_asc":"0","orders_date_format":"Y-m-d","orders_time_format":"no_time","orders_image_type":"","orders_display_header":"1","orders_display_footer":"1","orders_display_totals":"1","orders_display_currency_symbol":"1","orders_display_explanations":"1","orders_decimal_separator":".","orders_round":"2","orders_creation_date":"today","orders_from_date":"2021-12-13 00:00:00","orders_to_date":"2021-12-20 23:00:00","orders_invoice_date":"no_date","orders_invoice_from_date":"2021-09-01 02:00:00","orders_invoice_to_date":"2021-09-01 23:00:00","orders_delivery_date":"no_date","orders_delivery_from_date":"","orders_delivery_to_date":"","orders_payment_date":"no_date","orders_payment_from_date":"","orders_payment_to_date":"","orders_shipping_date":"no_date","orders_shipping_from_date":"","orders_shipping_to_date":"","ctrl-show-selected-shops":"all","shops_table_length":"10","orders_group_without":"1","ctrl-show-selected-groups":"all","groups_table_length":"10","orders_customer_without":"1","ctrl-show-selected-customers":"all","customers_table_length":"10","ctrl-show-selected-orders":"all","orders_table_length":"10","ctrl-show-selected-orderStates":"all","orderStates_table_length":"100","ctrl-show-selected-paymentMethods":"all","paymentMethods_table_length":"10","orders_cart_rule_without":"1","ctrl-show-selected-cartRules":"all","cartRules_table_length":"10","orders_carrier_without":"1","ctrl-show-selected-carriers":"all","carriers_table_length":"10","ctrl-show-selected-products":"all","products_table_length":"10","orders_category_whether_filter":"0","orders_category_without":"1","products_categories":["2","302","264","275","276","266","267","278","305","295","262","289","290","291","292","17","76","59","64","77","78","80","309","310","311","35","303","304","45","47","48","49","50","46","39","43","42","41","40","44","34","272","271","269","270","55","54","16","125","124","120","121","122","123","18","277","279","296","287","286","69","67","66","65","251","56","273","274","258","259","260","261","306","285","299","288","283","282","281","257","73","280","308","75","74","252","253","82","81","79","83","301"],"orders_attribute_without":"1","ctrl-show-selected-attributes":"all","attributes_table_length":"10","orders_feature_without":"1","ctrl-show-selected-features":"all","features_table_length":"10","orders_manufacturer_without":"1","ctrl-show-selected-manufacturers":"all","manufacturers_table_length":"10","orders_supplier_without":"1","ctrl-show-selected-suppliers":"all","suppliers_table_length":"10","ctrl-show-selected-countries":"all","countries_table_length":"10","ctrl-show-selected-currencies":"all","currencies_table_length":"10","orders_display_main_sales":"1","orders_display_daily_sales":"0","orders_display_monthly_sales":"0","orders_display_bestsellers":"0","orders_display_product_combs":"0","orders_display_top_customers":"0","orders_display_payment_methods":"1","orders_display_taxes":"0","orders_display_category_sales":"0","orders_display_manufacturer_sales":"0","orders_display_supplier_sales":"0","orders_display_attribute_sales":"0","orders_display_feature_sales":"0","orders_display_shop_sales":"0","orders_autoexport":"1","orders_autoexport_order_states":{"0":"0","24":"0","10":"0","13":"0","1":"0","14":"0","40":"0","41":"0","39":"0","6":"0","54":"0","5":"0","38":"0","12":"0","9":"0","25":"0","2":"0","17":"0","8":"0","27":"0","3":"0","7":"0","11":"0","4":"0","56":"0","18":"0","28":"0","37":"0","55":"0","26":"0","22":"0","23":"0","21":"0","34":"0","42":"0"},"orders_autoexport_use_email":"1","autoexportEmails_table_length":"10","orders_autoexport_use_ftp":"1","autoexportFTPs_table_length":"10","orders_autoexport_dont_send_empty":"0","orders_schedule":"1","orders_schedule_use_email":"1","scheduleEmails_table_length":"10","orders_schedule_use_ftp":"1","scheduleFTPs_table_length":"10","orders_schedule_dont_send_empty":"0","shops_type":"unselected","shops_data":"","groups_type":"unselected","groups_data":"","customers_type":"unselected","customers_data":"","orders_type":"unselected","orders_data":"","order_states_type":"unselected","order_states_data":"","cart_rules_type":"unselected","cart_rules_data":"","carriers_type":"unselected","carriers_data":"","manufacturers_type":"unselected","manufacturers_data":"","suppliers_type":"unselected","suppliers_data":"","attributes_type":"unselected","attributes_data":"","features_type":"unselected","features_data":"","payment_methods_type":"unselected","payment_methods_data":"","countries_type":"unselected","countries_data":"","currencies_type":"unselected","currencies_data":"","products_type":"unselected","products_data":"","ajax":1,"ajaxMode":1,"catIds":"","specific_categories":"","tab":"AdminModules"}';
+                $predefined_json = Db::getInstance()->executeS("SELECT * FROM "._DB_PREFIX_."orders_export_srpro ORDER BY id_orders_export_srpro DESC LIMIT 1");
+                parse_str($predefined_json[0]['configuration'], $predefined_json_arr_output);
+//                $predefined_json_arr = json_decode($predefined_json[0]['configuration'],true);
 
-                foreach($predefined_json_arr as $key => $predefined_json_value){
+                $date_from_start = new DateTime('today midnight');
+                $date_from_start_str = $date_from_start->format('Y-m-d H:i:s');
+                $date_from_end = new DateTime('today 23:59:59');
+                $date_from_end_str = $date_from_end->format('Y-m-d H:i:s');
+
+                $predefined_json_arr_output['orders_from_date'] =$date_from_start_str;
+                $predefined_json_arr_output['orders_to_date'] =$date_from_end_str;
+                foreach($predefined_json_arr_output as $key => $predefined_json_value){
                     $_POST[$key] = $predefined_json_value;
                 }
 
@@ -4145,11 +4154,19 @@ class ExportSales
 //        $this->sql = str_replace("DATE_FORMAT(order.date_add, '%Y-%m-%d')","DATE_FORMAT(order.invoice_date, '%Y-%m-%d')",$this->sql);
 //        $this->sql = str_replace("ORDER BY order.date_add DESC, order.id_order DESC","ORDER BY order.invoice_date DESC, order.id_order DESC",$this->sql);
          $orders = Db::getInstance()->executeS($this->sql);
-
+        $custom_totals = array(
+            'gift_card' => 0,
+            'credit_slip' => 0,
+            'voucher' => 0,
+            'ca' => 0,
+            'ca_qc' => 0,
+        );
 
         if($orders){
 
             $gift_payment_title = 'Gift Card Payment';
+            $payment_break_down = 'Payment Breakdown';
+            $discount_column = 'Total Discounts (Tax included)';
             // new change
             $credit_slip_title = 'Credit Slip';
             $voucher_title = 'Voucher';
@@ -4157,6 +4174,7 @@ class ExportSales
             $fromDate = pSQL(Tools::getValue('orders_from_date'));
             $toDate = pSQL(Tools::getValue('orders_to_date'));
             $refunded_orders = array();
+            $new_orders_arr = array();
             foreach($orders as $k => $order){
                 $norder = new Order($order[$this->selectedColumns->order->id_order]);
 
@@ -4209,32 +4227,56 @@ class ExportSales
                 }
 
 
-                $orders[$k] = array_merge($orderprev, $ordernext);
 
-                if( $orders[$k]['Total Discounts (Tax included)']>0  ){
-                    $orders[$k]['Total Discounts (Tax included)'] = $orders[$k]['Total Discounts (Tax included)'] - $gift_card_value;
-                    $orders[$k]['Total Discounts (Tax included)'] = $orders[$k]['Total Discounts (Tax included)'] - $credit_slip_value;
-                    $orders[$k]['Total Discounts (Tax included)'] = $orders[$k]['Total Discounts (Tax included)'] - $voucher_value;
+
+
+
+
+                $payment_method_arr = explode('_',$orders[$k]['Payment Method']);
+                $breakdown_column_value = '';
+                 if(count($payment_method_arr) >1){
+                    foreach($payment_method_arr as $payment_method_single){
+                        $current_payment_amount = Db::getInstance()->getValue("SELECT op.amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = ".$order[$this->selectedColumns->order->id_order]." AND op.payment_method = '".$payment_method_single."'");
+                        $current_payment_amount = abs($current_payment_amount);
+                        $current_payment_amount = number_format($current_payment_amount, 2, '.', '');
+                        $breakdown_column_value = $payment_method_single.'( '.$current_payment_amount.') -'.$breakdown_column_value;
+                    }
+                     $breakdown_column_value = substr($breakdown_column_value, 0, -1);
+
                 }
 
 
-//                if($norder->date_add >= $fromDate && $norder->date_add <= $toDate){
-//                    // do nothing
-//                }else{
-//                    $orders[$k]['Refunded Total Price (Tax included)'] = 0;
-//                    $orders[$k]['Refunded Total Price (Tax excluded)'] = 0;
-//                    $orders[$k]['Refunded Product Quantity'] = 0;
+                $orderprev[$payment_break_down] =$breakdown_column_value;
+                $orders[$k] = array_merge($orderprev, $ordernext);
+                if( $orders[$k]['Total Discounts (Tax included)']>0  ){
+                    $new_discount_value = $orders[$k]['Total Discounts (Tax included)'] - $gift_card_value;
+                    $new_discount_value = $new_discount_value - $credit_slip_value;
+                    $new_discount_value = $new_discount_value - $voucher_value;
+                    $orderprev[$discount_column] = $new_discount_value;
+                    $orders[$k]['Total Discounts (Tax included)'] = $new_discount_value;
+                }else{
+                    $orderprev[$discount_column] = 0;
+                }
+
+                self::$custom_totals['gift_card'] = self::$custom_totals['gift_card'] + $gift_card_value;
+                self::$custom_totals['credit_slip'] = self::$custom_totals['credit_slip'] + $credit_slip_value;
+                self::$custom_totals['voucher'] = self::$custom_totals['voucher'] + $voucher_value;
+
+
+
+
+//                if($order[$this->selectedColumns->order->id_order] == 19601){
+//                    echo "<pre>";
+//                    print_r($orders[$k]);
+//                    echo "</pre>";
+//                    die();
+//                    var_dump($orders[$k]);
+//                    die();
 //                }
+
 
                 if($only_refunds){
                     $order_slip_available = Db::getInstance()->getRow("SELECT * FROM "._DB_PREFIX_."order_slip_detail  WHERE id_order_detail = ". $orders[$k]['id_order_detail']);
-
-
-//                        $refunded_orders[$k]['Ordered At'] = $orders[$k]['Ordered At'] ;
-//                        $refunded_orders[$k]['Order ID'] = $orders[$k]['Order ID'] ;
-//                        $refunded_orders[$k]['Payment Method'] = $orders[$k]['Payment Method'] ;
-//                        $refunded_orders[$k]['Product Name'] = $orders[$k]['Product Name'] ;
-//                        $refunded_orders[$k]['Total Price (Tax included)'] = $orders[$k]['Total Price (Tax included)'] ;
 
                         foreach($orders[$k] as $key_index => $key_value){
                             if(!empty($order_slip_available)){
@@ -4262,9 +4304,6 @@ class ExportSales
 
         }
         if($only_refunds){
-//            var_dump($refunded_orders);
-//            die();
-
             return $refunded_orders;
         }
 
@@ -5627,6 +5666,20 @@ class ExportSales
                     $sheet->getStyle('A' . ($key - $empty_rows) . ':' . end($excelColumns) . ($key - $empty_rows))->applyFromArray($styleArray);
 
                     $def_curr = Configuration::get('OXSRP_DEF_CURR_SMBL') . ' ';
+
+//                    var_dump($totals);
+//                    die();
+                    $totals['D']['val'] = self::$custom_totals['gift_card']/2;
+                    $totals['D']['curr'] = false;
+                    $totals['E']['val'] = self::$custom_totals['credit_slip']/2;
+                    $totals['E']['curr'] = false;
+                    $totals['F']['val'] = self::$custom_totals['voucher']/2;
+                    $totals['F']['curr'] = false;
+
+                    $totals['L']['val'] = self::$custom_totals['ca']/2;
+                    $totals['L']['curr'] = false;
+                    $totals['M']['val'] = self::$custom_totals['ca_qc']/2;
+                    $totals['m']['curr'] = false;
 
                     foreach ($totals as $k => $v) {
                         $sheet->setCellValue($k . ($key - $empty_rows), ((isset($v['curr']) && $v['curr']) ? $def_curr : '') . str_replace('.', $this->decimalSeparator, (string) round($v['val'], $this->fracPart)));
@@ -7469,9 +7522,16 @@ class ExportSales
 //                die();
 //              $modified_sales[$key]['total_products'] = '$ '. $total_products;
 //              $modified_sales[$key]['total_products_wt'] = '$ '. $total_products_wt;
-                $modified_sales[$key]['total_discounts_wt'] = '$ '. $total_discounts_wt;
+//                $modified_sales[$key]['total_discounts_wt'] = '$ '. $total_discounts_wt; // commenitng this line because discount column is removed for now but we should not remove the above code.
+
+
+                if($total_voucher > 0){
+                    $modified_sales[$key]['payment'] = $payment_column. '_Voucher';
+                }
+
+
             }
-//            $sales = $modified_sales; // commenitng this line because discount column is removed for now but we should not remove the above code.
+            $sales = $modified_sales; // commenitng this line because discount column is removed for now but we should not remove the above code.
 //            array_pop($sales);
             if (is_numeric($this->auto) && !$sales && $autoExportDoNotSend) {
                 return 0;

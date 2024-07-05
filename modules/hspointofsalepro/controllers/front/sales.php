@@ -3781,7 +3781,20 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
 
 
                             //-------------------------------------------------------------------------------------------------------
-
+                            if (isset($this->context->cookie->new_voucher_code) && !empty($this->context->cookie->new_voucher_code)) {
+                                $new_cart_rule = new PosCartRule((int) $this->context->cookie->new_voucher_code);
+                                if (Validate::isLoadedObject($new_cart_rule)) {
+                                    $new_voucher_code_data = array(
+                                        'code' => $new_cart_rule->code,
+                                        'id_cart_rule' => (int) $new_cart_rule->id,
+                                        'name' => $new_cart_rule->name[$this->context->language->id],
+                                        'reduction_amount' => $new_cart_rule->reduction_amount,
+                                        'reduction_currency' => $new_cart_rule->reduction_currency,
+                                        'reduction_percent' => 0,
+                                    );
+                                    $this->ajax_json['data']['transaction']['order']['print_data']['receipt']['voucher_code'] = $new_voucher_code_data;
+                                }
+                            }
                             $this->module->clearSession();
                         }
                         $this->ajax_json['add_payment'] = false;

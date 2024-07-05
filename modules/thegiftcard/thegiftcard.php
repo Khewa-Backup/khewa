@@ -1043,7 +1043,7 @@ class Thegiftcard extends Module
     public static function createCombinations($list)
     {
         if (count($list) <= 1) {
-            return count($list) ? array_map(create_function('$v', 'return (array($v));'), $list[0]) : $list;
+            return count($list) ? array_map(function($v) { return array($v); }, $list[0]) : $list;
         }
         $res = array();
         $first = array_pop($list);

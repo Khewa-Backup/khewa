@@ -874,7 +874,7 @@ class HsPointOfSalePro extends PosPaymentModule
             'vat_number' => $this->l('VAT number', $source),
             'view' => $this->l('view', $source),
             'visibility' => $this->l('Visibility', $source),
-            'voucher' => $this->l('Voucher', $source),
+            'voucher' => $this->l('Credit Slip Code', $source),
             'voucher_credit_slip' => $this->l('Credit Slip Code', $source),
             'vouchers' => $this->l('Vouchers', $source),
             'want_tp_receipt_fr_tablet_mobile' => $this->l('Want to print receipt from tablet/mobile', $source),
@@ -1644,6 +1644,7 @@ class HsPointOfSalePro extends PosPaymentModule
         unset($this->context->cookie->pos_id_cart);
         unset($this->context->cookie->id_currency);
         unset($this->context->cookie->id_pos_exchange);
+        unset($this->context->cookie->new_voucher_code);
         $this->context->currency = new PosCurrency();
 
         return true;
@@ -2425,6 +2426,15 @@ class HsPointOfSalePro extends PosPaymentModule
 
         if ($vouchers) {
             $vouchers = array_values($vouchers);
+        }
+        $address_shop = array();
+        $address_shop1 = Configuration::get('PS_SHOP_ADDR1', null, null, $this->context->shop->id) ? Configuration::get('PS_SHOP_ADDR1', null, null, $this->context->shop->id) : '';
+        $address_shop2 = Configuration::get('PS_SHOP_ADDR2', null, null, $this->context->shop->id) ? Configuration::get('PS_SHOP_ADDR2', null, null, $this->context->shop->id) : '';
+        if (!empty($address_shop1)) {
+            $address_shop[] = $address_shop1;
+        }
+        if (!empty($address_shop2)) {
+            $address_shop[] = $address_shop2;
         }
 
         return array(

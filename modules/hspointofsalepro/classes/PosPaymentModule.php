@@ -481,7 +481,7 @@ class PosPaymentModule extends PaymentModule
                             if ($voucher->add()) {
                                 // If the voucher has conditions, they are now copied to the new voucher
                                 CartRule::copyConditions((int)$cart_rule['obj']->id, (int)$voucher->id);
-
+                                $this->context->cookie->new_voucher_code = (int)$voucher->id;
                                 $params = array(
                                     '{voucher_amount}' => Tools::displayPrice(
                                         $voucher->reduction_amount,
