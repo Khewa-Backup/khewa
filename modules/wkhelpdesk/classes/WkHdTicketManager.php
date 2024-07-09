@@ -97,8 +97,8 @@ class WkHdTicketManager
         $objTicket->id_query_type = (int) $idQueryType;
         $objTicket->assigned_agent_id = (int) 0;
         $objStatusMapping = new WkHdStatusMapping();
-        $objTicket->id_status = (int) $objStatusMapping->getMappedStatusIdByStatus('open');
-        $objTicket->id_status = (int) $objStatusMapping->getMappedStatusIdByStatus('open');
+//        $objTicket->id_status = (int) $objStatusMapping->getMappedStatusIdByStatus('open');
+        $objTicket->id_status = (int) $objStatusMapping->getMappedStatusIdByStatus('closed');
         $objTicket->subject = pSQL($this->module->l('New message from', 'WkHdTicketManager').' '.$customer->firstname.' '.$customer->lastname);
         $objTicket->id_order = (int) $idOrder;
         $objTicket->save();
