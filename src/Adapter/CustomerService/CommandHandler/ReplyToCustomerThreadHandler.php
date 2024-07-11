@@ -134,6 +134,18 @@ final class ReplyToCustomerThreadHandler implements ReplyToCustomerThreadHandler
             '{firstname}' => $customer->firstname,
             '{lastname}' => $customer->lastname,
         ];
+        // new change 12/07/2024
+        if(\Module::isEnabled('wkhelpdesk')) {
+
+            $objTicketManager = new \WkHdTicketManager($this, $this->context);
+            $mapping = $objTicketManager->getTicketByThread($customerThread->id);
+            if (!empty($mapping)) {
+                $idTicket = $mapping['id_ticket'];
+                $params['{link}'] = $this->context->link->getModuleLink('wkhelpdesk', 'viewticket', ['id' => $idTicket]);
+            }
+        }
+        //end
+
 
         $contact = new Contact((int) $customerThread->id_contact, (int) $customerThread->id_lang);
 

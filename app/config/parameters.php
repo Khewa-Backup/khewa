@@ -3,9 +3,9 @@
   array (
     'database_host' => '127.0.0.1',
     'database_port' => '',
-    'database_name' => 'prev_khewa_2',
-    'database_user' => 'musa',
-    'database_password' => 'Admin@1234',
+    'database_name' => 'kbklzsah_newdatabase',
+    'database_user' => 'kbklzsah_musa',
+    'database_password' => 'ATQJog87V0B6Y8$!',
     'database_prefix' => 'ps_',
     'database_engine' => 'InnoDB',
     'mailer_transport' => 'smtp',
