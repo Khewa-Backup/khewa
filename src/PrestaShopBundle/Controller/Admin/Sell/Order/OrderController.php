@@ -448,8 +448,7 @@ class OrderController extends FrameworkBundleAdminController
         ]);
 
         $orderMessageForm = $this->createForm(OrderMessageType::class, [
-//            'lang_id' => $orderForViewing->getCustomer()->getLanguageId(),
-            'lang_id' => $this->getContext()->employee->id_lang,
+            'lang_id' => $orderForViewing->getCustomer()->getLanguageId(),
         ], [
             'action' => $this->generateUrl('admin_orders_send_message', ['orderId' => $orderId]),
         ]);

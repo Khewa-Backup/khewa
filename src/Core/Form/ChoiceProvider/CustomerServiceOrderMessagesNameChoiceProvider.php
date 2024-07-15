@@ -46,9 +46,29 @@ final class CustomerServiceOrderMessagesNameChoiceProvider implements FormChoice
     /**
      * {@inheritdoc}
      */
-    public function getChoices(): array
+    public function getChoices($langId = null): array
     {
         $result = [];
+
+        // Access the Symfony container
+        $container = \PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance();
+
+        // Get the request stack service
+        $requestStack = $container->get('request_stack');
+
+        // Get the current request
+        $request = $requestStack->getCurrentRequest();
+
+        // Get route parameters
+        $routeParams = $request->attributes->get('_route_params');
+
+//        var_dump($routeParams);
+
+        if(isset($routeParams['orderId']) && $routeParams['orderId']){
+            $o = new \Order($routeParams['orderId']);
+            $langId = $o->id_lang;
+            $this->orderMessages = \OrderMessage::getOrderMessages($langId);
+        }
 
         foreach ($this->orderMessages as $orderMessage) {
             $result[$orderMessage['name']] = $orderMessage['id_order_message'];
