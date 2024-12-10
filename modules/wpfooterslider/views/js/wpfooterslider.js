@@ -56,7 +56,7 @@ $(document).ready(function() {
         autoplay: wpfooterlogos_auto,
         autoplayHoverPause: wpfooterlogos_pause_hover,
         loop: wpfooterlogos_loop,
-        nav: true,
+        nav: false,
         dots: false,
         navText: ['<i class="material-icons">&#xE5CB;</i>','<i class="material-icons">&#xE5CC;</i>'],
         responsiveBaseElement: "#header .container"
