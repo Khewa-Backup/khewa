@@ -74,6 +74,8 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
         $contextLangId,
         array $contextShopIds
     ) {
+        ini_set('display_errors', '1');
+
         $this->connection = $connection;
         $this->dbPrefix = $dbPrefix;
         $this->contextLangId = $contextLangId;
@@ -103,6 +105,15 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
 
         $qb = $this->applyNewCustomerFilter($qb, $searchCriteria->getFilters());
 
+//        $limit = $searchCriteria->getLimit(); // You can adjust this number based on your needs
+//        $offset = $searchCriteria->getOffset();
+//        dump($limit);
+//        dump($offset);
+//        die();
+//        $qb->setMaxResults($limit)
+//            ->setFirstResult($offset);
+
+
         $this->criteriaApplicator
             ->applyPagination($searchCriteria, $qb)
         ;
@@ -122,6 +133,20 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
         return $qb;
     }
 
+
+    private function getFirstOrdersSubSelect(): string
+    {
+        return $this->connection
+            ->createQueryBuilder()
+            ->select('id_customer, MIN(id_order) as first_order')
+            ->from($this->dbPrefix . 'orders')
+            ->groupBy('id_customer')
+            ->getSQL();
+    }
+    private function addNewCustomerField(QueryBuilder $qb): void
+    {
+        $qb->addSelect('CASE WHEN fo.first_order = o.id_order THEN 1 ELSE 0 END AS new');
+    }
     /**
      * @param array $filters
      *
@@ -130,14 +155,23 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
     private function getBaseQueryBuilder(array $filters)
     {
 
-//        var_dump(11111);
-//        die("okman");
-//        $this->connection->connect();
-//        var_dump($this->connection);
-//        die("okman");
+        $firstOrdersSubquery = $this->connection
+            ->createQueryBuilder()
+            ->select('id_customer, MIN(id_order) as first_order')
+            ->from($this->dbPrefix . 'orders')
+            ->groupBy('id_customer')
+            ->getSQL();
+
         $qb = $this->connection
             ->createQueryBuilder()
             ->from($this->dbPrefix . 'orders', 'o')
+            // Add the first orders as a derived table instead of CTE
+            ->leftJoin(
+                'o',
+                '(' . $firstOrdersSubquery . ')',
+                'fo',
+                'o.id_customer = fo.id_customer'
+            )
             ->leftJoin('o', $this->dbPrefix . 'customer', 'cu', 'o.id_customer = cu.id_customer')
             ->leftJoin('o', $this->dbPrefix . 'currency', 'cur', 'o.id_currency = cur.id_currency')
             ->innerJoin('o', $this->dbPrefix . 'address', 'a', 'o.id_address_delivery = a.id_address')
@@ -158,8 +192,7 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
             ->leftJoin('o', $this->dbPrefix . 'shop', 's', 'o.id_shop = s.id_shop')
             ->andWhere('o.`id_shop` IN (:context_shop_ids)')
             ->setParameter('context_lang_id', $this->contextLangId, PDO::PARAM_INT)
-            ->setParameter('context_shop_ids', $this->contextShopIds, Connection::PARAM_INT_ARRAY)
-        ;
+            ->setParameter('context_shop_ids', $this->contextShopIds, Connection::PARAM_INT_ARRAY);
 
 
         $strictComparisonFilters = [
@@ -253,7 +286,7 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
     /**
      * @param QueryBuilder $qb
      */
-    private function addNewCustomerField(QueryBuilder $qb): void
+    private function __addNewCustomerField(QueryBuilder &$qb): void
     {
         $qb->addSelect('(' . $this->getNewCustomerSubSelect() . ') AS new');
     }
@@ -273,6 +306,27 @@ final class OrderQueryBuilder implements DoctrineQueryBuilderInterface
      * @return QueryBuilder
      */
     private function applyNewCustomerFilter(QueryBuilder $qb, array $filters)
+    {
+        if (!isset($filters['new'])) {
+            return $qb;
+        }
+
+        $builder = $qb
+            ->andWhere('CASE WHEN fo.first_order = o.id_order THEN 1 ELSE 0 END = :new')
+            ->setParameter('new', $filters['new']);
+
+        foreach ($qb->getParameters() as $name => $previousParam) {
+            $builder->setParameter(
+                $name,
+                $previousParam,
+                is_array($previousParam) ? Connection::PARAM_INT_ARRAY : null
+            );
+        }
+
+        return $builder;
+    }
+
+    private function __applyNewCustomerFilter(QueryBuilder $qb, array $filters)
     {
 
 
