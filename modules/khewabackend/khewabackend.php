@@ -152,7 +152,7 @@ class Khewabackend extends Module
             return '';
         }
 
-        $switchLang = Tools::getValue('switch_employee_lang');
+        $switchLang = (int)Tools::getValue('switch_employee_lang');
         if ($switchLang && in_array($switchLang, [1, 2])) {
             $employee = $this->context->employee;
             $employee->id_lang = (int)$switchLang;
