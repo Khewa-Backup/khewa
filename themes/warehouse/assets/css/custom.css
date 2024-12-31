@@ -2,3 +2,40 @@
  * Custom code goes here.
  * A template should always ship with an empty custom.css
  */
+#main-page-content #footer .ps-emailsubscription-block .newsletter-input-group .btn-subscribe{
+    color: #fff;
+}
+#main-page-content .ps-emailsubscription-block .btn-subscribe{
+    background-color: #b67a24;
+    color: #fff;
+}
+
+.ps-social-follow {
+    padding: 0 15px;
+}
+.ps-social-follow ul {
+    display: flex;
+    justify-content: space-around;
+}
+.ps-social-follow ul li {
+    display: inline;
+    padding: 0 3px;
+}
+.ps-social-follow ul li i {
+    font-size: 24px;
+}
+.ps-emailsubscription-block {
+    padding: 0 15px 30px;
+}
+
+@media screen and (max-width: 767px) {
+    .ps-social-follow ul{
+        margin-top: 10px;
+    }
+    .ps-social-follow ul li {
+        padding: 0 10px;
+    }
+    .ps-social-follow{
+        margin-bottom: 10px;
+    }
+}

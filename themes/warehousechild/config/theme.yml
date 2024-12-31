@@ -1,0 +1,15 @@
+parent: warehouse
+name: warehousechild
+display_name: Warehouse child theme
+version: 1.0
+author:
+  name: "IQIT"
+assets:
+  use_parent_assets: true
+  css:
+    all:
+      - id: font-awesome
+        path: assets/css/font-awesome/css/font-awesome.css
+        media: all
+        priority: 200
+

@@ -139,4 +139,18 @@
 
 <script type="text/javascript">
     var ewrelatedproducts_lazyload_images = "{$ewrelatedproducts_lazyload_images|escape:'htmlall':'UTF-8'}";
+    document.addEventListener('DOMContentLoaded', function() {
+        $('.related-products-container .products.owl-carousel').find('.product-thumbnail img.owl-lazy').each(function(){
+            if(!$(this).attr('src') || $(this).attr('src') == 'undefined'){
+                $(this).attr('src', $(this).attr('data-src'));
+                $(this).attr('data-src', null);
+            }
+        });
+    });
 </script>
+
+<style>
+    .related-products-container .owl-loaded .product-thumbnail img.owl-lazy{
+        opacity: 1;
+    }
+</style>
