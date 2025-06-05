@@ -1,0 +1,9 @@
+h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#success-message {
+    margin: 10px 0;
+    color: green;
+}
