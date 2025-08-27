@@ -24,11 +24,9 @@
  *}
 <table id="total-tab" width="100%">
 
-
-
 	{if $footer.product_discounts_tax_excl > 0}
-		{*		--------------------------------------------------------------------------------this is edited-----------------------------------------------------------*}
-		{*		--------------------------------------------------------------------------------this is edited-----------------------------------------------------------*}
+
+		{* Total Products *}
 		<tr>
 			<td class="grey" width="50%">
 				{l s='Total Products' d='Shop.Pdf' pdf='true'}
@@ -37,6 +35,8 @@
 				{displayPrice currency=$order->id_currency price=$footer.products_before_discounts_tax_excl}
 			</td>
 		</tr>
+
+		{* Shipping *}
 		{if !$order->isVirtual()}
 			<tr>
 				<td class="grey" width="50%">
@@ -52,44 +52,38 @@
 			</tr>
 		{/if}
 
-		{if $footer.wrapping_tax_excl > 0}
-			<tr>
-				<td class="grey">
-					{l s='Wrapping Costs' d='Shop.Pdf' pdf='true'}
-				</td>
-				<td class="white">{displayPrice currency=$order->id_currency price=$footer.wrapping_tax_excl}</td>
-			</tr>
-		{/if}
-
-		{if $footer.total_taxes > 0}
-			<tr class="bold">
-				<td class="grey">
-					{l s='Total Tax' d='Shop.Pdf' pdf='true'}
-				</td>
-				<td class="white">
-					{displayPrice currency=$order->id_currency price=$footer.products_before_discounts_tax_incl - $footer.products_before_discounts_tax_excl}
-{*					{$footer.products_before_discounts_tax_incl - $footer.products_before_discounts_tax_excl}*}
-				</td>
-			</tr>
-		{/if}
-
-		<tr class="bold">
-			<td class="grey">
-				{l s='Total (Tax Incl.)' d='Shop.Pdf' pdf='true'}
-			</td>
-			<td class="white">
-				{displayPrice currency=$order->id_currency price=$footer.products_before_discounts_tax_incl}
-			</td>
-		</tr>
-
+		{* Corrected: Discount shown as tax-excluded *}
 		<tr>
 			<td class="grey" width="50%">
 				{l s='Total Discounts' d='Shop.Pdf' pdf='true'}
 			</td>
 			<td class="white" width="50%">
-				- {displayPrice currency=$order->id_currency price=$footer.product_discounts_tax_incl}
+				- {displayPrice currency=$order->id_currency price=$footer.product_discounts_tax_excl}
 			</td>
 		</tr>
+
+		{* Total (Tax Incl.) *}
+		<tr class="bold">
+			<td class="grey">
+				{l s='Total (Tax Excl.)' d='Shop.Pdf' pdf='true'}
+			</td>
+			<td class="white">
+				{displayPrice currency=$order->id_currency price=$footer.products_after_discounts_tax_excl}
+			</td>
+		</tr>
+
+		{* Tax shown after discount (recomputed as incl - excl) *}
+		<tr class="bold">
+			<td class="grey">
+				{l s='Total Tax' d='Shop.Pdf' pdf='true'}
+			</td>
+			<td class="white">
+				{assign var="taxAmount" value=$footer.total_paid_tax_incl - $footer.total_paid_tax_excl}
+				{displayPrice currency=$order->id_currency price=$taxAmount}
+			</td>
+		</tr>
+
+		{* Final Total Paid *}
 		<tr class="bold big">
 			<td class="grey">
 				{l s='Total' d='Shop.Pdf' pdf='true'}
@@ -98,9 +92,10 @@
 				{displayPrice currency=$order->id_currency price=$footer.total_paid_tax_incl}
 			</td>
 		</tr>
+
 	{else}
-		{*		--------------------------------------------------------------------------------this is default-----------------------------------------------------------*}
-		{*		--------------------------------------------------------------------------------this is default-----------------------------------------------------------*}
+
+		{* Default block (no discounts) *}
 		<tr>
 			<td class="grey" width="50%">
 				{l s='Total Products' d='Shop.Pdf' pdf='true'}
@@ -109,6 +104,7 @@
 				{displayPrice currency=$order->id_currency price=$footer.products_before_discounts_tax_excl}
 			</td>
 		</tr>
+
 		{if !$order->isVirtual()}
 			<tr>
 				<td class="grey" width="50%">
@@ -129,28 +125,23 @@
 				<td class="grey">
 					{l s='Wrapping Costs' d='Shop.Pdf' pdf='true'}
 				</td>
-				<td class="white">{displayPrice currency=$order->id_currency price=$footer.wrapping_tax_excl}</td>
+				<td class="white">
+					{displayPrice currency=$order->id_currency price=$footer.wrapping_tax_excl}
+				</td>
 			</tr>
 		{/if}
 
 		<tr class="bold">
 			<td class="grey">
-				{l s='Total (Tax excl.)' d='Shop.Pdf' pdf='true'}
+				{l s='Total Tax' d='Shop.Pdf' pdf='true'}
 			</td>
 			<td class="white">
-				{displayPrice currency=$order->id_currency price=$footer.total_paid_tax_excl}
+				{*				{displayPrice currency=$order->id_currency price=$footer.total_taxes}*}
+				{assign var="taxAmount" value=$footer.total_paid_tax_incl - $footer.total_paid_tax_excl}
+				{displayPrice currency=$order->id_currency price=$taxAmount}
 			</td>
 		</tr>
-		{if $footer.total_taxes > 0}
-			<tr class="bold">
-				<td class="grey">
-					{l s='Total Tax' d='Shop.Pdf' pdf='true'}
-				</td>
-				<td class="white">
-					{displayPrice currency=$order->id_currency price=$footer.total_taxes}
-				</td>
-			</tr>
-		{/if}
+
 		<tr class="bold big">
 			<td class="grey">
 				{l s='Total' d='Shop.Pdf' pdf='true'}
@@ -159,8 +150,7 @@
 				{displayPrice currency=$order->id_currency price=$footer.total_paid_tax_incl}
 			</td>
 		</tr>
+
 	{/if}
-
-
 
 </table>

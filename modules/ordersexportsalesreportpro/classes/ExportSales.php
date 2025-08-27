@@ -1210,7 +1210,7 @@ class ExportSales
 
 
 
-        $sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25))',$sql);
+        $sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25, 60))',$sql);
 
 //        var_dump($sql);
 //        die();
@@ -1405,7 +1405,7 @@ class ExportSales
             }
         }
 
-        $mutualSql_include = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25))',$this->mutualSql);
+        $mutualSql_include = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25, 60))',$this->mutualSql);
 
 
         $sql = "SELECT 
@@ -1579,7 +1579,7 @@ class ExportSales
                                             (`order`.`possible_refund_date` >= "'.$fromDate.'" AND `order`.`possible_refund_date` < "'.$toDate.'")
                                             AND (`order`.`date_add` >= "'.$fromDate.'" AND `order`.`date_add` < "'.$toDate.'")
                                         )
-                                        AND `order`.current_state NOT IN (7, 56,25)
+                                        AND `order`.current_state NOT IN (7, 56,25, 60)
                                     )
                                 ) AND order.module = "hspointofsalepro"  ' . $mutualSql_include . ') tmp
                     LEFT JOIN ' . _DB_PREFIX_. 'order_payment order_payment ON tmp.`reference` = order_payment.order_reference
@@ -1681,7 +1681,7 @@ class ExportSales
 
 
 
-        $order_date_range_disc = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25))',$this->mutualSql);
+        $order_date_range_disc = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25, 60))',$this->mutualSql);
         $order_date_range_disc = str_replace('order.','ord.',$order_date_range_disc);
 
         $sql_custom = 'SELECT ord.module, SUM(ocr.value) payment_amount FROM ' . _DB_PREFIX_. 'orders  as ord, ' . _DB_PREFIX_. 'order_cart_rule as ocr WHERE ord.id_order = ocr.id_order AND  ord.current_state NOT IN(6,8)  AND ocr.name LIKE "%promocode%"  AND ord.module != "hspointofsalepro" AND (
@@ -4149,10 +4149,10 @@ class ExportSales
         if($only_refunds){
             $this->sql = str_replace('AND order.date_add >=','AND order.possible_refund_date >=',$this->sql);
             $this->sql = str_replace('AND order.date_add <','AND order.possible_refund_date <',$this->sql);
-            $this->sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state IN (56,7,25))',$this->sql);
+            $this->sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state IN (56,7,25, 60))',$this->sql);
         }else{
 
-            $this->sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25))',$this->sql);
+            $this->sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25, 60))',$this->sql);
         }
 //         return Db::getInstance()->executeS($this->sql);
 //        $this->sql = str_replace("DATE_FORMAT(order.date_add, '%Y-%m-%d')","DATE_FORMAT(order.invoice_date, '%Y-%m-%d')",$this->sql);

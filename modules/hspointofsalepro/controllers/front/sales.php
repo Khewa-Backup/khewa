@@ -4278,7 +4278,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     }
                     if ($total > 0) {
                         $cartrule->reduction_amount = $total;
-                        $cartrule->reduction_tax = true;
+                        $cartrule->reduction_tax = false;
                         $cartrule->minimum_amount_currency = $order->id_currency;
                         $cartrule->reduction_currency = $order->id_currency;
                         $success[] = $cartrule->add();

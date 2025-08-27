@@ -6369,6 +6369,9 @@
             } catch (t) {
                 r = t
             }
+            //test
+            // console.trace('testing rakib',this._query, f, r, e);
+            //end
             r ? n.callback(r, e) : n.callback(null, e)
         })
     }
@@ -11195,6 +11198,7 @@
             s = 0,
             u = 0,
             c = 0;
+
         E.a.forEach(n.product, function(t) {
             t.return && (a -= parseFloat(t.productPrice) * parseInt(t.quantity), c -= parseFloat(t.productPriceTaxExcl) * parseInt(t.quantity)), t.exchange && (a += parseFloat(t.productPrice) * parseInt(t.quantity), c += parseFloat(t.productPriceTaxExcl) * parseInt(t.quantity))
         });
@@ -11212,6 +11216,8 @@
         } finally {
             h.f()
         }
+
+
         return s += u, l > 0 && o.push([t.shipping, Object(A.b)(l, i, !0)]), o.push([t.total, Object(A.b)(s, i, !0)]), E.a.forEach(n.payments, function(t, e) {
             t.amount < 0 && o.push([t.name, Object(A.b)(t.amount, i, !0)])
         }), e.summaryReceipt.forEach(function(e) {
@@ -21991,6 +21997,13 @@
                         p = u.availableFields,
                         h = Object(b.cloneDeep)(r),
                         d = parseInt(o) > 0;
+
+                    // new change
+                    window.rockposorder = n.order;
+                    // end
+
+                    // console.trace(l, n, b, i);
+
                     Object(b.isEmpty)(this.state.logoBase64) || (Object(F.a)(c, l, this.state.logoBase64, f, p, Object(O.k)(h), a, d, t, e), s.print_automatically && s.close_popup_after_print && this.closePopup())
                 }
             }, {
@@ -50680,6 +50693,7 @@
                 key: "onSuccessAddPayment",
                 value: function(t, e) {
                     var n = e.order ? e.order.amountDue : 0;
+                    // console.trace(t, e);
                     this.setState({
                         isLoading: !1,
                         notification: {
@@ -52946,10 +52960,74 @@
         function m(t) {
             return null != t ? t.replace(new RegExp("<p>", "g"), "").replace(new RegExp("<br />", "g"), "").replace(new RegExp("</p>", "g"), "") : ""
         }
+
+
+
+
+        // new changes
+        // console.log('before:', t);
+
+        // Insert 'subTtlAfterDiscount' before 'tax' if not present
+        if (!t.summaryReceipt.includes('subTtlAfterDiscount')) {
+            const taxIndex = t.summaryReceipt.indexOf('tax');
+            if (taxIndex > -1) {
+                t.summaryReceipt.splice(taxIndex, 0, 'subTtlAfterDiscount');
+            } else {
+                t.summaryReceipt.push('subTtlAfterDiscount');
+            }
+        }
+
+        const moveItemBeforeTax = (itemName) => {
+            const index = t.summaryReceipt.indexOf(itemName);
+            if (index > -1) {
+                const [item] = t.summaryReceipt.splice(index, 1);
+                const taxIndex = t.summaryReceipt.indexOf('tax');
+                if (taxIndex > -1) {
+                    t.summaryReceipt.splice(taxIndex, 0, item);
+                }
+            }
+        };
+
+        moveItemBeforeTax('totalOrderDiscount');
+        moveItemBeforeTax('subTtlAfterDiscount');
+
+        const khewaCurrency = window.rockposorder?.printData?.currency;
+        const tDiscountWoTax = window.rockposorder?.total?.discount;
+
+        function khewaFormatNum(value, currency) {
+            if (value == null || currency == null) return value;
+            const decimals = currency.decimals ?? 2;
+            const sign = currency.sign ?? "";
+            return sign + Number(value).toFixed(decimals);
+        }
+
+
+        // t.summaryReceipt = [];
+        // for(let ii = 5; ii < 8; ii++)
+        //     t.summaryReceipt.splice(ii, 1);
+        // console.log('after:',t);
+        // console.trace('window.rockposorder', window.rockposorder);
+        // console.trace('e:', e);
+        // console.trace('t.summaryReceipt:', t.summaryReceipt);
+        // console.log('discountExcludingTax', discountExcludingTax, totalWithTax, totalTax, discountWithTax);
+
+        let subTtlWoTax = 0;
+        if (Array.isArray(e.product)) {
+            subTtlWoTax = e.product.reduce((sum, product) => {
+                return sum + (parseFloat(product.totalPriceTaxExcl) || 0);
+            }, 0);
+        }
+        // console.log(subTtlWoTax);
+        //end
+
+
+
+
         var b = t.headerReceipt,
             E = t.footerReceipt,
             w = t.productReceipt,
             S = t.summaryReceipt;
+
         return {
             content: [{
                 table: {
@@ -53066,7 +53144,50 @@
                                 a = 0;
                             u.a.forEach(w, function(t, s) {
                                 var c = t.trim();
-                                "unitPrice" != c && "originalPrice" != c && ("name" == c ? i.push(e[c].join("\n ")) : u.a.isEmpty(e[c]) || i.push(e[c])), "unitPrice" === c && (n = e.return ? e.gift ? r.gift : "- ".concat(e.productUnitPrice) : e.exchange ? e.gift ? r.gift : "+ ".concat(e.productUnitPrice) : e.gift ? r.gift : "".concat(e.productUnitPrice)), "originalPrice" === c && e.productUnitPrice !== e.productOriginalPrice && (n = e.gift ? r.gift : n + "\n(".concat(e.productOriginalPrice, ")")), e.return ? (a = "- ".concat(e.quantity), o = e.gift ? r.gift : "- ".concat(e.productTotalPrice)) : e.exchange ? (a = "+ ".concat(e.quantity), o = e.gift ? r.gift : "+ ".concat(e.productTotalPrice)) : (a = "".concat(e.quantity), o = e.gift ? r.gift : "".concat(e.productTotalPrice))
+                                if ("unitPrice" !== c && "originalPrice" !== c) {
+                                    if ("name" === c) {
+                                        i.push(e[c].join("\n "));
+                                    } else if (!u.a.isEmpty(e[c])) {
+                                        i.push(e[c]);
+                                    }
+                                }
+
+                                if ("unitPrice" === c) {
+                                    if (e.return) {
+                                        n = e.gift ? r.gift : "- "
+                                            // + e.productUnitPrice;
+                                            + khewaFormatNum(e.productPriceTaxExcl, khewaCurrency);
+                                    } else if (e.exchange) {
+                                        n = e.gift ? r.gift : "+ "
+                                            // + e.productUnitPrice;
+                                            + khewaFormatNum(e.productPriceTaxExcl, khewaCurrency);
+                                    } else {
+                                        n = e.gift ? r.gift : ""
+                                            // + e.productUnitPrice;
+                                            + khewaFormatNum(e.productPriceTaxExcl, khewaCurrency);
+                                    }
+                                }
+
+                                if ("originalPrice" === c && e.productUnitPrice !== e.productOriginalPrice) {
+                                    n = e.gift ? r.gift : n + "\n(" + e.productOriginalPrice + ")";
+                                }
+
+                                if (e.return) {
+                                    a = "- " + e.quantity;
+                                    o = e.gift ? r.gift : "- " +
+                                        // e.productTotalPrice;
+                                        khewaFormatNum(e.totalPriceTaxExcl, khewaCurrency);
+                                } else if (e.exchange) {
+                                    a = "+ " + e.quantity;
+                                    o = e.gift ? r.gift : "+ " +
+                                        // e.productTotalPrice;
+                                        khewaFormatNum(e.totalPriceTaxExcl, khewaCurrency);
+                                } else {
+                                    a = "" + e.quantity;
+                                    o = e.gift ? r.gift : "" +
+                                        // e.productTotalPrice;
+                                        khewaFormatNum(e.totalPriceTaxExcl, khewaCurrency);
+                                }
                             }), t.push([{
                                 text: i.join("\n"),
                                 colSpan: 4
@@ -53083,13 +53204,24 @@
                         }), h = f + p + l, d && (e.total = Object(i.b)(h, o, !0), e.totalTax = Object(i.b)(h, o, !0), e.subtotal = Object(i.b)(f, o, !0)), u.a.forEach(S, function(n, a) {
                             var s = n.trim();
                             switch (s) {
+
+                                case "subTtlAfterDiscount":
+                                    t.push([{
+                                        colSpan: 3,
+                                        text: 'Subtotal After Discount',
+                                        alignment: "right"
+                                    }, "", "", {
+                                        text: khewaFormatNum(subTtlWoTax - tDiscountWoTax, khewaCurrency),
+                                        alignment: "right"
+                                    }]);
+                                    break;
                                 case "subtotal":
                                     t.push([{
                                         colSpan: 3,
-                                        text: e.useTax ? "".concat(r.subTotal, " (").concat(r.inclTax, ") ") : "".concat(r.subTotal, " (").concat(r.exclTax, ") "),
+                                        text: /*e.useTax ? "".concat(r.subTotal, " (").concat(r.inclTax, ") ") : "".concat(r.subTotal, " (").concat(r.exclTax, ") ")*/ "".concat(r.subTotal, " (").concat(r.exclTax, ") "),
                                         alignment: "right"
                                     }, "", "", {
-                                        text: e[s],
+                                        text: subTtlWoTax ? khewaFormatNum(subTtlWoTax, khewaCurrency) : e[s],
                                         alignment: "right"
                                     }]);
                                     break;
@@ -53104,12 +53236,17 @@
                                             alignment: "right"
                                         }])
                                     }) : u.a.forEach(e.taxDetail, function(e, n) {
+                                        // console.log(e, subTtlWoTax);
+                                        const txrate = e.taxRate.toFixed(2)/100;
+                                        const taxAmount = txrate * (subTtlWoTax - tDiscountWoTax);
+
                                         t.push([{
                                             colSpan: 3,
                                             text: "".concat(r.tax, " ").concat(e.taxRate.toFixed(2), "% (").concat(r.products, ") "),
                                             alignment: "right"
                                         }, "", "", {
-                                            text: e.taxAmount,
+                                            // text: e.taxAmount,
+                                            text: khewaFormatNum(taxAmount, khewaCurrency),
                                             alignment: "right"
                                         }])
                                     });
@@ -53147,7 +53284,8 @@
                                         text: r.totalOrderDiscount,
                                         alignment: "right"
                                     }, "", "", {
-                                        text: e.totalOrderDiscount,
+                                        // text: e.totalOrderDiscount,
+                                        text: tDiscountWoTax ? khewaFormatNum(tDiscountWoTax, khewaCurrency): e.totalOrderDiscount,
                                         alignment: "right"
                                     }]);
                                     break;
@@ -53219,7 +53357,7 @@
                             }
                         }), void 0 === e.voucherCode || u.a.isEmpty(e.voucherCode) || t.push([{
                             colSpan: 3,
-                            text: "".concat(r.voucher_credit_slip, " (").concat(e.voucherCode.code, ")"),
+                            text: "".concat(r.voucher, " (").concat(e.voucherCode.code, ")"),
                             alignment: "right"
                         }, "", "", {
                             text: "".concat(Object(i.c)(e.voucherCode.reductionAmount, o)),
@@ -71177,6 +71315,7 @@
                         l = ["info-text", a ? "" : "hide"],
                         f = ["pos-button submit-button round right", Object(x.isNull)(s) ? "" : s ? "" : "disabled"],
                         p = ["order-discount-value left", Object(x.isNull)(s) ? "" : s ? "valid" : "invalid"];
+                    t.discountTypes[2] =  {name:"Voucher", value:"voucher", isDefault:true};
                     t.discountTypes[3] =  {name:"Gift Card", value:"gift-card", isDefault:true};
                     t.discountTypes[4] =  {name:"Credit Slip", value:"credit-slip", isDefault:true};
                     return v.a.createElement("div", {
