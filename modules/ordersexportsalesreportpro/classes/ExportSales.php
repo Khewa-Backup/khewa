@@ -217,8 +217,10 @@ class ExportSales
 
             if ($fileType === 'excel') {
                 $this->generateExcel();
+
             } elseif ($fileType === 'csv') {
                 $this->generateCSV();
+
             } elseif ($fileType === 'html') {
                 $this->generateHTML();
             } elseif ($fileType === 'pdf') {
@@ -270,6 +272,7 @@ class ExportSales
                         $files = array_merge($files, array($this->tempDir => $fileName));
                     } elseif ($fileType === 'csv') {
                         $fileName = $this->generateCSV();
+
                         if ($fileName === 0) {
                             continue;
                         }
@@ -1282,10 +1285,10 @@ class ExportSales
 
 
             foreach($result_with_refund as $result_with_refund_single){
-                    if($result_without_refund_single['payment'] === $result_with_refund_single['payment']){
-                        $arranged['order_slip_amount_tax_incl'] = $result_with_refund_single['order_slip_amount_tax_incl'];
-                        $arranged['rock_refund_tax_incl'] = $result_with_refund_single['rock_refund_tax_incl'];
-                    }
+                if($result_without_refund_single['payment'] === $result_with_refund_single['payment']){
+                    $arranged['order_slip_amount_tax_incl'] = $result_with_refund_single['order_slip_amount_tax_incl'];
+                    $arranged['rock_refund_tax_incl'] = $result_with_refund_single['rock_refund_tax_incl'];
+                }
             }
             $final_result[$key] = $arranged;
         }
@@ -3315,6 +3318,7 @@ class ExportSales
 
     private function getOrders($only_refunds = false)
     {
+
         $refund_state2 = 56;
         $absentColumns = array(
             'product_link',
@@ -4153,13 +4157,11 @@ class ExportSales
 //         return Db::getInstance()->executeS($this->sql);
 //        $this->sql = str_replace("DATE_FORMAT(order.date_add, '%Y-%m-%d')","DATE_FORMAT(order.invoice_date, '%Y-%m-%d')",$this->sql);
 //        $this->sql = str_replace("ORDER BY order.date_add DESC, order.id_order DESC","ORDER BY order.invoice_date DESC, order.id_order DESC",$this->sql);
-         $orders = Db::getInstance()->executeS($this->sql);
+        $orders = Db::getInstance()->executeS($this->sql);
         $custom_totals = array(
             'gift_card' => 0,
             'credit_slip' => 0,
             'voucher' => 0,
-            'ca' => 0,
-            'ca_qc' => 0,
         );
 
         if($orders){
@@ -4234,14 +4236,14 @@ class ExportSales
 
                 $payment_method_arr = explode('_',$orders[$k]['Payment Method']);
                 $breakdown_column_value = '';
-                 if(count($payment_method_arr) >1){
+                if(count($payment_method_arr) >1){
                     foreach($payment_method_arr as $payment_method_single){
                         $current_payment_amount = Db::getInstance()->getValue("SELECT op.amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = ".$order[$this->selectedColumns->order->id_order]." AND op.payment_method = '".$payment_method_single."'");
                         $current_payment_amount = abs($current_payment_amount);
                         $current_payment_amount = number_format($current_payment_amount, 2, '.', '');
                         $breakdown_column_value = $payment_method_single.'( '.$current_payment_amount.') -'.$breakdown_column_value;
                     }
-                     $breakdown_column_value = substr($breakdown_column_value, 0, -1);
+                    $breakdown_column_value = substr($breakdown_column_value, 0, -1);
 
                 }
 
@@ -4278,14 +4280,14 @@ class ExportSales
                 if($only_refunds){
                     $order_slip_available = Db::getInstance()->getRow("SELECT * FROM "._DB_PREFIX_."order_slip_detail  WHERE id_order_detail = ". $orders[$k]['id_order_detail']);
 
-                        foreach($orders[$k] as $key_index => $key_value){
-                            if(!empty($order_slip_available)){
-                                $refunded_orders[$k][$key_index]=$key_value;
-                            }else{
+                    foreach($orders[$k] as $key_index => $key_value){
+                        if(!empty($order_slip_available)){
+                            $refunded_orders[$k][$key_index]=$key_value;
+                        }else{
 
-                                $refunded_orders[$k][$key_index] = '';
-                            }
+                            $refunded_orders[$k][$key_index] = '';
                         }
+                    }
 
 
                 }else{
@@ -4388,6 +4390,8 @@ class ExportSales
 
             $excelColumns = array();
             //        d($orders);
+//            var_dump($orders);
+//            die();
             if (!empty($orders)) {
                 $counter = count($orders[0]);
                 if ($this->orderId) {
@@ -4470,9 +4474,45 @@ class ExportSales
                     $sheet->getStyle('A1:' . end($excelColumns) . '1')->getBorders()
                         ->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
+                    // Set all headers as normal
                     for ($i = 0; $i < $counter - $psp; $i++) {
                         $sheet->setCellValue($excelColumns[$i] . '1', $headers[$i]);
                     }
+
+                    // Add date with a special character to split styling
+                    $originalContent = $sheet->getCell('H1')->getValue();
+                    $date = date('Y-m-d H:i:s');
+                    $sheet->setCellValue('H1', $date . "\n\n" . $originalContent);  // Added extra newline for spacing
+
+                    // Enable text wrap and center alignment for the whole cell
+                    $sheet->getStyle('H1')
+                        ->getAlignment()
+                        ->setWrapText(true)
+                        ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+                    // Make column wider
+                    $sheet->getColumnDimension('H')->setWidth(40);
+
+                    // Make row much taller
+                    $sheet->getRowDimension(1)->setRowHeight(100);  // Increased to 100
+
+                    // Use rich text to style the date and header separately
+                    $richText = new \PhpOffice\PhpSpreadsheet\RichText\RichText();
+
+                    // Add the date with big font
+                    $dateText = $richText->createTextRun($date . "\n\n");
+                    $dateText->getFont()
+                        ->setSize(20)
+                        ->setBold(true);
+
+                    // Add the header with normal font
+                    $headerText = $richText->createTextRun($originalContent);
+                    $headerText->getFont()
+                        ->setSize(11)  // Normal size
+                        ->setBold(true);
+
+                    // Set the rich text to the cell
+                    $sheet->getCell('H1')->setValue($richText);
                 }
                 // Rename worksheet
                 $sheet->setTitle($this->module->l('Sales', 'ExportSales'));
@@ -4480,7 +4520,6 @@ class ExportSales
                 $sheet->setTitle($this->module->l('Sales', 'ExportSales'));
                 $sheet->setCellValue('A1', $this->module->l('No Data', 'ExportSales'));
             }
-
 
 
 
@@ -5082,6 +5121,7 @@ class ExportSales
                             }
                         }
                     }
+
                 } else {
                     if ($this->noProduct) {
                         $break_points = $this->getBreakPoints($groups);
@@ -5675,11 +5715,6 @@ class ExportSales
                     $totals['E']['curr'] = false;
                     $totals['F']['val'] = self::$custom_totals['voucher']/2;
                     $totals['F']['curr'] = false;
-
-                    $totals['L']['val'] = self::$custom_totals['ca']/2;
-                    $totals['L']['curr'] = false;
-                    $totals['M']['val'] = self::$custom_totals['ca_qc']/2;
-                    $totals['m']['curr'] = false;
 
                     foreach ($totals as $k => $v) {
                         $sheet->setCellValue($k . ($key - $empty_rows), ((isset($v['curr']) && $v['curr']) ? $def_curr : '') . str_replace('.', $this->decimalSeparator, (string) round($v['val'], $this->fracPart)));
@@ -7516,7 +7551,7 @@ class ExportSales
                 $total_credit_slip = 1*number_format($total_credit_slip[0]['payment_amount_incl'],2);
 //                $total_products = str_replace('$ ','',$modified_sales[$key]['total_products']) - (number_format($total_voucher[0]['payment_amount_excl'],2)+ number_format($total_credit_slip[0]['payment_amount_excl'],2));
 //                $total_products_wt = str_replace('$ ','',$modified_sales[$key]['total_products_wt']) - (number_format($total_voucher[0]['payment_amount_incl'],2) + number_format($total_credit_slip[0]['payment_amount_incl'],2));
-                  $total_discounts_wt =   round($current_total_discounts -($total_voucher +$total_credit_slip));
+                $total_discounts_wt =   round($current_total_discounts -($total_voucher +$total_credit_slip));
 
 //                var_dump($total_products_wt);
 //                die();
@@ -7725,7 +7760,7 @@ class ExportSales
 
             $sales =array_merge($final_sales,$discount_sales)  ;
 
-
+            $sheet->setCellValue('B' . ($count-1), 'Date: ' . date('Y-m-d'));
 
             array_unshift($sales, array(
                 $this->module->l('Specific Payment', 'ExportSales'),
@@ -8147,6 +8182,7 @@ class ExportSales
 
     public function generateCSV()
     {
+
         $orders = $this->getOrders();
 
         if (is_numeric($this->auto) && !$orders && Configuration::get('OXSRP_AUTOEXP_DNSEM')) {
@@ -8307,6 +8343,7 @@ class ExportSales
                                             $totals[$count]['curr'] = (bool) $curr;
                                         }
                                     }
+
                                 } elseif ($k === $this->selectedColumns->product->purchase_supplier_price) {
                                     if (!$this->purchaseSupplierPrice) {
                                         $curr = $this->displayCurrSymbol ? $this->curs->{$orders[$j][$this->selectedColumns->order->{'currency.iso_code'}]} . ' ' : '';
@@ -8382,6 +8419,7 @@ class ExportSales
                                         if ($this->displayTotals === '1') {
                                             $purchase += (float) $val * $orders[$j][$this->selectedColumns->product->product_quantity] / $orders[$j][$this->selectedColumns->order->{'currency.conversion_rate'}];
                                         }
+
                                     }
                                 } elseif ($k === $this->selectedColumns->product->product_quantity) {
                                     $csv .= $encl . $val . $encl . $dlm;
@@ -8393,6 +8431,8 @@ class ExportSales
                                             $totals[$count]['curr'] = 0;
                                         }
                                     }
+
+
                                 } elseif ($k === $this->selectedColumns->product->reduction_percent) {
                                     $csv .= $encl . str_replace('.', $this->decimalSeparator, $val) . $encl . $dlm;
                                     if ($this->displayTotals === '1') {
@@ -8604,6 +8644,7 @@ class ExportSales
                 }
                 $key = $j - 1;
             } else {
+
                 if ($this->noProduct) {
                     $break_points = $this->getBreakPoints($groups);
                 }
@@ -8959,6 +9000,7 @@ class ExportSales
             }
 
             if ($this->displayTotals === '1') {
+
                 if ($profits) {
                     $sale += $totalProducts / $orders[$key][$this->selectedColumns->order->{'currency.conversion_rate'}];
                 }
