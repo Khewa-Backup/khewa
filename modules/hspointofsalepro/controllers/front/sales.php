@@ -2920,11 +2920,25 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
 
                     if ($discount_type === PosConstants::DISCOUNT_TYPE_VOUCHER) {
                         $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
+                        // Ensure reduction_tax = false for vouchers
+                        if (Validate::isLoadedObject($cart_rule)) {
+                            $cart_rule->reduction_tax = false;
+                            $cart_rule->update();
+                        }
                     }elseif ($discount_type ==='gift-card'){
                         $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
-
+                        // Ensure reduction_tax = false for gift cards
+                        if (Validate::isLoadedObject($cart_rule)) {
+                            $cart_rule->reduction_tax = false;
+                            $cart_rule->update();
+                        }
                     }elseif ($discount_type === 'credit-slip'){
                         $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
+                        // Ensure reduction_tax = false for credit slips
+                        if (Validate::isLoadedObject($cart_rule)) {
+                            $cart_rule->reduction_tax = false;
+                            $cart_rule->update();
+                        }
                     } else {
                         // add a new cart rule if it's not an existing voucher
                         $languages = Language::getLanguages(false);
@@ -2939,6 +2953,11 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                             $names,
                             $this->module->i18n['point_of_sale']
                         );
+                        // Ensure reduction_tax = false for new percentage/amount discounts
+                        if (Validate::isLoadedObject($cart_rule)) {
+                            $cart_rule->reduction_tax = false;
+                            $cart_rule->update();
+                        }
                     }
                     if (Validate::isLoadedObject($cart_rule) && (bool) $this->context->cart->addCartRule((int) $cart_rule->id)) {
                         $this->ajax_json['success'] = true;
