@@ -2188,7 +2188,7 @@ class Thegiftcard extends Module
             $cart_rule->date_to = date('Y-m-d', strtotime('+'.Configuration::get('GIFTCARD_EXPIRATION_TIME').' '.
                 Configuration::get('GIFTCARD_EXPIRATION_DATE'), strtotime($cart_rule->date_from)));
             $cart_rule->reduction_amount = $data['amount'];
-            $cart_rule->reduction_tax = true;
+            $cart_rule->reduction_tax = false;
             $cart_rule->reduction_currency = (int)$order->id_currency;
             $cart_rule->cart_rule_restriction = (int)Configuration::get('GIFTCARD_CART_RULE') ? 0 : 1;
             $cart_rule->shop_restriction = 1;

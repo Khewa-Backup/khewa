@@ -4186,6 +4186,21 @@ class ExportSales
                 $orderprev = $ordernext = $order;
                 array_splice($orderprev, 3);
                 array_splice($ordernext, 0, 3 - count($ordernext));
+                
+                // Add Payment Breakdown as the first column after the original 3 columns (position B)
+                $payment_method_arr = explode('_',$orders[$k]['Payment Method']);
+                $breakdown_column_value = '';
+                if(count($payment_method_arr) >1){
+                    foreach($payment_method_arr as $payment_method_single){
+                        $current_payment_amount = Db::getInstance()->getValue("SELECT op.amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = ".$order[$this->selectedColumns->order->id_order]." AND op.payment_method = '".$payment_method_single."'");
+                        $current_payment_amount = abs($current_payment_amount);
+                        $current_payment_amount = number_format($current_payment_amount, 2, '.', '');
+                        $breakdown_column_value = $payment_method_single.'( '.$current_payment_amount.') -'.$breakdown_column_value;
+                    }
+                    $breakdown_column_value = substr($breakdown_column_value, 0, -1);
+                }
+                $orderprev[$payment_break_down] = $breakdown_column_value;
+                
                 $gift_card_value =0;
                 if($gift_card && ($gift_card['gift_card_amount'] > 0 || $gift_card_fr['gift_card_amount'] > 0)){
                     $gift_card_value = abs($gift_card['gift_card_amount'] +(int)$gift_card_fr['gift_card_amount']);
@@ -4234,21 +4249,6 @@ class ExportSales
 
 
 
-                $payment_method_arr = explode('_',$orders[$k]['Payment Method']);
-                $breakdown_column_value = '';
-                if(count($payment_method_arr) >1){
-                    foreach($payment_method_arr as $payment_method_single){
-                        $current_payment_amount = Db::getInstance()->getValue("SELECT op.amount FROM "._DB_PREFIX_."order_payment op, "._DB_PREFIX_."orders o WHERE o.reference = op.order_reference AND o.id_order = ".$order[$this->selectedColumns->order->id_order]." AND op.payment_method = '".$payment_method_single."'");
-                        $current_payment_amount = abs($current_payment_amount);
-                        $current_payment_amount = number_format($current_payment_amount, 2, '.', '');
-                        $breakdown_column_value = $payment_method_single.'( '.$current_payment_amount.') -'.$breakdown_column_value;
-                    }
-                    $breakdown_column_value = substr($breakdown_column_value, 0, -1);
-
-                }
-
-
-                $orderprev[$payment_break_down] =$breakdown_column_value;
                 $orders[$k] = array_merge($orderprev, $ordernext);
                 if( $orders[$k]['Total Discounts (Tax included)']>0  ){
                     $new_discount_value = $orders[$k]['Total Discounts (Tax included)'] - $gift_card_value;
@@ -4481,7 +4481,7 @@ class ExportSales
 
                     // Add date with a special character to split styling
                     $originalContent = $sheet->getCell('H1')->getValue();
-                    $date = date('Y-m-d H:i:s');
+                    $date = $this->filteredDate ? $this->filteredDate : date('Y-m-d H:i:s');
                     $sheet->setCellValue('H1', $date . "\n\n" . $originalContent);  // Added extra newline for spacing
 
                     // Enable text wrap and center alignment for the whole cell
@@ -7760,7 +7760,9 @@ class ExportSales
 
             $sales =array_merge($final_sales,$discount_sales)  ;
 
-            $sheet->setCellValue('B' . ($count-1), 'Date: ' . date('Y-m-d'));
+            // Display the selected date range instead of today's date
+            $displayDate = $this->filteredDate ? $this->filteredDate : date('Y-m-d');
+            $sheet->setCellValue('B' . ($count-1), 'Date: ' . $displayDate);
 
             array_unshift($sales, array(
                 $this->module->l('Specific Payment', 'ExportSales'),
