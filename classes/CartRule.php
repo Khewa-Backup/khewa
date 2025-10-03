@@ -56,6 +56,7 @@ class CartRuleCore extends ObjectModel
     public $quantity_per_user = 1;
     public $priority = 1;
     /**
+     
      * @var bool
      */
     public $partial_use = 1;
@@ -1394,49 +1395,61 @@ class CartRuleCore extends ObjectModel
                     }
                     $reduction_value += $prorata * $reduction_amount;
                 } else {
-                    if ($this->reduction_product > 0) {
-                        foreach ($all_products as $product) {
-                            if ($product['id_product'] == $this->reduction_product) {
-                                $product_price_ti = $product['price_wt'];
-                                $product_price_te = $product['price'];
-                                $product_vat_amount = $product_price_ti - $product_price_te;
+                    // Special handling for tax-excluded discounts when use_tax = true
+                    if (!$this->reduction_tax && $use_tax) {
+                        // For percentage discounts: apply discount before tax (current behavior)
+                        // For amount discounts: apply discount after tax (new behavior)
+                        if ($this->reduction_percent > 0) {
+                            // Percentage discount: apply to tax-excluded amount
+                            $cart_amount = $cart_amount_te; // Use tax-excluded amount for calculation
+                            $reduction_amount = min($reduction_amount, $cart_amount);
+                            $reduction_value += $prorata * $reduction_amount;
+                        } else {
+                            // Amount discount: apply to tax-included amount
+                            $cart_amount = $cart_amount_ti; // Use tax-included amount for calculation
+                            $reduction_amount = min($reduction_amount, $cart_amount);
+                            $reduction_value += $prorata * $reduction_amount;
+                        }
+                    } else {
+                        // Original logic for other cases
+                        if ($this->reduction_product > 0) {
+                            foreach ($all_products as $product) {
+                                if ($product['id_product'] == $this->reduction_product) {
+                                    $product_price_ti = $product['price_wt'];
+                                    $product_price_te = $product['price'];
+                                    $product_vat_amount = $product_price_ti - $product_price_te;
 
-                                if ($product_vat_amount == 0 || $product_price_te == 0) {
-                                    $product_vat_rate = 0;
-                                } else {
-                                    $product_vat_rate = $product_vat_amount / $product_price_te;
-                                }
+                                    if ($product_vat_amount == 0 || $product_price_te == 0) {
+                                        $product_vat_rate = 0;
+                                    } else {
+                                        $product_vat_rate = $product_vat_amount / $product_price_te;
+                                    }
 
-                                if ($this->reduction_tax && !$use_tax) {
-                                    $reduction_value += $prorata * $reduction_amount / (1 + $product_vat_rate);
-                                } elseif (!$this->reduction_tax && $use_tax) {
-                                    $reduction_value += $prorata * $reduction_amount * (1 + $product_vat_rate);
+                                    if ($this->reduction_tax && !$use_tax) {
+                                        $reduction_value += $prorata * $reduction_amount / (1 + $product_vat_rate);
+                                    } elseif (!$this->reduction_tax && $use_tax) {
+                                        $reduction_value += $prorata * $reduction_amount * (1 + $product_vat_rate);
+                                    }
                                 }
                             }
-                        }
-                    } elseif ($this->reduction_product == 0) {
-                        // Discount (¤) on the whole order
-                        $cart_amount_te = null;
-                        $cart_amount_ti = null;
-                        $cart_average_vat_rate = $context->cart->getAverageProductsTaxRate($cart_amount_te, $cart_amount_ti);
+                        } elseif ($this->reduction_product == 0) {
+                            // Discount (¤) on the whole order
+                            $cart_amount_te = null;
+                            $cart_amount_ti = null;
+                            $cart_average_vat_rate = $context->cart->getAverageProductsTaxRate($cart_amount_te, $cart_amount_ti);
 
-                        // The reduction cannot exceed the products total, except when we do not want it to be limited (for the partial use calculation)
-                        if ($filter != CartRule::FILTER_ACTION_ALL_NOCAP) {
-                            $reduction_amount = min($reduction_amount, $this->reduction_tax ? $cart_amount_ti : $cart_amount_te);
-                        }
+                            // The reduction cannot exceed the products total, except when we do not want it to be limited (for the partial use calculation)
+                            if ($filter != CartRule::FILTER_ACTION_ALL_NOCAP) {
+                                $reduction_amount = min($reduction_amount, $this->reduction_tax ? $cart_amount_ti : $cart_amount_te);
+                            }
 
-                        if ($this->reduction_tax && !$use_tax) {
-                            $reduction_value += $prorata * $reduction_amount / (1 + $cart_average_vat_rate);
-                        } elseif (!$this->reduction_tax && $use_tax) {
-                            $reduction_value += $prorata * $reduction_amount * (1 + $cart_average_vat_rate);
+                            if ($this->reduction_tax && !$use_tax) {
+                                $reduction_value += $prorata * $reduction_amount / (1 + $cart_average_vat_rate);
+                            } elseif (!$this->reduction_tax && $use_tax) {
+                                $reduction_value += $prorata * $reduction_amount * (1 + $cart_average_vat_rate);
+                            }
                         }
                     }
-                    /*
-                     * Reduction on the cheapest or on the selection is not really meaningful and has been disabled in the backend, it only applies with percent
-                     * Please keep this code, so it won't be considered as a bug
-                     * elseif ($this->reduction_product == -1)
-                     * elseif ($this->reduction_product == -2)
-                     */
                 }
 
                 // Take care of the other cart rules values if the filter allow it
