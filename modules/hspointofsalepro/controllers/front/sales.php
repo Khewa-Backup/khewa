@@ -27,6 +27,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
     protected $static_actions = array(
         'search',
         'getCombinations',
+        'getDiscountInfo',
     );
 
     /**
@@ -5058,6 +5059,68 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
             $this->ajax_json['message'] = $this->module->i18n['oops_something_goes_wrong'];
         }
     }
+
+    /**
+     * Get discount information for an order
+     * 
+     * @return void
+     */
+    public function ajaxProcessGetDiscountInfo()
+    {
+        $id_order = (int) Tools::getValue('id_order', 0);
+        
+       
+        if (empty($id_order)) {
+            $this->ajax_json = array(
+                'success' => false,
+                'message' => 'Order ID is required',
+                'data' => array()
+            );
+            return;
+        }
+        
+        // try {
+            // Query to get discount information from order_cart_rule and cart_rule tables
+            $sql = 'SELECT cr.reduction_percent, cr.reduction_amount 
+                    FROM ' . _DB_PREFIX_ . 'order_cart_rule ocr
+                    INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+                    WHERE ocr.id_order = ' . (int) $id_order;
+            
+            $result = Db::getInstance()->getRow($sql);
+            
+            if ($result) {
+                $is_percentage = (float) $result['reduction_percent'] > 0;
+                $reduction_percent = (float) $result['reduction_percent'];
+                $reduction_amount = (float) $result['reduction_amount'];
+                
+                $this->ajax_json = array(
+                    'success' => true,
+                    'message' => 'Discount information retrieved',
+                    'data' => array(
+                        'is_percentage' => $is_percentage,
+                        'reduction_percent' => $reduction_percent,
+                        'reduction_amount' => $reduction_amount
+                    )
+                );
+            } else {
+                $this->ajax_json = array(
+                    'success' => true,
+                    'message' => 'No discount found for this order',
+                    'data' => array(
+                        'is_percentage' => false,
+                        'reduction_percent' => 0,
+                        'reduction_amount' => 0
+                    )
+                );
+            }
+        // } catch (Exception $e) {
+        //     $this->ajax_json = array(
+        //         'success' => false,
+        //         'message' => 'Error retrieving discount information: ' . $e->getMessage(),
+        //         'data' => array()
+        //     );
+        // }
+    }
 }
 
 function unique_multidim_array($array, $key)
@@ -5075,3 +5138,4 @@ function unique_multidim_array($array, $key)
     }
     return array_values($temp_array);
 }
+
