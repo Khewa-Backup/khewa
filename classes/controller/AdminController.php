@@ -1000,8 +1000,13 @@ class AdminControllerCore extends Controller
                     $this->processFilter();
                 }
 
-                if (isset($_POST) && count($_POST) && (int) Tools::getValue('submitFilter' . $this->list_id) || Tools::isSubmit('submitReset' . $this->list_id)) {
-                    $this->setRedirectAfter(self::$currentIndex . '&token=' . $this->token . (Tools::isSubmit('submitFilter' . $this->list_id) ? '&submitFilter' . $this->list_id . '=' . (int) Tools::getValue('submitFilter' . $this->list_id) : ''));
+                // Only redirect if we have a filter submission via POST (not GET) to prevent redirect loops
+                // Check explicitly for POST data to avoid redirect loops when page loads after redirect
+                $hasFilterPost = isset($_POST['submitFilter' . $this->list_id]) && (int) $_POST['submitFilter' . $this->list_id];
+                $hasResetPost = isset($_POST['submitReset' . $this->list_id]);
+                
+                if (($hasFilterPost || $hasResetPost) && $_SERVER['REQUEST_METHOD'] == 'POST' && empty($this->redirect_after)) {
+                    $this->setRedirectAfter(self::$currentIndex . '&token=' . $this->token . ($hasFilterPost ? '&submitFilter' . $this->list_id . '=' . (int) $_POST['submitFilter' . $this->list_id] : ''));
                 }
 
                 // If the method named after the action exists, call "before" hooks, then call action method, then call "after" hooks

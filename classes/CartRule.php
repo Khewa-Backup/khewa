@@ -1177,7 +1177,13 @@ class CartRuleCore extends ObjectModel
 
         // set base price that will be used for percent reductions
         if (!empty($context->virtualTotalTaxIncluded) && !empty($context->virtualTotalTaxExcluded)) {
-            $basePriceForPercentReduction = $use_tax ? $context->virtualTotalTaxIncluded : $context->virtualTotalTaxExcluded;
+            // For percentage discounts: if reduction_tax = false, always use tax-excluded (discount before tax)
+            // Otherwise, use tax-included if use_tax = true
+            if ((float) $this->reduction_percent > 0 && !$this->reduction_tax) {
+                $basePriceForPercentReduction = $context->virtualTotalTaxExcluded;
+            } else {
+                $basePriceForPercentReduction = $use_tax ? $context->virtualTotalTaxIncluded : $context->virtualTotalTaxExcluded;
+            }
         }
 
         if (!$context) {
@@ -1240,17 +1246,26 @@ class CartRuleCore extends ObjectModel
 
         if (in_array($filter, [CartRule::FILTER_ACTION_ALL, CartRule::FILTER_ACTION_ALL_NOCAP, CartRule::FILTER_ACTION_REDUCTION])) {
             $order_package_products_total = 0;
+            $order_package_products_total_te = 0;
             if ((float) $this->reduction_amount > 0
                 || (float) $this->reduction_percent && $this->reduction_product == 0) {
                 $order_package_products_total = $context->cart->getOrderTotal($use_tax, Cart::ONLY_PRODUCTS, $package_products);
+                // For percentage discounts with reduction_tax = false, we need tax-excluded total
+                if ((float) $this->reduction_percent && !$this->reduction_tax) {
+                    $order_package_products_total_te = $context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS, $package_products);
+                }
             }
             // Discount (%) on the whole order
             if ((float) $this->reduction_percent && $this->reduction_product == 0) {
                 // Do not give a reduction on free products!
-                $order_total = $order_package_products_total;
+                // For percentage discounts: if reduction_tax = false, use tax-excluded (discount before tax)
+                $use_te_for_percent = !$this->reduction_tax && $use_tax;
+                $order_total = $use_te_for_percent ? $order_package_products_total_te : $order_package_products_total;
                 $basePriceContainsDiscount = isset($basePriceForPercentReduction) && $order_total === $basePriceForPercentReduction;
                 foreach ($context->cart->getCartRules(CartRule::FILTER_ACTION_GIFT, false) as $cart_rule) {
-                    $freeProductsPrice = Tools::ps_round($cart_rule['obj']->getContextualValue($use_tax, $context, CartRule::FILTER_ACTION_GIFT, $package), Context::getContext()->getComputingPrecision());
+                    // For tax-excluded calculation, get gift price without tax
+                    $gift_use_tax = $use_te_for_percent ? false : $use_tax;
+                    $freeProductsPrice = Tools::ps_round($cart_rule['obj']->getContextualValue($gift_use_tax, $context, CartRule::FILTER_ACTION_GIFT, $package), Context::getContext()->getComputingPrecision());
                     if ($basePriceContainsDiscount) {
                         // Gifts haven't been excluded yet, we need to do it
                         $basePriceForPercentReduction -= $freeProductsPrice;
@@ -1262,11 +1277,8 @@ class CartRuleCore extends ObjectModel
                 if ($this->reduction_exclude_special) {
                     foreach ($package_products as $product) {
                         if ($product['reduction_applies']) {
-                            if ($use_tax) {
-                                $excludedReduction = Tools::ps_round($product['total_wt'], Context::getContext()->getComputingPrecision());
-                            } else {
-                                $excludedReduction = Tools::ps_round($product['total'], Context::getContext()->getComputingPrecision());
-                            }
+                            // For tax-excluded calculation, use tax-excluded price
+                            $excludedReduction = Tools::ps_round($use_te_for_percent ? $product['total'] : ($use_tax ? $product['total_wt'] : $product['total']), Context::getContext()->getComputingPrecision());
                             $order_total -= $excludedReduction;
                             if ($basePriceContainsDiscount) {
                                 $basePriceForPercentReduction -= $excludedReduction;
@@ -1283,7 +1295,9 @@ class CartRuleCore extends ObjectModel
             if ((float) $this->reduction_percent && $this->reduction_product > 0) {
                 foreach ($package_products as $product) {
                     if ($product['id_product'] == $this->reduction_product && (($this->reduction_exclude_special && !$product['reduction_applies']) || !$this->reduction_exclude_special)) {
-                        $reduction_value += ($use_tax ? $product['total_wt'] : $product['total']) * $this->reduction_percent / 100;
+                        // For percentage discounts: if reduction_tax = false, use tax-excluded (discount before tax)
+                        $product_price = (!$this->reduction_tax && $use_tax) ? $product['total'] : ($use_tax ? $product['total_wt'] : $product['total']);
+                        $reduction_value += $product_price * $this->reduction_percent / 100;
                     }
                 }
             }
@@ -1292,9 +1306,11 @@ class CartRuleCore extends ObjectModel
             if ((float) $this->reduction_percent && $this->reduction_product == -1) {
                 $minPrice = false;
                 $cheapest_product = null;
+                // For percentage discounts: if reduction_tax = false, use tax-excluded (discount before tax)
+                $use_te_for_percent = !$this->reduction_tax && $use_tax;
                 foreach ($all_products as $product) {
                     $price = $product['price'];
-                    if ($use_tax) {
+                    if ($use_tax && !$use_te_for_percent) {
                         // since later on we won't be able to know the product the cart rule was applied to,
                         // use average cart VAT for price_wt
                         $price *= (1 + $context->cart->getAverageProductsTaxRate());
@@ -1322,13 +1338,15 @@ class CartRuleCore extends ObjectModel
             if ((float) $this->reduction_percent && $this->reduction_product == -2) {
                 $selected_products_reduction = 0;
                 $selected_products = $this->checkProductRestrictionsFromCart($context->cart, true);
+                // For percentage discounts: if reduction_tax = false, use tax-excluded (discount before tax)
+                $use_te_for_percent = !$this->reduction_tax && $use_tax;
                 if (is_array($selected_products)) {
                     foreach ($package_products as $product) {
                         if ((in_array($product['id_product'] . '-' . $product['id_product_attribute'], $selected_products)
                                 || in_array($product['id_product'] . '-0', $selected_products))
                             && (($this->reduction_exclude_special && !$product['reduction_applies']) || !$this->reduction_exclude_special)) {
                             $price = $product['price'];
-                            if ($use_tax) {
+                            if ($use_tax && !$use_te_for_percent) {
                                 $infos = Product::getTaxesInformations($product, $context);
                                 $tax_rate = $infos['rate'] / 100;
                                 // As the price is tax excluded but ecotax included, we need to substract the ecotax before getting the price tax included
