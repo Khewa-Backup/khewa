@@ -2512,6 +2512,7 @@ class OrderCore extends ObjectModel
 
         $free_shipping_tax = 0;
         $product_specific_discounts = [];
+        $has_fixed_amount_discount = false; // Check if there are any fixed amount discounts
 
         $expected_total_base = $this->total_products - $this->total_discounts_tax_excl;
 
@@ -2523,6 +2524,10 @@ class OrderCore extends ObjectModel
             }
 
             $cart_rule = new CartRule($order_cart_rule['id_cart_rule']);
+            // Check if this is a fixed amount discount (not percentage)
+            if ((float) $cart_rule->reduction_amount > 0 && (float) $cart_rule->reduction_percent == 0) {
+                $has_fixed_amount_discount = true;
+            }
             if ($cart_rule->reduction_product > 0) {
                 if (empty($product_specific_discounts[$cart_rule->reduction_product])) {
                     $product_specific_discounts[$cart_rule->reduction_product] = 0;
@@ -2582,21 +2587,27 @@ class OrderCore extends ObjectModel
                 $tax_rates[$tax->id] = $tax->rate;
             }
 
-            foreach ($tax_calculator->getTaxesAmount($discounted_price_tax_excl) as $id_tax => $unit_amount) {
+            // For fixed amount discounts: calculate taxes on original price (before discount)
+            // For percentage discounts: calculate taxes on discounted price (after discount)
+            $price_for_tax_calculation = $has_fixed_amount_discount ? $order_detail['unit_price_tax_excl'] : $discounted_price_tax_excl;
+
+            foreach ($tax_calculator->getTaxesAmount($price_for_tax_calculation) as $id_tax => $unit_amount) {
                 $total_tax_base = 0;
+                // For fixed amount discounts, use original price for tax base calculation
+                $tax_base_price = $has_fixed_amount_discount ? $order_detail['unit_price_tax_excl'] : $discounted_price_tax_excl;
                 switch ($round_type) {
                     case Order::ROUND_ITEM:
-                        $total_tax_base = $quantity * Tools::ps_round($discounted_price_tax_excl, Context::getContext()->getComputingPrecision(), $this->round_mode);
+                        $total_tax_base = $quantity * Tools::ps_round($tax_base_price, Context::getContext()->getComputingPrecision(), $this->round_mode);
                         $total_amount = $quantity * Tools::ps_round($unit_amount, Context::getContext()->getComputingPrecision(), $this->round_mode);
 
                         break;
                     case Order::ROUND_LINE:
-                        $total_tax_base = Tools::ps_round($quantity * $discounted_price_tax_excl, Context::getContext()->getComputingPrecision(), $this->round_mode);
+                        $total_tax_base = Tools::ps_round($quantity * $tax_base_price, Context::getContext()->getComputingPrecision(), $this->round_mode);
                         $total_amount = Tools::ps_round($quantity * $unit_amount, Context::getContext()->getComputingPrecision(), $this->round_mode);
 
                         break;
                     case Order::ROUND_TOTAL:
-                        $total_tax_base = $quantity * $discounted_price_tax_excl;
+                        $total_tax_base = $quantity * $tax_base_price;
                         $total_amount = $quantity * $unit_amount;
 
                         break;
@@ -2613,7 +2624,7 @@ class OrderCore extends ObjectModel
                     'id_order_detail' => $id_order_detail,
                     'id_tax' => $id_tax,
                     'tax_rate' => $tax_rates[$id_tax],
-                    'unit_tax_base' => $discounted_price_tax_excl,
+                    'unit_tax_base' => $has_fixed_amount_discount ? $order_detail['unit_price_tax_excl'] : $discounted_price_tax_excl,
                     'total_tax_base' => $total_tax_base,
                     'unit_amount' => $unit_amount,
                     'total_amount' => $total_amount,
