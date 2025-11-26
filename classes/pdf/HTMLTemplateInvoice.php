@@ -240,6 +240,7 @@ class HTMLTemplateInvoiceCore extends HTMLTemplate
 
         $cart_rules = $this->order->getCartRules($this->order_invoice->id);
         $free_shipping = false;
+        $has_fixed_amount_discount = false;
         foreach ($cart_rules as $key => $cart_rule) {
             if ($cart_rule['free_shipping']) {
                 $free_shipping = true;
@@ -256,6 +257,13 @@ class HTMLTemplateInvoiceCore extends HTMLTemplate
                  */
                 if ($cart_rules[$key]['value'] == 0) {
                     unset($cart_rules[$key]);
+                }
+            }
+            // Check if this is a fixed amount discount (gift card)
+            if (isset($cart_rule['id_cart_rule'])) {
+                $cart_rule_obj = new CartRule($cart_rule['id_cart_rule']);
+                if ((float) $cart_rule_obj->reduction_amount > 0 && (float) $cart_rule_obj->reduction_percent == 0) {
+                    $has_fixed_amount_discount = true;
                 }
             }
         }
@@ -281,7 +289,28 @@ class HTMLTemplateInvoiceCore extends HTMLTemplate
 
         $wrapping_taxes = $this->order_invoice->total_wrapping_tax_incl - $this->order_invoice->total_wrapping_tax_excl;
 
-        $total_taxes = $this->order_invoice->total_paid_tax_incl - $this->order_invoice->total_paid_tax_excl;
+        // Get ecotax taxes
+        $ecotax_taxes = 0;
+        if (Configuration::get('PS_USE_ECOTAX')) {
+            $ecotax_breakdown = $this->order_invoice->getEcoTaxTaxesBreakdown();
+            foreach ($ecotax_breakdown as $ecotax) {
+                $ecotax_taxes += $ecotax['amount'];
+            }
+        }
+
+        // For fixed amount discounts: calculate total tax from breakdown (taxes are calculated on original price)
+        // For percentage discounts: use stored totals (taxes are calculated on discounted price)
+        if ($has_fixed_amount_discount) {
+            // Calculate total tax from breakdown components
+            $total_taxes = $product_taxes + $shipping_taxes + $wrapping_taxes + $ecotax_taxes;
+        } else {
+            // Use stored totals for percentage discounts
+            $total_taxes = $this->order_invoice->total_paid_tax_incl - $this->order_invoice->total_paid_tax_excl;
+            // Recalculate ecotax as residual if not already calculated
+            if (!Configuration::get('PS_USE_ECOTAX') || $ecotax_taxes == 0) {
+                $ecotax_taxes = $total_taxes - $product_taxes - $wrapping_taxes - $shipping_taxes;
+            }
+        }
 
         $footer = [
             'products_before_discounts_tax_excl' => $this->order_invoice->total_products,
@@ -297,7 +326,7 @@ class HTMLTemplateInvoiceCore extends HTMLTemplate
             'wrapping_tax_excl' => $this->order_invoice->total_wrapping_tax_excl,
             'wrapping_taxes' => $wrapping_taxes,
             'wrapping_tax_incl' => $this->order_invoice->total_wrapping_tax_incl,
-            'ecotax_taxes' => $total_taxes - $product_taxes - $wrapping_taxes - $shipping_taxes,
+            'ecotax_taxes' => $ecotax_taxes,
             'total_taxes' => $total_taxes,
             'total_paid_tax_excl' => $this->order_invoice->total_paid_tax_excl,
             'total_paid_tax_incl' => $this->order_invoice->total_paid_tax_incl,

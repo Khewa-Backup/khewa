@@ -227,8 +227,18 @@ class CartRuleCalculator
                 $totalTaxExcl += $concernedRow->getFinalTotalPrice()->getTaxExcluded();
             }
 
-            // The reduction cannot exceed the products total, except when we do not want it to be limited (for the partial use calculation)
-            $discountConverted = min($discountConverted, $cartRule->reduction_tax ? $totalTaxIncl : $totalTaxExcl);
+            // For fixed amount discounts (gift cards) applied after tax: allow discount to exceed product total
+            // For percentage discounts or tax-included discounts: cap at product total
+            $isFixedAmountDiscount = (float) $cartRule->reduction_percent == 0 && (float) $cartRule->reduction_amount > 0;
+            $isTaxExcluded = !$cartRule->reduction_tax;
+            
+            if ($isFixedAmountDiscount && $isTaxExcluded) {
+                // Fixed amount discount applied after tax - don't cap, can exceed product total to cover tax
+                // $discountConverted remains unchanged
+            } else {
+                // The reduction cannot exceed the products total
+                $discountConverted = min($discountConverted, $cartRule->reduction_tax ? $totalTaxIncl : $totalTaxExcl);
+            }
 
             // apply weighted discount :
             // on each line we apply a part of the discount corresponding to discount*rowWeight/total

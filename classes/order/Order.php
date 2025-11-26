@@ -2539,7 +2539,9 @@ class OrderCore extends ObjectModel
         }
 
         $products_tax = $this->total_products_wt - $this->total_products;
-        $discounts_tax = $this->total_discounts_tax_incl - $this->total_discounts_tax_excl;
+        // For fixed amount discounts: discount is applied after tax, so it doesn't reduce tax
+        // For percentage discounts: discount is applied before tax, so it reduces tax
+        $discounts_tax = $has_fixed_amount_discount ? 0 : ($this->total_discounts_tax_incl - $this->total_discounts_tax_excl);
 
         // We add $free_shipping_tax because when there is free shipping, the tax that would
         // be paid if there wasn't is included in $discounts_tax.

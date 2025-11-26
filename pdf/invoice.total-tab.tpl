@@ -72,14 +72,13 @@
 			</td>
 		</tr>
 
-		{* Tax shown after discount (recomputed as incl - excl) *}
+		{* Tax shown after discount - use footer.total_taxes which correctly handles fixed amount discounts *}
 		<tr class="bold">
 			<td class="grey">
 				{l s='Total Tax' d='Shop.Pdf' pdf='true'}
 			</td>
 			<td class="white">
-				{assign var="taxAmount" value=$footer.total_paid_tax_incl - $footer.total_paid_tax_excl}
-				{displayPrice currency=$order->id_currency price=$taxAmount}
+				{displayPrice currency=$order->id_currency price=$footer.total_taxes}
 			</td>
 		</tr>
 
@@ -136,9 +135,7 @@
 				{l s='Total Tax' d='Shop.Pdf' pdf='true'}
 			</td>
 			<td class="white">
-				{*				{displayPrice currency=$order->id_currency price=$footer.total_taxes}*}
-				{assign var="taxAmount" value=$footer.total_paid_tax_incl - $footer.total_paid_tax_excl}
-				{displayPrice currency=$order->id_currency price=$taxAmount}
+				{displayPrice currency=$order->id_currency price=$footer.total_taxes}
 			</td>
 		</tr>
 

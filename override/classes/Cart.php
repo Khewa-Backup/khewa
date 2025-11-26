@@ -629,7 +629,13 @@ class Cart extends CartCore
 
                 // Then, calculate the contextual value for each one
                 $flag = false;
+                $has_fixed_amount_discount = false;
                 foreach ($cart_rules as $cart_rule) {
+                    // Check if this is a fixed amount discount (gift card) - applied after tax, so can exceed product total
+                    if ((float) $cart_rule['obj']->reduction_amount > 0 && (float) $cart_rule['obj']->reduction_percent == 0) {
+                        $has_fixed_amount_discount = true;
+                    }
+                    
                     // If the cart rule offers free shipping, add the shipping cost
                     if (($with_shipping || $type == Cart::ONLY_DISCOUNTS) && $cart_rule['obj']->free_shipping && !$flag) {
                         $order_shipping_discount = (float) Tools::ps_round($cart_rule['obj']->getContextualValue($with_taxes, $virtual_context, CartRule::FILTER_ACTION_SHIPPING, ($param_product ? $package : null), $use_cache), $compute_precision);
@@ -659,7 +665,13 @@ class Cart extends CartCore
                         $order_total_discount += Tools::ps_round($cart_rule['obj']->getContextualValue($with_taxes, $virtual_context, CartRule::FILTER_ACTION_REDUCTION, $package, $use_cache), $compute_precision);
                     }
                 }
-                $order_total_discount = min(Tools::ps_round($order_total_discount, 2), (float) $order_total_products) + (float) $order_shipping_discount;
+                // For fixed amount discounts: allow discount to exceed product total (can cover tax)
+                // For percentage discounts: cap at product total (applied before tax)
+                if ($has_fixed_amount_discount) {
+                    $order_total_discount = Tools::ps_round($order_total_discount, 2) + (float) $order_shipping_discount;
+                } else {
+                    $order_total_discount = min(Tools::ps_round($order_total_discount, 2), (float) $order_total_products) + (float) $order_shipping_discount;
+                }
                 $order_total -= $order_total_discount;
             }
 
@@ -870,7 +882,13 @@ class Cart extends CartCore
 
                 // Then, calculate the contextual value for each one
                 $flag = false;
+                $has_fixed_amount_discount = false;
                 foreach ($cart_rules as $cart_rule) {
+                    // Check if this is a fixed amount discount (gift card) - applied after tax, so can exceed product total
+                    if ((float) $cart_rule['obj']->reduction_amount > 0 && (float) $cart_rule['obj']->reduction_percent == 0) {
+                        $has_fixed_amount_discount = true;
+                    }
+                    
                     // If the cart rule offers free shipping, add the shipping cost
                     if (($with_shipping || $type == Cart::ONLY_DISCOUNTS) && $cart_rule['obj']->free_shipping && !$flag) {
                         $order_shipping_discount = (float) Tools::ps_round($cart_rule['obj']->getContextualValue($with_taxes, $virtual_context, CartRule::FILTER_ACTION_SHIPPING, ($param_product ? $package : null), $use_cache), $compute_precision);
@@ -901,7 +919,13 @@ class Cart extends CartCore
                     }
                 }
 
-                $order_total_discount = min(Tools::ps_round($order_total_discount, 2), (float) $order_total_products) + (float) $order_shipping_discount;
+                // For fixed amount discounts: allow discount to exceed product total (can cover tax)
+                // For percentage discounts: cap at product total (applied before tax)
+                if ($has_fixed_amount_discount) {
+                    $order_total_discount = Tools::ps_round($order_total_discount, 2) + (float) $order_shipping_discount;
+                } else {
+                    $order_total_discount = min(Tools::ps_round($order_total_discount, 2), (float) $order_total_products) + (float) $order_shipping_discount;
+                }
                 $order_total -= $order_total_discount;
             }
 

@@ -227,8 +227,15 @@ class Calculator
     {
         $amount = new AmountImmutable();
         $isFreeShippingAppliedToAmount = false;
+        $hasFixedAmountDiscount = false;
         foreach ($this->cartRules as $cartRule) {
-            if ((bool) $cartRule->getRuleData()['free_shipping']) {
+            $ruleData = $cartRule->getRuleData();
+            // Check if this is a fixed amount discount (gift card) applied after tax
+            if ((float) $ruleData['reduction_percent'] == 0 && (float) $ruleData['reduction_amount'] > 0 && !$ruleData['reduction_tax']) {
+                $hasFixedAmountDiscount = true;
+            }
+            
+            if ((bool) $ruleData['free_shipping']) {
                 if ($isFreeShippingAppliedToAmount) {
                     $initialShippingFees = $this->getFees()->getInitialShippingFees();
                     $amount = $amount->sub($initialShippingFees);
@@ -247,8 +254,9 @@ class Calculator
             ;
             $allowedMaxDiscount = $allowedMaxDiscount->add($shippingDiscount);
         }
-        // discount cannot be above total cart price
-        if ($amount > $allowedMaxDiscount) {
+        // For fixed amount discounts applied after tax: allow discount to exceed product total (can cover tax)
+        // For percentage discounts: cap at product total
+        if (!$hasFixedAmountDiscount && $amount > $allowedMaxDiscount) {
             $amount = $allowedMaxDiscount;
         }
 
