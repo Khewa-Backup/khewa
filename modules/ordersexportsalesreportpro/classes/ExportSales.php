@@ -1301,27 +1301,45 @@ class ExportSales
 
     private function getTaxes()
     {
-//        $sql = "SELECT
-//                    tax_lang.`name`,
-//                    CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(odt.total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_price_tax_excl
-//            " . $this->helperSql . '
-//                    LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON `product`.id_order_detail = odt.id_order_detail
-//                    LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tax_lang ON tax_lang.id_tax = odt.id_tax AND tax_lang.id_lang = ' . $this->langId . '
-//
-//                    WHERE odt.id_tax IS NOT NULL AND odt.id_tax <> 0 ' . $this->mutualSql . ' GROUP BY odt.id_tax
-//                    ORDER BY odt.id_tax;';
+        // Use the same calculation logic as Sales by Payment Method tab
+        $refund_state = Configuration::getGlobalValue('PS_OS_REFUND');
+        $canceled_state = Configuration::getGlobalValue('PS_OS_CANCELED');
+        $error_state = Configuration::getGlobalValue('PS_OS_ERROR');
+        $refund_state2 = 56;
 
+        $fromDate = pSQL(Tools::getValue('orders_from_date'));
+        $toDate = pSQL(Tools::getValue('orders_to_date'));
 
         $sql = "SELECT
-                    tax_lang.`name`,
-                    CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(odt.unit_amount*(od.product_quantity - od.product_quantity_refunded)), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_price_tax_excl
-            " . $this->helperSql . '
+                    `name`,
+                    CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_price_tax_excl
+                FROM (
+                    SELECT
+                        `order`.id_order,
+                        tax_lang.`name`,
+                        odt.id_tax,
+                        CASE
+                            WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state) THEN SUM(0)
+                            WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state) THEN
+                                CASE
+                                    WHEN (`order`.`possible_refund_date` >= '$fromDate' AND `order`.`possible_refund_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN SUM(0)
+                                    ELSE SUM(odt.total_amount)
+                                END
+                            ELSE SUM(odt.total_amount)
+                        END AS tax_total_amount
+                    " . $this->helperSql . '
                     LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON `product`.id_order_detail = odt.id_order_detail
-                    LEFT JOIN ps_order_detail od ON od.id_order_detail = odt.id_order_detail
                     LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tax_lang ON tax_lang.id_tax = odt.id_tax AND tax_lang.id_lang = ' . $this->langId . '
                     
-                    WHERE odt.id_tax IS NOT NULL AND odt.id_tax <> 0 ' . $this->mutualSql . ' GROUP BY odt.id_tax
-                    ORDER BY odt.id_tax;';
+                    WHERE odt.id_tax IS NOT NULL AND odt.id_tax <> 0 ' . $this->mutualSql . ' 
+                    GROUP BY `order`.id_order, odt.id_tax
+                ) tmp
+                GROUP BY id_tax
+                ORDER BY id_tax;';
+
+        // Include refunded orders in the query (same as Sales by Payment Method)
+        $sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25,60))',$sql);
+
         return DB::getInstance()->executeS($sql);
     }
 
