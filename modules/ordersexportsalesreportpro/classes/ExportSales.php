@@ -1175,26 +1175,10 @@ class ExportSales
                     END
                     AS total_shipping_tax_incl,
 
-                    CASE
-                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN SUM(0)
-                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
-                           CASE
-                               WHEN (`order`.`possible_refund_date` >= '$fromDate' AND `order`.`possible_refund_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN SUM(0)
-                               ELSE SUM(canada_tax.total_amount)
-                           END
-                       ELSE SUM(canada_tax.total_amount)
-                    END
+                    SUM(canada_tax.unit_amount * (`product`.product_quantity - `product`.product_quantity_refunded))
                     AS canada_tax_total_amount,
 
-                    CASE
-                       WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state )THEN SUM(0)
-                       WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state ) THEN
-                           CASE
-                               WHEN (`order`.`possible_refund_date` >= '$fromDate' AND `order`.`possible_refund_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN SUM(0)
-                               ELSE SUM(quebec_tax.total_amount)
-                           END
-                       ELSE SUM(quebec_tax.total_amount)
-                    END
+                    SUM(quebec_tax.unit_amount * (`product`.product_quantity - `product`.product_quantity_refunded))
                     AS quebec_tax_total_amount,
 
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
@@ -1210,7 +1194,8 @@ class ExportSales
 
 
 
-        $sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25, 60))',$sql);
+        // Removed str_replace to use same mutualSql as Taxes Tab (excludes refund states 7, 56)
+        // $sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25, 60))',$sql);
 
 //        var_dump($sql);
 //        die();
@@ -1246,8 +1231,8 @@ class ExportSales
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_paid_tax_excl) total_paid_tax_excl,
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, (order.total_paid_tax_incl)) total_paid_tax_incl,
                     IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, order.total_shipping_tax_incl) total_shipping_tax_incl,
-                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, canada_tax.total_amount + (IFNULL(canada_shipping_tax.amount, 0))  )) canada_tax_total_amount,
-                    SUM(IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, quebec_tax.total_amount + (IFNULL(quebec_shipping_tax.amount, 0))  )) quebec_tax_total_amount,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, (SUM(canada_tax.unit_amount * (`product`.product_quantity - `product`.product_quantity_refunded)) + IFNULL(MAX(canada_shipping_tax.amount), 0))) canada_tax_total_amount,
+                    IF(`order`.current_state = $refund_state OR `order`.current_state = $canceled_state OR `order`.current_state = $refund_state2 OR `order`.current_state = $error_state, 0, (SUM(quebec_tax.unit_amount * (`product`.product_quantity - `product`.product_quantity_refunded)) + IFNULL(MAX(quebec_shipping_tax.amount), 0))) quebec_tax_total_amount,
                     IFNULL(order_slip.total_products_tax_excl, 0) amount_excl,
                 	IF(`order`.module != 'hspointofsalepro', order_slip.total_products_tax_incl, 0) amount_incl,
                     IFNULL(order_slip.total_products_tax_incl, 0) amount_incl_old, 
@@ -1301,45 +1286,18 @@ class ExportSales
 
     private function getTaxes()
     {
-        // Use the same calculation logic as Sales by Payment Method tab
-        $refund_state = Configuration::getGlobalValue('PS_OS_REFUND');
-        $canceled_state = Configuration::getGlobalValue('PS_OS_CANCELED');
-        $error_state = Configuration::getGlobalValue('PS_OS_ERROR');
-        $refund_state2 = 56;
-
-        $fromDate = pSQL(Tools::getValue('orders_from_date'));
-        $toDate = pSQL(Tools::getValue('orders_to_date'));
-
+        // Simple calculation: unit_amount × (qty - refunded_qty), NO shipping tax
+        // Uses original mutualSql which excludes refund states (7, 56)
         $sql = "SELECT
-                    `name`,
-                    CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(tax_total_amount), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_price_tax_excl
-                FROM (
-                    SELECT
-                        `order`.id_order,
-                        tax_lang.`name`,
-                        odt.id_tax,
-                        CASE
-                            WHEN (`order`.current_state = $canceled_state OR `order`.current_state = $error_state) THEN SUM(0)
-                            WHEN (`order`.current_state = $refund_state2 OR `order`.current_state = $refund_state) THEN
-                                CASE
-                                    WHEN (`order`.`possible_refund_date` >= '$fromDate' AND `order`.`possible_refund_date` < '$toDate') AND (`order`.`date_add` >= '$fromDate' AND `order`.`date_add` < '$toDate') THEN SUM(0)
-                                    ELSE SUM(odt.total_amount)
-                                END
-                            ELSE SUM(odt.total_amount)
-                        END AS tax_total_amount
-                    " . $this->helperSql . '
+                    tax_lang.`name`,
+                    CONCAT('$this->currencySymbol', REPLACE(CAST(TRIM(ROUND(SUM(odt.unit_amount*(od.product_quantity - od.product_quantity_refunded)), $this->fracPart)) + 0 AS CHAR), '.', '$this->decimalSeparator')) total_price_tax_excl
+            " . $this->helperSql . '
                     LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON `product`.id_order_detail = odt.id_order_detail
+                    LEFT JOIN ' . _DB_PREFIX_ . 'order_detail od ON od.id_order_detail = odt.id_order_detail
                     LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tax_lang ON tax_lang.id_tax = odt.id_tax AND tax_lang.id_lang = ' . $this->langId . '
                     
-                    WHERE odt.id_tax IS NOT NULL AND odt.id_tax <> 0 ' . $this->mutualSql . ' 
-                    GROUP BY `order`.id_order, odt.id_tax
-                ) tmp
-                GROUP BY id_tax
-                ORDER BY id_tax;';
-
-        // Include refunded orders in the query (same as Sales by Payment Method)
-        $sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25,60))',$sql);
-
+                    WHERE odt.id_tax IS NOT NULL AND odt.id_tax <> 0 ' . $this->mutualSql . ' GROUP BY odt.id_tax
+                    ORDER BY odt.id_tax;';
         return DB::getInstance()->executeS($sql);
     }
 
@@ -3564,7 +3522,14 @@ class ExportSales
                             $key.$k `$v`, ";
                     }
                 } else {
-                    if ($fracPart !== -1 &&
+                    // Special handling for ANY tax total_amount columns (e.g., canada_tax.total_amount, quebec_tax.total_amount, etc.)
+                    // to account for partial refunds using unit_amount * (qty - refunded_qty)
+                    // Pattern: *_tax.total_amount -> *_tax.unit_amount * (product.product_quantity - product.product_quantity_refunded)
+                    if (preg_match('/^([a-z_]+_tax)\.total_amount$/', $k, $matches)) {
+                        $tax_alias = $matches[1]; // e.g., 'canada_tax', 'quebec_tax', etc.
+                        $this->sql .= "
+                                (TRIM(ROUND({$tax_alias}.unit_amount * (`product`.product_quantity - `product`.product_quantity_refunded), $fracPart)) + 0) `$v`, ";
+                    } elseif ($fracPart !== -1 &&
                         (
                             strpos($k, 'rate') !== false ||
                             strpos($k, 'total') !== false ||
@@ -4168,10 +4133,11 @@ class ExportSales
             $this->sql = str_replace('AND order.date_add >=','AND order.possible_refund_date >=',$this->sql);
             $this->sql = str_replace('AND order.date_add <','AND order.possible_refund_date <',$this->sql);
             $this->sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state IN (56,7,25, 60))',$this->sql);
-        }else{
-
-            $this->sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25, 60))',$this->sql);
         }
+        // Removed str_replace to use same mutualSql as Taxes Tab (excludes refund states 7, 56)
+        // else{
+        //     $this->sql = str_replace('(order.current_state NOT IN (6,7,56,8))','(order.current_state NOT IN (6,8,25, 60))',$this->sql);
+        // }
 //         return Db::getInstance()->executeS($this->sql);
 //        $this->sql = str_replace("DATE_FORMAT(order.date_add, '%Y-%m-%d')","DATE_FORMAT(order.invoice_date, '%Y-%m-%d')",$this->sql);
 //        $this->sql = str_replace("ORDER BY order.date_add DESC, order.id_order DESC","ORDER BY order.invoice_date DESC, order.id_order DESC",$this->sql);
