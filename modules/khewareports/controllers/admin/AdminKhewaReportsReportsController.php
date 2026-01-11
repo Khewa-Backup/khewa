@@ -102,7 +102,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             }
             
             // Populate sheet with dummy data
-            $this->populateSheetWithDummyData($sheet);
+            $this->populateSheetWithDummyData($sheet, $date_from, $date_to);
         }
         
         // Set first sheet (Sales) as active
@@ -117,23 +117,50 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save('php://output');
-        exit;
+        die();
     }
 
     /**
      * Populate a sheet with dummy data
      */
-    protected function populateSheetWithDummyData($sheet)
+    protected function populateSheetWithDummyData($sheet, $date_from = '', $date_to = '')
     {
-        // Create dummy data - Set headers
-        $sheet->setCellValue('A1', 'ID');
-        $sheet->setCellValue('B1', 'Name');
-        $sheet->setCellValue('C1', 'Date');
-        $sheet->setCellValue('D1', 'Amount');
-        $sheet->setCellValue('E1', 'Status');
+        // Add header row with date range and export date
+        $exportDate = date('Y-m-d H:i:s');
+        $dateRangeText = '';
+        if ($date_from && $date_to) {
+            $dateRangeText = 'Date Range: ' . $date_from . ' to ' . $date_to;
+        }
+        $exportDateText = 'Exported on: ' . $exportDate;
         
-        // Add dummy rows
-        $row = 2;
+        // Merge cells for header row - use more columns for better spacing
+        $sheet->mergeCells('A1:J1');
+        $sheet->setCellValue('A1', '    ' . $dateRangeText . ' | ' . $exportDateText . '    ');
+        $headerFont = $sheet->getStyle('A1')->getFont();
+        $headerFont->setBold(true);
+        $headerFont->setSize(14);
+        $sheet->getStyle('A1')->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+            ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)
+            ->setIndent(2);
+        $sheet->getRowDimension(1)->setRowHeight(40);
+        
+        // Set column widths for the merged columns to ensure proper spacing
+        $sheet->getColumnDimension('F')->setWidth(15);
+        $sheet->getColumnDimension('G')->setWidth(15);
+        $sheet->getColumnDimension('H')->setWidth(15);
+        $sheet->getColumnDimension('I')->setWidth(15);
+        $sheet->getColumnDimension('J')->setWidth(15);
+        
+        // Create dummy data - Set column headers (now in row 2)
+        $sheet->setCellValue('A2', 'ID');
+        $sheet->setCellValue('B2', 'Name');
+        $sheet->setCellValue('C2', 'Date');
+        $sheet->setCellValue('D2', 'Amount');
+        $sheet->setCellValue('E2', 'Status');
+        
+        // Add dummy rows (starting from row 3)
+        $row = 3;
         for ($i = 1; $i <= 10; $i++) {
             $sheet->setCellValue('A' . $row, (string)$i);
             $sheet->setCellValue('B' . $row, 'Item ' . $i);
@@ -145,7 +172,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         
         $lastRow = $row - 1;
         
-        // Style the header row
+        // Style the column header row (row 2)
         $headerStyle = array(
             'font' => array(
                 'bold' => true,
@@ -166,9 +193,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             ),
         );
         
-        $sheet->getStyle('A1:E1')->applyFromArray($headerStyle);
+        $sheet->getStyle('A2:E2')->applyFromArray($headerStyle);
         
-        // Style data rows
+        // Style data rows (starting from row 3)
         $dataStyle = array(
             'alignment' => array(
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
@@ -181,7 +208,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             ),
         );
         
-        $sheet->getStyle('A2:E' . $lastRow)->applyFromArray($dataStyle);
+        $sheet->getStyle('A3:E' . $lastRow)->applyFromArray($dataStyle);
         
         // Set column widths
         $sheet->getColumnDimension('A')->setWidth(10);
@@ -192,10 +219,10 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         
         // Set row heights
         $sheet->getDefaultRowDimension()->setRowHeight(20);
-        $sheet->getRowDimension(1)->setRowHeight(25);
+        $sheet->getRowDimension(2)->setRowHeight(25);
         
-        // Set auto filter
-        $sheet->setAutoFilter('A1:E' . $lastRow);
+        // Set auto filter (starting from row 2 where headers are)
+        $sheet->setAutoFilter('A2:E' . $lastRow);
     }
 }
 

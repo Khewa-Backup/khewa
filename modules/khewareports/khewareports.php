@@ -104,8 +104,13 @@ class Khewareports extends Module
         $output = '';
 
         if (Tools::isSubmit('submitKhewaReportsModule')) {
-            // Process form submission if needed in the future
-            $output .= $this->displayConfirmation($this->l('Settings updated'));
+            $quick_export_period = Tools::getValue('KHEWA_QUICK_EXPORT_PERIOD');
+            if (in_array($quick_export_period, array('daily', 'weekly', 'monthly'))) {
+                Configuration::updateValue('KHEWA_QUICK_EXPORT_PERIOD', $quick_export_period);
+                $output .= $this->displayConfirmation($this->l('Settings updated'));
+            } else {
+                $output .= $this->displayError($this->l('Invalid period selected'));
+            }
         }
 
         return $output . $this->displayForm();
@@ -120,10 +125,24 @@ class Khewareports extends Module
 
         $fields_form[0]['form'] = array(
             'legend' => array(
-                'title' => $this->l('Settings'),
+                'title' => $this->l('Quick Export Date Settings'),
             ),
             'input' => array(
-                // Add form fields here in the future
+                array(
+                    'type' => 'select',
+                    'label' => $this->l('Export Period'),
+                    'name' => 'KHEWA_QUICK_EXPORT_PERIOD',
+                    'required' => true,
+                    'options' => array(
+                        'query' => array(
+                            array('id' => 'daily', 'name' => $this->l('Daily')),
+                            array('id' => 'weekly', 'name' => $this->l('Weekly')),
+                            array('id' => 'monthly', 'name' => $this->l('Monthly')),
+                        ),
+                        'id' => 'id',
+                        'name' => 'name'
+                    )
+                ),
             ),
             'submit' => array(
                 'title' => $this->l('Save'),
@@ -156,9 +175,11 @@ class Khewareports extends Module
             )
         );
 
-        $helper->fields_value = array();
+        $helper->fields_value = array(
+            'KHEWA_QUICK_EXPORT_PERIOD' => Configuration::get('KHEWA_QUICK_EXPORT_PERIOD', 'daily')
+        );
 
-        return '<h2>Hello</h2>' . $helper->generateForm($fields_form);
+        return $helper->generateForm($fields_form);
     }
 }
 
