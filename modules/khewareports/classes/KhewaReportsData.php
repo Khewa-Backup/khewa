@@ -273,15 +273,16 @@ class KhewaReportsData
         }
         
         // STEP 2: Get payment records for these orders
-        // Normalize payment methods and group by order_reference and normalized payment_method
-        // This ensures we combine multiple payments of the same method per order
+        // Normalize payment methods and get them in order of id_order_payment
         $sql = '
         SELECT 
             op.order_reference,
+            MIN(op.id_order_payment) as first_payment_id,
             CASE 
                 WHEN op.payment_method LIKE "%Credit Card%" OR op.payment_method LIKE "%Carte de crédit%" OR op.payment_method = "Credit Card(instore)" THEN "Credit Card"
                 WHEN op.payment_method LIKE "%Cash%" OR op.payment_method LIKE "%Comptant%" THEN "Cash"
                 WHEN op.payment_method LIKE "%Interac%" THEN "Interac"
+                WHEN op.payment_method LIKE "%Gift card%" OR op.payment_method LIKE "%Carte Cadeau%" THEN "Gift card"
                 ELSE TRIM(op.payment_method)
             END as payment_method,
             SUM(op.amount) as payment_amount
@@ -292,37 +293,34 @@ class KhewaReportsData
         AND o.current_state NOT IN (' . $excludedStates . ')
         AND op.amount > 0
         GROUP BY op.order_reference, payment_method
+        ORDER BY op.order_reference, first_payment_id
         ';
         $paymentRecords = Db::getInstance()->executeS($sql);
         
-        // Group payments by order reference AND normalized payment_method
-        // This combines multiple payments of the same method into one
+        // Group payments by order reference, maintaining the order they were added
         $paymentsByOrder = array();
         foreach ($paymentRecords as $payment) {
             $ref = $payment['order_reference'];
-            // Normalize payment method (trim and ensure consistent casing)
             $paymentMethod = trim($payment['payment_method']);
             
             if (!isset($paymentsByOrder[$ref])) {
                 $paymentsByOrder[$ref] = array();
             }
             
-            // Combine payments with same normalized payment_method
+            // Add payment method in order (uses first_payment_id ordering from SQL)
             if (!isset($paymentsByOrder[$ref][$paymentMethod])) {
                 $paymentsByOrder[$ref][$paymentMethod] = array(
                     'payment_method' => $paymentMethod,
-                    'amount' => 0
+                    'amount' => 0,
+                    'order' => count($paymentsByOrder[$ref])
                 );
             }
             $paymentsByOrder[$ref][$paymentMethod]['amount'] += (float)$payment['payment_amount'];
         }
         
-        // STEP 3: Distribute order totals to payment methods
-        // IMPORTANT: If an order has multiple payment methods (e.g., Cash + Credit Card),
-        // the order totals are distributed proportionally to each payment method.
-        // Example: Order $100 paid with Cash $50 + Credit Card $50
-        //   -> Creates 2 rows: "Cash" with $50, "Credit Card" with $50
-        //   -> Order count: Each payment method row counts this order once
+        // STEP 3: Group orders by payment method(s)
+        // - Single payment method orders → individual row (e.g., "Interac")
+        // - Multiple payment methods → combined row with underscore (e.g., "Interac_Cash")
         $combinedBase = array();
         
         foreach ($allOrders as $order) {
@@ -331,53 +329,50 @@ class KhewaReportsData
             $orderId = $order['id_order'];
             
             if (isset($paymentsByOrder[$ref]) && !empty($paymentsByOrder[$ref])) {
-                // Order has payment records - distribute proportionally
-                // First calculate total payment for this order (sum of all payment methods)
-                $totalPayment = 0;
-                foreach ($paymentsByOrder[$ref] as $paymentMethod => $paymentData) {
-                    $totalPayment += $paymentData['amount'];
+                // Get all payment methods for this order in the order they were recorded
+                $methodsWithOrder = array();
+                foreach ($paymentsByOrder[$ref] as $method => $data) {
+                    $methodsWithOrder[$method] = isset($data['order']) ? $data['order'] : 0;
+                }
+                asort($methodsWithOrder); // Sort by order value (maintains payment sequence)
+                $methods = array_keys($methodsWithOrder);
+                
+                if (count($methods) == 1) {
+                    // Single payment method - use it directly
+                    $paymentMethod = $methods[0];
+                } else {
+                    // Multiple payment methods - combine with underscore in payment order
+                    $paymentMethod = implode('_', $methods);
                 }
                 
-                // Now distribute order totals to each payment method proportionally
-                // Each payment method gets a share based on its payment amount
-                foreach ($paymentsByOrder[$ref] as $paymentMethod => $paymentData) {
-                    $paymentAmount = $paymentData['amount'];
-                    $proportion = ($totalPayment > 0) ? ($paymentAmount / $totalPayment) : 1;
-                    
-                    // Normalize payment method to ensure consistent key
-                    $normalizedPaymentMethod = trim($paymentData['payment_method']);
-                    $key = $normalizedPaymentMethod . '|' . $module;
-                    
-                    if (!isset($combinedBase[$key])) {
-                        $combinedBase[$key] = array(
-                            'payment_method' => $normalizedPaymentMethod,
-                            'module' => $module,
-                            'order_count' => 0,
-                            'total_products_tax_excl' => 0,
-                            'total_products_tax_incl' => 0,
-                            'total_shipping_tax_incl' => 0,
-                            'total_paid_tax_incl' => 0,
-                            'order_ids' => array()
-                        );
-                    }
-                    
-                    // Count order only once per payment method
-                    if (!in_array($orderId, $combinedBase[$key]['order_ids'])) {
-                        $combinedBase[$key]['order_ids'][] = $orderId;
-                        $combinedBase[$key]['order_count']++;
-                    }
-                    
-                    // Distribute totals proportionally with rounding to minimize precision loss
-                    // Round to 2 decimals to match currency precision
-                    $combinedBase[$key]['total_products_tax_excl'] += round((float)$order['order_total_products_excl'] * $proportion, 2);
-                    $combinedBase[$key]['total_products_tax_incl'] += round((float)$order['order_total_products_incl'] * $proportion, 2);
-                    $combinedBase[$key]['total_shipping_tax_incl'] += round((float)$order['order_total_shipping'] * $proportion, 2);
-                    $combinedBase[$key]['total_paid_tax_incl'] += round((float)$order['order_total_paid'] * $proportion, 2);
+                $key = $paymentMethod . '|' . $module;
+                
+                if (!isset($combinedBase[$key])) {
+                    $combinedBase[$key] = array(
+                        'payment_method' => $paymentMethod,
+                        'module' => $module,
+                        'order_count' => 0,
+                        'total_products_tax_excl' => 0,
+                        'total_products_tax_incl' => 0,
+                        'total_shipping_tax_incl' => 0,
+                        'total_paid_tax_incl' => 0,
+                        'order_ids' => array()
+                    );
                 }
+                
+                // Count order once
+                $combinedBase[$key]['order_ids'][] = $orderId;
+                $combinedBase[$key]['order_count']++;
+                
+                // Add full order totals (not distributed)
+                $combinedBase[$key]['total_products_tax_excl'] += (float)$order['order_total_products_excl'];
+                $combinedBase[$key]['total_products_tax_incl'] += (float)$order['order_total_products_incl'];
+                $combinedBase[$key]['total_shipping_tax_incl'] += (float)$order['order_total_shipping'];
+                $combinedBase[$key]['total_paid_tax_incl'] += (float)$order['order_total_paid'];
             } else {
                 // Order has NO payment records - paid entirely by gift card/voucher
-                // Add to "Gift Card / Voucher" category
-                $paymentMethod = 'Gift Card / Voucher';
+                // Add to "Gift Card_Voucher" category (using underscore for consistency)
+                $paymentMethod = 'Gift Card_Voucher';
                 $key = $paymentMethod . '|' . $module;
                 
                 if (!isset($combinedBase[$key])) {
