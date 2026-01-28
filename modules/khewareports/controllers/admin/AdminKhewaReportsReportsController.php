@@ -239,7 +239,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setCellValueSafe($sheet, 'A' . $row, $showOrderData ? $data['order_date'] : '');
             $this->setCellValueSafe($sheet, 'B' . $row, $showOrderData ? $data['id_order'] : '');
             $this->setCellValueSafe($sheet, 'C' . $row, $showOrderData ? '#ND' . $data['invoice_number'] : '');
-            $this->setCellValueSafe($sheet, 'D' . $row, $showOrderData ? '0' : '0');
+            // Column D: Payment Breakdown - shows how order was paid (e.g., "Cash($50.00) - Credit Card($25.00)")
+            $this->setCellValueSafe($sheet, 'D' . $row, $showOrderData ? $data['payment_breakdown'] : '');
             
             // Column E: Gift Card - order level, add only once per order
             if ($showOrderData && $data['gift_card_amount']) {
@@ -359,12 +360,20 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setNumericValue($sheet, 'T' . $row, $totals['product_qst']);
             $this->setNumericValue($sheet, 'U' . $row, $totals['shipping_excl']);
             $sheet->getStyle('A' . $row . ':W' . $row)->getFont()->setBold(true);
+            
+            // Add column headers again after totals row for reference when scrolling
+            $row++;
+            foreach ($headers as $column => $header) {
+                $this->setCellValueSafe($sheet, $column . $row, $header);
+            }
+            // Style header row (same as top header) - row height is set automatically by styleHeaderRow
+            $this->styleHeaderRow($sheet, 'A' . $row . ':W' . $row);
         }
         
         // Style data rows and set column widths
         $this->styleDataRows($sheet, 'A3:W' . $row);
         $this->setColumnWidths($sheet, array(
-            'A' => 12, 'B' => 10, 'C' => 14, 'D' => 10, 'E' => 12, 'F' => 10, 'G' => 10,
+            'A' => 12, 'B' => 10, 'C' => 14, 'D' => 35, 'E' => 12, 'F' => 10, 'G' => 10,
             'H' => 16, 'I' => 14, 'J' => 16, 'K' => 18, 'L' => 14, 'M' => 18, 'N' => 16,
             'O' => 14, 'P' => 30, 'Q' => 14, 'R' => 14, 'S' => 14, 'T' => 16, 'U' => 16,
             'V' => 14, 'W' => 14
@@ -915,8 +924,11 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             )
         ));
         
-        // Set header row height
-        $sheet->getRowDimension(2)->setRowHeight(30);
+        // Extract row number from range (e.g., "A2:W2" -> 2, "A5:W5" -> 5)
+        if (preg_match('/^[A-Z]+(\d+):/', $range, $matches)) {
+            $rowNumber = (int)$matches[1];
+            $sheet->getRowDimension($rowNumber)->setRowHeight(30);
+        }
     }
 
     /**

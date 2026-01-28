@@ -89,7 +89,8 @@ class KhewaReportsData
             IFNULL(slip.total_refund_tax_incl, 0) as total_refund_tax_incl,
             IFNULL(slip.refund_date, "") as refund_date,
             dcl.name as delivery_country,
-            ds.name as delivery_state
+            ds.name as delivery_state,
+            IFNULL(pb.payment_breakdown, "") as payment_breakdown
             
         FROM ' . _DB_PREFIX_ . 'orders o
         LEFT JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
@@ -130,6 +131,19 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'address da ON o.id_address_delivery = da.id_address
         LEFT JOIN ' . _DB_PREFIX_ . 'country_lang dcl ON da.id_country = dcl.id_country AND dcl.id_lang = ' . $this->id_lang . '
         LEFT JOIN ' . _DB_PREFIX_ . 'state ds ON da.id_state = ds.id_state
+        LEFT JOIN (
+            SELECT order_reference,
+                   CASE WHEN COUNT(*) > 1 THEN
+                       GROUP_CONCAT(
+                           CONCAT(payment_method, "($", ROUND(ABS(amount), 2), ")")
+                           ORDER BY id_order_payment ASC
+                           SEPARATOR " - "
+                       )
+                   ELSE "" END as payment_breakdown
+            FROM ' . _DB_PREFIX_ . 'order_payment
+            WHERE amount > 0
+            GROUP BY order_reference
+        ) pb ON o.reference = pb.order_reference
         
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
@@ -494,9 +508,11 @@ class KhewaReportsData
                 $row['total_gst'] = isset($gstMap[$module]) ? round($gstMap[$module] * $proportion, 2) : 0;
                 $row['total_qst'] = isset($qstMap[$module]) ? round($qstMap[$module] * $proportion, 2) : 0;
                 
-                // Refunds by module type
-                $row['refund_online'] = ($module != self::POS_MODULE && isset($refundMap[$module])) ? $refundMap[$module] : 0;
-                $row['refund_instore'] = ($module == self::POS_MODULE && isset($refundMap[$module])) ? $refundMap[$module] : 0;
+                // Distribute Refunds proportionally by module type (same as taxes)
+                $row['refund_online'] = ($module != self::POS_MODULE && isset($refundMap[$module])) 
+                    ? round($refundMap[$module] * $proportion, 2) : 0;
+                $row['refund_instore'] = ($module == self::POS_MODULE && isset($refundMap[$module])) 
+                    ? round($refundMap[$module] * $proportion, 2) : 0;
             }
             $result['combined'] = $combinedBase;
         }
