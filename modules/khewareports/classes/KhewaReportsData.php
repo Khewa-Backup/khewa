@@ -234,34 +234,183 @@ class KhewaReportsData
         );
         
         // ==================== TOP PART: Combined Summary by Payment Method ====================
-        // Simpler approach: get base data and join taxes separately
+        // STEP 1: Get ALL orders with their totals (same filter as Sales tab)
+        // Use orders.total_products_wt as the authoritative source (this is what payments are based on)
         $sql = '
         SELECT 
+            o.id_order,
+            o.reference,
+            o.module,
+            o.total_products as order_total_products_excl,
+            o.total_products_wt as order_total_products_incl,
+            o.total_shipping_tax_incl as order_total_shipping,
+            o.total_paid_tax_incl as order_total_paid
+        FROM ' . _DB_PREFIX_ . 'orders o
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        ';
+        $allOrders = Db::getInstance()->executeS($sql);
+        
+        // Build order reference map for quick lookup
+        $orderMap = array();
+        foreach ($allOrders as $order) {
+            $orderMap[$order['reference']] = $order;
+        }
+        
+        // STEP 2: Get payment records for these orders
+        // Normalize payment methods and group by order_reference and normalized payment_method
+        // This ensures we combine multiple payments of the same method per order
+        $sql = '
+        SELECT 
+            op.order_reference,
             CASE 
                 WHEN op.payment_method LIKE "%Credit Card%" OR op.payment_method LIKE "%Carte de crédit%" OR op.payment_method = "Credit Card(instore)" THEN "Credit Card"
                 WHEN op.payment_method LIKE "%Cash%" OR op.payment_method LIKE "%Comptant%" THEN "Cash"
                 WHEN op.payment_method LIKE "%Interac%" THEN "Interac"
-                ELSE op.payment_method
+                ELSE TRIM(op.payment_method)
             END as payment_method,
-            o.module,
-            COUNT(DISTINCT o.id_order) as order_count,
-            SUM(DISTINCT o.total_products) as total_products_tax_excl,
-            SUM(DISTINCT o.total_products_wt) as total_products_tax_incl,
-            SUM(DISTINCT o.total_shipping_tax_incl) as total_shipping_tax_incl,
-            SUM(DISTINCT o.total_paid_tax_incl) as total_paid_tax_incl
-            
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
-        
+            SUM(op.amount) as payment_amount
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        INNER JOIN ' . _DB_PREFIX_ . 'orders o ON o.reference = op.order_reference
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
         AND op.amount > 0
-        
-        GROUP BY payment_method, o.module
-        ORDER BY total_paid_tax_incl DESC
+        GROUP BY op.order_reference, payment_method
         ';
-        $combinedBase = Db::getInstance()->executeS($sql);
+        $paymentRecords = Db::getInstance()->executeS($sql);
+        
+        // Group payments by order reference AND normalized payment_method
+        // This combines multiple payments of the same method into one
+        $paymentsByOrder = array();
+        foreach ($paymentRecords as $payment) {
+            $ref = $payment['order_reference'];
+            // Normalize payment method (trim and ensure consistent casing)
+            $paymentMethod = trim($payment['payment_method']);
+            
+            if (!isset($paymentsByOrder[$ref])) {
+                $paymentsByOrder[$ref] = array();
+            }
+            
+            // Combine payments with same normalized payment_method
+            if (!isset($paymentsByOrder[$ref][$paymentMethod])) {
+                $paymentsByOrder[$ref][$paymentMethod] = array(
+                    'payment_method' => $paymentMethod,
+                    'amount' => 0
+                );
+            }
+            $paymentsByOrder[$ref][$paymentMethod]['amount'] += (float)$payment['payment_amount'];
+        }
+        
+        // STEP 3: Distribute order totals to payment methods
+        // IMPORTANT: If an order has multiple payment methods (e.g., Cash + Credit Card),
+        // the order totals are distributed proportionally to each payment method.
+        // Example: Order $100 paid with Cash $50 + Credit Card $50
+        //   -> Creates 2 rows: "Cash" with $50, "Credit Card" with $50
+        //   -> Order count: Each payment method row counts this order once
+        $combinedBase = array();
+        
+        foreach ($allOrders as $order) {
+            $ref = $order['reference'];
+            $module = $order['module'];
+            $orderId = $order['id_order'];
+            
+            if (isset($paymentsByOrder[$ref]) && !empty($paymentsByOrder[$ref])) {
+                // Order has payment records - distribute proportionally
+                // First calculate total payment for this order (sum of all payment methods)
+                $totalPayment = 0;
+                foreach ($paymentsByOrder[$ref] as $paymentMethod => $paymentData) {
+                    $totalPayment += $paymentData['amount'];
+                }
+                
+                // Now distribute order totals to each payment method proportionally
+                // Each payment method gets a share based on its payment amount
+                foreach ($paymentsByOrder[$ref] as $paymentMethod => $paymentData) {
+                    $paymentAmount = $paymentData['amount'];
+                    $proportion = ($totalPayment > 0) ? ($paymentAmount / $totalPayment) : 1;
+                    
+                    // Normalize payment method to ensure consistent key
+                    $normalizedPaymentMethod = trim($paymentData['payment_method']);
+                    $key = $normalizedPaymentMethod . '|' . $module;
+                    
+                    if (!isset($combinedBase[$key])) {
+                        $combinedBase[$key] = array(
+                            'payment_method' => $normalizedPaymentMethod,
+                            'module' => $module,
+                            'order_count' => 0,
+                            'total_products_tax_excl' => 0,
+                            'total_products_tax_incl' => 0,
+                            'total_shipping_tax_incl' => 0,
+                            'total_paid_tax_incl' => 0,
+                            'order_ids' => array()
+                        );
+                    }
+                    
+                    // Count order only once per payment method
+                    if (!in_array($orderId, $combinedBase[$key]['order_ids'])) {
+                        $combinedBase[$key]['order_ids'][] = $orderId;
+                        $combinedBase[$key]['order_count']++;
+                    }
+                    
+                    // Distribute totals proportionally with rounding to minimize precision loss
+                    // Round to 2 decimals to match currency precision
+                    $combinedBase[$key]['total_products_tax_excl'] += round((float)$order['order_total_products_excl'] * $proportion, 2);
+                    $combinedBase[$key]['total_products_tax_incl'] += round((float)$order['order_total_products_incl'] * $proportion, 2);
+                    $combinedBase[$key]['total_shipping_tax_incl'] += round((float)$order['order_total_shipping'] * $proportion, 2);
+                    $combinedBase[$key]['total_paid_tax_incl'] += round((float)$order['order_total_paid'] * $proportion, 2);
+                }
+            } else {
+                // Order has NO payment records - paid entirely by gift card/voucher
+                // Add to "Gift Card / Voucher" category
+                $paymentMethod = 'Gift Card / Voucher';
+                $key = $paymentMethod . '|' . $module;
+                
+                if (!isset($combinedBase[$key])) {
+                    $combinedBase[$key] = array(
+                        'payment_method' => $paymentMethod,
+                        'module' => $module,
+                        'order_count' => 0,
+                        'total_products_tax_excl' => 0,
+                        'total_products_tax_incl' => 0,
+                        'total_shipping_tax_incl' => 0,
+                        'total_paid_tax_incl' => 0,
+                        'order_ids' => array()
+                    );
+                }
+                
+                $combinedBase[$key]['order_ids'][] = $orderId;
+                $combinedBase[$key]['order_count']++;
+                $combinedBase[$key]['total_products_tax_excl'] += (float)$order['order_total_products_excl'];
+                $combinedBase[$key]['total_products_tax_incl'] += (float)$order['order_total_products_incl'];
+                $combinedBase[$key]['total_shipping_tax_incl'] += (float)$order['order_total_shipping'];
+                $combinedBase[$key]['total_paid_tax_incl'] += (float)$order['order_total_paid'];
+            }
+        }
+        
+        // Convert to indexed array and ensure no duplicates
+        // Group by payment_method + module to catch any edge cases
+        $finalCombined = array();
+        foreach ($combinedBase as $key => $row) {
+            $normalizedKey = trim($row['payment_method']) . '|' . $row['module'];
+            if (!isset($finalCombined[$normalizedKey])) {
+                unset($row['order_ids']); // Remove order_ids before adding
+                $finalCombined[$normalizedKey] = $row;
+            } else {
+                // If duplicate found, merge the data (shouldn't happen, but safety check)
+                $finalCombined[$normalizedKey]['order_count'] += $row['order_count'];
+                $finalCombined[$normalizedKey]['total_products_tax_excl'] += $row['total_products_tax_excl'];
+                $finalCombined[$normalizedKey]['total_products_tax_incl'] += $row['total_products_tax_incl'];
+                $finalCombined[$normalizedKey]['total_shipping_tax_incl'] += $row['total_shipping_tax_incl'];
+                $finalCombined[$normalizedKey]['total_paid_tax_incl'] += $row['total_paid_tax_incl'];
+            }
+        }
+        
+        // Convert to indexed array and sort by total_paid_tax_incl DESC
+        $combinedBase = array_values($finalCombined);
+        usort($combinedBase, function($a, $b) {
+            return $b['total_paid_tax_incl'] <=> $a['total_paid_tax_incl'];
+        });
         
         // Get GST by module
         $sql = '
@@ -586,6 +735,7 @@ class KhewaReportsData
             (int)$states['payment_error']
         ));
         
+        // Base order totals
         $sql = '
         SELECT 
             COUNT(DISTINCT o.id_order) as total_orders,
@@ -606,7 +756,112 @@ class KhewaReportsData
         ';
         
         $result = Db::getInstance()->getRow($sql);
-        return $result ? $result : array();
+        if (!$result) {
+            $result = array();
+        }
+        
+        // Gift Card totals (all orders, not just online)
+        $sql = '
+        SELECT IFNULL(SUM(ocr.value), 0) as total_gift_card
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
+        ';
+        $result['total_gift_card'] = (float)Db::getInstance()->getValue($sql);
+        
+        // Voucher totals (all orders)
+        $sql = '
+        SELECT IFNULL(SUM(ocr.value), 0) as total_voucher
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND LOWER(ocr.name) LIKE "%voucher%"
+        ';
+        $result['total_voucher'] = (float)Db::getInstance()->getValue($sql);
+        
+        // Shipping GST totals
+        $sql = '
+        SELECT IFNULL(SUM(oit.amount), 0) as total_shipping_gst
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice oi ON o.id_order = oi.id_order
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice_tax oit ON oi.id_order_invoice = oit.id_order_invoice
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND oit.id_tax = ' . self::TAX_ID_GST . '
+        AND oit.type = "shipping"
+        ';
+        $result['total_shipping_gst'] = (float)Db::getInstance()->getValue($sql);
+        
+        // Shipping QST totals
+        $sql = '
+        SELECT IFNULL(SUM(oit.amount), 0) as total_shipping_qst
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice oi ON o.id_order = oi.id_order
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice_tax oit ON oi.id_order_invoice = oit.id_order_invoice
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND oit.id_tax IN (' . self::TAX_IDS_QST . ')
+        AND oit.type = "shipping"
+        ';
+        $result['total_shipping_qst'] = (float)Db::getInstance()->getValue($sql);
+        
+        // Total Refunded Products (from order_detail)
+        $sql = '
+        SELECT IFNULL(SUM(od.total_refunded_tax_incl), 0) as total_refunded_products
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        ';
+        $result['total_refunded_products'] = (float)Db::getInstance()->getValue($sql);
+        
+        // Total Refund Amount (from order_slip - all refunds regardless of refund date)
+        $sql = '
+        SELECT IFNULL(SUM(os.total_products_tax_incl + os.total_shipping_tax_incl), 0) as total_refund_amount
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_slip os ON o.id_order = os.id_order
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        ';
+        $result['total_refund_amount'] = (float)Db::getInstance()->getValue($sql);
+        
+    
+        // Product GST totals (from order_detail_tax)
+        $sql = '
+        SELECT IFNULL(SUM(odt.total_amount), 0) as total_product_gst
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
+        INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND odt.id_tax = ' . self::TAX_ID_GST . '
+        ';
+        $result['total_product_gst'] = (float)Db::getInstance()->getValue($sql);
+        
+        // Product QST totals (from order_detail_tax)
+        $sql = '
+        SELECT IFNULL(SUM(odt.total_amount), 0) as total_product_qst
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
+        INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND odt.id_tax IN (' . self::TAX_IDS_QST . ')
+        ';
+        $result['total_product_qst'] = (float)Db::getInstance()->getValue($sql);
+        
+        return $result;
     }
     
     /**

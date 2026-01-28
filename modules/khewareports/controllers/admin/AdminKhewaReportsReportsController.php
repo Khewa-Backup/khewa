@@ -213,8 +213,24 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $salesData = $dataFetcher->getSalesData();
         
         // Populate data rows (starting from row 3)
+        // Initialize running totals - calculated from loop data to ensure consistency
         $row = 3;
         $lastOrderId = null;
+        $processedOrders = array(); // Track which orders we've counted for order-level totals
+        $totals = array(
+            'gift_card' => 0,
+            'voucher' => 0,
+            'shipping_incl' => 0,
+            'shipping_gst' => 0,
+            'shipping_qst' => 0,
+            'refunded_products' => 0,
+            'refund_amount' => 0,
+            'products_incl' => 0,      // Will use order-level total_products_tax_incl (from orders.total_products_wt)
+            'products_excl' => 0,      // Will use order-level total_products_tax_excl (from orders.total_products)
+            'product_gst' => 0,
+            'product_qst' => 0,
+            'shipping_excl' => 0
+        );
         
         foreach ($salesData as $data) {
             // Show order-level data only on first product row
@@ -224,52 +240,98 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setCellValueSafe($sheet, 'B' . $row, $showOrderData ? $data['id_order'] : '');
             $this->setCellValueSafe($sheet, 'C' . $row, $showOrderData ? '#ND' . $data['invoice_number'] : '');
             $this->setCellValueSafe($sheet, 'D' . $row, $showOrderData ? '0' : '0');
-            // Numeric columns - use setNumericValue for proper 2 decimal formatting
+            
+            // Column E: Gift Card - order level, add only once per order
             if ($showOrderData && $data['gift_card_amount']) {
                 $this->setNumericValue($sheet, 'E' . $row, $data['gift_card_amount']);
+                $totals['gift_card'] += (float)$data['gift_card_amount'];
             } else {
                 $this->setCellValueSafe($sheet, 'E' . $row, '');
             }
+            
             $this->setCellValueSafe($sheet, 'F' . $row, '0');
+            
+            // Column G: Voucher - order level
             if ($showOrderData && $data['voucher_value']) {
                 $this->setNumericValue($sheet, 'G' . $row, $data['voucher_value']);
+                $totals['voucher'] += (float)$data['voucher_value'];
             } else {
                 $this->setCellValueSafe($sheet, 'G' . $row, '');
             }
+            
+            // Column H: Shipping (Tax incl) - order level
             if ($showOrderData && $data['total_shipping_tax_incl']) {
                 $this->setNumericValue($sheet, 'H' . $row, $data['total_shipping_tax_incl']);
+                $totals['shipping_incl'] += (float)$data['total_shipping_tax_incl'];
             } else {
                 $this->setCellValueSafe($sheet, 'H' . $row, '');
             }
+            
+            // Column I: Shipping GST - order level
             if ($showOrderData && $data['shipping_gst_amount']) {
                 $this->setNumericValue($sheet, 'I' . $row, $data['shipping_gst_amount']);
+                $totals['shipping_gst'] += (float)$data['shipping_gst_amount'];
             } else {
                 $this->setCellValueSafe($sheet, 'I' . $row, '');
             }
+            
+            // Column J: Shipping QST - order level
             if ($showOrderData && $data['shipping_qst_amount']) {
                 $this->setNumericValue($sheet, 'J' . $row, $data['shipping_qst_amount']);
+                $totals['shipping_qst'] += (float)$data['shipping_qst_amount'];
             } else {
                 $this->setCellValueSafe($sheet, 'J' . $row, '');
             }
+            
+            // Column K: Refunded Products - product level (sum all)
             $this->setNumericValue($sheet, 'K' . $row, $data['total_refunded_tax_incl']);
+            $totals['refunded_products'] += (float)$data['total_refunded_tax_incl'];
+            
+            // Column L: Refund Amount - order level (displayed per product but count once)
             $this->setNumericValue($sheet, 'L' . $row, $data['total_refund_tax_incl']);
+            
+            // Column M: Total Refunds ROCK - order level
             if ($showOrderData && $data['total_refund_tax_incl']) {
                 $this->setNumericValue($sheet, 'M' . $row, $data['total_refund_tax_incl']);
+                $totals['refund_amount'] += (float)$data['total_refund_tax_incl'];
             } else {
                 $this->setCellValueSafe($sheet, 'M' . $row, '');
             }
+            
+            // Column N: Total Products With Tax - show product level detail
             $this->setNumericValue($sheet, 'N' . $row, $data['total_price_tax_incl']);
+            
+            // For TOTALS, use order-level values (orders.total_products_wt) - only count each order once
+            if ($showOrderData) {
+                $totals['products_incl'] += (float)$data['total_products_tax_incl'];  // order-level (from orders.total_products_wt)
+                $totals['products_excl'] += (float)$data['total_products_tax_excl'];  // order-level (from orders.total_products)
+            }
+            
             $this->setCellValueSafe($sheet, 'O' . $row, $showOrderData ? $data['payment'] : '');
             $this->setCellValueSafe($sheet, 'P' . $row, $data['product_name']);
+            
+            // Column Q: Total Price (Tax incl) - show product level detail
             $this->setNumericValue($sheet, 'Q' . $row, $data['total_price_tax_incl']);
+            
+            // Column R: Total Price (Tax excl) - show product level detail
             $this->setNumericValue($sheet, 'R' . $row, $data['total_price_tax_excl']);
+            
+            // Column S: Product GST - product level (sum all)
             $this->setNumericValue($sheet, 'S' . $row, $data['gst_total_amount']);
+            $totals['product_gst'] += (float)$data['gst_total_amount'];
+            
+            // Column T: Product QST - product level (sum all)
             $this->setNumericValue($sheet, 'T' . $row, $data['qst_total_amount']);
+            $totals['product_qst'] += (float)$data['qst_total_amount'];
+            
+            // Column U: Shipping (Tax excl) - order level
             if ($showOrderData && $data['total_shipping_tax_excl']) {
                 $this->setNumericValue($sheet, 'U' . $row, $data['total_shipping_tax_excl']);
+                $totals['shipping_excl'] += (float)$data['total_shipping_tax_excl'];
             } else {
                 $this->setCellValueSafe($sheet, 'U' . $row, '');
             }
+            
             $this->setCellValueSafe($sheet, 'V' . $row, $showOrderData ? $data['delivery_country'] : '');
             $this->setCellValueSafe($sheet, 'W' . $row, $showOrderData ? $data['delivery_state'] : '');
             
@@ -277,14 +339,25 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $row++;
         }
         
-        // Add totals row
+        // Add totals row - using calculated sums from loop (not separate query)
         $lastDataRow = $row - 1;
         if ($lastDataRow >= 3) {
-            $summary = $dataFetcher->getSalesSummary();
             $row++;
             $this->setCellValueSafe($sheet, 'A' . $row, 'TOTALS');
-            $this->setNumericValue($sheet, 'N' . $row, $summary['total_products_tax_incl']);
-            $this->setNumericValue($sheet, 'H' . $row, $summary['total_shipping_tax_incl']);
+            $this->setNumericValue($sheet, 'E' . $row, $totals['gift_card']);
+            $this->setNumericValue($sheet, 'G' . $row, $totals['voucher']);
+            $this->setNumericValue($sheet, 'H' . $row, $totals['shipping_incl']);
+            $this->setNumericValue($sheet, 'I' . $row, $totals['shipping_gst']);
+            $this->setNumericValue($sheet, 'J' . $row, $totals['shipping_qst']);
+            $this->setNumericValue($sheet, 'K' . $row, $totals['refunded_products']);
+            $this->setNumericValue($sheet, 'L' . $row, $totals['refund_amount']);
+            $this->setNumericValue($sheet, 'M' . $row, $totals['refund_amount']);
+            $this->setNumericValue($sheet, 'N' . $row, $totals['products_incl']);
+            $this->setNumericValue($sheet, 'Q' . $row, $totals['products_incl']);
+            $this->setNumericValue($sheet, 'R' . $row, $totals['products_excl']);
+            $this->setNumericValue($sheet, 'S' . $row, $totals['product_gst']);
+            $this->setNumericValue($sheet, 'T' . $row, $totals['product_qst']);
+            $this->setNumericValue($sheet, 'U' . $row, $totals['shipping_excl']);
             $sheet->getStyle('A' . $row . ':W' . $row)->getFont()->setBold(true);
         }
         
@@ -353,8 +426,20 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $refundsData = $dataFetcher->getRefundsData();
         
         // Populate data rows (starting from row 3)
+        // Initialize running totals - calculated from loop data
         $row = 3;
         $lastSlipId = null;
+        $totals = array(
+            'refund_count' => 0,
+            'refunded_qty' => 0,
+            'product_refund_incl' => 0,
+            'product_refund_excl' => 0,
+            'refund_gst' => 0,
+            'refund_qst' => 0,
+            'total_refund_incl' => 0,
+            'total_refund_excl' => 0,
+            'shipping_refund' => 0
+        );
         
         foreach ($refundsData as $data) {
             // Show slip-level data only on first product row
@@ -368,14 +453,52 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setCellValueSafe($sheet, 'F' . $row, $showSlipData ? ($data['is_partial_refund'] ? 'Yes' : 'No') : '');
             $this->setCellValueSafe($sheet, 'G' . $row, $showSlipData ? $data['payment'] : '');
             $this->setCellValueSafe($sheet, 'H' . $row, $data['product_name']);
-            $this->setCellValueSafe($sheet, 'I' . $row, $data['refunded_quantity']);
-            $this->setCellValueSafe($sheet, 'J' . $row, $data['product_refund_tax_incl']);
-            $this->setCellValueSafe($sheet, 'K' . $row, $data['product_refund_tax_excl']);
-            $this->setCellValueSafe($sheet, 'L' . $row, $data['refund_gst_amount']);
-            $this->setCellValueSafe($sheet, 'M' . $row, $data['refund_qst_amount']);
-            $this->setCellValueSafe($sheet, 'N' . $row, $showSlipData ? $data['total_refund_tax_incl'] : '');
-            $this->setCellValueSafe($sheet, 'O' . $row, $showSlipData ? $data['total_refund_tax_excl'] : '');
-            $this->setCellValueSafe($sheet, 'P' . $row, $showSlipData ? $data['refund_shipping_tax_incl'] : '');
+            
+            // Column I: Refunded Qty - product level
+            $this->setNumericValue($sheet, 'I' . $row, $data['refunded_quantity']);
+            $totals['refunded_qty'] += (int)$data['refunded_quantity'];
+            
+            // Column J: Product Refund (Tax incl) - product level
+            $this->setNumericValue($sheet, 'J' . $row, $data['product_refund_tax_incl']);
+            $totals['product_refund_incl'] += (float)$data['product_refund_tax_incl'];
+            
+            // Column K: Product Refund (Tax excl) - product level
+            $this->setNumericValue($sheet, 'K' . $row, $data['product_refund_tax_excl']);
+            $totals['product_refund_excl'] += (float)$data['product_refund_tax_excl'];
+            
+            // Column L: Refund GST - product level
+            $this->setNumericValue($sheet, 'L' . $row, $data['refund_gst_amount']);
+            $totals['refund_gst'] += (float)$data['refund_gst_amount'];
+            
+            // Column M: Refund QST - product level
+            $this->setNumericValue($sheet, 'M' . $row, $data['refund_qst_amount']);
+            $totals['refund_qst'] += (float)$data['refund_qst_amount'];
+            
+            // Column N: Total Refund (Tax incl) - slip level
+            if ($showSlipData) {
+                $this->setNumericValue($sheet, 'N' . $row, $data['total_refund_tax_incl']);
+                $totals['total_refund_incl'] += (float)$data['total_refund_tax_incl'];
+                $totals['refund_count']++;
+            } else {
+                $this->setCellValueSafe($sheet, 'N' . $row, '');
+            }
+            
+            // Column O: Total Refund (Tax excl) - slip level
+            if ($showSlipData) {
+                $this->setNumericValue($sheet, 'O' . $row, $data['total_refund_tax_excl']);
+                $totals['total_refund_excl'] += (float)$data['total_refund_tax_excl'];
+            } else {
+                $this->setCellValueSafe($sheet, 'O' . $row, '');
+            }
+            
+            // Column P: Shipping Refund - slip level
+            if ($showSlipData) {
+                $this->setNumericValue($sheet, 'P' . $row, $data['refund_shipping_tax_incl']);
+                $totals['shipping_refund'] += (float)$data['refund_shipping_tax_incl'];
+            } else {
+                $this->setCellValueSafe($sheet, 'P' . $row, '');
+            }
+            
             $this->setCellValueSafe($sheet, 'Q' . $row, $showSlipData ? $data['delivery_country'] : '');
             $this->setCellValueSafe($sheet, 'R' . $row, $showSlipData ? $data['delivery_state'] : '');
             
@@ -383,15 +506,20 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $row++;
         }
         
-        // Add totals row
+        // Add totals row - using calculated sums from loop
         $lastDataRow = $row - 1;
         if ($lastDataRow >= 3) {
-            $summary = $dataFetcher->getRefundsSummary();
             $row++;
             $this->setCellValueSafe($sheet, 'A' . $row, 'TOTALS');
-            $this->setCellValueSafe($sheet, 'E' . $row, $summary['total_refunds'] . ' refunds');
-            $this->setCellValueSafe($sheet, 'N' . $row, $summary['total_refund_tax_incl']);
-            $this->setCellValueSafe($sheet, 'O' . $row, $summary['total_refund_tax_excl']);
+            $this->setCellValueSafe($sheet, 'E' . $row, $totals['refund_count'] . ' refunds');
+            $this->setNumericValue($sheet, 'I' . $row, $totals['refunded_qty']);
+            $this->setNumericValue($sheet, 'J' . $row, $totals['product_refund_incl']);
+            $this->setNumericValue($sheet, 'K' . $row, $totals['product_refund_excl']);
+            $this->setNumericValue($sheet, 'L' . $row, $totals['refund_gst']);
+            $this->setNumericValue($sheet, 'M' . $row, $totals['refund_qst']);
+            $this->setNumericValue($sheet, 'N' . $row, $totals['total_refund_incl']);
+            $this->setNumericValue($sheet, 'O' . $row, $totals['total_refund_excl']);
+            $this->setNumericValue($sheet, 'P' . $row, $totals['shipping_refund']);
             $sheet->getStyle('A' . $row . ':R' . $row)->getFont()->setBold(true);
         }
         
@@ -419,8 +547,11 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
      */
     protected function populateSBPMSheet($sheet, $dataFetcher, $date_from, $date_to)
     {
+        // Add header row with date range info
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method');
+        
         // ==================== TOP PART: Summary Table ====================
-        // Column headers (Row 1)
+        // Column headers (Row 2)
         $topHeaders = array(
             'A' => 'Combined Payment',
             'B' => 'Module',
@@ -436,16 +567,16 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         );
         
         foreach ($topHeaders as $column => $header) {
-            $this->setCellValueSafe($sheet, $column . '1', $header);
+            $this->setCellValueSafe($sheet, $column . '2', $header);
         }
-        $this->styleHeaderRow($sheet, 'A1:K1');
-        $sheet->getRowDimension(1)->setRowHeight(30);
+        $this->styleHeaderRow($sheet, 'A2:K2');
+        $sheet->getRowDimension(2)->setRowHeight(30);
         
         // Get SBPM data
         $sbpmData = $dataFetcher->getSBPMData();
         
         // Populate top summary rows (combined by payment method)
-        $row = 2;
+        $row = 3;
         $totalOrders = 0;
         $totalProductsExcl = 0;
         $totalProductsIncl = 0;
@@ -493,10 +624,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setNumericValue($sheet, 'J' . $row, $totalRefundOnline);
         $this->setNumericValue($sheet, 'K' . $row, $totalRefundInstore);
         $sheet->getStyle('A' . $row . ':K' . $row)->getFont()->setBold(true);
-        $row++;
-        
-        // Date range row
-        $this->setCellValueSafe($sheet, 'A' . $row, 'Date: ' . $date_from . ' 00:00:00 - ' . $date_to . ' 23:59:59');
+        $topSectionEndRow = $row; // Track where top section ends
         $row++;
         
         // ==================== BOTTOM PART: Specific Payment Breakdown ====================
@@ -638,16 +766,15 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $lastRow = $row - 1;
         
         // Style all data rows (top and bottom sections)
-        if ($lastRow > 1) {
-            // Style top section (rows 2 to before date row)
-            $dateRow = $lastRow - 1; // Approximate - adjust if needed
-            $this->styleDataRows($sheet, 'A2:K' . $dateRow);
+        if ($lastRow > 2) {
+            // Style top section (rows 3 to TOTALS row)
+            $this->styleDataRows($sheet, 'A3:K' . $topSectionEndRow);
             // Apply number formatting to numeric columns in top section
-            $this->applyNumberFormat($sheet, 'C2:C' . $dateRow); // Order count
-            $this->applyNumberFormat($sheet, 'D2:K' . $dateRow); // All monetary values
+            $this->applyNumberFormat($sheet, 'C3:C' . $topSectionEndRow); // Order count
+            $this->applyNumberFormat($sheet, 'D3:K' . $topSectionEndRow); // All monetary values
             
-            // Style bottom section (after date row)
-            $bottomStartRow = $dateRow + 2; // After date row + header row
+            // Style bottom section (after TOTALS row + bottom header row)
+            $bottomStartRow = $topSectionEndRow + 2; // After TOTALS row + bottom header row
             if ($bottomStartRow <= $lastRow) {
                 $this->styleDataRows($sheet, 'A' . $bottomStartRow . ':C' . $lastRow);
                 // Apply number formatting to payment amount column
