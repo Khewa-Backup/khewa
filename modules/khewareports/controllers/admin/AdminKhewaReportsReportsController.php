@@ -559,6 +559,10 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Add header row with date range info
         $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method');
         
+        // Get POS module name from configuration (use first one for display)
+        $patterns = Khewareports::getPaymentMethodPatterns();
+        $posModuleName = !empty($patterns['pos_module']) ? $patterns['pos_module'][0] : 'hspointofsalepro';
+        
         // ==================== TOP PART: Summary Table ====================
         // Column headers (Row 2)
         $topHeaders = array(
@@ -714,40 +718,40 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Fixed In-Store rows (always show even if $0) - show rows first, then total
         // Paid with Voucher
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Voucher');
-        $this->setCellValueSafe($sheet, 'B' . $row, 'hspointofsalepro');
+        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
         $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['voucher']);
         $row++;
         
         // Paid with Credit Card
         $creditCard = $this->findPaymentAmount($sbpmData['instore']['payments'], 'Credit Card');
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Credit Card');
-        $this->setCellValueSafe($sheet, 'B' . $row, 'hspointofsalepro');
+        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
         $this->setNumericValue($sheet, 'C' . $row, $creditCard);
         $row++;
         
         // Paid with Cash
         $cash = $this->findPaymentAmount($sbpmData['instore']['payments'], 'Cash');
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Cash');
-        $this->setCellValueSafe($sheet, 'B' . $row, 'hspointofsalepro');
+        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
         $this->setNumericValue($sheet, 'C' . $row, $cash);
         $row++;
         
         // Paid with Interac
         $interac = $this->findPaymentAmount($sbpmData['instore']['payments'], 'Interac');
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Interac');
-        $this->setCellValueSafe($sheet, 'B' . $row, 'hspointofsalepro');
+        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
         $this->setNumericValue($sheet, 'C' . $row, $interac);
         $row++;
         
         // Paid with InStore Gift Card
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with InStore Gift Card');
-        $this->setCellValueSafe($sheet, 'B' . $row, 'hspointofsalepro');
+        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
         $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['gift_card']);
         $row++;
         
         // Paid with Credit Slip
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Credit Slip');
-        $this->setCellValueSafe($sheet, 'B' . $row, 'hspointofsalepro');
+        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
         $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['credit_slip']);
         $row++;
         

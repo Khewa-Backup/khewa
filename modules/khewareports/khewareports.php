@@ -16,6 +16,15 @@ class Khewareports extends Module
     const TAX_ID_CANADA_GST = 1;  // 5% GST
     const TAX_IDS_QUEBEC_QST = array(25, 34, 32, 31, 28);  // 9.975% QST
     
+    // Default Payment Method Patterns (comma-separated values that map to each category)
+    const DEFAULT_PM_CREDIT_CARD = 'Credit Card, Carte de crédit, Credit Card(instore)';
+    const DEFAULT_PM_CASH = 'Cash, Comptant';
+    const DEFAULT_PM_INTERAC = 'Interac';
+    const DEFAULT_PM_GIFT_CARD = 'Gift card, Carte Cadeau, InStore Gift Card';
+    const DEFAULT_PM_VOUCHER = 'Voucher';
+    const DEFAULT_PM_CREDIT_SLIP = 'Credit Slip';
+    const DEFAULT_PM_POS_MODULE = 'hspointofsalepro';
+    
     public function __construct()
     {
         $this->name = 'khewareports';
@@ -51,6 +60,16 @@ class Khewareports extends Module
         Configuration::updateValue('KHEWA_STATE_REFUNDED_OLD', self::DEFAULT_STATE_REFUNDED_OLD);
         Configuration::updateValue('KHEWA_STATE_PARTIAL_REFUND', self::DEFAULT_STATE_PARTIAL_REFUND);
         Configuration::updateValue('KHEWA_STATE_PAYMENT_ERROR', self::DEFAULT_STATE_PAYMENT_ERROR);
+        
+        // Payment method patterns (empty = use defaults)
+        Configuration::updateValue('KHEWA_PM_CREDIT_CARD', '');
+        Configuration::updateValue('KHEWA_PM_CASH', '');
+        Configuration::updateValue('KHEWA_PM_INTERAC', '');
+        Configuration::updateValue('KHEWA_PM_GIFT_CARD', '');
+        Configuration::updateValue('KHEWA_PM_VOUCHER', '');
+        Configuration::updateValue('KHEWA_PM_CREDIT_SLIP', '');
+        Configuration::updateValue('KHEWA_PM_POS_MODULE', '');
+        
         return true;
     }
 
@@ -75,6 +94,16 @@ class Khewareports extends Module
         Configuration::deleteByName('KHEWA_STATE_REFUNDED_OLD');
         Configuration::deleteByName('KHEWA_STATE_PARTIAL_REFUND');
         Configuration::deleteByName('KHEWA_STATE_PAYMENT_ERROR');
+        
+        // Payment method patterns
+        Configuration::deleteByName('KHEWA_PM_CREDIT_CARD');
+        Configuration::deleteByName('KHEWA_PM_CASH');
+        Configuration::deleteByName('KHEWA_PM_INTERAC');
+        Configuration::deleteByName('KHEWA_PM_GIFT_CARD');
+        Configuration::deleteByName('KHEWA_PM_VOUCHER');
+        Configuration::deleteByName('KHEWA_PM_CREDIT_SLIP');
+        Configuration::deleteByName('KHEWA_PM_POS_MODULE');
+        
         return true;
     }
 
@@ -157,6 +186,15 @@ class Khewareports extends Module
             Configuration::updateValue('KHEWA_STATE_REFUNDED_OLD', (int)Tools::getValue('KHEWA_STATE_REFUNDED_OLD'));
             Configuration::updateValue('KHEWA_STATE_PARTIAL_REFUND', (int)Tools::getValue('KHEWA_STATE_PARTIAL_REFUND'));
             Configuration::updateValue('KHEWA_STATE_PAYMENT_ERROR', (int)Tools::getValue('KHEWA_STATE_PAYMENT_ERROR'));
+            
+            // Payment method patterns (sanitize input)
+            Configuration::updateValue('KHEWA_PM_CREDIT_CARD', pSQL(Tools::getValue('KHEWA_PM_CREDIT_CARD')));
+            Configuration::updateValue('KHEWA_PM_CASH', pSQL(Tools::getValue('KHEWA_PM_CASH')));
+            Configuration::updateValue('KHEWA_PM_INTERAC', pSQL(Tools::getValue('KHEWA_PM_INTERAC')));
+            Configuration::updateValue('KHEWA_PM_GIFT_CARD', pSQL(Tools::getValue('KHEWA_PM_GIFT_CARD')));
+            Configuration::updateValue('KHEWA_PM_VOUCHER', pSQL(Tools::getValue('KHEWA_PM_VOUCHER')));
+            Configuration::updateValue('KHEWA_PM_CREDIT_SLIP', pSQL(Tools::getValue('KHEWA_PM_CREDIT_SLIP')));
+            Configuration::updateValue('KHEWA_PM_POS_MODULE', pSQL(Tools::getValue('KHEWA_PM_POS_MODULE')));
             
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
@@ -282,6 +320,73 @@ class Khewareports extends Module
                     )
                 ),
             ),
+        );
+        
+        // Payment Method Patterns Form
+        $fields_form[2]['form'] = array(
+            'legend' => array(
+                'title' => $this->l('Payment Method Patterns'),
+                'icon' => 'icon-credit-card'
+            ),
+            'description' => $this->l('Add comma-separated patterns to match payment methods. Your values will be ADDED to the defaults below (not replace them). Duplicates are automatically removed (case-insensitive).'),
+            'input' => array(
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Credit Card'),
+                    'name' => 'KHEWA_PM_CREDIT_CARD',
+                    'desc' => $this->l('Always included: ') . self::DEFAULT_PM_CREDIT_CARD,
+                    'placeholder' => $this->l('Add extra patterns here...'),
+                    'class' => 'fixed-width-xxl',
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Cash'),
+                    'name' => 'KHEWA_PM_CASH',
+                    'desc' => $this->l('Always included: ') . self::DEFAULT_PM_CASH,
+                    'placeholder' => $this->l('Add extra patterns here...'),
+                    'class' => 'fixed-width-xxl',
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Interac'),
+                    'name' => 'KHEWA_PM_INTERAC',
+                    'desc' => $this->l('Always included: ') . self::DEFAULT_PM_INTERAC,
+                    'placeholder' => $this->l('Add extra patterns here...'),
+                    'class' => 'fixed-width-xxl',
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Gift Card'),
+                    'name' => 'KHEWA_PM_GIFT_CARD',
+                    'desc' => $this->l('Always included: ') . self::DEFAULT_PM_GIFT_CARD,
+                    'placeholder' => $this->l('Add extra patterns here...'),
+                    'class' => 'fixed-width-xxl',
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Voucher'),
+                    'name' => 'KHEWA_PM_VOUCHER',
+                    'desc' => $this->l('Always included: ') . self::DEFAULT_PM_VOUCHER,
+                    'placeholder' => $this->l('Add extra patterns here...'),
+                    'class' => 'fixed-width-xxl',
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Credit Slip'),
+                    'name' => 'KHEWA_PM_CREDIT_SLIP',
+                    'desc' => $this->l('Always included: ') . self::DEFAULT_PM_CREDIT_SLIP,
+                    'placeholder' => $this->l('Add extra patterns here...'),
+                    'class' => 'fixed-width-xxl',
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Point of Sale Module'),
+                    'name' => 'KHEWA_PM_POS_MODULE',
+                    'desc' => $this->l('Module name(s) for in-store orders. Always included: ') . self::DEFAULT_PM_POS_MODULE,
+                    'placeholder' => $this->l('Add extra module names here...'),
+                    'class' => 'fixed-width-xxl',
+                ),
+            ),
             'submit' => array(
                 'title' => $this->l('Save'),
             )
@@ -320,6 +425,14 @@ class Khewareports extends Module
             'KHEWA_STATE_REFUNDED_OLD' => Configuration::get('KHEWA_STATE_REFUNDED_OLD', self::DEFAULT_STATE_REFUNDED_OLD),
             'KHEWA_STATE_PARTIAL_REFUND' => Configuration::get('KHEWA_STATE_PARTIAL_REFUND', self::DEFAULT_STATE_PARTIAL_REFUND),
             'KHEWA_STATE_PAYMENT_ERROR' => Configuration::get('KHEWA_STATE_PAYMENT_ERROR', self::DEFAULT_STATE_PAYMENT_ERROR),
+            // Payment method patterns
+            'KHEWA_PM_CREDIT_CARD' => Configuration::get('KHEWA_PM_CREDIT_CARD'),
+            'KHEWA_PM_CASH' => Configuration::get('KHEWA_PM_CASH'),
+            'KHEWA_PM_INTERAC' => Configuration::get('KHEWA_PM_INTERAC'),
+            'KHEWA_PM_GIFT_CARD' => Configuration::get('KHEWA_PM_GIFT_CARD'),
+            'KHEWA_PM_VOUCHER' => Configuration::get('KHEWA_PM_VOUCHER'),
+            'KHEWA_PM_CREDIT_SLIP' => Configuration::get('KHEWA_PM_CREDIT_SLIP'),
+            'KHEWA_PM_POS_MODULE' => Configuration::get('KHEWA_PM_POS_MODULE'),
         );
 
         return $helper->generateForm($fields_form);
@@ -365,6 +478,166 @@ class Khewareports extends Module
             $states['canceled'],
             $states['payment_error']
         );
+    }
+    
+    /**
+     * Parse comma-separated string into array of trimmed values
+     * @param string $str
+     * @return array
+     */
+    protected static function parseCommaSeparated($str)
+    {
+        if (empty($str)) {
+            return array();
+        }
+        $values = explode(',', $str);
+        $result = array();
+        foreach ($values as $val) {
+            $trimmed = trim($val);
+            if (!empty($trimmed)) {
+                $result[] = $trimmed;
+            }
+        }
+        return $result;
+    }
+    
+    /**
+     * Get merged and deduplicated payment method patterns
+     * Combines user-defined patterns with defaults, removes duplicates (case-insensitive)
+     * 
+     * @param string $configKey Configuration key (e.g., 'KHEWA_PM_CREDIT_CARD')
+     * @param string $defaultValue Default constant value
+     * @return array Array of unique patterns
+     */
+    protected static function getMergedPatterns($configKey, $defaultValue)
+    {
+        // Get user-defined patterns
+        $userPatterns = self::parseCommaSeparated(Configuration::get($configKey));
+        
+        // Get default patterns
+        $defaultPatterns = self::parseCommaSeparated($defaultValue);
+        
+        // Merge: user patterns first, then defaults
+        $merged = array_merge($userPatterns, $defaultPatterns);
+        
+        // Deduplicate (case-insensitive)
+        $seen = array();
+        $result = array();
+        foreach ($merged as $pattern) {
+            $lower = strtolower($pattern);
+            if (!isset($seen[$lower])) {
+                $seen[$lower] = true;
+                $result[] = $pattern;
+            }
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Get all configured payment method patterns
+     * @return array Associative array with all pattern categories
+     */
+    public static function getPaymentMethodPatterns()
+    {
+        return array(
+            'credit_card' => self::getMergedPatterns('KHEWA_PM_CREDIT_CARD', self::DEFAULT_PM_CREDIT_CARD),
+            'cash' => self::getMergedPatterns('KHEWA_PM_CASH', self::DEFAULT_PM_CASH),
+            'interac' => self::getMergedPatterns('KHEWA_PM_INTERAC', self::DEFAULT_PM_INTERAC),
+            'gift_card' => self::getMergedPatterns('KHEWA_PM_GIFT_CARD', self::DEFAULT_PM_GIFT_CARD),
+            'voucher' => self::getMergedPatterns('KHEWA_PM_VOUCHER', self::DEFAULT_PM_VOUCHER),
+            'credit_slip' => self::getMergedPatterns('KHEWA_PM_CREDIT_SLIP', self::DEFAULT_PM_CREDIT_SLIP),
+            'pos_module' => self::getMergedPatterns('KHEWA_PM_POS_MODULE', self::DEFAULT_PM_POS_MODULE),
+        );
+    }
+    
+    /**
+     * Build SQL LIKE conditions for a pattern category
+     * @param array $patterns Array of pattern strings
+     * @param string $columnName SQL column name (e.g., 'op.payment_method')
+     * @return string SQL condition (e.g., "(col LIKE '%X%' OR col LIKE '%Y%')")
+     */
+    public static function buildLikeCondition($patterns, $columnName)
+    {
+        if (empty($patterns)) {
+            return '1=0'; // No patterns = never match
+        }
+        
+        $conditions = array();
+        foreach ($patterns as $pattern) {
+            $escaped = pSQL($pattern);
+            $conditions[] = $columnName . ' LIKE "%' . $escaped . '%"';
+        }
+        
+        return '(' . implode(' OR ', $conditions) . ')';
+    }
+    
+    /**
+     * Build SQL CASE statement for normalizing payment methods
+     * @param string $columnName SQL column name (e.g., 'op.payment_method')
+     * @return string SQL CASE statement
+     */
+    public static function buildPaymentMethodCase($columnName)
+    {
+        $patterns = self::getPaymentMethodPatterns();
+        
+        $case = 'CASE' . "\n";
+        
+        // Credit Card
+        if (!empty($patterns['credit_card'])) {
+            $case .= '    WHEN ' . self::buildLikeCondition($patterns['credit_card'], $columnName) . ' THEN "Credit Card"' . "\n";
+        }
+        
+        // Cash
+        if (!empty($patterns['cash'])) {
+            $case .= '    WHEN ' . self::buildLikeCondition($patterns['cash'], $columnName) . ' THEN "Cash"' . "\n";
+        }
+        
+        // Interac
+        if (!empty($patterns['interac'])) {
+            $case .= '    WHEN ' . self::buildLikeCondition($patterns['interac'], $columnName) . ' THEN "Interac"' . "\n";
+        }
+        
+        // Gift Card
+        if (!empty($patterns['gift_card'])) {
+            $case .= '    WHEN ' . self::buildLikeCondition($patterns['gift_card'], $columnName) . ' THEN "Gift card"' . "\n";
+        }
+        
+        // Voucher
+        if (!empty($patterns['voucher'])) {
+            $case .= '    WHEN ' . self::buildLikeCondition($patterns['voucher'], $columnName) . ' THEN "Voucher"' . "\n";
+        }
+        
+        // Credit Slip
+        if (!empty($patterns['credit_slip'])) {
+            $case .= '    WHEN ' . self::buildLikeCondition($patterns['credit_slip'], $columnName) . ' THEN "Credit Slip"' . "\n";
+        }
+        
+        $case .= '    ELSE TRIM(' . $columnName . ')' . "\n";
+        $case .= 'END';
+        
+        return $case;
+    }
+    
+    /**
+     * Build SQL condition for POS (in-store) module detection
+     * @param string $columnName SQL column name (e.g., 'o.module')
+     * @return string SQL condition
+     */
+    public static function buildPosModuleCondition($columnName)
+    {
+        $patterns = self::getPaymentMethodPatterns();
+        
+        if (empty($patterns['pos_module'])) {
+            return $columnName . ' = "hspointofsalepro"'; // Fallback
+        }
+        
+        $conditions = array();
+        foreach ($patterns['pos_module'] as $module) {
+            $conditions[] = $columnName . ' = "' . pSQL($module) . '"';
+        }
+        
+        return '(' . implode(' OR ', $conditions) . ')';
     }
 }
 

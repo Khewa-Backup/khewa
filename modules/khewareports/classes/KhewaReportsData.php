@@ -16,9 +16,7 @@ class KhewaReportsData
     protected $date_to;
     protected $id_lang;
     protected $id_shop;
-    
-    // POS module name - used to distinguish online vs in-store
-    const POS_MODULE = 'hspointofsalepro';
+    protected $posModules;  // Cached POS module names
     
     // Tax IDs (Canadian specific)
     const TAX_ID_GST = 1;  // 5% Federal GST
@@ -35,6 +33,99 @@ class KhewaReportsData
         $this->date_to = pSQL($date_to) . ' 23:59:59';
         $this->id_lang = (int)Context::getContext()->language->id;
         $this->id_shop = (int)Context::getContext()->shop->id;
+        
+        // Cache POS module names from configuration
+        $patterns = Khewareports::getPaymentMethodPatterns();
+        $this->posModules = $patterns['pos_module'];
+    }
+    
+    /**
+     * Get POS module SQL condition (for in-store detection)
+     * @param string $column Column name (e.g., 'o.module')
+     * @return string SQL condition
+     */
+    protected function getPosModuleCondition($column)
+    {
+        if (empty($this->posModules)) {
+            return $column . ' = "hspointofsalepro"'; // Fallback
+        }
+        
+        $conditions = array();
+        foreach ($this->posModules as $module) {
+            $conditions[] = $column . ' = "' . pSQL($module) . '"';
+        }
+        
+        return '(' . implode(' OR ', $conditions) . ')';
+    }
+    
+    /**
+     * Get NOT POS module SQL condition (for online detection)
+     * @param string $column Column name (e.g., 'o.module')
+     * @return string SQL condition
+     */
+    protected function getNotPosModuleCondition($column)
+    {
+        if (empty($this->posModules)) {
+            return $column . ' != "hspointofsalepro"'; // Fallback
+        }
+        
+        $conditions = array();
+        foreach ($this->posModules as $module) {
+            $conditions[] = $column . ' != "' . pSQL($module) . '"';
+        }
+        
+        return '(' . implode(' AND ', $conditions) . ')';
+    }
+    
+    /**
+     * Check if a module is a POS module
+     * @param string $module Module name
+     * @return bool
+     */
+    protected function isPosModule($module)
+    {
+        if (empty($this->posModules)) {
+            return $module === 'hspointofsalepro'; // Fallback
+        }
+        
+        return in_array($module, $this->posModules);
+    }
+    
+    /**
+     * Check if a payment method should be excluded from TOTAL calculations
+     * Gift Card, Voucher, Credit Slip are NOT actual payments - they reduce order total
+     * @param string $paymentMethod Payment method name
+     * @return bool True if should be excluded from total
+     */
+    protected function isExcludedFromTotal($paymentMethod)
+    {
+        $paymentLower = strtolower($paymentMethod);
+        
+        // Get configured patterns
+        $patterns = Khewareports::getPaymentMethodPatterns();
+        
+        // Check against Gift Card patterns
+        foreach ($patterns['gift_card'] as $pattern) {
+            if (stripos($paymentLower, strtolower($pattern)) !== false) {
+                return true;
+            }
+        }
+        
+        // Check against Voucher patterns
+        foreach ($patterns['voucher'] as $pattern) {
+            if (stripos($paymentLower, strtolower($pattern)) !== false) {
+                return true;
+            }
+        }
+        
+        // Check against Credit Slip patterns
+        foreach ($patterns['credit_slip'] as $pattern) {
+            if (stripos($paymentLower, strtolower($pattern)) !== false) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**
@@ -149,11 +240,12 @@ class KhewaReportsData
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
         
-        ORDER BY o.date_add ASC, o.id_order ASC, od.id_order_detail ASC
+        ORDER BY o.date_add DESC, o.id_order DESC, od.id_order_detail ASC
         ';
         
         return Db::getInstance()->executeS($sql);
     }
+    
     
     /**
      * Get Refunds Data - Refunds within date range based on REFUND DATE
@@ -273,18 +365,14 @@ class KhewaReportsData
         }
         
         // STEP 2: Get payment records for these orders
-        // Normalize payment methods and get them in order of id_order_payment
+        // Normalize payment methods using configurable patterns
+        $paymentMethodCase = Khewareports::buildPaymentMethodCase('op.payment_method');
+        
         $sql = '
         SELECT 
             op.order_reference,
             MIN(op.id_order_payment) as first_payment_id,
-            CASE 
-                WHEN op.payment_method LIKE "%Credit Card%" OR op.payment_method LIKE "%Carte de crédit%" OR op.payment_method = "Credit Card(instore)" THEN "Credit Card"
-                WHEN op.payment_method LIKE "%Cash%" OR op.payment_method LIKE "%Comptant%" THEN "Cash"
-                WHEN op.payment_method LIKE "%Interac%" THEN "Interac"
-                WHEN op.payment_method LIKE "%Gift card%" OR op.payment_method LIKE "%Carte Cadeau%" THEN "Gift card"
-                ELSE TRIM(op.payment_method)
-            END as payment_method,
+            ' . $paymentMethodCase . ' as payment_method,
             SUM(op.amount) as payment_amount
         FROM ' . _DB_PREFIX_ . 'order_payment op
         INNER JOIN ' . _DB_PREFIX_ . 'orders o ON o.reference = op.order_reference
@@ -504,9 +592,9 @@ class KhewaReportsData
                 $row['total_qst'] = isset($qstMap[$module]) ? round($qstMap[$module] * $proportion, 2) : 0;
                 
                 // Distribute Refunds proportionally by module type (same as taxes)
-                $row['refund_online'] = ($module != self::POS_MODULE && isset($refundMap[$module])) 
+                $row['refund_online'] = (!$this->isPosModule($module) && isset($refundMap[$module])) 
                     ? round($refundMap[$module] * $proportion, 2) : 0;
-                $row['refund_instore'] = ($module == self::POS_MODULE && isset($refundMap[$module])) 
+                $row['refund_instore'] = ($this->isPosModule($module) && isset($refundMap[$module])) 
                     ? round($refundMap[$module] * $proportion, 2) : 0;
             }
             $result['combined'] = $combinedBase;
@@ -523,7 +611,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module != "' . self::POS_MODULE . '"
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND op.amount > 0
         GROUP BY op.payment_method, o.module
         ORDER BY payment_amount DESC
@@ -532,6 +620,11 @@ class KhewaReportsData
         if ($onlinePayments) {
             $result['online']['payments'] = $onlinePayments;
             foreach ($onlinePayments as $p) {
+                // IMPORTANT: Exclude Gift Card, Voucher, Credit Slip from TOTAL
+                // These are shown as separate rows but NOT counted in the total
+                if ($this->isExcludedFromTotal($p['payment_method'])) {
+                    continue;
+                }
                 $result['online']['total'] += (float)$p['payment_amount'];
             }
         }
@@ -547,7 +640,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module = "' . self::POS_MODULE . '"
+        AND ' . $this->getPosModuleCondition('o.module') . '
         AND op.amount > 0
         GROUP BY op.payment_method, o.module
         ORDER BY payment_amount DESC
@@ -556,11 +649,37 @@ class KhewaReportsData
         if ($instorePayments) {
             $result['instore']['payments'] = $instorePayments;
             foreach ($instorePayments as $p) {
+                // IMPORTANT: Exclude Gift Card, Voucher, Credit Slip from TOTAL
+                // These are shown as separate rows but NOT counted in the total
+                if ($this->isExcludedFromTotal($p['payment_method'])) {
+                    continue;
+                }
                 $result['instore']['total'] += (float)$p['payment_amount'];
             }
         }
         
-        // Get ONLINE Gift Card usage (cart rule with "gift" or "cadeau")
+        // ========================================================================
+        // GIFT CARD, VOUCHER, CREDIT SLIP - Check BOTH sources, eliminate duplicates
+        // Strategy: Get from order_payment first, then add order_cart_rule EXCLUDING
+        // orders that already have this type in order_payment (to avoid double-counting)
+        // ========================================================================
+        
+        // --- ONLINE GIFT CARD ---
+        // Source 1: From order_payment (primary - actual payment records)
+        $sql = '
+        SELECT IFNULL(SUM(op.amount), 0) as amount
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
+        AND (LOWER(op.payment_method) LIKE "%gift%" OR LOWER(op.payment_method) LIKE "%cadeau%")
+        AND op.amount > 0
+        ';
+        $giftOnlinePayment = (float)Db::getInstance()->getValue($sql);
+        
+        // Source 2: From order_cart_rule, EXCLUDING orders that have gift card in order_payment
         $sql = '
         SELECT IFNULL(SUM(ocr.value), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
@@ -568,13 +687,36 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module != "' . self::POS_MODULE . '"
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
+        AND o.id_order NOT IN (
+            SELECT DISTINCT o2.id_order 
+            FROM ' . _DB_PREFIX_ . 'orders o2
+            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
+            WHERE (LOWER(op2.payment_method) LIKE "%gift%" OR LOWER(op2.payment_method) LIKE "%cadeau%")
+            AND op2.amount > 0
+        )
         ';
-        $giftOnline = Db::getInstance()->getValue($sql);
-        $result['online']['gift_card'] = (float)$giftOnline;
+        $giftOnlineCartRule = (float)Db::getInstance()->getValue($sql);
         
-        // Get IN-STORE Gift Card usage
+        $result['online']['gift_card'] = $giftOnlinePayment + $giftOnlineCartRule;
+        
+        // --- IN-STORE GIFT CARD ---
+        // Source 1: From order_payment
+        $sql = '
+        SELECT IFNULL(SUM(op.amount), 0) as amount
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . $this->getPosModuleCondition('o.module') . '
+        AND (LOWER(op.payment_method) LIKE "%gift%" OR LOWER(op.payment_method) LIKE "%cadeau%")
+        AND op.amount > 0
+        ';
+        $giftInstorePayment = (float)Db::getInstance()->getValue($sql);
+        
+        // Source 2: From order_cart_rule, EXCLUDING orders that have gift card in order_payment
         $sql = '
         SELECT IFNULL(SUM(ocr.value), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
@@ -582,13 +724,36 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module = "' . self::POS_MODULE . '"
+        AND ' . $this->getPosModuleCondition('o.module') . '
         AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
+        AND o.id_order NOT IN (
+            SELECT DISTINCT o2.id_order 
+            FROM ' . _DB_PREFIX_ . 'orders o2
+            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
+            WHERE (LOWER(op2.payment_method) LIKE "%gift%" OR LOWER(op2.payment_method) LIKE "%cadeau%")
+            AND op2.amount > 0
+        )
         ';
-        $giftInstore = Db::getInstance()->getValue($sql);
-        $result['instore']['gift_card'] = (float)$giftInstore;
+        $giftInstoreCartRule = (float)Db::getInstance()->getValue($sql);
         
-        // Get ONLINE Voucher usage
+        $result['instore']['gift_card'] = $giftInstorePayment + $giftInstoreCartRule;
+        
+        // --- ONLINE VOUCHER ---
+        // Source 1: From order_payment
+        $sql = '
+        SELECT IFNULL(SUM(op.amount), 0) as amount
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
+        AND LOWER(op.payment_method) LIKE "%voucher%"
+        AND op.amount > 0
+        ';
+        $voucherOnlinePayment = (float)Db::getInstance()->getValue($sql);
+        
+        // Source 2: From order_cart_rule, EXCLUDING orders that have voucher in order_payment
         $sql = '
         SELECT IFNULL(SUM(ocr.value), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
@@ -596,13 +761,36 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module != "' . self::POS_MODULE . '"
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%voucher%"
+        AND o.id_order NOT IN (
+            SELECT DISTINCT o2.id_order 
+            FROM ' . _DB_PREFIX_ . 'orders o2
+            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
+            WHERE LOWER(op2.payment_method) LIKE "%voucher%"
+            AND op2.amount > 0
+        )
         ';
-        $voucherOnline = Db::getInstance()->getValue($sql);
-        $result['online']['voucher'] = (float)$voucherOnline;
+        $voucherOnlineCartRule = (float)Db::getInstance()->getValue($sql);
         
-        // Get IN-STORE Voucher usage
+        $result['online']['voucher'] = $voucherOnlinePayment + $voucherOnlineCartRule;
+        
+        // --- IN-STORE VOUCHER ---
+        // Source 1: From order_payment
+        $sql = '
+        SELECT IFNULL(SUM(op.amount), 0) as amount
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . $this->getPosModuleCondition('o.module') . '
+        AND LOWER(op.payment_method) LIKE "%voucher%"
+        AND op.amount > 0
+        ';
+        $voucherInstorePayment = (float)Db::getInstance()->getValue($sql);
+        
+        // Source 2: From order_cart_rule, EXCLUDING orders that have voucher in order_payment
         $sql = '
         SELECT IFNULL(SUM(ocr.value), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
@@ -610,13 +798,36 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module = "' . self::POS_MODULE . '"
+        AND ' . $this->getPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%voucher%"
+        AND o.id_order NOT IN (
+            SELECT DISTINCT o2.id_order 
+            FROM ' . _DB_PREFIX_ . 'orders o2
+            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
+            WHERE LOWER(op2.payment_method) LIKE "%voucher%"
+            AND op2.amount > 0
+        )
         ';
-        $voucherInstore = Db::getInstance()->getValue($sql);
-        $result['instore']['voucher'] = (float)$voucherInstore;
+        $voucherInstoreCartRule = (float)Db::getInstance()->getValue($sql);
         
-        // Get ONLINE Credit Slip usage (cart_rule description contains "slip")
+        $result['instore']['voucher'] = $voucherInstorePayment + $voucherInstoreCartRule;
+        
+        // --- ONLINE CREDIT SLIP ---
+        // Source 1: From order_payment
+        $sql = '
+        SELECT IFNULL(SUM(op.amount), 0) as amount
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
+        AND (LOWER(op.payment_method) LIKE "%credit slip%" OR LOWER(op.payment_method) LIKE "%slip%")
+        AND op.amount > 0
+        ';
+        $creditSlipOnlinePayment = (float)Db::getInstance()->getValue($sql);
+        
+        // Source 2: From order_cart_rule, EXCLUDING orders that have credit slip in order_payment
         $sql = '
         SELECT IFNULL(SUM(ocr.value), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
@@ -625,13 +836,36 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module != "' . self::POS_MODULE . '"
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND LOWER(cr.description) LIKE "%slip%"
+        AND o.id_order NOT IN (
+            SELECT DISTINCT o2.id_order 
+            FROM ' . _DB_PREFIX_ . 'orders o2
+            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
+            WHERE (LOWER(op2.payment_method) LIKE "%credit slip%" OR LOWER(op2.payment_method) LIKE "%slip%")
+            AND op2.amount > 0
+        )
         ';
-        $creditSlipOnline = Db::getInstance()->getValue($sql);
-        $result['online']['credit_slip'] = (float)$creditSlipOnline;
+        $creditSlipOnlineCartRule = (float)Db::getInstance()->getValue($sql);
         
-        // Get IN-STORE Credit Slip usage
+        $result['online']['credit_slip'] = $creditSlipOnlinePayment + $creditSlipOnlineCartRule;
+        
+        // --- IN-STORE CREDIT SLIP ---
+        // Source 1: From order_payment
+        $sql = '
+        SELECT IFNULL(SUM(op.amount), 0) as amount
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . $this->getPosModuleCondition('o.module') . '
+        AND (LOWER(op.payment_method) LIKE "%credit slip%" OR LOWER(op.payment_method) LIKE "%slip%")
+        AND op.amount > 0
+        ';
+        $creditSlipInstorePayment = (float)Db::getInstance()->getValue($sql);
+        
+        // Source 2: From order_cart_rule, EXCLUDING orders that have credit slip in order_payment
         $sql = '
         SELECT IFNULL(SUM(ocr.value), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
@@ -640,11 +874,21 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module = "' . self::POS_MODULE . '"
+        AND ' . $this->getPosModuleCondition('o.module') . '
         AND LOWER(cr.description) LIKE "%slip%"
+        AND o.id_order NOT IN (
+            SELECT DISTINCT o2.id_order 
+            FROM ' . _DB_PREFIX_ . 'orders o2
+            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
+            WHERE (LOWER(op2.payment_method) LIKE "%credit slip%" OR LOWER(op2.payment_method) LIKE "%slip%")
+            AND op2.amount > 0
+        )
         ';
-        $creditSlipInstore = Db::getInstance()->getValue($sql);
-        $result['instore']['credit_slip'] = (float)$creditSlipInstore;
+        $creditSlipInstoreCartRule = (float)Db::getInstance()->getValue($sql);
+        
+        $result['instore']['credit_slip'] = $creditSlipInstorePayment + $creditSlipInstoreCartRule;
+        
+        // --- END OF GIFT CARD / VOUCHER / CREDIT SLIP ---
         
         // Get ONLINE Discount (promocode)
         $sql = '
@@ -654,7 +898,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module != "' . self::POS_MODULE . '"
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%promocode%"
         ';
         $discountOnline = Db::getInstance()->getValue($sql);
@@ -668,7 +912,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
-        AND o.module = "' . self::POS_MODULE . '"
+        AND ' . $this->getPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%point of sale%"
         ';
         $discountInstore = Db::getInstance()->getValue($sql);
@@ -681,7 +925,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_slip os ON o.id_order = os.id_order
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
-        AND o.module != "' . self::POS_MODULE . '"
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
         ';
         $refundOnline = Db::getInstance()->getValue($sql);
         $result['online']['refund'] = (float)$refundOnline;
@@ -693,7 +937,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_slip os ON o.id_order = os.id_order
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
-        AND o.module = "' . self::POS_MODULE . '"
+        AND ' . $this->getPosModuleCondition('o.module') . '
         ';
         $refundInstore = Db::getInstance()->getValue($sql);
         $result['instore']['refund'] = (float)$refundInstore;
