@@ -795,10 +795,23 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             }
         }
         
+        // Reduce column widths to fit on one page when printing
         $this->setColumnWidths($sheet, array(
-            'A' => 25, 'B' => 18, 'C' => 18, 'D' => 18, 'E' => 18, 'F' => 18,
-            'G' => 18, 'H' => 16, 'I' => 18, 'J' => 18, 'K' => 18
+            'A' => 20, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 15,
+            'G' => 15, 'H' => 14, 'I' => 15, 'J' => 15, 'K' => 15
         ));
+        
+        // Set print settings to fit to one page width (landscape orientation)
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(0); // Don't limit height
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+        
+        // Set margins for better fit
+        $sheet->getPageMargins()->setLeft(0.5);
+        $sheet->getPageMargins()->setRight(0.5);
+        $sheet->getPageMargins()->setTop(0.5);
+        $sheet->getPageMargins()->setBottom(0.5);
     }
     
     /**
