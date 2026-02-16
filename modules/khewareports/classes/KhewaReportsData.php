@@ -160,16 +160,21 @@ class KhewaReportsData
         return false;
     }
     
+
+
     /**
      * Get Sales Data - Orders within date range based on ORDER DATE
      */
     public function getSalesData()
     {
-        $states = Khewareports::getConfiguredStates();
-        $excludedStates = implode(',', array(
-            (int)$states['canceled'],
-            (int)$states['payment_error']
-        ));
+        $excludedStates = Khewareports::getSalesExcludedStatesSQL();
+        $refundStates = Khewareports::getRefundStatesSQL();
+        
+        // English language id for order state name
+        $id_lang_en = (int)Language::getIdByIso('en');
+        if (!$id_lang_en) {
+            $id_lang_en = 1;
+        }
         
         $sql = '
         SELECT 
@@ -181,6 +186,7 @@ class KhewaReportsData
             o.module as payment_module,
             o.current_state,
             osl.name as order_state_name,
+            IFNULL(osl_en.name, osl.name) as order_state_name_en,
             o.total_paid_tax_incl,
             o.total_paid_tax_excl,
             o.total_products_wt as total_products_tax_incl,
@@ -219,6 +225,8 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
         LEFT JOIN ' . _DB_PREFIX_ . 'order_state_lang osl 
             ON o.current_state = osl.id_order_state AND osl.id_lang = ' . $this->id_lang . '
+        LEFT JOIN ' . _DB_PREFIX_ . 'order_state_lang osl_en 
+            ON o.current_state = osl_en.id_order_state AND osl_en.id_lang = ' . $id_lang_en . '
         LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax gst 
             ON od.id_order_detail = gst.id_order_detail AND gst.id_tax = ' . self::TAX_ID_GST . '
         LEFT JOIN (
@@ -256,31 +264,179 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'state ds ON da.id_state = ds.id_state
         LEFT JOIN (
             SELECT order_reference,
-                   CASE WHEN COUNT(*) > 1 THEN
-                       GROUP_CONCAT(
-                           CONCAT(payment_method, "($", ROUND(ABS(amount), 2), ")")
-                           ORDER BY id_order_payment ASC
-                           SEPARATOR " - "
-                       )
-                   ELSE "" END as payment_breakdown
-            FROM ' . _DB_PREFIX_ . 'order_payment
-            WHERE amount > 0
+                   GROUP_CONCAT(
+                       CONCAT(payment_method, "($", ROUND(total_amount, 2), ")")
+                       ORDER BY first_id ASC
+                       SEPARATOR " - "
+                   ) as payment_breakdown
+            FROM (
+                SELECT order_reference,
+                       payment_method,
+                       SUM(ABS(amount)) as total_amount,
+                       MIN(id_order_payment) as first_id
+                FROM ' . _DB_PREFIX_ . 'order_payment
+                WHERE amount > 0
+                GROUP BY order_reference, payment_method
+            ) grouped_payments
             GROUP BY order_reference
         ) pb ON o.reference = pb.order_reference
         
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        AND (
+            NOT(
+                o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+            )
+            OR (
+                (
+                    o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                    AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                )
+                AND o.current_state NOT IN (' . $refundStates . ')
+            )
+        )
         
         ORDER BY o.date_add DESC, o.id_order DESC, od.id_order_detail ASC
         ';
         
         return Db::getInstance()->executeS($sql);
     }
+
+
+
     
+
+
+
+    
+
+    /**
+     * Get partial refund orders (state = partial_refund e.g. 25, and possible_refund_date or date_add in range).
+     * Source: orders table only (no order_slip). When an order is partially refunded it has current_state = 25
+     * and possible_refund_date set. The whole amount of that order row (total_paid_tax_incl) is the refund.
+     * Used for Refunds tab, SBPM refund/deduction, and Sales total.
+     * POS may store possible_refund_date with 2-digit year (e.g. 25-12-30) so we match both DATE() and STR_TO_DATE(..., "%y-%m-%d").
+     * @return array List of arrays: id_order, reference, refund_date, amount, is_online, payment_method_normalized, ...
+     */
+    public function getPartialRefundOrders()
+    {
+
+        $partialRefundStateId = (int)Khewareports::getConfiguredStates()['partial_refund'];
+        if ($partialRefundStateId <= 0) {
+            $partialRefundStateId = (int)Khewareports::DEFAULT_STATE_PARTIAL_REFUND;
+        }
+        
+        $dateFromOnly = substr($this->date_from, 0, 10); // Y-m-d
+        $dateToOnly = substr($this->date_to, 0, 10);
+        
+        $sql = '
+        SELECT 
+            o.id_order,
+            o.reference,
+            DATE_FORMAT(o.possible_refund_date, "%Y-%m-%d") as refund_date,
+            o.total_paid_tax_incl as amount,
+            o.invoice_number,
+            DATE_FORMAT(o.date_add, "%Y-%m-%d") as order_date,
+            o.payment,
+            o.module,
+            o.total_products_wt as refund_products_tax_incl,
+            o.total_products as refund_products_tax_excl,
+            o.total_shipping_tax_incl as refund_shipping_tax_incl,
+            o.total_shipping_tax_excl as refund_shipping_tax_excl,
+            dcl.name as delivery_country,
+            ds.name as delivery_state,
+            (
+                SELECT op.payment_method 
+                FROM ' . _DB_PREFIX_ . 'order_payment op 
+                WHERE op.order_reference = o.reference AND op.amount > 0 
+                ORDER BY op.id_order_payment ASC 
+                LIMIT 1
+            ) as first_payment_method
+        FROM ' . _DB_PREFIX_ . 'orders o
+        LEFT JOIN ' . _DB_PREFIX_ . 'address da ON o.id_address_delivery = da.id_address
+        LEFT JOIN ' . _DB_PREFIX_ . 'country_lang dcl ON da.id_country = dcl.id_country AND dcl.id_lang = ' . $this->id_lang . '
+        LEFT JOIN ' . _DB_PREFIX_ . 'state ds ON da.id_state = ds.id_state
+        WHERE o.current_state = ' . $partialRefundStateId . '
+        AND (
+            (o.possible_refund_date IS NOT NULL AND (
+                (DATE(o.possible_refund_date) >= "' . pSQL($dateFromOnly) . '" AND DATE(o.possible_refund_date) <= "' . pSQL($dateToOnly) . '")
+                OR
+                (STR_TO_DATE(o.possible_refund_date, "%y-%m-%d %H:%i:%s") >= "' . $this->date_from . '" AND STR_TO_DATE(o.possible_refund_date, "%y-%m-%d %H:%i:%s") <= "' . $this->date_to . '")
+                OR
+                (STR_TO_DATE(SUBSTRING(o.possible_refund_date, 1, 8), "%y-%m-%d") >= "' . pSQL($dateFromOnly) . '" AND STR_TO_DATE(SUBSTRING(o.possible_refund_date, 1, 8), "%y-%m-%d") <= "' . pSQL($dateToOnly) . '")
+            ))
+            OR
+            (o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '")
+        )
+        ORDER BY COALESCE(o.possible_refund_date, o.date_add) ASC, o.id_order ASC
+        ';
+        
+
+        
+
+
+
+        $rows = Db::getInstance()->executeS($sql);
+        if (!$rows) {
+            return array();
+        }
+        
+        $posModules = $this->posModules;
+        $isPos = function ($module) use ($posModules) {
+            if (empty($posModules)) {
+                return (strtolower($module) === 'hspointofsalepro');
+            }
+            return in_array($module, $posModules);
+        };
+        
+        $out = array();
+        foreach ($rows as $r) {
+            $paymentMethod = isset($r['first_payment_method']) ? $r['first_payment_method'] : $r['payment'];
+            $refundDate = (isset($r['refund_date']) && $r['refund_date'] !== null && $r['refund_date'] !== '') ? $r['refund_date'] : $r['order_date'];
+            $out[] = array(
+                'id_order' => $r['id_order'],
+                'reference' => $r['reference'],
+                'refund_date' => $refundDate,
+                'amount' => (float)$r['amount'],
+                'is_online' => !$isPos($r['module']),
+                'payment_method_normalized' => Khewareports::normalizePaymentMethod($paymentMethod),
+                'invoice_number' => $r['invoice_number'],
+                'order_date' => $r['order_date'],
+                'payment' => $r['payment'],
+                'module' => $r['module'],
+                'refund_products_tax_incl' => (float)$r['refund_products_tax_incl'],
+                'refund_products_tax_excl' => (float)$r['refund_products_tax_excl'],
+                'refund_shipping_tax_incl' => (float)$r['refund_shipping_tax_incl'],
+                'refund_shipping_tax_excl' => (float)$r['refund_shipping_tax_excl'],
+                'delivery_country' => isset($r['delivery_country']) ? $r['delivery_country'] : '',
+                'delivery_state' => isset($r['delivery_state']) ? $r['delivery_state'] : ''
+            );
+        }
+        return $out;
+    }
+    
+
+    /**
+     * Total refund amount from partial refund orders (possible_refund_date in range).
+     * Used to add to Sales sheet refund total (partial refund orders are excluded from getSalesData).
+     * @return float
+     */
+    public function getPartialRefundTotal()
+    {
+        $list = $this->getPartialRefundOrders();
+        $total = 0;
+        foreach ($list as $partialRefund) {
+            $total += $partialRefund['amount'];
+        }
+        return $total;
+    }
     
     /**
-     * Get Refunds Data - Refunds within date range based on REFUND DATE
+     * Get Refunds Data - Refunds within date range based on REFUND DATE (order_slip.date_add).
+     * Includes ALL refund types: full refunds and partial refunds (no filter by order state or os.partial).
+     * Also merges in partial refund orders (detected by possible_refund_date, not order_slip).
      */
     public function getRefundsData()
     {
@@ -331,7 +487,73 @@ class KhewaReportsData
         ORDER BY os.date_add ASC, os.id_order_slip ASC
         ';
         
-        return Db::getInstance()->executeS($sql);
+        $slipRows = Db::getInstance()->executeS($sql);
+        if (!$slipRows) {
+            $slipRows = array();
+        }
+         
+
+        // Partial refunds: use state-25 order only; exclude slip rows for same reference to avoid double-count
+        $partialRefunds = $this->getPartialRefundOrders();
+        $partialRefReferences = array();
+        foreach ($partialRefunds as $pr) {
+            $partialRefReferences[$pr['reference']] = true;
+        }
+        if (!empty($partialRefReferences)) {
+            $slipRows = array_values(array_filter($slipRows, function ($row) use ($partialRefReferences) {
+                return empty($partialRefReferences[isset($row['reference']) ? $row['reference'] : '']);
+            }));
+        }
+        
+        // Merge partial refund orders (detected by state + possible_refund_date or date_add; no order_slip required)
+        foreach ($partialRefunds as $partialRefund) {
+            $totalIncl = $partialRefund['amount'];
+            $totalExcl = $partialRefund['refund_products_tax_excl'] + $partialRefund['refund_shipping_tax_excl'];
+            $slipRows[] = array(
+                'id_order' => $partialRefund['id_order'],
+                'reference' => $partialRefund['reference'],
+                'order_date' => $partialRefund['order_date'],
+                'invoice_number' => $partialRefund['invoice_number'],
+                'payment' => $partialRefund['payment'],
+                'payment_module' => $partialRefund['module'],
+                'current_state' => 25,
+                'order_state_name' => 'Partial refund',
+                'id_order_slip' => 'partial-' . $partialRefund['id_order'],
+                'refund_date' => $partialRefund['refund_date'],
+                'refund_products_tax_incl' => $partialRefund['refund_products_tax_incl'],
+                'refund_products_tax_excl' => $partialRefund['refund_products_tax_excl'],
+                'refund_shipping_tax_incl' => $partialRefund['refund_shipping_tax_incl'],
+                'refund_shipping_tax_excl' => $partialRefund['refund_shipping_tax_excl'],
+                'total_refund_tax_incl' => $totalIncl,
+                'total_refund_tax_excl' => $totalExcl,
+                'is_partial_refund' => 1,
+                'id_order_detail' => null,
+                'refunded_quantity' => 1,
+                'product_refund_tax_incl' => $totalIncl,
+                'product_refund_tax_excl' => $totalExcl,
+                'product_name' => 'Partial refund (state 25)',
+                'unit_price_tax_incl' => $totalIncl,
+                'unit_price_tax_excl' => $totalExcl,
+                'refund_gst_amount' => round($totalExcl * 0.05, 2),
+                'refund_qst_amount' => round($totalExcl * 0.09975, 2),
+                'delivery_country' => $partialRefund['delivery_country'],
+                'delivery_state' => $partialRefund['delivery_state']
+            );
+        }
+        
+        // Re-sort by refund_date so partial refund rows are interleaved by date
+        usort($slipRows, function ($a, $b) {
+            $da = isset($a['refund_date']) ? $a['refund_date'] : '';
+            $db = isset($b['refund_date']) ? $b['refund_date'] : '';
+            if ($da !== $db) {
+                return strcmp($da, $db);
+            }
+            $ida = isset($a['id_order_slip']) ? $a['id_order_slip'] : '';
+            $idb = isset($b['id_order_slip']) ? $b['id_order_slip'] : '';
+            return strcmp((string)$ida, (string)$idb);
+        });
+        
+        return $slipRows;
     }
     
     /**
@@ -340,11 +562,27 @@ class KhewaReportsData
      */
     public function getSBPMData()
     {
-        $states = Khewareports::getConfiguredStates();
-        $excludedStates = implode(',', array(
-            (int)$states['canceled'],
-            (int)$states['payment_error']
-        ));
+        $excludedStates = Khewareports::getSalesExcludedStatesSQL();
+        $refundStates = Khewareports::getRefundStatesSQL();
+        
+        // possible_refund_date condition (mirrors ExportSales approach):
+        // Exclude orders where BOTH date_add AND possible_refund_date fall within the
+        // reporting period AND the order state is a refund state (refunded/partial refund).
+        // If the refund happened outside this period, the order remains a valid sale.
+        $refundDateCondition = '
+            AND (
+                NOT(
+                    o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                    AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                )
+                OR (
+                    (
+                        o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                        AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                    )
+                    AND o.current_state NOT IN (' . $refundStates . ')
+                )
+            )';
         
         $result = array(
             'combined' => array(),  // Top summary table
@@ -387,6 +625,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         ';
         $allOrders = Db::getInstance()->executeS($sql);
         
@@ -414,6 +653,7 @@ class KhewaReportsData
             WHERE o.date_add >= "' . $this->date_from . '"
             AND o.date_add <= "' . $this->date_to . '"
             AND o.current_state NOT IN (' . $excludedStates . ')
+            ' . $refundDateCondition . '
         )
         AND op.amount > 0
         GROUP BY op.order_reference, payment_method
@@ -488,10 +728,13 @@ class KhewaReportsData
                 $combinedBase[$key]['order_ids'][] = $orderId;
                 $combinedBase[$key]['order_count']++;
                 
-                // Add full order totals (not distributed)
+                // Add order-level product/shipping totals
                 $combinedBase[$key]['total_products_tax_excl'] += (float)$order['order_total_products_excl'];
                 $combinedBase[$key]['total_products_tax_incl'] += (float)$order['order_total_products_incl'];
                 $combinedBase[$key]['total_shipping_tax_incl'] += (float)$order['order_total_shipping'];
+                
+                // Total Paid = order's total_paid_tax_incl (one value per order) so it stays consistent with Total Products + Shipping.
+                // Using order total avoids Total Paid > Total Products when order_payment has duplicates or extra rows.
                 $combinedBase[$key]['total_paid_tax_incl'] += (float)$order['order_total_paid'];
             } else {
                 // Order has NO payment records - paid entirely by gift card/voucher
@@ -555,6 +798,7 @@ class KhewaReportsData
         AND o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         GROUP BY o.module
         ';
         $gstByModule = Db::getInstance()->executeS($sql);
@@ -575,6 +819,7 @@ class KhewaReportsData
         AND o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         GROUP BY o.module
         ';
         $qstByModule = Db::getInstance()->executeS($sql);
@@ -600,6 +845,16 @@ class KhewaReportsData
             foreach ($refundByModule as $row) {
                 $refundMap[$row['module']] = (float)$row['total_refund'];
             }
+        }
+        
+        // Add partial refund orders (possible_refund_date) to refund map by module
+        $partialRefunds = $this->getPartialRefundOrders();
+        foreach ($partialRefunds as $partialRefund) {
+            $mod = $partialRefund['module'];
+            if (!isset($refundMap[$mod])) {
+                $refundMap[$mod] = 0;
+            }
+            $refundMap[$mod] += $partialRefund['amount'];
         }
         
         // Combine the data - distribute tax proportionally by paid amount
@@ -637,49 +892,79 @@ class KhewaReportsData
         }
         
         // ==================== BOTTOM PART: Specific Payment Amounts ====================
-        // DERIVED FROM THE SAME $paymentsByOrder data used in the top section
-        // This ensures perfect alignment between top table and bottom breakdown
-        //
-        // We iterate $paymentsByOrder (keyed by unique reference) so each reference
-        // is processed exactly ONCE - no risk of double-counting.
-        // We use $orderMap to determine if an order is online or in-store.
+        // Direct SQL queries against order_payment, grouped by normalized payment method.
+        // This matches the original ExportSales module's approach: GROUP BY payment_method
+        // with SUM(amount), which correctly totals ALL payments by method across ALL orders
+        // (including mixed-payment orders like Credit Card + Cash).
         // ==================== ==================== ====================
         
-        // Initialize accumulators for each specific payment method
-        $onlineByMethod = array();  // normalized_method => total_amount
-        $instoreByMethod = array(); // normalized_method => total_amount
+        // Subqueries: get DISTINCT qualifying order references split by online/instore
+        // Using subqueries (not JOINs) avoids inflating SUM when multiple orders share a reference
+        $onlineRefSubquery = '
+            SELECT DISTINCT o.reference 
+            FROM ' . _DB_PREFIX_ . 'orders o 
+            WHERE o.date_add >= "' . $this->date_from . '"
+            AND o.date_add <= "' . $this->date_to . '"
+            AND o.current_state NOT IN (' . $excludedStates . ')
+            ' . $refundDateCondition . '
+            AND ' . $this->getNotPosModuleCondition('o.module');
         
-        // Iterate by unique reference (not by allOrders which could have duplicates)
-        foreach ($paymentsByOrder as $ref => $methods) {
-            // Look up the order to determine online vs in-store
-            if (!isset($orderMap[$ref])) {
-                continue; // Skip if order not found (shouldn't happen)
-            }
-            $order = $orderMap[$ref];
-            $isInstore = $this->isPosModule($order['module']);
-            
-            foreach ($methods as $method => $data) {
-                $amount = (float)$data['amount'];
-                if ($isInstore) {
-                    if (!isset($instoreByMethod[$method])) {
-                        $instoreByMethod[$method] = 0;
-                    }
-                    $instoreByMethod[$method] += $amount;
-                } else {
-                    if (!isset($onlineByMethod[$method])) {
-                        $onlineByMethod[$method] = 0;
-                    }
-                    $onlineByMethod[$method] += $amount;
-                }
+        $instoreRefSubquery = '
+            SELECT DISTINCT o.reference 
+            FROM ' . _DB_PREFIX_ . 'orders o 
+            WHERE o.date_add >= "' . $this->date_from . '"
+            AND o.date_add <= "' . $this->date_to . '"
+            AND o.current_state NOT IN (' . $excludedStates . ')
+            ' . $refundDateCondition . '
+            AND ' . $this->getPosModuleCondition('o.module');
+        
+        // ONLINE payments: direct query grouped by normalized payment_method
+        $sql = '
+        SELECT 
+            ' . $paymentMethodCase . ' as payment_method,
+            SUM(op.amount) as payment_amount
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        WHERE op.order_reference IN (' . $onlineRefSubquery . ')
+        AND op.amount > 0
+        GROUP BY payment_method
+        ';
+        $onlinePayments = Db::getInstance()->executeS($sql);
+        
+        $onlineByMethod = array();
+        if ($onlinePayments) {
+            foreach ($onlinePayments as $p) {
+                $onlineByMethod[trim($p['payment_method'])] = (float)$p['payment_amount'];
             }
         }
         
-        // Online specific amounts (derived from same data)
+        // IN-STORE payments: direct query grouped by normalized payment_method
+        $sql = '
+        SELECT 
+            ' . $paymentMethodCase . ' as payment_method,
+            SUM(op.amount) as payment_amount
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        WHERE op.order_reference IN (' . $instoreRefSubquery . ')
+        AND op.amount > 0
+        GROUP BY payment_method
+        ';
+        $instorePayments = Db::getInstance()->executeS($sql);
+        
+        $instoreByMethod = array();
+        if ($instorePayments) {
+            foreach ($instorePayments as $p) {
+                $instoreByMethod[trim($p['payment_method'])] = (float)$p['payment_amount'];
+            }
+        }
+        
+        // Partial refunds are NOT deducted from individual payment methods (Cash, Credit Card, etc.).
+        // They are included in the Refund Instore/Online line and thus reduce the total only.
+
+        // Online specific amounts
         $result['online']['stripe_link'] = isset($onlineByMethod['Link via Stripe']) ? $onlineByMethod['Link via Stripe'] : 0;
         $result['online']['stripe_card'] = isset($onlineByMethod['Card via Stripe']) ? $onlineByMethod['Card via Stripe'] : 0;
         $result['online']['paypal'] = isset($onlineByMethod['PayPal']) ? $onlineByMethod['PayPal'] : 0;
         
-        // In-Store specific amounts (derived from same data)
+        // In-Store specific amounts
         $result['instore']['credit_card'] = isset($instoreByMethod['Credit Card']) ? $instoreByMethod['Credit Card'] : 0;
         $result['instore']['cash'] = isset($instoreByMethod['Cash']) ? $instoreByMethod['Cash'] : 0;
         $result['instore']['interac'] = isset($instoreByMethod['Interac']) ? $instoreByMethod['Interac'] : 0;
@@ -706,15 +991,13 @@ class KhewaReportsData
         // ========================================================================
         
         // --- ONLINE GIFT CARD ---
+
+
         // Source 1: From order_payment (primary - actual payment records)
         $sql = '
         SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        AND ' . $this->getNotPosModuleCondition('o.module') . '
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        WHERE op.order_reference IN (' . $onlineRefSubquery . ')
         AND (LOWER(op.payment_method) LIKE "%gift%" OR LOWER(op.payment_method) LIKE "%cadeau%")
         AND op.amount > 0
         ';
@@ -736,6 +1019,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
         AND o.id_order NOT IN (
@@ -754,12 +1038,8 @@ class KhewaReportsData
         // Source 1: From order_payment
         $sql = '
         SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        AND ' . $this->getPosModuleCondition('o.module') . '
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        WHERE op.order_reference IN (' . $instoreRefSubquery . ')
         AND (LOWER(op.payment_method) LIKE "%gift%" OR LOWER(op.payment_method) LIKE "%cadeau%")
         AND op.amount > 0
         ';
@@ -781,6 +1061,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         AND ' . $this->getPosModuleCondition('o.module') . '
         AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
         AND o.id_order NOT IN (
@@ -799,12 +1080,8 @@ class KhewaReportsData
         // Source 1: From order_payment
         $sql = '
         SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        AND ' . $this->getNotPosModuleCondition('o.module') . '
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        WHERE op.order_reference IN (' . $onlineRefSubquery . ')
         AND LOWER(op.payment_method) LIKE "%voucher%"
         AND op.amount > 0
         ';
@@ -826,6 +1103,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%voucher%"
         AND o.id_order NOT IN (
@@ -844,12 +1122,8 @@ class KhewaReportsData
         // Source 1: From order_payment
         $sql = '
         SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        AND ' . $this->getPosModuleCondition('o.module') . '
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        WHERE op.order_reference IN (' . $instoreRefSubquery . ')
         AND LOWER(op.payment_method) LIKE "%voucher%"
         AND op.amount > 0
         ';
@@ -871,6 +1145,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         AND ' . $this->getPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%voucher%"
         AND o.id_order NOT IN (
@@ -889,12 +1164,8 @@ class KhewaReportsData
         // Source 1: From order_payment
         $sql = '
         SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        AND ' . $this->getNotPosModuleCondition('o.module') . '
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        WHERE op.order_reference IN (' . $onlineRefSubquery . ')
         AND (LOWER(op.payment_method) LIKE "%credit slip%" OR LOWER(op.payment_method) LIKE "%slip%")
         AND op.amount > 0
         ';
@@ -916,6 +1187,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND LOWER(cr.description) LIKE "%slip%"
         AND o.id_order NOT IN (
@@ -934,12 +1206,8 @@ class KhewaReportsData
         // Source 1: From order_payment
         $sql = '
         SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        AND ' . $this->getPosModuleCondition('o.module') . '
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        WHERE op.order_reference IN (' . $instoreRefSubquery . ')
         AND (LOWER(op.payment_method) LIKE "%credit slip%" OR LOWER(op.payment_method) LIKE "%slip%")
         AND op.amount > 0
         ';
@@ -961,6 +1229,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         AND ' . $this->getPosModuleCondition('o.module') . '
         AND LOWER(cr.description) LIKE "%slip%"
         AND o.id_order NOT IN (
@@ -993,6 +1262,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%promocode%"
         ';
@@ -1015,6 +1285,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
         AND ' . $this->getPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%point of sale%"
         ';
@@ -1045,6 +1316,16 @@ class KhewaReportsData
         $refundInstore = Db::getInstance()->getValue($sql);
         $result['instore']['refund'] = (float)$refundInstore;
         
+        // Add partial refund orders to Refund Online / Refund Instore (then total = total - refund)
+        $partialRefundsForSbpm = $this->getPartialRefundOrders();
+        foreach ($partialRefundsForSbpm as $partialRefund) {
+            if ($partialRefund['is_online']) {
+                $result['online']['refund'] += $partialRefund['amount'];
+            } else {
+                $result['instore']['refund'] += $partialRefund['amount'];
+            }
+        }
+        
         // ========================================================================
         // DEDUCT REFUNDS FROM TOTALS
         // Refunds are money going back to customers, so they reduce the net total
@@ -1061,11 +1342,8 @@ class KhewaReportsData
      */
     public function getTaxSummary()
     {
-        $states = Khewareports::getConfiguredStates();
-        $excludedStates = implode(',', array(
-            (int)$states['canceled'],
-            (int)$states['payment_error']
-        ));
+        $excludedStates = Khewareports::getSalesExcludedStatesSQL();
+        $refundStates = Khewareports::getRefundStatesSQL();
         
         $sql = '
         SELECT 
@@ -1082,6 +1360,19 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        AND (
+            NOT(
+                o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+            )
+            OR (
+                (
+                    o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                    AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                )
+                AND o.current_state NOT IN (' . $refundStates . ')
+            )
+        )
         
         GROUP BY t.id_tax, tl.name, t.rate
         ORDER BY t.rate ASC
@@ -1091,17 +1382,31 @@ class KhewaReportsData
     }
     
 
+
+
     /**
      * 
      * Get aggregated Sales Summary (totals only)
      */
     public function getSalesSummary()
     {
-        $states = Khewareports::getConfiguredStates();
-        $excludedStates = implode(',', array(
-            (int)$states['canceled'],
-            (int)$states['payment_error']
-        ));
+        $excludedStates = Khewareports::getSalesExcludedStatesSQL();
+        $refundStates = Khewareports::getRefundStatesSQL();
+        
+        $refundDateCond = '
+        AND (
+            NOT(
+                o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+            )
+            OR (
+                (
+                    o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                    AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                )
+                AND o.current_state NOT IN (' . $refundStates . ')
+            )
+        )';
         
         // Base order totals
         $sql = '
@@ -1121,6 +1426,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCond . '
         ';
         
         $result = Db::getInstance()->getRow($sql);
@@ -1136,6 +1442,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCond . '
         AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
         ';
         $result['total_gift_card'] = (float)Db::getInstance()->getValue($sql);
@@ -1148,6 +1455,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCond . '
         AND LOWER(ocr.name) LIKE "%voucher%"
         ';
         $result['total_voucher'] = (float)Db::getInstance()->getValue($sql);
@@ -1161,6 +1469,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCond . '
         AND oit.id_tax = ' . self::TAX_ID_GST . '
         AND oit.type = "shipping"
         ';
@@ -1175,6 +1484,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCond . '
         AND oit.id_tax IN (' . self::TAX_IDS_QST . ')
         AND oit.type = "shipping"
         ';
@@ -1212,6 +1522,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCond . '
         AND odt.id_tax = ' . self::TAX_ID_GST . '
         ';
         $result['total_product_gst'] = (float)Db::getInstance()->getValue($sql);
@@ -1225,6 +1536,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCond . '
         AND odt.id_tax IN (' . self::TAX_IDS_QST . ')
         ';
         $result['total_product_qst'] = (float)Db::getInstance()->getValue($sql);

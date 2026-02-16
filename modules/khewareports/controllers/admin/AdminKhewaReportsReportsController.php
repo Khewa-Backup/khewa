@@ -175,12 +175,12 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Add header row with date range info
         $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales Report');
         
-        // Column headers (Row 2)
+        // Column headers (Row 2) - Order State after Invoice Number; Payment Breakdown just before Total Products With Tax
         $headers = array(
             'A' => 'Ordered At',
             'B' => 'Order ID',
             'C' => 'Invoice Number',
-            'D' => 'Payment Breakdown',
+            'D' => 'Order State',
             'E' => 'Gift Card Payment',
             'F' => 'Credit Slip',
             'G' => 'Voucher',
@@ -190,16 +190,17 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             'K' => 'Total Refunded Products (Tax incl)',
             'L' => 'Refunded Amount',
             'M' => 'Total Refunds ROCK (Tax incl)',
-            'N' => 'Total Products With Tax',
-            'O' => 'Payment Method',
-            'P' => 'Product Name',
-            'Q' => 'Total Price (Tax incl)',
-            'R' => 'Total Price (Tax excl)',
-            'S' => 'Total Amount (CA 5%)',
-            'T' => 'Total Amount (CA-QC 9.975%)',
-            'U' => 'Total Shipping Price (Tax excl)',
-            'V' => 'Delivery Country',
-            'W' => 'Delivery State'
+            'N' => 'Payment Breakdown',
+            'O' => 'Total Products With Tax',
+            'P' => 'Payment Method',
+            'Q' => 'Product Name',
+            'R' => 'Total Price (Tax incl)',
+            'S' => 'Total Price (Tax excl)',
+            'T' => 'Total Amount (CA 5%)',
+            'U' => 'Total Amount (CA-QC 9.975%)',
+            'V' => 'Total Shipping Price (Tax excl)',
+            'W' => 'Delivery Country',
+            'X' => 'Delivery State'
         );
         
         foreach ($headers as $column => $header) {
@@ -207,7 +208,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         }
         
         // Style header row
-        $this->styleHeaderRow($sheet, 'A2:W2');
+        $this->styleHeaderRow($sheet, 'A2:X2');
         
         // Get sales data
         $salesData = $dataFetcher->getSalesData();
@@ -217,6 +218,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $row = 3;
         $lastOrderId = null;
         $processedOrders = array(); // Track which orders we've counted for order-level totals
+        $paymentMethodTotals = array(); // Track total amounts per payment method for summary
         $totals = array(
             'gift_card' => 0,
             'voucher' => 0,
@@ -239,8 +241,17 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setCellValueSafe($sheet, 'A' . $row, $showOrderData ? $data['order_date'] : '');
             $this->setCellValueSafe($sheet, 'B' . $row, $showOrderData ? $data['id_order'] : '');
             $this->setCellValueSafe($sheet, 'C' . $row, $showOrderData ? '#ND' . $data['invoice_number'] : '');
-            // Column D: Payment Breakdown - shows how order was paid (e.g., "Cash($50.00) - Credit Card($25.00)")
-            $this->setCellValueSafe($sheet, 'D' . $row, $showOrderData ? $data['payment_breakdown'] : '');
+            
+            // Column D: Order State - name in English with state id in brackets (e.g. "Payment accepted (2)")
+            $orderStateDisplay = '';
+            if ($showOrderData && isset($data['current_state']) && $data['current_state'] !== '' && $data['current_state'] !== null) {
+                $stateId = (int)$data['current_state'];
+                $nameEn = isset($data['order_state_name_en']) ? trim((string)$data['order_state_name_en']) : '';
+                $nameDefault = isset($data['order_state_name']) ? trim((string)$data['order_state_name']) : '';
+                $stateName = $nameEn !== '' ? $nameEn : ($nameDefault !== '' ? $nameDefault : 'State ' . $stateId);
+                $orderStateDisplay = $stateName . ' (' . $stateId . ')';
+            }
+            $this->setCellValueSafe($sheet, 'D' . $row, $orderStateDisplay);
             
             // Column E: Gift Card - order level, add only once per order
             if ($showOrderData && $data['gift_card_amount']) {
@@ -254,10 +265,10 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             
             // Column G: Voucher - order level
             if ($showOrderData && $data['voucher_value']) {
-                $this->setNumericValue($sheet, 'G' . $row, $data['voucher_value']);
+                $this->setNumericValue($sheet, 'F' . $row, $data['voucher_value']);
                 $totals['voucher'] += (float)$data['voucher_value'];
             } else {
-                $this->setCellValueSafe($sheet, 'G' . $row, '');
+                $this->setCellValueSafe($sheet, 'F' . $row, '');
             }
             
             // Column H: Shipping (Tax incl) - order level
@@ -299,8 +310,26 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
                 $this->setCellValueSafe($sheet, 'M' . $row, '');
             }
             
-            // Column N: Total Products With Tax - show product level detail
-            $this->setNumericValue($sheet, 'N' . $row, $data['total_price_tax_incl']);
+            // Column N: Payment Breakdown - always shows payment method(s) with amounts (just before Total Products With Tax)
+            $this->setCellValueSafe($sheet, 'N' . $row, $showOrderData ? $data['payment_breakdown'] : '');
+            
+            // Track payment method totals (parse from breakdown, once per order)
+            if ($showOrderData && !empty($data['payment_breakdown'])) {
+                $parts = explode(' - ', $data['payment_breakdown']);
+                foreach ($parts as $part) {
+                    if (preg_match('/^(.+?)\(\$([0-9.]+)\)$/', trim($part), $matches)) {
+                        $methodName = trim($matches[1]);
+                        $methodAmount = (float)$matches[2];
+                        if (!isset($paymentMethodTotals[$methodName])) {
+                            $paymentMethodTotals[$methodName] = 0;
+                        }
+                        $paymentMethodTotals[$methodName] += $methodAmount;
+                    }
+                }
+            }
+            
+            // Column O: Total Products With Tax - show product level detail
+            $this->setNumericValue($sheet, 'O' . $row, $data['total_price_tax_incl']);
             
             // For TOTALS, use order-level values (orders.total_products_wt) - only count each order once
             if ($showOrderData) {
@@ -308,43 +337,63 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
                 $totals['products_excl'] += (float)$data['total_products_tax_excl'];  // order-level (from orders.total_products)
             }
             
-            $this->setCellValueSafe($sheet, 'O' . $row, $showOrderData ? $data['payment'] : '');
-            $this->setCellValueSafe($sheet, 'P' . $row, $data['product_name']);
+            $this->setCellValueSafe($sheet, 'P' . $row, $showOrderData ? $data['payment'] : '');
+            $this->setCellValueSafe($sheet, 'Q' . $row, $data['product_name']);
             
-            // Column Q: Total Price (Tax incl) - show product level detail
-            $this->setNumericValue($sheet, 'Q' . $row, $data['total_price_tax_incl']);
+            // Column R: Total Price (Tax incl) - show product level detail
+            $this->setNumericValue($sheet, 'R' . $row, $data['total_price_tax_incl']);
             
-            // Column R: Total Price (Tax excl) - show product level detail
-            $this->setNumericValue($sheet, 'R' . $row, $data['total_price_tax_excl']);
+            // Column S: Total Price (Tax excl) - show product level detail
+            $this->setNumericValue($sheet, 'S' . $row, $data['total_price_tax_excl']);
             
-            // Column S: Product GST - product level (sum all)
-            $this->setNumericValue($sheet, 'S' . $row, $data['gst_total_amount']);
+            // Column T: Product GST - product level (sum all)
+            $this->setNumericValue($sheet, 'T' . $row, $data['gst_total_amount']);
             $totals['product_gst'] += (float)$data['gst_total_amount'];
             
-            // Column T: Product QST - product level (sum all)
-            $this->setNumericValue($sheet, 'T' . $row, $data['qst_total_amount']);
+            // Column U: Product QST - product level (sum all)
+            $this->setNumericValue($sheet, 'U' . $row, $data['qst_total_amount']);
             $totals['product_qst'] += (float)$data['qst_total_amount'];
             
-            // Column U: Shipping (Tax excl) - order level
+            // Column V: Shipping (Tax excl) - order level
             if ($showOrderData && $data['total_shipping_tax_excl']) {
-                $this->setNumericValue($sheet, 'U' . $row, $data['total_shipping_tax_excl']);
+                $this->setNumericValue($sheet, 'V' . $row, $data['total_shipping_tax_excl']);
                 $totals['shipping_excl'] += (float)$data['total_shipping_tax_excl'];
             } else {
-                $this->setCellValueSafe($sheet, 'U' . $row, '');
+                $this->setCellValueSafe($sheet, 'V' . $row, '');
             }
             
-            $this->setCellValueSafe($sheet, 'V' . $row, $showOrderData ? $data['delivery_country'] : '');
-            $this->setCellValueSafe($sheet, 'W' . $row, $showOrderData ? $data['delivery_state'] : '');
+            $this->setCellValueSafe($sheet, 'W' . $row, $showOrderData ? $data['delivery_country'] : '');
+            $this->setCellValueSafe($sheet, 'X' . $row, $showOrderData ? $data['delivery_state'] : '');
             
             $lastOrderId = $data['id_order'];
             $row++;
         }
-        
+
+        // Add partial refund orders (possible_refund_date) to Sales refund total
+        // Partial refund orders are excluded from getSalesData, so they are not in the loop above
+        $totals['refund_amount'] += (float)$dataFetcher->getPartialRefundTotal();
+
         // Add totals row - using calculated sums from loop (not separate query)
         $lastDataRow = $row - 1;
         if ($lastDataRow >= 3) {
             $row++;
             $this->setCellValueSafe($sheet, 'A' . $row, 'TOTALS');
+            
+            // Column N: Payment Breakdown - show total per payment method, one per line
+            if (!empty($paymentMethodTotals)) {
+                arsort($paymentMethodTotals);
+                $breakdownParts = array();
+                foreach ($paymentMethodTotals as $method => $amount) {
+                    $breakdownParts[] = $method . ' ' . number_format($amount, 2, '.', '');
+                }
+                $breakdownText = implode("\n", $breakdownParts);
+                $this->setCellValueSafe($sheet, 'N' . $row, $breakdownText);
+                $sheet->getStyle('N' . $row)->getAlignment()->setWrapText(true);
+                $lineCount = count($breakdownParts);
+                $rowHeight = max(30, min(400, 18 * $lineCount));
+                $sheet->getRowDimension($row)->setRowHeight($rowHeight);
+            }
+            
             $this->setNumericValue($sheet, 'E' . $row, $totals['gift_card']);
             $this->setNumericValue($sheet, 'G' . $row, $totals['voucher']);
             $this->setNumericValue($sheet, 'H' . $row, $totals['shipping_incl']);
@@ -353,13 +402,13 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setNumericValue($sheet, 'K' . $row, $totals['refunded_products']);
             $this->setNumericValue($sheet, 'L' . $row, $totals['refund_amount']);
             $this->setNumericValue($sheet, 'M' . $row, $totals['refund_amount']);
-            $this->setNumericValue($sheet, 'N' . $row, $totals['products_incl']);
-            $this->setNumericValue($sheet, 'Q' . $row, $totals['products_incl']);
-            $this->setNumericValue($sheet, 'R' . $row, $totals['products_excl']);
-            $this->setNumericValue($sheet, 'S' . $row, $totals['product_gst']);
-            $this->setNumericValue($sheet, 'T' . $row, $totals['product_qst']);
-            $this->setNumericValue($sheet, 'U' . $row, $totals['shipping_excl']);
-            $sheet->getStyle('A' . $row . ':W' . $row)->getFont()->setBold(true);
+            $this->setNumericValue($sheet, 'O' . $row, $totals['products_incl']);
+            $this->setNumericValue($sheet, 'R' . $row, $totals['products_incl']);
+            $this->setNumericValue($sheet, 'S' . $row, $totals['products_excl']);
+            $this->setNumericValue($sheet, 'T' . $row, $totals['product_gst']);
+            $this->setNumericValue($sheet, 'U' . $row, $totals['product_qst']);
+            $this->setNumericValue($sheet, 'V' . $row, $totals['shipping_excl']);
+            $sheet->getStyle('A' . $row . ':X' . $row)->getFont()->setBold(true);
             
             // Add column headers again after totals row for reference when scrolling
             $row++;
@@ -367,16 +416,16 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
                 $this->setCellValueSafe($sheet, $column . $row, $header);
             }
             // Style header row (same as top header) - row height is set automatically by styleHeaderRow
-            $this->styleHeaderRow($sheet, 'A' . $row . ':W' . $row);
+            $this->styleHeaderRow($sheet, 'A' . $row . ':X' . $row);
         }
         
         // Style data rows and set column widths
-        $this->styleDataRows($sheet, 'A3:W' . $row);
+        $this->styleDataRows($sheet, 'A3:X' . $row);
         $this->setColumnWidths($sheet, array(
-            'A' => 12, 'B' => 10, 'C' => 14, 'D' => 35, 'E' => 12, 'F' => 10, 'G' => 10,
-            'H' => 16, 'I' => 14, 'J' => 16, 'K' => 18, 'L' => 14, 'M' => 18, 'N' => 16,
-            'O' => 14, 'P' => 30, 'Q' => 14, 'R' => 14, 'S' => 14, 'T' => 16, 'U' => 16,
-            'V' => 14, 'W' => 14
+            'A' => 12, 'B' => 10, 'C' => 14, 'D' => 22, 'E' => 12, 'F' => 10,
+            'G' => 10, 'H' => 16, 'I' => 14, 'J' => 16, 'K' => 18, 'L' => 14,
+            'M' => 18, 'N' => 35, 'O' => 16, 'P' => 14, 'Q' => 30, 'R' => 14,
+            'S' => 14, 'T' => 14, 'U' => 16, 'V' => 16, 'W' => 14, 'X' => 14
         ));
         
         // Apply number formatting to numeric columns (2 decimal places)
@@ -385,13 +434,13 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->applyNumberFormat($sheet, 'G3:G' . $row); // Voucher
             $this->applyNumberFormat($sheet, 'H3:J' . $row); // Shipping amounts
             $this->applyNumberFormat($sheet, 'K3:M' . $row); // Refund amounts
-            $this->applyNumberFormat($sheet, 'N3:N' . $row); // Product price tax incl
-            $this->applyNumberFormat($sheet, 'Q3:T' . $row); // Product prices and taxes
-            $this->applyNumberFormat($sheet, 'U3:U' . $row); // Shipping tax excl
+            $this->applyNumberFormat($sheet, 'O3:O' . $row); // Product price tax incl
+            $this->applyNumberFormat($sheet, 'R3:U' . $row); // Product prices and taxes
+            $this->applyNumberFormat($sheet, 'V3:V' . $row); // Shipping tax excl
         }
         
         // Set auto filter
-        $sheet->setAutoFilter('A2:W' . $row);
+        $sheet->setAutoFilter('A2:X' . $row);
         
         // Apply print settings - landscape for wide sheet with many columns
         $this->applyPrintSettings($sheet, 'landscape');
@@ -518,6 +567,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $row++;
         }
         
+
+
         // Add totals row - using calculated sums from loop
         $lastDataRow = $row - 1;
         if ($lastDataRow >= 3) {
@@ -555,6 +606,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Apply print settings - landscape for better fit
         $this->applyPrintSettings($sheet, 'landscape');
     }
+
 
     /**
      * Populate SBPM (Sales By Payment Method) sheet
@@ -717,7 +769,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Empty row separator
         $row++;
         
-        
+
         // ==================== IN-STORE SECTION ====================
         // Fixed In-Store rows (always show even if $0) - show rows first, then total
         // Paid with Voucher
@@ -901,7 +953,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $headerText .= ' | Exported: ' . $exportDate;
         
         // Merge cells for header (span across many columns)
-        $sheet->mergeCells('A1:W1');
+        $sheet->mergeCells('A1:X1');
         $sheet->setCellValue('A1', $headerText);
         
         // Style header

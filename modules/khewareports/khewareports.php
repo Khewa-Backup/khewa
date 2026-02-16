@@ -444,12 +444,18 @@ class Khewareports extends Module
      */
     public static function getConfiguredStates()
     {
+        $canceled = Configuration::get('KHEWA_STATE_CANCELED');
+        $refunded = Configuration::get('KHEWA_STATE_REFUNDED');
+        $refunded_old = Configuration::get('KHEWA_STATE_REFUNDED_OLD');
+        $partial_refund = Configuration::get('KHEWA_STATE_PARTIAL_REFUND');
+        $payment_error = Configuration::get('KHEWA_STATE_PAYMENT_ERROR');
+
         return array(
-            'canceled' => (int)Configuration::get('KHEWA_STATE_CANCELED', self::DEFAULT_STATE_CANCELED),
-            'refunded' => (int)Configuration::get('KHEWA_STATE_REFUNDED', self::DEFAULT_STATE_REFUNDED),
-            'refunded_old' => (int)Configuration::get('KHEWA_STATE_REFUNDED_OLD', self::DEFAULT_STATE_REFUNDED_OLD),
-            'partial_refund' => (int)Configuration::get('KHEWA_STATE_PARTIAL_REFUND', self::DEFAULT_STATE_PARTIAL_REFUND),
-            'payment_error' => (int)Configuration::get('KHEWA_STATE_PAYMENT_ERROR', self::DEFAULT_STATE_PAYMENT_ERROR),
+            'canceled' => ($canceled !== false && $canceled !== '') ? (int)$canceled : (int)self::DEFAULT_STATE_CANCELED,
+            'refunded' => ($refunded !== false && $refunded !== '') ? (int)$refunded : (int)self::DEFAULT_STATE_REFUNDED,
+            'refunded_old' => ($refunded_old !== false && $refunded_old !== '') ? (int)$refunded_old : (int)self::DEFAULT_STATE_REFUNDED_OLD,
+            'partial_refund' => ($partial_refund !== false && $partial_refund !== '') ? (int)$partial_refund : (int)self::DEFAULT_STATE_PARTIAL_REFUND,
+            'payment_error' => ($payment_error !== false && $payment_error !== '') ? (int)$payment_error : (int)self::DEFAULT_STATE_PAYMENT_ERROR,
         );
     }
     
@@ -467,6 +473,7 @@ class Khewareports extends Module
         );
     }
     
+
     /**
      * Get excluded state IDs (canceled, payment error)
      * @return array
@@ -479,7 +486,74 @@ class Khewareports extends Module
             $states['payment_error']
         );
     }
+
+    /**
+     * Get state IDs to exclude from Sales, SBPM, Tax, and Summary queries.
+     * Excludes:
+     *   - Canceled / Payment error: no valid sale
+     *   - Partial refund (25): state-25 rows are refund records (same reference, new order row);
+     *     they are counted via possible_refund_date and deducted from totals, not as sales.
+     * Full refunds (7, 56) use possible_refund_date conditional exclusion.
+     * @return array
+     */
+    public static function getSalesExcludedStateIds()
+    {
+        $states = self::getConfiguredStates();
+        $ids = array(
+            (int)$states['canceled'],
+            (int)$states['payment_error'],
+            (int)$states['partial_refund']
+        );
+        // Remove zeros (invalid) and duplicates
+        $ids = array_values(array_unique(array_filter($ids, function ($v) { return $v > 0; })));
+        // Hardcoded fallback: never return empty (would break SQL NOT IN ())
+        if (empty($ids)) {
+            $ids = array(
+                (int)self::DEFAULT_STATE_CANCELED,
+                (int)self::DEFAULT_STATE_PAYMENT_ERROR,
+                (int)self::DEFAULT_STATE_PARTIAL_REFUND
+            );
+        }
+        return $ids;
+    }
+
+    /**
+     * Get the excluded states as a ready-to-use SQL string for NOT IN clauses.
+     * Use this everywhere instead of building the string manually.
+     * @return string e.g. "6,8,56,7,25"
+     */
+    public static function getSalesExcludedStatesSQL()
+    {
+        return implode(',', self::getSalesExcludedStateIds());
+    }
     
+    /**
+     * Get FULL refund state IDs (refunded, refunded_old). NOT partial refund.
+     * Used for possible_refund_date conditional exclusion logic:
+     * orders in these states are excluded from payment amounts ONLY when
+     * both date_add and possible_refund_date fall within the reporting period.
+     * Partial refund (25) is excluded via getSalesExcludedStateIds() instead.
+     * @return string comma-separated state IDs for SQL IN clause
+     */
+
+    public static function getRefundStatesSQL()
+    {
+        $states = self::getConfiguredStates();
+        $ids = array_filter(array(
+            (int)$states['refunded'],
+            (int)$states['refunded_old']
+        ), function ($v) { return $v > 0; });
+        $ids = array_values(array_unique($ids));
+        if (empty($ids)) {
+            $ids = array(
+                (int)self::DEFAULT_STATE_REFUNDED,
+                (int)self::DEFAULT_STATE_REFUNDED_OLD
+            );
+        }
+        return implode(',', $ids);
+    }
+    
+
     /**
      * Parse comma-separated string into array of trimmed values
      * @param string $str
@@ -501,6 +575,7 @@ class Khewareports extends Module
         return $result;
     }
     
+
     /**
      * Get merged and deduplicated payment method patterns
      * Combines user-defined patterns with defaults, removes duplicates (case-insensitive)
@@ -631,6 +706,44 @@ class Khewareports extends Module
     }
     
     /**
+     * Normalize a payment method string to the same keys used in SBPM (e.g. Credit Card, Cash, Interac).
+     * Used when attributing partial refund orders to payment method buckets.
+     * @param string $paymentMethod Raw payment method name from order.payment or order_payment
+     * @return string Normalized key (e.g. "Credit Card", "Cash", "Interac", "PayPal", "Card via Stripe", "Link via Stripe", or trimmed original)
+     */
+    public static function normalizePaymentMethod($paymentMethod)
+    {
+        if ($paymentMethod === null || $paymentMethod === '') {
+            return 'Other';
+        }
+        $p = strtolower(trim((string)$paymentMethod));
+        if ($p === '') {
+            return 'Other';
+        }
+        if (strpos($p, 'link via stripe') !== false || strpos($p, 'stripe payment pro') !== false || strpos($p, 'stripe_official') !== false) {
+            return 'Link via Stripe';
+        }
+        if (strpos($p, 'stripe') !== false || strpos($p, 'payment by stripe') !== false || strpos($p, 'card via stripe') !== false) {
+            return 'Card via Stripe';
+        }
+        if (strpos($p, 'paypal') !== false || strpos($p, 'pay pal') !== false) {
+            return 'PayPal';
+        }
+        $patterns = self::getPaymentMethodPatterns();
+        foreach (array('credit_card' => 'Credit Card', 'cash' => 'Cash', 'interac' => 'Interac') as $key => $label) {
+            if (!empty($patterns[$key])) {
+                foreach ($patterns[$key] as $pattern) {
+                    if (stripos($p, $pattern) !== false) {
+                        return $label;
+                    }
+                }
+            }
+        }
+        return trim($paymentMethod);
+    }
+
+
+    /**
      * Build SQL condition for POS (in-store) module detection
      * @param string $columnName SQL column name (e.g., 'o.module')
      * @return string SQL condition
@@ -651,4 +764,5 @@ class Khewareports extends Module
         return '(' . implode(' OR ', $conditions) . ')';
     }
 }
+
 
