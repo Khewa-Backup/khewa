@@ -93,35 +93,67 @@ class KhewaReportsData
     
     /**
      * Check if a payment method should be excluded from TOTAL calculations
-     * Gift Card, Voucher, Credit Slip are NOT actual payments - they reduce order total
+     * Gift Card, Voucher, Credit Slip, Discount, Refund are NOT actual cash payments
+     * They should be excluded from the TOTAL ONLINE / TOTAL IN-STORE sums
      * @param string $paymentMethod Payment method name
      * @return bool True if should be excluded from total
      */
     protected function isExcludedFromTotal($paymentMethod)
     {
-        $paymentLower = strtolower($paymentMethod);
+        $paymentLower = strtolower(trim($paymentMethod));
         
-        // Get configured patterns
+        // Direct keyword check - these should ALWAYS be excluded
+        // These are not actual cash payments, they reduce order totals
+        $excludedKeywords = array(
+            'gift',           // Gift Card, Gift card, InStore Gift Card
+            'cadeau',         // Carte Cadeau (French)
+            'voucher',        // Voucher
+            'credit slip',    // Credit Slip
+            'slip',           // Any slip reference
+            'discount',       // Discount payment method
+            'refund',         // Refund payment method
+            'bon',            // French for voucher/coupon
+            'coupon',         // Coupon
+            'promo',          // Promotional
+            'reduction'       // Reduction/discount
+        );
+        
+        foreach ($excludedKeywords as $keyword) {
+            if (strpos($paymentLower, $keyword) !== false) {
+                return true;
+            }
+        }
+        
+        // Also check against configured patterns (user-defined patterns)
         $patterns = Khewareports::getPaymentMethodPatterns();
         
         // Check against Gift Card patterns
-        foreach ($patterns['gift_card'] as $pattern) {
-            if (stripos($paymentLower, strtolower($pattern)) !== false) {
-                return true;
+        if (!empty($patterns['gift_card'])) {
+            foreach ($patterns['gift_card'] as $pattern) {
+                $patternLower = strtolower(trim($pattern));
+                if (!empty($patternLower) && strpos($paymentLower, $patternLower) !== false) {
+                    return true;
+                }
             }
         }
         
         // Check against Voucher patterns
-        foreach ($patterns['voucher'] as $pattern) {
-            if (stripos($paymentLower, strtolower($pattern)) !== false) {
-                return true;
+        if (!empty($patterns['voucher'])) {
+            foreach ($patterns['voucher'] as $pattern) {
+                $patternLower = strtolower(trim($pattern));
+                if (!empty($patternLower) && strpos($paymentLower, $patternLower) !== false) {
+                    return true;
+                }
             }
         }
         
         // Check against Credit Slip patterns
-        foreach ($patterns['credit_slip'] as $pattern) {
-            if (stripos($paymentLower, strtolower($pattern)) !== false) {
-                return true;
+        if (!empty($patterns['credit_slip'])) {
+            foreach ($patterns['credit_slip'] as $pattern) {
+                $patternLower = strtolower(trim($pattern));
+                if (!empty($patternLower) && strpos($paymentLower, $patternLower) !== false) {
+                    return true;
+                }
             }
         }
         
@@ -366,6 +398,7 @@ class KhewaReportsData
         
         // STEP 2: Get payment records for these orders
         // Normalize payment methods using configurable patterns
+        // Use subquery to get valid references to avoid JOIN inflation
         $paymentMethodCase = Khewareports::buildPaymentMethodCase('op.payment_method');
         
         $sql = '
@@ -375,10 +408,13 @@ class KhewaReportsData
             ' . $paymentMethodCase . ' as payment_method,
             SUM(op.amount) as payment_amount
         FROM ' . _DB_PREFIX_ . 'order_payment op
-        INNER JOIN ' . _DB_PREFIX_ . 'orders o ON o.reference = op.order_reference
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        WHERE op.order_reference IN (
+            SELECT DISTINCT o.reference 
+            FROM ' . _DB_PREFIX_ . 'orders o 
+            WHERE o.date_add >= "' . $this->date_from . '"
+            AND o.date_add <= "' . $this->date_to . '"
+            AND o.current_state NOT IN (' . $excludedStates . ')
+        )
         AND op.amount > 0
         GROUP BY op.order_reference, payment_method
         ORDER BY op.order_reference, first_payment_id
@@ -600,61 +636,66 @@ class KhewaReportsData
             $result['combined'] = $combinedBase;
         }
         
-        // Get ONLINE payment methods from order_payment
-        $sql = '
-        SELECT 
-            op.payment_method,
-            o.module,
-            SUM(op.amount) as payment_amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        AND ' . $this->getNotPosModuleCondition('o.module') . '
-        AND op.amount > 0
-        GROUP BY op.payment_method, o.module
-        ORDER BY payment_amount DESC
-        ';
-        $onlinePayments = Db::getInstance()->executeS($sql);
-        if ($onlinePayments) {
-            $result['online']['payments'] = $onlinePayments;
-            foreach ($onlinePayments as $p) {
-                // IMPORTANT: Exclude Gift Card, Voucher, Credit Slip from TOTAL
-                // These are shown as separate rows but NOT counted in the total
-                if ($this->isExcludedFromTotal($p['payment_method'])) {
-                    continue;
+        // ==================== BOTTOM PART: Specific Payment Amounts ====================
+        // DERIVED FROM THE SAME $paymentsByOrder data used in the top section
+        // This ensures perfect alignment between top table and bottom breakdown
+        //
+        // We iterate $paymentsByOrder (keyed by unique reference) so each reference
+        // is processed exactly ONCE - no risk of double-counting.
+        // We use $orderMap to determine if an order is online or in-store.
+        // ==================== ==================== ====================
+        
+        // Initialize accumulators for each specific payment method
+        $onlineByMethod = array();  // normalized_method => total_amount
+        $instoreByMethod = array(); // normalized_method => total_amount
+        
+        // Iterate by unique reference (not by allOrders which could have duplicates)
+        foreach ($paymentsByOrder as $ref => $methods) {
+            // Look up the order to determine online vs in-store
+            if (!isset($orderMap[$ref])) {
+                continue; // Skip if order not found (shouldn't happen)
+            }
+            $order = $orderMap[$ref];
+            $isInstore = $this->isPosModule($order['module']);
+            
+            foreach ($methods as $method => $data) {
+                $amount = (float)$data['amount'];
+                if ($isInstore) {
+                    if (!isset($instoreByMethod[$method])) {
+                        $instoreByMethod[$method] = 0;
+                    }
+                    $instoreByMethod[$method] += $amount;
+                } else {
+                    if (!isset($onlineByMethod[$method])) {
+                        $onlineByMethod[$method] = 0;
+                    }
+                    $onlineByMethod[$method] += $amount;
                 }
-                $result['online']['total'] += (float)$p['payment_amount'];
             }
         }
         
-        // Get IN-STORE payment methods from order_payment
-        $sql = '
-        SELECT 
-            op.payment_method,
-            o.module,
-            SUM(op.amount) as payment_amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON o.reference = op.order_reference
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        AND ' . $this->getPosModuleCondition('o.module') . '
-        AND op.amount > 0
-        GROUP BY op.payment_method, o.module
-        ORDER BY payment_amount DESC
-        ';
-        $instorePayments = Db::getInstance()->executeS($sql);
-        if ($instorePayments) {
-            $result['instore']['payments'] = $instorePayments;
-            foreach ($instorePayments as $p) {
-                // IMPORTANT: Exclude Gift Card, Voucher, Credit Slip from TOTAL
-                // These are shown as separate rows but NOT counted in the total
-                if ($this->isExcludedFromTotal($p['payment_method'])) {
-                    continue;
-                }
-                $result['instore']['total'] += (float)$p['payment_amount'];
+        // Online specific amounts (derived from same data)
+        $result['online']['stripe_link'] = isset($onlineByMethod['Link via Stripe']) ? $onlineByMethod['Link via Stripe'] : 0;
+        $result['online']['stripe_card'] = isset($onlineByMethod['Card via Stripe']) ? $onlineByMethod['Card via Stripe'] : 0;
+        $result['online']['paypal'] = isset($onlineByMethod['PayPal']) ? $onlineByMethod['PayPal'] : 0;
+        
+        // In-Store specific amounts (derived from same data)
+        $result['instore']['credit_card'] = isset($instoreByMethod['Credit Card']) ? $instoreByMethod['Credit Card'] : 0;
+        $result['instore']['cash'] = isset($instoreByMethod['Cash']) ? $instoreByMethod['Cash'] : 0;
+        $result['instore']['interac'] = isset($instoreByMethod['Interac']) ? $instoreByMethod['Interac'] : 0;
+        
+        // Calculate totals by summing only actual cash payment methods (exclude gift cards, vouchers, etc.)
+        $result['online']['total'] = 0;
+        foreach ($onlineByMethod as $method => $amount) {
+            if (!$this->isExcludedFromTotal($method)) {
+                $result['online']['total'] += $amount;
+            }
+        }
+        
+        $result['instore']['total'] = 0;
+        foreach ($instoreByMethod as $method => $amount) {
+            if (!$this->isExcludedFromTotal($method)) {
+                $result['instore']['total'] += $amount;
             }
         }
         
@@ -1004,6 +1045,14 @@ class KhewaReportsData
         $refundInstore = Db::getInstance()->getValue($sql);
         $result['instore']['refund'] = (float)$refundInstore;
         
+        // ========================================================================
+        // DEDUCT REFUNDS FROM TOTALS
+        // Refunds are money going back to customers, so they reduce the net total
+        // TOTAL = Actual Cash Payments - Refunds
+        // ========================================================================
+        $result['online']['total'] = $result['online']['total'] - $result['online']['refund'];
+        $result['instore']['total'] = $result['instore']['total'] - $result['instore']['refund'];
+        
         return $result;
     }
     
@@ -1041,7 +1090,9 @@ class KhewaReportsData
         return Db::getInstance()->executeS($sql);
     }
     
+
     /**
+     * 
      * Get aggregated Sales Summary (totals only)
      */
     public function getSalesSummary()

@@ -392,6 +392,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         
         // Set auto filter
         $sheet->setAutoFilter('A2:W' . $row);
+        
+        // Apply print settings - landscape for wide sheet with many columns
+        $this->applyPrintSettings($sheet, 'landscape');
     }
 
     /**
@@ -548,6 +551,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         
         // Set auto filter
         $sheet->setAutoFilter('A2:R' . $row);
+        
+        // Apply print settings - landscape for better fit
+        $this->applyPrintSettings($sheet, 'landscape');
     }
 
     /**
@@ -648,6 +654,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             'C' => 'Payment Amount'
         );
         
+
         foreach ($bottomHeaders as $column => $header) {
             $this->setCellValueSafe($sheet, $column . $row, $header);
         }
@@ -656,25 +663,21 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         
         // ==================== ONLINE SECTION ====================
         // Fixed Online rows (always show even if $0) - show rows first, then total
+        // Using dedicated payment amount fields for accuracy
+        
         // Link via Stripe
-        $stripeLink = $this->findPaymentAmount($sbpmData['online']['payments'], 'Stripe Payment Pro');
         $this->setCellValueSafe($sheet, 'A' . $row, 'Link via Stripe');
-        $this->setNumericValue($sheet, 'C' . $row, $stripeLink);
+        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['stripe_link']);
         $row++;
         
         // PayPal
-        $paypal = $this->findPaymentAmount($sbpmData['online']['payments'], 'PayPal');
         $this->setCellValueSafe($sheet, 'A' . $row, 'PayPal');
-        $this->setNumericValue($sheet, 'C' . $row, $paypal);
+        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['paypal']);
         $row++;
         
         // Card via Stripe
-        $stripeCard = $this->findPaymentAmount($sbpmData['online']['payments'], 'Card via Stripe');
-        if ($stripeCard == 0) {
-            $stripeCard = $this->findPaymentAmount($sbpmData['online']['payments'], 'Payment by Stripe');
-        }
         $this->setCellValueSafe($sheet, 'A' . $row, 'Card via Stripe');
-        $this->setNumericValue($sheet, 'C' . $row, $stripeCard);
+        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['stripe_card']);
         $row++;
         
         // Paid with Gift Card
@@ -714,6 +717,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Empty row separator
         $row++;
         
+        
         // ==================== IN-STORE SECTION ====================
         // Fixed In-Store rows (always show even if $0) - show rows first, then total
         // Paid with Voucher
@@ -722,25 +726,22 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['voucher']);
         $row++;
         
-        // Paid with Credit Card
-        $creditCard = $this->findPaymentAmount($sbpmData['instore']['payments'], 'Credit Card');
+        // Paid with Credit Card - using dedicated field for accuracy
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Credit Card');
         $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
-        $this->setNumericValue($sheet, 'C' . $row, $creditCard);
+        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['credit_card']);
         $row++;
         
-        // Paid with Cash
-        $cash = $this->findPaymentAmount($sbpmData['instore']['payments'], 'Cash');
+        // Paid with Cash - using dedicated field for accuracy
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Cash');
         $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
-        $this->setNumericValue($sheet, 'C' . $row, $cash);
+        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['cash']);
         $row++;
         
-        // Paid with Interac
-        $interac = $this->findPaymentAmount($sbpmData['instore']['payments'], 'Interac');
+        // Paid with Interac - using dedicated field for accuracy
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Interac');
         $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
-        $this->setNumericValue($sheet, 'C' . $row, $interac);
+        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['interac']);
         $row++;
         
         // Paid with InStore Gift Card
@@ -801,30 +802,38 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             'G' => 15, 'H' => 14, 'I' => 15, 'J' => 15, 'K' => 15
         ));
         
-        // Set print settings to fit to one page width (landscape orientation)
-        $sheet->getPageSetup()->setFitToWidth(1);
-        $sheet->getPageSetup()->setFitToHeight(0); // Don't limit height
-        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
-        
-        // Set margins for better fit
-        $sheet->getPageMargins()->setLeft(0.5);
-        $sheet->getPageMargins()->setRight(0.5);
-        $sheet->getPageMargins()->setTop(0.5);
-        $sheet->getPageMargins()->setBottom(0.5);
+        // Apply print settings - landscape for better fit
+        $this->applyPrintSettings($sheet, 'landscape');
     }
     
     /**
      * Helper to find payment amount by method name
+     * Searches for exact match first, then partial match
+     * Sums all matching entries to handle edge cases
      */
     protected function findPaymentAmount($payments, $methodName)
     {
+        if (empty($payments)) {
+            return 0;
+        }
+        
+        $total = 0;
+        $methodLower = strtolower(trim($methodName));
+        
         foreach ($payments as $payment) {
-            if (stripos($payment['payment_method'], $methodName) !== false) {
-                return (float)$payment['payment_amount'];
+            $paymentMethodLower = strtolower(trim($payment['payment_method']));
+            
+            // Exact match first
+            if ($paymentMethodLower === $methodLower) {
+                $total += (float)$payment['payment_amount'];
+            }
+            // Partial match (payment method contains the search term)
+            elseif (strpos($paymentMethodLower, $methodLower) !== false) {
+                $total += (float)$payment['payment_amount'];
             }
         }
-        return 0;
+        
+        return $total;
     }
 
     /**
@@ -874,6 +883,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setColumnWidths($sheet, array(
             'A' => 25, 'B' => 18
         ));
+        
+        // Apply print settings - portrait is fine for narrow sheet
+        $this->applyPrintSettings($sheet, 'portrait');
     }
 
     /**
@@ -1010,5 +1022,37 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         foreach ($widths as $column => $width) {
             $sheet->getColumnDimension($column)->setWidth($width);
         }
+    }
+    
+    /**
+     * Apply print settings to fit sheet to one page width
+     * This ensures the Excel prints properly without manual scaling
+     */
+    protected function applyPrintSettings($sheet, $orientation = 'landscape')
+    {
+        // Set fit to width - this is the key setting that scales content to fit page width
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(0); // Don't limit height - allow multiple pages vertically
+        
+        // Set orientation based on content
+        if ($orientation === 'landscape') {
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        } else {
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+        }
+        
+        // Set paper size to A4
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+        
+        // Set narrow margins for better fit
+        $sheet->getPageMargins()->setLeft(0.4);
+        $sheet->getPageMargins()->setRight(0.4);
+        $sheet->getPageMargins()->setTop(0.5);
+        $sheet->getPageMargins()->setBottom(0.5);
+        
+        // Set print area to include all used cells
+        $highestColumn = $sheet->getHighestColumn();
+        $highestRow = $sheet->getHighestRow();
+        $sheet->getPageSetup()->setPrintArea('A1:' . $highestColumn . $highestRow);
     }
 }

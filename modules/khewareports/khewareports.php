@@ -583,6 +583,17 @@ class Khewareports extends Module
         
         $case = 'CASE' . "\n";
         
+        // Stripe Payment Link (Link via Stripe) - must be before generic Stripe
+        // Matches: "Link via Stripe", "Stripe Payment Pro", "stripe_official"
+        $case .= '    WHEN (LOWER(' . $columnName . ') LIKE "%link via stripe%" OR LOWER(' . $columnName . ') LIKE "%stripe payment pro%" OR LOWER(' . $columnName . ') LIKE "%stripe_official%") THEN "Link via Stripe"' . "\n";
+        
+        // Stripe Card (Card via Stripe) - generic Stripe payments
+        // Matches: "Card via Stripe", "Payment by Stripe", or any other "stripe" reference
+        $case .= '    WHEN (LOWER(' . $columnName . ') LIKE "%stripe%" OR LOWER(' . $columnName . ') LIKE "%payment by stripe%" OR LOWER(' . $columnName . ') LIKE "%card via stripe%") THEN "Card via Stripe"' . "\n";
+        
+        // PayPal
+        $case .= '    WHEN (LOWER(' . $columnName . ') LIKE "%paypal%" OR LOWER(' . $columnName . ') LIKE "%pay pal%") THEN "PayPal"' . "\n";
+        
         // Credit Card
         if (!empty($patterns['credit_card'])) {
             $case .= '    WHEN ' . self::buildLikeCondition($patterns['credit_card'], $columnName) . ' THEN "Credit Card"' . "\n";
