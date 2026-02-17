@@ -359,20 +359,18 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'country_lang dcl ON da.id_country = dcl.id_country AND dcl.id_lang = ' . $this->id_lang . '
         LEFT JOIN ' . _DB_PREFIX_ . 'state ds ON da.id_state = ds.id_state
         WHERE o.current_state = ' . $partialRefundStateId . '
+        AND o.possible_refund_date IS NOT NULL
         AND (
-            (o.possible_refund_date IS NOT NULL AND (
-                (DATE(o.possible_refund_date) >= "' . pSQL($dateFromOnly) . '" AND DATE(o.possible_refund_date) <= "' . pSQL($dateToOnly) . '")
-                OR
-                (STR_TO_DATE(o.possible_refund_date, "%y-%m-%d %H:%i:%s") >= "' . $this->date_from . '" AND STR_TO_DATE(o.possible_refund_date, "%y-%m-%d %H:%i:%s") <= "' . $this->date_to . '")
-                OR
-                (STR_TO_DATE(SUBSTRING(o.possible_refund_date, 1, 8), "%y-%m-%d") >= "' . pSQL($dateFromOnly) . '" AND STR_TO_DATE(SUBSTRING(o.possible_refund_date, 1, 8), "%y-%m-%d") <= "' . pSQL($dateToOnly) . '")
-            ))
+            (DATE(o.possible_refund_date) >= "' . pSQL($dateFromOnly) . '" AND DATE(o.possible_refund_date) <= "' . pSQL($dateToOnly) . '")
             OR
-            (o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '")
+            (STR_TO_DATE(o.possible_refund_date, "%y-%m-%d %H:%i:%s") >= "' . $this->date_from . '" AND STR_TO_DATE(o.possible_refund_date, "%y-%m-%d %H:%i:%s") <= "' . $this->date_to . '")
+            OR
+            (STR_TO_DATE(SUBSTRING(o.possible_refund_date, 1, 8), "%y-%m-%d") >= "' . pSQL($dateFromOnly) . '" AND STR_TO_DATE(SUBSTRING(o.possible_refund_date, 1, 8), "%y-%m-%d") <= "' . pSQL($dateToOnly) . '")
         )
-        ORDER BY COALESCE(o.possible_refund_date, o.date_add) ASC, o.id_order ASC
+        ORDER BY o.possible_refund_date ASC, o.id_order ASC
         ';
         
+
 
         
 
@@ -564,6 +562,22 @@ class KhewaReportsData
     {
         $excludedStates = Khewareports::getSalesExcludedStatesSQL();
         $refundStates = Khewareports::getRefundStatesSQL();
+        $partialRefundStateId = (int)Khewareports::getConfiguredStates()['partial_refund'];
+        if ($partialRefundStateId <= 0) {
+            $partialRefundStateId = (int)Khewareports::DEFAULT_STATE_PARTIAL_REFUND;
+        }
+        $sbpmDateFromOnly = substr($this->date_from, 0, 10);
+        $sbpmDateToOnly = substr($this->date_to, 0, 10);
+        $excludePartialRefReferencesSql = '
+            AND o.reference NOT IN (
+                SELECT o2.reference FROM ' . _DB_PREFIX_ . 'orders o2
+                WHERE o2.current_state = ' . $partialRefundStateId . '
+                AND o2.possible_refund_date IS NOT NULL
+                AND (
+                    (DATE(o2.possible_refund_date) >= "' . pSQL($sbpmDateFromOnly) . '" AND DATE(o2.possible_refund_date) <= "' . pSQL($sbpmDateToOnly) . '")
+                    OR (STR_TO_DATE(SUBSTRING(o2.possible_refund_date, 1, 8), "%y-%m-%d") >= "' . pSQL($sbpmDateFromOnly) . '" AND STR_TO_DATE(SUBSTRING(o2.possible_refund_date, 1, 8), "%y-%m-%d") <= "' . pSQL($sbpmDateToOnly) . '")
+                )
+            )';
         
         // possible_refund_date condition (mirrors ExportSales approach):
         // Exclude orders where BOTH date_add AND possible_refund_date fall within the
@@ -837,6 +851,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_slip os ON o.id_order = os.id_order
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
+        ' . $excludePartialRefReferencesSql . '
         GROUP BY o.module
         ';
         $refundByModule = Db::getInstance()->executeS($sql);
@@ -1292,7 +1307,7 @@ class KhewaReportsData
         $discountInstore = Db::getInstance()->getValue($sql);
         $result['instore']['discount'] = (float)$discountInstore;
         
-        // Get ONLINE Refunds
+        // Get ONLINE Refunds (from order_slip only; exclude orders counted as partial refund to avoid double-count)
         $sql = '
         SELECT IFNULL(SUM(os.total_products_tax_incl), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
@@ -1300,11 +1315,12 @@ class KhewaReportsData
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
         AND ' . $this->getNotPosModuleCondition('o.module') . '
+        ' . $excludePartialRefReferencesSql . '
         ';
         $refundOnline = Db::getInstance()->getValue($sql);
         $result['online']['refund'] = (float)$refundOnline;
         
-        // Get IN-STORE Refunds
+        // Get IN-STORE Refunds (from order_slip only; exclude orders counted as partial refund to avoid double-count)
         $sql = '
         SELECT IFNULL(SUM(os.total_products_tax_incl), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
@@ -1312,11 +1328,12 @@ class KhewaReportsData
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
         AND ' . $this->getPosModuleCondition('o.module') . '
+        ' . $excludePartialRefReferencesSql . '
         ';
         $refundInstore = Db::getInstance()->getValue($sql);
         $result['instore']['refund'] = (float)$refundInstore;
         
-        // Add partial refund orders to Refund Online / Refund Instore (then total = total - refund)
+        // Add partial refund orders (state 25 + possible_refund_date in range) to Refund Online / Refund Instore
         $partialRefundsForSbpm = $this->getPartialRefundOrders();
         foreach ($partialRefundsForSbpm as $partialRefund) {
             if ($partialRefund['is_online']) {
