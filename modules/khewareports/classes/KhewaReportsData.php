@@ -272,10 +272,11 @@ class KhewaReportsData
             FROM (
                 SELECT order_reference,
                        payment_method,
-                       SUM(ABS(amount)) as total_amount,
+                       SUM(amount) as total_amount,
                        MIN(id_order_payment) as first_id
                 FROM ' . _DB_PREFIX_ . 'order_payment
                 WHERE amount > 0
+                AND date_add >= "' . $this->date_from . '" AND date_add <= "' . $this->date_to . '"
                 GROUP BY order_reference, payment_method
             ) grouped_payments
             GROUP BY order_reference
@@ -872,6 +873,8 @@ class KhewaReportsData
             $refundMap[$mod] += $partialRefund['amount'];
         }
         
+
+
         // Combine the data - distribute tax proportionally by paid amount
         if ($combinedBase) {
             // First calculate total paid per module
@@ -933,7 +936,7 @@ class KhewaReportsData
             ' . $refundDateCondition . '
             AND ' . $this->getPosModuleCondition('o.module');
         
-        // ONLINE payments: direct query grouped by normalized payment_method
+        // ONLINE payments: only orders with module != POS; only payment rows with date_add in range (match ExportSales).
         $sql = '
         SELECT 
             ' . $paymentMethodCase . ' as payment_method,
@@ -941,6 +944,7 @@ class KhewaReportsData
         FROM ' . _DB_PREFIX_ . 'order_payment op
         WHERE op.order_reference IN (' . $onlineRefSubquery . ')
         AND op.amount > 0
+        AND op.date_add >= "' . $this->date_from . '" AND op.date_add <= "' . $this->date_to . '"
         GROUP BY payment_method
         ';
         $onlinePayments = Db::getInstance()->executeS($sql);
@@ -952,7 +956,7 @@ class KhewaReportsData
             }
         }
         
-        // IN-STORE payments: direct query grouped by normalized payment_method
+        // IN-STORE payments: only orders with module = POS; only payment rows with date_add in range; exclude Paypal/Stripe (instore = Cash/Credit Card/Interac only, match ExportSales).
         $sql = '
         SELECT 
             ' . $paymentMethodCase . ' as payment_method,
@@ -960,6 +964,8 @@ class KhewaReportsData
         FROM ' . _DB_PREFIX_ . 'order_payment op
         WHERE op.order_reference IN (' . $instoreRefSubquery . ')
         AND op.amount > 0
+        AND op.date_add >= "' . $this->date_from . '" AND op.date_add <= "' . $this->date_to . '"
+        AND LOWER(op.payment_method) NOT LIKE "%paypal%" AND LOWER(op.payment_method) NOT LIKE "%stripe%"
         GROUP BY payment_method
         ';
         $instorePayments = Db::getInstance()->executeS($sql);
@@ -970,7 +976,10 @@ class KhewaReportsData
                 $instoreByMethod[trim($p['payment_method'])] = (float)$p['payment_amount'];
             }
         }
+        // var_dump($instoreByMethod);
+        // die();
         
+
         // Partial refunds are NOT deducted from individual payment methods (Cash, Credit Card, etc.).
         // They are included in the Refund Instore/Online line and thus reduce the total only.
 
