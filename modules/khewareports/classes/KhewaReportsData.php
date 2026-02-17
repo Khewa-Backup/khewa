@@ -170,6 +170,9 @@ class KhewaReportsData
         $excludedStates = Khewareports::getSalesExcludedStatesSQL();
         $refundStates = Khewareports::getRefundStatesSQL();
         
+        // Same payment method normalization as SBPM (Credit Card, Cash, Interac, etc.)
+        $paymentMethodCase = Khewareports::buildPaymentMethodCase('op.payment_method');
+        
         // English language id for order state name
         $id_lang_en = (int)Language::getIdByIso('en');
         if (!$id_lang_en) {
@@ -263,24 +266,44 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'country_lang dcl ON da.id_country = dcl.id_country AND dcl.id_lang = ' . $this->id_lang . '
         LEFT JOIN ' . _DB_PREFIX_ . 'state ds ON da.id_state = ds.id_state
         LEFT JOIN (
-            SELECT order_reference,
+            SELECT id_order,
                    GROUP_CONCAT(
                        CONCAT(payment_method, "($", ROUND(total_amount, 2), ")")
                        ORDER BY first_id ASC
                        SEPARATOR " - "
                    ) as payment_breakdown
             FROM (
-                SELECT order_reference,
-                       payment_method,
-                       SUM(amount) as total_amount,
-                       MIN(id_order_payment) as first_id
-                FROM ' . _DB_PREFIX_ . 'order_payment
-                WHERE amount > 0
-                AND date_add >= "' . $this->date_from . '" AND date_add <= "' . $this->date_to . '"
-                GROUP BY order_reference, payment_method
+                SELECT pb_ord.id_order,
+                       ' . $paymentMethodCase . ' as payment_method,
+                       SUM(op.amount) as total_amount,
+                       MIN(op.id_order_payment) as first_id
+                FROM (
+                    SELECT MIN(o.id_order) as id_order, o.reference
+                    FROM ' . _DB_PREFIX_ . 'orders o
+                    WHERE o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                    AND o.current_state NOT IN (' . $excludedStates . ')
+                    AND (
+                        NOT(
+                            o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                            AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                        )
+                        OR (
+                            (
+                                o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                                AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                            )
+                            AND o.current_state NOT IN (' . $refundStates . ')
+                        )
+                    )
+                    GROUP BY o.reference
+                ) pb_ord
+                INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON op.order_reference = pb_ord.reference
+                    AND op.amount > 0
+                    AND op.date_add >= "' . $this->date_from . '" AND op.date_add <= "' . $this->date_to . '"
+                GROUP BY pb_ord.id_order, payment_method
             ) grouped_payments
-            GROUP BY order_reference
-        ) pb ON o.reference = pb.order_reference
+            GROUP BY id_order
+        ) pb ON o.id_order = pb.id_order
         
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
@@ -301,7 +324,6 @@ class KhewaReportsData
         
         ORDER BY o.date_add DESC, o.id_order DESC, od.id_order_detail ASC
         ';
-        
         return Db::getInstance()->executeS($sql);
     }
 
@@ -978,7 +1000,8 @@ class KhewaReportsData
         }
         // var_dump($instoreByMethod);
         // die();
-        
+
+
 
         // Partial refunds are NOT deducted from individual payment methods (Cash, Credit Card, etc.).
         // They are included in the Refund Instore/Online line and thus reduce the total only.
