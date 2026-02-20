@@ -172,8 +172,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
      */
     protected function populateSalesSheet($sheet, $dataFetcher, $date_from, $date_to)
     {
-        // Add header row with date range info
-        $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales Report');
+        // Add header row (width = top table columns A–X for print)
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales Report', 'X');
         
         // Column headers (Row 2) - Order State after Invoice Number; Payment Breakdown just before Total Products With Tax
         $headers = array(
@@ -451,8 +451,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
      */
     protected function populateRefundsSheet($sheet, $dataFetcher, $date_from, $date_to)
     {
-        // Add header row with date range info
-        $this->addSheetHeader($sheet, $date_from, $date_to, 'Refunds Report (by Refund Date)');
+        // Add header row (width = top table columns A–R for print)
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Refunds Report (by Refund Date)', 'R');
         
         // Column headers (Row 2)
         $headers = array(
@@ -614,8 +614,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
      */
     protected function populateSBPMSheet($sheet, $dataFetcher, $date_from, $date_to)
     {
-        // Add header row with date range info
-        $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method');
+        // Add header row (width = top table columns A–K for print)
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method', 'K');
         
         // Get POS module name from configuration (use first one for display)
         $patterns = Khewareports::getPaymentMethodPatterns();
@@ -888,13 +888,14 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         return $total;
     }
 
+    
     /**
      * Populate Taxes sheet - Simple tax name and amount
      */
     protected function populateTaxesSheet($sheet, $dataFetcher, $date_from, $date_to)
     {
-        // Add header row with date range info
-        $this->addSheetHeader($sheet, $date_from, $date_to, 'Tax Summary');
+        // Add header row (width = top table columns A–B for print)
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Tax Summary', 'B');
         
         // Column headers (Row 2)
         $headers = array(
@@ -941,9 +942,17 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
     }
 
     /**
-     * Add header row with date range and export info
+     * Add header row with date range and export info.
+     * Header width is fixed to match the top table columns so printing scales correctly:
+     * the top table (widest section) takes full page width and the header matches it.
+     *
+     * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet
+     * @param string $date_from
+     * @param string $date_to
+     * @param string $title
+     * @param string $topTableLastColumn Last column letter of the top table (e.g. 'K' for A–K). Header merges A1 to this column.
      */
-    protected function addSheetHeader($sheet, $date_from, $date_to, $title = '')
+    protected function addSheetHeader($sheet, $date_from, $date_to, $title = '', $topTableLastColumn = 'A')
     {
         $exportDate = date('Y-m-d H:i:s');
         $headerText = $date_from . ' 00:00:00 - ' . $date_to . ' 23:59:59';
@@ -952,8 +961,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         }
         $headerText .= ' | Exported: ' . $exportDate;
         
-        // Merge cells for header (span across many columns)
-        $sheet->mergeCells('A1:X1');
+        // Merge header to match top table width (fixes print layout: header and table same width, scale to full page)
+        $headerRange = 'A1:' . $topTableLastColumn . '1';
+        $sheet->mergeCells($headerRange);
         $sheet->setCellValue('A1', $headerText);
         
         // Style header

@@ -69,7 +69,11 @@ class PosEmployee extends Employee
      */
     public function getListShops()
     {
+        
         $associated_shops = $this->getAssociatedShops();
+        if (empty($associated_shops)) {
+            return array();
+        }
         $shops_collection = new PrestaShopCollection('PosShop');
         $shops_collection = $shops_collection->where('id_shop', 'in', $associated_shops);
         $shops = array();
