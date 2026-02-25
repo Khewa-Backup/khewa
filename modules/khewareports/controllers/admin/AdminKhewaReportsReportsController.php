@@ -784,7 +784,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['credit_card']);
         $row++;
         
-        // Paid with Cash - using dedicated field for accuracy
+        // Paid with Cash = total received in cash that day (gross; no deduction — refunds appear in Refund Instore and Cash in hand)
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Cash');
         $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
         $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['cash']);
@@ -825,6 +825,11 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $sheet->getStyle('A' . $row . ':C' . $row)->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setRGB('B8CCE4');
+        $row++;
+        
+        // Cash in hand (Cash − refunded in cash) — after TOTAL IN-STORE
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Cash in hand');
+        $this->setNumericValue($sheet, 'C' . $row, isset($sbpmData['instore']['cash_in_hand']) ? $sbpmData['instore']['cash_in_hand'] : 0);
         $row++;
         
         // Style data rows and column widths
@@ -888,6 +893,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         return $total;
     }
 
+    
     
     /**
      * Populate Taxes sheet - Simple tax name and amount

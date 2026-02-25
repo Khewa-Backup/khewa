@@ -979,6 +979,7 @@ class KhewaReportsData
         }
         
         // IN-STORE payments: only orders with module = POS; only payment rows with date_add in range; exclude Paypal/Stripe (instore = Cash/Credit Card/Interac only, match ExportSales).
+        // IMPORTANT: op.amount > 0 only — "Paid with Cash" must show total cash received (gross), never reduced by refunds.
         $sql = '
         SELECT 
             ' . $paymentMethodCase . ' as payment_method,
@@ -998,10 +999,30 @@ class KhewaReportsData
                 $instoreByMethod[trim($p['payment_method'])] = (float)$p['payment_amount'];
             }
         }
-        // var_dump($instoreByMethod);
-        // die();
 
 
+        // In-store refunds by payment method (negative amounts in order_payment) for Cash in hand
+        $sql = '
+        SELECT 
+            ' . $paymentMethodCase . ' as payment_method,
+            SUM(op.amount) as payment_amount
+        FROM ' . _DB_PREFIX_ . 'order_payment op
+        WHERE op.order_reference IN (' . $instoreRefSubquery . ')
+        AND op.amount < 0
+        AND op.date_add >= "' . $this->date_from . '" AND op.date_add <= "' . $this->date_to . '"
+        AND LOWER(op.payment_method) NOT LIKE "%paypal%" AND LOWER(op.payment_method) NOT LIKE "%stripe%"
+        GROUP BY payment_method
+        ';
+        $instoreRefundsByMethod = Db::getInstance()->executeS($sql);
+        $refundedInCash = 0;
+        if ($instoreRefundsByMethod) {
+            foreach ($instoreRefundsByMethod as $p) {
+                if (trim($p['payment_method']) === 'Cash') {
+                    $refundedInCash = abs((float)$p['payment_amount']);
+                    break;
+                }
+            }
+        }
 
         // Partial refunds are NOT deducted from individual payment methods (Cash, Credit Card, etc.).
         // They are included in the Refund Instore/Online line and thus reduce the total only.
@@ -1011,10 +1032,12 @@ class KhewaReportsData
         $result['online']['stripe_card'] = isset($onlineByMethod['Card via Stripe']) ? $onlineByMethod['Card via Stripe'] : 0;
         $result['online']['paypal'] = isset($onlineByMethod['PayPal']) ? $onlineByMethod['PayPal'] : 0;
         
-        // In-Store specific amounts
+        // In-Store specific amounts (Cash = gross cash received only, no deduction; Cash in hand = Cash − refunded in cash)
         $result['instore']['credit_card'] = isset($instoreByMethod['Credit Card']) ? $instoreByMethod['Credit Card'] : 0;
         $result['instore']['cash'] = isset($instoreByMethod['Cash']) ? $instoreByMethod['Cash'] : 0;
         $result['instore']['interac'] = isset($instoreByMethod['Interac']) ? $instoreByMethod['Interac'] : 0;
+        $result['instore']['refunded_in_cash'] = $refundedInCash;
+        $result['instore']['cash_in_hand'] = $result['instore']['cash'] - $refundedInCash;
         
         // Calculate totals by summing only actual cash payment methods (exclude gift cards, vouchers, etc.)
         $result['online']['total'] = 0;
