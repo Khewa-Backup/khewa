@@ -1081,12 +1081,6 @@ class Stripe_official extends PaymentModule
     {
         $order = new Order($params['id_order']);
 
-        // Fix: If order status is being set to 7 (Refund_Old) for a Stripe order, change it to 56 (Refund)
-        if ($order->module == 'stripe_official' && (int)$params['newOrderStatus']->id === 7) {
-            $order->setCurrentState('56');
-            StripeProcessLogger::logInfo('Hook Action Order Status Update - Changed refund state from 7 to 56 for Stripe order #' . $order->id, 'stripe_official');
-        }
-
         if ($order->module == 'stripe_official'
             && !empty($order->getHistory($this->context->language->id, Configuration::get(self::CAPTURE_WAITING)))
             && in_array($params['newOrderStatus']->id, explode(',', Configuration::get(self::CAPTURE_STATUS)))) {

@@ -8,6 +8,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+
+
 require_once _PS_MODULE_DIR_ . 'khewareports/classes/KhewaReportsData.php';
 
 class AdminKhewaReportsReportsController extends ModuleAdminController
@@ -614,38 +616,52 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
      */
     protected function populateSBPMSheet($sheet, $dataFetcher, $date_from, $date_to)
     {
-        // Add header row (width = top table columns A–K for print)
-        $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method', 'K');
-        
         // Get POS module name from configuration (use first one for display)
         $patterns = Khewareports::getPaymentMethodPatterns();
         $posModuleName = !empty($patterns['pos_module']) ? $patterns['pos_module'][0] : 'hspointofsalepro';
-        
+
+        // Get SBPM data
+        $sbpmData = $dataFetcher->getSBPMData();
+
+        // ==================== Build dynamic tax column map ====================
+        // Fixed columns: A=Combined Payment, B=Confirmed Orders, C=Products Excl, D=Products Incl,
+        //                E=Shipping, F=Total Paid  → tax columns start at index 7 (G)
+        $taxColumns = isset($sbpmData['tax_columns']) ? $sbpmData['tax_columns'] : array();
+        $taxColMap = array(); // id_tax => column letter
+        foreach ($taxColumns as $i => $tax) {
+            $colIndex = 7 + $i; // G=7, H=8, ...
+            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+            $taxColMap[(int)$tax['id_tax']] = $colLetter;
+        }
+        $lastTaxColIndex = 6 + count($taxColumns);
+        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(max(6, $lastTaxColIndex));
+
+        // Add sheet header spanning full dynamic width
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method', $lastColLetter);
+
         // ==================== TOP PART: Summary Table ====================
-        // Column headers (Row 2)
+        // Column headers (Row 2) — Module column removed; J/K Refund columns removed
         $topHeaders = array(
             'A' => 'Combined Payment',
-            'B' => 'Module',
-            'C' => 'Confirmed Orders',
-            'D' => 'Total Products (Tax Excl.)',
-            'E' => 'Total Products (Tax Incl.)',
-            'F' => 'Total Shipping (Tax Incl.)',
-            'G' => 'Total Paid (Tax Incl.)',
-            'H' => 'Total Tax (CA 5%)',
-            'I' => 'Total Tax (CA-QC 9.975%)',
-            'J' => 'Refund Online (Tax Incl.)',
-            'K' => 'Refund Instore (Tax Incl.)'
+            'B' => 'Confirmed Orders',
+            'C' => 'Total Products (Tax Excl.)',
+            'D' => 'Total Products (Tax Incl.)',
+            'E' => 'Total Shipping (Tax Incl.)',
+            'F' => 'Total Paid (Tax Incl.)',
         );
-        
+        // Add one column per active tax type
+        foreach ($taxColumns as $tax) {
+            $colLetter = $taxColMap[(int)$tax['id_tax']];
+            $topHeaders[$colLetter] = $tax['tax_name'] . ' (' . $tax['rate'] . '%)';
+        }
+        // Commented out: J => 'Refund Online (Tax Incl.)', K => 'Refund Instore (Tax Incl.)'
+
         foreach ($topHeaders as $column => $header) {
             $this->setCellValueSafe($sheet, $column . '2', $header);
         }
-        $this->styleHeaderRow($sheet, 'A2:K2');
+        $this->styleHeaderRow($sheet, 'A2:' . $lastColLetter . '2');
         $sheet->getRowDimension(2)->setRowHeight(30);
-        
-        // Get SBPM data
-        $sbpmData = $dataFetcher->getSBPMData();
-        
+
         // Populate top summary rows (combined by payment method)
         $row = 3;
         $totalOrders = 0;
@@ -653,50 +669,74 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $totalProductsIncl = 0;
         $totalShipping = 0;
         $totalPaid = 0;
-        $totalGST = 0;
-        $totalQST = 0;
-        $totalRefundOnline = 0;
-        $totalRefundInstore = 0;
-        
+        $totalTaxes = array(); // dynamic: id_tax => total
+
         foreach ($sbpmData['combined'] as $data) {
             $this->setCellValueSafe($sheet, 'A' . $row, $data['payment_method']);
-            $this->setCellValueSafe($sheet, 'B' . $row, $data['module']);
-            $this->setCellValueSafe($sheet, 'C' . $row, $data['order_count']);
-            $this->setNumericValue($sheet, 'D' . $row, (float)$data['total_products_tax_excl']);
-            $this->setNumericValue($sheet, 'E' . $row, (float)$data['total_products_tax_incl']);
-            $this->setNumericValue($sheet, 'F' . $row, (float)$data['total_shipping_tax_incl']);
-            $this->setNumericValue($sheet, 'G' . $row, (float)$data['total_paid_tax_incl']);
-            $this->setNumericValue($sheet, 'H' . $row, (float)$data['total_gst']);
-            $this->setNumericValue($sheet, 'I' . $row, (float)$data['total_qst']);
-            $this->setNumericValue($sheet, 'J' . $row, (float)$data['refund_online']);
-            $this->setNumericValue($sheet, 'K' . $row, (float)$data['refund_instore']);
-            
+            // Column B: Confirmed Orders (Module column removed)
+            $this->setCellValueSafe($sheet, 'B' . $row, $data['order_count']);
+            $this->setNumericValue($sheet, 'C' . $row, (float)$data['total_products_tax_excl']);
+            $this->setNumericValue($sheet, 'D' . $row, (float)$data['total_products_tax_incl']);
+            $this->setNumericValue($sheet, 'E' . $row, (float)$data['total_shipping_tax_incl']);
+            $this->setNumericValue($sheet, 'F' . $row, (float)$data['total_paid_tax_incl']);
+            // Dynamic tax columns
+            foreach ($taxColMap as $taxId => $colLetter) {
+                $taxAmount = isset($data['taxes'][$taxId]) ? (float)$data['taxes'][$taxId] : 0;
+                $this->setNumericValue($sheet, $colLetter . $row, $taxAmount);
+                if (!isset($totalTaxes[$taxId])) {
+                    $totalTaxes[$taxId] = 0;
+                }
+                $totalTaxes[$taxId] += $taxAmount;
+            }
+            // Removed: J refund_online, K refund_instore
+
             $totalOrders += (int)$data['order_count'];
             $totalProductsExcl += (float)$data['total_products_tax_excl'];
             $totalProductsIncl += (float)$data['total_products_tax_incl'];
             $totalShipping += (float)$data['total_shipping_tax_incl'];
             $totalPaid += (float)$data['total_paid_tax_incl'];
-            $totalGST += (float)$data['total_gst'];
-            $totalQST += (float)$data['total_qst'];
-            $totalRefundOnline += (float)$data['refund_online'];
-            $totalRefundInstore += (float)$data['refund_instore'];
             $row++;
         }
-        
+
         // TOTALS row
         $this->setCellValueSafe($sheet, 'A' . $row, 'TOTALS');
-        $this->setCellValueSafe($sheet, 'C' . $row, $totalOrders);
-        $this->setNumericValue($sheet, 'D' . $row, $totalProductsExcl);
-        $this->setNumericValue($sheet, 'E' . $row, $totalProductsIncl);
-        $this->setNumericValue($sheet, 'F' . $row, $totalShipping);
-        $this->setNumericValue($sheet, 'G' . $row, $totalPaid);
-        $this->setNumericValue($sheet, 'H' . $row, $totalGST);
-        $this->setNumericValue($sheet, 'I' . $row, $totalQST);
-        $this->setNumericValue($sheet, 'J' . $row, $totalRefundOnline);
-        $this->setNumericValue($sheet, 'K' . $row, $totalRefundInstore);
-        $sheet->getStyle('A' . $row . ':K' . $row)->getFont()->setBold(true);
-        $topSectionEndRow = $row; // Track where top section ends
+        $this->setCellValueSafe($sheet, 'B' . $row, $totalOrders);
+        $this->setNumericValue($sheet, 'C' . $row, $totalProductsExcl);
+        $this->setNumericValue($sheet, 'D' . $row, $totalProductsIncl);
+        $this->setNumericValue($sheet, 'E' . $row, $totalShipping);
+        $this->setNumericValue($sheet, 'F' . $row, $totalPaid);
+        foreach ($taxColMap as $taxId => $colLetter) {
+            $this->setNumericValue($sheet, $colLetter . $row, isset($totalTaxes[$taxId]) ? $totalTaxes[$taxId] : 0);
+        }
+        // Removed: J totalRefundOnline, K totalRefundInstore
+        $sheet->getStyle('A' . $row . ':' . $lastColLetter . $row)->getFont()->setBold(true);
         $row++;
+
+        // Refund Online breakdown row
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Refund Online');
+        $this->setNumericValue($sheet, 'C' . $row, (float)$sbpmData['online']['refund_products_excl']);
+        $this->setNumericValue($sheet, 'D' . $row, (float)$sbpmData['online']['refund_products_incl']);
+        $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['online']['refund_shipping_incl']);
+        $this->setNumericValue($sheet, 'F' . $row, round((float)$sbpmData['online']['refund_products_incl'] + (float)$sbpmData['online']['refund_shipping_incl'], 2));
+        foreach ($taxColMap as $taxId => $colLetter) {
+            $refundTax = isset($sbpmData['online']['refund_taxes'][$taxId]) ? (float)$sbpmData['online']['refund_taxes'][$taxId] : 0;
+            $this->setNumericValue($sheet, $colLetter . $row, $refundTax);
+        }
+        $row++;
+
+        // Refund Instore breakdown row
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Refund Instore');
+        $this->setNumericValue($sheet, 'C' . $row, (float)$sbpmData['instore']['refund_products_excl']);
+        $this->setNumericValue($sheet, 'D' . $row, (float)$sbpmData['instore']['refund_products_incl']);
+        $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['instore']['refund_shipping_incl']);
+        $this->setNumericValue($sheet, 'F' . $row, round((float)$sbpmData['instore']['refund_products_incl'] + (float)$sbpmData['instore']['refund_shipping_incl'], 2));
+        foreach ($taxColMap as $taxId => $colLetter) {
+            $refundTax = isset($sbpmData['instore']['refund_taxes'][$taxId]) ? (float)$sbpmData['instore']['refund_taxes'][$taxId] : 0;
+            $this->setNumericValue($sheet, $colLetter . $row, $refundTax);
+        }
+        $row++;
+
+        $topSectionEndRow = $row - 1; // Track where top section ends (includes refund rows)
         
         // ==================== BOTTOM PART: Specific Payment Breakdown ====================
         // Column headers for bottom section
@@ -838,26 +878,26 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         
         // Style all data rows (top and bottom sections)
         if ($lastRow > 2) {
-            // Style top section (rows 3 to TOTALS row)
-            $this->styleDataRows($sheet, 'A3:K' . $topSectionEndRow);
-            // Apply number formatting to numeric columns in top section
-            $this->applyNumberFormat($sheet, 'C3:C' . $topSectionEndRow); // Order count
-            $this->applyNumberFormat($sheet, 'D3:K' . $topSectionEndRow); // All monetary values
-            
-            // Style bottom section (after TOTALS row + bottom header row)
-            $bottomStartRow = $topSectionEndRow + 2; // After TOTALS row + bottom header row
+            // Style top section (rows 3 to end of refund rows)
+            $this->styleDataRows($sheet, 'A3:' . $lastColLetter . $topSectionEndRow);
+            // Apply number formatting: B=order count, C onwards=monetary
+            $this->applyNumberFormat($sheet, 'B3:B' . $topSectionEndRow);
+            $this->applyNumberFormat($sheet, 'C3:' . $lastColLetter . $topSectionEndRow);
+
+            // Style bottom section (after top section + bottom header row)
+            $bottomStartRow = $topSectionEndRow + 2;
             if ($bottomStartRow <= $lastRow) {
                 $this->styleDataRows($sheet, 'A' . $bottomStartRow . ':C' . $lastRow);
-                // Apply number formatting to payment amount column
                 $this->applyNumberFormat($sheet, 'C' . $bottomStartRow . ':C' . $lastRow);
             }
         }
-        
-        // Reduce column widths to fit on one page when printing
-        $this->setColumnWidths($sheet, array(
-            'A' => 20, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 15,
-            'G' => 15, 'H' => 14, 'I' => 15, 'J' => 15, 'K' => 15
-        ));
+
+        // Dynamic column widths
+        $colWidths = array('A' => 22, 'B' => 12, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 15);
+        foreach ($taxColMap as $taxId => $colLetter) {
+            $colWidths[$colLetter] = 14;
+        }
+        $this->setColumnWidths($sheet, $colWidths);
         
         // Apply print settings - landscape for better fit
         $this->applyPrintSettings($sheet, 'landscape');

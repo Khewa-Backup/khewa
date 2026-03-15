@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.php$|^d\")",
+      "Bash(grep -rn \"amount_refunded\\\\|refund_amount\" /Volumes/Workstation/khewa/1.7.8.5-live/modules/stripe_official/*.php)"
+    ]
+  }
+}
