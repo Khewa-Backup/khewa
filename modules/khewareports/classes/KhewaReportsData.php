@@ -580,6 +580,86 @@ class KhewaReportsData
     }
     
     /**
+     * Product tax from order_detail_tax per order (matches invoice / Sales tab product GST+QST).
+     *
+     * @param int[] $orderIds
+     * @return array [id_order => [id_tax => float]]
+     */
+    protected function getProductTaxAmountsByOrderIds(array $orderIds)
+    {
+        $orderIds = array_values(array_unique(array_map('intval', $orderIds)));
+        if (empty($orderIds)) {
+            return array();
+        }
+        $idList = implode(',', $orderIds);
+        $sql = '
+        SELECT od.id_order, odt.id_tax, SUM(odt.total_amount) as total_tax
+        FROM ' . _DB_PREFIX_ . 'order_detail od
+        INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
+        WHERE od.id_order IN (' . $idList . ')
+        GROUP BY od.id_order, odt.id_tax
+        ';
+        $rows = Db::getInstance()->executeS($sql);
+        $out = array();
+        if ($rows) {
+            foreach ($rows as $r) {
+                $oid = (int)$r['id_order'];
+                $tid = (int)$r['id_tax'];
+                if (!isset($out[$oid])) {
+                    $out[$oid] = array();
+                }
+                $out[$oid][$tid] = (float)$r['total_tax'];
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Refund amount per order (slip date in range + partial refunds), same filters as SBPM refund totals.
+     *
+     * @param int[] $orderIds
+     * @return array [id_order => float]
+     */
+    protected function getRefundAmountsByOrderIdsForSbpm(array $orderIds, $excludePartialRefReferencesSql)
+    {
+        $orderIds = array_values(array_unique(array_map('intval', $orderIds)));
+        if (empty($orderIds)) {
+            return array();
+        }
+        $idSet = array_flip($orderIds);
+        $out = array();
+        $idList = implode(',', $orderIds);
+        $sql = '
+        SELECT o.id_order, SUM(os.total_products_tax_incl) as ref_amt
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_slip os ON o.id_order = os.id_order
+        WHERE os.date_add >= "' . $this->date_from . '"
+        AND os.date_add <= "' . $this->date_to . '"
+        AND o.id_order IN (' . $idList . ')
+        ' . $excludePartialRefReferencesSql . '
+        GROUP BY o.id_order
+        ';
+        $rows = Db::getInstance()->executeS($sql);
+        if ($rows) {
+            foreach ($rows as $r) {
+                $out[(int)$r['id_order']] = (float)$r['ref_amt'];
+            }
+        }
+        $partialRefunds = $this->getPartialRefundOrders();
+        foreach ($partialRefunds as $pr) {
+            $oid = (int)$pr['id_order'];
+            if (isset($idSet[$oid])) {
+                $amt = (float)$pr['amount'];
+                if (!isset($out[$oid])) {
+                    $out[$oid] = 0;
+                }
+                $out[$oid] += $amt;
+            }
+        }
+        return $out;
+    }
+    
+    /**
      * Get SBPM Data - Complete Sales By Payment Method structure
      * Returns structured data for Combined summary, Online and In-Store sections
      */
@@ -818,7 +898,6 @@ class KhewaReportsData
         foreach ($combinedBase as $key => $row) {
             $normalizedKey = trim($row['payment_method']) . '|' . $row['module'];
             if (!isset($finalCombined[$normalizedKey])) {
-                unset($row['order_ids']); // Remove order_ids before adding
                 $finalCombined[$normalizedKey] = $row;
             } else {
                 // If duplicate found, merge the data (shouldn't happen, but safety check)
@@ -827,6 +906,10 @@ class KhewaReportsData
                 $finalCombined[$normalizedKey]['total_products_tax_incl'] += $row['total_products_tax_incl'];
                 $finalCombined[$normalizedKey]['total_shipping_tax_incl'] += $row['total_shipping_tax_incl'];
                 $finalCombined[$normalizedKey]['total_paid_tax_incl'] += $row['total_paid_tax_incl'];
+                $finalCombined[$normalizedKey]['order_ids'] = array_merge(
+                    isset($finalCombined[$normalizedKey]['order_ids']) ? $finalCombined[$normalizedKey]['order_ids'] : array(),
+                    isset($row['order_ids']) ? $row['order_ids'] : array()
+                );
             }
         }
         
@@ -836,31 +919,6 @@ class KhewaReportsData
             return $b['total_paid_tax_incl'] <=> $a['total_paid_tax_incl'];
         });
         
-        // Get all taxes by module (dynamic - covers all tax types across all provinces)
-        $sql = '
-        SELECT o.module, odt.id_tax, SUM(odt.total_amount) as total_tax
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
-        INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        ' . $refundDateCondition . '
-        GROUP BY o.module, odt.id_tax
-        ';
-        $taxesByModuleRows = Db::getInstance()->executeS($sql);
-        $taxesByModule = array(); // $taxesByModule[$module][$id_tax] = total_tax
-        if ($taxesByModuleRows) {
-            foreach ($taxesByModuleRows as $taxRow) {
-                $mod = $taxRow['module'];
-                $taxId = (int)$taxRow['id_tax'];
-                if (!isset($taxesByModule[$mod])) {
-                    $taxesByModule[$mod] = array();
-                }
-                $taxesByModule[$mod][$taxId] = (float)$taxRow['total_tax'];
-            }
-        }
-
         // Get ordered list of all active tax types for column headers
         $sql = '
         SELECT DISTINCT t.id_tax,
@@ -884,70 +942,64 @@ class KhewaReportsData
             $taxIds[] = (int)$tax['id_tax'];
         }
         
-        // Get Refunds by module
-        $sql = '
-        SELECT o.module, SUM(os.total_products_tax_incl) as total_refund
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_slip os ON o.id_order = os.id_order
-        WHERE os.date_add >= "' . $this->date_from . '"
-        AND os.date_add <= "' . $this->date_to . '"
-        ' . $excludePartialRefReferencesSql . '
-        GROUP BY o.module
-        ';
-        $refundByModule = Db::getInstance()->executeS($sql);
-        $refundMap = array();
-        if ($refundByModule) {
-            foreach ($refundByModule as $row) {
-                $refundMap[$row['module']] = (float)$row['total_refund'];
-            }
-        }
-        
-        // Add partial refund orders (possible_refund_date) to refund map by module
-        $partialRefunds = $this->getPartialRefundOrders();
-        foreach ($partialRefunds as $partialRefund) {
-            $mod = $partialRefund['module'];
-            if (!isset($refundMap[$mod])) {
-                $refundMap[$mod] = 0;
-            }
-            $refundMap[$mod] += $partialRefund['amount'];
-        }
-        
-
-
-        // Combine the data - distribute tax proportionally by paid amount
+        // Combined rows: sum order_detail_tax per order in each bucket (matches invoice / Sales tab; not split by Total Paid).
         if ($combinedBase) {
-            // First calculate total paid per module
-            $totalPaidByModule = array();
+            $allOrderIds = array();
             foreach ($combinedBase as $row) {
-                $module = $row['module'];
-                if (!isset($totalPaidByModule[$module])) {
-                    $totalPaidByModule[$module] = 0;
+                if (!empty($row['order_ids'])) {
+                    foreach ($row['order_ids'] as $oid) {
+                        $allOrderIds[(int)$oid] = true;
+                    }
                 }
-                $totalPaidByModule[$module] += (float)$row['total_paid_tax_incl'];
             }
-            
-            // Now distribute taxes proportionally
+            $allOrderIds = array_keys($allOrderIds);
+            $taxByOrderId = $this->getProductTaxAmountsByOrderIds($allOrderIds);
+            $refundByOrderId = $this->getRefundAmountsByOrderIdsForSbpm($allOrderIds, $excludePartialRefReferencesSql);
+
             foreach ($combinedBase as &$row) {
                 $module = $row['module'];
-                $paidAmount = (float)$row['total_paid_tax_incl'];
-                $moduleTotalPaid = $totalPaidByModule[$module];
-                
-                // Calculate proportion for this payment method
-                $proportion = ($moduleTotalPaid > 0) ? ($paidAmount / $moduleTotalPaid) : 0;
-                
-                // Distribute all taxes proportionally
                 $row['taxes'] = array();
                 foreach ($taxIds as $taxId) {
-                    $taxAmount = isset($taxesByModule[$module][$taxId]) ? $taxesByModule[$module][$taxId] : 0;
-                    $row['taxes'][$taxId] = round($taxAmount * $proportion, 2);
+                    $row['taxes'][$taxId] = 0;
                 }
-                
-                // Distribute Refunds proportionally by module type (same as taxes)
-                $row['refund_online'] = (!$this->isPosModule($module) && isset($refundMap[$module])) 
-                    ? round($refundMap[$module] * $proportion, 2) : 0;
-                $row['refund_instore'] = ($this->isPosModule($module) && isset($refundMap[$module])) 
-                    ? round($refundMap[$module] * $proportion, 2) : 0;
+                if (!empty($row['order_ids'])) {
+                    foreach ($row['order_ids'] as $oid) {
+                        $oid = (int)$oid;
+                        if (isset($taxByOrderId[$oid])) {
+                            foreach ($taxIds as $taxId) {
+                                if (isset($taxByOrderId[$oid][$taxId])) {
+                                    $row['taxes'][$taxId] += $taxByOrderId[$oid][$taxId];
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach ($taxIds as $taxId) {
+                    $row['taxes'][$taxId] = round($row['taxes'][$taxId], 2);
+                }
+
+                $row['refund_online'] = 0;
+                $row['refund_instore'] = 0;
+                if (!empty($row['order_ids'])) {
+                    foreach ($row['order_ids'] as $oid) {
+                        $oid = (int)$oid;
+                        $refAmt = isset($refundByOrderId[$oid]) ? $refundByOrderId[$oid] : 0;
+                        if ($refAmt <= 0) {
+                            continue;
+                        }
+                        if ($this->isPosModule($module)) {
+                            $row['refund_instore'] += $refAmt;
+                        } else {
+                            $row['refund_online'] += $refAmt;
+                        }
+                    }
+                }
+                $row['refund_online'] = round($row['refund_online'], 2);
+                $row['refund_instore'] = round($row['refund_instore'], 2);
+
+                unset($row['order_ids']);
             }
+            unset($row);
             $result['combined'] = $combinedBase;
         }
         
@@ -997,6 +1049,8 @@ class KhewaReportsData
                 $onlineByMethod[trim($p['payment_method'])] = (float)$p['payment_amount'];
             }
         }
+        
+
         
         // IN-STORE payments: only orders with module = POS; only payment rows with date_add in range; exclude Paypal/Stripe (instore = Cash/Credit Card/Interac only, match ExportSales).
         // IMPORTANT: op.amount > 0 only — "Paid with Cash" must show total cash received (gross), never reduced by refunds.
