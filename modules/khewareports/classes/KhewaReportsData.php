@@ -163,7 +163,6 @@ class KhewaReportsData
     }
     
 
-
     /**
      * Get Sales Data - Orders within date range based on ORDER DATE
      */
@@ -216,10 +215,17 @@ class KhewaReportsData
             IFNULL(qst.total_amount, 0) as qst_total_amount,
             IFNULL(gst_ship.amount, 0) as shipping_gst_amount,
             IFNULL(qst_ship.amount, 0) as shipping_qst_amount,
-            IFNULL(ocr.voucher_value, 0) as voucher_value,
+            IFNULL(ocr.total_cart_rule_value, 0) as voucher_value,
             ocr.voucher_names,
-            CASE WHEN LOWER(ocr.voucher_names) LIKE "%gift%" OR LOWER(ocr.voucher_names) LIKE "%cadeau%" 
-                 THEN IFNULL(ocr.voucher_value, 0) ELSE 0 END as gift_card_amount,
+            IFNULL(ocr.gift_card_value, 0) as gift_card_amount,
+            IFNULL(ocr.voucher_only_value, 0) as voucher_amount_sales,
+            GREATEST(
+                IFNULL(ocr.total_cart_rule_value, 0)
+                - IFNULL(ocr.gift_card_value, 0)
+                - IFNULL(ocr.voucher_only_value, 0)
+                - IFNULL(ocr.discount_value, 0),
+                0
+            ) as credit_slip_amount,
             IFNULL(slip.total_refund_tax_incl, 0) as total_refund_tax_incl,
             IFNULL(slip.refund_date, "") as refund_date,
             dcl.name as delivery_country,
@@ -252,7 +258,10 @@ class KhewaReportsData
         ) qst_ship ON o.id_order = qst_ship.id_order_invoice
         LEFT JOIN (
             SELECT id_order, 
-                   SUM(value) as voucher_value,
+                   SUM(value) as total_cart_rule_value,
+                   SUM(CASE WHEN LOWER(name) LIKE "%gift%" OR LOWER(name) LIKE "%cadeau%" THEN value ELSE 0 END) as gift_card_value,
+                   SUM(CASE WHEN LOWER(name) LIKE "%voucher%" THEN value ELSE 0 END) as voucher_only_value,
+                   SUM(CASE WHEN LOWER(name) LIKE "%promocode%" OR LOWER(name) LIKE "%point of sale%" THEN value ELSE 0 END) as discount_value,
                    GROUP_CONCAT(name SEPARATOR ", ") as voucher_names
             FROM ' . _DB_PREFIX_ . 'order_cart_rule
             GROUP BY id_order
@@ -331,11 +340,6 @@ class KhewaReportsData
 
 
 
-    
-
-
-
-    
 
     /**
      * Get partial refund orders (state = partial_refund e.g. 25, and possible_refund_date or date_add in range).

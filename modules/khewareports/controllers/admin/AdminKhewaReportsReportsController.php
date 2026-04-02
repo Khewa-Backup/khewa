@@ -223,6 +223,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $paymentMethodTotals = array(); // Track total amounts per payment method for summary
         $totals = array(
             'gift_card' => 0,
+            'credit_slip' => 0,
             'voucher' => 0,
             'shipping_incl' => 0,
             'shipping_gst' => 0,
@@ -263,14 +264,20 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
                 $this->setCellValueSafe($sheet, 'E' . $row, '');
             }
             
-            $this->setCellValueSafe($sheet, 'F' . $row, '0');
-            
-            // Column G: Voucher - order level
-            if ($showOrderData && $data['voucher_value']) {
-                $this->setNumericValue($sheet, 'F' . $row, $data['voucher_value']);
-                $totals['voucher'] += (float)$data['voucher_value'];
+            // Column F: Credit Slip - order level
+            if ($showOrderData && !empty($data['credit_slip_amount'])) {
+                $this->setNumericValue($sheet, 'F' . $row, $data['credit_slip_amount']);
+                $totals['credit_slip'] += (float)$data['credit_slip_amount'];
             } else {
                 $this->setCellValueSafe($sheet, 'F' . $row, '');
+            }
+
+            // Column G: Voucher - order level
+            if ($showOrderData && !empty($data['voucher_amount_sales'])) {
+                $this->setNumericValue($sheet, 'G' . $row, $data['voucher_amount_sales']);
+                $totals['voucher'] += (float)$data['voucher_amount_sales'];
+            } else {
+                $this->setCellValueSafe($sheet, 'G' . $row, '');
             }
             
             // Column H: Shipping (Tax incl) - order level
@@ -397,6 +404,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             }
             
             $this->setNumericValue($sheet, 'E' . $row, $totals['gift_card']);
+            $this->setNumericValue($sheet, 'F' . $row, $totals['credit_slip']);
             $this->setNumericValue($sheet, 'G' . $row, $totals['voucher']);
             $this->setNumericValue($sheet, 'H' . $row, $totals['shipping_incl']);
             $this->setNumericValue($sheet, 'I' . $row, $totals['shipping_gst']);
@@ -433,6 +441,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Apply number formatting to numeric columns (2 decimal places)
         if ($row > 3) {
             $this->applyNumberFormat($sheet, 'E3:E' . $row); // Gift Card
+            $this->applyNumberFormat($sheet, 'F3:F' . $row); // Credit Slip
             $this->applyNumberFormat($sheet, 'G3:G' . $row); // Voucher
             $this->applyNumberFormat($sheet, 'H3:J' . $row); // Shipping amounts
             $this->applyNumberFormat($sheet, 'K3:M' . $row); // Refund amounts
