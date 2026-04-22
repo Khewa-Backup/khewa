@@ -2960,7 +2960,13 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                             $cart_rule->update();
                         }
                     }
-                    if (Validate::isLoadedObject($cart_rule) && (bool) $this->context->cart->addCartRule((int) $cart_rule->id)) {
+                    // Defensive check: do not apply mismatched existing code even if upstream validation changes.
+                    if (Validate::isLoadedObject($cart_rule)
+                        && in_array($discount_type, array(PosConstants::DISCOUNT_TYPE_VOUCHER, 'gift-card', 'credit-slip'))
+                        && ($typeError = $this->validateDiscountTypeMatchesSelection($discount_type, $cart_rule))) {
+                        $this->ajax_json['success'] = false;
+                        $this->ajax_json['message'] = $typeError;
+                    } elseif (Validate::isLoadedObject($cart_rule) && (bool) $this->context->cart->addCartRule((int) $cart_rule->id)) {
                         $this->ajax_json['success'] = true;
                         $this->ajax_json['message'] = $this->module->i18n['discount_applied'];
                     }
@@ -2990,6 +2996,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
         $this->ajax_json['data']['transaction']['cart']['discounts'] = $this->module->getCartRules();
     }
 
+    
     /**
      * If the order discount is not valid, return the error message, otherwise, null!
      *
@@ -3025,6 +3032,9 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
                     if (Validate::isLoadedObject($cart_rule)) {
                         $error_message = $cart_rule->checkValidity($this->context, false, true);
+                        if (!$error_message) {
+                            $error_message = $this->validateDiscountTypeMatchesSelection($discount_type, $cart_rule);
+                        }
                     } else {
                         $error_message = $this->module->i18n['this_voucher_does_not_exist'];
                     }
@@ -3040,6 +3050,9 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
                     if (Validate::isLoadedObject($cart_rule)) {
                         $error_message = $cart_rule->checkValidity($this->context, false, true);
+                        if (!$error_message) {
+                            $error_message = $this->validateDiscountTypeMatchesSelection($discount_type, $cart_rule);
+                        }
                     } else {
 //                        $error_message = $this->module->i18n['this_voucher_does_not_exist'];
                         $error_message = "Code does not exist!";
@@ -3056,6 +3069,9 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
                     if (Validate::isLoadedObject($cart_rule)) {
                         $error_message = $cart_rule->checkValidity($this->context, false, true);
+                        if (!$error_message) {
+                            $error_message = $this->validateDiscountTypeMatchesSelection($discount_type, $cart_rule);
+                        }
                     } else {
 //                        $error_message = $this->module->i18n['this_voucher_does_not_exist'];
                         $error_message = "Code does not exist!";
@@ -3069,6 +3085,110 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
 
         return $error_message;
     }
+
+    /**
+     * Resolve a human-readable discount type label for messages.
+     *
+     * @param string $type
+     * @return string
+     */
+    protected function getDiscountTypeLabel($type)
+    {
+        switch ($type) {
+            case PosConstants::DISCOUNT_TYPE_VOUCHER:
+                return 'Voucher';
+            case 'gift-card':
+                return 'Gift Card';
+            case 'credit-slip':
+                return 'Credit Slip';
+            default:
+                return 'Unknown';
+        }
+    }
+
+    /**
+     * Get cart rule display name used for classification.
+     *
+     * @param CartRule $cart_rule
+     * @return string
+     */
+    protected function getCartRuleDisplayName(CartRule $cart_rule)
+    {
+        $name = '';
+        if (is_array($cart_rule->name)) {
+            $id_lang = (int)$this->context->language->id;
+            if (isset($cart_rule->name[$id_lang])) {
+                $name = (string)$cart_rule->name[$id_lang];
+            } else {
+                foreach ($cart_rule->name as $value) {
+                    if (!empty($value)) {
+                        $name = (string)$value;
+                        break;
+                    }
+                }
+            }
+        } elseif (is_string($cart_rule->name)) {
+            $name = $cart_rule->name;
+        }
+
+        return trim($name);
+    }
+
+    /**
+     * Detect cart rule category from name/description.
+     * Rules:
+     * - Voucher: contains "bon" or "voucher"
+     * - Gift card: contains "gift" or "cadeau"
+     * - Credit slip: starts with capital "V" and does not contain "voucher", OR contains "credit" in name/description
+     *
+     * @param CartRule $cart_rule
+     * @return string one of: voucher, gift-card, credit-slip, unknown
+     */
+    protected function detectCartRuleType(CartRule $cart_rule)
+    {
+        $name = $this->getCartRuleDisplayName($cart_rule);
+        $description = trim((string)$cart_rule->description);
+
+        $nameLower = Tools::strtolower($name);
+        $descriptionLower = Tools::strtolower($description);
+
+        if (strpos($nameLower, 'bon') !== false || strpos($nameLower, 'voucher') !== false) {
+            return PosConstants::DISCOUNT_TYPE_VOUCHER;
+        }
+
+        if (strpos($nameLower, 'gift') !== false || strpos($nameLower, 'cadeau') !== false) {
+            return 'gift-card';
+        }
+
+        $startsWithCapitalV = preg_match('/^V/u', $name) === 1;
+        $containsVoucher = strpos($nameLower, 'voucher') !== false;
+        $containsCredit = (strpos($nameLower, 'credit') !== false || strpos($descriptionLower, 'credit') !== false);
+
+        if (($startsWithCapitalV && !$containsVoucher) || $containsCredit) {
+            return 'credit-slip';
+        }
+
+        return 'unknown';
+    }
+
+    /**
+     * Ensure the selected POS discount type matches the cart rule type.
+     *
+     * @param string $selected_type
+     * @param CartRule $cart_rule
+     * @return string|null
+     */
+    protected function validateDiscountTypeMatchesSelection($selected_type, CartRule $cart_rule)
+    {
+        $detected_type = $this->detectCartRuleType($cart_rule);
+        if ($detected_type === 'unknown' || $selected_type === $detected_type) {
+            return null;
+        }
+
+        return 'Selected code is a "' . $this->getDiscountTypeLabel($detected_type) . '". Please select "' . $this->getDiscountTypeLabel($detected_type) . '" on the left.';
+    }
+
+
 
     /**
      * @input

@@ -619,6 +619,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
     }
 
 
+
+
     /**
      * Populate SBPM (Sales By Payment Method) sheet
      * Two parts: TOP summary table + BOTTOM Online/In-Store breakdown
@@ -634,16 +636,16 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
 
         // ==================== Build dynamic tax column map ====================
         // Fixed columns: A=Combined Payment, B=Confirmed Orders, C=Products Excl, D=Products Incl,
-        //                E=Shipping, F=Total Paid  → tax columns start at index 7 (G)
+        //                E=Shipping, F=Total Sum, G=Total Bill (Tax Incl.)  → tax columns start at index 8 (H)
         $taxColumns = isset($sbpmData['tax_columns']) ? $sbpmData['tax_columns'] : array();
         $taxColMap = array(); // id_tax => column letter
         foreach ($taxColumns as $i => $tax) {
-            $colIndex = 7 + $i; // G=7, H=8, ...
+            $colIndex = 8 + $i; // H=8, I=9, ...
             $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
             $taxColMap[(int)$tax['id_tax']] = $colLetter;
         }
-        $lastTaxColIndex = 6 + count($taxColumns);
-        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(max(6, $lastTaxColIndex));
+        $lastTaxColIndex = 7 + count($taxColumns);
+        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(max(7, $lastTaxColIndex));
 
         // Add sheet header spanning full dynamic width
         $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method', $lastColLetter);
@@ -656,7 +658,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             'C' => 'Total Products (Tax Excl.)',
             'D' => 'Total Products (Tax Incl.)',
             'E' => 'Total Shipping (Tax Incl.)',
-            'F' => 'Total Paid (Tax Incl.)',
+            'F' => 'Total Sum (Tax Incl)',
+            'G' => 'Total Bill (Tax Incl.)',
         );
         // Add one column per active tax type
         foreach ($taxColumns as $tax) {
@@ -677,6 +680,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $totalProductsExcl = 0;
         $totalProductsIncl = 0;
         $totalShipping = 0;
+        $totalSumTaxIncl = 0;
         $totalPaid = 0;
         $totalTaxes = array(); // dynamic: id_tax => total
 
@@ -687,7 +691,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setNumericValue($sheet, 'C' . $row, (float)$data['total_products_tax_excl']);
             $this->setNumericValue($sheet, 'D' . $row, (float)$data['total_products_tax_incl']);
             $this->setNumericValue($sheet, 'E' . $row, (float)$data['total_shipping_tax_incl']);
-            $this->setNumericValue($sheet, 'F' . $row, (float)$data['total_paid_tax_incl']);
+            $totalSum = (float)$data['total_products_tax_incl'] + (float)$data['total_shipping_tax_incl'];
+            $this->setNumericValue($sheet, 'F' . $row, $totalSum);
+            $this->setNumericValue($sheet, 'G' . $row, (float)$data['total_paid_tax_incl']);
             // Dynamic tax columns
             foreach ($taxColMap as $taxId => $colLetter) {
                 $taxAmount = isset($data['taxes'][$taxId]) ? (float)$data['taxes'][$taxId] : 0;
@@ -703,17 +709,18 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $totalProductsExcl += (float)$data['total_products_tax_excl'];
             $totalProductsIncl += (float)$data['total_products_tax_incl'];
             $totalShipping += (float)$data['total_shipping_tax_incl'];
+            $totalSumTaxIncl += $totalSum;
             $totalPaid += (float)$data['total_paid_tax_incl'];
             $row++;
         }
-
         // TOTALS row
         $this->setCellValueSafe($sheet, 'A' . $row, 'TOTALS');
         $this->setCellValueSafe($sheet, 'B' . $row, $totalOrders);
         $this->setNumericValue($sheet, 'C' . $row, $totalProductsExcl);
         $this->setNumericValue($sheet, 'D' . $row, $totalProductsIncl);
         $this->setNumericValue($sheet, 'E' . $row, $totalShipping);
-        $this->setNumericValue($sheet, 'F' . $row, $totalPaid);
+        $this->setNumericValue($sheet, 'F' . $row, $totalSumTaxIncl);
+        $this->setNumericValue($sheet, 'G' . $row, $totalPaid);
         foreach ($taxColMap as $taxId => $colLetter) {
             $this->setNumericValue($sheet, $colLetter . $row, isset($totalTaxes[$taxId]) ? $totalTaxes[$taxId] : 0);
         }
@@ -721,12 +728,23 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $sheet->getStyle('A' . $row . ':' . $lastColLetter . $row)->getFont()->setBold(true);
         $row++;
 
+        // Shipping Online row (between TOTALS and Refund Online)
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Shipping Online');
+        $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['online']['shipping_incl']);
+        foreach ($taxColMap as $taxId => $colLetter) {
+            $shippingTax = isset($sbpmData['online']['shipping_taxes'][$taxId]) ? (float)$sbpmData['online']['shipping_taxes'][$taxId] : 0;
+            $this->setNumericValue($sheet, $colLetter . $row, $shippingTax);
+        }
+        $row++;
+
         // Refund Online breakdown row
         $this->setCellValueSafe($sheet, 'A' . $row, 'Refund Online');
         $this->setNumericValue($sheet, 'C' . $row, (float)$sbpmData['online']['refund_products_excl']);
         $this->setNumericValue($sheet, 'D' . $row, (float)$sbpmData['online']['refund_products_incl']);
         $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['online']['refund_shipping_incl']);
-        $this->setNumericValue($sheet, 'F' . $row, round((float)$sbpmData['online']['refund_products_incl'] + (float)$sbpmData['online']['refund_shipping_incl'], 2));
+        $refundOnlineSum = round((float)$sbpmData['online']['refund_products_incl'] + (float)$sbpmData['online']['refund_shipping_incl'], 2);
+        $this->setNumericValue($sheet, 'F' . $row, $refundOnlineSum);
+        $this->setNumericValue($sheet, 'G' . $row, $refundOnlineSum);
         foreach ($taxColMap as $taxId => $colLetter) {
             $refundTax = isset($sbpmData['online']['refund_taxes'][$taxId]) ? (float)$sbpmData['online']['refund_taxes'][$taxId] : 0;
             $this->setNumericValue($sheet, $colLetter . $row, $refundTax);
@@ -738,7 +756,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setNumericValue($sheet, 'C' . $row, (float)$sbpmData['instore']['refund_products_excl']);
         $this->setNumericValue($sheet, 'D' . $row, (float)$sbpmData['instore']['refund_products_incl']);
         $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['instore']['refund_shipping_incl']);
-        $this->setNumericValue($sheet, 'F' . $row, round((float)$sbpmData['instore']['refund_products_incl'] + (float)$sbpmData['instore']['refund_shipping_incl'], 2));
+        $refundInstoreSum = round((float)$sbpmData['instore']['refund_products_incl'] + (float)$sbpmData['instore']['refund_shipping_incl'], 2);
+        $this->setNumericValue($sheet, 'F' . $row, $refundInstoreSum);
+        $this->setNumericValue($sheet, 'G' . $row, $refundInstoreSum);
         foreach ($taxColMap as $taxId => $colLetter) {
             $refundTax = isset($sbpmData['instore']['refund_taxes'][$taxId]) ? (float)$sbpmData['instore']['refund_taxes'][$taxId] : 0;
             $this->setNumericValue($sheet, $colLetter . $row, $refundTax);
@@ -902,7 +922,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         }
 
         // Dynamic column widths
-        $colWidths = array('A' => 22, 'B' => 12, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 15);
+        $colWidths = array('A' => 22, 'B' => 12, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 16, 'G' => 16);
         foreach ($taxColMap as $taxId => $colLetter) {
             $colWidths[$colLetter] = 14;
         }

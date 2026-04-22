@@ -161,7 +161,25 @@ class KhewaReportsData
         
         return false;
     }
-    
+
+
+    /**
+     * SQL fragment: cart-rule line amount aligned with invoice / PrestaShop rules.
+     * - Percentage reduction: use value_tax_excl (discount applied on tax base).
+     * - Fixed reduction: use value when reduction_tax applies (amount tax-incl), else value_tax_excl.
+     *
+     * @param string $ocrAlias ps_order_cart_rule alias
+     * @param string $crAlias ps_cart_rule alias
+     * @return string
+     */
+    protected function getSqlOrderCartRuleLineAmountSql($ocrAlias, $crAlias)
+    {
+        return 'CASE '
+            . 'WHEN IFNULL(' . $crAlias . '.reduction_percent, 0) > 0 THEN ' . $ocrAlias . '.value_tax_excl '
+            . 'WHEN IFNULL(' . $crAlias . '.reduction_amount, 0) > 0 THEN '
+            . '(CASE WHEN IFNULL(' . $crAlias . '.reduction_tax, 0) = 1 THEN ' . $ocrAlias . '.value ELSE ' . $ocrAlias . '.value_tax_excl END) '
+            . 'ELSE ' . $ocrAlias . '.value_tax_excl END';
+    }
 
     /**
      * Get Sales Data - Orders within date range based on ORDER DATE
@@ -170,6 +188,8 @@ class KhewaReportsData
     {
         $excludedStates = Khewareports::getSalesExcludedStatesSQL();
         $refundStates = Khewareports::getRefundStatesSQL();
+
+        $ocrLineAmt = $this->getSqlOrderCartRuleLineAmountSql('ocr', 'cr');
         
         // Same payment method normalization as SBPM (Credit Card, Cash, Interac, etc.)
         $paymentMethodCase = Khewareports::buildPaymentMethodCase('op.payment_method');
@@ -257,14 +277,15 @@ class KhewaReportsData
             GROUP BY id_order_invoice
         ) qst_ship ON o.id_order = qst_ship.id_order_invoice
         LEFT JOIN (
-            SELECT id_order, 
-                   SUM(value) as total_cart_rule_value,
-                   SUM(CASE WHEN LOWER(name) LIKE "%gift%" OR LOWER(name) LIKE "%cadeau%" THEN value ELSE 0 END) as gift_card_value,
-                   SUM(CASE WHEN LOWER(name) LIKE "%voucher%" THEN value ELSE 0 END) as voucher_only_value,
-                   SUM(CASE WHEN LOWER(name) LIKE "%promocode%" OR LOWER(name) LIKE "%point of sale%" THEN value ELSE 0 END) as discount_value,
-                   GROUP_CONCAT(name SEPARATOR ", ") as voucher_names
-            FROM ' . _DB_PREFIX_ . 'order_cart_rule
-            GROUP BY id_order
+            SELECT ocr.id_order,
+                   SUM(' . $ocrLineAmt . ') as total_cart_rule_value,
+                   SUM(CASE WHEN LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%" THEN ' . $ocrLineAmt . ' ELSE 0 END) as gift_card_value,
+                   SUM(CASE WHEN LOWER(ocr.name) LIKE "%voucher%" THEN ' . $ocrLineAmt . ' ELSE 0 END) as voucher_only_value,
+                   SUM(CASE WHEN LOWER(ocr.name) LIKE "%promocode%" OR LOWER(ocr.name) LIKE "%point of sale%" THEN ' . $ocrLineAmt . ' ELSE 0 END) as discount_value,
+                   GROUP_CONCAT(ocr.name SEPARATOR ", ") as voucher_names
+            FROM ' . _DB_PREFIX_ . 'order_cart_rule ocr
+            LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON cr.id_cart_rule = ocr.id_cart_rule
+            GROUP BY ocr.id_order
         ) ocr ON o.id_order = ocr.id_order
         LEFT JOIN (
             SELECT id_order,
@@ -707,6 +728,7 @@ class KhewaReportsData
                 )
             )';
         
+            
         $result = array(
             'combined' => array(),  // Top summary table
             'online' => array(
@@ -715,6 +737,8 @@ class KhewaReportsData
                 'voucher' => 0,
                 'credit_slip' => 0,
                 'discount' => 0,
+                'shipping_incl' => 0,
+                'shipping_taxes' => array(),
                 'refund' => 0,
                 'refund_products_excl' => 0,
                 'refund_products_incl' => 0,
@@ -731,6 +755,8 @@ class KhewaReportsData
                 'gift_card' => 0,
                 'credit_slip' => 0,
                 'discount' => 0,
+                'shipping_incl' => 0,
+                'shipping_taxes' => array(),
                 'refund' => 0,
                 'refund_products_excl' => 0,
                 'refund_products_incl' => 0,
@@ -1155,15 +1181,16 @@ class KhewaReportsData
         // Use CASE to select correct value based on reduction type
         $sql = '
         SELECT IFNULL(SUM(
-            CASE 
-                WHEN cr.reduction_percent > 0 THEN ocr.value_tax_excl
-                WHEN cr.reduction_amount > 0 THEN ocr.value
-                ELSE ocr.value
+            CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
             END
         ), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1197,15 +1224,16 @@ class KhewaReportsData
         // Use CASE to select correct value based on reduction type
         $sql = '
         SELECT IFNULL(SUM(
-            CASE 
-                WHEN cr.reduction_percent > 0 THEN ocr.value_tax_excl
-                WHEN cr.reduction_amount > 0 THEN ocr.value
-                ELSE ocr.value
+            CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
             END
         ), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1239,15 +1267,16 @@ class KhewaReportsData
         // Use CASE to select correct value based on reduction type
         $sql = '
         SELECT IFNULL(SUM(
-            CASE 
-                WHEN cr.reduction_percent > 0 THEN ocr.value_tax_excl
-                WHEN cr.reduction_amount > 0 THEN ocr.value
-                ELSE ocr.value
+            CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
             END
         ), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1281,15 +1310,16 @@ class KhewaReportsData
         // Use CASE to select correct value based on reduction type
         $sql = '
         SELECT IFNULL(SUM(
-            CASE 
-                WHEN cr.reduction_percent > 0 THEN ocr.value_tax_excl
-                WHEN cr.reduction_amount > 0 THEN ocr.value
-                ELSE ocr.value
+            CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
             END
         ), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1323,15 +1353,16 @@ class KhewaReportsData
         // Use CASE to select correct value based on reduction type
         $sql = '
         SELECT IFNULL(SUM(
-            CASE 
-                WHEN cr.reduction_percent > 0 THEN ocr.value_tax_excl
-                WHEN cr.reduction_amount > 0 THEN ocr.value
-                ELSE ocr.value
+            CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
             END
         ), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1365,15 +1396,16 @@ class KhewaReportsData
         // Use CASE to select correct value based on reduction type
         $sql = '
         SELECT IFNULL(SUM(
-            CASE 
-                WHEN cr.reduction_percent > 0 THEN ocr.value_tax_excl
-                WHEN cr.reduction_amount > 0 THEN ocr.value
-                ELSE ocr.value
+            CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
             END
         ), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1398,15 +1430,16 @@ class KhewaReportsData
         // Use CASE to select correct value based on reduction type
         $sql = '
         SELECT IFNULL(SUM(
-            CASE 
-                WHEN cr.reduction_percent > 0 THEN ocr.value_tax_excl
-                WHEN cr.reduction_amount > 0 THEN ocr.value
-                ELSE ocr.value
+            CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
             END
         ), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1421,15 +1454,16 @@ class KhewaReportsData
         // Use CASE to select correct value based on reduction type
         $sql = '
         SELECT IFNULL(SUM(
-            CASE 
-                WHEN cr.reduction_percent > 0 THEN ocr.value_tax_excl
-                WHEN cr.reduction_amount > 0 THEN ocr.value
-                ELSE ocr.value
+            CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
             END
         ), 0) as amount
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1439,6 +1473,39 @@ class KhewaReportsData
         ';
         $discountInstore = Db::getInstance()->getValue($sql);
         $result['instore']['discount'] = (float)$discountInstore;
+
+        // ONLINE shipping totals (for SBPM top table "Shipping Online" row)
+        $sql = '
+        SELECT IFNULL(SUM(o.total_shipping_tax_incl), 0) as shipping_incl
+        FROM ' . _DB_PREFIX_ . 'orders o
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
+        ';
+        $result['online']['shipping_incl'] = (float)Db::getInstance()->getValue($sql);
+
+        $sql = '
+        SELECT oit.id_tax, IFNULL(SUM(oit.amount), 0) as shipping_tax
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice oi ON oi.id_order = o.id_order
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice_tax oit ON oit.id_order_invoice = oi.id_order_invoice
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        ' . $refundDateCondition . '
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
+        AND oit.type = "shipping"
+        GROUP BY oit.id_tax
+        ';
+        $shippingOnlineTaxRows = Db::getInstance()->executeS($sql);
+        $result['online']['shipping_taxes'] = array();
+        if ($shippingOnlineTaxRows) {
+            foreach ($shippingOnlineTaxRows as $taxRow) {
+                $result['online']['shipping_taxes'][(int)$taxRow['id_tax']] = (float)$taxRow['shipping_tax'];
+            }
+        }
         
         // Get ONLINE Refunds - products/shipping totals (from order_slip; exclude partial refund orders)
         $sql = '
@@ -1694,6 +1761,8 @@ class KhewaReportsData
                 AND o.current_state NOT IN (' . $refundStates . ')
             )
         )';
+
+        $ocrLineAmt = $this->getSqlOrderCartRuleLineAmountSql('ocr', 'cr');
         
         // Base order totals
         $sql = '
@@ -1723,9 +1792,10 @@ class KhewaReportsData
         
         // Gift Card totals (all orders, not just online)
         $sql = '
-        SELECT IFNULL(SUM(ocr.value), 0) as total_gift_card
+        SELECT IFNULL(SUM(' . $ocrLineAmt . '), 0) as total_gift_card
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON cr.id_cart_rule = ocr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1736,9 +1806,10 @@ class KhewaReportsData
         
         // Voucher totals (all orders)
         $sql = '
-        SELECT IFNULL(SUM(ocr.value), 0) as total_voucher
+        SELECT IFNULL(SUM(' . $ocrLineAmt . '), 0) as total_voucher
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON cr.id_cart_rule = ocr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
