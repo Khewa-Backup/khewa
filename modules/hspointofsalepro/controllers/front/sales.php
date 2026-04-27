@@ -421,6 +421,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
      * }
      * </pre>
      */
+    
     public function ajaxProcessInitShop()
     {
         $root_category = PosCategory::getRootCategory();

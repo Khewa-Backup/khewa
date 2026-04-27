@@ -13,6 +13,78 @@
 class PosOrderHistory extends OrderHistory
 {
     /**
+     * Override: guard against invalid order-state email template in staging.
+     *
+     * @param Order $order
+     * @param array|false $template_vars
+     *
+     * @return bool
+     */
+    public function sendEmail($order, $template_vars = false)
+    {
+        $result = Db::getInstance()->getRow('
+            SELECT osl.`template`, os.`send_email`
+            FROM `' . _DB_PREFIX_ . 'order_history` oh
+                LEFT JOIN `' . _DB_PREFIX_ . 'orders` o ON oh.`id_order` = o.`id_order`
+                LEFT JOIN `' . _DB_PREFIX_ . 'order_state` os ON oh.`id_order_state` = os.`id_order_state`
+                LEFT JOIN `' . _DB_PREFIX_ . 'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` AND osl.`id_lang` = o.`id_lang`)
+            WHERE oh.`id_order_history` = ' . (int) $this->id);
+
+        if (!empty($result) && (int) $result['send_email'] === 1 && !Validate::isTplName((string) $result['template'])) {
+            PrestaShopLogger::addLog(
+                'PosOrderHistory::sendEmail - Invalid email template "' . (string) $result['template'] . '"'
+                . ' for order ' . (int) $this->id_order . ' and state ' . (int) $this->id_order_state,
+                2
+            );
+
+            return true;
+        }
+
+        return parent::sendEmail($order, $template_vars);
+    }
+
+    
+    /**
+     * Override: do not break POS order completion when email template is misconfigured.
+     *
+     * @param bool $autodate
+     * @param array|false $template_vars
+     * @param Context|null $context
+     *
+     * @return bool
+     */
+    public function addWithemail($autodate = true, $template_vars = false, Context $context = null)
+    {
+        $order = new Order((int) $this->id_order);
+
+        if (!$this->add($autodate)) {
+            return false;
+        }
+        Order::cleanHistoryCache();
+
+        try {
+            if (!$this->sendEmail($order, $template_vars)) {
+                return false;
+            }
+        } catch (Exception $exception) {
+            if (stripos($exception->getMessage(), 'invalid e-mail template') !== false) {
+                PrestaShopLogger::addLog(
+                    'PosOrderHistory::addWithemail - Skip invalid e-mail template for order ' . (int) $this->id_order
+                    . ' and order state ' . (int) $this->id_order_state,
+                    2
+                );
+
+                return true;
+            }
+
+            throw $exception;
+        }
+
+        return true;
+    }
+
+
+    /**
      * Override: accept partial payment.
      *
      * @param int $new_order_state
