@@ -664,10 +664,11 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Add one column per active tax type
         foreach ($taxColumns as $tax) {
             $colLetter = $taxColMap[(int)$tax['id_tax']];
-            $topHeaders[$colLetter] = $tax['tax_name'] . ' (' . $tax['rate'] . '%)';
+            $topHeaders[$colLetter] = $tax['tax_name'];
         }
         // Commented out: J => 'Refund Online (Tax Incl.)', K => 'Refund Instore (Tax Incl.)'
 
+        
         foreach ($topHeaders as $column => $header) {
             $this->setCellValueSafe($sheet, $column . '2', $header);
         }
