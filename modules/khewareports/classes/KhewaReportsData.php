@@ -638,6 +638,45 @@ class KhewaReportsData
         }
         return $out;
     }
+    
+    /**
+     * Shipping tax amount per order/tax from order_invoice_tax (type=shipping).
+     *
+     * @param int[] $orderIds
+     * @return array [id_order => [id_tax => float]]
+     */
+    protected function getShippingTaxAmountsByOrderIds(array $orderIds)
+    {
+        $orderIds = array_values(array_unique(array_map('intval', $orderIds)));
+        if (empty($orderIds)) {
+            return array();
+        }
+        $idList = implode(',', $orderIds);
+        $sql = '
+        SELECT oi.id_order, oit.id_tax,
+               SUM(oit.amount) as total_tax
+        FROM ' . _DB_PREFIX_ . 'order_invoice oi
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice_tax oit ON oi.id_order_invoice = oit.id_order_invoice
+        WHERE oi.id_order IN (' . $idList . ')
+        AND oit.type = "shipping"
+        GROUP BY oi.id_order, oit.id_tax
+        ';
+        $rows = Db::getInstance()->executeS($sql);
+        $out = array();
+        if ($rows) {
+            foreach ($rows as $r) {
+                $oid = (int)$r['id_order'];
+                $tid = (int)$r['id_tax'];
+                if (!isset($out[$oid])) {
+                    $out[$oid] = array();
+                }
+                $out[$oid][$tid] = (float)$r['total_tax'];
+            }
+        }
+        return $out;
+    }
+
+
 
     /**
      * Refund amount per order (slip date in range + partial refunds), same filters as SBPM refund totals.
@@ -840,6 +879,8 @@ class KhewaReportsData
             $paymentsByOrder[$ref][$paymentMethod]['amount'] += (float)$payment['payment_amount'];
         }
         
+
+        
         // STEP 3: Group orders by payment method(s)
         // - Single payment method orders → individual row (e.g., "Interac")
         // - Multiple payment methods → combined row with underscore (e.g., "Interac_Cash")
@@ -922,6 +963,8 @@ class KhewaReportsData
             }
         }
         
+
+        
         // Convert to indexed array and ensure no duplicates
         // Group by payment_method + module to catch any edge cases
         $finalCombined = array();
@@ -983,8 +1026,14 @@ class KhewaReportsData
                 }
             }
             $allOrderIds = array_keys($allOrderIds);
-            $taxByOrderId = $this->getProductTaxAmountsByOrderIds($allOrderIds);
+            $productTaxByOrderId = $this->getProductTaxAmountsByOrderIds($allOrderIds);
+            $shippingTaxByOrderId = $this->getShippingTaxAmountsByOrderIds($allOrderIds);
             $refundByOrderId = $this->getRefundAmountsByOrderIdsForSbpm($allOrderIds, $excludePartialRefReferencesSql);
+            $taxRateById = array();
+            foreach ($result['tax_columns'] as $tax) {
+                $taxRateById[(int)$tax['id_tax']] = (float)$tax['rate'];
+            }
+            $qstTaxIds = array_map('intval', array_filter(array_map('trim', explode(',', self::TAX_IDS_QST))));
 
             foreach ($combinedBase as &$row) {
                 $module = $row['module'];
@@ -992,16 +1041,45 @@ class KhewaReportsData
                 foreach ($taxIds as $taxId) {
                     $row['taxes'][$taxId] = 0;
                 }
+                $rowProductTax = array();
+                $rowShippingTax = array();
+                foreach ($taxIds as $taxId) {
+                    $rowProductTax[$taxId] = 0;
+                    $rowShippingTax[$taxId] = 0;
+                }
                 if (!empty($row['order_ids'])) {
                     foreach ($row['order_ids'] as $oid) {
                         $oid = (int)$oid;
-                        if (isset($taxByOrderId[$oid])) {
-                            foreach ($taxIds as $taxId) {
-                                if (isset($taxByOrderId[$oid][$taxId])) {
-                                    $row['taxes'][$taxId] += $taxByOrderId[$oid][$taxId];
-                                }
-                            }
+                        foreach ($taxIds as $taxId) {
+                            $productTax = (isset($productTaxByOrderId[$oid]) && isset($productTaxByOrderId[$oid][$taxId]))
+                                ? (float)$productTaxByOrderId[$oid][$taxId]
+                                : 0;
+                            $shippingTax = (isset($shippingTaxByOrderId[$oid]) && isset($shippingTaxByOrderId[$oid][$taxId]))
+                                ? (float)$shippingTaxByOrderId[$oid][$taxId]
+                                : 0;
+                            $rowProductTax[$taxId] += $productTax;
+                            $rowShippingTax[$taxId] += $shippingTax;
                         }
+                    }
+                }
+
+                // Match expected sheet behavior:
+                // - In-store buckets: formula from product excl using display rates (QST normalized to 9.975)
+                // - Online buckets: keep real product tax + add shipping tax by same tax id
+                if ($this->isPosModule($module)) {
+                    $formulaBase = (float)$row['total_products_tax_excl'];
+                    foreach ($taxIds as $taxId) {
+                        $sourceTax = $rowProductTax[$taxId] + $rowShippingTax[$taxId];
+                        if ($sourceTax <= 0) {
+                            $row['taxes'][$taxId] = 0;
+                            continue;
+                        }
+                        $displayRate = in_array((int)$taxId, $qstTaxIds, true) ? 9.975 : (isset($taxRateById[$taxId]) ? (float)$taxRateById[$taxId] : 0);
+                        $row['taxes'][$taxId] = ($displayRate > 0) ? ($formulaBase * $displayRate / 100) : 0;
+                    }
+                } else {
+                    foreach ($taxIds as $taxId) {
+                        $row['taxes'][$taxId] = $rowProductTax[$taxId] + $rowShippingTax[$taxId];
                     }
                 }
                 foreach ($taxIds as $taxId) {
