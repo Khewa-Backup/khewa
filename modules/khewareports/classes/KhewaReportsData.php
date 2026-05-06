@@ -605,7 +605,7 @@ class KhewaReportsData
     }
     
     /**
-     * Product tax from order_detail_tax per order (invoice / Sales tab basis).
+     * Product tax from order_detail_tax per order (matches invoice / Sales tab product GST+QST).
      *
      * @param int[] $orderIds
      * @return array [id_order => [id_tax => float]]
@@ -638,7 +638,6 @@ class KhewaReportsData
         }
         return $out;
     }
-    
 
     /**
      * Refund amount per order (slip date in range + partial refunds), same filters as SBPM refund totals.
@@ -973,8 +972,7 @@ class KhewaReportsData
             $taxIds[] = (int)$tax['id_tax'];
         }
         
-        // SBPM combined rows: keep invoice-true sums from order_detail_tax, then override $row['taxes'] with
-        // nominal rate × row total products (tax excl.) for the sheet (same dependency chain as before the override).
+        // Combined rows: sum order_detail_tax per order in each bucket (matches invoice / Sales tab; not split by Total Paid).
         if ($combinedBase) {
             $allOrderIds = array();
             foreach ($combinedBase as $row) {
@@ -988,17 +986,11 @@ class KhewaReportsData
             $taxByOrderId = $this->getProductTaxAmountsByOrderIds($allOrderIds);
             $refundByOrderId = $this->getRefundAmountsByOrderIdsForSbpm($allOrderIds, $excludePartialRefReferencesSql);
 
-            $taxRateById = array();
-            foreach ($result['tax_columns'] as $tax) {
-                $taxRateById[(int)$tax['id_tax']] = (float)$tax['rate'];
-            }
-            $precision = Context::getContext()->getComputingPrecision();
-
             foreach ($combinedBase as &$row) {
                 $module = $row['module'];
-                $taxesFromOrderDetailTax = array();
+                $row['taxes'] = array();
                 foreach ($taxIds as $taxId) {
-                    $taxesFromOrderDetailTax[$taxId] = 0;
+                    $row['taxes'][$taxId] = 0;
                 }
                 if (!empty($row['order_ids'])) {
                     foreach ($row['order_ids'] as $oid) {
@@ -1006,24 +998,15 @@ class KhewaReportsData
                         if (isset($taxByOrderId[$oid])) {
                             foreach ($taxIds as $taxId) {
                                 if (isset($taxByOrderId[$oid][$taxId])) {
-                                    $taxesFromOrderDetailTax[$taxId] += $taxByOrderId[$oid][$taxId];
+                                    $row['taxes'][$taxId] += $taxByOrderId[$oid][$taxId];
                                 }
                             }
                         }
                     }
                 }
                 foreach ($taxIds as $taxId) {
-                    $taxesFromOrderDetailTax[$taxId] = round($taxesFromOrderDetailTax[$taxId], 2);
+                    $row['taxes'][$taxId] = round($row['taxes'][$taxId], 2);
                 }
-
-                $base = (float)$row['total_products_tax_excl'];
-                $taxesForSbpmDisplay = array();
-                foreach ($taxIds as $taxId) {
-                    $rate = isset($taxRateById[$taxId]) ? $taxRateById[$taxId] : 0;
-                    $taxesForSbpmDisplay[$taxId] = Tools::ps_round($base * $rate / 100, $precision);
-                }
-                $row['taxes_from_order_detail_tax'] = $taxesFromOrderDetailTax;
-                $row['taxes'] = $taxesForSbpmDisplay;
 
                 $row['refund_online'] = 0;
                 $row['refund_instore'] = 0;
