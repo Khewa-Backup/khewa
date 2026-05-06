@@ -880,7 +880,7 @@ class KhewaReportsData
         }
         
 
-        
+
         // STEP 3: Group orders by payment method(s)
         // - Single payment method orders → individual row (e.g., "Interac")
         // - Multiple payment methods → combined row with underscore (e.g., "Interac_Cash")
@@ -1079,12 +1079,14 @@ class KhewaReportsData
                     }
                 } else {
                     foreach ($taxIds as $taxId) {
-                        $row['taxes'][$taxId] = $rowProductTax[$taxId] + $rowShippingTax[$taxId];
+                        // $row['taxes'][$taxId] = $rowProductTax[$taxId] + $rowShippingTax[$taxId];
+                        $row['taxes'][$taxId] = $rowProductTax[$taxId];
                     }
                 }
                 foreach ($taxIds as $taxId) {
                     $row['taxes'][$taxId] = round($row['taxes'][$taxId], 2);
                 }
+
 
                 $row['refund_online'] = 0;
                 $row['refund_instore'] = 0;
