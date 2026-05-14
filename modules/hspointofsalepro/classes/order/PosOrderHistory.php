@@ -44,6 +44,7 @@ class PosOrderHistory extends OrderHistory
     }
 
     
+    
     /**
      * Override: do not break POS order completion when email template is misconfigured.
      *

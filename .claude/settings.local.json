@@ -1,6 +1,21 @@
 {
   "permissions": {
     "allow": [
+      "Agent",
+      "Bash",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read",
+      "Skill",
+      "Write",
+      "TodoWrite",
+      "ToolSearch",
+      "WebFetch",
+      "WebSearch",
+      "NotebookEdit",
+      "Edit(/.claude/**)",
+      "Write(/.claude/**)",
       "Bash(grep -E \"\\\\.php$|^d\")",
       "Bash(grep -rn \"amount_refunded\\\\|refund_amount\" /Volumes/Workstation/khewa/1.7.8.5-live/modules/stripe_official/*.php)"
     ]

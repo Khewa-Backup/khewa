@@ -425,7 +425,6 @@ class KhewaReportsData
         
 
 
-
         $rows = Db::getInstance()->executeS($sql);
         if (!$rows) {
             return array();
@@ -1772,25 +1771,30 @@ class KhewaReportsData
     }
     
     /**
-     * Get Tax Summary - All taxes used in orders within date range
+     * Get Tax Summary - All taxes used in orders within date range.
+     * Each row returns: tax_name, tax_rate, tax_collected, tax_refunded, tax_amount (=net).
+     * Refunds are POS-only and dated by refund date (order_slip.date_add for full refunds,
+     * possible_refund_date for partial refunds) — matches dating used elsewhere in the module.
      */
     public function getTaxSummary()
     {
         $excludedStates = Khewareports::getSalesExcludedStatesSQL();
         $refundStates = Khewareports::getRefundStatesSQL();
-        
+
+        // 1) Tax collected on sales in the period (original behavior)
         $sql = '
-        SELECT 
+        SELECT
+            t.id_tax,
             IFNULL(tl.name, CONCAT("Tax ", t.id_tax)) as tax_name,
             t.rate as tax_rate,
-            SUM(odt.total_amount) as tax_amount
-            
+            SUM(odt.total_amount) as tax_collected
+
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
         INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
         INNER JOIN ' . _DB_PREFIX_ . 'tax t ON odt.id_tax = t.id_tax
         LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tl ON t.id_tax = tl.id_tax AND tl.id_lang = ' . $this->id_lang . '
-        
+
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND o.current_state NOT IN (' . $excludedStates . ')
@@ -1807,12 +1811,116 @@ class KhewaReportsData
                 AND o.current_state NOT IN (' . $refundStates . ')
             )
         )
-        
+
         GROUP BY t.id_tax, tl.name, t.rate
-        ORDER BY t.rate ASC
         ';
-        
-        return Db::getInstance()->executeS($sql);
+        $collectedRows = Db::getInstance()->executeS($sql);
+
+        // 2) Tax refunded via order_slip (full refunds) within the period — POS only, dated by os.date_add.
+        // Pro-rate the original order's tax by refunded products ratio (same approach as SBPM refund_taxes).
+        $sql = '
+        SELECT tx.id_tax,
+            IFNULL(tl.name, CONCAT("Tax ", t.id_tax)) as tax_name,
+            t.rate as tax_rate,
+            IFNULL(SUM(
+                CASE WHEN o.total_products > 0
+                THEN (os.total_products_tax_excl / o.total_products) * tx.order_tax
+                ELSE tx.order_tax END
+            ), 0) as tax_refunded
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_slip os ON o.id_order = os.id_order
+        INNER JOIN (
+            SELECT od.id_order, odt.id_tax, SUM(odt.total_amount) as order_tax
+            FROM ' . _DB_PREFIX_ . 'order_detail od
+            INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
+            GROUP BY od.id_order, odt.id_tax
+        ) tx ON tx.id_order = o.id_order
+        INNER JOIN ' . _DB_PREFIX_ . 'tax t ON tx.id_tax = t.id_tax
+        LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tl ON t.id_tax = tl.id_tax AND tl.id_lang = ' . $this->id_lang . '
+        WHERE os.date_add >= "' . $this->date_from . '"
+        AND os.date_add <= "' . $this->date_to . '"
+        AND ' . $this->getPosModuleCondition('o.module') . '
+        GROUP BY tx.id_tax, tl.name, t.rate
+        ';
+        $slipRefundRows = Db::getInstance()->executeS($sql);
+
+        // 3) Tax refunded via partial refund orders (state 25, dated by possible_refund_date) — POS only.
+        // For partial refunds the whole order amount is the refund, so subtract the full per-tax order_tax.
+        $partialRefundStateId = (int)Khewareports::getConfiguredStates()['partial_refund'];
+        if ($partialRefundStateId <= 0) {
+            $partialRefundStateId = (int)Khewareports::DEFAULT_STATE_PARTIAL_REFUND;
+        }
+        $dateFromOnly = substr($this->date_from, 0, 10);
+        $dateToOnly = substr($this->date_to, 0, 10);
+
+        $sql = '
+        SELECT odt.id_tax,
+            IFNULL(tl.name, CONCAT("Tax ", t.id_tax)) as tax_name,
+            t.rate as tax_rate,
+            IFNULL(SUM(odt.total_amount), 0) as tax_refunded
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
+        INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
+        INNER JOIN ' . _DB_PREFIX_ . 'tax t ON odt.id_tax = t.id_tax
+        LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tl ON t.id_tax = tl.id_tax AND tl.id_lang = ' . $this->id_lang . '
+        WHERE o.current_state = ' . $partialRefundStateId . '
+        AND ' . $this->getPosModuleCondition('o.module') . '
+        AND o.possible_refund_date IS NOT NULL
+        AND (
+            (DATE(o.possible_refund_date) >= "' . pSQL($dateFromOnly) . '" AND DATE(o.possible_refund_date) <= "' . pSQL($dateToOnly) . '")
+            OR
+            (STR_TO_DATE(o.possible_refund_date, "%y-%m-%d %H:%i:%s") >= "' . $this->date_from . '" AND STR_TO_DATE(o.possible_refund_date, "%y-%m-%d %H:%i:%s") <= "' . $this->date_to . '")
+            OR
+            (STR_TO_DATE(SUBSTRING(o.possible_refund_date, 1, 8), "%y-%m-%d") >= "' . pSQL($dateFromOnly) . '" AND STR_TO_DATE(SUBSTRING(o.possible_refund_date, 1, 8), "%y-%m-%d") <= "' . pSQL($dateToOnly) . '")
+        )
+        GROUP BY odt.id_tax, tl.name, t.rate
+        ';
+        $partialRefundRows = Db::getInstance()->executeS($sql);
+
+        // Merge by id_tax — a tax may appear in collected only, refunded only, or both.
+        $byTax = array();
+        foreach ((array)$collectedRows as $r) {
+            $id = (int)$r['id_tax'];
+            $byTax[$id] = array(
+                'id_tax' => $id,
+                'tax_name' => $r['tax_name'],
+                'tax_rate' => (float)$r['tax_rate'],
+                'tax_collected' => (float)$r['tax_collected'],
+                'tax_refunded' => 0.0,
+            );
+        }
+        $applyRefunds = function ($rows) use (&$byTax) {
+            foreach ((array)$rows as $r) {
+                $id = (int)$r['id_tax'];
+                if (!isset($byTax[$id])) {
+                    $byTax[$id] = array(
+                        'id_tax' => $id,
+                        'tax_name' => $r['tax_name'],
+                        'tax_rate' => (float)$r['tax_rate'],
+                        'tax_collected' => 0.0,
+                        'tax_refunded' => 0.0,
+                    );
+                }
+                $byTax[$id]['tax_refunded'] += (float)$r['tax_refunded'];
+            }
+        };
+        $applyRefunds($slipRefundRows);
+        $applyRefunds($partialRefundRows);
+
+        $out = array();
+        foreach ($byTax as $row) {
+            $row['tax_amount'] = $row['tax_collected'] - $row['tax_refunded'];
+            $out[] = $row;
+        }
+
+        usort($out, function ($a, $b) {
+            if ($a['tax_rate'] == $b['tax_rate']) {
+                return $a['id_tax'] - $b['id_tax'];
+            }
+            return ($a['tax_rate'] < $b['tax_rate']) ? -1 : 1;
+        });
+
+        return $out;
     }
     
 

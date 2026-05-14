@@ -10,7 +10,6 @@ if (!defined('_PS_VERSION_')) {
 
 
 
-
 require_once _PS_MODULE_DIR_ . 'khewareports/classes/KhewaReportsData.php';
 
 class AdminKhewaReportsReportsController extends ModuleAdminController
@@ -966,53 +965,67 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
     
     
     /**
-     * Populate Taxes sheet - Simple tax name and amount
+     * Populate Taxes sheet - Tax name, collected, refunded, and net (collected - refunded).
      */
     protected function populateTaxesSheet($sheet, $dataFetcher, $date_from, $date_to)
     {
-        // Add header row (width = top table columns A–B for print)
-        $this->addSheetHeader($sheet, $date_from, $date_to, 'Tax Summary', 'B');
-        
+        // Add header row (width = top table columns A–D for print)
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Tax Summary', 'D');
+
         // Column headers (Row 2)
         $headers = array(
             'A' => 'Tax Name',
-            'B' => 'Tax Amount'
+            'B' => 'Tax Collected',
+            'C' => 'Tax Refunded',
+            'D' => 'Net Tax'
         );
-        
+
         foreach ($headers as $column => $header) {
             $this->setCellValueSafe($sheet, $column . '2', $header);
         }
-        
+
         // Style header row
-        $this->styleHeaderRow($sheet, 'A2:B2');
-        
+        $this->styleHeaderRow($sheet, 'A2:D2');
+
         // Get tax data
         $taxData = $dataFetcher->getTaxSummary();
-        
+
         // Populate data rows
         $row = 3;
+        $totalCollected = 0;
+        $totalRefunded = 0;
         $grandTotal = 0;
-        
+
         foreach ($taxData as $data) {
+            $collected = (float)$data['tax_collected'];
+            $refunded = (float)$data['tax_refunded'];
+            $net = (float)$data['tax_amount'];
+
             $this->setCellValueSafe($sheet, 'A' . $row, $data['tax_name']);
-            $this->setNumericValue($sheet, 'B' . $row, (float)$data['tax_amount']);
-            
-            $grandTotal += (float)$data['tax_amount'];
+            $this->setNumericValue($sheet, 'B' . $row, $collected);
+            $this->setNumericValue($sheet, 'C' . $row, $refunded);
+            $this->setNumericValue($sheet, 'D' . $row, $net);
+
+            $totalCollected += $collected;
+            $totalRefunded += $refunded;
+            $grandTotal += $net;
             $row++;
         }
-        
+
         // Add totals row
         $row++;
         $this->setCellValueSafe($sheet, 'A' . $row, 'GRAND TOTAL');
-        $this->setNumericValue($sheet, 'B' . $row, $grandTotal);
-        $sheet->getStyle('A' . $row . ':B' . $row)->getFont()->setBold(true);
-        
+        $this->setNumericValue($sheet, 'B' . $row, $totalCollected);
+        $this->setNumericValue($sheet, 'C' . $row, $totalRefunded);
+        $this->setNumericValue($sheet, 'D' . $row, $grandTotal);
+        $sheet->getStyle('A' . $row . ':D' . $row)->getFont()->setBold(true);
+
         // Style and column widths
-        $this->styleDataRows($sheet, 'A3:B' . $row);
+        $this->styleDataRows($sheet, 'A3:D' . $row);
         $this->setColumnWidths($sheet, array(
-            'A' => 25, 'B' => 18
+            'A' => 25, 'B' => 18, 'C' => 18, 'D' => 18
         ));
-        
+
         // Apply print settings - portrait is fine for narrow sheet
         $this->applyPrintSettings($sheet, 'portrait');
     }

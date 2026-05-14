@@ -30,6 +30,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
         'getDiscountInfo',
     );
 
+    
     /**
      * An actual action which DOES something.
      *
