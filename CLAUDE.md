@@ -57,3 +57,39 @@ Commit messages sometimes reference Trello cards (e.g. `https://trello.com/c/...
 
 - Production-style checkout — be conservative with destructive operations. Confirm before deleting files, dropping tables, or running migrations.
 - When editing a controller, also check whether a matching template under the module's `views/templates/` needs updating.
+
+## Uploading to production / staging
+
+The user uses the VSCode "SFTP" extension with two profiles defined in [.vscode/sftp.json](.vscode/sftp.json): `production` and `staging`. Both point at the same FTP host with different credentials and both use remote base path `/public_html`. Local project root maps directly to that remote path (e.g. `modules/khewareports/classes/Foo.php` → `/public_html/modules/khewareports/classes/Foo.php`).
+
+When the user says something like:
+- "upload this to production" / "push to prod" / "deploy to live" → use the `production` profile
+- "upload to staging" / "push to stage" / "send to test" → use the `staging` profile
+
+Claude cannot trigger the VSCode extension (no hotkey access). Instead, upload via `curl --ftp-create-dirs -T <local> ftp://<host><remotePath>/<relative> --user <user>:<pass>`, reading credentials from `.vscode/sftp.json`. Do not hard-code creds in commands that get logged.
+
+**Rules every time:**
+
+1. **List the files first.** Before any upload, show the user the exact list of local files about to be sent and the resolved remote paths. Wait for confirmation.
+2. **Production always requires explicit confirmation, even mid-session.** A previous "upload to prod" approval does NOT cover later uploads. Ask each time. Staging can proceed once confirmed for the file list.
+3. **Only upload files the user clearly intended.** Default to just the files edited in the current task. Never `find`/glob the whole tree.
+4. **Never upload `.vscode/`, `.git/`, `.claude/`, `*.zip`, `node_modules/`, or `.DS_Store`.** These are in the SFTP extension's ignore list for a reason.
+5. **Never commit `.vscode/sftp.json` to git** — it contains plaintext FTP credentials. If it's not already gitignored, flag it.
+6. **After uploading, report back** which files went up to which profile so the user can verify on the server.
+
+If `curl` upload fails (e.g. 530 auth), don't retry blindly — surface the error to the user; creds may have rotated.
+
+### Always ask about uploading after edits
+
+After completing any task that edited files inside `modules/`, `override/`, `controllers/`, `classes/`, `themes/`, `mails/`, `pdf/`, or other server-deployable folders, **always end the response by asking the user where to upload**:
+
+> "Upload these changes to **staging**, **production**, or **skip**?"
+
+Include the list of files that would be uploaded so the user can verify the scope before answering.
+
+Exceptions (do NOT auto-ask):
+- Edits only to local-only files: `CLAUDE.md`, `.vscode/*`, `.claude/*`, `.gitignore`, `MEMORY.md`, etc.
+- Read-only tasks (research, explanations, diagnosing without editing).
+- The user explicitly said "don't deploy" or "local only" for this task.
+
+If the user picks production, still apply the standard production-confirmation rule above (re-list files, wait for "go").
