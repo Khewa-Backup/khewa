@@ -1028,6 +1028,11 @@ class KhewaReportsData
             $productTaxByOrderId = $this->getProductTaxAmountsByOrderIds($allOrderIds);
             $shippingTaxByOrderId = $this->getShippingTaxAmountsByOrderIds($allOrderIds);
             $refundByOrderId = $this->getRefundAmountsByOrderIdsForSbpm($allOrderIds, $excludePartialRefReferencesSql);
+            // Per-order tax-excl base for the POS formula (so a 0-tax order contributes 0)
+            $orderExclById = array();
+            foreach ($allOrders as $ord) {
+                $orderExclById[(int)$ord['id_order']] = (float)$ord['order_total_products_excl'];
+            }
             $taxRateById = array();
             foreach ($result['tax_columns'] as $tax) {
                 $taxRateById[(int)$tax['id_tax']] = (float)$tax['rate'];
@@ -1066,15 +1071,26 @@ class KhewaReportsData
                 // - In-store buckets: formula from product excl using display rates (QST normalized to 9.975)
                 // - Online buckets: keep real product tax + add shipping tax by same tax id
                 if ($this->isPosModule($module)) {
-                    $formulaBase = (float)$row['total_products_tax_excl'];
+                    // Per-order: if an order has 0 real tax for this column (e.g. gift card,
+                    // tax-exempt line), do NOT override — that order contributes 0.
+                    // Otherwise, apply the formula to that order's tax-excl product total.
                     foreach ($taxIds as $taxId) {
-                        $sourceTax = $rowProductTax[$taxId] + $rowShippingTax[$taxId];
-                        if ($sourceTax <= 0) {
-                            $row['taxes'][$taxId] = 0;
-                            continue;
-                        }
                         $displayRate = in_array((int)$taxId, $qstTaxIds, true) ? 9.975 : (isset($taxRateById[$taxId]) ? (float)$taxRateById[$taxId] : 0);
-                        $row['taxes'][$taxId] = ($displayRate > 0) ? ($formulaBase * $displayRate / 100) : 0;
+                        $bucketTax = 0;
+                        if (!empty($row['order_ids'])) {
+                            foreach ($row['order_ids'] as $oid) {
+                                $oid = (int)$oid;
+                                $orderRealTax = (isset($productTaxByOrderId[$oid][$taxId]) ? (float)$productTaxByOrderId[$oid][$taxId] : 0)
+                                              + (isset($shippingTaxByOrderId[$oid][$taxId]) ? (float)$shippingTaxByOrderId[$oid][$taxId] : 0);
+                                if ($orderRealTax <= 0) {
+                                    continue;
+                                }
+                                // Look up this order's tax-excl product total for the formula base
+                                $orderExcl = isset($orderExclById[$oid]) ? $orderExclById[$oid] : 0;
+                                $bucketTax += ($displayRate > 0) ? ($orderExcl * $displayRate / 100) : 0;
+                            }
+                        }
+                        $row['taxes'][$taxId] = $bucketTax;
                     }
                 } else {
                     foreach ($taxIds as $taxId) {
