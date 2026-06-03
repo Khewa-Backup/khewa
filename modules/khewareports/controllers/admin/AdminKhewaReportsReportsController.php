@@ -627,10 +627,6 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
      */
     protected function populateSBPMSheet($sheet, $dataFetcher, $date_from, $date_to)
     {
-        // Get POS module name from configuration (use first one for display)
-        $patterns = Khewareports::getPaymentMethodPatterns();
-        $posModuleName = !empty($patterns['pos_module']) ? $patterns['pos_module'][0] : 'hspointofsalepro';
-
         // Get SBPM data
         $sbpmData = $dataFetcher->getSBPMData();
 
@@ -645,7 +641,19 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $taxColMap[(int)$tax['id_tax']] = $colLetter;
         }
         $lastTaxColIndex = 7 + count($taxColumns);
-        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(max(7, $lastTaxColIndex));
+
+        // Optional gift-wrapping columns: only shown when at least one order in the
+        // range had gift wrapping. Placed immediately after the dynamic tax columns.
+        $hasWrapping = !empty($sbpmData['has_wrapping']);
+        $wrappingCostCol = null;
+        $wrappingTaxCol = null;
+        $lastDataColIndex = $lastTaxColIndex;
+        if ($hasWrapping) {
+            $wrappingCostCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastTaxColIndex + 1);
+            $wrappingTaxCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastTaxColIndex + 2);
+            $lastDataColIndex = $lastTaxColIndex + 2;
+        }
+        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(max(7, $lastDataColIndex));
 
         // Add sheet header spanning full dynamic width
         $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method', $lastColLetter);
@@ -666,6 +674,11 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $colLetter = $taxColMap[(int)$tax['id_tax']];
             $topHeaders[$colLetter] = $tax['tax_name'] . ' (' . $tax['rate'] . '%)';
         }
+        // Optional gift-wrapping columns (only when the range has wrapping)
+        if ($hasWrapping) {
+            $topHeaders[$wrappingCostCol] = 'Wrapping Cost (Tax Excl.)';
+            $topHeaders[$wrappingTaxCol] = 'Wrapping Tax';
+        }
         // Commented out: J => 'Refund Online (Tax Incl.)', K => 'Refund Instore (Tax Incl.)'
 
         foreach ($topHeaders as $column => $header) {
@@ -683,6 +696,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $totalSumTaxIncl = 0;
         $totalPaid = 0;
         $totalTaxes = array(); // dynamic: id_tax => total
+        $totalWrappingCost = 0;
+        $totalWrappingTax = 0;
 
         foreach ($sbpmData['combined'] as $data) {
             $this->setCellValueSafe($sheet, 'A' . $row, $data['payment_method']);
@@ -702,6 +717,15 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
                     $totalTaxes[$taxId] = 0;
                 }
                 $totalTaxes[$taxId] += $taxAmount;
+            }
+            // Optional wrapping columns
+            if ($hasWrapping) {
+                $wrapCost = isset($data['wrapping_cost']) ? (float)$data['wrapping_cost'] : 0;
+                $wrapTax = isset($data['wrapping_tax']) ? (float)$data['wrapping_tax'] : 0;
+                $this->setNumericValue($sheet, $wrappingCostCol . $row, $wrapCost);
+                $this->setNumericValue($sheet, $wrappingTaxCol . $row, $wrapTax);
+                $totalWrappingCost += $wrapCost;
+                $totalWrappingTax += $wrapTax;
             }
             // Removed: J refund_online, K refund_instore
 
@@ -723,6 +747,10 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setNumericValue($sheet, 'G' . $row, $totalPaid);
         foreach ($taxColMap as $taxId => $colLetter) {
             $this->setNumericValue($sheet, $colLetter . $row, isset($totalTaxes[$taxId]) ? $totalTaxes[$taxId] : 0);
+        }
+        if ($hasWrapping) {
+            $this->setNumericValue($sheet, $wrappingCostCol . $row, $totalWrappingCost);
+            $this->setNumericValue($sheet, $wrappingTaxCol . $row, $totalWrappingTax);
         }
         // Removed: J totalRefundOnline, K totalRefundInstore
         $sheet->getStyle('A' . $row . ':' . $lastColLetter . $row)->getFont()->setBold(true);
@@ -771,15 +799,14 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Column headers for bottom section
         $bottomHeaders = array(
             'A' => 'Specific Payment',
-            'B' => 'Module',
-            'C' => 'Payment Amount'
+            'B' => 'Payment Amount'
         );
-        
+
 
         foreach ($bottomHeaders as $column => $header) {
             $this->setCellValueSafe($sheet, $column . $row, $header);
         }
-        $this->styleHeaderRow($sheet, 'A' . $row . ':C' . $row);
+        $this->styleHeaderRow($sheet, 'A' . $row . ':B' . $row);
         $row++;
         
         // ==================== ONLINE SECTION ====================
@@ -788,49 +815,49 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         
         // Link via Stripe
         $this->setCellValueSafe($sheet, 'A' . $row, 'Link via Stripe');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['stripe_link']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['stripe_link']);
         $row++;
-        
+
         // PayPal
         $this->setCellValueSafe($sheet, 'A' . $row, 'PayPal');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['paypal']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['paypal']);
         $row++;
-        
+
         // Card via Stripe
         $this->setCellValueSafe($sheet, 'A' . $row, 'Card via Stripe');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['stripe_card']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['stripe_card']);
         $row++;
-        
+
         // Paid with Gift Card
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Gift Card');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['gift_card']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['gift_card']);
         $row++;
-        
+
         // Paid with Voucher
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Voucher');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['voucher']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['voucher']);
         $row++;
-        
+
         // Paid with Credit Slip
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Credit Slip');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['credit_slip']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['credit_slip']);
         $row++;
-        
+
         // Discount Online
         $this->setCellValueSafe($sheet, 'A' . $row, 'Discount Online');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['discount']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['discount']);
         $row++;
-        
+
         // Refund Online
         $this->setCellValueSafe($sheet, 'A' . $row, 'Refund Online');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['refund']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['refund']);
         $row++;
-        
+
         // TOTAL ONLINE - moved to bottom of online section
         $this->setCellValueSafe($sheet, 'A' . $row, 'TOTAL ONLINE');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['online']['total']);
-        $sheet->getStyle('A' . $row . ':C' . $row)->getFont()->setBold(true);
-        $sheet->getStyle('A' . $row . ':C' . $row)->getFill()
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['total']);
+        $sheet->getStyle('A' . $row . ':B' . $row)->getFont()->setBold(true);
+        $sheet->getStyle('A' . $row . ':B' . $row)->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setRGB('B8CCE4');
         $row++;
@@ -843,62 +870,56 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Fixed In-Store rows (always show even if $0) - show rows first, then total
         // Paid with Voucher
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Voucher');
-        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['voucher']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['voucher']);
         $row++;
-        
+
         // Paid with Credit Card - using dedicated field for accuracy
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Credit Card');
-        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['credit_card']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['credit_card']);
         $row++;
-        
+
         // Paid with Cash = total received in cash that day (gross; no deduction — refunds appear in Refund Instore and Cash in hand)
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Cash');
-        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['cash']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['cash']);
         $row++;
-        
+
         // Paid with Interac - using dedicated field for accuracy
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Interac');
-        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['interac']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['interac']);
         $row++;
-        
+
         // Paid with InStore Gift Card
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with InStore Gift Card');
-        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['gift_card']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['gift_card']);
         $row++;
-        
+
         // Paid with Credit Slip
         $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Credit Slip');
-        $this->setCellValueSafe($sheet, 'B' . $row, $posModuleName);
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['credit_slip']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['credit_slip']);
         $row++;
-        
+
         // Refund Instore
         $this->setCellValueSafe($sheet, 'A' . $row, 'Refund Instore');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['refund']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['refund']);
         $row++;
-        
+
         // Discount InStore
         $this->setCellValueSafe($sheet, 'A' . $row, 'Discount InStore');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['discount']);
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['discount']);
         $row++;
-        
+
         // TOTAL IN-STORE - moved to bottom of in-store section
         $this->setCellValueSafe($sheet, 'A' . $row, 'TOTAL IN-STORE');
-        $this->setNumericValue($sheet, 'C' . $row, $sbpmData['instore']['total']);
-        $sheet->getStyle('A' . $row . ':C' . $row)->getFont()->setBold(true);
-        $sheet->getStyle('A' . $row . ':C' . $row)->getFill()
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['total']);
+        $sheet->getStyle('A' . $row . ':B' . $row)->getFont()->setBold(true);
+        $sheet->getStyle('A' . $row . ':B' . $row)->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setRGB('B8CCE4');
         $row++;
         
         // Cash in hand (Cash − refunded in cash) — after TOTAL IN-STORE
         $this->setCellValueSafe($sheet, 'A' . $row, 'Cash in hand');
-        $this->setNumericValue($sheet, 'C' . $row, isset($sbpmData['instore']['cash_in_hand']) ? $sbpmData['instore']['cash_in_hand'] : 0);
+        $this->setNumericValue($sheet, 'B' . $row, isset($sbpmData['instore']['cash_in_hand']) ? $sbpmData['instore']['cash_in_hand'] : 0);
         $row++;
         
         // Style data rows and column widths
@@ -916,8 +937,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             // Style bottom section (after top section + bottom header row)
             $bottomStartRow = $topSectionEndRow + 2;
             if ($bottomStartRow <= $lastRow) {
-                $this->styleDataRows($sheet, 'A' . $bottomStartRow . ':C' . $lastRow);
-                $this->applyNumberFormat($sheet, 'C' . $bottomStartRow . ':C' . $lastRow);
+                $this->styleDataRows($sheet, 'A' . $bottomStartRow . ':B' . $lastRow);
+                $this->applyNumberFormat($sheet, 'B' . $bottomStartRow . ':B' . $lastRow);
             }
         }
 
@@ -925,6 +946,10 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $colWidths = array('A' => 22, 'B' => 12, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 16, 'G' => 16);
         foreach ($taxColMap as $taxId => $colLetter) {
             $colWidths[$colLetter] = 14;
+        }
+        if ($hasWrapping) {
+            $colWidths[$wrappingCostCol] = 18;
+            $colWidths[$wrappingTaxCol] = 14;
         }
         $this->setColumnWidths($sheet, $colWidths);
         

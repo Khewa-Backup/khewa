@@ -675,6 +675,46 @@ class KhewaReportsData
         return $out;
     }
 
+    /**
+     * Wrapping (gift wrap) tax amount per order/tax from order_invoice_tax (type=wrapping).
+     * Mirrors the shipping-tax lookup; PrestaShop stores gift-wrapping tax in
+     * order_invoice_tax with type="wrapping", separate from product (order_detail_tax)
+     * and shipping rows.
+     *
+     * @param int[] $orderIds
+     * @return array [id_order => [id_tax => float]]
+     */
+    protected function getWrappingTaxAmountsByOrderIds(array $orderIds)
+    {
+        $orderIds = array_values(array_unique(array_map('intval', $orderIds)));
+        if (empty($orderIds)) {
+            return array();
+        }
+        $idList = implode(',', $orderIds);
+        $sql = '
+        SELECT oi.id_order, oit.id_tax,
+               SUM(oit.amount) as total_tax
+        FROM ' . _DB_PREFIX_ . 'order_invoice oi
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice_tax oit ON oi.id_order_invoice = oit.id_order_invoice
+        WHERE oi.id_order IN (' . $idList . ')
+        AND oit.type = "wrapping"
+        GROUP BY oi.id_order, oit.id_tax
+        ';
+        $rows = Db::getInstance()->executeS($sql);
+        $out = array();
+        if ($rows) {
+            foreach ($rows as $r) {
+                $oid = (int)$r['id_order'];
+                $tid = (int)$r['id_tax'];
+                if (!isset($out[$oid])) {
+                    $out[$oid] = array();
+                }
+                $out[$oid][$tid] = (float)$r['total_tax'];
+            }
+        }
+        return $out;
+    }
+
 
 
     /**
@@ -802,9 +842,10 @@ class KhewaReportsData
                 'refund_taxes' => array(),
                 'total' => 0
             ),
-            'tax_columns' => array()
+            'tax_columns' => array(),
+            'has_wrapping' => false
         );
-        
+
         // ==================== TOP PART: Combined Summary by Payment Method ====================
         // STEP 1: Get ALL orders with their totals (same filter as Sales tab)
         // Use orders.total_products_wt as the authoritative source (this is what payments are based on)
@@ -816,6 +857,7 @@ class KhewaReportsData
             o.total_products as order_total_products_excl,
             o.total_products_wt as order_total_products_incl,
             o.total_shipping_tax_incl as order_total_shipping,
+            o.total_wrapping_tax_excl as order_total_wrapping_excl,
             o.total_paid_tax_incl as order_total_paid
         FROM ' . _DB_PREFIX_ . 'orders o
         WHERE o.date_add >= "' . $this->date_from . '"
@@ -1027,11 +1069,15 @@ class KhewaReportsData
             $allOrderIds = array_keys($allOrderIds);
             $productTaxByOrderId = $this->getProductTaxAmountsByOrderIds($allOrderIds);
             $shippingTaxByOrderId = $this->getShippingTaxAmountsByOrderIds($allOrderIds);
+            $wrappingTaxByOrderId = $this->getWrappingTaxAmountsByOrderIds($allOrderIds);
             $refundByOrderId = $this->getRefundAmountsByOrderIdsForSbpm($allOrderIds, $excludePartialRefReferencesSql);
             // Per-order tax-excl base for the POS formula (so a 0-tax order contributes 0)
             $orderExclById = array();
+            // Per-order gift-wrapping cost (tax-excl) for the optional Wrapping Cost column.
+            $orderWrappingExclById = array();
             foreach ($allOrders as $ord) {
                 $orderExclById[(int)$ord['id_order']] = (float)$ord['order_total_products_excl'];
+                $orderWrappingExclById[(int)$ord['id_order']] = (float)$ord['order_total_wrapping_excl'];
             }
             $taxRateById = array();
             foreach ($result['tax_columns'] as $tax) {
@@ -1047,9 +1093,11 @@ class KhewaReportsData
                 }
                 $rowProductTax = array();
                 $rowShippingTax = array();
+                $rowWrappingTax = array();
                 foreach ($taxIds as $taxId) {
                     $rowProductTax[$taxId] = 0;
                     $rowShippingTax[$taxId] = 0;
+                    $rowWrappingTax[$taxId] = 0;
                 }
                 if (!empty($row['order_ids'])) {
                     foreach ($row['order_ids'] as $oid) {
@@ -1061,15 +1109,19 @@ class KhewaReportsData
                             $shippingTax = (isset($shippingTaxByOrderId[$oid]) && isset($shippingTaxByOrderId[$oid][$taxId]))
                                 ? (float)$shippingTaxByOrderId[$oid][$taxId]
                                 : 0;
+                            $wrappingTax = (isset($wrappingTaxByOrderId[$oid]) && isset($wrappingTaxByOrderId[$oid][$taxId]))
+                                ? (float)$wrappingTaxByOrderId[$oid][$taxId]
+                                : 0;
                             $rowProductTax[$taxId] += $productTax;
                             $rowShippingTax[$taxId] += $shippingTax;
+                            $rowWrappingTax[$taxId] += $wrappingTax;
                         }
                     }
                 }
 
                 // Match expected sheet behavior:
                 // - In-store buckets: formula from product excl using display rates (QST normalized to 9.975)
-                // - Online buckets: keep real product tax + add shipping tax by same tax id
+                // - Online buckets: real product tax + gift-wrapping tax by same tax id (shipping excluded)
                 if ($this->isPosModule($module)) {
                     // Per-order: if an order has 0 real tax for this column (e.g. gift card,
                     // tax-exempt line), do NOT override — that order contributes 0.
@@ -1094,13 +1146,30 @@ class KhewaReportsData
                     }
                 } else {
                     foreach ($taxIds as $taxId) {
+                        // Online buckets: product tax + gift-wrapping tax (shipping tax intentionally excluded).
                         // $row['taxes'][$taxId] = $rowProductTax[$taxId] + $rowShippingTax[$taxId];
-                        $row['taxes'][$taxId] = $rowProductTax[$taxId];
+                        $row['taxes'][$taxId] = $rowProductTax[$taxId] + $rowWrappingTax[$taxId];
                     }
                 }
                 foreach ($taxIds as $taxId) {
                     $row['taxes'][$taxId] = round($row['taxes'][$taxId], 2);
                 }
+
+                // Gift-wrapping cost (tax-excl) and combined wrapping tax for this bucket.
+                // wrapping_tax = sum of per-rate wrapping tax already accumulated above.
+                $row['wrapping_cost'] = 0;
+                if (!empty($row['order_ids'])) {
+                    foreach ($row['order_ids'] as $oid) {
+                        $oid = (int)$oid;
+                        $row['wrapping_cost'] += isset($orderWrappingExclById[$oid]) ? $orderWrappingExclById[$oid] : 0;
+                    }
+                }
+                $rowWrappingTaxTotal = 0;
+                foreach ($taxIds as $taxId) {
+                    $rowWrappingTaxTotal += $rowWrappingTax[$taxId];
+                }
+                $row['wrapping_cost'] = round($row['wrapping_cost'], 2);
+                $row['wrapping_tax'] = round($rowWrappingTaxTotal, 2);
 
 
                 $row['refund_online'] = 0;
@@ -1126,8 +1195,20 @@ class KhewaReportsData
             }
             unset($row);
             $result['combined'] = $combinedBase;
+
+            // Only expose the Wrapping Cost / Wrapping Tax columns when at least one
+            // order in the range actually had gift wrapping (cost or tax > 0).
+            $hasWrapping = false;
+            foreach ($combinedBase as $row) {
+                if ((isset($row['wrapping_cost']) && $row['wrapping_cost'] > 0)
+                    || (isset($row['wrapping_tax']) && $row['wrapping_tax'] > 0)) {
+                    $hasWrapping = true;
+                    break;
+                }
+            }
+            $result['has_wrapping'] = $hasWrapping;
         }
-        
+
         // ==================== BOTTOM PART: Specific Payment Amounts ====================
         // Direct SQL queries against order_payment, grouped by normalized payment method.
         // This matches the original ExportSales module's approach: GROUP BY payment_method
@@ -1832,6 +1913,44 @@ class KhewaReportsData
         ';
         $collectedRows = Db::getInstance()->executeS($sql);
 
+        // 1b) Tax collected on gift wrapping in the period (order_invoice_tax type="wrapping").
+        // Same order date/state filters as the product-tax query above; merged into the
+        // collected totals by id_tax so wrapping tax is included in "Tax Collected".
+        $sql = '
+        SELECT
+            t.id_tax,
+            IFNULL(tl.name, CONCAT("Tax ", t.id_tax)) as tax_name,
+            t.rate as tax_rate,
+            SUM(oit.amount) as tax_collected
+
+        FROM ' . _DB_PREFIX_ . 'orders o
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice oi ON o.id_order = oi.id_order
+        INNER JOIN ' . _DB_PREFIX_ . 'order_invoice_tax oit ON oi.id_order_invoice = oit.id_order_invoice
+        INNER JOIN ' . _DB_PREFIX_ . 'tax t ON oit.id_tax = t.id_tax
+        LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tl ON t.id_tax = tl.id_tax AND tl.id_lang = ' . $this->id_lang . '
+
+        WHERE oit.type = "wrapping"
+        AND o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND (
+            NOT(
+                o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+            )
+            OR (
+                (
+                    o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                    AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                )
+                AND o.current_state NOT IN (' . $refundStates . ')
+            )
+        )
+
+        GROUP BY t.id_tax, tl.name, t.rate
+        ';
+        $wrappingCollectedRows = Db::getInstance()->executeS($sql);
+
         // 2) Tax refunded via order_slip (full refunds) within the period — POS only, dated by os.date_add.
         // Pro-rate the original order's tax by refunded products ratio (same approach as SBPM refund_taxes).
         $sql = '
@@ -1904,6 +2023,21 @@ class KhewaReportsData
                 'tax_collected' => (float)$r['tax_collected'],
                 'tax_refunded' => 0.0,
             );
+        }
+        // Add gift-wrapping tax to the collected totals (create the tax entry if a tax
+        // appears only on wrapping and not on any product line).
+        foreach ((array)$wrappingCollectedRows as $r) {
+            $id = (int)$r['id_tax'];
+            if (!isset($byTax[$id])) {
+                $byTax[$id] = array(
+                    'id_tax' => $id,
+                    'tax_name' => $r['tax_name'],
+                    'tax_rate' => (float)$r['tax_rate'],
+                    'tax_collected' => 0.0,
+                    'tax_refunded' => 0.0,
+                );
+            }
+            $byTax[$id]['tax_collected'] += (float)$r['tax_collected'];
         }
         $applyRefunds = function ($rows) use (&$byTax) {
             foreach ((array)$rows as $r) {
