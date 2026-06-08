@@ -637,7 +637,45 @@ class KhewaReportsData
         }
         return $out;
     }
-    
+
+    /**
+     * Tax-excl product base per order/tax, summed from the order_detail lines that
+     * actually carry each tax id. Used by the POS tax formula so the percentage is
+     * applied only to the lines that bear that tax (e.g. books — GST only — never
+     * inflate the QST column). Returns [id_order => [id_tax => sum(total_price_tax_excl)]].
+     *
+     * @param int[] $orderIds
+     * @return array
+     */
+    protected function getProductExclBaseByOrderIdsTax(array $orderIds)
+    {
+        $orderIds = array_values(array_unique(array_map('intval', $orderIds)));
+        if (empty($orderIds)) {
+            return array();
+        }
+        $idList = implode(',', $orderIds);
+        $sql = '
+        SELECT od.id_order, odt.id_tax, SUM(od.total_price_tax_excl) as excl_base
+        FROM ' . _DB_PREFIX_ . 'order_detail od
+        INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
+        WHERE od.id_order IN (' . $idList . ')
+        GROUP BY od.id_order, odt.id_tax
+        ';
+        $rows = Db::getInstance()->executeS($sql);
+        $out = array();
+        if ($rows) {
+            foreach ($rows as $r) {
+                $oid = (int)$r['id_order'];
+                $tid = (int)$r['id_tax'];
+                if (!isset($out[$oid])) {
+                    $out[$oid] = array();
+                }
+                $out[$oid][$tid] = (float)$r['excl_base'];
+            }
+        }
+        return $out;
+    }
+
     /**
      * Shipping tax amount per order/tax from order_invoice_tax (type=shipping).
      *
@@ -1068,6 +1106,7 @@ class KhewaReportsData
             }
             $allOrderIds = array_keys($allOrderIds);
             $productTaxByOrderId = $this->getProductTaxAmountsByOrderIds($allOrderIds);
+            $productExclBaseByOrderId = $this->getProductExclBaseByOrderIdsTax($allOrderIds);
             $shippingTaxByOrderId = $this->getShippingTaxAmountsByOrderIds($allOrderIds);
             $wrappingTaxByOrderId = $this->getWrappingTaxAmountsByOrderIds($allOrderIds);
             $refundByOrderId = $this->getRefundAmountsByOrderIdsForSbpm($allOrderIds, $excludePartialRefReferencesSql);
@@ -1123,23 +1162,28 @@ class KhewaReportsData
                 // - In-store buckets: formula from product excl using display rates (QST normalized to 9.975)
                 // - Online buckets: real product tax + gift-wrapping tax by same tax id (shipping excluded)
                 if ($this->isPosModule($module)) {
-                    // Per-order: if an order has 0 real tax for this column (e.g. gift card,
-                    // tax-exempt line), do NOT override — that order contributes 0.
-                    // Otherwise, apply the formula to that order's tax-excl product total.
+                    // POS formula: apply the display rate to the tax-excl product base of ONLY the
+                    // lines that actually carry this tax id (from order_detail joined to
+                    // order_detail_tax). This keeps the percentage approach — which reproduces the
+                    // verified report values, since PrestaShop's stored order_detail_tax.total_amount
+                    // is per-unit-rounded-then-multiplied and over-reports — while ensuring that
+                    // tax-exempt / single-tax lines (e.g. books are GST-only) never inflate another
+                    // tax column. Contributions are summed unrounded and rounded once per bucket below.
                     foreach ($taxIds as $taxId) {
                         $displayRate = in_array((int)$taxId, $qstTaxIds, true) ? 9.975 : (isset($taxRateById[$taxId]) ? (float)$taxRateById[$taxId] : 0);
                         $bucketTax = 0;
                         if (!empty($row['order_ids'])) {
                             foreach ($row['order_ids'] as $oid) {
                                 $oid = (int)$oid;
-                                $orderRealTax = (isset($productTaxByOrderId[$oid][$taxId]) ? (float)$productTaxByOrderId[$oid][$taxId] : 0)
-                                              + (isset($shippingTaxByOrderId[$oid][$taxId]) ? (float)$shippingTaxByOrderId[$oid][$taxId] : 0);
-                                if ($orderRealTax <= 0) {
+                                // Tax-excl base of the lines bearing THIS tax id in this order.
+                                // Absent/zero => order contributes 0 to this column (the zero-gate).
+                                $exclBase = (isset($productExclBaseByOrderId[$oid][$taxId]))
+                                    ? (float)$productExclBaseByOrderId[$oid][$taxId]
+                                    : 0;
+                                if ($exclBase <= 0) {
                                     continue;
                                 }
-                                // Look up this order's tax-excl product total for the formula base
-                                $orderExcl = isset($orderExclById[$oid]) ? $orderExclById[$oid] : 0;
-                                $bucketTax += ($displayRate > 0) ? ($orderExcl * $displayRate / 100) : 0;
+                                $bucketTax += ($displayRate > 0) ? ($exclBase * $displayRate / 100) : 0;
                             }
                         }
                         $row['taxes'][$taxId] = $bucketTax;
