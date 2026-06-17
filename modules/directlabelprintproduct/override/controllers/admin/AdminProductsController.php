@@ -26,9 +26,10 @@ class AdminProductsController extends AdminProductsControllerCore
 
     public function displayLabelLink($token, $id, $name)
     {
-        $combination= Tools::strlen(Tools::getValue("id_product"))>0;
+        return Module::getInstanceByName('directlabelprintproduct')->displayLabelLink($token, $id, $name);
+        /*$combination= Tools::strlen(Tools::getValue("id_product"))>0;
 
-        $product_info="";
+        $product_info=$token.$name;
         if (!$combination) {
             $product_info = Module::getInstanceByName('directlabelprintproduct')->getProductInfo($id);
         } else {
@@ -55,6 +56,6 @@ class AdminProductsController extends AdminProductsControllerCore
         'id' => $id
         ));
 
-        return $tpl->fetch();
+        return $tpl->fetch();*/
     }
 }

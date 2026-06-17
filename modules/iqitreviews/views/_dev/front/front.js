@@ -11,6 +11,7 @@ iqitreviews.script = (function () {
 
                 $('#iqitreviews-rating-product').on('click', function () {
                     let element = document.getElementById("product-infos-tabs");
+            
                     $('.nav-tabs a[data-iqitextra="iqit-reviews-tab"]').tab('show');
 
                     if(typeof(element) != 'undefined' && element != null){

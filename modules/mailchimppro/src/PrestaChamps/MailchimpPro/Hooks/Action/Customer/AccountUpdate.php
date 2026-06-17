@@ -18,12 +18,17 @@
  */
 
 namespace PrestaChamps\MailchimpPro\Hooks\Action\Customer;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 use Context;
 use Customer;
-use DrewM\MailChimp\MailChimp;
+use PrestaChamps\MailChimpAPI;
 use PrestaChamps\MailchimpPro\Commands\CartSyncCommand;
 use PrestaChamps\MailchimpPro\Commands\CustomerSyncCommand;
+use PrestaChamps\Queue\Jobs\CustomerSyncJob;
+use PrestaChamps\Queue\Jobs\CartSyncJob;
+use PrestaChamps\Queue\Queue;
 
 /**
  * Invoked when a customer updates its account successfully
@@ -40,10 +45,10 @@ class AccountUpdate
      * AccountUpdate constructor
      *
      * @param Customer $customer
-     * @param MailChimp $mailchimp
+     * @param MailChimpAPI $mailchimp
      * @param Context $context
      */
-    protected function __construct(Customer $customer, MailChimp $mailchimp, Context $context)
+    protected function __construct(Customer $customer, MailChimpAPI $mailchimp, Context $context)
     {
         $this->context = $context;
         $this->customer = $customer;
@@ -54,9 +59,9 @@ class AccountUpdate
         }
     }
 
-    public static function run(Context $context, MailChimp $mailchimp, Customer $customer)
+    public static function run(Context $context, MailChimpAPI $mailchimp, Customer $customer)
     {
-        new static($customer, $mailchimp, $context);
+        new AccountUpdate($customer, $mailchimp, $context);
     }
 
     protected function handleGuestCheckoutAbandonedMail()
@@ -67,37 +72,53 @@ class AccountUpdate
 
     protected function syncCustomer()
     {
-        $command = new CustomerSyncCommand($this->context, $this->mailchimp, array($this->customer->id));
-        $command->setMethod(CustomerSyncCommand::SYNC_METHOD_PUT);
-        $command->setSyncMode(CustomerSyncCommand::SYNC_MODE_REGULAR);
-        $command->execute();
+        if (\Configuration::get(\MailchimpProConfig::SYNC_CUSTOMERS)) {
+            if (!\Configuration::get(\MailchimpProConfig::CRONJOB_BASED_SYNC)) {
+                $command = new CustomerSyncCommand($this->context, $this->mailchimp, [$this->customer->id]);
+                $command->setSyncMode($command::SYNC_MODE_REGULAR);
+                $command->setMethod($command::SYNC_METHOD_PUT);
+                return $command->execute();
+            }
+            else {
+                $job = new CustomerSyncJob();
+                $job->customerId = $this->customer->id;
+                $job->setMethod(CustomerSyncCommand::SYNC_METHOD_PUT);
+                $job->setSyncMode(CustomerSyncCommand::SYNC_MODE_REGULAR);
+                $queue = new Queue();
+                $queue->push($job, 'hook-account-update', $this->context->shop->id);
+                return true;
+            }
+        }
     }
 
     protected function syncCart()
     {
-        if ($this->context->cart && $this->context->cart->nbProducts()) {
-            $command = new CartSyncCommand($this->context, $this->mailchimp, array($this->context->cart->id));
-            $command->setMethod(
-                $this->getCartExists($this->context->cart->id)
-                ? CartSyncCommand::SYNC_METHOD_PATCH
-                : CartSyncCommand::SYNC_METHOD_POST
-            );
-            $command->setSyncMode(CartSyncCommand::SYNC_MODE_REGULAR);
-            $command->execute();
+        if (\Configuration::get(\MailchimpProConfig::SYNC_CARTS)) {
+            $cartId = isset($this->context->cart->id) ? $this->context->cart->id : false;
+            $customerId = isset($this->customer->id) ? $this->customer->id : false;
+            if ($cartId && $customerId) {
+                if (!\Configuration::get(\MailchimpProConfig::CRONJOB_BASED_SYNC)) {
+                    $command = new CartSyncCommand($this->context, $this->mailchimp, [$cartId]);
+                    $command->setSyncMode($command::SYNC_MODE_REGULAR);
+                    //if ($command->getCartExists($cartId)) {
+                        $command->setMethod($command::SYNC_METHOD_DELETE);
+                        $command->execute();
+                    //}
+                    if ($this->context->cart->nbProducts()) {
+                        $command->setMethod($command::SYNC_METHOD_POST);
+                        $command->execute();
+                    }
+                }
+                else {
+                    $job = new CartSyncJob();
+                    $job->cartId = $cartId;
+                    if (isset($_COOKIE['mc_cid']) && !empty($_COOKIE['mc_cid']) && !is_a($this->context->controller, 'AdminController') && !is_subclass_of($this->context->controller, 'AdminController')) {
+                        $job->setCampaignId($_COOKIE['mc_cid']);
+                    }
+                    $queue = new Queue();
+                    $queue->push($job, 'hook-account-update', $this->context->shop->id);
+                }
+            }
         }
-    }
-
-    protected function getCartExists($cartId)
-    {
-        $this->mailchimp->get(
-            "/ecommerce/stores/{$this->context->shop->id}/carts/{$cartId}",
-            array('fields' => array('id'))
-        );
-
-        if ($this->mailchimp->success()) {
-            return true;
-        }
-
-        return false;
     }
 }

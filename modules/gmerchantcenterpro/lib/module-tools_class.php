@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -33,82 +33,33 @@ class BT_GmcProModuleTools
         return ($sDetail !== null ? (isset($aDetails[$sDetail]) ? $aDetails[$sDetail] : false) : $aDetails);
     }
 
-
     /**
      * returns good translated errors
      */
     public static function translateJsMsg()
     {
-        $GLOBALS['GMCP_JS_MSG']['link'] = GMerchantCenterPro::$oModule->l(
-            'You have not filled out the shop URL option',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['token'] = GMerchantCenterPro::$oModule->l(
-            'Field is required or Token must be 32 characters',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['customlabel'] = GMerchantCenterPro::$oModule->l(
-            'You have not fill the custom label name out',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['dateNewProduct'] = GMerchantCenterPro::$oModule->l(
-            'You have not filled a date for new product management',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['amount'] = GMerchantCenterPro::$oModule->l(
-            'You have not filled out the amount for best sales',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['category'] = GMerchantCenterPro::$oModule->l(
-            'You did not select any category to export',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['brand'] = GMerchantCenterPro::$oModule->l(
-            'You did not select any brand to export',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['color'] = GMerchantCenterPro::$oModule->l(
-            'You did not select any attribute or feature to fit to your color tag',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['voucher_amount'] = GMerchantCenterPro::$oModule->l(
-            'You have not fill the voucher name out',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['voucher_date_from'] = GMerchantCenterPro::$oModule->l(
-            'You have not fill the date start out',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['voucher_date_to'] = GMerchantCenterPro::$oModule->l(
-            'You have not fill the date end out',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['voucher_min_amount'] = GMerchantCenterPro::$oModule->l(
-            'You have not fill the min amount purchase out',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['voucher_amount_min'] = GMerchantCenterPro::$oModule->l(
-            'You have not fill the min amount out',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['voucher_amount_max'] = GMerchantCenterPro::$oModule->l(
-            'You have not fill the max amount out',
-            'module-tools_class'
-        );
-        $GLOBALS['GMCP_JS_MSG']['cl_feature_message'] = GMerchantCenterPro::$oModule->l(
-            'You have not fill the feature to use',
-            'module-tools_class'
-        );
+        $GLOBALS['GMCP_JS_MSG']['link'] = GMerchantCenterPro::$oModule->l('You have not filled in the shop URL', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['token'] = GMerchantCenterPro::$oModule->l('Field is required or token must be 32 characters', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['customlabel'] = GMerchantCenterPro::$oModule->l('You have not indicated a name for your custom label', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['dateNewProduct'] = GMerchantCenterPro::$oModule->l('You have not indicated a date for new product management', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['amount'] = GMerchantCenterPro::$oModule->l('You have not indicated the amount for best sales', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['category'] = GMerchantCenterPro::$oModule->l('You have not selected any category to be exported', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['brand'] = GMerchantCenterPro::$oModule->l('You have not selected any any brand to be exported', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['color'] = GMerchantCenterPro::$oModule->l('You have not selected any attribute or feature to be associated with the color tag', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['voucher_amount'] = GMerchantCenterPro::$oModule->l('You have not filled in the voucher name', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['voucher_date_from'] = GMerchantCenterPro::$oModule->l('You have not filled in a start date', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['voucher_date_to'] = GMerchantCenterPro::$oModule->l('You have not filled in a end date', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['voucher_min_amount'] = GMerchantCenterPro::$oModule->l('You have not filled in the minimum purchase amount required', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['voucher_amount_min'] = GMerchantCenterPro::$oModule->l('You have not filled in the minimum amount', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['voucher_amount_max'] = GMerchantCenterPro::$oModule->l('You have not filled in the maximum amount', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['cl_feature_message'] = GMerchantCenterPro::$oModule->l('You have not indicated the feature to be used', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['merchantId'] = GMerchantCenterPro::$oModule->l('You have not filled in your Merchant Center ID', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['handlingTime'] = GMerchantCenterPro::$oModule->l('You have not filled in the handling time, or this is not an integer', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['handlingTimeMinSupMax'] = GMerchantCenterPro::$oModule->l('The min handling time cannot be superior to the max handling time', 'module-tools_class');
+        $GLOBALS['GMCP_JS_MSG']['percentStock'] = GMerchantCenterPro::$oModule->l('You have not filled in the percentage of stock available for sale on Google', 'module-tools_class');
 
         foreach (Language::getLanguages() as $aLang) {
-            $GLOBALS['GMCP_JS_MSG']['homecat'][$aLang['id_lang']] = GMerchantCenterPro::$oModule->l(
-                'You have not filled in any value with language',
-                'module-tools_class'
-            )
-                . ' ' . $aLang['name'] . '. ' . GMerchantCenterPro::$oModule->l(
-                    'Click on the drop-down flag list in order to fill out the correct language field(s).',
-                    'module-tools_class'
-                );
+            $GLOBALS['GMCP_JS_MSG']['homecat'][$aLang['id_lang']] = GMerchantCenterPro::$oModule->l('You have not filled in the fields for the language(s)', 'module-tools_class') . ' ' . $aLang['name'] . '. ' . GMerchantCenterPro::$oModule->l('Click on the language drop-down menu, indicated by a flag, to fill in the fields in all languages.', 'module-tools_class');
         }
     }
 
@@ -137,12 +88,7 @@ class BT_GmcProModuleTools
     {
         // get configuration options
         if (null !== $iShopId && is_numeric($iShopId)) {
-            GMerchantCenterPro::$conf = Configuration::getMultiple(
-                array_keys($GLOBALS['GMCP_CONFIGURATION']),
-                null,
-                null,
-                $iShopId
-            );
+            GMerchantCenterPro::$conf = Configuration::getMultiple(array_keys($GLOBALS['GMCP_CONFIGURATION']), null, null, $iShopId);
         } else {
             GMerchantCenterPro::$conf = Configuration::getMultiple(array_keys($GLOBALS['GMCP_CONFIGURATION']));
         }
@@ -257,17 +203,32 @@ class BT_GmcProModuleTools
     {
         // set
         $aLangCurrencyCountry = array();
+        $psCurrencies = array();
 
         foreach ($aAvailableLanguages as $aLanguage) {
             foreach ($aAvailableCountries[$aLanguage['iso_code']] as $sCountry => $aLocaleData) {
                 $oLanguage = new Language($aLanguage['id_lang']);
-                $iCountryId = Country::getByIso(Tools::strtolower($sCountry));
+
+                if ($sCountry != 'KO') {
+                    $iCountryId = Country::getByIso(Tools::strtolower($sCountry));
+                } else {
+                    $iCountryId = Country::getByIso(Tools::strtolower('KR'));
+                }
+
                 if ($iCountryId) {
                     $sCountryName = Country::getNameById(GMerchantCenterPro::$iCurrentLang, $iCountryId);
                     $oCountry = new Country($iCountryId);
                     if (!empty($oCountry->id)) {
                         foreach ($aLocaleData['currency'] as $sCurrency) {
                             // manage the currency data
+                            if (array_key_exists($sCurrency, $psCurrencies)) {
+                                $oCurrency = $psCurrencies[$sCurrency];
+                            } else {
+                                $iCurrencyId = Currency::getIdByIsoCode($sCurrency);
+                                $oCurrency = new Currency($iCurrencyId);
+                                $psCurrencies[$sCurrency] = $oCurrency;
+                            }
+
                             $iCurrencyId = Currency::getIdByIsoCode($sCurrency);
                             $oCurrency = new Currency($iCurrencyId);
                             if (Currency::getIdByIsoCode($sCurrency)) {
@@ -279,7 +240,7 @@ class BT_GmcProModuleTools
                                     'countryName' => $sCountryName,
                                     'currencyIso' => $sCurrency,
                                     'currencySign' => $oCurrency->sign,
-                                    'currencyId' => Currency::getIdByIsoCode($sCurrency),
+                                    'currencyId' => $oCurrency->id,
                                 );
                             }
                         }
@@ -396,31 +357,16 @@ class BT_GmcProModuleTools
 
             switch ($sTemplate) {
                 case 'snippet':
-                    $sDate = date('d', $iTimestamp)
-                        . ' '
-                        . (!empty($GLOBALS['GMCP_MONTH'][$sLangIso]) ? $GLOBALS['GMCP_MONTH'][$sLangIso]['long'][date(
-                            'n',
-                            $iTimestamp
-                        )] : date('M', $iTimestamp))
-                        . ' '
-                        . date('Y', $iTimestamp);
+                    $sDate = date('d', $iTimestamp) . ' ' . (!empty($GLOBALS['GMCP_MONTH'][$sLangIso]) ? $GLOBALS['GMCP_MONTH'][$sLangIso]['long'][date('n', $iTimestamp)] : date('M', $iTimestamp)) . ' ' . date('Y', $iTimestamp);
                     break;
                 default:
                     // set date with matching month or with default language
-                    $sDate = date('d', $iTimestamp)
-                        . ' '
-                        . (!empty($GLOBALS['GMCP_MONTH'][$sLangIso]) ? $GLOBALS['GMCP_MONTH'][$sLangIso]['short'][date(
-                            'n',
-                            $iTimestamp
-                        )] : date('M', $iTimestamp))
-                        . ' '
-                        . date('Y', $iTimestamp);
+                    $sDate = date('d', $iTimestamp) . ' ' . (!empty($GLOBALS['GMCP_MONTH'][$sLangIso]) ? $GLOBALS['GMCP_MONTH'][$sLangIso]['short'][date('n', $iTimestamp)] : date('M', $iTimestamp)) . ' ' . date('Y', $iTimestamp);
                     break;
             }
         }
         return $sDate;
     }
-
 
     /**
      * returns formatted URI for page name type
@@ -443,7 +389,6 @@ class BT_GmcProModuleTools
         }
         return substr(basename($sScriptName), 0, strpos(basename($sScriptName), '.'));
     }
-
 
     /**
      * returns template path
@@ -468,42 +413,12 @@ class BT_GmcProModuleTools
     {
         $sProdUrl = '';
 
-        if (!empty(GMerchantCenterPro::$bCompare1550)) {
-            $sProdUrl = Context::getContext()->link->getProductLink(
-                $oProduct,
-                null,
-                null,
-                null,
-                (int) $iLangId,
-                null,
-                0,
-                false
-            );
+        if (Configuration::get('PS_REWRITING_SETTINGS')) {
+            $sProdUrl = Context::getContext()->link->getProductLink($oProduct, null, null, null, (int) $iLangId, null, 0, true);
         } else {
-            if (Configuration::get('PS_REWRITING_SETTINGS')) {
-                $sProdUrl = Context::getContext()->link->getProductLink(
-                    $oProduct,
-                    null,
-                    null,
-                    null,
-                    (int) $iLangId,
-                    null,
-                    0,
-                    true
-                );
-            } else {
-                $sProdUrl = Context::getContext()->link->getProductLink(
-                    $oProduct,
-                    null,
-                    null,
-                    null,
-                    (int) $iLangId,
-                    null,
-                    0,
-                    false
-                );
-            }
+            $sProdUrl = Context::getContext()->link->getProductLink($oProduct, null, null, null, (int) $iLangId, null, 0, false);
         }
+
         return $sProdUrl;
     }
 
@@ -529,7 +444,6 @@ class BT_GmcProModuleTools
         return $sResult;
     }
 
-
     /**
      * returns product image
      *
@@ -539,12 +453,8 @@ class BT_GmcProModuleTools
      * @param string $sForceDomainName
      * @return obj
      */
-    public static function getProductImage(
-        Product &$oProduct,
-        $sImageType = null,
-        $aForceImage = false,
-        $sForceDomainName = null
-    ) {
+    public static function getProductImage(Product &$oProduct, $sImageType = null, $aForceImage = false, $sForceDomainName = null)
+    {
         $sImgUrl = '';
 
         if (Validate::isLoadedObject($oProduct)) {
@@ -554,16 +464,9 @@ class BT_GmcProModuleTools
             if (!empty($aImage)) {
                 // get image url
                 if ($sImageType !== null) {
-                    $sImgUrl = Context::getContext()->link->getImageLink(
-                        $oProduct->link_rewrite,
-                        $oProduct->id . '-' . $aImage['id_image'],
-                        $sImageType
-                    );
+                    $sImgUrl = Context::getContext()->link->getImageLink($oProduct->link_rewrite, $oProduct->id . '-' . $aImage['id_image'], $sImageType);
                 } else {
-                    $sImgUrl = Context::getContext()->link->getImageLink(
-                        $oProduct->link_rewrite,
-                        $oProduct->id . '-' . $aImage
-                    );
+                    $sImgUrl = Context::getContext()->link->getImageLink($oProduct->link_rewrite, $oProduct->id . '-' . $aImage);
                 }
             }
         }
@@ -750,9 +653,6 @@ class BT_GmcProModuleTools
      */
     public static function dateCompare($sDate1, $sDate2)
     {
-        // set
-        $sReturn = "";
-
         $dDate1 = date_create($sDate1);
         $dDate2 = date_create($sDate2);
         $iDiff = date_diff($dDate1, $dDate2);
@@ -774,11 +674,7 @@ class BT_GmcProModuleTools
     {
         $oCategory = new Category($iCatId);
 
-        return (Validate::isLoadedObject($oCategory) ? str_replace(
-            '>',
-            ' > ',
-            strip_tags(self::getPath((int) $oCategory->id, (int) $iLangId, $sPath, $bEncoding))
-        ) : '');
+        return (Validate::isLoadedObject($oCategory) ? str_replace('>', ' > ', strip_tags(self::getPath((int) $oCategory->id, (int) $iLangId, $sPath, $bEncoding))) : '');
     }
 
     /**
@@ -805,107 +701,32 @@ class BT_GmcProModuleTools
 
             $sFullPath = '';
 
-            /* Old way: v1.2 - v1.3 */
-            if (version_compare(_PS_VERSION_, '1.4.1') == -1) {
-                // instantiate
-                $oCategory = new Category((int) ($iCatId), (int) ($iLangId));
+            $aInterval = Category::getInterval($iCatId);
+            $aIntervalRoot = Category::getInterval(Context::getContext()->shop->getCategory());
 
-                if (Validate::isLoadedObject($oCategory)) {
-                    $sCatName = Category::hideCategoryPosition($oCategory->name);
+            if (!empty($aInterval) && !empty($aIntervalRoot)) {
+                $sQuery = 'SELECT c.id_category, cl.name, cl.link_rewrite'
+                    . ' FROM ' . _DB_PREFIX_ . 'category c'
+                    . (version_compare(_PS_VERSION_, '1.5', '>') ? Shop::addSqlAssociation('category', 'c', false) : '')
+                    . ' LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cl ON (cl.id_category = c.id_category' . Shop::addSqlRestrictionOnLang('cl') . ')'
+                    . ' WHERE c.nleft <= ' . (int)$aInterval['nleft']
+                    . ' AND c.nright >= ' . (int)$aInterval['nright']
+                    . ' AND c.nleft >= ' . (int)$aIntervalRoot['nleft']
+                    . ' AND c.nright <= ' . (int)$aIntervalRoot['nright']
+                    . ' AND cl.id_lang = ' . (int) $iLangId
+                    . ' AND c.level_depth > ' . (int) $aIntervalRoot['level_depth']
+                    . ' ORDER BY c.level_depth ASC';
 
-                    // htmlentities because this method generates some view
-                    if ($sPath != $sCatName) {
-                        $sDisplayedPath = ($bEncoding ? htmlentities(
-                            $sCatName,
-                            ENT_NOQUOTES,
-                            'UTF-8'
-                        ) : $sCatName) . $sPipe . $sPath;
-                    } else {
-                        $sDisplayedPath = ($bEncoding ? htmlentities($sPath, ENT_NOQUOTES, 'UTF-8') : $sPath);
-                    }
+                $aCategories = Db::getInstance()->executeS($sQuery);
 
-                    $mReturn = self::getPath((int) ($oCategory->id_parent), $iLangId, trim($sDisplayedPath, $sPipe));
+                $iCount = 1;
+                $nCategories = count($aCategories);
+
+                foreach ($aCategories as $aCategory) {
+                    $sFullPath .=
+                        ($bEncoding ? htmlentities($aCategory['name'], ENT_NOQUOTES, 'UTF-8') : $aCategory['name']) . (($iCount++ != $nCategories || !empty($sPath)) ? $sPipe : '');
                 }
-            } /* New way for versions between v1.4 to v1.5.6.0 */ elseif (version_compare(_PS_VERSION_, '1.5.6.0', '<')) {
-                $aCurrentCategory = Db::getInstance()->getRow(
-                    '
-					SELECT id_category, level_depth, nleft, nright
-					FROM ' . _DB_PREFIX_ . 'category
-					WHERE id_category = ' . (int) $iCatId
-                );
-
-                if (isset($aCurrentCategory['id_category'])) {
-                    $sQuery = 'SELECT c.id_category, cl.name, cl.link_rewrite FROM ' . _DB_PREFIX_ . 'category c';
-
-                    // use case 1.5
-                    if (version_compare(_PS_VERSION_, '1.5', '>')) {
-                        Shop::addSqlAssociation('category', 'c', false);
-                    }
-
-                    $sQuery .= ' LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cl ON (cl.id_category = c.id_category AND cl.`id_lang` = ' . (int) ($iLangId) . (version_compare(
-                        _PS_VERSION_,
-                        '1.5',
-                        '>'
-                    ) ? Shop::addSqlRestrictionOnLang('cl') : '') . ')';
-
-                    $sQuery .= '
-						WHERE c.nleft <= ' . (int) $aCurrentCategory['nleft'] . ' AND c.nright >= ' . (int) $aCurrentCategory['nright'] . ' AND cl.id_lang = ' . (int) ($iLangId) . ' AND c.id_category != 1
-						ORDER BY c.level_depth ASC
-						LIMIT ' . (int) $aCurrentCategory['level_depth'];
-
-                    $aCategories = Db::getInstance()->ExecuteS($sQuery);
-
-                    $iCount = 1;
-                    $nCategories = count($aCategories);
-
-                    foreach ($aCategories as $aCategory) {
-                        $sFullPath .=
-                            ($bEncoding ? htmlentities(
-                                $aCategory['name'],
-                                ENT_NOQUOTES,
-                                'UTF-8'
-                            ) : $aCategory['name']) .
-                            (($iCount++ != $nCategories or !empty($sPath)) ? $sPipe : '');
-                    }
-                    $mReturn = $sFullPath . $sPath;
-                }
-            } else {
-                $aInterval = Category::getInterval($iCatId);
-                $aIntervalRoot = Category::getInterval(Context::getContext()->shop->getCategory());
-
-                if (!empty($aInterval) && !empty($aIntervalRoot)) {
-                    $sQuery = 'SELECT c.id_category, cl.name, cl.link_rewrite'
-                        . ' FROM ' . _DB_PREFIX_ . 'category c'
-                        . (version_compare(_PS_VERSION_, '1.5', '>') ? Shop::addSqlAssociation(
-                            'category',
-                            'c',
-                            false
-                        ) : '')
-                        . ' LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cl ON (cl.id_category = c.id_category' . Shop::addSqlRestrictionOnLang('cl') . ')'
-                        . ' WHERE c.nleft <= ' . $aInterval['nleft']
-                        . ' AND c.nright >= ' . $aInterval['nright']
-                        . ' AND c.nleft >= ' . $aIntervalRoot['nleft']
-                        . ' AND c.nright <= ' . $aIntervalRoot['nright']
-                        . ' AND cl.id_lang = ' . (int) $iLangId
-                        . ' AND c.level_depth > ' . (int) $aIntervalRoot['level_depth']
-                        . ' ORDER BY c.level_depth ASC';
-
-                    $aCategories = Db::getInstance()->executeS($sQuery);
-
-                    $iCount = 1;
-                    $nCategories = count($aCategories);
-
-                    foreach ($aCategories as $aCategory) {
-                        $sFullPath .=
-                            ($bEncoding ? htmlentities(
-                                $aCategory['name'],
-                                ENT_NOQUOTES,
-                                'UTF-8'
-                            ) : $aCategory['name']) .
-                            (($iCount++ != $nCategories || !empty($sPath)) ? $sPipe : '');
-                    }
-                    $mReturn = $sFullPath . $sPath;
-                }
+                $mReturn = $sFullPath . $sPath;
             }
         }
 
@@ -924,14 +745,8 @@ class BT_GmcProModuleTools
      * @param bool $bFirstExec
      * @return array
      */
-    public static function recursiveCategoryTree(
-        array $aCategories,
-        array $aIndexedCat,
-        $aCurrentCat,
-        $iCurrentIndex = 1,
-        $iDefaultId = null,
-        $bFirstExec = false
-    ) {
+    public static function recursiveCategoryTree(array $aCategories, array $aIndexedCat, $aCurrentCat, $iCurrentIndex = 1, $iDefaultId = null, $bFirstExec = false)
+    {
         // set variables
         static $_aTmpCat;
         static $_aFormatCat;
@@ -947,11 +762,7 @@ class BT_GmcProModuleTools
         $_aTmpCat[$aCurrentCat['infos']['id_parent']] += 1;
 
         // calculate new level
-        $aCurrentCat['infos']['iNewLevel'] = $aCurrentCat['infos']['level_depth'] + (version_compare(
-            _PS_VERSION_,
-            '1.5.0'
-        ) != -1 ? 0 : 1);
-
+        $aCurrentCat['infos']['iNewLevel'] = $aCurrentCat['infos']['level_depth'] + (version_compare(_PS_VERSION_, '1.5.0') != -1 ? 0 : 1);
         // calculate type of gif to display - displays tree in good
         $aCurrentCat['infos']['sGifType'] = (count($aCategories[$aCurrentCat['infos']['id_parent']]) == $_aTmpCat[$aCurrentCat['infos']['id_parent']] ? 'f' : 'b');
 
@@ -970,12 +781,7 @@ class BT_GmcProModuleTools
         if (isset($aCategories[$iCurrentIndex])) {
             foreach ($aCategories[$iCurrentIndex] as $iCatId => $aCat) {
                 if ($iCatId != 'infos') {
-                    self::recursiveCategoryTree(
-                        $aCategories,
-                        $aIndexedCat,
-                        $aCategories[$iCurrentIndex][$iCatId],
-                        $iCatId
-                    );
+                    self::recursiveCategoryTree($aCategories, $aIndexedCat, $aCategories[$iCurrentIndex][$iCatId], $iCatId);
                 }
             }
         }
@@ -1093,18 +899,6 @@ class BT_GmcProModuleTools
     }
 
     /**
-     * copy module's php file
-     *
-     * @return bool
-     */
-    public static function copyOutputFile()
-    {
-        @copy(_GMCP_PATH_ROOT . _GMCP_XML_PHP_NAME, _PS_ROOT_DIR_ . '/' . _GMCP_XML_PHP_NAME);
-        return true;
-    }
-
-
-    /**
      * copy module's on-fly php file
      *
      * @return bool
@@ -1114,18 +908,6 @@ class BT_GmcProModuleTools
         @copy(_GMCP_PATH_ROOT . _GMCP_FEED_PHP_NAME, _PS_ROOT_DIR_ . '/' . _GMCP_FEED_PHP_NAME);
         return true;
     }
-
-
-    /**
-     * check the copy of the php script file
-     *
-     * @return bool
-     */
-    public static function checkOutputFile()
-    {
-        return is_file(_PS_ROOT_DIR_ . '/' . _GMCP_XML_PHP_NAME);
-    }
-
 
     /**
      * clear all generated files
@@ -1214,32 +996,23 @@ class BT_GmcProModuleTools
                 'label' => 'no_available_for_order',
                 'type' => 'notice',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'Products not exported due to the "available for order" option not activated for them',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 0,
+                'msg' => GMerchantCenterPro::$oModule->l('Products not exported because the "available for order" option is not activated', 'module-tools_class') . '.',
+                'faq_id' => 237,
                 'anchor' => ''
             ),
             '_no_product_name' => array(
                 'label' => 'no_product_name',
                 'type' => 'error',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'Products not exported due to missing the product name',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 0,
+                'msg' => GMerchantCenterPro::$oModule->l('Products not exported because the product name is missing', 'module-tools_class') . '.',
+                'faq_id' => 210,
                 'anchor' => ''
             ),
             '_no_required_data' => array(
                 'label' => 'no_required_data',
                 'type' => 'error',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'Products not exported due to missing one of these information: product name or product description or product URL or URL image link',
-                    'module-tools_class'
-                ) . '.',
+                'msg' => GMerchantCenterPro::$oModule->l('Products not exported because one of this information is missing: product name or product description or product URL or image URL', 'module-tools_class') . '.',
                 'faq_id' => 0,
                 'anchor' => ''
             ),
@@ -1247,32 +1020,23 @@ class BT_GmcProModuleTools
                 'label' => 'not_export_without_supplier_ref',
                 'type' => 'notice',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'Products not exported due to missing supplier reference and Unique Product Identifier settings',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 22,
+                'msg' => GMerchantCenterPro::$oModule->l('Products not exported due to missing MPN reference. Please review the configuration of unique product identifiers', 'module-tools_class') . '.',
+                'faq_id' => 198,
                 'anchor' => ''
             ),
             '_no_export_no_ean_upc' => array(
                 'label' => 'not_export_without_EAN13_UPC_ref',
                 'type' => 'notice',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'Products not exported due to missing EAN / UPC and Unique Product Identifier settings',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 22,
+                'msg' => GMerchantCenterPro::$oModule->l('Products not exported due to missing EAN/UPC reference. Please review the configuration of unique product identifiers', 'module-tools_class') . '.',
+                'faq_id' => 192,
                 'anchor' => ''
             ),
             '_no_export_no_stock' => array(
                 'label' => 'not_export_no_stock',
                 'type' => 'notice',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'Products not exported due to out of stock export settings',
-                    'module-tools_class'
-                ) . '.',
+                'msg' => GMerchantCenterPro::$oModule->l('Products not exported due to out of stock export settings', 'module-tools_class') . '.',
                 'faq_id' => 22,
                 'anchor' => ''
             ),
@@ -1280,11 +1044,8 @@ class BT_GmcProModuleTools
                 'label' => 'not_export_under_min_price',
                 'type' => 'notice',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'Products not exported due to minimum price settings',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 0,
+                'msg' => GMerchantCenterPro::$oModule->l('Products not exported due to minimum price settings', 'module-tools_class') . '.',
+                'faq_id' => 22,
                 'anchor' => ''
             ),
             // Product exported but missing information
@@ -1292,263 +1053,191 @@ class BT_GmcProModuleTools
                 'label' => 'excluded_product_list',
                 'type' => 'notice',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'this product or combination has been excluded from your feed as you define it in the exclusion rules tab',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 175,
+                'msg' => GMerchantCenterPro::$oModule->l('this product or combination has been excluded from your feed as you defined it in the exclusion rules tab', 'module-tools_class') . '.',
+                'faq_id' => 22,
                 'anchor' => ''
             ),
             'id' => array(
                 'label' => '<g:id>',
                 'type' => 'error',
                 'mandatory' => true,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "ID" => The identifier for each item has to be unique within your account, and cannot be re-used between feeds',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "ID" tag => This is the unique identifier of the item', 'module-tools_class') . '.',
+                'faq_id' => 194,
                 'anchor' => 'prod_id'
             ),
             'title' => array(
                 'label' => 'title',
                 'type' => 'error',
                 'mandatory' => true,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "TITLE" => This is the name of your item which is required',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "TITLE" tag => This is the title of the item', 'module-tools_class') . '.',
+                'faq_id' => 210,
                 'anchor' => 'title'
             ),
             'description' => array(
                 'label' => 'description',
                 'type' => 'error',
                 'mandatory' => true,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "DESCRIPTION" => Include only information relevant to the item, but be comprehensive since we use this text to find your item',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "DESCRIPTION" tag => This is the description of the item', 'module-tools_class') . '.',
+                'faq_id' => 196,
                 'anchor' => 'prod_description'
             ),
             'google_product_category' => array(
                 'label' => '<g:google_product_category>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "GOOGLE PRODUCT CATEGORY" => The Google product category attribute indicates the category of the product being submitted, according to the Google product taxonomy',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "GOOGLE PRODUCT CATEGORY" tag => You have to associate each product default category with an official Google category', 'module-tools_class') . '.',
+                'faq_id' => 212,
                 'anchor' => 'google_category'
             ),
             'product_type' => array(
                 'label' => '<g:product_type>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "PRODUCT TYPE" => This attribute also indicates the category of the product being submitted, but you can provide your own classification.',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "PRODUCT TYPE" tag => Unlike the "Google Product Category" tag, the "Product Type" tag contains the information about the category of the product according to your own classification', 'module-tools_class') . '.',
+                'faq_id' => 211,
                 'anchor' => 'prod_type'
             ),
             'link' => array(
                 'label' => 'link',
                 'type' => 'error',
                 'mandatory' => true,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "LINK" => The user is sent to this URL when your item is clicked on Google Shopping. We also refer to this as the landing page',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "LINK" tag => This is the link of the item', 'module-tools_class') . '.',
+                'faq_id' => 204,
                 'anchor' => 'prod_link'
             ),
             'image_link' => array(
                 'label' => '<g:image_link>',
                 'type' => 'error',
                 'mandatory' => true,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "IMAGE LINK" => This is the URL of an associated image for a product. Submit full-size images for your products and do not submit thumbnail versions of the images',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "IMAGE LINK" tag => This is the URL of the main image of the product', 'module-tools_class') . '.',
+                'faq_id' => 203,
                 'anchor' => 'image_link'
             ),
             'condition' => array(
                 'label' => '<g:condition>',
                 'type' => 'error',
                 'mandatory' => true,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "CONDITION" => There are only three accepted values : "new", "refurbished", "used"',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "CONDITION" tag => This is the condition of the item. There are only 3 accepted values: "new", "refurbished" and "used"', 'module-tools_class') . '.',
+                'faq_id' => 195,
                 'anchor' => 'prod_condition'
             ),
             'availability' => array(
                 'label' => '<g:availability>',
                 'type' => 'error',
                 'mandatory' => true,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "AVAILABILITY" => The availability attribute only has three accepted values : "in stock", "out of stock", "preorder"',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "AVAILABILITY" tag => This indicates the availability of the item. There are only 3 accepted values: "in stock", "out of stock" and "preorder"',  'module-tools_class') . '.',
+                'faq_id' => 213,
                 'anchor' => 'prod_availability'
             ),
             'price' => array(
                 'label' => '<g:price>',
                 'type' => 'error',
                 'mandatory' => true,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "PRICE" => The price of the item has to be the most prominent price on the landing page',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "PRICE" tag => This is the price of the item', 'module-tools_class') . '.',
+                'faq_id' => 190,
                 'anchor' => 'prod_price'
             ),
             'gtin' => array(
                 'label' => '<g:gtin>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "GTIN" => In this attribute, you will include Global Trade Item Numbers (GTINs) for your products',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "GTIN" tag => The "Global Trade Item Number" is one of the Unique Product Identifiers', 'module-tools_class') . '.',
+                'faq_id' => 192,
                 'anchor' => 'prod_gtin'
             ),
             'brand' => array(
                 'label' => '<g:brand>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "BRAND" => When to include: Required for all items - except for books, media and custom made goods, or if you\'re providing \'mpn\' and \'gtin\'',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "BRAND" tag => The product brand is one of the Unique Product Identifiers',  'module-tools_class') . '.',
+                'faq_id' => 197,
                 'anchor' => 'prod_brand'
             ),
             'mpn' => array(
                 'label' => '<g:mpn>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "MPN" => This code uniquely identifies the product to its manufacturer. In particular, the combination of brand and MPN clearly specifies one product',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "MPN tag=> The "Manufacturer Part Number" of a product is one of the Unique Product Identifiers', 'module-tools_class') . '.',
+                'faq_id' => 198,
                 'anchor' => 'prod_mpn'
             ),
             'adult' => array(
                 'label' => '<g:adult>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "ADULT" => The adult status assigned to your product listings through the ‘adult’ attribute affects where product listings can show',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "ADULT" tag => This tag indicates that the item is for adults only', 'module-tools_class') . '.',
+                'faq_id' => 222,
                 'anchor' => 'adult'
             ),
             'gender' => array(
                 'label' => '<g:gender>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "GENDER" => Three predefined values accepted : "male", "female", "unisex"',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "GENDER" tag => This tag allows you specify the gender your product is designed for. You can choose between 3 predefined values: "male", "female" or "unisex"', 'module-tools_class') . '.',
+                'faq_id' => 209,
                 'anchor' => 'gender'
             ),
             'age_group' => array(
                 'label' => '<g:age_group>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "AGE GROUP" => The only five accepted values of this attribute are : "adults", "kids","toddler","infant","newborn"',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "AGE GROUP" tag => This tag allows you to specify the age group your product is designed for. You can choose between 5 predefined values: "adults", "kids","toddler","infant" or "newborn"', 'module-tools_class') . '.',
+                'faq_id' => 202,
                 'anchor' => 'age_group'
             ),
             'color' => array(
                 'label' => '<g:color>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "COLOR" => This defines the dominant color(s) of an item',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "COLOR" tag => This defines the dominant color(s) of an item',  'module-tools_class') . '.',
+                'faq_id' => 199,
                 'anchor' => 'size_color'
             ),
             'size' => array(
                 'label' => '<g:size>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "SIZE" => This indicates the size of a product. You may any provide values which are appropriate to your items',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "SIZE" tag => This indicates the size of an item', 'module-tools_class') . '.',
+                'faq_id' => 201,
                 'anchor' => 'size_color'
             ),
             'sizeType' => array(
                 'label' => '<g:size_type>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "SIZE TYPE" => The only accepted values of this attribute are : "maternity", "big and tall", "petite", "plus", "regular"',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "SIZE TYPE" tag => This tag allows you to give an additional information about clothing size. You can choose between 4 predefined values: "regular", petite", "oversize" or "maternity"',  'module-tools_class') . '.',
+                'faq_id' => 220,
                 'anchor' => 'sizeTyp'
             ),
             'sizeSystem' => array(
                 'label' => '<g:size_system>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "SIZE SYSTEM" => The only accepted values of this attribute are defined in the module configuration',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "SIZE SYSTEM" tag => This tag allows you to indicate which country’s sizing system you use for the item', 'module-tools_class') . '.',
+                'faq_id' => 221,
                 'anchor' => 'sizeTyp'
             ),
             'material' => array(
                 'label' => '<g:material>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "MATERIAL" => The material or fabric that a product is made out of',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "MATERIAL" tag => This tag indicates the main fabric or material that the item is made of', 'module-tools_class') . '.',
+                'faq_id' => 205,
                 'anchor' => 'pattern'
             ),
             'pattern' => array(
                 'label' => '<g:pattern>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "PATTERN" => The pattern or graphic print featured on a product',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "PATTERN" tag => This tag indicates the pattern or graphic print on the item', 'module-tools_class') . '.',
+                'faq_id' => 206,
                 'anchor' => 'pattern',
             ),
             'energy' => array(
                 'label' => '<g:energy>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "ENERGY" => The energy class',
-                    'module-tools_class'
-                ) . '.',
+                'msg' => GMerchantCenterPro::$oModule->l('The "ENERGY EFFICIENCY CLASS" tag => This tag indicates the energy efficiency class of the item', 'module-tools_class') . '.',
                 'faq_id' => 232,
                 'anchor' => '',
             ),
@@ -1556,10 +1245,7 @@ class BT_GmcProModuleTools
                 'label' => '<g:shipping_label>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "SHIPPING" => The energy class',
-                    'module-tools_class'
-                ) . '.',
+                'msg' => GMerchantCenterPro::$oModule->l('The "SHIPPING LABEL" tag => If you want to set different shipping costs for specific groups of items, use this tag to apply a label to the items', 'module-tools_class') . '.',
                 'faq_id' => 235,
                 'anchor' => '',
             ),
@@ -1567,32 +1253,23 @@ class BT_GmcProModuleTools
                 'label' => '<g:unit_pricing_measure>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "UNIT PRICING MEASURE" => The unit_pricing_measure',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 235,
+                'msg' => GMerchantCenterPro::$oModule->l('The "UNIT PRICING MEASURE" tag => This tag represents the total quantity or dimension of your item', 'module-tools_class') . '.',
+                'faq_id' => 241,
                 'anchor' => '',
             ),
             'unit_pricing_base_measure' => array(
                 'label' => '<g:unit_pricing_base_measure>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "UNIT PRICING MEASURE" => The unit_pricing_measure',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 235,
+                'msg' => GMerchantCenterPro::$oModule->l('The "UNIT PRICING BASE MEASURE" tag => This tag matches the volume / surface / dimension etc... your users will have to consider as a reference value', 'module-tools_class') . '.',
+                'faq_id' => 241,
                 'anchor' => '',
             ),
             'item_group_id' => array(
                 'label' => '<g:item_group_id>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "ITEM GROUP ID" => All items that are color/material/pattern/size variants of the same product must have the same item group id',
-                    'module-tools_class'
-                ) . '.',
+                'msg' => GMerchantCenterPro::$oModule->l('The "ITEM GROUP ID" tag => All items that are color/material/pattern/size variants of the same product must have the same item group id', 'module-tools_class') . '.',
                 'faq_id' => 0,
                 'anchor' => ''
             ),
@@ -1600,22 +1277,16 @@ class BT_GmcProModuleTools
                 'label' => '<g:shipping_weight>',
                 'type' => 'warning',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "SHIPPING WEIGHT" => This is the weight of the product used to calculate the shipping cost of the item. It is required to provide this attribute if you have specified a global shipping rule in Settings that is dependent on shipping weight. Google accept the following units: lb, oz, g, kg (respect the lowercase)',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "SHIPPING WEIGHT" tag => This is the weight of the item used to calculate the shipping cost of the item', 'module-tools_class') . '.',
+                'faq_id' => 214,
                 'anchor' => 'shipping_weight'
             ),
             'shipping' => array(
                 'label' => '<g:shipping>',
                 'type' => 'error',
                 'mandatory' => true,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'tag "SHIPPING" => This attribute provides the specific shipping estimate for the product. Providing this attribute for an item overrides the global shipping settings you defined in your Google Merchant Center settings. It is required to provide shipping information for all items either by specifying default shipping values in your Google Merchant Center account settings, or by providing this attribute',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 100,
+                'msg' => GMerchantCenterPro::$oModule->l('The "SHIPPING" tag => The shipping tag lets you override the shipping cost defined in your Merchant Center account for an item', 'module-tools_class') . '.',
+                'faq_id' => 51,
                 'anchor' => ''
             ),
             // Product exported which do not respect Google prerequisites
@@ -1623,11 +1294,8 @@ class BT_GmcProModuleTools
                 'label' => 'not_respect_title_length',
                 'type' => 'notice',
                 'mandatory' => false,
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'Google will still require your product titles to be no more than 150 characters long',
-                    'module-tools_class'
-                ) . '.',
-                'faq_id' => 0,
+                'msg' => GMerchantCenterPro::$oModule->l('Google requires your product titles to be no more than 150 characters long', 'module-tools_class') . '.',
+                'faq_id' => 210,
                 'anchor' => ''
             ),
         );
@@ -1753,16 +1421,8 @@ class BT_GmcProModuleTools
      * @param string $sSuffix
      * @return string
      */
-    public static function truncateProductTitle(
-        $iAdvancedProdName,
-        $sProdName,
-        $sCatName,
-        $sManufacturerName,
-        $iLength,
-        $iLangId,
-        $sPrefix,
-        $sSuffix
-    ) {
+    public static function truncateProductTitle($iAdvancedProdName, $sProdName, $sCatName, $sManufacturerName, $iLength, $iLangId, $sPrefix, $sSuffix)
+    {
         if (function_exists('mb_substr')) {
             switch ($iAdvancedProdName) {
                 case 0:
@@ -1805,7 +1465,7 @@ class BT_GmcProModuleTools
     }
 
     /**
-     *  Used by uncapProductTitle. strtolower doesn't work with UTF-8
+     * Used by uncapProductTitle. strtolower doesn't work with UTF-8
      * The second solution if no mb_strtolower available is not perfect but will work
      * with most European languages. Worse comes to worse, the person may chose not to uncap
      *
@@ -1815,10 +1475,7 @@ class BT_GmcProModuleTools
     public static function strToLowerUtf8($sString)
     {
 
-        return (function_exists('mb_strtolower') ? mb_strtolower(
-            $sString,
-            'utf-8'
-        ) : utf8_encode(Tools::strtolower(utf8_decode($sString))));
+        return (function_exists('mb_strtolower') ? mb_strtolower($sString, 'utf-8') : utf8_encode(Tools::strtolower(utf8_decode($sString))));
     }
 
     /**
@@ -1831,10 +1488,7 @@ class BT_GmcProModuleTools
      */
     public static function strToUtf8($sString)
     {
-        return (function_exists('mb_convert_encoding') ? mb_convert_encoding(
-            $sString,
-            'utf-8'
-        ) : utf8_encode(utf8_decode($sString)));
+        return (function_exists('mb_convert_encoding') ? mb_convert_encoding($sString, 'utf-8') : utf8_encode(utf8_decode($sString)));
     }
 
     /**
@@ -1971,7 +1625,6 @@ class BT_GmcProModuleTools
             }
             $sProductName .= $sExtraName;
         }
-
         return $sProductName;
     }
 
@@ -2117,40 +1770,27 @@ class BT_GmcProModuleTools
             if ($sValue['type'] !== null) {
                 switch ($sValue['type']) {
                     case 'word':
-                        $aData[$sKey]['exclusion_value_text']
-                            = $aTmpData['exclusionData'];
+                        $aData[$sKey]['exclusion_value_text'] = $aTmpData['exclusionData'];
                         break;
                     case 'feature':
-                        $aFeature
-                            = FeatureValue::getFeatureValuesWithLang(
-                                GMerchantCenterPro::$iCurrentLang,
-                                (int) $aTmpData['exclusionOn']
-                            );
+                        $aFeature = FeatureValue::getFeatureValuesWithLang(GMerchantCenterPro::$iCurrentLang, (int) $aTmpData['exclusionOn']);
                         foreach ($aFeature as $sFeature) {
                             if (
-                                $sFeature['id_feature_value']
-                                == (int) $aTmpData['exclusionData']
+                                $sFeature['id_feature_value'] == (int) $aTmpData['exclusionData']
                             ) {
-                                $aData[$sKey]['exclusion_value_text']
-                                    = $sFeature['value'];
+                                $aData[$sKey]['exclusion_value_text'] = $sFeature['value'];
                             }
                         }
 
                         break;
                     case 'attribute':
-                        $aAttribute
-                            = AttributeGroup::getAttributes(
-                                GMerchantCenterPro::$iCurrentLang,
-                                (int) $aTmpData['exclusionOn']
-                            );
+                        $aAttribute = AttributeGroup::getAttributes(GMerchantCenterPro::$iCurrentLang, (int) $aTmpData['exclusionOn']);
 
                         foreach ($aAttribute as $sAttribute) {
                             if (
-                                $sAttribute['id_attribute']
-                                == (int) $aTmpData['exclusionData']
+                                $sAttribute['id_attribute'] == (int) $aTmpData['exclusionData']
                             ) {
-                                $aData[$sKey]['exclusion_value_text']
-                                    = $sAttribute['name'];
+                                $aData[$sKey]['exclusion_value_text'] = $sAttribute['name'];
                             }
                         }
                         break;
@@ -2209,55 +1849,61 @@ class BT_GmcProModuleTools
     }
 
     /**
-     * added module order state
-     *  @param string $sName // The name of the order state
-     *  @param string $sColor // The color value of the order state
-     *  @param bool $bEmail // the status for email 
-     *  @param string $sModuleName // The module name
-     *  @param string $sEmailTemplate // Email name template
-     *  @param bool $bIsValid // Set the consider as valid option 
-     *  @param bool $bIsPaid // Set the paid status
-     *  @param bool $bIsShipped // Set the shipped status
-     *  @param bool $bIsRefunded // Set refunded status
-     *  @param bool $bInvoice // Set the invoice 
-     *  @return array
+     * get the dimension in the good format you can check all data about this in https://support.google.com/merchants/answer/6324498?hl=en
+     * @param $width
+     * @param $height
+     * @param $length
+     * @param $weight
+     * @return array
      */
-    public static function addOrderState($sName, $sColor, $bEmail, $sModuleName, $sEmailTemplate, $bIsValid = true, $bIsPaid = false, $bIsShipped = false, $bInvoice = false)
+    public static function getDimension($width, $height, $length, $weight = null)
     {
-        $bExist = false;
-        $aStates = OrderState::getOrderStates(GMerchantCenterPro::$iCurrentLang);
+        $aDimension = array();
 
-        // check if order state exist
-        foreach ($aStates as $aStates) {
-            if (in_array($sName, $aStates)) {
-                $bExist = true;
-                break;
+        // Only handle if unit is valid for Google
+        if (in_array(Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT')), $GLOBALS['GMCP_DIMENSION_UNITS'])) {
+
+            // Convert the data 
+            $width = (int)number_format($width, 2, '.', '');
+            $height = (int)number_format($height, 2, '.', '');
+            $length = (int)number_format($length, 2, '.', '');
+
+            // Use case for CM
+            if (Configuration::get('PS_DIMENSION_UNIT') == 'cm') {
+                if ($width > 1 && $width <= 400 &&  $height > 1 && $height <= 400 && $length > 1 && $length <= 400) {
+                    $aDimension['shipping_width'] = $width . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['shipping_height'] = $height . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['shipping_length'] = $length . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['product_width'] = $width . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['product_height'] = $height . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['product_length'] = $length . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+
+                    // Use case for the weight for the poduct data
+                    if (!empty($weight)) {
+                        $aDimension['product_weight'] = number_format($weight, 2, '.', '') . ' ' . Tools::strtolower(Configuration::get('PS_WEIGHT_UNIT'));
+                    }
+                }
             }
-        }
 
-        // If the state does not exist, we create it.
-        if (!$bExist) {
-            // create new order state
-            $order_state = new OrderState();
-            $order_state->color = (string) $sColor;
-            $order_state->send_email = $bEmail;
-            $order_state->module_name = (string) $sModuleName;
-            $order_state->template = (string) $sEmailTemplate;
-            $order_state->logable = $bIsValid;
-            $order_state->paid = $bIsPaid;
-            $order_state->shipped = $bIsShipped;
-            $order_state->invoice = $bInvoice;
-            $order_state->name = array();
-            $aLanguages = Language::getLanguages(false);
-            foreach ($aLanguages as $aLanguage)
-                $order_state->name[$aLanguage['id_lang']] = $sName;
+            // Use case for inch
+            if (Configuration::get('PS_DIMENSION_UNIT') == 'in') {
+                if ($width > 1 && $width <= 150 &&  $height > 1 && $height <= 150 && $length > 1 && $length <= 150) {
+                    $aDimension['shipping_width'] = $width . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['shipping_height'] = $height . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['shipping_length'] = $length . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['product_width'] = $width . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['product_height'] = $height . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
+                    $aDimension['product_length'] = $length . ' ' . Tools::strtolower(Configuration::get('PS_DIMENSION_UNIT'));
 
-            // Update object
-            if (!$order_state->add()) {
-                throw new Exception("The order status has not been added", 100);
+                    // Use case for the weight for the poduct data
+                    if (!empty($weight)) {
+                        $aDimension['product_weight'] = number_format($weight, 2, '.', '') . ' ' . Tools::strtolower(Configuration::get('PS_WEIGHT_UNIT'));
+                    }
+                }
             }
-        }
 
-        return true;
+
+            return $aDimension;
+        }
     }
 }

@@ -59,7 +59,7 @@
                 {$order.history.current.ostate_name}
               </span>
             </td>
-            <td class="text-center hidden-md-down">
+            <td class="text-center">
               {if $order.details.invoice_url}
                 <a href="{$order.details.invoice_url}"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
               {else}
@@ -96,6 +96,12 @@
                   {$order.history.current.ostate_name}
                 </span>
               </div>
+              <div class="invoice">
+              {if $order.details.invoice_url}
+                <a href="{$order.details.invoice_url}"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> {l s='Invoice' d='Shop.Theme.Checkout'}</a>
+              {/if}
+              </div>
+
             </div>
           </div>
         </div>

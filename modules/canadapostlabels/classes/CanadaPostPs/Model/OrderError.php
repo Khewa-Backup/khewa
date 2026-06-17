@@ -42,7 +42,7 @@ class OrderError extends \ObjectModel
         'fields' => array(
             'id_order' => array('type' => self::TYPE_INT, 'required' => false, 'validate' => 'isUnsignedInt', 'size' => 10),
             'id_batch' => array('type' => self::TYPE_INT, 'required' => false, 'validate' => 'isUnsignedInt', 'size' => 10),
-            'errorMessage' => array('type' => self::TYPE_STRING, 'required' => true, 'size' => 255),
+            'errorMessage' => array('type' => self::TYPE_STRING, 'required' => true),
             'date_add' => array('type' => self::TYPE_DATE, 'validate' => 'isDate', 'copy_post' => false),
             'date_upd' => array('type' => self::TYPE_DATE, 'validate' => 'isDate', 'copy_post' => false),
         ),

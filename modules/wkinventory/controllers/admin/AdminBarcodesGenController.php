@@ -25,6 +25,19 @@ class AdminBarcodesgenController extends ModuleAdminController
         parent::__construct();
 
         $this->tmp_storage_file = _PS_MODULE_DIR_.$this->module->name.'/tmp-storage-data.json';
+        $this->displayInformation($this->l('This feature has been created because we found:'));
+        $this->displayInformation(
+			'- '.$this->l('Many merchants want to generate EAN and / or UPC codes to facilitate their warehouse stock management.')
+		);
+        $this->displayInformation(
+			'- '.$this->l('Many merchants "manufacturers" want to create these codes for their products in order to sell on the market place.')
+		);
+        $this->displayInformation(
+			'- '.$this->l('Our module generate in bulk EAN and UPC codes by respecting algorithms and specific positions rules.')
+		);
+        $this->displayInformation(
+			'- '.$this->l('The generator avoids you buying ranks of EAN and / or UPC codes for prohibitive prices.')
+		);
     }
 
     /*
@@ -38,12 +51,12 @@ class AdminBarcodesgenController extends ModuleAdminController
             'suppliers' => Supplier::getSuppliers(false, (int)$id_lang),
             'manufacturers' => Manufacturer::getManufacturers(),
             'this_path' => _MODULE_DIR_.$this->module->name,
-            'is_before_16' => $this->module->is_before_16,
+            'isPS15' => $this->module->isPS15,
             'module_name' => $this->module->displayName,
             'isModuleFolderWritable' => is_writable(dirname(__FILE__).'/../../../'.$this->module->name.'/'),
             //'token_security' => WorkshopStock::getToken()
         );
-        if ($this->module->is_before_16) {
+        if ($this->module->isPS15) {
             $this->tpl_view_vars['title_page'] = $this->toolbar_title;
         }
         $this->base_tpl_view = 'view.tpl';
@@ -54,7 +67,7 @@ class AdminBarcodesgenController extends ModuleAdminController
     public function getDataFromPreviousIteration($key = false)
     {
         $data = array();
-        $stored_data = Tools::jsonDecode(Tools::file_get_contents($this->tmp_storage_file), true);
+        $stored_data = json_decode(Tools::file_get_contents($this->tmp_storage_file), true);
         if (!empty($stored_data) && !empty($stored_data['identifier'][0]) && ($stored_data['identifier'][0] == $this->identifier || $key == 'identifier')) {
             $data = $stored_data;
             if ($key) {
@@ -92,7 +105,7 @@ class AdminBarcodesgenController extends ModuleAdminController
         foreach ($data as $k => $d) {
             $data_to_save[$k] = $d;
         }
-        file_put_contents($this->tmp_storage_file, Tools::jsonEncode($data_to_save));
+        file_put_contents($this->tmp_storage_file, json_encode($data_to_save));
     }
 
     public function ajaxProcessProcessEanUpcGeneration()
@@ -110,7 +123,7 @@ class AdminBarcodesgenController extends ModuleAdminController
             }
         }
         if (!$isAllowed) {
-            die(Tools::jsonEncode(array(
+            die(json_encode(array(
                 'responseText' => $error,
                 'isAllowed' => $isAllowed,
             )));
@@ -185,7 +198,7 @@ class AdminBarcodesgenController extends ModuleAdminController
             $this->saveDataForNextIteration($data_for_next_iteration);
             $ret['complete'] = false;
             $ret['responseText'] = $this->getResponseText(0, count($product_ids));
-            die(Tools::jsonEncode($ret));
+            die(json_encode($ret));
         }
 
         // For Ajax Handler
@@ -215,7 +228,7 @@ class AdminBarcodesgenController extends ModuleAdminController
                 $total = $data_from_previous_iteration['total'];
                 $ret['complete'] = false;
                 $ret['responseText'] = $this->getResponseText($total - count($product_ids), $total);
-                die(Tools::jsonEncode($ret));
+                die(json_encode($ret));
             } else {
                 break;
             }
@@ -227,7 +240,7 @@ class AdminBarcodesgenController extends ModuleAdminController
             $this->clearTmpStorage();
             $ret['complete'] = true;
             $ret['responseText'] = $this->l('The generation process is finished').'.';
-            die(Tools::jsonEncode($ret));
+            die(json_encode($ret));
         }
     }
 
@@ -246,7 +259,7 @@ class AdminBarcodesgenController extends ModuleAdminController
         if ($clear_tmp_storage) {
             $this->clearTmpStorage();
         }
-        die(Tools::jsonEncode($ret));
+        die(json_encode($ret));
     }
 
     public function setMedia($isNewTheme = false)
@@ -282,7 +295,7 @@ class AdminBarcodesgenController extends ModuleAdminController
     {
         if (method_exists('Context', 'getTranslator')) {
             $this->translator = Context::getContext()->getTranslator();
-            $translated = $this->translator->trans($string);
+            $translated = $this->translator->trans($string, [], 'Modules.Wkinventory.Adminbarcodesgencontroller');
             if ($translated !== $string) {
                 return $translated;
             }

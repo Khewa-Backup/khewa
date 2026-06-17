@@ -1,18 +1,15 @@
 <?php
 /**
- * 2020 Anvanto
- *
- * NOTICE OF LICENSE
- *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
- * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- *
- *  @author Anvanto <anvantoco@gmail.com>
- *  @copyright  2020 Anvanto
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of Anvanto
- */
+* 2022 Anvanto
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+*
+*  @author    Anvanto <anvantoco@gmail.com>
+*  @copyright 2022 Anvanto
+*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*/
  
 class an_wishlistajaxModuleFrontController extends ModuleFrontController
 {
@@ -27,7 +24,7 @@ class an_wishlistajaxModuleFrontController extends ModuleFrontController
             }
         }
 
-        die(Tools::jsonEncode($result));
+        die(json_encode($result));
     }
     
     public function addRemoveAction()
@@ -43,7 +40,7 @@ class an_wishlistajaxModuleFrontController extends ModuleFrontController
             $return['error'] = 'notLogged';
             $this->context->smarty->assign('myAccount', Context::getContext()->link->getPageLink('my-account', null));
             $return['modal'] = $this->module->display($this->module->name, 'modal.tpl');
-            $this->ajaxDie(Tools::jsonEncode($return));
+            $this->ajaxDie(json_encode($return));
         }
 		
 
@@ -98,6 +95,6 @@ class an_wishlistajaxModuleFrontController extends ModuleFrontController
         $return['count'] = an_wish_products::countProductsWishlist($idWish);
         $return['countWishlists'] = an_wish_products::countProductsAllWishlists($idProduct);
 
-        $this->ajaxDie(Tools::jsonEncode($return));
+        $this->ajaxDie(json_encode($return));
     }	
 }

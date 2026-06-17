@@ -22,25 +22,6 @@ namespace PrestaShop\Module\PsAccounts\Adapter;
 
 class Configuration
 {
-    const PS_ACCOUNTS_FIREBASE_ID_TOKEN = 'PS_ACCOUNTS_FIREBASE_ID_TOKEN';
-    const PS_PSX_FIREBASE_ID_TOKEN = 'PS_PSX_FIREBASE_ID_TOKEN';
-    const PS_ACCOUNTS_FIREBASE_REFRESH_TOKEN = 'PS_ACCOUNTS_FIREBASE_REFRESH_TOKEN';
-    const PS_PSX_FIREBASE_REFRESH_TOKEN = 'PS_PSX_FIREBASE_REFRESH_TOKEN';
-    const PS_CHECKOUT_SHOP_UUID_V4 = 'PS_CHECKOUT_SHOP_UUID_V4';
-    const PSX_UUID_V4 = 'PSX_UUID_V4';
-    const PS_PSX_FIREBASE_ADMIN_TOKEN = 'PS_PSX_FIREBASE_ADMIN_TOKEN';
-    const PS_ACCOUNTS_FIREBASE_ADMIN_TOKEN = 'PS_ACCOUNTS_FIREBASE_ADMIN_TOKEN';
-    const PS_PSX_FIREBASE_REFRESH_DATE = 'PS_PSX_FIREBASE_REFRESH_DATE';
-    const PS_PSX_FIREBASE_EMAIL = 'PS_PSX_FIREBASE_EMAIL';
-    const PS_ACCOUNTS_FIREBASE_EMAIL = 'PS_ACCOUNTS_FIREBASE_EMAIL';
-    const PS_PSX_FIREBASE_EMAIL_IS_VERIFIED = 'PS_PSX_FIREBASE_EMAIL_IS_VERIFIED';
-    const PS_ACCOUNTS_FIREBASE_EMAIL_IS_VERIFIED = 'PS_ACCOUNTS_FIREBASE_EMAIL_IS_VERIFIED';
-    const PS_PSX_FIREBASE_LOCAL_ID = 'PS_PSX_FIREBASE_LOCAL_ID';
-    const PS_ACCOUNTS_FIREBASE_LOCAL_ID = 'PS_ACCOUNTS_FIREBASE_LOCAL_ID';
-    const PS_ACCOUNTS_RSA_PUBLIC_KEY = 'PS_ACCOUNTS_RSA_PUBLIC_KEY';
-    const PS_ACCOUNTS_RSA_PRIVATE_KEY = 'PS_ACCOUNTS_RSA_PRIVATE_KEY';
-    const PS_ACCOUNTS_RSA_SIGN_DATA = 'PS_ACCOUNTS_RSA_SIGN_DATA';
-
     /**
      * @var int
      */
@@ -171,5 +152,41 @@ class Configuration
     public function setRaw($key, $values, $html = false, $idShopGroup = null, $idShop = null)
     {
         return \Configuration::updateValue($key, $values, $html, $idShopGroup, $idShop);
+    }
+
+    /**
+     * @param string $key
+     * @param string|array $values
+     * @param bool $html
+     *
+     * @return void
+     */
+    public function setGlobal($key, $values, $html = false)
+    {
+        \Configuration::updateGlobalValue($key, $values, $html);
+    }
+
+    /**
+     * @param string $key
+     * @param int|null $idShopGroup
+     * @param int|null $idShop
+     * @param string|bool $default
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function getUncached($key, $idShopGroup = null, $idShop = null, $default = false)
+    {
+        $id = \Configuration::getIdByName($key, $idShopGroup, $idShop);
+        if ($id > 0) {
+            $found = (new \Configuration($id));
+            $found->clearCache();
+
+            return $found->value;
+        }
+
+        return $default;
     }
 }

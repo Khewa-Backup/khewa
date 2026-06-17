@@ -1,11 +1,27 @@
-{**
- * DiscountGenerator Prestashop Module
- *
- * @author iRessources <support-prestashop@iressources.com>
- * @link http://www.iressources.com/
- * @copyright Copyright &copy; 2015-2019 iRessources
- * @version 1.4.1
- *}
+{*
+* 2007-2025 PrestaShop SA and Contributors
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/afl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+*  @author    PrestaShop SA <contact@prestashop.com>
+*  @copyright 2007-2025 PrestaShop SA and Contributors
+*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  International Registered Trademark & Property of PrestaShop SA
+*}
 {include file="toolbar.tpl" toolbar_btn=$toolbar_btn toolbar_scroll=$toolbar_scroll title=$title}
 <div class="leadin">{block name="leadin"}{/block}</div>
 <div>
@@ -73,7 +89,7 @@
 						 style="{if !isset($show_group_discount) || $show_group_discount == 0}display:none{/if}">
 						<label for="coupon_quantity">{l s='Total quantity of generated coupons' mod='discountgenerator'}</label>
 						<div class="margin-form">
-							<input type="text" size="15" name="coupon_quantity" id="coupon_quantity"
+							<input style="width:150px;" type="text" size="15" name="coupon_quantity" id="coupon_quantity"
 								   value="{if isset($coupon_quantity)}{$coupon_quantity|intval}{/if}"/> <sup>*</sup>
 							<p class="clear">{l s='Total number of unique vouchers' mod='discountgenerator'}</p>
 						</div>
@@ -84,7 +100,7 @@
 								   onclick=""/>
 							<input type="text" placeholder="Code mask" size="15" name="code_mask"
 								   value="{if isset($code_mask)}{$code_mask|escape:'htmlall':'UTF-8'}{/if}" onclick=""
-								   style="width:100px;"/> <sup>*</sup>
+								   style="width:150px;"/> <sup>*</sup>
 							<p class="clear">{l s='Code generation rules (mask: x - digit, y - letter, for example "xxxyy" )' mod='discountgenerator'}</p>
 						</div>
 					</div>
@@ -160,15 +176,15 @@
 <script type="text/javascript">
 	var product_rule_groups_counter = {if isset($product_rule_groups_counter)}{$product_rule_groups_counter|intval}{else}0{/if};
 	var product_rule_counters = new Array();
-	var currentToken = '{$currentToken|escape:'quotes'}';
-	var currentFormTab = '{if isset($smarty.post.currentFormTab)}{$smarty.post.currentFormTab|escape:'quotes'}{else}informations{/if}';
+	var currentToken = '{$currentToken|escape:'quotes':'UTF-8'}';
+	var currentFormTab = '{if isset($smarty.post.currentFormTab)}{$smarty.post.currentFormTab|escape:'quotes':'UTF-8'}{else}informations{/if}';
 
 	var languages = new Array();
 	{foreach from=$languages item=language key=k}
 	languages[{$k}] = {
 		id_lang: {$language.id_lang},
-		iso_code: '{$language.iso_code|escape:'quotes'}',
-		name: '{$language.name|escape:'quotes'}'
+		iso_code: '{$language.iso_code|escape:'quotes':'UTF-8'}',
+		name: '{$language.name|escape:'quotes':'UTF-8'}'
 	};
 	{/foreach}
 	displayFlags(languages, {$id_lang_default});

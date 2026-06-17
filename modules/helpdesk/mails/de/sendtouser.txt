@@ -1,0 +1,15 @@
+Ticket alert from Admin Help Desk
+
+Ticket Replied from admin to {userName}
+
+Message: {message}
+
+This e-mail is a notificetion of a ticket reply from admin help desk.
+
+Please reply the ticket as soon as possible. 
+ 
+Thank you for using help desk ticket system. 
+ 
+powered by PrestaShop™
+
+This module is designed and developed by FMM MODULES

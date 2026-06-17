@@ -13,12 +13,14 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  */
 
 namespace PrestaChamps\MailchimpPro\Formatters;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class PromoRuleFormatter
  *
@@ -36,6 +38,8 @@ class PromoRuleFormatter
      */
     public $cartRule;
 
+    protected $idStore;
+
     const TYPE_FIXED      = 'fixed';
     const TYPE_PERCENTAGE = 'percentage';
 
@@ -49,32 +53,33 @@ class PromoRuleFormatter
      * @param \CartRule $cartRule
      * @param \Context  $context
      */
-    public function __construct(\CartRule $cartRule, \Context $context)
+    public function __construct(\CartRule $cartRule, \Context $context, $idStore = null)
     {
         $this->cartRule = $cartRule;
         $this->context = $context;
+        $this->idStore = $idStore ? $idStore : $this->context->shop->id;
     }
 
     public function format()
     {
-        $data = array(
+        $data = [
             'id' => (string)$this->cartRule->id,
             'title' => $this->cartRule->name,
             'description' => $this->cartRule->description,
             'starts_at' => $this->cartRule->date_from,
             'ends_at' => $this->cartRule->date_to,
             'enabled' => (boolean)$this->cartRule->active,
-        );
+        ];
 
         if ($this->cartRule->free_shipping) {
             $data['type'] = self::TYPE_FIXED;
             $data['target'] = self::TARGET_SHIPPING;
             $data['amount'] = 0;
-        } elseif (isset($this->cartRule->reduction_percent) && $this->cartRule->reduction_percent != 0) {
+        } else if (isset($this->cartRule->reduction_percent) && $this->cartRule->reduction_percent != 0) {
             $data['type'] = self::TYPE_PERCENTAGE;
             $data['amount'] = $this->cartRule->reduction_percent / 100.0;
             $data['target'] = ($this->cartRule->product_restriction ? self::TARGET_PER_ITEM : self::TARGET_TOTAL);
-        } elseif (isset($this->cartRule->reduction_amount) && $this->cartRule->reduction_amount != 0) {
+        } else if (isset($this->cartRule->reduction_amount) && $this->cartRule->reduction_amount != 0) {
             $data['type'] = self::TYPE_FIXED;
             $data['amount'] = $this->cartRule->reduction_amount;
             $data['target'] = ($this->cartRule->product_restriction ? self::TARGET_PER_ITEM : self::TARGET_TOTAL);
@@ -89,10 +94,11 @@ class PromoRuleFormatter
 
     public function formatPromoCode()
     {
-        return array(
+        return [
             'id' => (string)$this->cartRule->id,
             'code' => $this->cartRule->code,
-            'redemption_url' => $this->context->shop->getBaseURL(true, true)
-        );
+            'redemption_url' => $this->context->shop->getBaseURL(true,true),
+			'enabled' => (boolean)$this->cartRule->active
+        ];
     }
 }

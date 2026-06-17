@@ -2,6 +2,12 @@
 
 global $_MODULE;
 $_MODULE = array();
+$_MODULE['<{wkinventory}prestashop>wkinventory_63d5049791d9d79d86e9a108b0a999ca'] = 'Référence';
+$_MODULE['<{wkinventory}prestashop>wkinventory_b9aefa40a54680bb258f9f9569290fae'] = 'Nom produit';
+$_MODULE['<{wkinventory}prestashop>wkinventory_52eb5928a34db3e3da7ba52b0644273b'] = 'EAN13';
+$_MODULE['<{wkinventory}prestashop>wkinventory_fbd99ad01b92dbafc686772a39e3d065'] = 'UPC';
+$_MODULE['<{wkinventory}prestashop>wkinventory_9609dddf3618cff8f67b7829e6fc575e'] = 'ISBN';
+$_MODULE['<{wkinventory}prestashop>wkinventory_294598238a4d88a9920c7e6fba9bb843'] = 'MPN';
 $_MODULE['<{wkinventory}prestashop>wkinventory_534ff90ffe29730f5491ed29028ec5fc'] = 'Wk Gestion Inventaire';
 $_MODULE['<{wkinventory}prestashop>wkinventory_0a7e14cf1841a52ce634493d4bb38fe5'] = 'Gérez facilement et rapidement vos inventaires';
 $_MODULE['<{wkinventory}prestashop>wkinventory_f85a5b520ece4108266fd3764430ccf1'] = 'Attention: toutes les données sauvegardées dans votre base de données seront supprimées. Êtes-vous sûr de vouloir désinstaller ce module?';
@@ -17,15 +23,13 @@ $_MODULE['<{wkinventory}prestashop>wkinventory_a5091da5a6fa1084e693efe48443e43c'
 $_MODULE['<{wkinventory}prestashop>wkinventory_92894d3e1d346e0855dd9901be82dd36'] = 'Paramètres Quantité de Correction (Quantité d\'Ajustement)';
 $_MODULE['<{wkinventory}prestashop>wkinventory_bf37928a5b4e5038cf4439f42a06801e'] = 'Quantité par défaut';
 $_MODULE['<{wkinventory}prestashop>wkinventory_a3bf0eb66343bb0ae0165b4488d0dcc4'] = 'Quantité par défaut à ajouter/diminuer aux stocks des produits';
+$_MODULE['<{wkinventory}prestashop>wkinventory_2f9dbdf6b4bee639c0d9aa2de00495ba'] = 'Vider ce champ pour désactiver cette fonctionnalité.';
 $_MODULE['<{wkinventory}prestashop>wkinventory_052a33bb01a2c0bea7c86e4e76c42fff'] = 'Les valeurs négatives sont autorisées';
 $_MODULE['<{wkinventory}prestashop>wkinventory_cfb49b9e11efc798f7f04380cfccd43b'] = 'Additionner à la quantité d\'ajustement existante';
 $_MODULE['<{wkinventory}prestashop>wkinventory_fc8947b67819d9d10df1ee4081cb3a7c'] = 'Si activé, lors du processus d\'inventaire, additionner (cumuler) la quantité de correction à la quantité d\'ajustement existante, sinon, elle sera remplacée';
 $_MODULE['<{wkinventory}prestashop>wkinventory_05077496e907fa604a46d6fed15c0d28'] = 'Ajouter automatiquement';
 $_MODULE['<{wkinventory}prestashop>wkinventory_e0aaf91f3617f0f12b25ba9bdbfa6303'] = 'Cette option si activée permettra d\'ajouter / mettre à jour automatiquement le stock produit par la quantité de correction dans l\'inventaire sans devoir cliquer chaque fois sur le bouton \"Corriger la quantité du produit\"';
 $_MODULE['<{wkinventory}prestashop>wkinventory_81a8912c749cca701d419fc2a59bc60f'] = 'L\'ajout / mise à jour automatique n\'est effectif que si la recherche trouve bien sûr un seul produit.';
-$_MODULE['<{wkinventory}prestashop>wkinventory_ddb2795c8355429d05a5af11014785ca'] = 'Réinitialiser le stock des produits non inventoriés (modifiés)';
-$_MODULE['<{wkinventory}prestashop>wkinventory_75ec504b7033b2eafd8ee9d71fd079ca'] = 'Cette option n\'est disponible que pour les produits d\'un inventaire qui n\'ont pas été inventoriés (dont les quantités d\'ajustement n\'ont pas subi de modification).';
-$_MODULE['<{wkinventory}prestashop>wkinventory_d8e74a446fc5e809ecba8d025bcb1d43'] = 'Si tel est le cas, après la finalisation (clôture) d\'un inventaire, les quantités disponibles des produits seront réinitialisées (remise à 0).';
 $_MODULE['<{wkinventory}prestashop>wkinventory_67c0577c8175183d5fd31980f45dce0e'] = 'Chaque employé gère ses inventaires';
 $_MODULE['<{wkinventory}prestashop>wkinventory_96834bc0254e3ee8e5f98d852183de7a'] = 'Le super administrateur peut voir et éditer tous les inventaires';
 $_MODULE['<{wkinventory}prestashop>wkinventory_7efb82d9cc4dc9a2a706ee7fe8f1c9e8'] = 'Paramètres Génération Codes-barres';
@@ -40,6 +44,11 @@ $_MODULE['<{wkinventory}prestashop>wkinventory_c9cc8cce247e49bae79f15173ce97354'
 $_MODULE['<{wkinventory}prestashop>wkinventory_dbcfbffd35bbc7b274e02b289514dd63'] = '%d %s codes-barre à générer mais il n\'y a que %d possibilités avec ce préfix.';
 $_MODULE['<{wkinventory}prestashop>wkinventory_cc8ecb0d098bd3e59bcba4b90e402791'] = 'Mise à jour de votre boutique ...';
 $_MODULE['<{wkinventory}prestashop>adminbarcodesgencontroller_1faf943d2a3eebf93e21cf515c9bd2b1'] = 'Générateur de codes EAN / UPC';
+$_MODULE['<{wkinventory}prestashop>adminbarcodesgencontroller_b1f2c68fd37c16683ecba033cccd956d'] = 'Cette fonctionnalité a été créé car nous avons constaté que :';
+$_MODULE['<{wkinventory}prestashop>adminbarcodesgencontroller_6e5b1e6b54ef02ce9437dc9fcd3c8fd8'] = 'De nombreux marchands souhaite générer des codes EAN et / ou UPC afin de faciliter leur gestion de stock en entrepôt.';
+$_MODULE['<{wkinventory}prestashop>adminbarcodesgencontroller_61d500464847ce11b4feabf03052b815'] = 'De nombreux marchands \"fabricants\" souhaitent créer ces codes pour leurs produits afin de les vendre sur les places de marché.';
+$_MODULE['<{wkinventory}prestashop>adminbarcodesgencontroller_0e1d7ad3a6fbeaa0a767878f125b94b8'] = 'Notre module génère des codes EAN et UPC en respectant des algorithmes et des règles de positions spécifiques.';
+$_MODULE['<{wkinventory}prestashop>adminbarcodesgencontroller_3f254dd27be96679155967f994c6fe88'] = 'Le générateur vous permet d’éviter d’acheter des plages de codes EAN et / ou UPC à des prix trop élevés.';
 $_MODULE['<{wkinventory}prestashop>adminbarcodesgencontroller_6d340a6f15700da2164438da99b70f95'] = 'Veuillez patienter, une autre personne est en train de générer des codes';
 $_MODULE['<{wkinventory}prestashop>adminbarcodesgencontroller_9c89bb352efeeb11db4c0685d7ef924a'] = 'Le préfixe est requis pour la génération de codes (voir page de configuration).';
 $_MODULE['<{wkinventory}prestashop>adminbarcodesgencontroller_97942516f72df29214300714f44dc9c9'] = 'Les options de génération pour les codes EAN13 et UPC sont désactivées. Vous devez activer au moins une option depuis la page de configuration pour pouvoir continuer.';
@@ -71,7 +80,6 @@ $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_c9554de29b03ede9e2b1
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_96431b8ad8f7d725ca8f5ffef9c91a34'] = 'Action interdite ou aucun produit à mettre à jour';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_8ae67ce7cfd0e2081ed069daa994c97c'] = 'Scanner/Trouver Produit et Mettre à jour Le Stock';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_4d410a8cd762b8da06aa0d98a04f2ef6'] = 'Commencez à saisir les premières lettres du nom, référence, code EAN13 ou code UPC du produit puis sélectionnez le produit/déclinaison dans le menu déroulant';
-$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_4fc5ec9554e5dbaf2660ac02b454b374'] = 'Référence / Nom produit / EAN / UPC';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_a505c5ca5c97bb2a7ad5d08c14814b61'] = 'Corriger la quantité du produit';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_4dd6cdcec8a9abca766bfa4cb59a0a89'] = 'Correction multiple';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_1a7a4b8661250631d7e6532e54b36ff8'] = 'Quantité à augmenter/diminuer';
@@ -110,10 +118,13 @@ $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_c96f04d133f836deddc3
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_34e34c43ec6b943c10a3cc1a1a16fb11'] = 'Gérer';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_686e697538050e4664636337cc3b834f'] = 'Créer';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_7a1eabc3deb7fd02ceb1e16eafc41073'] = 'inventaire';
-$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_20bc47a3e9ff614f0e96d926d7569ed3'] = 'Clôturer cet inventaire ?';
-$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_bcad4778930250f286a84573f7c3278d'] = 'Lorsque les quantités sont à jour, mettez cette option sur « Oui » et cliquez sur le bouton « Enregistrer » pour permettre la mise à jour des stocks réels de votre boutique et clôturer cet inventaire';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_ddb2795c8355429d05a5af11014785ca'] = 'Réinitialiser le stock des produits non inventoriés';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_75ec504b7033b2eafd8ee9d71fd079ca'] = 'Cette option n\'est disponible que pour les produits d\'un inventaire qui n\'ont pas été inventoriés (dont les quantités d\'ajustement n\'ont pas subi de modification).';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_d8e74a446fc5e809ecba8d025bcb1d43'] = 'Si tel est le cas, après la finalisation (clôture) d\'un inventaire, les quantités disponibles des produits seront réinitialisées (mise à 0).';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_93cba07454f06a4a960172bbd6e2a435'] = 'Oui';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_bafd7322c6e97d25b6299b5d6fe8920b'] = 'Non';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_20bc47a3e9ff614f0e96d926d7569ed3'] = 'Clôturer cet inventaire ?';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_bcad4778930250f286a84573f7c3278d'] = 'Lorsque les quantités sont à jour, mettez cette option sur « Oui » et cliquez sur le bouton « Enregistrer » pour permettre la mise à jour des stocks réels de votre boutique et clôturer cet inventaire';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_06933067aafd48425d67bcb01bba5cb6'] = 'Mettre à jour';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Enregistrer';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_496689fbd342f80d30f1f266d060415a'] = 'Pas de fournisseur';
@@ -121,6 +132,8 @@ $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_9f82518d468b9fee614f
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_f3d695d9bd69183406cb894cf050ebd2'] = 'Vide sans produits?';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_c1a0d81c89134939f832b493b0798bd1'] = 'Si défini sur « Oui », un inventaire vide sera créé vous permettant d\'ajouter progressivement les produits à gérer leurs stocks';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_cbda4c71fc0b1ddb10c1d5a1dbc79e7b'] = 'Les sélections des filtres ci-dessous ne seront pas pris en compte';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_0de9763b6415ca0cfe83daffb5c185c1'] = 'Statut stock';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_fbd8442315206102188bb70cf7d5b3bf'] = 'Statut produit';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_9d188c4d43d7913adeb06ead267f5f8c'] = 'Cliquez sur \"Ouvrir tout\" pour voir toutes les catégories';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_91b442d385b54e1418d81adc34871053'] = 'Sélectionnées';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_b56c3bda503a8dc4be356edb0cc31793'] = 'Réduire tout';
@@ -138,9 +151,11 @@ $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_ff796f630e17756a1e39
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_4f697bcbbc12fab3e641c475df38fc4f'] = 'Après avoir clôturé et fermé l\'inventaire, les quantités disponibles seront REMPLACÉES par les nouvelles définies dans cet inventaire.';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_2cfb175b1ee73d67e538e25b572edaf2'] = 'Impossible de sauvegarder cet inventaire';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_656634bb3e99c098d7f1449696ba4ffe'] = 'Aucun produit trouvé selon les filtres sélectionnés';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_72536f4604a5f39577b9a47b6b442c4c'] = 'Impossible de traiter l\'inventaire ! Limite de pagination = 0 !';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_c14ce5ad0cf4dbaf6362364c0216e554'] = 'Clôture Inventaire';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_cc795f748c0bb78f3fb4900aa9a7bbdc'] = 'Impossible de traiter l\'inventaire ! Veuillez actualiser la page et réessayer ! ';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_bcc6a5adcff035446bcbbd0c9b43bdc3'] = 'Erreur Critique !';
-$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_bd9935a9424e927b84c4fc217ff265d1'] = 'Il n\'y a aucun produit nécessitant un inventaire (aucun mouvement de stock n\'a été détecté pour les produits de cet inventaire) !';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_9ce3e284f82997f28d988036ba1d2387'] = 'Il n\'y a aucun produit nécessitant un inventaire (Aucun mouvement de stock trouvé pour les produits de cet inventaire) !';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_52e0f6128e16b34edddeefa538b1236d'] = 'Mise à jour réussie. Cependant, il semble que le stock de certains produits n\'ait pas été mis à jour !';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_13e668ee5f5cce0416dd3fa35a7496aa'] = 'Éditer à nouveau cet inventaire afin de vérifier et gérer ces produits (marqués avec une ligne rouge).';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_7e31014ad8794df6787d8d0fc5807212'] = 'Clôture Inventaire : Traitement produits';
@@ -151,8 +166,13 @@ $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_fd19484a06d07b9bb9c3
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_f22de4b7c9dd25307704c0531414b0a8'] = 'Vous n\'avez pas assez de quantité utilisable pour le produit %s. Impossible de supprimer %d éléments de %d de %s.';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_688e60bd0b0bc1df2ba9fc808c22df74'] = 'Par conséquent, aucun stock n\'a été retiré.';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_6311685964316cb4d653f8aa98f630b1'] = 'Il n\'est pas possible d\'ajouter du stock au produit %s dans l\'entrepôt %s !';
-$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_9bedffec524698656824dd314453a223'] = 'Aucune commande depuis le début de l\'inventaire';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_ce4877300b6903b254213cc16f97761d'] = 'Définition quantité';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_34c7a11c4311c5342f351990d807db63'] = 'Mise à jour quantité';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_2ba3712db62b932df9fa22cf42670145'] = 'Synchronisation stock';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_a37291c6f87bd92b58a7619f28c0d1b9'] = 'Mise à jour produit inventaire';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_104630b83cd502fa17a42f339748e571'] = 'Les statuts de commandes ne sont pas définis dans la page de configuration.';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_d2390f519e8867bba21d7bea248c5091'] = '%d produit(s) mis à jour.';
+$_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_9bedffec524698656824dd314453a223'] = 'Aucune commande depuis le début de l\'inventaire';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_cc8ecb0d098bd3e59bcba4b90e402791'] = 'Mise à jour de votre boutique ...';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_2938c7f7e560ed972f8a4f68e80ff834'] = 'Tableau de bord';
 $_MODULE['<{wkinventory}prestashop>adminstocktakecontroller_630f6dc397fe74e52d5189e2c80f282b'] = 'Retour à la liste';
@@ -287,4 +307,4 @@ $_MODULE['<{wkinventory}prestashop>form_38e3f343052268d972ab6d5a48f178e5'] = 'L\
 $_MODULE['<{wkinventory}prestashop>form_badf238cbdef5c19ddb6647bf4790018'] = 'Possibilité de [1]réaliser et gérer des inventaires tout en laissant la boutique en ligne ouverte[/1] et [1]continuer à vendre[/1]';
 $_MODULE['<{wkinventory}prestashop>form_c212ea813ac81f6005b48ada7fb293f2'] = 'Générez [1]des codes EAN et UPC valides[/1] sur le marché pour tous vos produits/déclinaisons ou seulement pour [1]les codes manquants[/1] afin de faciliter la gestion de votre stock';
 $_MODULE['<{wkinventory}prestashop>form_5700cac003b8cba06eb35d6eff0fffe3'] = 'Les codes EAN et UPC sont générés automatiquement [1]en respectant des algorithmes et des règles standards précises[/1] ­respectés par notre module';
-$_MODULE['<{wkinventory}prestashop>form_6b8ded5d1a4019e0fc0c25794a075177'] = 'Peut être utilisé pour [1]plusieurs boutiques[/1]';
+$_MODULE['<{wkinventory}prestashop>form_29c2303e7b938d856b64280be36eceb2'] = 'Peut être utilisé par [1]plusieurs employées[/1] en même temps et pour [1]plusieurs boutiques[/1]';

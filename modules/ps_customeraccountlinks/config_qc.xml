@@ -3,7 +3,7 @@
     <name>ps_customeraccountlinks</name>
     <displayName><![CDATA[Bloc Mon compte]]></displayName>
     <version><![CDATA[3.1.1]]></version>
-    <description><![CDATA[Enrich your stats, add a registration progress tab to analyze your visitors&rsquo; behavior.]]></description>
+    <description><![CDATA[Enrichissez vos statistiques en ajoutant un onglet de progression des inscriptions pour analyser le comportement de vos visiteurs. ]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[]]></tab>
     <is_configurable>0</is_configurable>

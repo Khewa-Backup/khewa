@@ -1,1 +1,8 @@
 .icon-AdminEtsyModule:before, .icon-AdminEtsyModule:before { content: "\f019"; }
+
+#content > div.bootstrap > div > div > h1{
+    width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

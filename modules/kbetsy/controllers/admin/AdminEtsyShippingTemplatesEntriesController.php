@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 //Include Etsy Module Class to inherit some common functions and callbacks
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyShippingTemplates.php');
@@ -620,7 +623,7 @@ class AdminEtsyShippingTemplatesEntriesController extends ModuleAdminController
             if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_shipping_templates')))) {
                 $this->page_header_toolbar_btn['new_template'] = array(
                     'href' => $this->context->link->getAdminlink('AdminEtsyShippingTemplatesEntries') . '&addetsy_shipping_templates_entries&id_etsy_shipping_templates=' . Tools::getValue('id_etsy_shipping_templates'),
-                    'desc' => $this->l('Add new'),
+                    'desc' => $this->module->l('Add new'),
                     'icon' => 'process-icon-new'
                 );
             }
@@ -629,7 +632,7 @@ class AdminEtsyShippingTemplatesEntriesController extends ModuleAdminController
         if (Tools::getValue('id_etsy_shipping_templates_entries') || Tools::isSubmit('id_etsy_shipping_templates_entries') || Tools::isSubmit('addetsy_shipping_templates_entries')) {
             $this->page_header_toolbar_btn['kb_cancel_action'] = array(
                 'href' => self::$currentIndex . '&token=' . $this->token,
-                'desc' => $this->l('Cancel'),
+                'desc' => $this->module->l('Cancel'),
                 'icon' => 'process-icon-cancel'
             );
         }

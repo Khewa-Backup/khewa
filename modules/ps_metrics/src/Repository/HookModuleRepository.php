@@ -24,7 +24,7 @@ use Db;
 
 class HookModuleRepository
 {
-    const TABLE_NAME = 'hook_module';
+    public const TABLE_NAME = 'hook_module';
 
     /**
      * setModuleHookPosition

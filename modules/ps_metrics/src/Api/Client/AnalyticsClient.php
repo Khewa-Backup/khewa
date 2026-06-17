@@ -29,7 +29,7 @@ use PrestaShop\Module\Ps_metrics\Middleware\SentryMiddleware;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
-class AnalyticsClient extends ClientFactory
+class AnalyticsClient extends HttpFactory
 {
     /**
      * @var PsAccounts

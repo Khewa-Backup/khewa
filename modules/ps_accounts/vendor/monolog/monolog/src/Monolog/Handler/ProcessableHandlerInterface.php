@@ -1,5 +1,6 @@
-<?php declare(strict_types=1);
+<?php
 
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -8,11 +9,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PrestaShop\Module\PsAccounts\Vendor\Monolog\Handler;
 
-namespace Monolog\Handler;
-
-use Monolog\Processor\ProcessorInterface;
-
+use PrestaShop\Module\PsAccounts\Vendor\Monolog\Processor\ProcessorInterface;
 /**
  * Interface to describe loggers that have processors
  *
@@ -28,13 +27,12 @@ interface ProcessableHandlerInterface
      * @param  ProcessorInterface|callable $callback
      * @return HandlerInterface            self
      */
-    public function pushProcessor($callback): HandlerInterface;
-
+    public function pushProcessor($callback) : HandlerInterface;
     /**
      * Removes the processor on top of the stack and returns it.
      *
      * @throws \LogicException In case the processor stack is empty
      * @return callable
      */
-    public function popProcessor(): callable;
+    public function popProcessor() : callable;
 }

@@ -1,12 +1,10 @@
 <?php
 
-namespace Lcobucci\JWT\Signer\Key;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Key;
 
-use Lcobucci\JWT\Encoding\CannotDecodeContent;
-use Lcobucci\JWT\Signer\Key;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Encoding\CannotDecodeContent;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Key;
 use function base64_decode;
-
 final class InMemory extends Key
 {
     /**
@@ -19,7 +17,6 @@ final class InMemory extends Key
     {
         return new self($contents, $passphrase);
     }
-
     /**
      * @param string $contents
      * @param string $passphrase
@@ -28,15 +25,12 @@ final class InMemory extends Key
      */
     public static function base64Encoded($contents, $passphrase = '')
     {
-        $decoded = base64_decode($contents, true);
-
-        if ($decoded === false) {
+        $decoded = base64_decode($contents, \true);
+        if ($decoded === \false) {
             throw CannotDecodeContent::invalidBase64String();
         }
-
         return new self($decoded, $passphrase);
     }
-
     /**
      * @param string $path
      * @param string $passphrase

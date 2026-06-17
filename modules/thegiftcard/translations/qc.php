@@ -1,0 +1,34 @@
+<?php
+
+global $_MODULE;
+$_MODULE = array();
+$_MODULE['<{thegiftcard}prestashop>thegiftcard_e8d76b829795f3eba6d48acc0249d300'] = 'La carte cadeau';
+$_MODULE['<{thegiftcard}prestashop>content_0092e3a43e53844878c5f2e99fbb1281'] = 'Bonjour %s';
+$_MODULE['<{thegiftcard}prestashop>content_8ee0d54c41b74e7df89acd10adf250a0'] = 'Vous avez reçu une cardeau cadeau d\'une valeur de %s de %s';
+$_MODULE['<{thegiftcard}prestashop>content_db6bb74b198a9fe39338e808f1782d84'] = 'Voici votre carte cadeau au montant de %s';
+$_MODULE['<{thegiftcard}prestashop>content_34e5077927d2db4f849790def13037fb'] = 'carte_cadeau';
+$_MODULE['<{thegiftcard}prestashop>content_a17a1512d4eb7e1ed0c996a555b7e2f4'] = 'Information concernant la carte cadeau';
+$_MODULE['<{thegiftcard}prestashop>content_b2f40690858b404ed10e62bdf422c704'] = 'Montant';
+$_MODULE['<{thegiftcard}prestashop>content_ca0dbad92a874b2f69b549293387925e'] = 'Code';
+$_MODULE['<{thegiftcard}prestashop>content_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
+$_MODULE['<{thegiftcard}prestashop>content_c2fb72b117e34a1c1324513a7b0fc41d'] = 'Comment utiliser votre carte cadeau';
+$_MODULE['<{thegiftcard}prestashop>content_cbf50b74989535a52368bf9cf471a493'] = 'Disponible %s de la date d\'achat, la carte cadeau peut être utilisée dans toute la boutique %s (%s). Elle peut être utilisée plusieurs fois, y compris en période de soldes, et peut être combiné avec un autre mode de paiement. Pour utiliser la carte cadeau, il vous suffit de copier/coller le code ci-dessus lors du processus de paiement de votre prochaine commande.';
+$_MODULE['<{thegiftcard}prestashop>giftcard_865f0024b0d290e38bda156a2ab6c55e'] = 'Veuillez choisir un montant';
+$_MODULE['<{thegiftcard}prestashop>giftcard_8df41ed5ebc778c45f74a201e822613a'] = 'Veuillez choisir un modèle';
+$_MODULE['<{thegiftcard}prestashop>giftcard_be204b49718aa58a4164ea4acb684bdd'] = 'Veuillez choisir le montant';
+$_MODULE['<{thegiftcard}prestashop>giftcard_0433fbe357c68c8b9a053d28917b897b'] = 'Autre montant';
+$_MODULE['<{thegiftcard}prestashop>giftcard_52e85c3895f5eb06d4805e8bf01a7dff'] = 'Montant personnalisé entre';
+$_MODULE['<{thegiftcard}prestashop>giftcard_be5d5d37542d75f93a87094459f76678'] = 'et';
+$_MODULE['<{thegiftcard}prestashop>giftcard_10dc718bf671ff802edcc013954cd0cb'] = 'Échelle de prix';
+$_MODULE['<{thegiftcard}prestashop>giftcard_810339c17c5c61745a8896d48fa45bb5'] = 'Veuillez choisir votre mode d\'envoi';
+$_MODULE['<{thegiftcard}prestashop>giftcard_53a10624b93334d999f75d26b45f1bb4'] = 'Imprimer à la maison';
+$_MODULE['<{thegiftcard}prestashop>giftcard_2107f6398c37b4b9ee1e1b5afb5d3b2a'] = 'Envoyer à un.e ami.e';
+$_MODULE['<{thegiftcard}prestashop>giftcard_2d0f6b8300be19cf35e89e66f0677f95'] = 'Ajouter au panier';
+$_MODULE['<{thegiftcard}prestashop>giftcard_58ddde7380dec705f4a41be178ddcaba'] = 'La carte cadeau n\'est pas encore disponible pour cette devise';
+$_MODULE['<{thegiftcard}prestashop>giftcard_f7cc06af5b47ae5a02f14ce476a9fc25'] = 'Aucune carte cadeau pour le moment';
+$_MODULE['<{thegiftcard}prestashop>emails_1fb0dca951abc12549f7b257b4b7c1df'] = 'Courriel de l\'acheteur';
+$_MODULE['<{thegiftcard}prestashop>emails_6c0745a55a41e0937be6f2e8cd6edde1'] = 'Courriel de l\'ami.e';
+$_MODULE['<{thegiftcard}prestashop>emails_c7892ebbb139886662c6f2fc8c450710'] = 'Sujet';
+$_MODULE['<{thegiftcard}prestashop>emails_d7b54d98a923f3db1e1d6f4c174f8286'] = '\"titre\" tag';
+$_MODULE['<{thegiftcard}prestashop>emails_f15c1cae7882448b3fb0404682e17e61'] = 'Contenu';
+$_MODULE['<{thegiftcard}prestashop>emails_c9cc8cce247e49bae79f15173ce97354'] = 'Sauvegarder';

@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 {$JSON_PRETTY_PRINT = 128}
@@ -60,32 +60,32 @@
                 <td>
                     <div class="well">
                         {* HTML code, no need for escape *}
-                        <pre>{json_encode($automation.recipients, $JSON_PRETTY_PRINT)}</pre>
+                        <pre>{json_encode($automation.recipients, $JSON_PRETTY_PRINT)|escape:'htmlall':'UTF-8'}</pre> {* HTML comment, no escape necessary *}
                     </div>
                 </td>
                 <td>
                     <div class="well">
                         {* HTML code, no need for escape *}
-                        <pre>{json_encode($automation.settings, $JSON_PRETTY_PRINT)}</pre>
+                        <pre>{json_encode($automation.settings, $JSON_PRETTY_PRINT)|escape:'htmlall':'UTF-8'}</pre> {* HTML comment, no escape necessary *}
                     </div>
                 </td>
                 <td>
                     <div class="well">
                         {* HTML code, no need for escape *}
-                        <pre>{json_encode($automation.tracking, $JSON_PRETTY_PRINT)}</pre>
+                        <pre>{json_encode($automation.tracking, $JSON_PRETTY_PRINT)|escape:'htmlall':'UTF-8'}</pre> {* HTML comment, no escape necessary *}
                     </div>
                 </td>
                 <td>
                     <div class="well">
                         {* HTML code, no need for escape *}
-                        <pre>{json_encode($automation.trigger_settings, $JSON_PRETTY_PRINT)}</pre>
+                        <pre>{json_encode($automation.trigger_settings, $JSON_PRETTY_PRINT)|escape:'htmlall':'UTF-8'}</pre> {* HTML comment, no escape necessary *}
                     </div>
                 </td>
                 <td>
                     <div class="well">
                         {if isset($automation.report_summary)}
                             {* HTML code, no need for escape *}
-                            <pre>{json_encode($automation.report_summary, $JSON_PRETTY_PRINT)}</pre>
+                            <pre>{json_encode($automation.report_summary, $JSON_PRETTY_PRINT)|escape:'htmlall':'UTF-8'}</pre> {* HTML comment, no escape necessary *}
                         {/if}
                     </div>
                 </td>

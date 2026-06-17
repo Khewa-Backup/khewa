@@ -1,73 +1,52 @@
 <?php
 /**
- * 2007-2020 ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
  *
  * NOTICE OF LICENSE
  *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
  * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- * 
+ *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please contact us for extra customization service at an affordable price
+ * versions in the future.
  *
- *  @author ETS-Soft <etssoft.jsc@gmail.com>
- *  @copyright  2007-2021 ETS-Soft
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of ETS-Soft
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
  */
 
-if (!defined('_PS_VERSION_'))
-    	exit;
+if (!defined('_PS_VERSION_')) { exit; }
+
+/**
+ * Class AdminSuperSpeedSystemAnalyticsController
+ * @property Ets_superspeed $module
+ */
 class AdminSuperSpeedSystemAnalyticsController extends ModuleAdminController
 {
     public function __construct()
     {
        parent::__construct();
-       $this->context= Context::getContext();
        $this->bootstrap = true;
     }
     public function initContent()
     {
         parent::initContent();
         $change_register_option = (int)Tools::getValue('change_register_option');
-        if(Tools::isSubmit('change_register_option') && ($id_module = Tools::getValue('id_module')) && ($hook_name = Tools::getValue('hook_name')) && Validate::isHookName($hook_name))
+        if(Tools::isSubmit('change_register_option') && ($id_module = (int)Tools::getValue('id_module')) && ($hook_name = Tools::getValue('hook_name')) && Validate::isHookName($hook_name))
         {
             $id_hook = Hook::getIdByName($hook_name);
-            if($id_hook && $id_module && Validate::isUnsignedId($id_hook) && Validate::isUnsignedId($id_module))
+            if($id_hook && Validate::isUnsignedId($id_module))
             {
-                $module = Module::getInstanceById($id_module);
-                if($change_register_option)
-                {
-                    if(!$module->isRegisteredInHook($hook_name))
-                    {
-                        $module->registerHook($hook_name);
-                        $module_hook_old = Db::getInstance()->getRow('SELECT * FROM `'._DB_PREFIX_.'ets_superspeed_hook_module` WHERE id_module="'.(int)$id_module.'" AND id_hook="'.(int)$id_hook.'" AND id_shop='.(int)$this->context->shop->id);
-                        if($module_hook_old)
-                            $module->updatePosition($id_hook,false,$module_hook_old['position']);
-                    }
-                    Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'ets_superspeed_hook_module` WHERE id_module="'.(int)$id_module.'" AND id_hook="'.(int)$id_hook.'" AND id_shop="'.(int)$this->context->shop->id.'"');
-                }
-                else
-                {
-                    if($module->isRegisteredInHook($hook_name))
-                    {
-                        $postion = $module->getPosition($id_hook);
-                        $module->unregisterHook($hook_name); 
-                    }
-                    else
-                        $postion=0;
-                    Db::getInstance()->execute('INSERT INTO `'._DB_PREFIX_.'ets_superspeed_hook_module`(id_module,id_hook,position,id_shop) values("'.(int)$id_module.'","'.(int)$id_hook.'","'.(int)$postion.'","'.(int)$this->context->shop->id.'")');
-                }
+                Ets_superspeed_defines::changeRegisterHook($change_register_option,$hook_name,$id_module,$id_hook, $this->context);
                 if(Tools::isSubmit('ajax'))
                 {
                     die(
-                        Tools::jsonEncode(
+                        json_encode(
                             array(
-                                'success' =>$change_register_option ? $this->module->l('Hook registered successfully. Clear cache to see changes in front office.'): $this->module->l('Hook unregistered'),
+                                'success' =>$change_register_option ? $this->module->l('Hook registered successfully. Clear cache to see changes in front office.', 'AdminSuperSpeedSystemAnalyticsController'): $this->module->l('Hook unregistered', 'AdminSuperSpeedSystemAnalyticsController'),
                                 'url'=> $this->context->link->getAdminLink('AdminSuperSpeedSystemAnalytics').'&change_register_option='.($change_register_option?'0':'1').'&id_module='.(int)$id_module.'&hook_name='.$hook_name,
                             )
                         )
@@ -80,22 +59,22 @@ class AdminSuperSpeedSystemAnalyticsController extends ModuleAdminController
             {
                 if(Tools::isSubmit('ajax'))
                     die(
-                        Tools::jsonEncode(
+                        json_encode(
                             array(
-                                'error' => $this->module->l('Module or hook does not exist'),
+                                'error' => $this->module->l('Module or hook does not exist', 'AdminSuperSpeedSystemAnalyticsController'),
                             )
                         )
                     );
                 else   
-                    $this->context->controller->errors[] = $this->module->l('Module or hook does not exist');
+                    $this->context->controller->errors[] = $this->module->l('Module or hook does not exist', 'AdminSuperSpeedSystemAnalyticsController');
             }
         }
         if(Tools::isSubmit('paggination_ajax'))
         {
             die(
-                Tools::jsonEncode(
+                json_encode(
                     array(
-                        'html' =>$this->module->renderSpeedSystemAnalytics(),
+                        'html' =>$this->renderSpeedSystemAnalytics(),
                     )
                 )
             );
@@ -105,9 +84,9 @@ class AdminSuperSpeedSystemAnalyticsController extends ModuleAdminController
             $ETS_SPEED_RECORD_MODULE_PERFORMANCE = (int)Tools::getValue('ETS_SPEED_RECORD_MODULE_PERFORMANCE');
             Configuration::updateValue('ETS_SPEED_RECORD_MODULE_PERFORMANCE',$ETS_SPEED_RECORD_MODULE_PERFORMANCE);
             die(
-                Tools::jsonEncode(
+                json_encode(
                     array(
-                        'success' => $this->module->l('Updated successfully'),
+                        'success' => $this->module->l('Updated successfully', 'AdminSuperSpeedSystemAnalyticsController'),
                     )
                 )
             );
@@ -117,9 +96,130 @@ class AdminSuperSpeedSystemAnalyticsController extends ModuleAdminController
     {
         $this->context->smarty->assign(
             array(
-                'html_form' =>$this->module->renderSpeedSystemAnalytics(),
+                'site_url_home' => $this->module->getLinkHomePage(),
+                'html_form' =>$this->renderSpeedSystemAnalytics(),
             )
         );
         return $this->module->display(_PS_MODULE_DIR_.$this->module->name.DIRECTORY_SEPARATOR.$this->module->name.'.php', 'admin.tpl');
+    }
+    public function renderSpeedSystemAnalytics()
+    {
+        $sql_filter = '';
+        $orderby = Tools::getValue('Orderby', 'pht.time');
+        if(!in_array($orderby,array('pht.time','pht.hook_name','pht.date_add','phm.id_module')))
+            $orderby ='pht.time';
+        $orderway = Tools::strtolower(Tools::getValue('Orderway', 'desc'));
+        if(!in_array($orderway,array('desc','asc')))
+            $orderway ='desc';
+        if (Tools::isSubmit('submitFilterModule')) {
+            $filter = array();
+            if (($module_name = trim(Tools::getValue('module_name'))) || $module_name!='') {
+                $filter['module_name'] = $module_name;
+                if(Validate::isCleanHtml($module_name))
+                    $sql_filter .= ' AND m.name like "%' . pSQL($module_name) . '%"';
+
+            }
+            if (($hook_name = trim(Tools::getValue('hook_name'))) || $hook_name!='') {
+                $filter['hook_name'] = $hook_name;
+                if(Validate::isCleanHtml($hook_name))
+                    $sql_filter .= ' AND pht.hook_name like "%' . pSQL($hook_name) . '%"';
+            }
+            if (trim(Tools::isSubmit('disabled'))) {
+                $filter['disabled'] = Tools::getValue('disabled');
+                if ($filter['disabled'] != '' && Validate::isInt($filter['disabled'])) {
+                    if ($filter['disabled'] == 1) {
+                        $sql_filter .= ' AND phm.id_module is not null';
+                    } else {
+                        unset($filter['disabled']);
+                        $sql_filter .= ' AND phm.id_module is null';
+                    }
+                }
+            }
+            if (($date_add_from = Tools::getValue('date_add_from')) || $date_add_from!='') {
+                $filter['date_add_from'] = $date_add_from;
+                if(Validate::isDate($date_add_from))
+                    $sql_filter .= ' AND pht.date_add >= "' . pSQL($date_add_from) . ' 00:00:00"';
+            }
+            if (($date_add_to = Tools::getValue('date_add_to')) || $date_add_to!='') {
+                $filter['date_add_to'] = $date_add_to;
+                if(Validate::isDate($date_add_to))
+                    $sql_filter .= ' AND pht.date_add <= "' . pSQL($date_add_to) . ' 23:59:59"';
+            }
+            if (($module_page = Tools::getValue('module_page')) && $module_page!='') {
+                $filter['module_page'] = $module_page;
+                if(Validate::isCleanHtml($module_page))
+                    $sql_filter .= ' AND pht.page LIKE "%' . pSQL($module_page) . '%"';
+            }
+            if (($module_time_min = Tools::getValue('module_time_min')) || $module_time_min!='' ) {
+                $filter['module_time_min'] = (float)$module_time_min;
+                $sql_filter .= ' AND pht.time >="' . ((float)$module_time_min / 1000) . '"';
+            }
+            if (($module_time_max =Tools::getValue('module_time_max')) || $module_time_max!='' ) {
+                $filter['module_time_max'] = (float)$module_time_max;
+                $sql_filter .= ' AND pht.time <= "' . ((float)$module_time_max / 1000) . '"';
+            }
+            if ($filter) {
+                $filter['submitFilterModule'] = 1;
+                $this->context->smarty->assign(
+                    array(
+                        'filter' => $filter,
+                    )
+                );
+            }
+        } else
+            $sql_filter = 'AND phm.id_module is null';
+        $page = (int)Tools::getValue('page');
+        if($page<1)
+            $page =1;
+        $totalRecords = (int)Ets_superspeed_defines::getHookTimeByFilter($this->context->shop->id, $sql_filter,true);
+        $paggination = new Ets_superspeed_pagination_class();
+        $paggination->total = $totalRecords;
+        $paggination->url = $this->context->link->getAdminLink('AdminSuperSpeedSystemAnalytics', true) . '&page=_page_' . (isset($filter) ? $this->module->getFilterValues($filter) : '') . '&Orderby=' . $orderby . '&OrderWay=' . $orderway;
+        $paggination->limit = 20;
+        $totalPages = ceil($totalRecords / $paggination->limit);
+        if ($page > $totalPages)
+            $page = $totalPages;
+        $paggination->page = $page;
+        $start = (int)$paggination->limit * ((int)$page - 1);
+        if ($start < 0)
+            $start = 0;
+        $paggination->text = $this->module->l('Showing {start} to {end} of {total} ({pages} Pages)', 'AdminSuperSpeedSystemAnalyticsController');
+        $paggination->style_links = $this->module->l('links', 'AdminSuperSpeedSystemAnalyticsController');
+        $module_hooks = Ets_superspeed_defines::getHookTimeByFilter($this->context->shop->id, $sql_filter,false,$orderby,$orderway,$start,$paggination->limit);
+        if ($module_hooks) {
+            foreach ($module_hooks as $key=> &$module_hook) {
+                $module = Module::getInstanceById($module_hook['id_module']);
+                if($module)
+                {
+                    $module_hook['display_name'] = $module->displayName;
+                    $module_hook['logo'] = $this->module->getBaseLink() . '/modules/' . $module->name . '/logo.png';
+                }
+                else
+                    unset($module_hooks[$key]);
+
+            }
+        }
+        $tab_current = Tools::getValue('tab_current', 'module_performance');
+        $this->context->smarty->assign(
+            array(
+                'module_hooks' => $module_hooks,
+                'extra_hooks' => $this->module->getCheckPoints(),
+                'orderby' => Validate::isCleanHtml($orderby) ? $orderby:'pht.time',
+                'orderway' => in_array($orderway,array('desc','asc')) ? $orderway :'desc',
+                'tab_current' => Validate::isCleanHtml($tab_current) ? $tab_current:'module_performance',
+                'ETS_SPEED_RECORD_MODULE_PERFORMANCE' => Configuration::get('ETS_SPEED_RECORD_MODULE_PERFORMANCE'),
+                'url_base' => $this->context->link->getAdminLink('AdminSuperSpeedSystemAnalytics', true) . '&page=' . (int)$page . (isset($filter) ? $this->module->getFilterValues($filter) : ''),
+                'url_base_sort' => $this->context->link->getAdminLink('AdminSuperSpeedSystemAnalytics', true) . '&page=1'. (isset($filter) ? $this->module->getFilterValues($filter) : ''),
+                'paggination' => $paggination->render(),
+            )
+        );
+        if (Tools::isSubmit('paggination_ajax')) {
+            $this->context->smarty->assign(
+                array(
+                    'ajax' => 1,
+                )
+            );
+        }
+        return $this->module->display(_PS_MODULE_DIR_.$this->module->name.DIRECTORY_SEPARATOR.$this->module->name.'.php', 'system_analytics.tpl');
     }
 }

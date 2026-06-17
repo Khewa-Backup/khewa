@@ -18,13 +18,16 @@
  */
 
 namespace PrestaChamps\MailchimpPro\Hooks\Display;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 use Context;
-use DrewM\MailChimp\MailChimp;
+use PrestaChamps\MailChimpAPI;
 use Module;
-use PrestaChamps\MailchimpPro\Formatters\ListMemberFormatter;
 use Tools;
-use UnexpectedValueException;
+use PrestaChamps\Queue\Queue;
+use PrestaChamps\Queue\Jobs\NewsletterSubscriberSyncJob;
+use PrestaChamps\MailchimpPro\Commands\NewsletterSubscriberSyncCommand;
 
 /**
  * Class FooterBefore
@@ -35,80 +38,76 @@ class FooterBefore
     /**
      * @var array
      */
-    private $params;
+    private $_params;
 
     /**
-     * @var MailChimp
+     * @var MailChimpAPI
      */
-    private $mailChimp;
+    private $_mailChimp;
 
     /**
      * @var Context
      */
-    private $context;
+    private $_context;
 
-    protected function __construct($params, MailChimp $mailChimp, Context $context)
+    protected function __construct($params, MailChimpAPI $mailChimp, Context $context)
     {
-        $this->params = $params;
-        $this->mailChimp = $mailChimp;
-        $this->context = $context;
+        $this->_params = $params;
+        $this->_mailChimp = $mailChimp;
+        $this->_context = $context;
     }
 
-    public static function run($params, MailChimp $mailchimp, Context $context)
+    public static function run($params, MailChimpAPI $mailchimp, Context $context)
     {
-        return new static($params, $mailchimp, $context);
+        return new FooterBefore($params, $mailchimp, $context);
     }
 
     public function newsletterBlockRegistration()
     {
-        $subscriptionIsEnabled = Module::isEnabled('Ps_Emailsubscription')
-            || Module::isEnabled('blocknewsletter');
-        if (Tools::isSubmit('submitNewsletter') && $subscriptionIsEnabled) {
-            $subscriberHash = md5(Tools::strtolower(Tools::getValue('email')));
-            $listId = $this->getListIdFromStore();
-            $this->mailChimp->put(
-                "/lists/{$listId}/members/{$subscriberHash}",
-                array(
-                    'email_address' => Tools::getValue('email'),
-                    'status'        => $this->getListRequiresDOI($listId)
-                        ? ListMemberFormatter::STATUS_PENDING
-                        : ListMemberFormatter::STATUS_SUBSCRIBED
-                )
-            );
+        if (\Configuration::get(\MailchimpProConfig::SYNC_NEWSLETTER_SUBSCRIBERS)) {
+            $subscriptionIsEnabled = Module::isEnabled('Ps_Emailsubscription')
+                || Module::isEnabled('blocknewsletter');
+            if (Tools::isSubmit('submitNewsletter') && $subscriptionIsEnabled) {
+                // If PrestaShop Double Opt-In is enabled, skip sync here —
+                // actionNewsletterRegistrationAfter will handle it after email verification
+                if ($this->isPrestaShopDoubleOptInEnabled()) {
+                    return false;
+                }
+
+                $newsletterSubscriber['email'] = Tools::getValue('email');
+                if (isset($this->_context->language->id) && $this->_context->language->id) {
+                    $newsletterSubscriber['id_lang'] = $this->_context->language->id;
+                }
+                if (!\Configuration::get(\MailchimpProConfig::CRONJOB_BASED_SYNC)) {
+                    $command = new NewsletterSubscriberSyncCommand(
+                        Context::getContext(),
+                        Module::getInstanceByName('mailchimppro')->getApiClient(),
+                        [$newsletterSubscriber]
+                    );
+                    $command->setSyncMode($command::SYNC_MODE_REGULAR);
+                    $command->setMethod($command::SYNC_METHOD_PUT);
+                    return $command->execute();
+                } else {
+                    $job = new NewsletterSubscriberSyncJob();
+                    $job->newsletterSubscriber = $newsletterSubscriber;
+                    $job->setSyncMode(NewsletterSubscriberSyncCommand::SYNC_MODE_REGULAR);
+                    $job->setMethod(NewsletterSubscriberSyncCommand::SYNC_METHOD_PUT);
+                    $queue = new Queue();
+                    $queue->push($job, 'hook-footer-before', $this->_context->shop->id);
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     /**
-     * Get list ID from store
-     *
-     * @return string
-     */
-    protected function getListIdFromStore()
-    {
-        $listId = $this->mailChimp->get("/ecommerce/stores/{$this->context->shop->id}", array('fields' => 'list_id'));
-
-        if (isset($listId['list_id']) && $this->mailChimp->success()) {
-            return $listId['list_id'];
-        }
-
-        throw new UnexpectedValueException("Can't determine LIST id from store");
-    }
-
-    /**
-     * Decide if a list requires the Double Opt In feature
-     *
-     * @param $listId
+     * Check if PrestaShop's ps_emailsubscription Double Opt-In is enabled
      *
      * @return bool
      */
-    protected function getListRequiresDOI($listId)
+    protected function isPrestaShopDoubleOptInEnabled()
     {
-        $list = $this->mailChimp->get("/lists/{$listId}", array('fields' => 'double_optin'));
-
-        if (isset($list['double_optin']) && $this->mailChimp->success()) {
-            return (bool)$list['double_optin'];
-        }
-
-        throw new UnexpectedValueException("Can't determine if the value requires double optin or not");
+        return (bool) \Configuration::get('NW_VERIFICATION_EMAIL');
     }
 }

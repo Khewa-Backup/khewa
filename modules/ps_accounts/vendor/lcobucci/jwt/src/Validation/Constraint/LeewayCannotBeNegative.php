@@ -1,10 +1,9 @@
 <?php
 
-namespace Lcobucci\JWT\Validation\Constraint;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Validation\Constraint;
 
 use InvalidArgumentException;
-use Lcobucci\JWT\Exception;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 final class LeewayCannotBeNegative extends InvalidArgumentException implements Exception
 {
     /** @return self */

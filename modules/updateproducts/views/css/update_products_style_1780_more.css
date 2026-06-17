@@ -1,0 +1,155 @@
+.updateproducts .form-wrapper  {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+.updateproducts .form-group {
+    margin-bottom: 10px;
+}
+
+.updateproducts .form-group .col-lg-8,
+.updateproducts .form_group_list_settings .col-lg-8 {
+    width: 75%;
+}
+
+.updateproducts .form-group .col-lg-4 {
+    width: 25%;
+}
+
+.updateproducts .export_strip_tags .prestashop-switch,
+.updateproducts .form_group_class_update .prestashop-switch,
+.updateproducts .form_group_class_set_name .prestashop-switch{
+    height: 20px !important;
+}
+
+
+.updateproducts .sort_block_orderway .col-lg-8 .radio {
+    float: left;
+    width: 105px;
+    padding-top: 2px;
+}
+
+.updateproducts .sort_block_orderway .col-lg-8 .radio label {
+    border: 1px solid #dadada;
+    padding: 5px 25px 5px 40px;
+    border-radius: 3px;
+}
+.updateproducts .sort_block_orderway .col-lg-8 .radio label input[type='radio'] {
+    margin: 2px 0 0;
+    float: left;
+    margin-left: -20px;
+}
+
+.updateproducts .control-label {
+    padding-right: 20px;
+}
+
+.updateproducts .tree-panel-heading-controls .btn {
+    margin-bottom: 3px;
+}
+
+.updateproducts .col-lg-6 .search_checkbox_table,
+.updateproducts .tree-panel-heading-controls #categories-tree-categories-search {
+    height: 35px;
+}
+
+.updateproducts .col-lg-8 input[type="text"]{
+    height: 32px !important;
+}
+
+.updateproducts .exportFields .col-lg-8,
+.updateproducts .updateFields .col-lg-8 {
+    width: 100% !important;
+}
+.updateproducts .exportFields .col-lg-offset-3,
+.updateproducts .updateFields .col-lg-offset-3 {
+    margin-left: 0;
+}
+
+.updateproducts .new_settings_form .col-lg-4,
+.updateproducts .update_settings_form .col-lg-4
+{
+    width: 33.33333%;
+}
+
+.updateproducts .new_settings_form .col-lg-8,
+.updateproducts .update_settings_form .col-lg-8{
+    width: 66.66667%;
+    margin-top: 10px;
+}
+
+.updateproducts .save_settings_reset_filters .col-lg-offset-3 {
+    margin-left: 9%;
+}
+
+.updateproducts .new_settings_form,
+.updateproducts .update_settings_form {
+    margin-top: 10px;
+}
+
+.updateproducts .new_settings_form .control-label,
+.updateproducts .update_settings_form .control-label {
+    margin-top: 8px;
+}
+
+.updateproducts .form_group_list_settings .col-lg-offset-3 {
+    margin-left: 0;
+}
+
+.updateproducts .form_group_list_settings .col-lg-8 {
+    width: 100%;
+    margin-top: 25px;
+}
+
+.updateproducts .form_group_list_settings .col-lg-8 .list-settings-module-header {
+    text-transform: uppercase;
+    font-weight: bold;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #dadada;
+}
+
+.updateproducts .form_group_list_settings .col-lg-8 ul {
+    list-style: none;
+    padding-left: 0px;
+}
+
+.updateproducts .form_group_list_settings .col-lg-8 ul li.active_setting {
+    background-color: #F6FBFD;
+}
+
+.updateproducts .form_group_list_settings .col-lg-8 ul li {
+    font-size: 14px;
+    border-bottom: 1px solid #dadada;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+    position: relative;
+}
+
+.updateproducts .form_group_list_settings .col-lg-8 ul .icon-trash {
+    font-size: 20px;
+}
+
+.updateproducts .form_group_list_settings .col-lg-8 ul .delete_setting,
+.updateproducts .form_group_list_settings .col-lg-8 ul .delete_setting_update {
+    padding: 6px 12px;
+    float: right;
+    margin-top: 2px;
+}
+
+.updateproducts .form_group_upload_file #file-name {
+    height: 39px !important;
+}
+
+.updateproducts .manufacturer_list {
+    width: 50% !important;
+}
+
+.updateproducts .supplier_list .col-lg-9 {
+    width: 75% !important;
+}
+
+#filter_products .table #show_checked,
+#filter_products .table #show_all {
+    padding: 6px 8px;
+}

@@ -172,4 +172,3 @@
 		return this.core().wrapElement().find('.text-focus');
 	};
 })(jQuery);
-

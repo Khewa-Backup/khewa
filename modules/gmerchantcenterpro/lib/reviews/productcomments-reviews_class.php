@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -59,11 +60,9 @@ class BT_ProductcommentsReviews implements BT_IReviews
                     $aGenericArray[$sKey]['sDate'] = $aReview['date_add'];
                     $aGenericArray[$sKey]['sReview'] = $aReview['content'];
                     $aGenericArray[$sKey]['sTitle'] = $aReview['title'];
-                    $aGenericArray[$sKey]['sReviewUrl'] = BT_GmcProModuleTools::getProductLink((int)$aReview['id_product'],
-                        $iLangId);
+                    $aGenericArray[$sKey]['sReviewUrl'] = BT_GmcProModuleTools::getProductLink((int)$aReview['id_product'], $iLangId);
                     $aGenericArray[$sKey]['sRating'] = $aReview['grade'];
-                    $aGenericArray[$sKey]['sProductUrl'] = BT_GmcProModuleTools::getProductLink((int)$aReview['id_product'],
-                        $iLangId);
+                    $aGenericArray[$sKey]['sProductUrl'] = BT_GmcProModuleTools::getProductLink((int)$aReview['id_product'], $iLangId);
                     $aGenericArray[$sKey]['sProductName'] = $oProduct->name[$iLangId];
 
                     // USE case for the GTIN code // Same logic as the product data feed.

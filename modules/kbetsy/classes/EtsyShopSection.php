@@ -25,11 +25,20 @@ class EtsyShopSection extends ObjectModel
     public $shop_section_title;
     public $shop_section_date_added;
     public $shop_section_date_update;
+    /*
+     * Updated 'fields' definition to include all table columns for PrestaShop 9.0 compatibility
+     * 27-12-2024
+     */
     public static $definition = array(
         'table' => 'etsy_shop_section',
         'primary' => 'id_etsy_shop_section',
         'fields' => array(
-            'shop_section_title' => array('type' => self::TYPE_STRING, 'required' => true),
+            'shop_section_title' => array('type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 25, 'required' => true),
+            'delete_flag' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
+            'renew_flag' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
+            'shop_section_date_added' => array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
+            'shop_section_date_update' => array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
+            'shop_section_id' => array('type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 20, 'required' => true),
         )
     );
 

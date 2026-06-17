@@ -13,10 +13,12 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class AdminMailchimpProCartsController
  *
@@ -37,6 +39,9 @@ class AdminMailchimpProStoresController extends \PrestaChamps\MailchimpPro\Contr
         $this->mailchimp->delete("/ecommerce/stores/{$id}");
 
         if ($this->mailchimp->success()) {
+            if ($id == $this->getShopId()) {
+                \MailchimpProConfig::saveValue(\MailchimpProConfig::MAILCHIMP_STORE_SYNCED, false);
+            }
             return true;
         }
         return false;

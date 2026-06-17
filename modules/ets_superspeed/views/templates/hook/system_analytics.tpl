@@ -1,22 +1,20 @@
 {*
-* 2007-2020 ETS-Soft
-*
-* NOTICE OF LICENSE
-*
-* This file is not open source! Each license that you purchased is only available for 1 wesite only.
-* If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
-* You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
-* 
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs, please contact us for extra customization service at an affordable price
-*
-*  @author ETS-Soft <etssoft.jsc@gmail.com>
-*  @copyright  2007-2021 ETS-Soft
-*  @license    Valid for 1 website (or project) for each purchase of license
-*  International Registered Trademark & Property of ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
+ * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future.
+ *
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
 *}
 {if !isset($ajax)}
 <script type="text/javascript">
@@ -29,21 +27,26 @@
 <div class="module_system_analytics">
     <form class="defaultForm form-horizontal" action="{$link->getAdminLink('AdminSuperSpeedSystemAnalytics')|escape:'html':'UTF-8'}" method="post">
         <div id="fieldset_0" class="panel">
-            <div class="panel-heading">
-                {l s='System Analytics' mod='ets_superspeed'}
-                <label for="ETS_SPEED_RECORD_MODULE_PERFORMANCE">
-                    <input id="ETS_SPEED_RECORD_MODULE_PERFORMANCE" value="1" name="ETS_SPEED_RECORD_MODULE_PERFORMANCE" type="checkbox"{if $ETS_SPEED_RECORD_MODULE_PERFORMANCE} checked="checked"{/if} />
-                    <span class="sp_configuration_switch">
-                    <span class="sp_configuration_label on">{l s='On' mod='ets_superspeed'}</span>
-                    <span class="sp_configuration_label off">{l s='Off' mod='ets_superspeed'}</span>
-                    </span>
-                    {l s='Record module performance (Should be turned off for production website)' mod='ets_superspeed'}
-                </label>
+            <div class="ets_sp_confitab_wrap">
+                <div class="panel-heading">
+                    {l s='System Analytics' mod='ets_superspeed'}
+                </div>
             </div>
             <ul class="tab_config_page_cache">
                 <li class="confi_tab config_tab_module_performance{if $tab_current =='module_performance'} active{/if}" data-tab-id="module_performance">{l s='Module performance' mod='ets_superspeed'}</li>
                 <li class="confi_tab config_tab_extra_checks{if $tab_current =='extra_checks'} active{/if}" data-tab-id="extra_checks">{l s='Extra checks' mod='ets_superspeed'}</li>
+                <li class="viewmore_dropdown">
+                    <span class="threedots"></span>
+                </li>
             </ul>
+            <label for="ETS_SPEED_RECORD_MODULE_PERFORMANCE">
+                <input id="ETS_SPEED_RECORD_MODULE_PERFORMANCE" value="1" name="ETS_SPEED_RECORD_MODULE_PERFORMANCE" type="checkbox"{if $ETS_SPEED_RECORD_MODULE_PERFORMANCE} checked="checked"{/if} />
+                <span class="sp_configuration_switch">
+                    <span class="sp_configuration_label on">{l s='On' mod='ets_superspeed'}</span>
+                    <span class="sp_configuration_label off">{l s='Off' mod='ets_superspeed'}</span>
+                    </span>
+                {l s='Record module performance (Should be turned off for production website)' mod='ets_superspeed'}
+            </label>
             <div class="responsive tabble" >
             <table class="table table_analytics module_performance{if !$module_hooks} table_nodata{/if}">
                 <thead>
@@ -51,21 +54,15 @@
                         <th class="module_name">
                             <span class="title_box">
                             {l s='Module' mod='ets_superspeed'}
-                                {*<a {if isset($orderby) && $orderby=='m.name' && isset($orderway) && $orderway=='desc'}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=m.name&Orderway=desc">
-                                    <i class="icon-caret-down"></i>
-                                </a>
-                                <a {if isset($orderby) && $orderby=='m.name' && isset($orderway) && $orderway=='asc'}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=m.name&Orderway=asc">
-                                    <i class="icon-caret-up"></i>
-                                </a>*}
                             </span>
                         </th>
                         <th class="hook_name">
                             <span class="title_box">
                             {l s='Hook name' mod='ets_superspeed'}
-                                <a {if isset($orderby) && $orderby=='pht.hook_name' && isset($orderway) && $orderway=='desc'}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=pht.hook_name&Orderway=desc">
+                                <a {if isset($orderby) && $orderby=='pht.hook_name' && isset($orderway) && $orderway=='desc'}class="active"{/if} href="{$url_base_sort|escape:'html':'UTF-8'}&Orderby=pht.hook_name&Orderway=desc">
                                     <i class="icon-caret-down"></i>
                                 </a>
-                                <a {if isset($orderby) && $orderby=='pht.hook_name' && isset($orderway) && $orderway=='asc'}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=pht.hook_name&Orderway=asc">
+                                <a {if isset($orderby) && $orderby=='pht.hook_name' && isset($orderway) && $orderway=='asc'}class="active"{/if} href="{$url_base_sort|escape:'html':'UTF-8'}&Orderby=pht.hook_name&Orderway=asc">
                                     <i class="icon-caret-up"></i>
                                 </a>
                             </span>
@@ -74,10 +71,10 @@
                         <th class="time_run text-center">
                             <span class="title_box">
                                 {l s='Execution time' mod='ets_superspeed'}
-                                <a {if (isset($orderby) && $orderby=='pht.time' && isset($orderway) && $orderway=='desc') || !isset($orderby)}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=pht.time&Orderway=desc">
+                                <a {if (isset($orderby) && $orderby=='pht.time' && isset($orderway) && $orderway=='desc') || !isset($orderby)}class="active"{/if} href="{$url_base_sort|escape:'html':'UTF-8'}&Orderby=pht.time&Orderway=desc">
                                     <i class="icon-caret-down"></i>
                                 </a>
-                                <a {if isset($orderby) && $orderby=='pht.time' && isset($orderway) && $orderway=='asc'}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=pht.time&Orderway=asc">
+                                <a {if isset($orderby) && $orderby=='pht.time' && isset($orderway) && $orderway=='asc'}class="active"{/if} href="{$url_base_sort|escape:'html':'UTF-8'}&Orderby=pht.time&Orderway=asc">
                                     <i class="icon-caret-up"></i>
                                 </a>
                             </span>
@@ -85,10 +82,10 @@
                         <th class="date_add">
                             <span class="title_box">
                                 {l s='Date' mod='ets_superspeed'}
-                                <a {if isset($orderby) && $orderby=='pht.date_add' && isset($orderway) && $orderway=='desc'}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=pht.date_add&Orderway=desc">
+                                <a {if isset($orderby) && $orderby=='pht.date_add' && isset($orderway) && $orderway=='desc'}class="active"{/if} href="{$url_base_sort|escape:'html':'UTF-8'}&Orderby=pht.date_add&Orderway=desc">
                                     <i class="icon-caret-down"></i>
                                 </a>
-                                <a {if isset($orderby) && $orderby=='pht.date_add' && isset($orderway) && $orderway=='asc'}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=pht.date_add&Orderway=asc">
+                                <a {if isset($orderby) && $orderby=='pht.date_add' && isset($orderway) && $orderway=='asc'}class="active"{/if} href="{$url_base_sort|escape:'html':'UTF-8'}&Orderby=pht.date_add&Orderway=asc">
                                     <i class="icon-caret-up"></i>
                                 </a>
                             </span>
@@ -96,10 +93,10 @@
                         <th class="status">
                             <span class="title_box">
                                 {l s='Status' mod='ets_superspeed'}
-                                <a {if isset($orderby) && $orderby=='phm.id_module' && isset($orderway) && $orderway=='asc'}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=phm.id_module&Orderway=asc">
+                                <a {if isset($orderby) && $orderby=='phm.id_module' && isset($orderway) && $orderway=='asc'}class="active"{/if} href="{$url_base_sort|escape:'html':'UTF-8'}&Orderby=phm.id_module&Orderway=asc">
                                     <i class="icon-caret-down"></i>
                                 </a>
-                                <a {if isset($orderby) && $orderby=='phm.id_module' && isset($orderway) && $orderway=='desc'}class="active"{/if} href="{$url_base|escape:'html':'UTF-8'}&Orderby=phm.id_module&Orderway=desc">
+                                <a {if isset($orderby) && $orderby=='phm.id_module' && isset($orderway) && $orderway=='desc'}class="active"{/if} href="{$url_base_sort|escape:'html':'UTF-8'}&Orderby=phm.id_module&Orderway=desc">
                                     <i class="icon-caret-up"></i>
                                 </a>
                             </span>

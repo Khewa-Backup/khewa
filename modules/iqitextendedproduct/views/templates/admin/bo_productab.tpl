@@ -105,7 +105,7 @@
             </div>
             <div class="video">
                 <iframe class="iframe js-video-iframe" width="200" height="150"
-                    src="https://www.youtube.com/embed/XGSy3_Czz8k"></iframe>
+                    src=""></iframe>
 
                 <video width="200" height="150" controls class="js-video-hosted video-hosted">
                      <source src="movie.mp4" type="video/mp4" class="js-video-hosted-source">

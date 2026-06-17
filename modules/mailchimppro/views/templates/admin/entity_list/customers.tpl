@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 <div class="table-responsive">
@@ -25,7 +25,7 @@
             <th>{l s='Orders' mod='mailchimppro'}</th>
             <th>{l s='Opt in status' mod='mailchimppro'}</th>
             <th>{l s='Total orders' mod='mailchimppro'}</th>
-            <th>#</th>
+            <th>{l s='Actions' mod='mailchimppro'}</th>
         </tr>
         </thead>
         <tbody>
@@ -38,9 +38,12 @@
                 <td>{$customer.opt_in_status|var_export:true|escape:'htmlall':'UTF-8'}</td>
                 <td>{$customer.total_spent|escape:'htmlall':'UTF-8'}</td>
                 <td>
-                    <a href="{LinkHelper::getAdminLink('AdminMailchimpProCustomers', true, [], ['action' => 'entitydelete', 'entity_id' => $customer.id])|escape:'htmlall':'UTF-8'}">
-                        Delete
-                    </a>
+					<div class="btn-group btn-group-xs">
+						<a class="btn btn-default" href="{LinkHelper::getAdminLink('AdminMailchimpProCustomers', true, [], ['action' => 'entitydelete', 'entity_id' => $customer.id])|escape:'htmlall':'UTF-8'}" title="{l s='Delete' mod='mailchimppro'}">
+							<i class="icon icon-trash" aria-hidden="true"></i>
+							<span>{l s='Delete' mod='mailchimppro'}</span>
+						</a>
+					</div>
                 </td>
             </tr>
         {/foreach}

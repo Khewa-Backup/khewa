@@ -1,38 +1,18 @@
 <?php
-/**
- * 2007-2020 ETS-Soft
- *
- * NOTICE OF LICENSE
- *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
- * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please contact us for extra customization service at an affordable price
- *
- *  @author ETS-Soft <etssoft.jsc@gmail.com>
- *  @copyright  2007-2021 ETS-Soft
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of ETS-Soft
- */
+if (!defined('_PS_VERSION_')) { exit; }
 abstract class Db extends DbCore
 {
     /*
     * module: ets_superspeed
-    * date: 2022-02-12 17:04:57
-    * version: 1.3.9
+    * date: 2026-01-17 12:14:11
+    * version: 2.1.2
     */
     public function query($sql)
     {
-        $context = Context::getContext();
-        if(isset($context->ss_total_sql))
-            $context->ss_total_sql++;
-        else
-            $context->ss_total_sql=1;
+        if (!class_exists('Ets_superspeed')) {
+            require_once(dirname(__FILE__) . '/../../../modules/ets_superspeed/ets_superspeed.php');
+        }
+        Ets_superspeed::$query_count++;
         return parent::query($sql);
     }
 }

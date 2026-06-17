@@ -1,5 +1,5 @@
 {*
-* 2007-2021 PrestaShop
+* 2007-2023 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,16 +18,16 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author Buy-addons <contact@buy-addons.com>
-*  @copyright  2007-2021 Buy-addons
+*  @copyright  2007-2023 Buy-addons
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 {if $orders|@count<=5}
-	{foreach from=$orders item=c}
-		<a href="{$c_controller|escape:'htmlall':'UTF-8'}&id_order={$c.id|escape:'htmlall':'UTF-8'}" target="_blank">#{$c.id|escape:'htmlall':'UTF-8'}</a>{if !$c@last}, {/if}
-	{/foreach}
+    {foreach from=$orders item=c}
+        <a href="{$c_controller|escape:'htmlall':'UTF-8'}&id_order={$c.id|escape:'htmlall':'UTF-8'}" target="_blank">#{$c.id|escape:'htmlall':'UTF-8'}</a>{if !$c@last}, {/if}
+    {/foreach}
 {else}
-	<a class="btn btn-default" href="javascript:void(0)" data-id-report="{$row.id_report|escape:'htmlall':'UTF-8'}" data-ajax-token="{$ajax_token|escape:'htmlall':'UTF-8'}" onclick="reportsale_viewOrderData(this)">
-		{l s='View' mod='reportsale'}
-	</a>
+    <a class="btn btn-default" href="javascript:void(0)" data-id-report="{$row.id_report|escape:'htmlall':'UTF-8'}" data-ajax-token="{$ajax_token|escape:'htmlall':'UTF-8'}" onclick="reportsale_viewOrderData(this)">
+        {l s='View' mod='reportsale'}
+    </a>
 {/if}

@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 
 class AdminEtsyOrdersListingController extends ModuleAdminController
@@ -118,12 +121,20 @@ class AdminEtsyOrdersListingController extends ModuleAdminController
     public function displayViewLink($token = null, $id = null, $name = null)
     {
         if (!array_key_exists('View', self::$cache_lang)) {
-            self::$cache_lang['View'] = $this->l('View', 'Helper');
+            self::$cache_lang['View'] = $this->module->l('View', 'Helper');
+        }
+        
+        $view_link = $this->context->link->getAdminlink('AdminOrders');
+        
+        if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
+            $view_link = str_replace('orders/','orders/'.$id.'/view',$view_link);
+        } else {
+            $view_link = $view_link . '&' . $this->identifier . '=' . $id . '&vieworder';
         }
 
         $this->context->smarty->assign(array(
-            'href' => $this->context->link->getAdminlink('AdminOrders') . '&' . $this->identifier . '=' . $id . '&vieworder',
-            'action' => $this->l('View'),
+            'href' => $view_link,
+            'action' => $this->module->l('View','AdminEtsyOrdersListingController'),
             'icon' => 'search-plus'
         ));
 
@@ -136,13 +147,13 @@ class AdminEtsyOrdersListingController extends ModuleAdminController
         $this->page_header_toolbar_btn['kb_sync_order_list'] = array(
             'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncOrdersListing', 'secure_key' => $secure_key)),
             'target' => '_blank',
-            'desc' => $this->l('Sync Orders from Etsy'),
+            'desc' => $this->module->l('Sync Orders from Etsy','AdminEtsyOrdersListingController'),
             'icon' => 'process-icon-update'
         );
         $this->page_header_toolbar_btn['kb_sync_order_status'] = array(
             'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncOrdersStatus', 'secure_key' => $secure_key)),
             'target' => '_blank',
-            'desc' => $this->l('Update Order Status On Etsy'),
+            'desc' => $this->module->l('Update Order Status On Etsy','AdminEtsyOrdersListingController'),
             'icon' => 'process-icon-update'
         );
 

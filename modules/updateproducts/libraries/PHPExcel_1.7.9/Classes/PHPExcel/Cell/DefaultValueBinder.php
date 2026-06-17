@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
  * @version    1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /** PHPExcel root directory */
 if (!defined('PHPEXCEL_ROOT')) {
@@ -83,16 +85,18 @@ class PHPExcel_Cell_DefaultValueBinder implements PHPExcel_Cell_IValueBinder
         } elseif ($pValue instanceof PHPExcel_RichText) {
             return PHPExcel_Cell_DataType::TYPE_INLINE;
 
-        } elseif ($pValue{0} === '=' && strlen($pValue) > 1) {
-            return PHPExcel_Cell_DataType::TYPE_FORMULA;
-
-        } elseif (is_bool($pValue)) {
-            return PHPExcel_Cell_DataType::TYPE_BOOL;
+        }
+        elseif (is_bool($pValue)) {
+          return PHPExcel_Cell_DataType::TYPE_BOOL;
 
         } elseif (is_float($pValue) || is_int($pValue)) {
-            return PHPExcel_Cell_DataType::TYPE_NUMERIC;
+          return PHPExcel_Cell_DataType::TYPE_NUMERIC;
 
-        } elseif (preg_match('/^\-?([0-9]+\\.?[0-9]*|[0-9]*\\.?[0-9]+)$/', $pValue)) {
+        }
+        elseif ($pValue[0] === '=' && strlen($pValue) > 1) {
+            return PHPExcel_Cell_DataType::TYPE_FORMULA;
+
+        }  elseif (preg_match('/^\-?([0-9]+\\.?[0-9]*|[0-9]*\\.?[0-9]+)$/', $pValue)) {
             return PHPExcel_Cell_DataType::TYPE_NUMERIC;
 
         } elseif (is_string($pValue) && array_key_exists($pValue, PHPExcel_Cell_DataType::getErrorCodes())) {

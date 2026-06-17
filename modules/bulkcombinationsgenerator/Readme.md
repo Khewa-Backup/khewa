@@ -1,10 +1,66 @@
-Module is installed in a regular way - simply upload your archive and click install.
+Module is installed in a regular way - go to Module Manager in BackOffice and upload the archive
 
 CHANGELOG:
 ===========================
+v 2.1.4 (August 1, 2024)
+===========================
+- [+] New action: Update parameters of existing combinations
+- [*] Fixed duplicating combinations in some complex multishop scenarios
+- [*] Minor bug fixes and optimizations
+
+Files modified:
+-----
+- /bulkcombinationsgenerator.php
+- /readme_en.pdf
+- /views/js/back.js
+- /views/templates/admin/configure.tpl
+
+Files added:
+-----
+- /.htaccess
+
+===========================
+v 2.1.3 (December 5, 2022)
+===========================
+- [+] Compatibility with PS 8.0
+- [+] Possibility to select products by specifying range of IDs, like 5-19
+- [+] Added German translation
+- [*] Minor bug fixes and optimizations
+
+Files modified:
+-----
+- /bulkcombinationsgenerator.php
+- /views/css/back.css
+
+Files added:
+-----
+- /translations/de.php
+
+===========================
+v 2.1.2 (May 5, 2022)
+===========================
+- [+] Possibility to update Price/Weight impacts for existing combinations
+- [+] New action: Add new combinations (don't touch existing)
+- [+] New action: Delete combinations with selected attributes
+- [*] Remember selected tax option (incl/excl) for price impacts
+- [*] Improved information displayed in dynamic log for better user experience
+- [*] Improved multishop support
+- [*] Improved compatibility with PS 1.7.8
+- [*] Misc fixes and optimizations
+
+Files modified:
+-----
+- /bulkcombinationsgenerator.php
+- /readme_en.pdf
+- /views/css/back.css
+- /views/js/back.js
+- /views/templates/admin/configure.tpl
+- /views/templates/admin/reference-variables.tpl
+
+===========================
 v 2.1.1 (March 1, 2019)
 ===========================
-- [+] Optionally include taxes in combination price impacts
+- [+] Optionally set price impacts including taxes
 - [*] Sort {att_names_xx} by positions of attribute groups
 - [*] Fixed issue with blocked text inputs on some laptops with non-English keyboards
 

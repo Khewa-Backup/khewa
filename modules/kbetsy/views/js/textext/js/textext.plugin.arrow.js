@@ -104,4 +104,3 @@
 	// Core functionality
 
 })(jQuery);
-

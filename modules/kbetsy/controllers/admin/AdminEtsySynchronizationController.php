@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 //Include Etsy Module Class to inherit some common functions and callbacks
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 
@@ -41,7 +44,7 @@ class AdminEtsySynchronizationController extends ModuleAdminController
 
     public function initPageHeaderToolbar()
     {
-        $this->page_header_toolbar_title = $this->l('Etsy Synchronization');
+        $this->page_header_toolbar_title = $this->module->l('Etsy Synchronization');
         parent::initPageHeaderToolbar();
     }
 

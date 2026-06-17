@@ -156,7 +156,7 @@ class AdminStocktakeLogsController extends ModuleAdminController
     {
         parent::initToolbar();
 
-        if ($this->module->is_before_16 && empty($this->display)) {
+        if ($this->module->isPS15 && empty($this->display)) {
             $this->toolbar_btn['back'] = array(
                 'href' => $this->context->link->getAdminLink('AdminStocktakedash'),
                 'desc' => $this->l('Dashboard')
@@ -190,7 +190,7 @@ class AdminStocktakeLogsController extends ModuleAdminController
     {
         if (method_exists('Context', 'getTranslator')) {
             $this->translator = Context::getContext()->getTranslator();
-            $translated = $this->translator->trans($string);
+            $translated = $this->translator->trans($string, [], 'Modules.Wkinventory.Adminstocktakelogscontroller');
             if ($translated !== $string) {
                 return $translated;
             }

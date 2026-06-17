@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyProfiles.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyShippingTemplates.php');
@@ -103,6 +106,15 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
     {
         $this->addRowAction('edit');
         $this->addRowAction('delete');
+        /**
+         * To add row action for local sync and etsy sync
+         * @modifier Pragya Maurya
+         * @date 26-05-2024
+         * PMMay2024 ebay-profile-level-sync
+         */
+        $this->addRowAction('localsync');
+        $this->addRowAction('syncetsy');
+
 
         $etsy_categories = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'etsy_categories WHERE parent_id = 0 ORDER BY category_name ASC');
         if (EtsyShippingTemplates::getTotalTeamplates() <= 0) {
@@ -120,9 +132,15 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             $secure_key = Configuration::get('KBETSY_SECURE_KEY');
             $this->context->smarty->assign("categories_imported", 'no');
             $this->context->smarty->assign("type", 'alert-warning');
-            $this->context->smarty->assign("message", sprintf($this->l('Etsy categories is not imported yet. <a href="%s" target="_blank">Click here</a> to import the categories to continue.'), $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncCategory', 'secure_key' => $secure_key))));
+            /**
+             * Etsy Category Import Link HTML Escape Issue
+             * Etsy003-Mar-2024 etsy-category-import-link-escape 
+             * @date 09-03-2024
+             * @author Ashish
+             */
+            $this->context->smarty->assign("message", "");
             $this->context->smarty->assign("KbMessageLink", $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncCategory', 'secure_key' => $secure_key)));
-            return $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/msgs.tpl");
+            return $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/import_category.tpl");
         }
     }
 
@@ -132,7 +150,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         $product_mapping = array();
         $custom_pricing_array = array();
         $product_selection_type = array();
-        
+
         $is_size_chart_image_exists = 0;
         if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_profiles')))) {
             $getProfileDetails = EtsyProfiles::getProfileDetails(Tools::getValue('id_etsy_profiles'));
@@ -152,13 +170,22 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                     'feature' => $getProfileDetails[0]['material_feature'],
                     'custom_pricing' => $getProfileDetails[0]['custom_pricing'],
                     'size_chart_image' => $getProfileDetails[0]['size_chart_image'],
+                    //changes by gopi for alter quantity
+                    'alter_quantity' => $getProfileDetails[0]['alter_quantity'],
+                    //changes by gopi for alter quantity end here
                     'id_etsy_shop_section' => $getProfileDetails[0]['id_etsy_shop_section'],
+                    /*
+                     * Added id_etsy_return_policy to fields_value for profile edit form
+		     * @modifier Himanshu Vishwakarma
+                     * @date 15-12-2025
+                     */
+                    'id_etsy_return_policy' => isset($getProfileDetails[0]['id_etsy_return_policy']) ? $getProfileDetails[0]['id_etsy_return_policy'] : '',
                     'etsy_product_type' => $getProfileDetails[0]['etsy_product_type'],
                     'kbetsy_selected_products' => $getProfileDetails[0]['etsy_selected_products'],
                     /* Start-MK made changes on 23-11-2017 to persist etsy category and property */
                     'etsy_category_code' => (!empty($getCategoryMapping) && is_array($getCategoryMapping)) ? $getCategoryMapping[0]['etsy_category_code'] : '',
                     'property[]' => explode(',', $getProfileDetails[0]['property']),
-                        /* End-MK made changes on 23-11-2017 to persist etsy category and property */
+                    /* End-MK made changes on 23-11-2017 to persist etsy category and property */
                 );
                 $custom_pricing_array['price_reduction'] = $getProfileDetails[0]['price_reduction'];
                 $custom_pricing_array['price_type'] = $getProfileDetails[0]['price_type'];
@@ -197,13 +224,13 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                     }
                 }
             }
-            
+
             /*
              * to check if image exists already
              */
             if ((int)Tools::getValue('id_etsy_profiles') != 0) {
                 $id_profile = (int)Tools::getValue('id_etsy_profiles');
-                $exist_file = _PS_MODULE_DIR_. 'kbetsy/views/img/profile/'.$id_profile. '.*';
+                $exist_file = _PS_MODULE_DIR_ . 'kbetsy/views/img/profile/' . $id_profile . '.*';
                 $match1 = glob($exist_file);
                 if (isset($match1) && count($match1) > 0) {
                     $ban = explode('/', $match1[0]);
@@ -219,16 +246,16 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         /*
          * Start: Added By Anshul Mittal to fix the category selection issue on 30/01/2020
          */
-        $sql = 'SELECT category_code FROM '._DB_PREFIX_.'etsy_categories';
+        $sql = 'SELECT category_code FROM ' . _DB_PREFIX_ . 'etsy_categories';
         $categories_code = Db::getInstance()->executeS($sql);
         $query = '';
         foreach ($categories_code as $code) {
-            $query .= '(category_code = '.$code['category_code'].') OR ';
+            $query .= '(category_code = ' . $code['category_code'] . ') OR ';
         }
         /*
          * End: Added By Anshul Mittal to fix the category selection issue on 30/01/2020
          */
-        $etsy_categories = Db::getInstance()->executeS("SELECT category_code, category_name FROM " . _DB_PREFIX_ . "etsy_categories WHERE last_level = 1 OR ".$query." parent_id = 0 ORDER BY category_name ASC", true, false);
+        $etsy_categories = Db::getInstance()->executeS("SELECT category_code, category_name FROM " . _DB_PREFIX_ . "etsy_categories WHERE last_level = 1 OR " . $query . " parent_id = 0 ORDER BY category_name ASC", true, false);
         $etsyCategoriesList = array();
         if ($etsy_categories) {
             foreach ($etsy_categories as $etsy_category) {
@@ -239,9 +266,8 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 );
             }
         }
-
-        $product_selection_type[] = array("id" => "0", "name" => $this->l("Category"));
-        $product_selection_type[] = array("id" => "1", "name" => $this->l("Product"));
+        $product_selection_type[] = array("id" => "0", "name" => $this->module->l("Category",'AdminEtsyProfileManagementController'));
+        $product_selection_type[] = array("id" => "1", "name" => $this->module->l("Product",'AdminEtsyProfileManagementController'));
 
         //Prepare array of Shipping Templates
         $getShippingTemplates = EtsyShippingTemplates::getShippingTemplateDetails('', 'id_etsy_shipping_templates, shipping_template_title, shipping_template_id, delete_flag');
@@ -272,7 +298,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         $getFeatureList = Db::getInstance()->executeS($getFeatureListSQL, true, false);
         $featureList[] = array(
             'id_option' => '',
-            'name' => $this->l('Select Feature'),
+            'name' => $this->module->l('Select Feature','AdminEtsyProfileManagementController'),
         );
         foreach ($getFeatureList as $feature) {
             $featureList[] = array(
@@ -286,7 +312,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         $getShopSectionList = Db::getInstance()->executeS($getShopSectionSQL, true, false);
         $etsyShopSection[] = array(
             'id_option' => '',
-            'name' => $this->l('Select Shop Section'),
+            'name' => $this->module->l('Select Shop Section','AdminEtsyProfileManagementController'),
         );
         foreach ($getShopSectionList as $feature) {
             $etsyShopSection[] = array(
@@ -295,24 +321,74 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             );
         }
 
+        /*
+         * Added return policy dropdown options
+         * Updated format to show descriptive text based on policy values
+         * @modifier Himanshu Vishwakarma
+	 * @date 15-12-2025
+         */
+        $etsyReturnPolicy = array();
+        $getReturnPolicySQL = "SELECT id_etsy_return_policy, return_policy_id, accepts_returns, accepts_exchanges, return_deadline FROM " . _DB_PREFIX_ . "etsy_return_policy WHERE return_policy_id IS NOT NULL AND return_policy_id != '' AND return_policy_id != '0'";
+        $getReturnPolicyList = Db::getInstance()->executeS($getReturnPolicySQL, true, false);
+        $etsyReturnPolicy[] = array(
+            'id_option' => '',
+            'name' => $this->module->l('Select Return Policy','AdminEtsyProfileManagementController'),
+        );
+        foreach ($getReturnPolicyList as $returnPolicy) {
+            /*
+             * Format return policy display based on accepts_returns, accepts_exchanges, and return_deadline
+             * Format: "Returns and Exchanges - X days" or "Returns - X days" or "Exchanges - X days"
+             * @modifier Himanshu Vishwakarma
+	     * @date 15-12-2025
+             */
+            $acceptsReturns = (int)$returnPolicy['accepts_returns'];
+            $acceptsExchanges = (int)$returnPolicy['accepts_exchanges'];
+            $returnDeadline = (int)$returnPolicy['return_deadline'];
+            
+            // Format deadline text
+            $deadlineText = '';
+            if ($returnDeadline == 0) {
+                $deadlineText = $this->module->l('No deadline', 'AdminEtsyProfileManagementController');
+            } else {
+                $deadlineText = $returnDeadline . ' ' . $this->module->l('days', 'AdminEtsyProfileManagementController');
+            }
+            
+            $policyName = '';
+            if ($acceptsReturns && $acceptsExchanges) {
+                $policyName = $this->module->l('Returns and Exchanges', 'AdminEtsyProfileManagementController') . ' - ' . $deadlineText;
+            } elseif ($acceptsReturns) {
+                $policyName = $this->module->l('Returns', 'AdminEtsyProfileManagementController') . ' - ' . $deadlineText;
+            } elseif ($acceptsExchanges) {
+                $policyName = $this->module->l('Exchanges', 'AdminEtsyProfileManagementController') . ' - ' . $deadlineText;
+            } else {
+                // Fallback if neither is selected
+                $policyName = $this->module->l('No Returns or Exchanges', 'AdminEtsyProfileManagementController') . ' - ' . $deadlineText;
+            }
+            
+            $etsyReturnPolicy[] = array(
+                'id_option' => $returnPolicy['id_etsy_return_policy'],
+                'name' => $policyName
+            );
+        }
+
 
         /* Start-MK made changes on 23-11-2017 to creating property array */
         $etsyProperty = array(
             array(
                 'id' => 'taxonomy_id',
-                'name' => $this->l('Etsy Category'),
+                'name' => $this->module->l('Etsy Category','AdminEtsyProfileManagementController'),
             ),
             array(
                 'id' => 'shipping_template_id',
-                'name' => $this->l('Shipping Template'),
+                'name' => $this->module->l('Shipping Template','AdminEtsyProfileManagementController'),
             ),
             array(
                 'id' => 'recipient',
-                'name' => $this->l('Recipient'),
+                'name' => $this->module->l('Recipient','AdminEtsyProfileManagementController'),
             ),
             array(
                 'id' => 'occasion',
-                'name' => $this->l('Occasion'),
+                'name' => $this->module->l('Occasion','AdminEtsyProfileManagementController'),
             ),
         );
 
@@ -323,12 +399,12 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         //Generating the tree for the first column
         $tree = new HelperTreeCategories('prestashop_category'); //The string in param is the ID used by the generated tree
         $tree->setUseCheckBox(true)
-                ->setAttribute('is_category_filter', $root->id)
-                ->setRootCategory($root->id)
-                ->setSelectedCategories($categoryTreeSelection)
-                ->setInputName('prestashop_category')
-                //->setDisabledCategories($categoryListDisabled)
-                ->setFullTree(true); //Set the name of input. The option "name" of $fields_form doesn't seem to work with "categories_select" type
+            ->setAttribute('is_category_filter', $root->id)
+            ->setRootCategory($root->id)
+            ->setSelectedCategories($categoryTreeSelection)
+            ->setInputName('prestashop_category')
+            //->setDisabledCategories($categoryListDisabled)
+            ->setFullTree(true); //Set the name of input. The option "name" of $fields_form doesn't seem to work with "categories_select" type
 
         $categoryTreePresta = $tree->render();
 
@@ -350,13 +426,35 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         }
 
         //Prepare array of When Made
+        //        $whenMadeOptions = array(
+        //            'made_to_order' => $this->module->l('Made to Order', 'AdminEtsyProfileManagementController'),
+        //            '2020_'.date("Y") => '2020 - '.date("Y"),
+        //            '2010_2019' => '2010 - 2019',
+        //            '2001_2009' => '2001 - 2009',
+        //            'before_2001' => $this->module->l('Before', 'AdminEtsyProfileManagementController') . ' 2001',
+        //            '2000_2000' => '2000',
+        //            '1990s' => '1990s',
+        //            '1980s' => '1980s',
+        //            '1970s' => '1970s',
+        //            '1960s' => '1960s',
+        //            '1950s' => '1950s',
+        //            '1940s' => '1940s',
+        //            '1930s' => '1930s',
+        //            '1920s' => '1920s',
+        //            '1910s' => '1910s',
+        //            '1900s' => '1900s',
+        //            '1800s' => '1800s',
+        //            '1700s' => '1700s',
+        //            'before_1700' => $this->module->l('Before', 'AdminEtsyProfileManagementController') . ' 1700'
+        //        );
+
         $whenMadeOptions = array(
             'made_to_order' => $this->module->l('Made to Order', 'AdminEtsyProfileManagementController'),
-            '2020_'.date("Y") => '2020 - '.date("Y"),
+            '2020_' . date("Y") => '2020 - ' . date("Y"),
             '2010_2019' => '2010 - 2019',
-            '2001_2009' => '2001 - 2009',
-            'before_2001' => $this->module->l('Before', 'AdminEtsyProfileManagementController') . ' 2001',
-            '2000_2000' => '2000',
+            '2003_2009' => '2003 - 2009',
+            'before_2003' => $this->module->l('Before', 'AdminEtsyProfileManagementController') . ' 2003',
+            '2000_2002' => '2000 - 2002',
             '1990s' => '1990s',
             '1980s' => '1980s',
             '1970s' => '1970s',
@@ -895,10 +993,10 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         }
 
         // changes by rishabh jain
-        $logo_image = $this->getModuleDirUrl() . 'kbetsy/views/img/profile/sample.jpg?time='.time();
+        $logo_image = $this->getModuleDirUrl() . 'kbetsy/views/img/profile/sample.jpg?time=' . time();
         if ((int)Tools::getValue('id_etsy_profiles') != 0) {
             $id_profile = (int)Tools::getValue('id_etsy_profiles');
-            $exist_file = _PS_MODULE_DIR_. 'kbetsy/views/img/profile/'.$id_profile. '.*';
+            $exist_file = _PS_MODULE_DIR_ . 'kbetsy/views/img/profile/' . $id_profile . '.*';
             $match1 = glob($exist_file);
             if (count($match1) > 0) {
                 $ban = explode('/', $match1[0]);
@@ -906,11 +1004,11 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 $ban = trim($ban);
                 $img_url = $this->getModuleDirUrl() . 'kbetsy/views/img/profile/' . $ban;
                 if (file_exists($match1[0])) {
-                    $logo_image = $img_url.'?time='.time();
+                    $logo_image = $img_url . '?time=' . time();
                 }
             }
         }
-        $logo_url = "<img id='kbsizechartlogo' class='img img-thumbnail'  src='".$logo_image."'>";
+        $logo_url = "<img id='kbsizechartlogo' class='img img-thumbnail'  src='" . $logo_image . "'>";
         // changes over
         $this->fields_form = array(
             'legend' => array(
@@ -987,11 +1085,27 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Shop section'),
-                    'desc' => $this->l('Map Etsy Shop Section with this profile.'),
+                    'label' => $this->module->l('Shop section','AdminEtsyProfileManagementController'),
+                    'desc' => $this->module->l('Map Etsy Shop Section with this profile.','AdminEtsyProfileManagementController'),
                     'name' => 'id_etsy_shop_section',
                     'options' => array(
                         'query' => $etsyShopSection,
+                        'id' => 'id_option',
+                        'name' => 'name'
+                    )
+                ),
+                /*
+                 * Added return policy dropdown field in profile form
+                 * @modifier Himanshu Vishwakarma
+		 * @date 15-12-2025
+                 */
+                array(
+                    'type' => 'select',
+                    'label' => $this->module->l('Return Policy','AdminEtsyProfileManagementController'),
+                    'desc' => $this->module->l('Map Etsy Return Policy with this profile.','AdminEtsyProfileManagementController'),
+                    'name' => 'id_etsy_return_policy',
+                    'options' => array(
+                        'query' => $etsyReturnPolicy,
                         'id' => 'id_option',
                         'name' => 'name'
                     )
@@ -1018,57 +1132,69 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 /* Start-MK made changes on 22-11-2017 for adding inventory field, property and custom product name field */
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Customize product title'),
+                    'label' => $this->module->l('Customize product title','AdminEtsyProfileManagementController'),
                     'name' => 'customize_product_title',
                     'required' => true,
                     'default_value' => '{product_title}',
-                    'desc' => $this->l('Customize the product title by using the following place-holders. Place-holders like {sample} will be replace by dynamic content at the time of execution.'),
+                    'desc' => $this->module->l('Customize the product title by using the following place-holders. Place-holders like {sample} will be replace by dynamic content at the time of execution.','AdminEtsyProfileManagementController'),
                 ),
                 array(
                     'type' => 'hidden',
-                    'label' => $this->l('Sync Property'),
-                    'desc' => $this->l('Select property to sync with Etsy Marketplace.This will work when updating the product and its variations'),
+                    'label' => $this->module->l('Sync Property','AdminEtsyProfileManagementController'),
+                    'desc' => $this->module->l('Select property to sync with Etsy Marketplace.This will work when updating the product and its variations','AdminEtsyProfileManagementController'),
                     'name' => 'property',
                 ),
                 array(
                     'type' => 'hidden',
-                    'label' => $this->l('Enable minimum quantity'),
+                    'label' => $this->module->l('Enable minimum quantity','AdminEtsyProfileManagementController'),
                     'name' => 'enable_min_qty',
                     'default_value' => 0,
-                    'desc' => $this->l('Enable to enter minimum quantity')
+                    'desc' => $this->module->l('Enable to enter minimum quantity','AdminEtsyProfileManagementController')
                 ),
                 array(
                     'type' => 'hidden',
-                    'label' => $this->l('Minimum Quantity'),
+                    'label' => $this->module->l('Minimum Quantity','AdminEtsyProfileManagementController'),
                     'name' => 'min_qty',
                     'col' => 2,
                     'default_value' => 1
                 ),
                 array(
                     'type' => 'hidden',
-                    'label' => $this->l('Enable maximum quantity'),
+                    'label' => $this->module->l('Enable maximum quantity','AdminEtsyProfileManagementController'),
                     'name' => 'enable_max_qty',
                     'default_value' => 1,
-                    'desc' => $this->l('The maximum quantity of the products which needs to be synced. If quantity of the items is greater than defined value than the system will sync defined quantity of those products.')
+                    'desc' => $this->module->l('The maximum quantity of the products which needs to be synced. If quantity of the items is greater than defined value than the system will sync defined quantity of those products.','AdminEtsyProfileManagementController')
                 ),
                 array(
                     'type' => 'hidden',
-                    'label' => $this->l('Maximum quantity'),
+                    'label' => $this->module->l('Maximum quantity','AdminEtsyProfileManagementController'),
                     'name' => 'max_qty',
                     'col' => 2,
                     'default_value' => 999,
                 ),
+                //changes by gopi for alter quantity
+                array(
+                    'type' => 'text',
+                    'label' => $this->module->l('Alter Quantity','AdminEtsyProfileManagementController'),
+                    'name' => 'alter_quantity',
+                    'default_value' => 0,
+                    'hint' => $this->module->l('Leave blank OR enter 0 to sync the original quantity of the products.','AdminEtsyProfileManagementController'),
+                    'desc' => $this->module->l('Enter the quantity of the product which you wants to sync on etsy. For example, If you have added 5 in this field & you have 100 quantity of a product then the system will send quantity as 5 for the product & In the case item quantity is less than 5 then system will send the actual quantity of the product to etsy.','AdminEtsyProfileManagementController'),
+                ),
+                //changes by gopi for alter quantity end here
                 array(
                     'type' => 'switch',
                     'name' => 'custom_pricing',
-                    'label' => $this->l('Enable custom pricing'),
-                    'desc' => $this->l('Enable if you want to sync different price from the actual price of products associated with this profile.'),
+                    'label' => $this->module->l('Enable custom pricing','AdminEtsyProfileManagementController'),
+                    'desc' => $this->module->l('Enable if you want to sync different price from the actual price of products associated with this profile.','AdminEtsyProfileManagementController'),
                     'values' => array(
                         array(
-                            'value' => 1
+                            'value' => 1,
+                            'id' => 'custom_pricing_on',
                         ),
                         array(
-                            'value' => 0
+                            'value' => 0,
+                            'id' => 'custom_pricing_off',
                         )
                     ),
                 ),
@@ -1076,14 +1202,16 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 array(
                     'type' => 'switch',
                     'name' => 'should_auto_renew',
-                    'label' => $this->module->l('Enable auto renewal'),
-                    'desc' => $this->module->l('Enable if you want to set automatical renewals of products associated with this profile'),
+                    'label' => $this->module->l('Enable auto renewal','AdminEtsyProfileManagementController'),
+                    'desc' => $this->module->l('Enable if you want to set automatical renewals of products associated with this profile','AdminEtsyProfileManagementController'),
                     'values' => array(
                         array(
-                            'value' => 1
+                            'value' => 1,
+                            'id' => 'should_auto_renew_on',
                         ),
                         array(
-                            'value' => 0
+                            'value' => 0,
+                            'id' => 'should_auto_renew_off',
                         )
                     ),
                 ),
@@ -1094,10 +1222,12 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                     'name' => 'is_customizable',
                     'values' => array(
                         array(
-                            'value' => 1
+                            'value' => 1,
+                            'id' => 'is_customizable_on',
                         ),
                         array(
-                            'value' => 0
+                            'value' => 0,
+                            'id' => 'is_customizable_off',
                         )
                     )
                 ),
@@ -1133,12 +1263,12 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                         array(
                             'id' => 'finished_product',
                             'value' => 0,
-                            'label' => $this->l('A finished product')
+                            'label' => $this->module->l('A finished product','AdminEtsyProfileManagementController')
                         ),
                         array(
                             'id' => 'tool',
                             'value' => 1,
-                            'label' => $this->l('A supply or tool to make things')
+                            'label' => $this->module->l('A supply or tool to make things','AdminEtsyProfileManagementController')
                         )
                     )
                 ),
@@ -1166,8 +1296,8 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Materials used'),
-                    'desc' => $this->l('Map store features which contains material details.'),
+                    'label' => $this->module->l('Materials used','AdminEtsyProfileManagementController'),
+                    'desc' => $this->module->l('Map store features which contains material details.','AdminEtsyProfileManagementController'),
                     'name' => 'feature',
                     'options' => array(
                         'query' => $featureList,
@@ -1177,8 +1307,8 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'hidden',
-                    'label' => $this->l('Exclude Products'),
-                    'desc' => $this->l('Exclude products to sync on Etsy marketplace'),
+                    'label' => $this->module->l('Exclude Products','AdminEtsyProfileManagementController'),
+                    'desc' => $this->module->l('Exclude products to sync on Etsy marketplace','AdminEtsyProfileManagementController'),
                     'name' => 'exclude_product',
                     'col' => 4,
                     'class' => 'etsy_exclude_product'
@@ -1190,27 +1320,29 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 array(
                     'type' => 'switch',
                     'name' => 'size_chart_image',
-                    'label' => $this->l('Enable Size Chart Image'),
-                    'desc' => $this->l('Enable if you want to associate an additional Image For the Product.'),
+                    'label' => $this->module->l('Enable Size Chart Image','AdminEtsyProfileManagementController'),
+                    'desc' => $this->module->l('Enable if you want to associate an additional Image For the Product.','AdminEtsyProfileManagementController'),
                     'values' => array(
                         array(
-                            'value' => 1
+                            'value' => 1,
+                            'id' => 'size_chart_image_on',
                         ),
                         array(
-                            'value' => 0
+                            'value' => 0,
+                            'id' => 'size_chart_image_off',
                         )
                     ),
                 ),
                 array(
                     'type' => 'file',
-                    'label' => $this->l('Size Chart Image'),
+                    'label' => $this->module->l('Size Chart Image','AdminEtsyProfileManagementController'),
                     'name' => 'banner_image',
                     'required' => true,
                     'image' => $logo_url ? $logo_url : false,
-//                    'desc' => $this->module->l('For the best view, upload 30 x 30 pixel size PNG image file.'),
+                    //                    'desc' => $this->module->l('For the best view, upload 30 x 30 pixel size PNG image file.'),
                     'display_image' => true,
-                    'hint' => $this->l('The Uploaded image will be sent to etsy as a normal Image In addition to the product image.')
-            ),
+                    'hint' => $this->module->l('The Uploaded image will be sent to etsy as a normal Image In addition to the product image.','AdminEtsyProfileManagementController')
+                ),
             ),
             'buttons' => array(
                 array(
@@ -1236,7 +1368,6 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             'custom_pricing_array' => $custom_pricing_array,
             'custom_pricing' => true
         ));
-
         /* Start-MK made changes on 22-11-2017 for display placeholder for product title */
         $customize_product_title = $this->context->smarty->fetch(
             _PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/customize_product_title.tpl'
@@ -1302,15 +1433,15 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             $order_by = $order_by[1];
         }
         $sql = 'SELECT p.*, product_shop.*, pl.* FROM `' . _DB_PREFIX_ . 'product` p ' . Shop::addSqlAssociation('product', 'p') . ''
-                . 'LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (p.`id_product` = pl.`id_product` ' . Shop::addSqlRestrictionOnLang('pl') . ') '
-                . 'LEFT JOIN `' . _DB_PREFIX_ . 'etsy_products_list` epl ON (p.`id_product` = epl.`id_product`) '
-                . 'WHERE (epl.id_product is null OR epl.id_etsy_profiles = 0) and p.id_product NOT in (SELECT fp.id_product FROM ' . _DB_PREFIX_ . 'etsy_exclude_product fp) AND  pl.`id_lang` = ' . (int) $id_lang .
-                (!empty($excludeIds) ? ' AND p.id_product NOT IN (' . $excludeIds . ') ' : ' ') .
-                (($search_product && $prod_query != '') ? ' AND (pl.name LIKE \'%' . pSQL($prod_query) . '%\' OR p.reference LIKE \'%' . pSQL($prod_query) . '%\')' : '') .
-                ($front ? ' AND product_shop.`visibility` IN ("both", "catalog")' : '') .
-                ($only_active ? ' AND p.`active` = 1' : '') . '
+            . 'LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (p.`id_product` = pl.`id_product` ' . Shop::addSqlRestrictionOnLang('pl') . ') '
+            . 'LEFT JOIN `' . _DB_PREFIX_ . 'etsy_products_list` epl ON (p.`id_product` = epl.`id_product`) '
+            . 'WHERE (epl.id_product is null OR epl.id_etsy_profiles = 0) and p.id_product NOT in (SELECT fp.id_product FROM ' . _DB_PREFIX_ . 'etsy_exclude_product fp) AND  pl.`id_lang` = ' . (int) $id_lang .
+            (!empty($excludeIds) ? ' AND p.id_product NOT IN (' . $excludeIds . ') ' : ' ') .
+            (($search_product && $prod_query != '') ? ' AND (pl.name LIKE \'%' . pSQL($prod_query) . '%\' OR p.reference LIKE \'%' . pSQL($prod_query) . '%\')' : '') .
+            ($front ? ' AND product_shop.`visibility` IN ("both", "catalog")' : '') .
+            ($only_active ? ' AND p.`active` = 1' : '') . '
 				ORDER BY ' . (isset($order_by_prefix) ? pSQL($order_by_prefix) . '.' : '') . '`' . pSQL($order_by) . '` ' . pSQL($order_way) .
-                ($limit > 0 ? ' LIMIT ' . (int) $start . ',' . (int) $limit : '');
+            ($limit > 0 ? ' LIMIT ' . (int) $start . ',' . (int) $limit : '');
         $rq = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
 
         return $rq;
@@ -1321,13 +1452,13 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         /* Below 3-4 lines of code is no longer requured. It was added to display category selection on the Popup */
         if (!empty(Tools::getValue('action')) && Tools::getValue('action') == 'getEtsyCategory') {
             $etsy_categories = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'etsy_categories WHERE parent_id = "' . pSQL(Tools::getValue('category_code')) . '" ORDER BY category_name ASC');
-            die(Tools::jsonEncode($etsy_categories));
+            die(json_encode($etsy_categories));
         }
 
         if (Tools::isSubmit('searchKbProduct')) {
             $id_lang = $this->context->language->id;
             $product = $this->kbAjaxProductList($id_lang, 0, 0, 'price', 'desc', true);
-            die(Tools::jsonEncode($product));
+            die(json_encode($product));
         }
 
         if (Tools::isSubmit('is_product_selected')) {
@@ -1357,13 +1488,11 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         if (Tools::isSubmit('submitAddetsy_profiles')) {
             $formError = 0;
             $customErrors = array();
-
             //Prepare variables holding  post values
             $profileTitle = pSQL(Tools::getValue('profile_title'));
             $profileEtsyCategory = Tools::getValue('etsy_category_code');
             $custmize_product_title = trim(Tools::getValue('customize_product_title'));
             $etsy_product_type = Tools::getValue('etsy_product_type');
-
             $storeCategoriesList = '';
             if (Tools::getValue('prestashop_category')) {
                 $storeCategories = Tools::getValue('prestashop_category');
@@ -1376,7 +1505,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             }
 
             $shippingTemplateID = Tools::getValue('id_etsy_shipping_templates');
-            
+
             $is_customizable = '0';
             if (!empty((Tools::getValue('is_customizable')))) {
                 $is_customizable = '1';
@@ -1394,7 +1523,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             } else if (!empty(trim(Tools::getValue('is_supply_1')))) {
                 $is_supply = '1';
             }
-            
+
             $recipient = Tools::getValue('recipient');
             $occassion = Tools::getValue('occassion');
 
@@ -1423,6 +1552,9 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             $custom_pricing = Tools::getValue('custom_pricing');
             $custom_price = Tools::getValue('custom_price');
             $enable_size_chart_image = Tools::getValue('size_chart_image');
+            //changes by gopi start
+            $alter_quantity = Tools::getValue('alter_quantity');
+            //changes by gopi end
             $price_type = Tools::getValue('price_type');
             $price_reduction = Tools::getValue('price_reduction');
 
@@ -1451,20 +1583,21 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 if ($etsy_product_type == "0") {
                     $storeCategoryExist = 0;
                     $ProfileCategoryExist = 0;
-                    $storeCategoryProfileExist = 0;
-                    foreach ($storeCategories as $key => $value) {
+                    
+		    foreach ($storeCategories as $key => $value) {
                         //SQL to check details existence
                         if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_profiles')))) {
+                            /*
+                             * Updated validation to only check if store category + Etsy category combination exists in OTHER profiles
+                             * Removed check within same profile as it's unnecessary when updating
+                             * @modifier Himanshu Vishwakarma
+			     * @date: 11-12-2025
+                             */
                             $selectSQL = 'SELECT count(*) as count FROM ' . _DB_PREFIX_ . 'etsy_category_mapping WHERE FIND_IN_SET("' . pSQL($value) . '", prestashop_category) AND id_etsy_profiles !=' . (int) Tools::getValue('id_etsy_profiles');
                             $dataExistenceResult = Db::getInstance()->executeS($selectSQL, true, false);
 
-                            $dataSQL = 'SELECT count(*) as count FROM ' . _DB_PREFIX_ . 'etsy_category_mapping WHERE FIND_IN_SET("' . pSQL($value) . '", prestashop_category) AND etsy_category_code !=' . (int) $profileEtsyCategory . ' AND id_etsy_profiles =' . (int) Tools::getValue('id_etsy_profiles');
-                            $dataExistenceCatRes = Db::getInstance()->executeS($dataSQL, true, false);
-
                             if ($dataExistenceResult[0]['count'] > 0) {
                                 $storeCategoryExist = 1;
-                            } elseif ($dataExistenceCatRes[0]['count'] > 0) {
-                                $storeCategoryProfileExist = 1;
                             }
                         } else {
                             $selectSQL = "SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_category_mapping WHERE FIND_IN_SET(" . pSQL($value) . ", prestashop_category)";
@@ -1481,9 +1614,6 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                     } elseif ($storeCategoryExist) {
                         $formError = 1;
                         $customErrors[] = 7;
-                    } elseif ($storeCategoryProfileExist) {
-                        $formError = 1;
-                        $customErrors[] = 31;
                     }
                 }
             }
@@ -1493,33 +1623,40 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_profiles')))) {
                     //Update data SQL
                     $updateProfileSQL = 'UPDATE ' . _DB_PREFIX_ . 'etsy_profiles SET '
-                            . 'profile_title = "' . pSQL($profileTitle) . '", '
-                            . 'customize_product_title = "' . pSQL($custmize_product_title) . '", '
-                            . 'id_etsy_shipping_templates =' . (int) $shippingTemplateID . ', '
-                            . 'etsy_currency = "' . pSQL($currency) . '", '
-                            . 'is_customizable = "' . (int) $is_customizable . '", '
-                            . 'who_made = "' . pSQL($whoMade) . '", '
-                            . 'when_made = "' . pSQL($whenMade) . '", '
-                            . 'is_supply = "' . (int) $is_supply . '", '
-                            . 'recipient = "' . pSQL($recipient) . '", '
-                            . 'occassion = "' . pSQL($occassion) . '", '
-                            . 'should_auto_renew = "' . (int) $should_auto_renew . '", '
-                            . 'enable_max_qty = "' . (int) $enable_max_qty . '", '
-                            . 'max_qty = "' . (int) $max_qty . '", '
-                            . 'enable_min_qty = "' . (int) $enable_min_qty . '", '
-                            . 'min_qty = "' . (int) $min_qty . '", '
-                            . 'property = "' . pSQL($property) . '",'
-                            . 'material_feature = "' . pSQL($mapped_material_feature) . '", '
-                            . 'etsy_selected_products = "' . pSQL($etsy_selected_products) . '", '
-                            . 'etsy_product_type = "' . pSQL($etsy_product_type) . '", '
-                            . 'custom_pricing="' . pSQL($custom_pricing) . '", '
-                            . 'custom_price="' . pSQL($custom_price) . '", '
-                            . 'size_chart_image = "' . (int) $enable_size_chart_image . '", '
-                            . 'price_type="' . pSQL($price_type) . '", '
-                            . 'id_etsy_shop_section = "' . pSQL(Tools::getValue('id_etsy_shop_section')) . '", '
-                            . 'price_reduction="' . pSQL($price_reduction) . '", '
-                            . 'date_updated = NOW() '
-                            . 'WHERE id_etsy_profiles = ' . (int) Tools::getValue('id_etsy_profiles');
+                        . 'profile_title = "' . pSQL(str_replace('\\', '', $profileTitle)) . '", '
+                        . 'customize_product_title = "' . pSQL($custmize_product_title) . '", '
+                        . 'id_etsy_shipping_templates =' . (int) $shippingTemplateID . ', '
+                        . 'etsy_currency = "' . pSQL($currency) . '", '
+                        . 'is_customizable = "' . (int) $is_customizable . '", '
+                        . 'who_made = "' . pSQL($whoMade) . '", '
+                        . 'when_made = "' . pSQL($whenMade) . '", '
+                        . 'is_supply = "' . (int) $is_supply . '", '
+                        . 'recipient = "' . pSQL($recipient) . '", '
+                        . 'occassion = "' . pSQL($occassion) . '", '
+                        . 'should_auto_renew = "' . (int) $should_auto_renew . '", '
+                        . 'enable_max_qty = "' . (int) $enable_max_qty . '", '
+                        . 'max_qty = "' . (int) $max_qty . '", '
+                        . 'alter_quantity = "' . (int) $alter_quantity . '", ' //changes by gopi
+                        . 'enable_min_qty = "' . (int) $enable_min_qty . '", '
+                        . 'min_qty = "' . (int) $min_qty . '", '
+                        . 'property = "' . pSQL($property) . '",'
+                        . 'material_feature = "' . pSQL($mapped_material_feature) . '", '
+                        . 'etsy_selected_products = "' . pSQL($etsy_selected_products) . '", '
+                        . 'etsy_product_type = "' . pSQL($etsy_product_type) . '", '
+                        . 'custom_pricing="' . pSQL($custom_pricing) . '", '
+                        . 'custom_price="' . pSQL($custom_price) . '", '
+                        . 'size_chart_image = "' . (int) $enable_size_chart_image . '", '
+                        . 'price_type="' . pSQL($price_type) . '", '
+                        . 'id_etsy_shop_section = "' . pSQL(Tools::getValue('id_etsy_shop_section')) . '", '
+                        /*
+                         * Added id_etsy_return_policy to profile update query
+			 * @modifier Himanshu Vishwakarma
+                         * @date 15-12-2025
+                         */
+                        . 'id_etsy_return_policy = "' . pSQL(Tools::getValue('id_etsy_return_policy')) . '", '
+                        . 'price_reduction="' . pSQL($price_reduction) . '", '
+                        . 'date_updated = NOW() '
+                        . 'WHERE id_etsy_profiles = ' . (int) Tools::getValue('id_etsy_profiles');
 
                     /*
                     * changes by rishabh jain for saving size chart image
@@ -1546,9 +1683,9 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                      * chanegs over
                      */
                     Db::getInstance()->execute('UPDATE ' . _DB_PREFIX_ . 'etsy_category_mapping SET '
-                            . 'etsy_category_code = "' . pSQL($profileEtsyCategory) . '",'
-                            . 'prestashop_category = "' . pSQL($storeCategoriesList) . '" '
-                            . 'WHERE id_etsy_profiles = ' . (int) Tools::getValue('id_etsy_profiles'));
+                        . 'etsy_category_code = "' . pSQL($profileEtsyCategory) . '",'
+                        . 'prestashop_category = "' . pSQL($storeCategoriesList) . '" '
+                        . 'WHERE id_etsy_profiles = ' . (int) Tools::getValue('id_etsy_profiles'));
 
                     $insert_profile_category_id = Db::getInstance()->getValue('SELECT id_profile_category from ' . _DB_PREFIX_ . 'etsy_category_mapping WHERE id_etsy_profiles = ' . (int) Tools::getValue('id_etsy_profiles') . ' ORDER BY id_profile_category asc');
 
@@ -1556,13 +1693,50 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                         //Attribute Mapping List
                         $propertyList = Tools::getValue('property_attr');
                         if (!empty($propertyList)) {
+                            /**
+                             * Changes done to save properties id value into the database
+                             * @date 12-04-2023
+                             * @author Tanisha Gupta
+                             */
+                            $property_data = array();
+                            $property_data = $this->ajaxGetPropertiesList($profileEtsyCategory);
                             Db::getInstance()->execute("DELETE FROM " . _DB_PREFIX_ . "etsy_attribute_mapping WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "' AND id_profile_category = '" . (int) $insert_profile_category_id . "'");
                             foreach ($propertyList as $key => $value) {
                                 if ($value != "") {
                                     if (is_array($value)) {
+                                        $property_value = array();
+                                        if (!empty($property_data)) {
+                                            foreach ($property_data as $property_data1) {
+                                                if ($property_data1['propertyId'] == $key) {
+                                                    foreach ($value as $value1) {
+                                                        foreach ($property_data1['possibleValues'] as $key1 => $possibleValues) {
+                                                            if ($possibleValues['id'] == $value1) {
+                                                                $property_value[] = $possibleValues['value'];
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            $property_value = implode(",", $property_value);
+                                        }
                                         $value = implode(",", $value);
+                                    } else {
+                                        $property_value = '';
+                                        if (!empty($property_data)) {
+                                            foreach ($property_data as $property_data1) {
+                                                if ($property_data1['propertyId'] == $key) {
+                                                    foreach ($property_data1['possibleValues'] as $key1 => $possibleValues) {
+                                                        if ($possibleValues['id'] == $value) {
+                                                            $property_value = $possibleValues['value'];
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                    $insertAttributeMappingSQL = "INSERT INTO " . _DB_PREFIX_ . "etsy_attribute_mapping (property_id, id_attribute_group, id_profile_category, id_etsy_profiles, date_added, date_updated) VALUES ('" . pSQL($key) . "', '" . pSQL($value) . "', '" . pSQL($insert_profile_category_id) . "','" . (int) Tools::getValue('id_etsy_profiles') . "', NOW(), NOW())";
+                                    $insertAttributeMappingSQL = "INSERT INTO " . _DB_PREFIX_ . "etsy_attribute_mapping (property_id, id_attribute_group, id_attribute_value, id_profile_category, id_etsy_profiles, date_added, date_updated) VALUES ('" . pSQL($key) . "', '" . pSQL($value) . "', '" . pSQL($property_value) . "', '" . pSQL($insert_profile_category_id) . "','" . (int) Tools::getValue('id_etsy_profiles') . "', NOW(), NOW())";
                                     Db::getInstance()->execute($insertAttributeMappingSQL);
                                 }
                             }
@@ -1577,24 +1751,24 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                         }
 
                         $shippingTemplateTitle = EtsyModule::getShippingTemplateTitleByID($shippingTemplateID);
-                        
+
                         /* Reset product is_error flag to so that item can be send to sync again as profile info updated & error might has been fixed */
-                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list "
-                                . "SET is_error = '0' "
-                                . "WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'");
-                        
+                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list "
+                            . "SET is_error = '0' "
+                            . "WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'");
+
                         /* Start-Harish made changes on 16-10-2018 to Update profile products when profile updates  */
                         if (Tools::getValue('update_profile_product', 0) == '1') {
-                            DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list "
-                                    . "SET listing_status = 'Updated',"
-                                    . "is_error = '0' "
-                                    . "WHERE  listing_id != '' AND listing_id != 0 AND listing_id IS NOT NULL "
-                                    . "AND listing_status IN ('Listed','Sold Out','Inactive') "
-                                    . "AND delete_flag = '0' "
-                                    . "AND active = '1' "
-                                    . "AND id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'");
+                            Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list "
+                                . "SET listing_status = 'Updated',"
+                                . "is_error = '0' "
+                                . "WHERE  listing_id != '' AND listing_id != 0 AND listing_id IS NOT NULL "
+                                . "AND listing_status IN ('Listed','Sold Out','Inactive') "
+                                . "AND delete_flag = '0' "
+                                . "AND active = '1' "
+                                . "AND id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'");
 
-                            DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 0 WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'");
+                            Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 0 WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'");
                         }
                         /* End-Harish made changes on 16-10-2018 for Update profile products when profile updates */
 
@@ -1631,11 +1805,18 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                         custom_pricing, 
                         custom_price, 
                         size_chart_image,
+                        alter_quantity,
                         price_type, 
                         price_reduction, 
                         id_etsy_shop_section,
+                        /*
+                         * Added id_etsy_return_policy to profile insert query
+			 * @modifier Himanshu Vishwakarma
+                         * @date 15-12-2025
+                         */
+                        id_etsy_return_policy,
                         etsy_selected_products,
-                        etsy_product_type) VALUES ('" . pSQL($profileTitle) . "', '" . pSQL($custmize_product_title) . "','" . (int) $shippingTemplateID . "', '" . (int) $is_customizable . "', '" . pSQL($whoMade) . "', '" . pSQL($whenMade) . "', '" . (int) $is_supply . "', '" . pSQL($recipient) . "', '" . pSQL($occassion) . "', '1', NOW(), NOW(), '" . pSQL($currency) . "','" . (int) $should_auto_renew . "', '" . (int) $enable_max_qty . "','" . (int) $max_qty . "','" . (int) $enable_min_qty . "', '" . (int) $min_qty . "', '" . pSQL($mapped_material_feature) . "', '" . pSQL($property) . "', '" . pSQL($custom_pricing) . "', '" . pSQL($custom_price) . "'," . (int) $enable_size_chart_image .  ",'" . pSQL($price_type) . "', '" . pSQL($price_reduction) . "', '" . pSQL(Tools::getValue('id_etsy_shop_section')) . "', '" . pSQL($etsy_selected_products) . "','" . pSQL($etsy_product_type) . "')";
+                        etsy_product_type) VALUES ('" . pSQL(str_replace('\\', '', $profileTitle)) . "', '" . pSQL($custmize_product_title) . "','" . (int) $shippingTemplateID . "', '" . (int) $is_customizable . "', '" . pSQL($whoMade) . "', '" . pSQL($whenMade) . "', '" . (int) $is_supply . "', '" . pSQL($recipient) . "', '" . pSQL($occassion) . "', '1', NOW(), NOW(), '" . pSQL($currency) . "','" . (int) $should_auto_renew . "', '" . (int) $enable_max_qty . "','" . (int) $max_qty . "','" . (int) $enable_min_qty . "', '" . (int) $min_qty . "', '" . pSQL($mapped_material_feature) . "', '" . pSQL($property) . "', '" . pSQL($custom_pricing) . "', '" . pSQL($custom_price) . "','" . (int) $enable_size_chart_image . "','" . (int) $alter_quantity .  "','" . pSQL($price_type) . "', '" . pSQL($price_reduction) . "', '" . pSQL(Tools::getValue('id_etsy_shop_section')) . "', '" . pSQL(Tools::getValue('id_etsy_return_policy')) . "', '" . pSQL($etsy_selected_products) . "','" . pSQL($etsy_product_type) . "')";
 
                     if (Db::getInstance()->execute($insertProfileSQL)) {
                         $id_etsy_profiles = Db::getInstance()->Insert_ID();
@@ -1654,16 +1835,21 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                             // changes by rishabh jain
                             if ($_FILES['banner_image']['error'] == 0 && $_FILES['banner_image']['name'] != '' && $_FILES['banner_image']['size'] > 0) {
                                 $file_extension = pathinfo($_FILES['banner_image']['name'], PATHINFO_EXTENSION);
-                                $path = _PS_MODULE_DIR_ .'kbetsy/views/img/profile/'.$id_etsy_profiles.'.'. $file_extension;
-                                $exist_image = glob(_PS_MODULE_DIR_ . 'kbetsy/views/img/profile/'.$id_etsy_profiles.'.*');
-                                if (file_exists($exist_image[0])) {
-                                    unlink($exist_image[0]);
+                                $path = _PS_MODULE_DIR_ . 'kbetsy/views/img/profile/' . $id_etsy_profiles . '.' . $file_extension;
+                                $exist_image = glob(_PS_MODULE_DIR_ . 'kbetsy/views/img/profile/' . $id_etsy_profiles . '.*');
+
+                                /**
+                                 * Added a empty check to avoid Undefined offset notice.
+                                 * @date 08-03-2024
+                                 * @author Ashish
+                                 */
+                                if (!empty($exist_image)) {
+                                    if (file_exists($exist_image[0])) {
+                                        unlink($exist_image[0]);
+                                    }
                                 }
-                                move_uploaded_file(
-                                    $_FILES['banner_image']['tmp_name'],
-                                    $path
-                                );
-                                chmod(_PS_MODULE_DIR_ . 'kbetsy/views/img/profile/'.$id_etsy_profiles.'.'. $file_extension, 0777);
+                                move_uploaded_file($_FILES['banner_image']['tmp_name'], $path);
+                                //chmod(_PS_MODULE_DIR_ . 'kbetsy/views/img/profile/'.$id_etsy_profiles.'.'. $file_extension, 0775);
                             }
                             // changes over
                         }
@@ -1673,12 +1859,49 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                         //Attribute Mapping List
                         $propertyList = Tools::getValue('property_attr');
                         if (!empty($propertyList)) {
+                            /**
+                             * Changes done to save properties id value into the database
+                             * @date 12-04-2023
+                             * @author Tanisha Gupta
+                             */
+                            $property_data = array();
+                            $property_data = $this->ajaxGetPropertiesList($profileEtsyCategory);
                             foreach ($propertyList as $key => $value) {
                                 if ($value != "") {
                                     if (is_array($value)) {
+                                        $property_value = array();
+                                        if (!empty($property_data)) {
+                                            foreach ($property_data as $property_data1) {
+                                                if ($property_data1['propertyId'] == $key) {
+                                                    foreach ($value as $value1) {
+                                                        foreach ($property_data1['possibleValues'] as $key1 => $possibleValues) {
+                                                            if ($possibleValues['id'] == $value1) {
+                                                                $property_value[] = $possibleValues['value'];
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            $property_value = implode(",", $property_value);
+                                        }
                                         $value = implode(",", $value);
+                                    } else {
+                                        $property_value = '';
+                                        if (!empty($property_data)) {
+                                            foreach ($property_data as $property_data1) {
+                                                if ($property_data1['propertyId'] == $key) {
+                                                    foreach ($property_data1['possibleValues'] as $key1 => $possibleValues) {
+                                                        if ($possibleValues['id'] == $value) {
+                                                            $property_value = $possibleValues['value'];
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                    Db::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_attribute_mapping (property_id, id_attribute_group, id_profile_category, id_etsy_profiles, date_added, date_updated) VALUES ('" . pSQL($key) . "', '" . pSQL($value) . "', '" . pSQL($id_profile_category) . "','" . (int) $id_etsy_profiles . "', NOW(), NOW())");
+                                    Db::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_attribute_mapping (property_id, id_attribute_group, id_attribute_value, id_profile_category, id_etsy_profiles, date_added, date_updated) VALUES ('" . pSQL($key) . "', '" . pSQL($value) . "', '" . pSQL($property_value) . "', '" . pSQL($id_profile_category) . "','" . (int) $id_etsy_profiles . "', NOW(), NOW())");
                                 }
                             }
                         }
@@ -1710,7 +1933,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             $getProfileDetails = EtsyProfiles::getProfileDetails(Tools::getValue('id_etsy_profiles'));
 
             if (Tools::getValue('status') == 'Disable') {
-                if (DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_profiles SET active = '0' WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'")) {
+                if (Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_profiles SET active = '0' WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'")) {
                     //Audit Log Entry
                     $auditLogEntryString = 'Profile - <b>' . $getProfileDetails[0]['profile_title'] . '</b> Disabled.';
                     $auditMethodName = 'AdminEtsyProfileManagement::postProcess()';
@@ -1719,7 +1942,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                     Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyProfileManagement') . '&etsyConf=10');
                 }
             } else if (Tools::getValue('status') == 'Enable') {
-                if (DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_profiles SET active = '1' WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'")) {
+                if (Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_profiles SET active = '1' WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'")) {
                     //Audit Log Entry
                     $auditLogEntryString = 'Profile - <b>' . $getProfileDetails[0]['profile_title'] . '</b> Enabled.';
                     $auditMethodName = 'AdminEtsyProfileManagement::postProcess()';
@@ -1733,6 +1956,12 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         } else {
             parent::postProcess();
         }
+        /**
+         * Set link of url to fetch product on the profile page
+         * @date 11-04-2023
+         * @author Tanisha Gupta
+         */
+        $this->context->smarty->assign('kb_fetch_product_link', $this->context->link->getAdminLink('AdminEtsyProfileManagement', true) . '&configure=' . $this->module->name . '&searchKbProduct=true');
         $this->content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/velovalidation.tpl');
     }
 
@@ -1775,7 +2004,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 if (Tools::isEmpty($singleProduct['listing_id'])) {
                     Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'etsy_products_list WHERE id_product = ' . (int) $singleProduct['id_product'] . ' AND id_etsy_profiles =' . (int) $profile_id);
                 } else {
-                    DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET delete_flag = '1', renew_flag = '0', listing_status = 'Inactive', id_etsy_profiles = NULL WHERE id_product = " . (int) $singleProduct['id_product'] . " AND id_etsy_profiles = " . (int) $profile_id);
+                    Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET delete_flag = '1', renew_flag = '0', listing_status = 'Inactive', id_etsy_profiles = NULL WHERE id_product = " . (int) $singleProduct['id_product'] . " AND id_etsy_profiles = " . (int) $profile_id);
                 }
             }
         }
@@ -1792,25 +2021,26 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         }
         $profileEtsyCategory = Tools::getValue('etsy_category_code');
         if (empty($storeCategoriesList)) {
-            $customErrors = $this->l('Please select store categories to map with Profile.');
+            $customErrors = $this->module->l('Please select store categories to map with Profile.','AdminEtsyProfileManagementController');
         } else {
             if (isset($storeCategories)) {
                 /* Start-MK made changes on 22-11-2017 for display error message based on category mapping */
                 $storeCategoryExist = 0;
                 $ProfileCategoryExist = 0;
-                $storeCategoryProfileExist = 0;
                 foreach ($storeCategoriesList as $key => $value) {
                     //SQL to check details existence
                     if (!Tools::isEmpty($value)) {
                         if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_profiles')))) {
+                            /*
+                             * Updated validation to only check if store category exists in OTHER profiles
+                             * Removed check within same profile as it's unnecessary when updating
+                             * @modifier Himanshu Vishwakarma
+			     * @date: 11-12-2025
+                             */
                             $selectSQL = 'SELECT count(*) as count FROM ' . _DB_PREFIX_ . 'etsy_category_mapping WHERE FIND_IN_SET("' . pSQL($value) . '", prestashop_category) AND id_etsy_profiles !=' . (int) Tools::getValue('id_etsy_profiles');
-                            $dataSQL = 'SELECT count(*) as count FROM ' . _DB_PREFIX_ . 'etsy_category_mapping WHERE FIND_IN_SET("' . pSQL($value) . '", prestashop_category) AND etsy_category_code !=' . (int) $profileEtsyCategory . ' AND id_etsy_profiles =' . (int) Tools::getValue('id_etsy_profiles');
                             $dataExistenceResult = Db::getInstance()->executeS($selectSQL, true, false);
-                            $dataExistenceCatRes = Db::getInstance()->executeS($dataSQL, true, false);
                             if ($dataExistenceResult[0]['count'] > 0) {
                                 $storeCategoryExist = 1;
-                            } elseif ($dataExistenceCatRes[0]['count'] > 0) {
-                                $storeCategoryProfileExist = 1;
                             }
                         } else {
                             $selectSQL = "SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_category_mapping WHERE FIND_IN_SET(" . pSQL($value) . ", prestashop_category)";
@@ -1823,11 +2053,9 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                 }
 
                 if ($ProfileCategoryExist) {
-                    $customErrors = $this->l('Profile and Etsy Category already exist.');
+                    $customErrors = $this->module->l('Profile and Etsy Category already exist.','AdminEtsyProfileManagementController');
                 } elseif ($storeCategoryExist) {
-                    $customErrors = $this->l('Profile already exists for atleast one of selected categories.');
-                } elseif ($storeCategoryProfileExist) {
-                    $customErrors = $this->l('Store category already exist with other Etsy Category.');
+                    $customErrors = $this->module->l('Profile already exists for atleast one of selected categories.','AdminEtsyProfileManagementController');
                 }
             }
         }
@@ -1835,18 +2063,30 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
     }
 
     //To get get properties list of an Etsy Category, based on the selected category on the profile
-    public function ajaxGetPropertiesList()
+    /**
+     * Added parameter to fetch property list while saving property data to the databa
+     * @date 11-03-2023
+     * @author Tanisha Gupta
+     * param $cat_id, Etsy category code
+     */
+    public function ajaxGetPropertiesList($cat_id = 0)
     {
         $propertiesListHTML = '';
         if (!Tools::isEmpty(trim(Tools::getValue('category_code')))) {
             $propertSetJson = Tools::file_get_contents("https://www.etsy.com/api/v3/ajax/public/taxonomy/" . trim(Tools::getValue('category_code')) . "/properties");
-            $propertySet = Tools::jsonDecode($propertSetJson, true);
+            $propertySet = json_decode($propertSetJson, true);
             if (!empty($propertySet)) {
                 $propertiesListHTML = $this->displayPropertiesList($propertySet);
             }
+            echo $this->displayAttributeMappingSection($propertiesListHTML);
+            die();
+        } else if ($cat_id > 0) {
+            $propertSetJson = Tools::file_get_contents("https://www.etsy.com/api/v3/ajax/public/taxonomy/" . $cat_id . "/properties");
+            $propertySet = json_decode($propertSetJson, TRUE);
+            if (!empty($propertySet)) {
+                return $propertySet;
+            }
         }
-        echo $this->displayAttributeMappingSection($propertiesListHTML);
-        die();
     }
 
     /** Display Attribute Mapping Section */
@@ -1866,7 +2106,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             //Get Mapped Attribute
             $selected_attribute = array();
             if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_profiles')))) {
-                $mappedAttribute = DB::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_attribute_mapping WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'");
+                $mappedAttribute = Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_attribute_mapping WHERE id_etsy_profiles = '" . (int) Tools::getValue('id_etsy_profiles') . "'");
                 if (!empty($mappedAttribute)) {
                     foreach ($mappedAttribute as $mapped) {
                         $selected_attribute[] = array("id" => $mapped['property_id'], "value" => $mapped['id_attribute_group']);
@@ -1875,11 +2115,16 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             }
 
             foreach ($properties as $propery) {
-                if ($propery["attributeId"] != null && $propery["attributeId"] != 3) {
+                /**
+                 * If possibleValues has the value, only then show the fields.
+                 * @date 15-04-2023
+                 * @modifier Tanisha Gupta
+                 */
+                if ($propery["attributeId"] != null && $propery["attributeId"] != 3 && !empty($propery['possibleValues'])) {
                     $selected_values = array();
                     $flag = false;
 
-                    /* Popuplate Selecte Values from the DB Values */
+                    /* Popuplate Selecte Values from the Db Values */
                     foreach ($selected_attribute as $attribute) {
                         if ($attribute["id"] == $propery["propertyId"]) {
                             $selected_value = $attribute["value"];
@@ -1888,7 +2133,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
                         }
                     }
 
-                    /* In case no DB selected value, Pick the default selected value from the Etsy */
+                    /* In case no Db selected value, Pick the default selected value from the Etsy */
                     if ($flag == false) {
                         if (isset($propery['selectedValues'])) {
                             foreach ($propery['selectedValues'] as $selectedValues) {
@@ -1938,10 +2183,10 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
     {
         $getProfileStatus = EtsyProfiles::getProfileDetails($id, 'active');
         $status_text = 'Enable';
-        $status = $this->l('Enable');
+        $status = $this->module->l('Enable','AdminEtsyProfileManagementController');
         $icon = 'circle';
         if ($getProfileStatus[0]['active'] == 1) {
-            $status = $this->l('Disable');
+            $status = $this->module->l('Disable','AdminEtsyProfileManagementController');
             $status_text = 'Disable';
             $icon = 'circle-o';
         }
@@ -1959,13 +2204,55 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
     }
 
     /** Display Enable/Disable action link  */
+    /**
+     * Changes added by pragya maurya for localsync on profile level
+     * @modifier pragya maurya
+     * @date 04-06-2024
+     * Etsy-enhancement-profile-level
+     */
+    public function displayLocalSyncLink($token = null, $id = null, $name = null)
+    {
+        $secure_key = Configuration::get('KBETSY_SECURE_KEY');
+        $this->context->smarty->assign(array(
+            'should_blank' => '1',
+            'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'localSync', 'profile_id' => $id, 'secure_key' => $secure_key)),
+            'action' => $this->module->l('Local Sync','AdminEtsyProfileManagementController'),
+            'icon' => 'refresh',
+        ));
+
+        return $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/list/list_action.tpl');
+    }
+
+
+    /**
+     * Changes added by pragya maurya for localsync on profile level
+     * @modifier pragya maurya
+     * @date 04-06-2024
+     * Etsy-enhancement-profile-level
+     */
+    public function displaySyncEtsyLink($token = null, $id = null, $name = null)
+    {
+        $secure_key = Configuration::get('KBETSY_SECURE_KEY');
+        $this->context->smarty->assign(array(
+            'should_blank' => '1',
+            'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncProductsListing', 'profile_id' => $id, 'secure_key' => $secure_key)),
+            'action' => $this->module->l('Sync profile Products','AdminEtsyProfileManagementController'),
+            'icon' => 'refresh',
+        ));
+
+        return $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/list/list_action.tpl');
+    }
+
+    //End changes added
+
+
     public function displayDeleteLink($token = null, $id = null, $name = null)
     {
         $this->context->smarty->assign(array(
             'href' => $this->context->link->getAdminlink('AdminEtsyProfileManagement') . '&' . $this->identifier . '=' . $id . '&action=delete',
-            'action' => $this->l('Delete'),
+            'action' => $this->module->l('Delete'),
             'icon' => 'trash',
-            'warning_message' => $this->l('Are you sure to delete the profile? Corresponding profile item will also be deleted from the Etsy.')
+            'warning_message' => $this->module->l('Are you sure to delete the profile? Corresponding profile item will also be deleted from the Etsy.','AdminEtsyProfileManagementController')
         ));
 
         return $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/list/list_action_confirmation.tpl');
@@ -1977,7 +2264,7 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         $category = 'profilecategory';
 
         if (!array_key_exists($category, self::$cache_lang)) {
-            self::$cache_lang[$category] = $this->l('View Mapped Category');
+            self::$cache_lang[$category] = $this->module->l('View Mapped Category','AdminEtsyProfileManagementController');
         }
 
         $this->context->smarty->assign(array(
@@ -2032,21 +2319,21 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
             if (!Tools::getValue('id_etsy_profiles') && !Tools::isSubmit('addetsy_profiles')) {
                 $this->page_header_toolbar_btn['new_template'] = array(
                     'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
-                    'desc' => $this->l('Add new'),
+                    'desc' => $this->module->l('Add new','AdminEtsyProfileManagementController'),
                     'icon' => 'process-icon-new'
                 );
                 $secure_key = Configuration::get('KBETSY_SECURE_KEY');
                 $this->page_header_toolbar_btn['kb_sync_translation'] = array(
                     'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'localSync', 'secure_key' => $secure_key)),
                     'target' => '_blank',
-                    'desc' => $this->l('Local Sync'),
+                    'desc' => $this->module->l('Local Sync','AdminEtsyProfileManagementController'),
                     'icon' => 'process-icon-update'
                 );
             }
             if (Tools::getValue('id_etsy_profiles') || Tools::isSubmit('id_etsy_profiles') || Tools::isSubmit('addetsy_profiles')) {
                 $this->page_header_toolbar_btn['kb_cancel_action'] = array(
                     'href' => self::$currentIndex . '&token=' . $this->token,
-                    'desc' => $this->l('Cancel'),
+                    'desc' => $this->module->l('Cancel','AdminEtsyProfileManagementController'),
                     'icon' => 'process-icon-cancel'
                 );
             }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,25 +21,8 @@
 
 namespace PrestaShop\Module\Ps_metrics\Helper;
 
-use PrestaShop\Module\Ps_metrics\Adapter\LoggerAdapter;
-
 class JsonHelper
 {
-    /**
-     * @var LoggerAdapter
-     */
-    private $loggerAdapter;
-
-    /**
-     * JsonHelper constructor.
-     *
-     * @param LoggerAdapter $loggerAdapter
-     */
-    public function __construct(LoggerAdapter $loggerAdapter)
-    {
-        $this->loggerAdapter = $loggerAdapter;
-    }
-
     /**
      * Encode the data to json and check and force the return to empty string if false
      *
@@ -46,7 +30,7 @@ class JsonHelper
      *
      * @return string
      */
-    public function jsonEncode($data)
+    public function jsonEncode($data): string
     {
         $json = json_encode($data);
         if (empty($data)) {
@@ -57,28 +41,26 @@ class JsonHelper
             return $json;
         }
 
-        $this->loggerAdapter->error('[PS_METRICS] Unable to encode Json');
-
         return '';
     }
 
     /**
      * Check if the json is valid and returns an empty data if not
      *
-     * @param mixed $json
+     * @param string|false $json
      * @param bool $assoc
      *
      * @return array $data
      */
-    public function jsonDecode($json, $assoc = true)
+    public function jsonDecode($json, bool $assoc = true): array
     {
-        $data = json_decode($json, $assoc);
+        if ($json) {
+            $data = json_decode($json, $assoc);
 
-        if (JSON_ERROR_NONE === json_last_error()) {
-            return $data;
+            if (JSON_ERROR_NONE === json_last_error()) {
+                return $data;
+            }
         }
-
-        $this->loggerAdapter->error('[PS_METRICS] Unable to decode Json');
 
         return [];
     }
@@ -90,7 +72,7 @@ class JsonHelper
      *
      * @return bool
      */
-    public function isJson($string)
+    public function isJson(string $string): bool
     {
         json_decode($string);
 

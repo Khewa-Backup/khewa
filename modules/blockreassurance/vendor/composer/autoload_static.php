@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitcb10c16ec33fc6216189441289485cf5
+class ComposerStaticInit96b1afdded7bf354ddeb4149edbfc9e2
 {
     public static $files = array (
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
@@ -22,7 +22,6 @@ class ComposerStaticInitcb10c16ec33fc6216189441289485cf5
         'P' => 
         array (
             'PrestaShop\\Module\\BlockReassurance\\' => 35,
-            'PrestaShop\\CircuitBreaker\\' => 26,
         ),
         'G' => 
         array (
@@ -49,10 +48,6 @@ class ComposerStaticInitcb10c16ec33fc6216189441289485cf5
         'PrestaShop\\Module\\BlockReassurance\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
-        ),
-        'PrestaShop\\CircuitBreaker\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/prestashop/circuit-breaker/src',
         ),
         'GuzzleHttp\\Subscriber\\Cache\\' => 
         array (
@@ -220,46 +215,6 @@ class ComposerStaticInitcb10c16ec33fc6216189441289485cf5
         'GuzzleHttp\\UriTemplate' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/UriTemplate.php',
         'GuzzleHttp\\Url' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Url.php',
         'GuzzleHttp\\Utils' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Utils.php',
-        'PrestaShop\\CircuitBreaker\\AdvancedCircuitBreaker' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/AdvancedCircuitBreaker.php',
-        'PrestaShop\\CircuitBreaker\\AdvancedCircuitBreakerFactory' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/AdvancedCircuitBreakerFactory.php',
-        'PrestaShop\\CircuitBreaker\\Client\\GuzzleClient' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Client/GuzzleClient.php',
-        'PrestaShop\\CircuitBreaker\\Contract\\CircuitBreakerInterface' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Contract/CircuitBreakerInterface.php',
-        'PrestaShop\\CircuitBreaker\\Contract\\ClientInterface' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Contract/ClientInterface.php',
-        'PrestaShop\\CircuitBreaker\\Contract\\FactoryInterface' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Contract/FactoryInterface.php',
-        'PrestaShop\\CircuitBreaker\\Contract\\FactorySettingsInterface' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Contract/FactorySettingsInterface.php',
-        'PrestaShop\\CircuitBreaker\\Contract\\PlaceInterface' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Contract/PlaceInterface.php',
-        'PrestaShop\\CircuitBreaker\\Contract\\StorageInterface' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Contract/StorageInterface.php',
-        'PrestaShop\\CircuitBreaker\\Contract\\SystemInterface' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Contract/SystemInterface.php',
-        'PrestaShop\\CircuitBreaker\\Contract\\TransactionInterface' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Contract/TransactionInterface.php',
-        'PrestaShop\\CircuitBreaker\\Contract\\TransitionDispatcherInterface' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Contract/TransitionDispatcherInterface.php',
-        'PrestaShop\\CircuitBreaker\\Event\\TransitionEvent' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Event/TransitionEvent.php',
-        'PrestaShop\\CircuitBreaker\\Exception\\CircuitBreakerException' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Exception/CircuitBreakerException.php',
-        'PrestaShop\\CircuitBreaker\\Exception\\InvalidPlaceException' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Exception/InvalidPlaceException.php',
-        'PrestaShop\\CircuitBreaker\\Exception\\InvalidTransactionException' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Exception/InvalidTransactionException.php',
-        'PrestaShop\\CircuitBreaker\\Exception\\TransactionNotFoundException' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Exception/TransactionNotFoundException.php',
-        'PrestaShop\\CircuitBreaker\\Exception\\UnavailableServiceException' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Exception/UnavailableServiceException.php',
-        'PrestaShop\\CircuitBreaker\\Exception\\UnsupportedMethodException' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Exception/UnsupportedMethodException.php',
-        'PrestaShop\\CircuitBreaker\\FactorySettings' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/FactorySettings.php',
-        'PrestaShop\\CircuitBreaker\\PartialCircuitBreaker' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/PartialCircuitBreaker.php',
-        'PrestaShop\\CircuitBreaker\\Place\\AbstractPlace' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Place/AbstractPlace.php',
-        'PrestaShop\\CircuitBreaker\\Place\\ClosedPlace' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Place/ClosedPlace.php',
-        'PrestaShop\\CircuitBreaker\\Place\\HalfOpenPlace' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Place/HalfOpenPlace.php',
-        'PrestaShop\\CircuitBreaker\\Place\\OpenPlace' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Place/OpenPlace.php',
-        'PrestaShop\\CircuitBreaker\\SimpleCircuitBreaker' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/SimpleCircuitBreaker.php',
-        'PrestaShop\\CircuitBreaker\\SimpleCircuitBreakerFactory' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/SimpleCircuitBreakerFactory.php',
-        'PrestaShop\\CircuitBreaker\\State' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/State.php',
-        'PrestaShop\\CircuitBreaker\\Storage\\DoctrineCache' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Storage/DoctrineCache.php',
-        'PrestaShop\\CircuitBreaker\\Storage\\SimpleArray' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Storage/SimpleArray.php',
-        'PrestaShop\\CircuitBreaker\\Storage\\SymfonyCache' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Storage/SymfonyCache.php',
-        'PrestaShop\\CircuitBreaker\\SymfonyCircuitBreaker' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/SymfonyCircuitBreaker.php',
-        'PrestaShop\\CircuitBreaker\\System\\MainSystem' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/System/MainSystem.php',
-        'PrestaShop\\CircuitBreaker\\Transaction\\SimpleTransaction' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Transaction/SimpleTransaction.php',
-        'PrestaShop\\CircuitBreaker\\Transition' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Transition.php',
-        'PrestaShop\\CircuitBreaker\\Transition\\EventDispatcher' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Transition/EventDispatcher.php',
-        'PrestaShop\\CircuitBreaker\\Transition\\NullDispatcher' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Transition/NullDispatcher.php',
-        'PrestaShop\\CircuitBreaker\\Util\\Assert' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Util/Assert.php',
-        'PrestaShop\\CircuitBreaker\\Util\\ErrorFormatter' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Util/ErrorFormatter.php',
-        'PrestaShop\\Module\\BlockReassurance\\Addons\\CategoryFetcher' => __DIR__ . '/../..' . '/src/Addons/CategoryFetcher.php',
         'React\\Promise\\CancellablePromiseInterface' => __DIR__ . '/..' . '/react/promise/src/CancellablePromiseInterface.php',
         'React\\Promise\\CancellationQueue' => __DIR__ . '/..' . '/react/promise/src/CancellationQueue.php',
         'React\\Promise\\Deferred' => __DIR__ . '/..' . '/react/promise/src/Deferred.php',
@@ -327,9 +282,9 @@ class ComposerStaticInitcb10c16ec33fc6216189441289485cf5
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitcb10c16ec33fc6216189441289485cf5::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitcb10c16ec33fc6216189441289485cf5::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitcb10c16ec33fc6216189441289485cf5::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit96b1afdded7bf354ddeb4149edbfc9e2::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit96b1afdded7bf354ddeb4149edbfc9e2::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit96b1afdded7bf354ddeb4149edbfc9e2::$classMap;
 
         }, null, ClassLoader::class);
     }

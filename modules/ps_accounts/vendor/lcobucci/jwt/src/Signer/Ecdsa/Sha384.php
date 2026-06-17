@@ -1,14 +1,13 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Ecdsa;
 
-namespace Lcobucci\JWT\Signer\Ecdsa;
-
-use Lcobucci\JWT\Signer\Ecdsa;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Ecdsa;
 /**
  * Signer for ECDSA SHA-384
  *
@@ -24,7 +23,6 @@ class Sha384 extends Ecdsa
     {
         return 'ES384';
     }
-
     /**
      * {@inheritdoc}
      */
@@ -32,7 +30,6 @@ class Sha384 extends Ecdsa
     {
         return 'sha384';
     }
-
     /**
      * {@inheritdoc}
      */

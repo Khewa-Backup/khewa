@@ -680,7 +680,7 @@ class MailAlerts extends Module
 	public function hookDisplayHeader()
 	{
 		$this->page_name = Dispatcher::getInstance()->getController();
-		// var_dump($this->page_name);
+		var_dump($this->page_name);
 		if (in_array($this->page_name, array('product', 'account')))
 		{
 			$this->context->controller->addJS($this->_path.'js/mailalerts.js');

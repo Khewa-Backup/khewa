@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>ets_sociallogin</name>
+    <displayName><![CDATA[SOCIAL LOGIN]]></displayName>
+    <version><![CDATA[2.6.6]]></version>
+    <description><![CDATA[Login or register new account using 32+ payment gateways and social networks such as Amazon, Paypal, Facebook, Google, X, Linked In, etc.]]></description>
+    <author><![CDATA[PrestaHero]]></author>
+    <tab><![CDATA[front_office_features]]></tab>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>

@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyShippingTemplates.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyShippingTemplatesEntries.php');
@@ -54,6 +57,16 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                 'title' => $this->module->l('Max. Processing Days', 'AdminEtsyShippingTemplatesController'),
                 'align' => 'center',
                 'callback' => 'showMaxDays'
+            ),
+            /**
+             * Added by Ashish to show the template sync errors.
+             * Etsy001-Mar-2024 etsy-handle-template-sync
+             * @date 08-03-2024
+             * @author Ashish
+             */
+            'sync_error' => array(
+                'title' => $this->module->l('Sync error', 'AdminEtsyShippingTemplatesController'),
+                'align' => 'center'
             )
         );
 
@@ -116,26 +129,46 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
         //$this->addRowAction('viewUpgrade');
         $this->addRowAction('edit');
         $this->addRowAction('delete');
-        if ($this->country_sync == false) {
-            $secure_key = Configuration::get('KBETSY_SECURE_KEY');
-            $sync_countries_regions_link = $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncCountriesRegions', 'secure_key' => $secure_key));
-                    
-            $this->context->smarty->assign("message", html_entity_decode(sprintf($this->module->l('Etsy countries not found in the system. <a href="%s" target="_blank">Click here</a> to sync the etsy countries to continue.', 'AdminEtsyShopSectionController'), $sync_countries_regions_link)));
-            $this->context->smarty->assign("type", "alert-info");
-            $this->context->smarty->assign("KbMessageLink", $sync_countries_regions_link);
 
-            $msgs = $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/msgs.tpl");
-            return $msgs;
-        } else if (EtsyShippingTemplates::getTotalTeamplates() <= 0) {
-            $this->context->smarty->assign("message", $this->module->l('Shipping template has not been added yet. Click on the "Add new" icon to add the same OR click on the "Sync Shipping Templates" icon to download the existing shipping templates from the Etsy account.', 'AdminEtsyShopSectionController'));
+        /**
+         * Added by Ashish to Handle show the template sync errors. Show the error message if table column is not added by module reset. 
+         * Etsy001-Mar-2024 etsy-handle-template-sync
+         * @date 08-03-2024
+         * @author Ashish
+         */
+        $sync_error_check_column_sql = 'SELECT count(*) FROM information_schema.COLUMNS
+                      WHERE COLUMN_NAME = "sync_error"
+                      AND TABLE_NAME = "' . _DB_PREFIX_ . 'etsy_shipping_templates"
+                      AND TABLE_SCHEMA = "' . _DB_NAME_ . '"';
+        $sync_error_check_column = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sync_error_check_column_sql);
+        if ((int) $sync_error_check_column == 0) {
+            $this->context->smarty->assign("message", $this->module->l('Module reset is required to migrate the Db tables. Reset the etsy module to proceed.', 'AdminEtsyShopSectionController'));
             $this->context->smarty->assign("type", "alert-info");
             $this->context->smarty->assign("KbMessageLink", '');
             $msgs = $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/msgs.tpl");
             return $msgs;
         } else {
+            if ($this->country_sync == false) {
+                $secure_key = Configuration::get('KBETSY_SECURE_KEY');
+                $sync_countries_regions_link = $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncCountriesRegions', 'secure_key' => $secure_key));
+                        
+                $this->context->smarty->assign("message", html_entity_decode(sprintf($this->module->l('Etsy countries not found in the system. <a href="%s" target="_blank">Click here</a> to sync the etsy countries to continue.', 'AdminEtsyShopSectionController'), $sync_countries_regions_link)));
+                $this->context->smarty->assign("type", "alert-info");
+                $this->context->smarty->assign("KbMessageLink", $sync_countries_regions_link);
+    
+                $msgs = $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/msgs.tpl");
+                return $msgs;
+            } else if (EtsyShippingTemplates::getTotalTeamplates() <= 0) {
+                $this->context->smarty->assign("message", $this->module->l('Shipping template has not been added yet. Click on the "Add new" icon to add the same OR click on the "Sync Shipping Templates" icon to download the existing shipping templates from the Etsy account.', 'AdminEtsyShopSectionController'));
+                $this->context->smarty->assign("type", "alert-info");
+                $this->context->smarty->assign("KbMessageLink", '');
+                $msgs = $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/msgs.tpl");
+                return $msgs;
+            } else {
+                return parent::renderList();
+            }
             return parent::renderList();
         }
-        return parent::renderList();
     }
 
     /** Render a form */
@@ -145,7 +178,7 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
         $etsyCountriesList = array();
         $regionsList = array();
         $etsyRegionsList = array();
-        $countriesList[] = array('id_option' => '', 'name' => $this->l('Select Country'));
+        $countriesList[] = array('id_option' => '', 'name' => $this->module->l('Select Country','AdminEtsyShippingTemplatesController'));
         $etsyCountriesList = EtsyModule::etsyGetAllCountriesFromDB();
         if (isset($etsyCountriesList)) {
             foreach ($etsyCountriesList as $etsyCountry) {
@@ -264,14 +297,41 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                     'shipping_primary_cost' => $getShippingTemplateDetails[0]['shipping_primary_cost'],
                     'shipping_secondary_cost' => $getShippingTemplateDetails[0]['shipping_secondary_cost'],
                     'shipping_min_process_days' => $getShippingTemplateDetails[0]['shipping_min_process_days'],
-                    'shipping_max_process_days' => $getShippingTemplateDetails[0]['shipping_max_process_days']
+                    'shipping_max_process_days' => $getShippingTemplateDetails[0]['shipping_max_process_days'],
+                    /**
+                     * Added postal fields for the shipping template
+                     * @date 10-04-2023
+                     * @author Tanisha Gupta
+                     */
+                    'postal_code' => $getShippingTemplateDetails[0]['postal_code']
+                    //'shipping_transmit_type' => $getShippingTemplateDetails[0]['shipping_transmit_type'],
+                    //'shipping_carrier_id' => $getShippingTemplateDetails[0]['shipping_carrier_id'],
+                    //'shipping_mail_class_key' => $getShippingTemplateDetails[0]['shipping_mail_class_key'],
+                    //'shipping_min_delivery_days' => $getShippingTemplateDetails[0]['shipping_min_delivery_days'],
+                    //'shipping_max_delivery_days' => $getShippingTemplateDetails[0]['shipping_max_delivery_days']
                 );
             }
             
             $template_entries_html = '';
             $template_entries = EtsyShippingTemplatesEntries::getShippingTemplateEntryDetails(Tools::getValue('id_etsy_shipping_templates'));
             if (!empty($template_entries)) {
+                
                 foreach ($template_entries as $template_entry) {
+                    if($template_entry['shipping_entry_transmit_type'] == 'shipping_carrier'){
+                        $template_entry['shipping_carrier_id'] = $template_entry['shipping_entry_carrier_id'] . '.' . $template_entry['shipping_entry_mail_class_key'];
+                        if(!empty($template_entry['shipping_entry_destination_country_id']) && ($template_entry['shipping_entry_destination_country_id'] == $getShippingTemplateDetails[0]['shipping_origin_country_id'])){
+                            $domesticshipping = $this->getDomesticShippingDetails($getShippingTemplateDetails[0]['shipping_origin_country_id']);
+                            if(!empty($domesticshipping)){
+                                $template_entry['shipping_carrier_list'] = $domesticshipping;
+                            }
+                           
+                        }else{
+                            $internationalshipping = $this->getInternationalShippingServices($getShippingTemplateDetails[0]['shipping_origin_country_id']);
+                            if(!empty($internationalshipping)){
+                                $template_entry['shipping_carrier_list'] = $internationalshipping;
+                            }
+                        }
+                    }
                     $this->context->smarty->assign('template_entry', array_merge(array('existing_entry' => true), $template_entry));
                     $template_entries_html .= $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/template_entry.tpl");
                 }
@@ -284,6 +344,20 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
             $template_upgrades = EtsyShippingUpgrades::getShippingUpgradeDetails(Tools::getValue('id_etsy_shipping_templates'));
             if (!empty($template_upgrades)) {
                 foreach ($template_upgrades as $template_upgrade) {
+                    if($template_upgrade['shipping_upgrade_transmit_type'] == 'shipping_carrier'){
+                        $template_upgrade['shipping_upgrade_carrier_id'] = $template_upgrade['shipping_upgrade_carrier_id'] . '.' . $template_upgrade['shipping_upgrade_mail_class_key'];
+                        if(($template_upgrade['shipping_upgrade_destination'] == '0')){
+                            $domesticshipping = $this->getDomesticShippingDetails($getShippingTemplateDetails[0]['shipping_origin_country_id']);
+                            if(!empty($domesticshipping)){
+                                $template_upgrade['shipping_carrier_list'] = $domesticshipping;
+                            }
+                        } else {
+                            $internationalshipping = $this->getInternationalShippingServices($getShippingTemplateDetails[0]['shipping_origin_country_id']);
+                            if(!empty($internationalshipping)){
+                                $template_upgrade['shipping_carrier_list'] = $internationalshipping;
+                            }
+                        }
+                    }
                     $this->context->smarty->assign('template_upgrade', array_merge(array('existing_entry' => true), $template_upgrade));
                     $template_upgrades_html .= $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/template_upgrade.tpl");
                 }
@@ -300,7 +374,13 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                 'shipping_primary_cost' => '',
                 'shipping_secondary_cost' => '',
                 'shipping_min_process_days' => '',
-                'shipping_max_process_days' => ''
+                'shipping_max_process_days' => '',
+                /**
+                * Added postal fields for the shipping template
+                * @date 10-04-2023
+                * @author Tanisha Gupta
+                */
+                'postal_code' => '' 
             );
             $this->context->smarty->assign('template_entry', array(
                 'existing_entry' => false,
@@ -308,7 +388,17 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                 'shipping_entry_destination_country_id' => '',
                 'shipping_entry_destination_region_id' => '',
                 'shipping_entry_primary_cost' => '',
-                'shipping_entry_secondary_cost' => ''
+                'shipping_entry_secondary_cost' => '',
+                /**
+                 * Set Transmit type field 
+                 * @date 10-04-2023
+                 * @author Tanisha Gupta
+                 */
+                'shipping_entry_transmit_type' => '',
+                'shipping_entry_min_delivery_days' => '',
+                'shipping_entry_max_delivery_days' => '',
+                'shipping_carrier_id' => '',
+                'shipping_mail_class_key' => ''
             ));
             $this->context->smarty->assign('fields_value', $this->fields_value);
 
@@ -323,7 +413,6 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
        
         return $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/shipping_template_form.tpl");
     }
-
     public function postProcess()
     {
         $method_name = 'AdminEtsyShippingTemplates::postProcess()';
@@ -331,7 +420,7 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
         $etsyCountriesList = array();
         $regionsList = array();
         $etsyRegionsList = array();
-        $countriesList[] = array('id_option' => '', 'name' => $this->l('Select Country'));
+        $countriesList[] = array('id_option' => '', 'name' => $this->module->l('Select Country','AdminEtsyShippingTemplatesController'));
         $etsyCountriesList = EtsyModule::etsyGetAllCountriesFromDB();
         if (isset($etsyCountriesList)) {
             foreach ($etsyCountriesList as $etsyCountry) {
@@ -366,7 +455,17 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                 'shipping_entry_destination_country_id' => '',
                 'shipping_entry_destination_region_id' => '',
                 'shipping_entry_primary_cost' => '',
-                'shipping_entry_secondary_cost' => ''
+                'shipping_entry_secondary_cost' => '',
+                /**
+                 * Set Transmit type field 
+                 * @date 10-04-2023
+                 * @author Tanisha Gupta
+                 */
+                'shipping_entry_transmit_type' => '',
+                'shipping_entry_min_delivery_days' => '',
+                'shipping_entry_max_delivery_days' => '',
+                'shipping_carrier_id' => '',
+                'shipping_mail_class_key' => ''
             ));
             echo $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/template_entry.tpl");
             die();
@@ -379,12 +478,22 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                 'shipping_upgrade_title' => '',
                 'shipping_upgrade_destination' => 0,
                 'shipping_upgrade_primary_cost' => '',
-                'shipping_upgrade_secondary_cost' => ''
+                'shipping_upgrade_secondary_cost' => '',
+                /**
+                 * Set Transmit type field 
+                 * @date 10-04-2023
+                 * @author Tanisha Gupta
+                 */
+                'shipping_upgrade_transmit_type' => '',
+                'shipping_upgrade_min_delivery_days' => '',
+                'shipping_upgrade_max_delivery_days' => '',
+                'shipping_upgrade_carrier_id' => '',
+                'shipping_upgrade_class_key' => ''
             ));
             echo $this->context->smarty->fetch(_PS_MODULE_DIR_ . "kbetsy/views/templates/admin/template_upgrade.tpl");
             die();
         } else if (!empty(Tools::getValue('type')) && Tools::getValue('type') == 'deleteentry') {
-            /* If shipping template entry id is set then set the delete flag OR directly delete the same for DB */
+            /* If shipping template entry id is set then set the delete flag OR directly delete the same for Db */
             Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_shipping_templates_entries SET "
                 . "delete_flag = '1' "
                 . "WHERE id_etsy_shipping_templates_entries = '" . (int) Tools::getValue('entry_id') . "' AND shipping_template_entry_id IS NOT NULL");
@@ -394,7 +503,7 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
             echo "true";
             die();
         } else if (!empty(Tools::getValue('type')) && Tools::getValue('type') == 'deleteupgrade') {
-            /* If shipping template entry id is set then set the delete flag OR directly delete the same for DB */
+            /* If shipping template entry id is set then set the delete flag OR directly delete the same for Db */
             Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_shipping_upgrades SET "
                 . "delete_flag = '1' "
                 . "WHERE id_etsy_shipping_upgrades = '" . (int) Tools::getValue('upgrade_id') . "' AND shipping_upgrade_id IS NOT NULL");
@@ -403,12 +512,36 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
 
             echo "true";
             die();
+            /**
+             * Handle ajax request for the domestic shipping carrier
+             * @date 13-04-2023
+             * @author Tanisha Gupta
+             */
+        } else if (!empty(Tools::getValue('type')) && Tools::getValue('type') == 'domesticShipping') {
+            $response = array();
+            if(!empty(Tools::getValue('origin_country_id'))){
+                $response = $this->getDomesticShippingDetails(Tools::getValue('origin_country_id'));
+            }
+            echo json_encode($response);
+            die;
         }
-
+        /**
+        * Handle ajax request for the international shipping carrier
+        * @date 13-04-2023
+        * @author Tanisha Gupta
+        */
+        else if (!empty(Tools::getValue('type')) && Tools::getValue('type') == 'internationalShipping') {
+            $response = array();
+            if(!empty(Tools::getValue('origin_country_id'))){
+                $response = $this->getInternationalShippingServices(Tools::getValue('origin_country_id'));
+            }
+            echo json_encode($response);
+            die;
+        }
         if (Tools::isSubmit('submitAddetsy_shipping_templates')) {
+            
             $formError = 0;
             $customErrors = array();
-
             //Prepare variables holding  post values
             $shippingTemplateTitle = pSQL(Tools::getValue('shipping_template_title'));
 
@@ -417,7 +550,12 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
 
             $shippingMinProcessDays = !Tools::isEmpty(trim(Tools::getValue('shipping_min_process_days'))) ? Tools::getValue('shipping_min_process_days') : 0;
             $shippingMaxProcessDays = !Tools::isEmpty(trim(Tools::getValue('shipping_max_process_days'))) ? Tools::getValue('shipping_max_process_days') : 0;
-
+            /**
+             * Save postal code value to the database
+             * @date 10-04-2023
+             * @author Tanisha Gupta
+             */
+            $shippingPostalCode = Tools::getValue('postal_code');
             //Validate Shipping Template Title
             if (empty($shippingTemplateTitle)) {
                 $formError = 1;
@@ -435,16 +573,34 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                     $customErrors[] = 16;
                 }
             }
+           /**
+            * Validate shipping processing fields
+            * @date 14-04-2023
+            * @author Tanisha Gupta
+            */
+            
+           
             if (!$formError) {
                 if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_shipping_templates')))) {
-                    $title_exist = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_shipping_templates WHERE shipping_template_title = '" . pSQL($shippingTemplateTitle) . "' AND delete_flag = '0' AND id_etsy_shipping_templates != '" . (int) Tools::getValue('id_etsy_shipping_templates') . "'", true, false);
+                    $title_exist = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_shipping_templates WHERE shipping_template_title = '" . pSQL(str_replace('\\', '', $shippingTemplateTitle)) . "' AND delete_flag = '0' AND id_etsy_shipping_templates != '" . (int) Tools::getValue('id_etsy_shipping_templates') . "'", true, false);
                     if ($title_exist == 0) {
+                        /**
+                         * Added str_replace so / will not saved with apostrophe into the database
+                         * @date 18-04-2023
+                         * @modifier Tanisha Gupta
+                         */
                         Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_shipping_templates SET "
-                                . "shipping_template_title = '" . pSQL($shippingTemplateTitle) . "', "
+                                . "shipping_template_title = '" . pSQL(str_replace('\\', '', $shippingTemplateTitle)) . "', "
                                 . "shipping_origin_country_id = '" . (int) $shippingOriginCountryID . "', "
                                 . "shipping_origin_country = '" . pSQL($shippingOriginCountryName) . "', "
                                 . "shipping_min_process_days = '" . (int) $shippingMinProcessDays . "', "
                                 . "shipping_max_process_days = '" . (int) $shippingMaxProcessDays . "', "
+                                /**
+                                * Save postal code value to the database
+                                * @date 10-04-2023
+                                * @author Tanisha Gupta
+                                */
+                                . "postal_code = '" . pSQL($shippingPostalCode) . "', "
                                 . "renew_flag = '1' "
                                 . "WHERE id_etsy_shipping_templates = '" . (int) Tools::getValue('id_etsy_shipping_templates') . "'");
                         
@@ -459,10 +615,36 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                                     $shipping_desination_country = EtsyModule::etsyGetCountryNameByCountryId($entry['shipping_desination_country']);
                                     $shipping_desination_region = EtsyModule::etsyGetRegionNameByRegionId($entry['shipping_destination_region']);
                                 }
+                                /**
+                                * Set data before saving into the database
+                                * @date 14-04-2023
+                                * @author Tanisha Gupta
+                                */
+                               if($entry['shipping_entry_transmit_type'] == 'shipping_carrier'){
+                                   $selected_carrier = explode('.', $entry['shipping_carrier_id']);
+                                   $entry['shipping_entry_carrier_id'] = $selected_carrier[0];
+                                   $entry['shipping_entry_mail_class_key'] = $selected_carrier[1];
+                                   $entry['shipping_entry_min_delivery_days'] = 0;
+                                   $entry['shipping_entry_max_delivery_days'] = 0;
+                               }else{
+                                   $entry['shipping_entry_carrier_id'] = 0;
+                                   $entry['shipping_entry_mail_class_key'] = '';
+                               }
                                 if (!empty($entry['existing_entry']) && $entry['existing_entry'] == 1) {
+                                    
                                     Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_shipping_templates_entries SET "
                                         . "shipping_entry_primary_cost = '" . (float) $entry['shipping_primary_cost'] . "',"
                                         . "shipping_entry_secondary_cost = '" . (float) $entry['shipping_secondary_cost'] . "',"
+                                        /**
+                                        * Save Transmit type field 
+                                        * @date 10-04-2023
+                                        * @author Tanisha Gupta
+                                        */              
+                                        . "shipping_entry_transmit_type = '" . pSQL($entry['shipping_entry_transmit_type']) . "',"    
+                                        . "shipping_entry_min_delivery_days = '" . pSQL($entry['shipping_entry_min_delivery_days']) . "',"
+                                        . "shipping_entry_max_delivery_days = '" . pSQL($entry['shipping_entry_max_delivery_days']) . "',"   
+                                        . "shipping_entry_carrier_id = '" . pSQL($entry['shipping_entry_carrier_id']) . "',"
+                                        . "shipping_entry_mail_class_key = '" . pSQL($entry['shipping_entry_mail_class_key']) . "',"
                                         . "renew_flag = '1',"
                                         . "shipping_entry_date_update = NOW() "
                                         . "WHERE id_etsy_shipping_templates_entries = '" . (int) $entry['id_etsy_shipping_templates_entries'] . "'");
@@ -473,6 +655,16 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                                         . "shipping_entry_destination_country = '" . pSQL($shipping_desination_country) . "',"
                                         . "shipping_entry_primary_cost = '" . (float) $entry['shipping_primary_cost'] . "',"
                                         . "shipping_entry_secondary_cost = '" . (float) $entry['shipping_secondary_cost'] . "',"
+                                        /**
+                                        * Save Transmit type field 
+                                        * @date 10-04-2023
+                                        * @author Tanisha Gupta
+                                        */      
+                                        . "shipping_entry_transmit_type = '" . pSQL($entry['shipping_entry_transmit_type']) . "',"
+                                        . "shipping_entry_min_delivery_days = '" . pSQL($entry['shipping_entry_min_delivery_days']) . "',"
+                                        . "shipping_entry_max_delivery_days = '" . pSQL($entry['shipping_entry_max_delivery_days']) . "',"
+                                        . "shipping_entry_carrier_id = '" . pSQL($entry['shipping_entry_carrier_id']) . "',"
+                                        . "shipping_entry_mail_class_key = '" . pSQL($entry['shipping_entry_mail_class_key']) . "',"    
                                         . "shipping_entry_destination_region_id = '" . (int) $entry['shipping_destination_region'] . "',"
                                         . "shipping_entry_destination_region = '" . pSQL($shipping_desination_region) . "',"
                                         . "shipping_entry_date_added = NOW(),"
@@ -486,21 +678,46 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                             $upgrades = Tools::getValue('template_upgrade');
                             if (!empty($upgrades)) {
                                 foreach ($upgrades as $upgrade) {
+                                    /**
+                                     * Set data before saving into the database
+                                     * @date 14-04-2023
+                                     * @author Tanisha Gupta
+                                     */
+                                    if($upgrade['shipping_upgrade_transmit_type'] == 'shipping_carrier'){
+                                        $selected_carrier = explode('.', $upgrade['shipping_upgrade_carrier_id']);
+                                        $upgrade['shipping_upgrade_carrier_id'] = $selected_carrier[0];
+                                        $upgrade['shipping_upgrade_mail_class_key'] = $selected_carrier[1];
+                                        $upgrade['shipping_upgrade_min_delivery_days'] = 0;
+                                        $upgrade['shipping_upgrade_max_delivery_days'] = 0;
+                                    }else{
+                                        $upgrade['shipping_upgrade_carrier_id'] = 0;
+                                        $upgrade['shipping_upgrade_mail_class_key'] = '';
+                                    }
                                     if (!empty($upgrade['existing_entry']) && $upgrade['existing_entry'] == 1) {
                                         Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_shipping_upgrades SET "
-                                            . "shipping_upgrade_title = '" . pSQL($upgrade['shipping_upgrade_title']) . "',"
+                                            . "shipping_upgrade_title = '" . pSQL(str_replace('\\', '', $upgrade['shipping_upgrade_title'])) . "',"
                                             . "shipping_upgrade_primary_cost = '" . (float) $upgrade['shipping_upgrade_primary_cost'] . "',"
                                             . "shipping_upgrade_secondary_cost = '" . (float) $upgrade['shipping_upgrade_secondary_cost'] . "',"
+                                            . "shipping_upgrade_transmit_type = '" . pSQL($upgrade['shipping_upgrade_transmit_type']) . "',"
+                                            . "shipping_upgrade_min_delivery_days = '" . pSQL($upgrade['shipping_upgrade_min_delivery_days']) . "',"
+                                            . "shipping_upgrade_max_delivery_days = '" . pSQL($upgrade['shipping_upgrade_max_delivery_days']) . "',"
+                                            . "shipping_upgrade_carrier_id = '" . pSQL($upgrade['shipping_upgrade_carrier_id']) . "',"
+                                            . "shipping_upgrade_mail_class_key = '" . pSQL($upgrade['shipping_upgrade_mail_class_key']) . "',"    
                                             . "renew_flag = '1',"
                                             . "shipping_upgrade_date_update = NOW() "
                                             . "WHERE id_etsy_shipping_upgrades = '" . (int) $upgrade['id_etsy_shipping_upgrades'] . "'");
                                     } else {
                                         Db::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_shipping_upgrades SET "
                                             . "id_etsy_shipping_templates = '" . (int) Tools::getValue('id_etsy_shipping_templates') . "',"
-                                            . "shipping_upgrade_title = '" . pSQL($upgrade['shipping_upgrade_title']) . "',"
+                                            . "shipping_upgrade_title = '" . pSQL(str_replace('\\', '', $upgrade['shipping_upgrade_title'])) . "',"
                                             . "shipping_upgrade_destination = '" . pSQL($upgrade['shipping_upgrade_destination']) . "',"
                                             . "shipping_upgrade_primary_cost = '" . (float) $upgrade['shipping_upgrade_primary_cost'] . "',"
                                             . "shipping_upgrade_secondary_cost = '" . (float) $upgrade['shipping_upgrade_secondary_cost'] . "',"
+                                            . "shipping_upgrade_transmit_type = '" . pSQL($upgrade['shipping_upgrade_transmit_type']) . "',"
+                                            . "shipping_upgrade_min_delivery_days = '" . pSQL($upgrade['shipping_upgrade_min_delivery_days']) . "',"
+                                            . "shipping_upgrade_max_delivery_days = '" . pSQL($upgrade['shipping_upgrade_max_delivery_days']) . "',"
+                                            . "shipping_upgrade_carrier_id = '" . pSQL($upgrade['shipping_upgrade_carrier_id']) . "',"
+                                            . "shipping_upgrade_mail_class_key = '" . pSQL($upgrade['shipping_upgrade_mail_class_key']) . "',"    
                                             . "shipping_upgrade_date_added = NOW(),"
                                             . "shipping_upgrade_date_update = NOW()");
                                     }
@@ -516,20 +733,41 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                         Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyShippingTemplates') . '&etsyError=17');
                     }
                 } else {
-                    $title_exist = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_shipping_templates WHERE shipping_template_title = '" . pSQL($shippingTemplateTitle) . "' AND delete_flag = '0'", true, false);
+                    $title_exist = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_shipping_templates WHERE shipping_template_title = '" . pSQL(str_replace('\\', '', $shippingTemplateTitle)) . "' AND delete_flag = '0'", true, false);
                     if ($title_exist == 0) {
                         Db::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_shipping_templates SET "
-                                . "shipping_template_title = '" . pSQL($shippingTemplateTitle) . "', "
+                                . "shipping_template_title = '" . pSQL(str_replace('\\', '', $shippingTemplateTitle)) . "', "
                                 . "shipping_origin_country_id = '" . (int) $shippingOriginCountryID . "', "
                                 . "shipping_origin_country = '" . pSQL($shippingOriginCountryName) . "', "
                                 . "shipping_min_process_days = '" . (int) $shippingMinProcessDays . "', "
                                 . "shipping_max_process_days = '" . (int) $shippingMaxProcessDays . "', "
+                                /**
+                                * Save postal code value to the database
+                                * @date 10-04-2023
+                                * @author Tanisha Gupta
+                                */
+                                . "postal_code = '" . pSQL($shippingPostalCode) . "', "
                                 . "shipping_date_added = NOW(),"
                                 . "shipping_date_update = NOW()");
-                        $id_etsy_shipping_templates = DB::getInstance()->Insert_ID();
+                        $id_etsy_shipping_templates = Db::getInstance()->Insert_ID();
                         if (!Tools::isEmpty(Tools::getValue('template_entry'))) {
                             $entires = Tools::getValue('template_entry');
                             foreach ($entires as $entry) {
+                                    /**
+                                    * Set data before saving into the database
+                                    * @date 14-04-2023
+                                    * @author Tanisha Gupta
+                                    */
+                                   if($entry['shipping_entry_transmit_type'] == 'shipping_carrier'){
+                                       $selected_carrier = explode('.', $entry['shipping_carrier_id']);
+                                       $entry['shipping_entry_carrier_id'] = $selected_carrier[0];
+                                       $entry['shipping_entry_mail_class_key'] = $selected_carrier[1];
+                                       $entry['shipping_entry_min_delivery_days'] = 0;
+                                       $entry['shipping_entry_max_delivery_days'] = 0;
+                                   }else{
+                                       $entry['shipping_entry_carrier_id'] = 0;
+                                       $entry['shipping_entry_mail_class_key'] = '';
+                                   }
                                 $shipping_desination_country = EtsyModule::etsyGetCountryNameByCountryId($entry['shipping_desination_country']);
                                 $shipping_desination_region = EtsyModule::etsyGetRegionNameByRegionId($entry['shipping_destination_region']);
                                 Db::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_shipping_templates_entries SET "
@@ -538,6 +776,16 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
                                     . "shipping_entry_destination_country = '" . pSQL($shipping_desination_country) . "',"
                                     . "shipping_entry_primary_cost = '" . (float) $entry['shipping_primary_cost'] . "',"
                                     . "shipping_entry_secondary_cost = '" . (float) $entry['shipping_secondary_cost'] . "',"
+                                    /**
+                                        * Save Transmit type field 
+                                        * @date 10-04-2023
+                                        * @author Tanisha Gupta
+                                        */      
+                                    . "shipping_entry_transmit_type = '" . pSQL($entry['shipping_entry_transmit_type']) . "',"     
+                                    . "shipping_entry_min_delivery_days	= '" . pSQL($entry['shipping_entry_min_delivery_days']) . "'," 
+                                    . "shipping_entry_max_delivery_days	= '" . pSQL($entry['shipping_entry_max_delivery_days']) . "'," 
+                                    . "shipping_entry_carrier_id = '" . pSQL($entry['shipping_entry_carrier_id']) . "',"
+                                    . "shipping_entry_mail_class_key = '" . pSQL($entry['shipping_entry_mail_class_key']) . "',"    
                                     . "shipping_entry_destination_region_id = '" . (int) $entry['shipping_destination_region'] . "',"
                                     . "shipping_entry_destination_region = '" . pSQL($shipping_desination_region) . "',"
                                     . "shipping_entry_date_added = NOW(),"
@@ -647,7 +895,7 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
 
         $this->context->smarty->assign(array(
             'href' => $this->context->link->getAdminlink('AdminEtsyShippingTemplatesEntries') . '&id_etsy_shipping_templates=' . $id,
-            'action' => $this->l('View Shipping Entries'),
+            'action' => $this->module->l('View Shipping Entries','AdminEtsyShippingTemplatesController'),
             'icon' => 'search-plus'
         ));
 
@@ -658,12 +906,12 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
     {
 
         if (!array_key_exists('ViewUpgrade', self::$cache_lang)) {
-            self::$cache_lang['ViewUpgrade'] = $this->l('View Shipping Upgrades', 'Helper');
+            self::$cache_lang['ViewUpgrade'] = $this->module->l('View Shipping Upgrades', 'Helper');
         }
 
         $this->context->smarty->assign(array(
             'href' => $this->context->link->getAdminlink('AdminEtsyShippingUpgrades') . '&id_etsy_shipping_templates=' . $id,
-            'action' => $this->l('View Shipping Upgrades'),
+            'action' => $this->module->l('View Shipping Upgrades','AdminEtsyShippingTemplatesController'),
             'icon' => 'search-plus'
         ));
 
@@ -705,21 +953,21 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
         if (!Tools::getValue('id_etsy_shipping_templates') && !Tools::isSubmit('addetsy_shipping_templates')) {
             $this->page_header_toolbar_btn['new_template'] = array(
                 'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
-                'desc' => $this->l('Add new'),
+                'desc' => $this->module->l('Add new','AdminEtsyShippingTemplatesController'),
                 'icon' => 'process-icon-new'
             );
             $secure_key = Configuration::get('KBETSY_SECURE_KEY');
             $this->page_header_toolbar_btn['kb_sync_templates'] = array(
                 'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncShippingTemplates', 'secure_key' => $secure_key)),
                 'target'=> '_blank',
-                'desc' => $this->l('Sync Shipping Templates'),
+                'desc' => $this->module->l('Sync Shipping Templates','AdminEtsyShippingTemplatesController'),
                 'icon' => 'process-icon-update'
             );
             /*
             $this->page_header_toolbar_btn['kb_sync_country_region'] = array(
                 'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncCountriesRegions', 'secure_key' => $secure_key)),
                 'target'=> '_blank',
-                'desc' => $this->l('Sync Country/Region'),
+                'desc' => $this->module->l('Sync Country/Region'),
                 'icon' => 'process-icon-update'
             );
             */
@@ -727,11 +975,84 @@ class AdminEtsyShippingTemplatesController extends ModuleAdminController
         if (Tools::getValue('id_etsy_shipping_templates') || Tools::isSubmit('id_etsy_shipping_templates') || Tools::isSubmit('addetsy_shipping_templates')) {
             $this->page_header_toolbar_btn['kb_cancel_action'] = array(
                 'href' => self::$currentIndex . '&token=' . $this->token,
-                'desc' => $this->l('Cancel'),
+                'desc' => $this->module->l('Cancel','AdminEtsyShippingTemplatesController'),
                 'icon' => 'process-icon-cancel'
             );
         }
 
         parent::initPageHeaderToolbar();
     }
+    /**
+     * To fetch domestic shipping carriers based on country id
+     * @date 27-03-2023
+     * @author Tanisha Gupta
+     */
+    public function getDomesticShippingDetails($countryid = 0) {
+        $domestic_service_array = array();
+        if ($countryid > 0) {   
+            $domestic_service = Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "kb_etsy_shipping_carriers WHERE country_id = " .(int) $countryid);
+            if (!empty($domestic_service)) {
+                foreach ($domestic_service as $service) {
+                   if($service['etsy_shipping_carrier_id'] > 0 && $service['domestic_shipping']!= ''){
+                       
+                       $domestic_service_array[] = array('etsy_shipping_carrier_id' => $service['etsy_shipping_carrier_id'],
+                           'etsy_shipping_carrier_name' => $service['etsy_shipping_carrier_name'],
+                           'carrier_list' => json_decode($service['domestic_shipping'],true));
+                   }
+                }
+            } else {
+                $shippingdata_array  = EtsyModule::getShippingCarriers($countryid);
+                if(isset($shippingdata_array['count']) && $shippingdata_array['count'] > 0){                    
+                        foreach($shippingdata_array['results'] as $shippingdataservice){
+                            if(count($shippingdataservice['domestic_classes'])>0){    
+                                $domestic_service_array[] = array('etsy_shipping_carrier_id' => $shippingdataservice['shipping_carrier_id'],
+                               'etsy_shipping_carrier_name' => $shippingdataservice['name'],
+                               'carrier_list' => $shippingdataservice['domestic_classes']);
+                            }
+                        }
+                }
+               
+            }
+            
+        }
+        return $domestic_service_array;
+    }
+    /**
+     * Added to fetch international shipping services based on country id from database if it exists in database otherwise from the etsy
+     * @date 13-04-2023
+     * @author Tanisha Gupta
+     * @param type $countryid
+     * @return json, International shipping services
+     */
+    public function getInternationalShippingServices($countryid = 0) {
+        $response = array();
+        $international_service_array = array();
+         if ($countryid > 0) {   
+            $domestic_service = Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "kb_etsy_shipping_carriers WHERE country_id = " .(int) $countryid);
+            if (!empty($domestic_service)) {
+                foreach ($domestic_service as $service) {
+                   if($service['etsy_shipping_carrier_id'] > 0 && $service['international_shipping']!= ''){
+                       
+                       $international_service_array[] = array('etsy_shipping_carrier_id' => $service['etsy_shipping_carrier_id'],
+                           'etsy_shipping_carrier_name' => $service['etsy_shipping_carrier_name'],
+                           'carrier_list' => json_decode($service['international_shipping'],true));
+                   }
+                }
+            } else {
+                $shippingdata_array  = EtsyModule::getShippingCarriers($countryid);
+                if(isset($shippingdata_array['count']) && $shippingdata_array['count'] > 0){                    
+                        foreach($shippingdata_array['results'] as $shippingdataservice){
+                            if(count($shippingdataservice['domestic_classes'])>0){    
+                                $international_service_array[] = array('etsy_shipping_carrier_id' => $shippingdataservice['shipping_carrier_id'],
+                               'etsy_shipping_carrier_name' => $shippingdataservice['name'],
+                               'carrier_list' => $shippingdataservice['international_classes']);
+                            }
+                        }
+                }
+               
+            }       
+         }
+         return $international_service_array;
+    }
+
 }

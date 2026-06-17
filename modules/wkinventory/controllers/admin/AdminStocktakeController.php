@@ -22,10 +22,10 @@ class AdminStocktakeController extends ModuleAdminController
 
     public function __construct()
     {
-        include dirname(__FILE__).'/../../classes/StockTake.php';
-        include dirname(__FILE__).'/../../classes/StockTakeProduct.php';
-        include dirname(__FILE__).'/../../classes/StockTakeLog.php';
-        include dirname(__FILE__).'/../../classes/Workshop.php';
+		include_once dirname(__FILE__).'/../../classes/StockTake.php';
+		include_once dirname(__FILE__).'/../../classes/StockTakeProduct.php';
+        include_once dirname(__FILE__).'/../../classes/StockTakeLog.php';
+        include_once dirname(__FILE__).'/../../classes/Workshop.php';
 
         $this->bootstrap = true;
         $this->context = Context::getContext();
@@ -127,12 +127,14 @@ class AdminStocktakeController extends ModuleAdminController
             $this->fields_list['is_empty'] = array(
                 'title' => $this->l('Progressive'),
                 'type' => 'bool',
+                'class' => 'fixed-width-xs',
                 'active' => 'is_empty',
             );
             $this->fields_list['done'] = array(
                 'title' => $this->l('Finished'),
                 'width' => 140,
                 'type' => 'bool',
+                'class' => 'fixed-width-xs',
                 'active' => 'done',
             );
 
@@ -145,9 +147,8 @@ class AdminStocktakeController extends ModuleAdminController
     {
         if (!empty($categories)) {
             return $this->returnCategoriesNames($categories);
-        } else {
-            return '--';
         }
+        return '--';
     }
 
     public function getWarehouseName($id)
@@ -172,9 +173,8 @@ class AdminStocktakeController extends ModuleAdminController
     {
         if (!empty($manufacturers)) {
             return $this->returnManufacturersNames($manufacturers);
-        } else {
-            return '--';
         }
+		return '--';
     }
 
     public function returnCategoriesNames($categories, $to_array = false)
@@ -381,19 +381,20 @@ class AdminStocktakeController extends ModuleAdminController
 
     public function productsFoundHtml()
     {
-        $this->context->smarty->assign(array(
+        $tpl = $this->context->smarty->createTemplate(
+            _PS_MODULE_DIR_.$this->module->name.'/views/templates/admin/stocktake/html_data.tpl'
+        );
+        $tpl->assign(array(
             'asm' => $this->canUseAdvancedStockManagementOld || $this->canUseAdvancedStockManagementNew ? true : false,
         ));
-        return $this->context->smarty->createTemplate(
-            _PS_MODULE_DIR_.$this->module->name.'/views/templates/admin/stocktake/html_data.tpl'
-        )->fetch();
+        return $tpl->fetch();
     }
 
     public function getFormScanUpdateProduct(StockTake $inventory)
     {
         $helper = new HelperForm();
         $helper->id = 'form_inventory_product_scan';
-        $quantity_update = (int)Configuration::get('WKINVENTORY_DEFAULTQTY_UPDATE');
+        $quantity_update = Configuration::get('WKINVENTORY_DEFAULTQTY_UPDATE');
         $is_supervisor = $this->isSupervisor($inventory->id_employee);
 
         $form_fields = array(
@@ -409,17 +410,13 @@ class AdminStocktakeController extends ModuleAdminController
                         'name' => 'ean',
                         'hint' => $this->l('Start by typing the first letters of the product’s (name, reference, EAN or UPC), then select the product/combination from the drop-down list'),
                         'class' => 'form-control input-lg',
-                        'label' => $this->l('Reference / Product Name / EAN13 / UPC'),
+                        'label' => implode(' | ', $this->module->identifiers),
                         'size' => 60,// PS 1.5
-                    ),
-                    array(
-                        'type' => ($this->module->is_before_16 ? 'free' : 'html'),
-                        'name' => 'products_found',
-                        'html_content' => ($this->module->is_before_16 ? '' : $this->productsFoundHtml()),
+                        'autocomplete' => false,
                     ),
                 ),
                 'submit' => array(
-                    'class' => ($this->module->is_before_16 ? 'button' : 'btn btn-default pull-right').' addInventoryProduct-btn addInventoryProduct-disabled',
+                    'class' => ($this->module->isPS15 ? 'button' : 'btn btn-default pull-right').' addInventoryProduct-btn addInventoryProduct-disabled',
                     'title' => $this->l('Correct Product Quantity'),
                     'id' => 'wkaddInventoryProduct',
                 ),
@@ -446,12 +443,17 @@ class AdminStocktakeController extends ModuleAdminController
                 'hint' => $this->l('Negative values are allowed')
             );
         }
+        $form_fields['form']['input'][] = array(
+            'type' => ($this->module->isPS15 ? 'free' : 'html'),
+            'name' => 'products_found',
+            'html_content' => ($this->module->isPS15 ? '' : $this->productsFoundHtml()),
+        );
 
         $default_field_value = array(
             'ean' => null,
-            'quantity' => $quantity_update ? $quantity_update : 1,
+            'quantity' => $quantity_update,
         );
-        if ($this->module->is_before_16) {
+        if ($this->module->isPS15) {
             $default_field_value['products_found'] = $this->productsFoundHtml();
         }
 
@@ -477,11 +479,15 @@ class AdminStocktakeController extends ModuleAdminController
     // Search & choose product
     public function ajaxProcessSearchProducts()
     {
-        if ($products = WorkshopInv::searchByTerms(pSQL(Tools::getValue('product_search')))) {
+        if ($products = WorkshopInv::searchByTerms(
+			pSQL(Tools::getValue('product_search')),
+			$this->module->product_has_isbn,
+			$this->module->product_has_mpn)
+		) {
             $id_lang = (int)$this->context->language->id;
             /* Instanciate current inventory */
             $inventory = new StockTake((int)Tools::getValue('id_inventory'));
-            $canManageWarehouses = ($this->canUseAdvancedStockManagementOld || $this->canUseAdvancedStockManagementNew) && $inventory->is_empty;
+            $canManageWarehouses = ($this->canUseAdvancedStockManagementOld || $this->canUseAdvancedStockManagementNew) && !$inventory->id_warehouse;
 
             foreach ($products as &$product) {
                 $id_product = (int)$product['id_product'];
@@ -548,13 +554,13 @@ class AdminStocktakeController extends ModuleAdminController
             $to_return = array('found' => false);
         }
 
-        die(Tools::jsonEncode($to_return));
+        die(json_encode($to_return));
     }
 
     // Load warehouses for selected product/combination
     public function ajaxProcessLoadLocationsByWarehouse()
     {
-        die(Tools::jsonEncode(array(
+        die(json_encode(array(
             'locations' => WorkshopInv::getWarehousesLocations(Tools::getValue('id_warehouse')),
         )));
     }
@@ -584,7 +590,7 @@ class AdminStocktakeController extends ModuleAdminController
                 ));
             }
         }
-        die(Tools::jsonEncode(array(
+        die(json_encode(array(
             'warehouses' => $warehouses,
         )));
     }
@@ -795,14 +801,14 @@ class AdminStocktakeController extends ModuleAdminController
                 $this->l('Can be the available quantity found in Backoffice or the physical quantity if product is based on advanced stock management system.')
             ),
             'class' => 'shop_quantity',
-            'align' => 'center'.($this->module->is_before_16 ? ' shop_quantity' : ''),
+            'align' => 'center'.($this->module->isPS15 ? ' shop_quantity' : ''),
             'width' => 100
         );
         $this->fields_list['sold_quantity'] = array(
             'title' => ($this->ps172 === true ? $this->l('Reserved quantity') : $this->l('Quantity sold')),
             'hint' => ($this->ps172 === true ? $this->l('Reserved quantity') : $this->l('Quantity sold')).' '.$this->l('since the beginning of the inventory'),
             'class' => 'sold_quantity',
-            'align' => 'center'.($this->module->is_before_16 ? ' sold_quantity' : ''),
+            'align' => 'center'.($this->module->isPS15 ? ' sold_quantity' : ''),
             'width' => 100,
         );
         $this->fields_list['stock_difference'] = array(
@@ -846,7 +852,7 @@ class AdminStocktakeController extends ModuleAdminController
         if ($inventory->manufacturer_ids) {
             $inventory_manufacturers = $this->returnManufacturersNames($inventory->manufacturer_ids, true);
             if (count($inventory_manufacturers)) {
-                $inventory_for[$this->module->is_greater_17 ? $this->l('MANUFACTURERS') : $this->l('BRANDS')] = $inventory_manufacturers;
+                $inventory_for[$this->module->isPS17 ? $this->l('MANUFACTURERS') : $this->l('BRANDS')] = $inventory_manufacturers;
             }
         }
         if ($inventory->id_warehouse) {
@@ -871,7 +877,7 @@ class AdminStocktakeController extends ModuleAdminController
     public function getList($id_lang, $orderBy = null, $orderWay = null, $start = 0, $limit = null, $id_lang_shop = null)
     {
         if (Tools::isSubmit('exportCSV') || Tools::isSubmit('exportwkinventory_product')) {
-            $limit = $this->module->is_greater_17 ? 99999999 : false;
+            $limit = $this->module->isPS17 ? 99999999 : false;
         }
         if (isset($this->context->cookie->last_id_inventory_product) && $this->context->cookie->last_id_inventory_product) {
             $orderBy = 'a.id_inventory_product';
@@ -887,6 +893,7 @@ class AdminStocktakeController extends ModuleAdminController
                 $product['combination'] = (!empty($product['id_product_attribute']) ? WorkshopInv::getAttributesCombinationNames($product['id_product_attribute']) : '');
                 // Put inventory product identifier in <tr> tag in class
                 $product['class'] = $product['id_inventory_product']
+                .($product['stock_difference'] != 0 ? ' success' : '')
                 .($product['has_error'] ? ' hasError' : '')
                 .($product['stock_updated'] ? ' stockUpdate' : '')
                 ;
@@ -992,7 +999,7 @@ class AdminStocktakeController extends ModuleAdminController
         }
         if (Tools::isSubmit('submitFilter'.StockTakeProduct::$definition['table'])) {
             $list_id = StockTakeProduct::$definition['table'];
-            $Filter_reference = Tools::getValue($list_id.'Filter_p!reference');
+            $Filter_reference = trim(Tools::getValue($list_id.'Filter_p!reference'));
             if (!empty($Filter_reference)) {
                 if (Combination::isFeatureActive()) {
                     // Allowing to search also by attribute reference in addition with product reference
@@ -1000,7 +1007,7 @@ class AdminStocktakeController extends ModuleAdminController
                     $this->_filter = str_replace('p.`reference` LIKE \'%'.pSQL($Filter_reference).'%\'', $attribute_where, $this->_filter);
                 }
             }
-            $Filter_ean13 = Tools::getValue($list_id.'Filter_p!ean13');
+            $Filter_ean13 = trim(Tools::getValue($list_id.'Filter_p!ean13'));
             if (!empty($Filter_ean13)) {
                 // Allowing to search also by attribute ean13 in addition with product ean13
                 $ean13_where = ' (IF(a.`id_product_attribute` > 0, pa.`ean13`, p.`ean13`) LIKE \'%'.pSQL($Filter_ean13).'%\')';
@@ -1080,11 +1087,25 @@ class AdminStocktakeController extends ModuleAdminController
             'name' => 'name',
             'class' => 'input fixed-width-xl',
         ));
+		$reset_unchanged_products_option = array(
+			'type' => $this->module->isPS15 ? 'radio' : 'switch',
+			'label' => $this->l('Reset stock of unchanged products'),
+			'name' => 'reset_not_inventoried_stock',
+			'class' => 't',
+			'is_bool' => true,
+			'desc' => $this->l('This option is only available for products of an inventory which they have not been inventoried (Adjustment quantities have not been changed, still at 0).').'<br />'
+			.$this->l('If that\'s so, after the finalization (closure) of an inventory, the stock (shop quantities) of those products will be reset (set to 0).'),
+			'values' => array(
+				array('id' => 'active_on', 'value' => 1, 'label' => $this->l('Yes')),
+				array('id' => 'active_off', 'value' => 0, 'label' => $this->l('No'))
+			)
+		);
 
         // I F   E D I T   M O D E
         if (!empty($id_inventory)) {
             $this->show_form_cancel_button = false;
             $inventory = new StockTake($id_inventory);
+
             if (!Validate::isLoadedObject($inventory)) {
                 throw new PrestaShopException('Unable to load this inventory');
             }
@@ -1093,9 +1114,20 @@ class AdminStocktakeController extends ModuleAdminController
 
             /* Finish Inventory Field */
             if ($is_supervisor && !$inventory->stock_updated) {
+                $this->fields_form['input'][] = $reset_unchanged_products_option;
+                $parameters = json_decode($inventory->settings, true);
+				$this->fields_value = array(
+					'reset_not_inventoried_stock' => $parameters['reset_not_inventoried_stock'],
+				);
+
                 $this->fields_form['input'][] = array(
-                    'type' => $this->module->is_before_16 ? 'radio' : 'switch',
-                    'label' => $this->l('Finish this inventory?'),
+                    'type' => 'html',
+                    'name' => 'tag',
+                    'html_content' => '<hr />',
+				);
+                $this->fields_form['input'][] = array(
+                    'type' => $this->module->isPS15 ? 'radio' : 'switch',
+                    'label' => '<b>'.$this->l('Finish this inventory?').'</b>',
                     'class' => 't',
                     'name' => 'done',
                     'is_bool' => true,
@@ -1105,7 +1137,7 @@ class AdminStocktakeController extends ModuleAdminController
                         array('id' => 'done_off', 'value' => false, 'label' => $this->l('No'))
                     ),
                 );
-                if (!$this->module->is_before_16) {
+                if (!$this->module->isPS15) {
                     $this->fields_form['buttons'] = array(array(
                         'title' => $this->l('Update'),
                         'icon' => 'process-icon-save',
@@ -1134,7 +1166,7 @@ class AdminStocktakeController extends ModuleAdminController
                 'formScanUpdateProduct' => $this->getFormScanUpdateProduct($inventory),
                 'isSupervisor' => $is_supervisor,
                 'productsList' => $this->getProductsList($inventory),
-                'defaultQty' => (int)Configuration::get('WKINVENTORY_DEFAULTQTY_UPDATE'),
+                'defaultQty' => Configuration::get('WKINVENTORY_DEFAULTQTY_UPDATE'),
                 'addToExistantQty' => (int)Configuration::get('WKINVENTORY_ADDQTY_EXISTANT'),
                 'module_path' => _MODULE_DIR_.$this->module->name,
             );
@@ -1143,7 +1175,7 @@ class AdminStocktakeController extends ModuleAdminController
             // I F   A D D   M  O D E
             $this->fields_form['submit'] = array(/* Save btn */
                 'title' => $this->l('Save'),
-                'class' => $this->module->is_before_16 ? 'button' : 'btn btn-default pull-right',
+                'class' => $this->module->isPS15 ? 'button' : 'btn btn-default pull-right',
             );
 
             // For categories
@@ -1184,7 +1216,7 @@ class AdminStocktakeController extends ModuleAdminController
             );
             // Progressif (empty or not) ?
             $this->fields_form['input'][] = array(
-                'type' => $this->module->is_before_16 ? 'radio' : 'switch',
+                'type' => $this->module->isPS15 ? 'radio' : 'switch',
                 'label' => $this->l('Empty without products?'),
                 'class' => 't',
                 'desc' => $this->l('If set to « Yes », an empty inventory will be created letting you to add gradually the products to manage their stocks')
@@ -1194,6 +1226,36 @@ class AdminStocktakeController extends ModuleAdminController
                 'values' => array(
                     array('id' => 'is_empty_on', 'value' => 1, 'label' => $this->l('Yes')),
                     array('id' => 'is_empty_off', 'value' => 0, 'label' => $this->l('No'))
+                )
+            );
+            // Stock status
+            $this->fields_form['input'][] = array(
+                'type' => 'select',
+                'label' => $this->l('Stock status'),
+                'name' => 'stock_status',
+                'options' => array(
+                    'query' => array(
+                        array('id' => 'noMatter', 'name' => 'No matter'),
+                        array('id' => 'inStock', 'name' => 'Only in stock'),
+                        array('id' => 'ooStock', 'name' => 'Only out of stock'),
+                    ),
+                    'id' => 'id',
+                    'name' => 'name',
+                )
+            );
+            // Product status
+            $this->fields_form['input'][] = array(
+                'type' => 'select',
+                'label' => $this->l('Product status'),
+                'name' => 'product_status',
+                'options' => array(
+                    'query' => array(
+                        array('id' => '', 'name' => 'No matter'),
+                        array('id' => 'enabled', 'name' => 'Only enabled'),
+                        array('id' => 'disabled', 'name' => 'Only disabled'),
+                    ),
+                    'id' => 'id',
+                    'name' => 'name',
                 )
             );
             // For categories
@@ -1251,11 +1313,11 @@ class AdminStocktakeController extends ModuleAdminController
             $manufacturers = Manufacturer::getManufacturers(false, 0, true, false, false, false, true);
             array_unshift($manufacturers, array(
                 'id_manufacturer' => 0,
-                'name' => !$this->module->is_greater_17 ? $this->l('No manufacturers') : $this->l('No brands'),
+                'name' => !$this->module->isPS17 ? $this->l('No manufacturers') : $this->l('No brands'),
             ));
             $this->fields_form['input'][] = array(
                 'type' => 'select',
-                'label' => !$this->module->is_greater_17 ? $this->l('Manufacturers') : $this->l('Brands'),
+                'label' => !$this->module->isPS17 ? $this->l('Manufacturers') : $this->l('Brands'),
                 'name' => 'manufacturer_ids[]',
                 'multiple' => true,
                 'options' => array(
@@ -1289,7 +1351,9 @@ class AdminStocktakeController extends ModuleAdminController
                         'type' => 'select',
                         'label' => $this->l('Warehouse location(s)'),
                         'name' => 'warehouses_locations[]',
+                        'size' => 10,
                         'id' => 'warehouses_locations',
+                        'class' => 'locations_resizable',
                         'multiple' => true,
                         'options' => array(
                             'query' => $warehouses_locations,
@@ -1301,7 +1365,7 @@ class AdminStocktakeController extends ModuleAdminController
             }
             // Inventoty with stock at zero ?
             $this->fields_form['input'][] = array(
-                'type' => $this->module->is_before_16 ? 'radio' : 'switch',
+                'type' => $this->module->isPS15 ? 'radio' : 'switch',
                 'label' => $this->l('Start inventory with « Available Quantities » set to 0'),
                 'class' => 't',
                 'desc' => $this->l('If set to « Yes », the inventory will be created and started with products whose their available quantities will be set to zero')
@@ -1315,8 +1379,9 @@ class AdminStocktakeController extends ModuleAdminController
                     array('id' => 'active_off', 'value' => 0, 'label' => $this->l('No'))
                 )
             );
+            $this->fields_form['input'][] = $reset_unchanged_products_option;
         }
-        if ($this->module->is_before_16) {
+        if ($this->module->isPS15) {
             $this->initToolbar();
         }
 
@@ -1333,6 +1398,8 @@ class AdminStocktakeController extends ModuleAdminController
         $manufacturer_ids = Tools::getValue('manufacturer_ids');
         $id_shop = Tools::getValue('id_shop');
         $is_empty = (int)Tools::getValue('is_empty');
+        $stock_status = Tools::getValue('stock_status');
+        $product_status = Tools::getValue('product_status');
         $ps_asm = $this->canUseAdvancedStockManagementOld || $this->canUseAdvancedStockManagementNew ? true : false;
 
         if ($ps_asm) {
@@ -1354,6 +1421,7 @@ class AdminStocktakeController extends ModuleAdminController
             $query->from('product', 'p');
             $query->innerJoin('product_shop', 'ps', 'p.`id_product` = ps.`id_product`');
             $query->where('ps.`id_shop` = '.(int)$id_shop);
+            $query->where('p.`is_virtual` = 0');
             $query->leftJoin('product_attribute', 'pa', 'p.`id_product` = pa.`id_product`');
             // By Supplier
             if (!empty($id_supplier)) {
@@ -1385,6 +1453,10 @@ class AdminStocktakeController extends ModuleAdminController
                     $query->where(sprintf('wpl.`location` IN (%s)', implode(',', $warehouses_locations)));
                 }
             }
+            // By Product status
+            if (!empty($product_status)) {
+                $query->where('ps.`active` = '.($product_status == 'enabled' ? 1 : 0));
+            }
             $query->groupBy('p.`id_product`, pa.`id_product_attribute`'.($ps_asm ? ', wpl.`id_warehouse`' : ''));
             $results = Db::getInstance()->executeS($query);
 
@@ -1399,6 +1471,18 @@ class AdminStocktakeController extends ModuleAdminController
                             (($this->canUseAdvancedStockManagementNew && $row['advanced_stock_management']) ||
                              ($this->canUseAdvancedStockManagementOld && StockAvailable::dependsOnStock($row['id_product'])))) {
                             continue;
+                        }
+                        // Check up stock status
+                        if ($stock_status == 'inStock' || $stock_status == 'ooStock') {
+                            $original_quantity = (int)WorkshopInv::getRealProductStock(
+                                $row['id_product'],
+                                $row['id_product_attribute'],
+                                $id_shop,
+                                ($ps_asm && !empty($row['id_warehouse']) ? $row['id_warehouse'] : null)
+                            );
+                            if (($stock_status == 'inStock' && $original_quantity <= 0) || ($stock_status == 'ooStock' && $original_quantity > 0)) {
+                                continue;
+                            }
                         }
                         $res = WorkshopInv::createInventoryProduct($row, $inventory->id, $inventory->id_shop);
                         if ($res) {
@@ -1471,15 +1555,15 @@ class AdminStocktakeController extends ModuleAdminController
 
         if ((bool)$results['isFinished']) {/* finished */
             /* Check after just validating an inventory if it's worth to make an inventory */
+            $inventory = new StockTake((int)Tools::getValue('id_inventory'));
             if ($validateBefore) {// validate inventory is finished
-                if (StockTakeProduct::productsNeedInventory(Tools::getValue('id_inventory')) == 0 &&
-                    !Configuration::get('WKINVENTORY_RESETSTOCK_NOTINVENT')) {
+                $parameters = json_decode($inventory->settings, true);
+                if (!StockTakeProduct::productsNeedInventory(Tools::getValue('id_inventory')) &&
+                    !$parameters['reset_not_inventoried_stock']) {
                     $this->errors[] = $this->l('There are no products needing inventory (No movement of stock found for the products of this inventory)!');
                     $results['errors'] = $this->errors;
                 }
             } else {
-                $inventory = new StockTake((int)Tools::getValue('id_inventory'));
-
                 // Mark product as inventoried if no error
                 StockTakeProduct::updateInventoriedProducts($inventory->id);
 
@@ -1557,9 +1641,10 @@ class AdminStocktakeController extends ModuleAdminController
     {
         $ps_asm = $this->canUseAdvancedStockManagementOld || $this->canUseAdvancedStockManagementNew ? true : false;
         // Init Option: Reset stock of unchanged products
-        $reset_qty = (int)Configuration::get('WKINVENTORY_RESETSTOCK_NOTINVENT');
 
         $inventory = new StockTake((int)Tools::getValue('id_inventory'));
+        $parameters = json_decode($inventory->settings, true);
+        $reset_qty = (int)$parameters['reset_not_inventoried_stock'];
 
         $line_count = 0;
         if (Validate::isLoadedObject($inventory) && !$inventory->stock_updated) {
@@ -1569,7 +1654,6 @@ class AdminStocktakeController extends ModuleAdminController
             if (Shop::isFeatureActive() && ShopGroup::getTotalShopGroup() >= 1 && Shop::getTotalShops() > 0) {
                 Shop::setContext(Shop::CONTEXT_SHOP, $inventory->id_shop);
             }
-
             // Get inventory products
             $inventoryProducts = $inventory->getInventoryProducts(false, true, $offset, $limit);
 
@@ -1586,12 +1670,11 @@ class AdminStocktakeController extends ModuleAdminController
                     }
 
                     $update_product_inventory = true;
-    
-                    $delta_quantity = $stock_difference;
-                    if ($this->ps172) {// Because later we will synchronize available qty with reserved & physical qties
-                        $delta_quantity += (int)$inventory_product->sold_quantity;
-                    }
 
+                    $delta_quantity = $stock_difference;
+                    /*if ($this->ps172) {// Because later we will synchronize available qty with reserved & physical qties
+                        $delta_quantity -= (int)$inventory_product->sold_quantity;
+                    }*/
                     $productObj = new Product($id_product, false, $this->context->language->id);
 
                     if (Validate::isLoadedObject($productObj)) {
@@ -1738,14 +1821,19 @@ class AdminStocktakeController extends ModuleAdminController
                                         }
                                     }
                                     if (!empty($delta_quantity)) {
+                                        $unit_price = $inventory_product->unit_price;
                                         if ($old_manager) {
+                                            if ($unit_price == 0) {
+                                                // Be carefull, if price = 0, that may cause error in calculateWA function
+                                                $unit_price = Product::getPriceStatic($id_product, false, 0, 6, null, false, false);
+                                            }
                                             $added_product = $stock_manager->addProduct(
                                                 $id_product,
                                                 $id_product_attribute,
                                                 $warehouse,
                                                 $delta_quantity,
                                                 4, // Add Mvt (Increase stock)
-                                                $inventory_product->unit_price
+                                                $unit_price
                                             );
                                         } else {
                                             $added_product = $stock_manager->addProduct(
@@ -1753,7 +1841,7 @@ class AdminStocktakeController extends ModuleAdminController
                                                 $id_product_attribute,
                                                 $warehouse,
                                                 $delta_quantity,
-                                                $inventory_product->unit_price
+                                                $unit_price
                                             );
                                         }
                                         if ($added_product) {
@@ -2050,9 +2138,9 @@ class AdminStocktakeController extends ModuleAdminController
     {
         parent::setMedia($isNewTheme);
         $this->addJqueryPlugin(array('typewatch'));
-        $this->addJqueryUI('ui.dialog');
+        $this->addJqueryUI(array('ui.dialog', 'ui.resizable'));
         /* Enable modal on PS 1.5.6.x */
-        if ($this->module->is_before_16) {
+        if ($this->module->isPS15) {
             $this->addJS(_MODULE_DIR_.$this->module->name.'/views/js/bootstrap.min.js');
             $this->addCSS(_MODULE_DIR_.$this->module->name.'/views/css/modal.css');
         }
@@ -2063,7 +2151,7 @@ class AdminStocktakeController extends ModuleAdminController
     {
         parent::initToolbar();
 
-        if ($this->module->is_before_16) {
+        if ($this->module->isPS15) {
             $this->toolbar_btn['back'] = array(
                 'href' => $this->context->link->getAdminLink('AdminStocktakedash'),
                 'desc' => $this->l('Dashboard')
@@ -2190,8 +2278,7 @@ class AdminStocktakeController extends ModuleAdminController
     {
         if (method_exists('Context', 'getTranslator')) {
             $this->translator = Context::getContext()->getTranslator();
-            $translated = $this->translator->trans($string);
-    
+            $translated = $this->translator->trans($string, [], 'Modules.Wkinventory.Adminstocktakecontroller');
             if ($translated !== $string) {
                 return $translated;
             }

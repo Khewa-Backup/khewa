@@ -2,7 +2,7 @@
  * 2003-2016 Business Tech
  *
  *  @author    Business Tech SARL <http://www.businesstech.fr/en/contact-us>
- *  @copyright 2003-2020 Business Tech SARL
+ *  @copyright 2003-2021 Business Tech SARL
  */
 // declare the custom label js object
 var GmcProCustomLabel = function (sName) {
@@ -37,7 +37,7 @@ var GmcProCustomLabel = function (sName) {
 		if ($("#" + sSelectElem).val() == "custom_label")
 		{
 			aShow.push('#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_manual_info');
-			aHide.push('#bt_cl_configure_attribute,#bt_cl_configure_new_products,#bt_cl_configure_best_sales,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#bt_cl_configure_price_range');
+			aHide.push('#bt_cl_configure_last_order,#bt_cl_configure_attribute,#bt_cl_configure_new_products,#bt_cl_configure_best_sales,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#bt_cl_configure_price_range');
 
 			// generate the h3 title above the filter
 			sGmcpCustomLabelType = 'Manual custom label';
@@ -50,7 +50,7 @@ var GmcProCustomLabel = function (sName) {
 			$('#bt_cat_tree').removeClass('col-xs-12');
 
 			aShow.push('#bt_cl_configure_cat,#bt_cl_configure_cat_header,#gmcp_cat_behavior')
-			aHide.push('#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_new_products,#bt_cl_configure_best_sales,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
+			aHide.push('#bt_cl_configure_last_order,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_new_products,#bt_cl_configure_best_sales,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
 
 			// generate the h3 title above the filter
 			sGmcpCustomLabelType = 'categories (dynamic mode) ';
@@ -60,7 +60,7 @@ var GmcProCustomLabel = function (sName) {
 		if ($("#" + sSelectElem).val() == "dynamic_features_list")
 		{
 			aShow.push('#bt_cl_configure_attribute');
-			aHide.push('#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_best_sales,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_new_products,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_price_range');
+			aHide.push('#bt_cl_configure_last_order,#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_best_sales,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_new_products,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_price_range');
 
 			// generate the h3 title above the filter
 			sGmcpCustomLabelType = 'features (dynamic mode)';
@@ -70,7 +70,7 @@ var GmcProCustomLabel = function (sName) {
 		if ($("#" + sSelectElem).val() == "dynamic_new_product")
 		{
 			aShow.push('#bt_cl_configure_new_products,#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header');
-			aHide.push('#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_best_sales,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
+			aHide.push('#bt_cl_configure_last_order,#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_best_sales,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
 
 			// generate the h3 title above the filter
 			sGmcpCustomLabelType = 'new products (dynamic mode)';
@@ -80,7 +80,7 @@ var GmcProCustomLabel = function (sName) {
 		if ($("#" + sSelectElem).val() == "dynamic_best_sale")
 		{
 			aShow.push('#bt_cl_configure_best_sales');
-			aHide.push('#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_new_products,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
+			aHide.push('#bt_cl_configure_last_order,#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_new_products,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
 
 			// generate the h3 title above the filter
 			sGmcpCustomLabelType = 'best sales (dynamic mode)';
@@ -90,12 +90,43 @@ var GmcProCustomLabel = function (sName) {
 		if ($("#" + sSelectElem).val() == "dynamic_price_range")
 		{
 			aShow.push('#bt_cl_configure_price_range');
-			aHide.push('#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_best_sales,#bt_cl_configure_new_products,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
+			aHide.push('#bt_cl_configure_last_order,#bt_cl_configure_cat,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_best_sales,#bt_cl_configure_new_products,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
 
 			// generate the h3 title above the filter
 			sGmcpCustomLabelType = 'price range sales (dynamic mode)';
 			oGmcPro.generateFilterTitle('#gcmp_filter_name', sGmcpLabel, sGmcpCustomLabelType);
 		}
+
+		if ($("#" + sSelectElem).val() == "dynamic_last_order")
+		{
+			aShow.push('#bt_cl_configure_last_order');
+			aHide.push('#bt_cl_configure_cat,#bt_cl_configure_price_range,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_best_sales,#bt_cl_configure_new_products,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
+
+			// generate the h3 title above the filter
+			sGmcpCustomLabelType = 'Last order (dynamic mode)';
+			oGmcPro.generateFilterTitle('#gcmp_filter_name', sGmcpLabel, sGmcpCustomLabelType);
+		}
+
+		if ($("#" + sSelectElem).val() == "dynamic_last_order")
+		{
+			aShow.push('#bt_cl_configure_last_order');
+			aHide.push('#bt_cl_configure_cat,#bt_cl_configure_price_range,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_best_sales,#bt_cl_configure_new_products,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
+
+			// generate the h3 title above the filter
+			sGmcpCustomLabelType = 'Last order (dynamic mode)';
+			oGmcPro.generateFilterTitle('#gcmp_filter_name', sGmcpLabel, sGmcpCustomLabelType);
+		}
+
+		if ($("#" + sSelectElem).val() == "dynamic_promotion")
+		{
+			aShow.push('');
+			aHide.push('#bt_cl_configure_last_order,#bt_cl_configure_cat,#bt_cl_configure_price_range,#bt_cl_configure_cat_header,#bt_cl_configure_brand,#bt_cl_configure_brand_header,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#bt_cl_configure_attribute,#bt_cl_configure_best_sales,#bt_cl_configure_new_products,#bt_cl_configure_supplier,#bt_cl_configure_supplier_header,#gmcp_infobox_dynamique_cat,#gmcp_cat_behavior,#gmcp_manual_info,#bt_cl_configure_product_header,#bt_cl_configure_product,#bt_cl_configure_price_range');
+
+			// generate the h3 title above the filter
+			sGmcpCustomLabelType = 'Last order (dynamic mode)';
+			oGmcPro.generateFilterTitle('#gcmp_filter_name', sGmcpLabel, sGmcpCustomLabelType);
+		}
+
 		oGmcPro.initHide(aHide);
 		oGmcPro.initShow(aShow);
 	};
@@ -136,6 +167,7 @@ var GmcProCustomLabel = function (sName) {
 				$('#bt_cat_header_button').removeClass('pull-left');
 				$('#bt_cat_header_button').addClass('pull-right');
 				$('#bt_cat_row').css('display', 'block');
+				$('#bt_cl_configure_last_order').slideUp();
 
 				// generate the h3 title above the filter
 				sGmcpCustomLabelType = 'manual configuration';
@@ -169,6 +201,7 @@ var GmcProCustomLabel = function (sName) {
 				$('#bt_cat_header_button').addClass('pull-left');
 				$('#bt_cat_header_button').removeClass('pull-right');
 				$('#bt_cat_row').css('display', 'block');
+				$('#bt_cl_configure_last_order').slideUp();
 
 				// generate the h3 title above the filter
 				sGmcpCustomLabelType = 'categories (dynamic mode)';
@@ -193,6 +226,7 @@ var GmcProCustomLabel = function (sName) {
 				// $('#bt_label-name').attr('readonly', 'true');
 				$('#bt_label-name').val('');
 				$('#bt_cat_row').css('display', 'none');
+				$('#bt_cl_configure_last_order').slideUp();
 
 
 				// generate the h3 title above the filter
@@ -226,6 +260,7 @@ var GmcProCustomLabel = function (sName) {
 				$('#bt_cat_header_button').removeClass('pull-left');
 				$('#bt_cat_header_button').addClass('pull-right');
 				$('#bt_cat_row').css('display', 'block');
+				$('#bt_cl_configure_last_order').slideUp();
 
 				// generate the h3 title above the filter
 				sGmcpCustomLabelType = 'new products (dynamic mode)';
@@ -250,6 +285,7 @@ var GmcProCustomLabel = function (sName) {
 				// $('#bt_label-name').attr('readonly', 'true');
 				$('#bt_label-name').val('');
 				$('#bt_cat_row').css('display', 'none');
+				$('#bt_cl_configure_last_order').slideUp();
 
 				sCustomLabelType = 'Best sales';
 
@@ -258,7 +294,7 @@ var GmcProCustomLabel = function (sName) {
 				oGmcPro.generateFilterTitle('#gcmp_filter_name', sLabel, sGmcpCustomLabelType);
 			}
 
-			//dynamic best sales
+			//dynamic price range
 			if ($("#" + sSelectElem).val() == "dynamic_price_range") {
 				$('#bt_cl_configure_cat').slideUp();
 				$('#bt_cl_configure_cat_header').slideUp();
@@ -273,7 +309,64 @@ var GmcProCustomLabel = function (sName) {
 				$('#bt_cl_configure_product_header').slideUp();
 				$('#bt_cl_configure_price_range').slideDown();
 				$('#gmcp_infobox_dynamique_cat').slideUp();
+				$('#bt_cl_configure_last_order').slideUp();
 				$('#gmcp_manual_info').slideUp();
+				// $('#bt_label-name').attr('readonly', 'true');
+				$('#bt_label-name').val('');
+				$('#bt_cat_row').css('display', 'none');
+
+				sCustomLabelType = 'Price Range ';
+
+				// generate the h3 title above the filter
+				sGmcpCustomLabelType = 'price range (dynamic mode)';
+				oGmcPro.generateFilterTitle('#gcmp_filter_name', sLabel, sGmcpCustomLabelType);
+			}
+
+			//dynamic best sales
+			if ($("#" + sSelectElem).val() == "dynamic_last_order") {
+				$('#bt_cl_configure_cat').slideUp();
+				$('#bt_cl_configure_cat_header').slideUp();
+				$('#bt_cl_configure_brand').slideUp();
+				$('#bt_cl_configure_brand_header').slideUp();
+				$('#bt_cl_configure_supplier').slideUp();
+				$('#bt_cl_configure_supplier_header').slideUp();
+				$('#bt_cl_configure_attribute').slideUp();
+				$('#bt_cl_configure_new_products').slideUp();
+				$('#bt_cl_configure_best_sales').slideUp();
+				$('#bt_cl_configure_product').slideUp();
+				$('#bt_cl_configure_product_header').slideUp();
+				$('#bt_cl_configure_price_range').slideUp();
+				$('#gmcp_infobox_dynamique_cat').slideUp();
+				$('#gmcp_manual_info').slideUp();
+				$('#bt_cl_configure_last_order').slideDown();
+				// $('#bt_label-name').attr('readonly', 'true');
+				$('#bt_label-name').val('');
+				$('#bt_cat_row').css('display', 'none');
+
+				sCustomLabelType = 'Price Range ';
+
+				// generate the h3 title above the filter
+				sGmcpCustomLabelType = 'price range (dynamic mode)';
+				oGmcPro.generateFilterTitle('#gcmp_filter_name', sLabel, sGmcpCustomLabelType);
+			}
+
+			//dynamic best sales
+			if ($("#" + sSelectElem).val() == "dynamic_promotion") {
+				$('#bt_cl_configure_cat').slideUp();
+				$('#bt_cl_configure_cat_header').slideUp();
+				$('#bt_cl_configure_brand').slideUp();
+				$('#bt_cl_configure_brand_header').slideUp();
+				$('#bt_cl_configure_supplier').slideUp();
+				$('#bt_cl_configure_supplier_header').slideUp();
+				$('#bt_cl_configure_attribute').slideUp();
+				$('#bt_cl_configure_new_products').slideUp();
+				$('#bt_cl_configure_best_sales').slideUp();
+				$('#bt_cl_configure_product').slideUp();
+				$('#bt_cl_configure_product_header').slideUp();
+				$('#bt_cl_configure_price_range').slideUp();
+				$('#gmcp_infobox_dynamique_cat').slideUp();
+				$('#gmcp_manual_info').slideUp();
+				$('#bt_cl_configure_last_order').slideUp();
 				// $('#bt_label-name').attr('readonly', 'true');
 				$('#bt_label-name').val('');
 				$('#bt_cat_row').css('display', 'none');

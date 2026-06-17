@@ -2,8 +2,8 @@
 <module>
     <name>pagesnotfound</name>
     <displayName><![CDATA[Pages introuvables]]></displayName>
-    <version><![CDATA[2.0.0]]></version>
-    <description><![CDATA[Ajoute un onglet au tableau de bord de statistiques, affichant les pages demand&eacute;es par vos visiteurs mais qui n&#039;ont pas &eacute;t&eacute; trouv&eacute;es.]]></description>
+    <version><![CDATA[2.0.2]]></version>
+    <description><![CDATA[Enrichissez vos statistiques en affichant les pages demand&eacute;es par vos visiteurs qui n&rsquo;ont pas &eacute;t&eacute; trouv&eacute;es.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[analytics_stats]]></tab>
     <is_configurable>0</is_configurable>

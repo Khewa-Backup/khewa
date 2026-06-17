@@ -271,13 +271,14 @@ class IqitFreeDeliveryCount extends Module implements WidgetInterface
                 Currency::getCurrencyInstance((int) Context::getContext()->currency->id)
             );
         }
+        if (Context::getContext()->cart->id_carrier){
+            $currentShipping = Context::getContext()->cart->getOrderTotal(true, Cart::ONLY_SHIPPING);
 
-        $currentShipping = Context::getContext()->cart->getOrderTotal(true, Cart::ONLY_SHIPPING);
-
-        if(!$currentShipping){
-            return;
+            if(!$currentShipping){
+                return;
+            }
         }
-
+   
         $tax_excluded_display = Group::getPriceDisplayMethod(Group::getCurrent()->id);
 
         if ($tax_excluded_display ){

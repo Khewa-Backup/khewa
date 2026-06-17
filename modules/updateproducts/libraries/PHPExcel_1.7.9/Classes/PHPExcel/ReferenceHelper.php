@@ -24,7 +24,9 @@
  * @license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version	1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  * PHPExcel_ReferenceHelper (Singleton)
@@ -884,10 +886,10 @@ class PHPExcel_ReferenceHelper
 			list($newColumn, $newRow) = PHPExcel_Cell::coordinateFromString( $pCellReference );
 
 			// Verify which parts should be updated
-			$updateColumn = (($newColumn{0} != '$') && ($beforeColumn{0} != '$') &&
+			$updateColumn = (($newColumn[0] != '$') && ($beforeColumn[0] != '$') &&
 							 PHPExcel_Cell::columnIndexFromString($newColumn) >= PHPExcel_Cell::columnIndexFromString($beforeColumn));
 
-			$updateRow = (($newRow{0} != '$') && ($beforeRow{0} != '$') &&
+			$updateRow = (($newRow[0] != '$') && ($beforeRow[0] != '$') &&
 						  $newRow >= $beforeRow);
 
 			// Create new column reference

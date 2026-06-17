@@ -35,9 +35,27 @@ class EtsyShippingTemplatesEntries extends ObjectModel
     /**
      * @see ObjectModel::$definition
      */
+    /*
+     * Added missing 'fields' definition to fix "Undefined array key 'fields'" error in PrestaShop 9.0
+     * 27-12-2024
+     */
     public static $definition = array(
         'table' => 'etsy_shipping_templates_entries',
         'primary' => 'id_etsy_shipping_templates_entries',
+        'fields' => array(
+            'id_etsy_shipping_templates' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
+            'shipping_template_entry_id' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
+            'shipping_entry_destination_country_id' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
+            'shipping_entry_destination_country' => array('type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 255),
+            'shipping_entry_primary_cost' => array('type' => self::TYPE_FLOAT, 'validate' => 'isPrice', 'required' => true),
+            'shipping_entry_secondary_cost' => array('type' => self::TYPE_FLOAT, 'validate' => 'isPrice', 'required' => true),
+            'shipping_entry_destination_region_id' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
+            'shipping_entry_destination_region' => array('type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 255),
+            'renew_flag' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
+            'delete_flag' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
+            'shipping_entry_date_added' => array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
+            'shipping_entry_date_update' => array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
+        ),
     );
 
     public function __construct($id = null)

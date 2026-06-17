@@ -24,7 +24,9 @@
  * @license		http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version		1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /** PHPExcel root directory */
 if (!defined('PHPEXCEL_ROOT')) {
@@ -308,9 +310,9 @@ class PHPExcel_Calculation_Functions {
 
 	public static function _ifCondition($condition) {
 		$condition	= PHPExcel_Calculation_Functions::flattenSingleValue($condition);
-		if (!isset($condition{0}))
+		if (!isset($condition[0]))
 			$condition = '=""';
-		if (!in_array($condition{0},array('>', '<', '='))) {
+		if (!in_array($condition[0],array('>', '<', '='))) {
 			if (!is_numeric($condition)) { $condition = PHPExcel_Calculation::_wrapResult(strtoupper($condition)); }
 			return '='.$condition;
 		} else {
@@ -526,7 +528,7 @@ class PHPExcel_Calculation_Functions {
 				break;
 			case 'string'	:
 				//	Errors
-				if ((strlen($value) > 0) && ($value{0} == '#')) {
+				if ((strlen($value) > 0) && ($value[0] == '#')) {
 					return $value;
 				}
 				break;
@@ -573,10 +575,10 @@ class PHPExcel_Calculation_Functions {
 				return 4;
 		} elseif(is_array($value)) {
 				return 64;
-			//	break;
+				//break;
 		} elseif(is_string($value)) {
 			//	Errors
-			if ((strlen($value) > 0) && ($value{0} == '#')) {
+			if ((strlen($value) > 0) && ($value[0] == '#')) {
 				return 16;
 			}
 			return 2;

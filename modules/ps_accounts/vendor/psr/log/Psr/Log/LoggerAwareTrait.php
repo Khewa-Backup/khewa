@@ -1,6 +1,6 @@
 <?php
 
-namespace Psr\Log;
+namespace PrestaShop\Module\PsAccounts\Vendor\Psr\Log;
 
 /**
  * Basic Implementation of LoggerAwareInterface.
@@ -10,10 +10,9 @@ trait LoggerAwareTrait
     /**
      * The logger instance.
      *
-     * @var LoggerInterface
+     * @var LoggerInterface|null
      */
     protected $logger;
-
     /**
      * Sets a logger.
      *

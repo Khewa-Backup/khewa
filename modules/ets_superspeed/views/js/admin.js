@@ -1,27 +1,46 @@
 /**
- * 2007-2020 ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
  *
  * NOTICE OF LICENSE
  *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
  * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- * 
+ *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please contact us for extra customization service at an affordable price
+ * versions in the future.
  *
- *  @author ETS-Soft <etssoft.jsc@gmail.com>
- *  @copyright  2007-2021 ETS-Soft
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of ETS-Soft
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
  */
 var editor_script=false;
 var total_optimize_images=0;
 $(document).ready(function(){
+    var headerInfosHeight = $('#header_infos').outerHeight(true) || 0;
+    var pageHeadHeight = $('.page-head').outerHeight(true) || 0;
+    var totalHeight = headerInfosHeight + pageHeadHeight;
+    $('.sp_block_left').css('top', totalHeight + 'px');
+
+    $(window).on('load', function() {
+        setTimeout(function(e){
+            var headerInfosHeight = $('#header_infos').outerHeight(true) || 0;
+            var pageHeadHeight = $('.page-head').outerHeight(true) || 0;
+            var totalHeight = headerInfosHeight + pageHeadHeight;
+            $('.sp_block_left').css('top', totalHeight + 'px');
+        },300);
+    });
+    $('input[name="btnSubmitPageCache"]').remove();
     $('.filter input[type="text"]').attr('autocomplete','off');
+    if ($(".ets_sp_datepicker input").length > 0) {
+        $(".ets_sp_datepicker input").datepicker({
+            dateFormat: 'yy-mm-dd',
+            changeMonth: true,
+            changeYear: true,
+        });
+    }
     if($('button[name="btnRefreshSystemAnalyticsNew"]').length)
     {
         $.ajax({
@@ -157,68 +176,7 @@ $(document).ready(function(){
             data: '',
             type: 'post',
             dataType: 'html',
-            success: function(json){
-                var total_images = ets_substr_count(json,'<img');
-                if(total_images <=30)
-                {
-                    var $status = Good_text;
-                    var $class_name = 'status-good';
-                }
-                else if(total_images>50)
-                {
-                    var $status = Bad_text;
-                    var $class_name ='status-bad';
-                }
-                else
-                {
-                    var $status = Acceptable_text;
-                    var $class_name = 'status-reputable';
-                }
-                var total_css = ets_substr_count(json,'.css');
-                if(total_css <=5)
-                {
-                    var $status_css = Good_text;
-                    var $class_name_css = 'status-good';
-                }
-                else if(total_css>10)
-                {
-                    var $status_css = Bad_text;
-                    var $class_name_css ='status-bad';
-                }
-                else
-                {
-                    var $status_css = Acceptable_text;
-                    var $class_name_css = 'status-reputable';
-                }
-                var total_script = ets_substr_count(json,'.js');
-                
-                if(total_script > 1)
-                    total_script = total_script-1;
-                if(total_script <=5)
-                {
-                    var $status_script = Good_text;
-                    var $class_name_script = 'status-good';
-                }
-                else if(total_script>10)
-                {
-                    var $status_script = Bad_text;
-                    var $class_name_script ='status-bad';
-                }
-                else
-                {
-                    var $status_script = Acceptable_text;
-                    var $class_name_script = 'status-reputable';
-                }
-                if(json)
-                {
-                    $('.table_analytics .image_home .number_data').html(total_images);
-                    $('.table_analytics .image_home .status span').attr('class','').addClass($class_name).html($status);
-                    $('.table_analytics .css_home .number_data').html(total_css);
-                    $('.table_analytics .css_home .status span').attr('class','').addClass($class_name_css).html($status_css);
-                    $('.table_analytics .script_home .number_data').html(total_script);
-                    $('.table_analytics .script_home .status span').attr('class','').addClass($class_name_script).html($status_script);
-                }
-            },
+            success: _ets_sp_parseImageCssHome,
             error: function(xhr, status, error)
             {     
             }
@@ -279,6 +237,95 @@ $(document).ready(function(){
             });
         }
     });
+    $(document).on('click','.btn-clear-log-cache',function(e){
+        e.preventDefault();
+        if(!$(this).hasClass('loading'))
+        {
+            $(this).addClass('loading');
+            $.ajax({
+                url: '',
+                data:{
+                    'deleteLogError':1
+                },
+                type: 'post',
+                dataType: 'json',
+                success: function(json){
+                    if(json)
+                    {
+                        if(json.success)
+                            $.growl.notice({ message: json.success });
+                        if(json.error)
+                            $.growl.error({message:json.error});
+                    }
+                    $('.btn-clear-log-cache').removeClass('loading');
+                    $('#list-file_no_caches').html('<tr class="no-record not_items_found"><td colspan="100%"><p>No items found</p></td></tr>');
+                },
+                error: function(xhr, status, error)
+                {
+                    $('.btn-clear-log-cache').removeClass('loading');
+                }
+            });
+        }
+    });
+    $(document).on('click','#ETS_SPEED_ENABLE_LOG_CACHE_ERROR',function(){
+        if(!$('.module_system_analytics').hasClass('loading'))
+        {
+            $('.module_system_analytics').addClass('loading');
+            $.ajax({
+                url: '',
+                data:{
+                    'ETS_SPEED_ENABLE_LOG_CACHE_ERROR' : $('#ETS_SPEED_ENABLE_LOG_CACHE_ERROR:checked').length ? 1 :0,
+                    'enableLogError':1
+                },
+                type: 'post',
+                dataType: 'json',
+                success: function(json){
+                    if(json)
+                    {
+                        if(json.success)
+                            $.growl.notice({ message: json.success });
+                        if(json.error)
+                            $.growl.error({message:json.error});
+                    }
+                    $('.module_system_analytics').removeClass('loading');
+                },
+                error: function(xhr, status, error)
+                {
+                    $('.module_system_analytics').removeClass('loading');
+                }
+            });
+        }
+    });
+    $(document).on('click','.btn-clear-cache-history',function(e){
+        e.preventDefault();
+        if(!$(this).hasClass('loading'))
+        {
+            $(this).addClass('loading');
+            $.ajax({
+                url: '',
+                data:{
+                    'deleteAllCache':1
+                },
+                type: 'post',
+                dataType: 'json',
+                success: function(json){
+                    if(json)
+                    {
+                        if(json.success)
+                            $.growl.notice({ message: json.success });
+                        if(json.error)
+                            $.growl.error({message:json.error});
+                    }
+                    $('.btn-clear-cache-history').removeClass('loading');
+                    $('#list-file_caches').html('<tr class="no-record not_items_found"><td colspan="100%"><p>No items found</p></td></tr>');
+                },
+                error: function(xhr, status, error)
+                {
+                    $('.btn-clear-cache-history').removeClass('loading');
+                }
+            });
+        }
+    });
     $(document).on('click','.register-option',function(e){
         e.preventDefault(); 
        if(!$(this).hasClass('loading'))
@@ -328,9 +375,65 @@ $(document).ready(function(){
             });
        } 
     });
-//    $(document).ajaxStart(function() {
-//      $('.bootstrap .module_error').remove(); 
-//    });
+    $(document).on('click','.btn-clear-log-clear-history',function(e){
+        e.preventDefault();
+        if(!$(this).hasClass('loading'))
+        {
+            $(this).addClass('loading');
+            $.ajax({
+                url: '',
+                data:{
+                    'deleteLogClear':1
+                },
+                type: 'post',
+                dataType: 'json',
+                success: function(json){
+                    if(json)
+                    {
+                        if(json.success)
+                            $.growl.notice({ message: json.success });
+                        if(json.error)
+                            $.growl.error({message:json.error});
+                    }
+                    $('.btn-clear-log-clear-history').removeClass('loading');
+                    $('#list-clear_history').html('<tr class="no-record not_items_found"><td colspan="100%"><p>No items found</p></td></tr>');
+                },
+                error: function(xhr, status, error)
+                {
+                    $('.btn-clear-log-clear-history').removeClass('loading');
+                }
+            });
+        }
+    });
+    $(document).on('click','#ETS_SPEED_ENABLE_LOG_CACHE_CLEAR',function(){
+        if(!$('.module_system_analytics').hasClass('loading'))
+        {
+            $('.module_system_analytics').addClass('loading');
+            $.ajax({
+                url: '',
+                data:{
+                    'ETS_SPEED_ENABLE_LOG_CACHE_CLEAR' : $('#ETS_SPEED_ENABLE_LOG_CACHE_CLEAR:checked').length ? 1 :0,
+                    'enableLogClear':1
+                },
+                type: 'post',
+                dataType: 'json',
+                success: function(json){
+                    if(json)
+                    {
+                        if(json.success)
+                            $.growl.notice({ message: json.success });
+                        if(json.error)
+                            $.growl.error({message:json.error});
+                    }
+                    $('.module_system_analytics').removeClass('loading');
+                },
+                error: function(xhr, status, error)
+                {
+                    $('.module_system_analytics').removeClass('loading');
+                }
+            });
+        }
+    });
     $('.sp_button-group').parent().removeClass('col-lg-9').removeClass('col-lg-offset-3');
     if($('.alert.alert-success').length)
         setTimeout(function(){ $('.alert.alert-success').remove(); }, 3000);
@@ -386,6 +489,7 @@ $(document).ready(function(){
     });
 
     var block_left_height =  $('.sp_block_left').height();
+    $('#content.bootstrap').prepend( "<div class='sp_block_space'></div>" )
     $('.sp_block_space').css('height',block_left_height);
     $(window).resize(function(e){
         var block_left_height =  $('.sp_block_left').height();
@@ -428,7 +532,7 @@ $(document).ready(function(){
             $('.popup-content-body li.'+name).addClass('disabled');
     });
     sp_displayTynyPNG();
-    $('#ETS_SPEED_OPTIMIZE_SCRIPT,#ETS_SPEED_OPTIMIZE_SCRIPT_NEW,#ETS_SPEED_OPTIMIZE_SCRIPT_BROWSE,#ETS_SPEED_OPTIMIZE_SCRIPT_UPLOAD').change(function(){
+    $('#ETS_SPEED_OPTIMIZE_SCRIPT,#ETS_SPEED_OPTIMIZE_SCRIPT_BROWSE,#ETS_SPEED_OPTIMIZE_SCRIPT_UPLOAD').change(function(){
         sp_displayTynyPNG();
     });
     $('.confi_tab').click(function(){
@@ -491,12 +595,7 @@ $(document).ready(function(){
                   matchBrackets: true
                 });
             }
-            if($(this).data('tab-id')=='image_new')
-            {
-                ets_sp_change_range($('input[name="ETS_SPEED_QUALITY_OPTIMIZE_NEW"]'));
-            }
-            else
-                ets_sp_change_range($('input[name="ETS_SPEED_QUALITY_OPTIMIZE"]'));
+            ets_sp_change_range($('input[name="ETS_SPEED_QUALITY_OPTIMIZE"]'));
         } 
         sp_displayTynyPNG();        
     });
@@ -509,13 +608,13 @@ $(document).ready(function(){
         if($(this).val()==0)
         {
             $('input[name="ETS_SPEED_PAGES_TO_CACHE[]"]').each(function(){
-               $(this).removeAttr('checked'); 
+               $(this).prop('checked',false);
             });
         }
         else if($('input[name="ETS_SPEED_PAGES_TO_CACHE[]"]:checked').length==0)
         {
            $('input[name="ETS_SPEED_PAGES_TO_CACHE[]"]').each(function(){
-               $(this).attr('checked',true); 
+               $(this).prop('checked',true);
            }); 
         }
     });
@@ -538,7 +637,31 @@ $(document).ready(function(){
     else
     {
         $('.form_cache_page.update_quality .col-lg-9').show();
-    } 
+    }
+    
+    // Xử lý hiển thị/ẩn các field Cloudflare khi switch ETS_CACHE_USE_CLOUDFLARE thay đổi
+    function toggleCloudflareFields() {
+        var isEnabled = $('#ETS_CACHE_USE_CLOUDFLARE_on:checked').length > 0;
+        if(isEnabled)
+        {
+            $('.form-group.ETS_CACHE_USE_CLOUDFLARE').show();
+            $('button[name="clearCloudflareCache"]').show();
+        }
+        else
+        {
+            $('.form-group.ETS_CACHE_USE_CLOUDFLARE').hide();
+            $('button[name="clearCloudflareCache"]').hide();
+        }
+        
+    }
+    
+    // Kiểm tra trạng thái ban đầu khi page load
+    toggleCloudflareFields();
+    
+    // Xử lý khi switch thay đổi
+    $(document).on('click','input[name="ETS_CACHE_USE_CLOUDFLARE"]',function(){
+        toggleCloudflareFields();
+    }); 
     $(document).on('change','.image_old .checkbox_all input,.unoptimized_image input,input[name="ETS_SPEED_QUALITY_OPTIMIZE"],select[name="ETS_SPEED_OPTIMIZE_SCRIPT"],#ETS_SPEED_UPDATE_QUALITY_1',function(){
         var formData = new FormData($('button[name="btnSubmitImageOptimize"]').parents('form').get(0));
         formData.append('changeSubmitImageOptimize', '1');
@@ -610,14 +733,14 @@ $(document).on('click','.toogle-hide-seting-dynamic',function(){
 });
 $(document).on('click','.dynamic_modules',function(){
     $('.bootstrap .module_error').remove();
-   var url_ajax= $(this).closest('#module_form').attr('action');
+   var url_ajax= $(this).closest('#configuration_form').attr('action');
    var id_module=$(this).attr('data-module');
    var hook_name=$(this).attr('data-hook');
    var add= $(this).is(':checked') ? 1 : 0;
    var empty_content = $('#empty_dynamic_modules_'+id_module+'_'+hook_name).is('checked') ? 1 :0;
    if(!add)
    {
-        $('#empty_dynamic_modules_'+id_module+'_'+hook_name).removeAttr('checked');
+        $('#empty_dynamic_modules_'+id_module+'_'+hook_name).prop('checked',false);
         $('#empty_dynamic_modules_'+id_module+'_'+hook_name).attr('disabled','disabled');
    }
    else
@@ -643,7 +766,7 @@ $(document).on('click','.dynamic_modules',function(){
     });
 });
 $(document).on('click','.empty_dynamic_modules',function(){
-    var url_ajax= $(this).closest('#module_form').attr('action');
+    var url_ajax= $(this).closest('#configuration_form').attr('action');
     var id_module=$(this).attr('data-module');
     var hook_name=$(this).attr('data-hook');
     var empty_content = $(this).is(':checked') ? 1 :0;
@@ -686,6 +809,8 @@ $(document).on('click','.delete_data_cache',function(e){
                     {
                         sp_displaySuccessMessage(json.success);
                         $this.parents('tr').find('.total_data_row').text('0');
+                        $this.parents('tr').find('.total_data_row').text('0');
+                        $this.parents('tr').find('.row-status').html('<span class="status-good">'+Good_text+'</span>');
                         $this.parents('td').find('a').remove();
                     }
                     else if(json.errors)
@@ -751,6 +876,12 @@ $(document).on('click','.run_auto_cache',function(e){
                 if(json.success)
                 {
                     sp_displaySuccessMessage(json.success);
+                    if($('.cronjob_last_box .alert-info').length)
+                    {
+                        $('.cronjob_last_box .alert-info').html(json.message)
+                    }
+                    else
+                        $('.cronjob_last_box').html('<div class="alert alert-info">'+json.message+'</div>');
                 }
                 else if(json.errors)
                     sp_displayErrorMessage(json.errors);
@@ -766,6 +897,7 @@ $(document).on('click','.run_auto_cache',function(e){
 });
 $(document).on('click','button[name="clear_all_page_caches"]',function(e){
     e.preventDefault();
+    $('.bootstrap .module_error').remove();
     if(!$(this).hasClass('loading'))
     {
         var url_ajax= link_ajax_submit;
@@ -787,6 +919,42 @@ $(document).on('click','button[name="clear_all_page_caches"]',function(e){
             error: function(xhr, status, error)
             { 
                 $('button[name="clear_all_page_caches"]').removeClass('loading');
+            }
+        });
+    }
+});
+$(document).on('click','button[name="clearCloudflareCache"]',function(e){
+    e.preventDefault();
+    $('.bootstrap .module_error').remove();
+    if(!$(this).hasClass('loading'))
+    {
+        var zoneId = $('input[name="ETS_SPEED_CLOUDFLARE_ZONE_ID"]').val();
+        var apiToken = $('input[name="ETS_SPEED_CLOUDFLARE_API_TOKEN"]').val();
+        
+        if(!zoneId || !apiToken)
+        {
+            showErrorMessage(ZoneId_and_api_token_required_text);
+            return;
+        }
+        $(this).addClass('loading');
+        $.ajax({
+            url: link_ajax_submit,
+            data: 'clearCloudflareCache=1&ETS_SPEED_CLOUDFLARE_ZONE_ID='+encodeURIComponent(zoneId)+'&ETS_SPEED_CLOUDFLARE_API_TOKEN='+encodeURIComponent(apiToken),
+            type: 'post',
+            dataType: 'json',
+            success: function(json){
+                if(json.success)
+                {
+                    showSuccessMessage(json.success);
+                }
+                else if(json.errors)
+                    sp_displayErrorMessage(json.errors);
+                $('button[name="clearCloudflareCache"]').removeClass('loading');
+            },
+            error: function(xhr, status, error)
+            { 
+                $('button[name="clearCloudflareCache"]').removeClass('loading');
+                sp_displayErrorMessage('An error occurred while clearing Cloudflare cache');
             }
         });
     }
@@ -861,7 +1029,7 @@ $(document).on('click','.confirm-popup-configuration-disable-cache-yes',function
                 });
                 $('.popup-configuration-cache .auto:not(.production_mode):not(.lazy_load):not(.optimize_newly_images):not(.optimize_existing_images)').addClass('disabled');
                 $('.popup-configuration-cache .auto .icon-check').removeClass('icon-check').addClass('icon-clock');
-                $('.list-chonse-configuration-auto input[type="checkbox"]:checked:not(.optimize_newly_images):not(#production_mode):not(#lazy_load)').removeAttr('checked');
+                $('.list-chonse-configuration-auto input[type="checkbox"]:checked:not(.optimize_newly_images):not(#production_mode):not(#lazy_load)').prop('checked',false);
                 $('.popup-configuration-cache').removeClass('hide');
                 setTimeout(function(){ $('.sp-dashboard-cache .bootstrap_sussec').remove(); }, 3000);
                 
@@ -898,35 +1066,6 @@ $(document).on('click','.confirm-popup-configuration-cache-yes',function(e){
         $('.popup-configuration-cache .button-group').show();
     sp_submitPageCacheDashboard(false);
     continue_optimize = false;
-}); 
-$(document).on('click','button[name="btnRefreshCachePageNew"]',function(e){
-    e.preventDefault();
-    $('.page_cache_generation_recently_header').addClass('refresh');
-    if(!$(this).hasClass('loading'))
-    {
-        $(this).addClass('loading');
-        $.ajax({
-            url: cache_url_ajax,
-            data: 'btnRefreshCachePageNew=1',
-            type: 'post',
-            dataType: 'json',
-            success: function(json){
-                $('button[name="btnRefreshCachePageNew"]').removeClass('loading');
-                if(json.file_caches)
-                {
-                    $('.page_cache_generation_recently_header').removeClass('refresh');
-                    $('.page_cache_generation_recently table tbody').html(json.file_caches);
-                }
-                else
-                    $('.page_cache_generation_recently tbody').html('<tr><td colspan="3"><p class="not-data">'+no_data_text+'</p></td></tr>');
-                $('.total_cache').text(json.total_cache);
-            },
-            error: function(xhr, status, error)
-            {  
-                $('button[name="btnRefreshCachePageNew"]').removeClass('loading');
-            }
-        });
-    }
 });
 $(document).on('click','button[name="btnRefreshSystemAnalyticsNew"]',function(e){
     e.preventDefault();
@@ -1070,7 +1209,7 @@ $(document).on('click','.checkbox_all input',function(){
     }
     else
     {
-        $(this).closest('.form-group').find('input').removeAttr('checked');
+        $(this).closest('.form-group').find('input').prop('checked',false);
     }
 });
 $(document).on('click','.checkbox input',function(){
@@ -1081,10 +1220,17 @@ $(document).on('click','.checkbox input',function(){
     }
     else
     {
-        $(this).closest('.form-group').find('.checkbox_all input').removeAttr('checked');
+        $(this).closest('.form-group').find('.checkbox_all input').prop('checked',false);
     } 
 });
 $(document).ready(function(){
+    $('.viewmore_dropdown').on('click',function(e){
+       $(this).parent().toggleClass('show_item_dropdown');
+    });
+    changeDropdownTab();
+    $(window).resize(function(){
+        changeDropdownTab();
+    });
     if($('.image_old.blog_gallery').find('input:checked').length==$('.image_old.blog_gallery').find('input').length-1)
     {
         $('.image_old.blog_gallery').find('.checkbox_all input').prop('checked',true);
@@ -1131,27 +1277,6 @@ $(document).ready(function(){
             }
         });
     }
-    if($('input[name="ETS_SPEED_OPTIMIZE_NEW_IMAGE"]').length)
-    {
-        $('input[name="ETS_SPEED_OPTIMIZE_NEW_IMAGE"]').click(function(){
-            if($('input[name="ETS_SPEED_OPTIMIZE_NEW_IMAGE"]:checked').val()==1)
-            {
-                $('.form-group.new_image_type').show();
-            }
-            else
-            {
-                $('.form-group.new_image_type').hide();
-            }
-        });
-        if($('input[name="ETS_SPEED_OPTIMIZE_NEW_IMAGE"]:checked').val()==1)
-        {
-            $('.form-group.new_image_type').show();
-        }
-        else
-        {
-            $('.form-group.new_image_type').hide();
-        }
-    }
     $('input[type="range"]').each(function(){
         ets_sp_change_range($(this));
     });
@@ -1159,6 +1284,31 @@ $(document).ready(function(){
         ets_sp_change_range($(this));
     });
 });
+function changeDropdownTab(){
+    var headingwidth = $('.ets_sp_confitab_wrap').outerWidth();
+    var tabwidth = $('.tab_config_page_cache').outerWidth();
+    var titlewidth = $('.ets_sp_confitab_wrap > .panel-heading').outerWidth();
+    var _dropdownitem = parseInt(0);
+    if ( headingwidth < (tabwidth + titlewidth) ){
+        $('.tab_config_page_cache .confi_tab:not(.hidden_dropdown)').each(function(){
+            var _newWidthtab = $(this).outerWidth();
+            _dropdownitem = _dropdownitem + $(this).outerWidth();
+            if ( (_dropdownitem + titlewidth) > headingwidth){
+                $(this).addClass('hidden_dropdown');
+            }
+        });
+    }
+    if ( headingwidth > (tabwidth + titlewidth) ){
+        $('.tab_config_page_cache .confi_tab').removeClass('hidden_dropdown');
+        $('.tab_config_page_cache .confi_tab:not(.hidden_dropdown)').each(function(){
+            var _newWidthtab = $(this).outerWidth();
+            _dropdownitem = _dropdownitem + $(this).outerWidth();
+            if ( (_dropdownitem + titlewidth) > headingwidth){
+                $(this).addClass('hidden_dropdown');
+            }
+        });
+    }
+}
 function sp_displaySuccessMessage(msg)
 {
     if($('form .bootstrap_sussec').length)
@@ -1171,7 +1321,7 @@ function sp_displaySuccessMessage(msg)
 }
 function sp_displayErrorMessage(msg)
 {
-    $('.module_error.alert').parent().remove();
+    $('.module_error.alert').remove();
     if($('form .form-wrapper').next('.module_error').length)
         $('form .form-wrapper').next('.module_error').replaceWith(msg);
     else
@@ -1213,8 +1363,8 @@ function sp_ajaxOptimizeImage(resume)
         html += '<div class="popup-title"><h3>'+optimize_title_text+'</h3><span class="optimize_stop" title="Close">Close</span></div> <div class="popup_run"><div class="optimize-wapper-percent"><div class="percentage_optimize">0%</div></div>';
         html += '<div class="popup_optimizeing_pls">'+(parseInt($('input[name="ETS_SPEED_QUALITY_OPTIMIZE"]').val())==100 ? Restoring_text : Optimizing_text )+' '+total_images+' '+please_wait+'<span class="bacham">...</span></div>';
         html += '<div class="button-group"><button class="btn btn-default pull-left optimize_pause">'+pause_text+'</button><button class="btn btn-default pull-right optimize_stop">'+stop_text+'</button></div></div></div></div>';
-    if(!$('#module_form .popup_optimizeing_wapper').length)
-        $('#module_form .panel-footer').before(html); 
+    if(!$('#configuration_form .popup_optimizeing_wapper').length)
+        $('#configuration_form .panel-footer').before(html);
     $.ajax({
         url: url_ajax,
         data: formData,
@@ -1248,9 +1398,9 @@ function sp_ajaxOptimizeImage(resume)
                 {
                     sp_displaySuccessMessage(json.success);
                     sp_displayInfoImageOptimize(json);
-                    $('#module_form .popup_optimizeing .optimize-wapper-percent').css('transition','all 1s ease 0s');
-                    $('#module_form .popup_optimizeing .optimize-wapper-percent').css('width','100%');
-                    $('#module_form .popup_optimizeing .percentage_optimize').html('100%');
+                    $('#configuration_form .popup_optimizeing .optimize-wapper-percent').css('transition','all 1s ease 0s');
+                    $('#configuration_form .popup_optimizeing .optimize-wapper-percent').css('width','100%');
+                    $('#configuration_form .popup_optimizeing .percentage_optimize').html('100%');
                     setTimeout(function(){ $('.popup_optimizeing_wapper').remove(); }, 1500);
                     $('.list_optimized_images').html('<li class="stop"></li>');
                 }
@@ -1288,8 +1438,8 @@ function sp_ajaxOptimizeAllImage(resume)
     }
     else
         $('.bootstrap .module_error').remove();
-    if(!$('#module_form .popup_optimizeing_wapper').length)
-        $('#module_form .panel-footer').before(html);
+    if(!$('#configuration_form .popup_optimizeing_wapper').length)
+        $('#configuration_form .panel-footer').before(html);
     if(!resume)
     {
         continue_optimize_webp=false;
@@ -1324,9 +1474,9 @@ function sp_ajaxOptimizeAllImage(resume)
                 {
                     sp_displaySuccessMessage(json.success);
                     sp_displayInfoImageOptimize(json);
-                    $('#module_form .popup_optimizeing .optimize-wapper-percent').css('transition','all 1s ease 0s');
-                    $('#module_form .popup_optimizeing .optimize-wapper-percent').css('width','100%');
-                    $('#module_form .popup_optimizeing .percentage_optimize').html('100%');
+                    $('#configuration_form .popup_optimizeing .optimize-wapper-percent').css('transition','all 1s ease 0s');
+                    $('#configuration_form .popup_optimizeing .optimize-wapper-percent').css('width','100%');
+                    $('#configuration_form .popup_optimizeing .percentage_optimize').html('100%');
                     $('.total_image_optimized').html(total_images +' '+images_optimized_text);
                     $('.total_image_optimized_size').html(json.total_size_save);
                     $('.list-chonse-configuration-auto input[name="optimize_existing_images"]').parents('li').remove();
@@ -1404,9 +1554,9 @@ function sp_ajaxPercentageImageOptimize(json)
 {
     if(json.percent>0 && json.percent<100)
     {
-        $('#module_form .popup_optimizeing .optimize-wapper-percent').css('transition','all 3s ease 0s');
-        $('#module_form .popup_optimizeing .optimize-wapper-percent').css('width',json.percent+'%');
-        $('#module_form .popup_optimizeing .percentage_optimize').html(json.percent+'%');
+        $('#configuration_form .popup_optimizeing .optimize-wapper-percent').css('transition','all 3s ease 0s');
+        $('#configuration_form .popup_optimizeing .optimize-wapper-percent').css('width',json.percent+'%');
+        $('#configuration_form .popup_optimizeing .percentage_optimize').html(json.percent+'%');
         if(json.optimized_images)
         {
             if($('.popup_optimizeing_wapper .popup_optimizeing .list_optimized_images').length==0)
@@ -1431,9 +1581,9 @@ function sp_ajaxPercentageAllImageOptimize(json)
 {
     if(json.percent>0 && json.percent<100)
     {
-        $('#module_form .popup_optimizeing .optimize-wapper-percent').css('transition','all 3s ease 0s');
-        $('#module_form .popup_optimizeing .optimize-wapper-percent').css('width',json.percent2+'%');
-        $('#module_form .popup_optimizeing .percentage_optimize').html(json.percent2+'%');
+        $('#configuration_form .popup_optimizeing .optimize-wapper-percent').css('transition','all 3s ease 0s');
+        $('#configuration_form .popup_optimizeing .optimize-wapper-percent').css('width',json.percent2+'%');
+        $('#configuration_form .popup_optimizeing .percentage_optimize').html(json.percent2+'%');
         total_need_optimized_images = json.total_unoptimized;    
         $('.percent-image-in-chart').html(json.percent+'%');
         $('.total_image_optimized').html(json.total_optimizeed +' '+images_optimized_text);
@@ -1676,7 +1826,7 @@ function sp_submitFormAjax(name,$this)
     formData.append(name, 1);
     formData.append('ajax', 1);
     var url_ajax= link_ajax_submit;
-    $('.bootstrap .module_error').remove();
+        $('.bootstrap .module_error').remove();
     $this.addClass('loading');
     $.ajax({
         url: url_ajax,
@@ -1731,13 +1881,13 @@ function sp_hidePopupDashboard()
 function sp_displayTynyPNG()
 {
     
-    if($('.config_tab_image_old').hasClass('active') ||$('.config_tab_image_new').hasClass('active'))
+    if($('.config_tab_image_old').hasClass('active'))
     {
-        if(!$('.form_cache_page.image_new.script').next('.tinypng').length)
+        if(!$('.form_cache_page.image_old.script').next('.tinypng').length)
         {
             var html_tiny = $('.form-group.tinypng').clone();
             $('.form-group.tinypng').remove();
-            $('.form_cache_page.image_new.script').after(html_tiny);
+            $('.form_cache_page.image_old.script').after(html_tiny);
         }
     }
     else if($('.config_tab_image_upload').hasClass('active') ||$('.config_tab_image_browse').hasClass('active'))
@@ -1753,11 +1903,6 @@ function sp_displayTynyPNG()
     {
         var script_optimize = $('#ETS_SPEED_OPTIMIZE_SCRIPT');
         var type ='';
-    }
-    else if($('.config_tab_image_new').hasClass('active'))
-    {
-        var script_optimize = $('#ETS_SPEED_OPTIMIZE_SCRIPT_NEW');
-        var type = 'new_';
     }
     else if($('.config_tab_image_upload').hasClass('active'))
     {
@@ -1832,4 +1977,66 @@ function ets_substr_count(string,substring)
       count++;
  }
  return count;
+}
+function _ets_sp_parseImageCssHome(json){
+    var total_images = ets_substr_count(json,'<img');
+    if(total_images <=30)
+    {
+        var $status = Good_text;
+        var $class_name = 'status-good';
+    }
+    else if(total_images>50)
+    {
+        var $status = Bad_text;
+        var $class_name ='status-bad';
+    }
+    else
+    {
+        var $status = Acceptable_text;
+        var $class_name = 'status-reputable';
+    }
+    var total_css = ets_substr_count(json,'.css');
+    if(total_css <=5)
+    {
+        var $status_css = Good_text;
+        var $class_name_css = 'status-good';
+    }
+    else if(total_css>10)
+    {
+        var $status_css = Bad_text;
+        var $class_name_css ='status-bad';
+    }
+    else
+    {
+        var $status_css = Acceptable_text;
+        var $class_name_css = 'status-reputable';
+    }
+    var total_script = ets_substr_count(json,'.js');
+
+    if(total_script > 1)
+        total_script = total_script-1;
+    if(total_script <=5)
+    {
+        var $status_script = Good_text;
+        var $class_name_script = 'status-good';
+    }
+    else if(total_script>10)
+    {
+        var $status_script = Bad_text;
+        var $class_name_script ='status-bad';
+    }
+    else
+    {
+        var $status_script = Acceptable_text;
+        var $class_name_script = 'status-reputable';
+    }
+    if(json)
+    {
+        $('.table_analytics .image_home .number_data').html(total_images);
+        $('.table_analytics .image_home .status span').attr('class','').addClass($class_name).html($status);
+        $('.table_analytics .css_home .number_data').html(total_css);
+        $('.table_analytics .css_home .status span').attr('class','').addClass($class_name_css).html($status_css);
+        $('.table_analytics .script_home .number_data').html(total_script);
+        $('.table_analytics .script_home .status span').attr('class','').addClass($class_name_script).html($status_script);
+    }
 }

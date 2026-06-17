@@ -2,8 +2,9 @@
 *
 * Google merchant center Pro
 *
-* @author BusinessTech.fr
-* @copyright Business Tech
+* @author    BusinessTech.fr - https://www.businesstech.fr
+* @copyright Business Tech - https://www.businesstech.fr
+* @license   Commercial
 *
 *           ____    _______
 *          |  _ \  |__   __|
@@ -68,6 +69,9 @@
 					{/if}
 					{if !empty($bExcludedDest)}
 						<option value="excluded_destination">{l s='Set excluded destination tags' mod='gmerchantcenterpro'}</option>
+					{/if}
+					{if !empty($bExcludedCountry)}
+						<option value="excluded_country">{l s='Set excluded country tags' mod='gmerchantcenterpro'}</option>
 					{/if}					
 				</select>
 			</div>
@@ -75,7 +79,7 @@
 			<div class="bulk-actions">
 				<table class="table bg-info">
 					<tr id="bulk_action_material">
-						<td class="label_tag_categories_value feature_cat_tag">{l s='Set MATERIAL tags : for each product default category, if available, you will have to indicate the feature that defines the material of the products that are in this category.' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6 feature_cat_tag">{l s='Set MATERIAL tags : for each product default category, if available, you will have to indicate the feature that defines the material of the products that are in this category.' mod='gmerchantcenterpro'}</td>
 						<td>
 							<select name="set_material_bulk_action" class="set_material_bulk_action">
 								{foreach from=$aFeatures item=feature}
@@ -86,18 +90,18 @@
 						<td><span class="btn btn-default" onclick="oGmcPro.doSet('.material', $('.set_material_bulk_action').val());">{l s='Set for all categories' mod='gmerchantcenterpro'}</span> - <span class="btn btn-default" onclick="oGmcPro.doSet('.material', 0);">{l s='Reset' mod='gmerchantcenterpro'}</td>
 					</tr>
 					<tr id="bulk_action_pattern">
-						<td class="label_tag_categories_value">{l s='Set PATTERN tags : for each product default category, if available, you will have to indicate the feature that defines the pattern of the products that are in this category.' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6">{l s='Set PATTERN tags : for each product default category, if available, you will have to indicate the feature that defines the pattern of the products that are in this category.' mod='gmerchantcenterpro'}</td>
 						<td>
 							<select name="set_pattern_bulk_action" class="set_pattern_bulk_action">
 								{foreach from=$aFeatures item=feature}
-									<option value="{$feature.id_feature|intval}">{$feature.name|escape:'html'}</option>
+									<option value="{$feature.id_feature|intval}">{$feature.name|escape:'htmlall':'UTF-8'}</option>
 								{/foreach}
 							</select>
 						</td>
 						<td><span class="btn btn-default" onclick="oGmcPro.doSet('.pattern', $('.set_pattern_bulk_action').val());">{l s='Set for all categories' mod='gmerchantcenterpro'}</span> - <span class="btn btn-default" onclick="oGmcPro.doSet('.pattern', 0);">{l s='Reset' mod='gmerchantcenterpro'}</span></td>
 					</tr>
 					<tr id="bulk_action_adult">
-						<td class="label_tag_categories_value">{l s='Set AGE GROUP tags : for each product default category, if available, you will have to select, in the drop and down menu, which Google predefined \"age group\" value defines the age group for which the products of this category are reserved. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6">{l s='Set AGE GROUP tags : for each product default category, if available, you will have to select, in the drop and down menu, which Google predefined \"age group\" value defines the age group for which the products of this category are reserved. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>
 						<td>
 							<span class="btn btn-default" onclick="oGmcPro.doSet('.agegroup', 'adult');">{l s='Adults (>13y.o)' mod='gmerchantcenterpro'} </span>
 							- <span class="btn btn-default" onclick="oGmcPro.doSet('.agegroup', 'kids');">{l s='Kids (5-13y.o)' mod='gmerchantcenterpro'}</span>
@@ -109,7 +113,7 @@
 						</td>
 					</tr>
 					<tr id="bulk_action_gender">
-						<td class="label_tag_categories_value"> {l s='Set GENDER tags : for each product default category, if available, you will have to select, in the drop and down menu, which Google predefined \"gender\" value defines the gender for which the products of this category are reserved. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6"> {l s='Set GENDER tags : for each product default category, if available, you will have to select, in the drop and down menu, which Google predefined \"gender\" value defines the gender for which the products of this category are reserved. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>
 						<td>
 							<span class="btn btn-default" onclick="oGmcPro.doSet('.gender', 'male');">{l s='Men (male)' mod='gmerchantcenterpro'} </span>
 							- <span class="btn btn-default" onclick="oGmcPro.doSet('.gender', 'female');">{l s='Women (female)' mod='gmerchantcenterpro'} </span>
@@ -117,23 +121,22 @@
 							- <span class="btn btn-default" onclick="oGmcPro.doSet('.gender', 0);">{l s='Reset' mod='gmerchantcenterpro'}</span></td>
 					</tr>
 					<tr id="bulk_action_tagadult">
-						<td class="label_tag_categories_value" >{l s='Set ADULT tags : for each product default category, if the products of the category are for adult only, select the \"true\" value in the drop and down menu.' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6" >{l s='Set ADULT tags : for each product default category, if the products of the category are for adult only, select the \"true\" value in the drop and down menu.' mod='gmerchantcenterpro'}</td>
 						<td>
 							<span class="btn btn-default" onclick="oGmcPro.doSet('.adult', 'true');">{l s='Set for all categories' mod='gmerchantcenterpro'}</span>
 							- <span class="btn btn-default" onclick="oGmcPro.doSet('.adult', 0);">{l s='Reset' mod='gmerchantcenterpro'}</span></td>
 					</tr>
 					<tr id="bulk_action_sizeType">
-						<td class="label_tag_categories_value">{l s='Set SIZE TYPE tags : for each product default category, if available, you will have to select, in the drop and down menu, which Google predefined \"size type\" value defines the size type of the products that are in this category. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6">{l s='Set SIZE TYPE tags : for each product default category, if available, you will have to select, in the drop and down menu, which Google predefined \"size type\" value defines the size type of the products that are in this category. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>
 						<td><span class="btn btn-default" onclick="oGmcPro.doSet('.sizeType', 'maternity');">{l s='Maternity' mod='gmerchantcenterpro'} </span>
-							- <span class="btn btn-default" onclick="oGmcPro.doSet('.sizeType', 'big and tall');">{l s='Big and tall' mod='gmerchantcenterpro'} </span>
-							- <span class="btn btn-default" onclick="oGmcPro.doSet('.sizeType', 'plus');">{l s='Plus' mod='gmerchantcenterpro'}</span>
+							- <span class="btn btn-default" onclick="oGmcPro.doSet('.sizeType', 'oversize');">{l s='Oversize' mod='gmerchantcenterpro'} </span>
 							- <span class="btn btn-default" onclick="oGmcPro.doSet('.sizeType', 'petite');">{l s='Petite' mod='gmerchantcenterpro'}</span>
 							- <span class="btn btn-default" onclick="oGmcPro.doSet('.sizeType', 'regular');">{l s='Regular' mod='gmerchantcenterpro'}</span>
 							- <span class="btn btn-default" onclick="oGmcPro.doSet('.sizeType', 0);">{l s='Reset' mod='gmerchantcenterpro'}</span>
 						</td>
 					</tr>
 					<tr id="bulk_action_sizeSystem">
-						<td class="label_tag_categories_value">{l s='Set SIZE SYSTEM tags : for each product default category, if available, you will have to select, in the drop and down menu, which Google predefined \"size system\" value defines the size system of the products that are in this category. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6">{l s='Set SIZE SYSTEM tags : for each product default category, if available, you will have to select, in the drop and down menu, which Google predefined \"size system\" value defines the size system of the products that are in this category. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>
 						<td><span class="btn btn-default" onclick="oGmcPro.doSet('.sizeSystem', 'US');">{l s='US' mod='gmerchantcenterpro'} </span>
 							- <span class="btn btn-default" onclick="oGmcPro.doSet('.sizeSystem', 'UK');">{l s='UK' mod='gmerchantcenterpro'} </span>
 							- <span class="btn btn-default" onclick="oGmcPro.doSet('.sizeSystem', 'EU');">{l s='EU' mod='gmerchantcenterpro'}</span>
@@ -150,7 +153,7 @@
 					</tr>
 
 					<tr id="bulk_action_energy">
-						<td class="label_tag_categories_value">{l s='Set ENERGY EFFICIENCY CLASS tags : for each product default category, if available, you will have to indicate the feature that defines the energy efficiency class of the products that are in this category. You will also have to indicate the feature that defines the min energy efficiency class and the one that defines the max energy efficiency class of your catalog products.' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6">{l s='Set ENERGY EFFICIENCY CLASS tags : for each product default category, if available, you will have to indicate the feature that defines the energy efficiency class of the products that are in this category. You will also have to indicate the feature that defines the min energy efficiency class and the one that defines the max energy efficiency class of your catalog products.' mod='gmerchantcenterpro'}</td>
 						<td>
 							<div class="row">
 								<div class="col-xs-2">
@@ -201,7 +204,7 @@
 
 					</tr>
 					<tr id="bulk_action_shipping_label">
-						<td class="label_tag_categories_value">{l s='Set SHIPPING LABEL tags : for each product default category, if available, you will have to indicate the feature that defines the shipping label of the products that are in this category.' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6">{l s='Set SHIPPING LABEL tags : for each product default category, if available, you will have to indicate the feature that defines the shipping label of the products that are in this category.' mod='gmerchantcenterpro'}</td>
 						<td>
 							<select name="set_shipping_label_bulk_action" class="set_shipping_label_bulk_action">
 								{foreach from=$aFeatures item=feature}
@@ -213,11 +216,11 @@
 					</tr>
 
 					<tr id="bulk_action_unit_pricing_measure">
-						<td class="label_tag_categories_value">{l s='Set UNIT PRICING MEASURE tags : for each product default category, if available, you will have to indicate the feature that defines the unit pricing measure of the products that are in this category.' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6">{l s='Set UNIT PRICING MEASURE tags : for each product default category, if available, you will have to indicate the feature that defines the unit pricing measure of the products that are in this category.' mod='gmerchantcenterpro'}</td>
 						<td>
 							<select name="set_unit_pricing_measure_bulk_action" class="set_unit_pricing_measure_bulk_action">
 								{foreach from=$aFeatures item=feature}
-									<option value="{$feature.id_feature|intval}">{$feature.name|escape:'html'}</option>
+									<option value="{$feature.id_feature|intval}">{$feature.name|escape:'htmlall':'UTF-8'}</option>
 								{/foreach}
 							</select>
 						</td>
@@ -225,11 +228,11 @@
 					</tr>
 
 					<tr id="bulk_action_base_unit_pricing_measure">
-						<td class="label_tag_categories_value">{l s='Set UNIT PRICING BASE MEASURE tags : for each product default category, if available, you will have to indicate the feature that defines the unit pricing base measure of the products that are in this category.' mod='gmerchantcenterpro'}</td>
+						<td class="label_tag_categories_value col-xs-6">{l s='Set UNIT PRICING BASE MEASURE tags : for each product default category, if available, you will have to indicate the feature that defines the unit pricing base measure of the products that are in this category.' mod='gmerchantcenterpro'}</td>
 						<td>
 							<select name="set_base_unit_pricing_measure_bulk_action" class="set_base_unit_pricing_measure_bulk_action">
 								{foreach from=$aFeatures item=feature}
-									<option value="{$feature.id_feature|intval}">{$feature.name|escape:'html'}</option>
+									<option value="{$feature.id_feature|intval}">{$feature.name|escape:'htmlall':'UTF-8'}</option>
 								{/foreach}
 							</select>
 						</td>
@@ -237,19 +240,31 @@
 					</tr>
 
 					<tr id="bulk_action_excluded_destination">
-						<td class="label_tag_categories_value">{l s='Set EXCLUDED DESTINATION tags: for each product default category, select in the drop and down menu the advertising channel on which you DO NOT want products of this category to be displayed. You can select several channels by holding down the CTRL (or CMD) key. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>			
+						<td class="label_tag_categories_value col-xs-6">{l s='Set EXCLUDED DESTINATION tags: for each product default category, select in the drop and down menu the advertising channel on which you DO NOT want products of this category to be displayed. You can select several channels by holding down the CTRL (or CMD) key. To assign the same tag to all categories, click on one of the opposite buttons  -------->' mod='gmerchantcenterpro'}</td>			
 							<td>
 								<select multiple name="set_excluded_destination_bulk_action" class="set_excluded_destination_bulk_action">
 									<option value="">{l s='--' mod='gmerchantcenterpro'}</option>
 									<option value="shopping">{l s='Shopping Ads' mod='gmerchantcenterpro'}</option>
-									<option value="actions">{l s='Shopping Actions' mod='gmerchantcenterpro'}</option>
 									<option value="display">{l s='Display Ads' mod='gmerchantcenterpro'}</option>
-									<option value="local">{l s='Local Shopping' mod='gmerchantcenterpro'}</option>
-									<option value="surface">{l s='Surfaces across Google' mod='gmerchantcenterpro'}</option>
+									<option value="local">{l s='Local inventory ads' mod='gmerchantcenterpro'}</option>
+									<option value="free-listing">{l s='Free listings' mod='gmerchantcenterpro'}</option>
+									<option value="free-local-listing">{l s='Free local listings' mod='gmerchantcenterpro'}</option>
 								</select>
 							<td>
 						<td><span class="btn btn-default" onclick="oGmcPro.doSet('.excluded_destination', $('.set_excluded_destination_bulk_action').val());">{l s='Set for all categories' mod='gmerchantcenterpro'}</span> - <span class="btn btn-default" onclick="oGmcPro.doSet('.excluded_destination', '');">{l s='Reset' mod='gmerchantcenterpro'}</span></td>
 					</tr>
+
+					<tr id="bulk_action_excluded_country">
+					<td class="label_tag_categories_value col-xs-6">{l s='Set EXCLUDED COUNTRY tags: for each product default category, select in the drop and down menu the country in which you DO NOT want products of this category to be displayed. You can select several countries by holding down the CTRL (or CMD) key. To assign the same tag to all categories, click on one of the opposite buttons -------->' mod='gmerchantcenterpro'}</td>			
+						<td>
+							<select multiple name="set_excluded_country_bulk_action" class="set_excluded_country_bulk_action">
+								{foreach from=$aCountries item=country}
+									<option value="{$country|escape:'htmlall':'UTF-8'}">{$country|escape:'htmlall':'UTF-8'}</option>
+								{/foreach}
+							</select>
+						<td>
+					<td><span class="btn btn-default" onclick="oGmcPro.doSet('.excluded_country', $('.set_excluded_country_bulk_action').val());">{l s='Set for all categories' mod='gmerchantcenterpro'}</span> - <span class="btn btn-default" onclick="oGmcPro.doSet('.excluded_destination', '');">{l s='Reset' mod='gmerchantcenterpro'}</span></td>
+				</tr>
 
 				</table>
 			</div>
@@ -279,7 +294,7 @@
 									<select name="material[{$cat.id_category|intval}]" class="material" >
 										<option value="0">-----</option>
 										{foreach from=$aFeatures item=feature}
-											<option value="{$feature.id_feature|intval}" {if $cat.material == $feature.id_feature} selected {/if}>{$feature.name|escape:'html'}</option>
+											<option value="{$feature.id_feature|intval}" {if $cat.material == $feature.id_feature} selected {/if}>{$feature.name|escape:'htmlall':'UTF-8'}</option>
 										{/foreach}
 									</select>
 								</div>
@@ -292,7 +307,7 @@
 									<select name="pattern[{$cat.id_category|intval}]" class="pattern" >
 										<option value="0">-----</option>
 										{foreach from=$aFeatures item=feature}
-											<option value="{$feature.id_feature|intval}" {if $cat.pattern == $feature.id_feature} selected {/if}>{$feature.name|escape:'html'}</option>
+											<option value="{$feature.id_feature|intval}" {if $cat.pattern == $feature.id_feature} selected {/if}>{$feature.name|escape:'html':'UTF-8'}</option>
 										{/foreach}
 									</select>
 								</div>
@@ -345,8 +360,7 @@
 										<option value="0"{if $cat.sizeType=="0"} selected{/if}>--</option>
 										<option value="regular"{if $cat.sizeType=="regular"} selected{/if}>{l s='Regular' mod='gmerchantcenterpro'}</option>
 										<option value="petite"{if $cat.sizeType=="petite"} selected{/if}>{l s='Petite' mod='gmerchantcenterpro'}</option>
-										<option value="plus"{if $cat.sizeType=="plus"} selected{/if}>{l s='Plus' mod='gmerchantcenterpro'}</option>
-										<option value="big and tall"{if $cat.sizeType=="big and tall"} selected{/if}>{l s='Big and tall' mod='gmerchantcenterpro'}</option>
+										<option value="oversize"{if $cat.sizeType=="oversize"} selected{/if}>{l s='Oversize' mod='gmerchantcenterpro'}</option>
 										<option value="maternity"{if $cat.sizeType=="maternity"} selected{/if}>{l s='Maternity' mod='gmerchantcenterpro'}</option>
 									</select>
 								</div>
@@ -382,7 +396,7 @@
 										<select name="energy[{$cat.id_category|intval}]" class="energy" >
 											<option value="0">-----</option>
 											{foreach from=$aFeatures item=feature}
-												<option value="{$feature.id_feature|intval}" {if $cat.energy == $feature.id_feature} selected {/if}>{$feature.name|escape:'html'}</option>
+												<option value="{$feature.id_feature|intval}" {if $cat.energy == $feature.id_feature} selected {/if}>{$feature.name|escape:'htmlall':'UTF-8'}</option>
 											{/foreach}
 										</select>
 									</div>
@@ -396,7 +410,7 @@
 										<select name="energy_min[{$cat.id_category|intval}]" class="energy_min" >
 											<option value="0">-----</option>
 											{foreach from=$aFeatures item=feature}
-												<option value="{$feature.id_feature|intval}" {if $cat.energy_min == $feature.id_feature} selected {/if}>{$feature.name|escape:'html'}</option>
+												<option value="{$feature.id_feature|intval}" {if $cat.energy_min == $feature.id_feature} selected {/if}>{$feature.name|escape:'htmlall':'UTF-8'}</option>
 											{/foreach}
 										</select>
 									</div>
@@ -411,7 +425,7 @@
 										<select name="energy_max[{$cat.id_category|intval}]" class="energy_max" >
 											<option value="0">-----</option>
 											{foreach from=$aFeatures item=feature}
-												<option value="{$feature.id_feature|intval}" {if $cat.energy_max == $feature.id_feature} selected {/if}>{$feature.name|escape:'html'}</option>
+												<option value="{$feature.id_feature|intval}" {if $cat.energy_max == $feature.id_feature} selected {/if}>{$feature.name|escape:'htmlall':'UTF-8'}</option>
 											{/foreach}
 										</select>
 									</div>
@@ -426,7 +440,7 @@
 									<select name="shipping_label[{$cat.id_category|intval}]" class="shipping_label" >
 										<option value="0">-----</option>
 										{foreach from=$aFeatures item=feature}
-											<option value="{$feature.id_feature|intval}" {if $cat.shipping_label == $feature.id_feature} selected {/if}>{$feature.name|escape:'html'}</option>
+											<option value="{$feature.id_feature|intval}" {if $cat.shipping_label == $feature.id_feature} selected {/if}>{$feature.name|escape:'htmlall':'UTF-8'}</option>
 										{/foreach}
 									</select>
 								</div>
@@ -440,7 +454,7 @@
 									<select name="unit_pricing_measure[{$cat.id_category|intval}]" class="unit_pricing_measure" >
 										<option value="0">-----</option>
 										{foreach from=$aFeatures item=feature}
-											<option value="{$feature.id_feature|intval}" {if $cat.unit_pricing_measure == $feature.id_feature} selected {/if}>{$feature.name|escape:'html'}</option>
+											<option value="{$feature.id_feature|intval}" {if $cat.unit_pricing_measure == $feature.id_feature} selected {/if}>{$feature.name|escape:'html':'UTF-8'}</option>
 										{/foreach}
 									</select>
 								</div>
@@ -454,7 +468,7 @@
 									<select name="base_unit_pricing_measure[{$cat.id_category|intval}]" class="base_unit_pricing_measure" >
 										<option value="0">-----</option>
 										{foreach from=$aFeatures item=feature}
-											<option value="{$feature.id_feature|intval}" {if $cat.base_unit_pricing_measure == $feature.id_feature} selected {/if}>{$feature.name|escape:'html'}</option>
+											<option value="{$feature.id_feature|intval}" {if $cat.base_unit_pricing_measure == $feature.id_feature} selected {/if}>{$feature.name|escape:'htmlall':'UTF-8'}</option>
 										{/foreach}
 									</select>
 								</div>
@@ -464,10 +478,19 @@
 								<select multiple name="excluded_destination[{$cat.id_category|intval}][]" class="excluded_destination">
 									<option value="">{l s='--' mod='gmerchantcenterpro'}</option>
 									<option {if in_array('shopping', $cat.excluded_destination)} selected {/if} value="shopping">{l s='Shopping Ads' mod='gmerchantcenterpro'}</option>
-									<option {if in_array('actions', $cat.excluded_destination)} selected {/if} value="actions">{l s='Shopping Actions' mod='gmerchantcenterpro'}</option>
+									<option {if in_array('actions', $cat.excluded_destination)} selected {/if} value="actions">{l s='Buy on Google listing' mod='gmerchantcenterpro'}</option>
 									<option {if in_array('display', $cat.excluded_destination)} selected {/if} value="display">{l s='Display Ads' mod='gmerchantcenterpro'}</option>
-									<option {if in_array('local', $cat.excluded_destination)} selected {/if} value="local">{l s='Local Shopping' mod='gmerchantcenterpro'}</option>
-									<option {if in_array('surface', $cat.excluded_destination)} selected {/if} value="surface">{l s='Surfaces across Google' mod='gmerchantcenterpro'}</option>
+									<option {if in_array('local', $cat.excluded_destination)} selected {/if} value="local">{l s='Local inventory ads' mod='gmerchantcenterpro'}</option>
+									<option {if in_array('free-listing', $cat.excluded_destination)} selected {/if} value="free-listing">{l s='Free listings' mod='gmerchantcenterpro'}</option>
+									<option {if in_array('free-local-listing', $cat.excluded_destination)} selected {/if} value="free-local-listing">{l s='Free local listings' mod='gmerchantcenterpro'}</option>
+								</select>
+							</div>
+
+							<div class="value_excluded_country">
+								<select multiple name="excluded_country[{$cat.id_category|intval}][]" class="excluded_country">
+									{foreach from=$aCountries item=country}
+										<option value="{$country|escape:'htmlall':'UTF-8'}" {if in_array($country, $cat.excluded_country)} selected {/if}> {$country|escape:'htmlall':'UTF-8'}</option>
+									{/foreach}
 								</select>
 							<div>
 
@@ -503,7 +526,7 @@
 <div id="loadingAdvancedTagDiv" style="display: none;">
 	<div class="alert alert-info">
 		<p style="text-align: center !important;"><img src="{$sLoadingImg|escape:'htmlall':'UTF-8'}" alt="Loading" /></p><div class="clr_20"></div>
-		<p style="text-align: center !important;">{l s='Your update configuration is in progress...' mod='gmerchantcenterpro'}</p>
+		<p style="text-align: center !important;">{l s='Your configuration updating is in progress...' mod='gmerchantcenterpro'}</p>
 	</div>
 </div>
 {/if}

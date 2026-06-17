@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -82,15 +82,7 @@ abstract class BT_BaseProductXml
      * @param string $sCombiRef
      * @return string
      */
-    abstract public function getSupplierReference(
-        $iProdId,
-        $iSupplierId,
-        $sSupplierRef = null,
-        $sProductRef = null,
-        $iProdAttributeId = null,
-        $sCombiSupplierRef = null,
-        $sCombiRef = null
-    );
+    abstract public function getSupplierReference($iProdId, $iSupplierId, $sSupplierRef = null, $sProductRef = null, $iProdAttributeId = null, $sCombiSupplierRef = null, $sCombiRef = null);
 
 
     /**
@@ -106,18 +98,7 @@ abstract class BT_BaseProductXml
      * @param int $iLangId
      * @return string
      */
-    abstract public function formatProductName(
-        $iAdvancedProdName,
-        $iAdvancedProdTitle,
-        $sProdName,
-        $sCatName,
-        $sManufacturerName,
-        $iLength,
-        $iProdAttrId = null,
-        $iLangId = null,
-        $sPrefix = null,
-        $sSuffix = null
-    );
+    abstract public function formatProductName($iAdvancedProdName, $iAdvancedProdTitle, $sProdName, $sCatName, $sManufacturerName, $iLength, $iProdAttrId = null, $iLangId = null, $sPrefix = null, $sSuffix = null);
 
 
     /**
@@ -180,6 +161,7 @@ abstract class BT_BaseProductXml
 
             // check qty , export type and the product name
             if (!empty($sName)) {
+
                 $bExport = true;
 
                 if (
@@ -201,10 +183,7 @@ abstract class BT_BaseProductXml
 
                 if ($bExport) {
                     // get  the product category object
-                    $this->data->step->category = new Category(
-                        (int) ($this->data->p->id_category_default),
-                        (int) $this->aParams['iLangId']
-                    );
+                    $this->data->step->category = new Category((int) ($this->data->p->id_category_default), (int) $this->aParams['iLangId']);
 
                     // set the product ID
                     $this->data->step->id = $this->data->p->id;
@@ -228,10 +207,7 @@ abstract class BT_BaseProductXml
                         GMerchantCenterPro::$conf['GMCP_ADV_PRODUCT_NAME'] != 0
                         && Tools::strlen($sName) >= _GMCP_FEED_TITLE_LENGTH
                     ) {
-                        BT_GmcProReporting::create()->set(
-                            'title_length',
-                            array('productId' => $this->data->step->id_reporting)
-                        );
+                        BT_GmcProReporting::create()->set('title_length', array('productId' => $this->data->step->id_reporting));
                     }
 
                     $this->data->p->description_short = BT_GmcProModuleTools::sanitizeProductProperty($this->data->p->description_short, $this->aParams['iLangId']);
@@ -306,14 +282,18 @@ abstract class BT_BaseProductXml
                         // get Google Categories
                         $this->data->step->google_cat = BT_GmcProModuleDao::getGoogleCategories($this->aParams['iShopId'], $this->data->p->id_category_default, $GLOBALS['GMCP_AVAILABLE_COUNTRIES'][$this->aParams['sLangIso']][$this->aParams['sCountryIso']]['taxonomy']);
 
+                        // Use case for package language problem, and didn't let us identify the taxonomy with the good current lang
+                        if (empty($this->data->step->google_cat)) {
+                            $this->data->step->google_cat = BT_GmcProModuleDao::getGoogleCategories($this->aParams['iShopId'], $this->data->p->id_category_default, 'en-US');
+                        }
+
                         //get all product categories
                         $oProduct = new Product($this->data->p->id);
 
-                        $iDefaultCat = $oProduct->getDefaultCategory();
                         $aProductCategories = $oProduct->getCategories($this->data->p->id);
 
                         // get google adwords tags
-                        $this->data->step->google_tags = BT_GmcProCustomLabelDao::getTagsForXml($this->data->p->id, $iDefaultCat, $this->data->p->id_manufacturer, $this->data->p->id_supplier, (int) $this->aParams['iLangId']);
+                        $this->data->step->google_tags = BT_GmcProCustomLabelDao::getTagsForXml($this->data->p->id, $aProductCategories, $this->data->p->id_manufacturer, $this->data->p->id_supplier, (int) $this->aParams['iLangId']);
 
                         // get features by category
                         $this->data->step->features = BT_GmcProModuleDao::getFeaturesByCategory($this->data->p->id_category_default, GMerchantCenterPro::$iShopId);
@@ -384,23 +364,14 @@ abstract class BT_BaseProductXml
                     }
                 } // use case - reporting if product was excluded due to no_stock
                 else {
-                    BT_GmcProReporting::create()->set(
-                        '_no_export_no_stock',
-                        array('productId' => $this->data->step->id_reporting)
-                    );
+                    BT_GmcProReporting::create()->set('_no_export_no_stock', array('productId' => $this->data->step->id_reporting));
                 }
             } // use case - reporting if product was excluded due to the empty name
             else {
-                BT_GmcProReporting::create()->set(
-                    '_no_product_name',
-                    array('productId' => $this->data->step->id_reporting)
-                );
+                BT_GmcProReporting::create()->set('_no_product_name', array('productId' => $this->data->step->id_reporting));
             }
         } else {
-            BT_GmcProReporting::create()->set(
-                '_no_available_for_order',
-                array('productId' => $this->data->step->id_reporting)
-            );
+            BT_GmcProReporting::create()->set('_no_available_for_order', array('productId' => $this->data->step->id_reporting));
         }
         return false;
     }
@@ -429,6 +400,7 @@ abstract class BT_BaseProductXml
             && !empty($this->data->step->image_link)
             && $this->data->step->visibility != 'none'
         ) {
+
             $sContent .= "\t" . '<item>' . "\n";
 
             if (empty(GMerchantCenterPro::$conf['GMCP_SIMPLE_PROD_ID'])) {
@@ -437,6 +409,9 @@ abstract class BT_BaseProductXml
                 $sContent .= "\t\t" . '<g:id>' . $this->data->step->id . '</g:id>' . "\n";
             }
 
+            if (!empty(GMerchantCenterPro::$conf['GMCP_SHIPS_FROM'])) {
+                $sContent .= "\t\t" . '<g:ships_from_country>' . strtoupper(GMerchantCenterPro::$conf['GMCP_SHIPS_FROM']) . '</g:ships_from_country>' . "\n";
+            }
             // ****** PRODUCT NAME ******
             if (!empty($this->data->step->name)) {
                 $sContent .= "\t\t" . '<title><![CDATA[' . BT_GmcProModuleTools::cleanUp($this->data->step->name) . ']]></title>' . "\n";
@@ -456,6 +431,12 @@ abstract class BT_BaseProductXml
                 $sContent .= "\t\t" . '<link><![CDATA[' . $this->data->step->url . ']]></link>' . "\n";
             } else {
                 $aReporting[] = 'link';
+            }
+
+            // ****** ADS REDIRECT to handle utm_content={campaignid ******
+            if (!empty(GMerchantCenterPro::$conf['GMCP_UTM_CONTENT'])) {
+                $sCampaignIdUrl = $this->data->step->url .= (strpos($this->data->step->url, '?') !== false) ? '&utm_content={campaignid}' : '?utm_content={campaignid}';
+                $sContent .= "\t\t" . '<g:ads_redirect><![CDATA[' .  $sCampaignIdUrl . ']]></g:ads_redirect>' . "\n";
             }
 
             // ****** IMAGE LINK ******
@@ -499,19 +480,51 @@ abstract class BT_BaseProductXml
                     }
                 }
             }
-                        
+
             // ****** PRODUCT AVAILABILITY ******
             if (GMerchantCenterPro::$conf['GMCP_INC_STOCK'] == 2) {
-                $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
-                if ($this->data->step->quantity > 0) {
-                    $sContent .= "\t\t" . '<g:sell_on_google_quantity>' . (int) $this->data->step->quantity . '</g:sell_on_google_quantity>' . "\n";
+                if (empty($this->data->step->availabilty_date)) {
+                    if ($this->data->step->quantity > 0) {
+                        $sContent .= "\t\t" . '<g:sell_on_google_quantity>' . (int) $this->data->step->quantity . '</g:sell_on_google_quantity>' . "\n";
+                        $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
+                    } else {
+                        $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
+                    }
+                } else {
+                    if ($this->data->step->quantity > 0) {
+                        $sContent .= "\t\t" . '<g:sell_on_google_quantity>' . (int) $this->data->step->quantity . '</g:sell_on_google_quantity>' . "\n";
+                        $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
+                    } else {
+                        if ($this->data->p->out_of_stock == 0 || Configuration::get('PS_ORDER_OUT_OF_STOCK') == 0) {
+                            $sContent .= "\t\t" . '<g:availability>preorder</g:availability>' . "\n";
+                        } else {
+                            $sContent .= "\t\t" . '<g:availability>backorder</g:availability>' . "\n";
+                        }
+
+                        $sContent .= "\t\t" . '<g:availability_date>'  . BT_GmcProModuleTools::formatDateISO8601($this->data->step->availabilty_date) . '</g:availability_date>' . "\n";
+                    }
                 }
-            } elseif ($this->data->step->quantity > 0) {
-                $sContent .= "\t\t" . '<g:sell_on_google_quantity>' . (int) $this->data->step->quantity . '</g:sell_on_google_quantity>' . "\n"
-                    . "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
             } else {
-                $sContent .= "\t\t" . '<g:sell_on_google_quantity>' . (int) $this->data->step->quantity . '</g:sell_on_google_quantity>' . "\n"
-                    . "\t\t" . '<g:availability>out of stock</g:availability>' . "\n";
+                if (empty($this->data->step->availabilty_date)) {
+                    if ($this->data->step->quantity > 0) {
+                        $sContent .= "\t\t" . '<g:sell_on_google_quantity>' . (int) $this->data->step->quantity . '</g:sell_on_google_quantity>' . "\n";
+                        $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
+                    } else {
+                        $sContent .= "\t\t" . '<g:availability>out of stock</g:availability>' . "\n";
+                    }
+                } else {
+                    if ($this->data->step->quantity > 0) {
+                        $sContent .= "\t\t" . '<g:sell_on_google_quantity>' . (int) $this->data->step->quantity . '</g:sell_on_google_quantity>' . "\n";
+                        $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
+                    } else {
+                        if ($this->data->p->out_of_stock == 0 || Configuration::get('PS_ORDER_OUT_OF_STOCK') == 0) {
+                            $sContent .= "\t\t" . '<g:availability>preorder</g:availability>' . "\n";
+                        } else {
+                            $sContent .= "\t\t" . '<g:availability>backorder</g:availability>' . "\n";
+                        }
+                        $sContent .= "\t\t" . '<g:availability_date>'  . BT_GmcProModuleTools::formatDateISO8601($this->data->step->availabilty_date) . '</g:availability_date>' . "\n";
+                    }
+                }
             }
 
             // ****** PRODUCT PRICES ******
@@ -530,6 +543,10 @@ abstract class BT_BaseProductXml
 
             if (!empty($this->data->step->cost_price) && !empty(GMerchantCenterPro::$conf['GMCP_INC_COST'])) {
                 $sContent .= "\t\t" . '<g:cost_of_goods_sold>' . $this->data->step->cost_price . '</g:cost_of_goods_sold>' . "\n";
+            }
+
+            if (!empty($this->data->multipack)) {
+                $sContent .= "\t\t" . '<g:multipack>' . $this->data->multipack . '</g:multipack>' . "\n";
             }
 
             // ****** UNIQUE PRODUCT IDENTIFIERS ******
@@ -555,11 +572,7 @@ abstract class BT_BaseProductXml
             }
 
             // ****** IDENTIFIER EXISTS ******
-            if (
-                empty($this->data->step->gtin)
-                && (empty($this->data->step->mpn)
-                    || empty($this->data->p->manufacturer_name) || !empty(GMerchantCenterPro::$conf['GMCP_FORCE_IDENTIFIER']))
-            ) {
+            if ((empty($this->data->step->gtin)  && empty($this->data->step->mpn)) || empty($this->data->p->manufacturer_name) || !empty(GMerchantCenterPro::$conf['GMCP_FORCE_IDENTIFIER'])) {
                 $sContent .= "\t\t" . '<g:identifier_exists>FALSE</g:identifier_exists>' . "\n";
             }
 
@@ -705,10 +718,27 @@ abstract class BT_BaseProductXml
                 }
             }
 
+            //Use case for the excluded country value
+            if (
+                !empty($this->data->step->features['excluded_country'])
+                && !empty(GMerchantCenterPro::$conf['GMCP_EXCLUDED_COUNTRY'])
+            ) {
+                // Transform excluded country to an array
+                $aExcludedCountry = explode(' ', $this->data->step->features['excluded_country']);
+
+                // Use case if is array we can handle the tag
+                if (is_array($aExcludedCountry)) {
+                    // For each exclusion country we set the tag
+                    foreach ($aExcludedCountry as $sCountry) {
+                        $sContent .= "\t\t" . '<g:shopping_ads_excluded_country><![CDATA[' . Tools::stripslashes($sCountry) . ']]></g:shopping_ads_excluded_country>' . "\n";
+                    }
+                }
+            }
+
             // handle the default pack from PS
             if (
                 !empty($this->data->p->cache_is_pack)
-                || (BT_GmcProModuleTools::isInstalled('pm_advancedpack')
+                || (GMerchantCenterPro::$bAdvancedPack
                     && AdvancedPack::isValidPack($this->data->p->id))
             ) {
                 $sContent .= "\t\t" . '<g:is_bundle>TRUE</g:is_bundle>' . "\n";
@@ -723,26 +753,48 @@ abstract class BT_BaseProductXml
                 }
             }
 
+            // Handle the product dimension
+            if (!empty(GMerchantCenterPro::$conf['GMCP_PRODUCT_DIMENSION'])) {
+                if (!empty($this->data->step->product_width) && !empty($this->data->step->product_height) && !empty($this->data->step->product_length) && !empty($this->data->step->product_weight)) {
+                    $sContent .= "\t\t" . '<g:product_width><![CDATA[' . $this->data->step->product_width . ']]></g:product_width>' . "\n";
+                    $sContent .= "\t\t" . '<g:product_height><![CDATA[' . $this->data->step->product_height . ']]></g:product_height>' . "\n";
+                    $sContent .= "\t\t" . '<g:product_length><![CDATA[' . $this->data->step->product_length . ']]></g:product_length>' . "\n";
+                    $sContent .= "\t\t" . '<g:product_weight><![CDATA[' . $this->data->step->product_weight . ']]></g:product_weight>' . "\n";
+                }
+            }
+            
             // ****** TAX AND SHIPPING ******
             $sWeightUnit = Configuration::get('PS_WEIGHT_UNIT');
             if (!empty($this->data->step->weight) && !empty($sWeightUnit)) {
                 if (in_array(Tools::strtolower($sWeightUnit), $GLOBALS['GMCP_WEIGHT_UNITS'])) {
-                    $sContent .= "\t\t" . '<g:shipping_weight>' . number_format(
-                        $this->data->step->weight,
-                        2,
-                        '.',
-                        ''
-                    ) . ' ' . Tools::strtolower($sWeightUnit) . '</g:shipping_weight>' . "\n";
+                    $sContent .= "\t\t" . '<g:shipping_weight>' . number_format($this->data->step->weight, 2, '.', '') . ' ' . Tools::strtolower($sWeightUnit) . '</g:shipping_weight>' . "\n";
                 } else {
                     $aReporting[] = 'shipping_weight';
                 }
             }
 
+            // Handle the dimension tag
+            if (!empty(GMerchantCenterPro::$conf['GMCP_DIMENSION'])) {
+                if (!empty($this->data->step->shipping_width) && !empty($this->data->step->shipping_height) && !empty($this->data->step->shipping_length)) {
+                    $sContent .= "\t\t" . '<g:shipping_width><![CDATA[' . $this->data->step->shipping_width . ']]></g:shipping_width>' . "\n";
+                    $sContent .= "\t\t" . '<g:shipping_height><![CDATA[' . $this->data->step->shipping_height . ']]></g:shipping_height>' . "\n";
+                    $sContent .= "\t\t" . '<g:shipping_length><![CDATA[' . $this->data->step->shipping_length . ']]></g:shipping_length>' . "\n";
+                }
+            }
+
             if (!empty(GMerchantCenterPro::$conf['GMCP_SHIPPING_USE'])) {
-                $sContent .= "\t\t" . '<g:shipping>' . "\n"
+                if (empty($this->data->step->free_shipping)) {
+                    $sContent .= "\t\t" . '<g:shipping>' . "\n"
                     . "\t\t\t" . '<g:country>' . $this->aParams['sCountryIso'] . '</g:country>' . "\n"
                     . "\t\t\t" . '<g:price>' . $this->data->step->shipping_fees . '</g:price>' . "\n"
                     . "\t\t" . '</g:shipping>' . "\n";
+                } else {
+                    $sContent .= "\t\t" . '<g:shipping>' . "\n"
+                    . "\t\t\t" . '<g:country>' . $this->aParams['sCountryIso'] . '</g:country>' . "\n"
+                    . "\t\t\t" . '<g:price>0</g:price>' . "\n"
+                    . "\t\t" . '</g:shipping>' . "\n"; 
+                }
+               
             }
 
             /** Promotion ID **/
@@ -761,6 +813,7 @@ abstract class BT_BaseProductXml
                 }
                 $sContent .= "\t\t" . '<g:promotion_id>' . $sFormatIdsForXml . '</g:promotion_id>' . "\n";
             }
+
             $sContent .= "\t" . '</item>' . "\n";
 
             $this->bProductProcess = true;
@@ -799,15 +852,42 @@ abstract class BT_BaseProductXml
             $sContent .= "\t\t" . '<g:price>' . $this->data->step->price . '</g:price>' . "\n";
         }
 
-        // ****** PRODUCT AVAILABILITY ******
         if (!empty(GMerchantCenterPro::$conf['GMCP_INV_SALE_PRICE'])) {
-            if (
-                GMerchantCenterPro::$conf['GMCP_INC_STOCK'] == 2
-                || $this->data->step->quantity > 0
-            ) {
-                $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
+            if (GMerchantCenterPro::$conf['GMCP_INC_STOCK'] == 2) {
+
+                if ($this->data->step->quantity > 0) {
+                    if (empty($this->data->step->availabilty_date)) {
+                        $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
+                    } else {
+                        $sContent .= "\t\t" . '<g:availability>preorder</g:availability>' . "\n";
+                        $sContent .= "\t\t" . '<g:availability_date>'  . BT_GmcProModuleTools::formatDateISO8601($this->data->step->availabilty_date) . '</g:availability_date>' . "\n";
+                    }
+                } else {
+                    $sContent .= "\t\t" . '<g:quantity_to_sell_on_facebook>1</g:quantity_to_sell_on_facebook>' . "\n";
+
+                    if (empty($this->data->step->availabilty_date)) {
+                        $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
+                    } else {
+                        $sContent .= "\t\t" . '<g:availability>preorder</g:availability>' . "\n";
+                        $sContent .= "\t\t" . '<g:availability_date>'  . BT_GmcProModuleTools::formatDateISO8601($this->data->step->availabilty_date) . '</g:availability_date>' . "\n";
+                    }
+                }
+            } elseif ($this->data->step->quantity > 0) {
+
+                if (empty($this->data->step->availabilty_date)) {
+                    $sContent .= "\t\t" . '<g:availability>in stock</g:availability>' . "\n";
+                } else {
+                    $sContent .= "\t\t" . '<g:availability>preorder</g:availability>' . "\n";
+                    $sContent .= "\t\t" . '<g:availability_date>'  . BT_GmcProModuleTools::formatDateISO8601($this->data->step->availabilty_date) . '</g:availability_date>' . "\n";
+                }
             } else {
-                $sContent .= "\t\t" . '<g:availability>out of stock</g:availability>' . "\n";
+
+                if (empty($this->data->step->availabilty_date)) {
+                    $sContent .= "\t\t" . '<g:availability>out of stock</g:availability>' . "\n";
+                } else {
+                    $sContent .= "\t\t" . '<g:availability>preorder</g:availability>' . "\n";
+                    $sContent .= "\t\t" . '<g:availability_date>'  . BT_GmcProModuleTools::formatDateISO8601($this->data->step->availabilty_date) . '</g:availability_date>' . "\n";
+                }
             }
         }
 
@@ -868,32 +948,18 @@ abstract class BT_BaseProductXml
         // only in case of not free shipping weight or price
         if ($bProcess && is_a($this->data->currentCarrier, 'Carrier')) {
             // Get shipping method - Version 1.4 / 1.5
-            if (method_exists('Carrier', 'getShippingMethod')) {
-                $sShippingMethod = ($this->data->currentCarrier->getShippingMethod() == Carrier::SHIPPING_METHOD_WEIGHT) ? 'weight' : 'price';
-            } // Version 1.2 / 1.3
-            else {
-                $sShippingMethod = $this->data->shippingConfig['PS_SHIPPING_METHOD'] ? 'weight' : 'price';
-            }
+            $sShippingMethod = ($this->data->currentCarrier->getShippingMethod() == Carrier::SHIPPING_METHOD_WEIGHT) ? 'weight' : 'price';
 
             // Get main shipping fee
             if ($sShippingMethod == 'weight') {
-                $fShippingFees += $this->data->currentCarrier->getDeliveryPriceByWeight(
-                    $this->data->step->weight,
-                    $this->data->currentZone->id
-                );
+                $fShippingFees += $this->data->currentCarrier->getDeliveryPriceByWeight($this->data->step->weight, $this->data->currentZone->id);
             } else {
-                $fShippingFees += $this->data->currentCarrier->getDeliveryPriceByPrice(
-                    $fProductPrice,
-                    $this->data->currentZone->id
-                );
+                $fShippingFees += $this->data->currentCarrier->getDeliveryPriceByPrice($fProductPrice, $this->data->currentZone->id);
             }
 
             // Add product specific shipping fee
             if (empty($this->data->currentCarrier->is_free)) {
-                $fShippingFees += (float) BT_GmcProModuleDao::getAdditionalShippingCost(
-                    $this->data->p->id,
-                    $this->aParams['iShopId']
-                );
+                $fShippingFees += (float) BT_GmcProModuleDao::getAdditionalShippingCost($this->data->p->id, $this->aParams['iShopId']);
             }
 
             // Add handling fees if applicable
@@ -904,14 +970,7 @@ abstract class BT_BaseProductXml
                 $fShippingFees += (float) $this->data->shippingConfig['PS_SHIPPING_HANDLING'];
             }
 
-            // Apply tax
-            // Get tax rate - Version 1.4 / 1.5
-            if (method_exists('Tax', 'getCarrierTaxRate')) {
-                $fCarrierTax = Tax::getCarrierTaxRate((int) $this->data->currentCarrier->id);
-            } // Version 1.2 / 1.3
-            else {
-                $fCarrierTax = BT_GmcProModuleDao::getCarrierTaxRate($this->data->currentCarrier->id);
-            }
+            $fCarrierTax = Tax::getCarrierTaxRate((int) $this->data->currentCarrier->id);
             $fShippingFees *= (1 + ($fCarrierTax / 100));
 
             // Covert to correct currency and format
@@ -978,12 +1037,15 @@ abstract class BT_BaseProductXml
         $aColors = array();
 
         if (!empty(GMerchantCenterPro::$conf['GMCP_INC_COLOR'])) {
+
             if (!empty(GMerchantCenterPro::$conf['GMCP_COLOR_OPT']['attribute'])) {
                 $sAttributes = implode(',', GMerchantCenterPro::$conf['GMCP_COLOR_OPT']['attribute']);
             }
+
             if (!empty(GMerchantCenterPro::$conf['GMCP_COLOR_OPT']['feature'])) {
                 $iFeature = implode(',', GMerchantCenterPro::$conf['GMCP_COLOR_OPT']['feature']);
             }
+
             if (!empty($sAttributes)) {
                 $aColors = BT_GmcProModuleDao::getProductAttribute((int) $this->data->p->id, $sAttributes, (int) $iLangId, (int) $iProdAttrId);
             }
@@ -1014,12 +1076,15 @@ abstract class BT_BaseProductXml
         $aSize = array();
 
         if (!empty(GMerchantCenterPro::$conf['GMCP_SIZE_OPT'])) {
+
             if (!empty(GMerchantCenterPro::$conf['GMCP_SIZE_OPT']['attribute'])) {
                 $sAttributes = implode(',', GMerchantCenterPro::$conf['GMCP_SIZE_OPT']['attribute']);
             }
+
             if (!empty(GMerchantCenterPro::$conf['GMCP_SIZE_OPT']['feature'])) {
                 $iFeature = implode(',', GMerchantCenterPro::$conf['GMCP_SIZE_OPT']['feature']);
             }
+
             if (!empty($sAttributes)) {
                 $aSize = BT_GmcProModuleDao::getProductAttribute((int) $this->data->p->id, $sAttributes, (int) $iLangId, (int) $iProdAttrId);
             }

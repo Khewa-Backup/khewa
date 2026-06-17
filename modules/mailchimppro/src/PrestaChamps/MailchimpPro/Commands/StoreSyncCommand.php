@@ -18,8 +18,10 @@
  */
 
 namespace PrestaChamps\MailchimpPro\Commands;
-
-use DrewM\MailChimp\MailChimp;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+use PrestaChamps\MailChimpAPI;
 use \PrestaChamps\MailchimpPro\Formatters\StoreFormatter;
 
 /**
@@ -34,65 +36,156 @@ class StoreSyncCommand extends BaseApiCommand
     protected $mailchimp;
     protected $batch;
     protected $batchPrefix = '';
+    protected $commands = [];
 
     /**
-     * ProductSyncService constructor.
+     * StoreSyncService constructor.
      *
      * @param \Context  $context
-     * @param MailChimp $mailchimp
+     * @param MailChimpAPI $mailchimp
      * @param array     $storeIds
      */
-    public function __construct(\Context $context, MailChimp $mailchimp, $storeIds = array())
+    public function __construct(\Context $context, MailChimpAPI $mailchimp, $storeIds = [])
     {
         $this->context = $context;
         $this->mailchimp = $mailchimp;
-        $this->batchPrefix = uniqid('STORE_SYNC', true);
+        $this->batchPrefix = uniqid("STORE_SYNC_", true);
         $this->batch = $this->mailchimp->new_batch($this->batchPrefix);
         $this->stores = $storeIds;
     }
 
+    /**
+     * @return array|false
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
     public function execute()
     {
-        $this->responses = array();
-        if ($this->syncMode == self::SYNC_MODE_REGULAR) {
-            foreach ($this->stores as $storeId) {
-                $formatted = new StoreFormatter(new \Shop($storeId), $this->context);
-                if ($this->method === self::SYNC_METHOD_POST) {
-                    $this->mailchimp->post('/ecommerce/stores', $formatted->format());
-                }
-                if ($this->method === self::SYNC_METHOD_PATCH) {
-                    $data = $formatted->format();
-                    // MC does not support changing the list id, so it must be unset
-                    unset($data['list_id']);
-                    $this->mailchimp->patch("/ecommerce/stores/{$storeId}", $data);
-                }
-                if ($this->method === self::SYNC_METHOD_DELETE) {
-                    $this->mailchimp->delete("/ecommerce/stores/{$storeId}");
-                }
-                $this->responses[] = $this->mailchimp->getLastResponse();
-            }
-        }
-        if ($this->syncMode == self::SYNC_MODE_BATCH) {
-            $batch = $this->mailchimp->new_batch();
-            foreach ($this->stores as $storeId) {
-                $formatted = new StoreFormatter(new \Shop($storeId), $this->context);
-                if ($this->method === 'POST') {
-                    $batch->post("{$this->batchPrefix}_{$storeId}", '/ecommerce/stores', $formatted->format());
-                }
-                if ($this->method === 'PATCH') {
-                    $data = $formatted->format();
-                    // MC does not support changing the list id, so it must be unset
-                    unset($data['list_id']);
-                    $batch->patch("{$this->batchPrefix}_{$storeId}", "/ecommerce/stores/{$storeId}", $data);
-                }
-                if ($this->method === 'DELETE') {
-                    $batch->delete("{$this->batchPrefix}_{$storeId}", "/ecommerce/stores/{$storeId}");
-                }
-                $this->responses[] = $this->mailchimp->getLastResponse();
-            }
-            $this->responses[] = $batch->execute();
+        $this->responses = [];
+
+        $this->buildStores();
+
+        if ($this->syncMode === self::SYNC_MODE_BATCH) {
+            $this->responses['batch'] = $this->batch->execute();
         }
 
+        $allRequestsSuccess = true;
+        $requestErrors = [];
+        if ($this->syncMode === self::SYNC_MODE_REGULAR) {
+            $method = \Tools::strtolower($this->method);
+            foreach ($this->commands as $entityId => $params) {
+                try {
+                    //$this->responses[$entityId] = $this->mailchimp->$method($params['route'], $params['data']);
+                    $this->mailchimp->$method($params['route'], $params['data']);
+                } catch (\Exception $exception) {
+                    //$this->responses[$entityId] = $this->mailchimp->getLastResponse();
+                    //\PrestaShopLogger::addLog("[MAILCHIMP]: {$exception->getMessage()}");
+                    continue;
+                }
+
+                if (!$this->mailchimp->success()) {
+                    $allRequestsSuccess = false;
+                    $requestErrors[$entityId] = $this->mailchimp->getLastError();
+                }
+
+                $this->responses['entities'][$entityId]['requestSuccess'] = $this->mailchimp->success();
+                $this->responses['entities'][$entityId]['requestLastResponse'] = $this->mailchimp->getLastResponse();
+                $this->responses['entities'][$entityId]['requestLastError'] = $this->mailchimp->getLastError();
+            }
+        }
+
+        $this->responses['requestMethod'] = $this->method;
+        if (empty($this->responses['requestSuccess'])) {
+            $this->responses['requestSuccess'] = $this->syncMode === self::SYNC_MODE_REGULAR ? $allRequestsSuccess : $this->mailchimp->success();
+        }
+        if (!$this->responses['requestSuccess']) {
+            $this->responses['requestLastErrors'] = $this->syncMode === self::SYNC_MODE_REGULAR ? $requestErrors : $this->mailchimp->getLastError();
+        }
+        $this->responses['requestLastResponse'] = $this->mailchimp->getLastResponse();
+        $this->responses['requestSyncMode'] = $this->syncMode === self::SYNC_MODE_REGULAR ? 'regular' : 'batch';
+
         return $this->responses;
+    }
+
+    /**
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    protected function buildStores()
+    {
+        foreach ($this->stores as $storeId) {
+            $shop = new \Shop($storeId);
+            $storeFormatter = new StoreFormatter($shop, $this->context);
+            $formattedId = \Mailchimppro::shopIdTransformer($shop);
+
+            if ($this->method === self::SYNC_METHOD_POST) {
+                if ($this->syncMode == self::SYNC_MODE_BATCH) {
+                    $this->batch->post(
+                        "{$this->batchPrefix}_{$formattedId}",
+                        "/ecommerce/stores",
+                        $storeFormatter->format()
+                    );
+                } elseif ($this->syncMode === self::SYNC_MODE_REGULAR) {
+                    $this->commands[$storeId] = [
+                        'route' => "/ecommerce/stores",
+                        'data' => $storeFormatter->format(),
+                    ];
+                }
+            } elseif ($this->method === self::SYNC_METHOD_PATCH) {
+                $data = $storeFormatter->format();
+                // MC does not support changing the list id, so it must be unset
+                unset($data['list_id']);
+
+                if ($this->syncMode == self::SYNC_MODE_BATCH) {
+                    $this->batch->patch(
+                        "{$this->batchPrefix}_{$formattedId}",
+                        "/ecommerce/stores/{$formattedId}",
+                        $data
+                    );
+                } elseif ($this->syncMode === self::SYNC_MODE_REGULAR) {
+                    $this->commands[$storeId] = [
+                        'route' => "/ecommerce/stores/{$formattedId}",
+                        'data' => $data,
+                    ];
+                }
+            } elseif ($this->method === self::SYNC_METHOD_DELETE) {
+                if ($this->syncMode == self::SYNC_MODE_BATCH) {
+                    $this->batch->delete(
+                        "{$this->batchPrefix}_{$formattedId}",
+                        "/ecommerce/stores/{$formattedId}"
+                    );
+                } elseif ($this->syncMode === self::SYNC_MODE_REGULAR) {
+                    $this->commands[$storeId] = [
+                        'route' => "/ecommerce/stores/{$formattedId}",
+                        'data' => [],
+                    ];
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $shopId
+     * @param bool   $returnFields
+     *
+     * @return bool|array
+     */
+    public function getStoreExists($shopId = null, $returnFields = null)
+    {
+        if (!$shopId) {
+            $shopId = $this->getShopId();
+        }
+        $result = $this->mailchimp->get(
+            "/ecommerce/stores/{$shopId}"
+        );
+
+        if ($this->mailchimp->success()) {
+            if ($returnFields) {
+                return $result;
+            }
+            return true;
+        }
+
+        return false;
     }
 }

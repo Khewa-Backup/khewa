@@ -2,7 +2,7 @@
  * Spam Protection - Invisible reCaptcha
  *
  * @author    WebshopWorks
- * @copyright 2018-2019 WebshopWorks.com
+ * @copyright 2018-2025 WebshopWorks.com
  * @license   One Domain Licence
  *
  * Not allowed to resell or redistribute this software
@@ -22,12 +22,8 @@
 	position: absolute;
 	width: 100%;
 	margin: 0 -50%;
-	-webkit-animation:spin 2s linear infinite;
-	-moz-animation:spin 2s linear infinite;
 	animation:spin 2s linear infinite;
 }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
 @keyframes spin { 100% { transform:rotate(360deg); } }
 </style>
 <script>
@@ -40,7 +36,7 @@ jQuery.ajax('https://www.google.com/recaptcha/api.js?onload=ircInit&render=expli
 });
 
 function ircInit() {
-	jQuery(function($) {
+	jQuery($ => {
 		var $submit = $(':submit', form);
 		var $wrapper = $();
 		var loading, keyChanged;
@@ -78,11 +74,12 @@ function ircInit() {
 						var res = JSON.parse(resp.split(")]}'\n")[1] || '{ "error-codes": ["unknown-error"] }');
 						if (res.success) {
 							$(form).off('submit.irc');
+							form.version.value = res.score ? 3 : 2;
 						} else if (~res['error-codes'].indexOf('invalid-input-secret')) {
 							form.secretkey.setCustomValidity("{l s='Invalid secret key!' mod='invrecaptcha'}");
 						} else {
-							$submit[0].setCustomValidity("{l s='Invisible reCaptcha error:' mod='invrecaptcha'} " + res['error-codes'].join(', '));
-							setTimeout(function() { $submit[0].setCustomValidity('') }, 3000);
+							$submit[0].setCustomValidity("{l s='Captcha error:' mod='invrecaptcha'} " + res['error-codes'].join(', '));
+							setTimeout(() => $submit[0].setCustomValidity(''), 3000);
 						}
 						$submit.removeAttr('disabled');
 						$submit[0].click();
@@ -104,5 +101,4 @@ function ircInit() {
 }
 </script>
 {l s='Please register your webshop on Google reCaptcha admin page to get your own Site key and Secret key:' mod='invrecaptcha'}
-<a href="https://www.google.com/recaptcha/admin" target="_blank">https://www.google.com/recaptcha/admin</a><br>
-({l s='Check the documentation for more details' mod='invrecaptcha'})
+<a href="https://www.google.com/recaptcha/admin" target="_blank">https://www.google.com/recaptcha/admin</a>

@@ -1,14 +1,23 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PsEventbus\Formatter\ArrayFormatter;
 use PrestaShop\Module\PsEventbus\Repository\ConfigurationRepository;
 use PrestaShop\Module\PsEventbus\Repository\CurrencyRepository;
 use PrestaShop\Module\PsEventbus\Repository\LanguageRepository;
 use PrestaShop\Module\PsEventbus\Repository\ServerInformationRepository;
 use PrestaShop\Module\PsEventbus\Repository\ShopRepository;
+use PrestaShop\Module\PsEventbus\Tests\Mocks\Handler\ErrorHandlerMock;
+use PrestaShop\Module\PsEventbus\Tests\System\Tests\BaseTestCase;
+use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
+use Yandex\Allure\Adapter\Annotation\Features;
+use Yandex\Allure\Adapter\Annotation\Stories;
+use Yandex\Allure\Adapter\Annotation\Title;
 
-class ServerInformationRepositoryTest extends TestCase
+/**
+ * @Features("repository")
+ * @Stories("server information repository")
+ */
+class ServerInformationRepositoryTest extends BaseTestCase
 {
     /**
      * @var CurrencyRepository
@@ -42,14 +51,20 @@ class ServerInformationRepositoryTest extends TestCase
      * @var Db
      */
     private $db;
+    /**
+     * @var PsAccounts
+     */
+    private $psAccounts;
 
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
         $this->currencyRepository = $this->createMock(CurrencyRepository::class);
         $this->languageRepository = $this->createMock(LanguageRepository::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->shopRepository = $this->createMock(ShopRepository::class);
+        $this->arrayFormatter = $this->createMock(ArrayFormatter::class);
+        $this->psAccounts = $this->createMock(PsAccounts::class);
         $this->arrayFormatter = $this->createMock(ArrayFormatter::class);
         $this->context = $this->createMock(Context::class);
         $link = $this->createMock(Link::class);
@@ -63,10 +78,17 @@ class ServerInformationRepositoryTest extends TestCase
             $this->languageRepository,
             $this->configurationRepository,
             $this->shopRepository,
-            $this->arrayFormatter
+            $this->arrayFormatter,
+            $this->psAccounts,
+            new ErrorHandlerMock(),
+            []
         );
     }
 
+    /**
+     * @Stories("server information repository")
+     * @Title("testGetServerInformation")
+     */
     public function testGetServerInformation()
     {
         $this->shopRepository->method('getMultiShopCount')->willReturn(1);
@@ -79,9 +101,12 @@ class ServerInformationRepositoryTest extends TestCase
         $this->configurationRepository->expects($this->at(0))->method('get')->with('PS_REWRITING_SETTINGS')->willReturn(true);
         $this->configurationRepository->expects($this->at(1))->method('get')->with('PS_CART_FOLLOWING')->willReturn(true);
         $this->configurationRepository->expects($this->at(2))->method('get')->with('PS_WEIGHT_UNIT')->willReturn('kg');
-        $this->configurationRepository->expects($this->at(3))->method('get')->with('PS_TIMEZONE')->willReturn('GMT/Zulu');
-        $this->configurationRepository->expects($this->at(4))->method('get')->with('PS_ORDER_RETURN')->willReturn('1');
-        $this->configurationRepository->expects($this->at(5))->method('get')->with('PS_ORDER_RETURN_NB_DAYS')->willReturn('1');
+        $this->configurationRepository->expects($this->at(3))->method('get')->with('PS_BASE_DISTANCE_UNIT')->willReturn('km');
+        $this->configurationRepository->expects($this->at(4))->method('get')->with('PS_VOLUME_UNIT')->willReturn('L');
+        $this->configurationRepository->expects($this->at(5))->method('get')->with('PS_DIMENSION_UNIT')->willReturn('cm');
+        $this->configurationRepository->expects($this->at(6))->method('get')->with('PS_TIMEZONE')->willReturn('GMT/Zulu');
+        $this->configurationRepository->expects($this->at(7))->method('get')->with('PS_ORDER_RETURN')->willReturn('1');
+        $this->configurationRepository->expects($this->at(8))->method('get')->with('PS_ORDER_RETURN_NB_DAYS')->willReturn('1');
 
         $this->context->link->method('getPageLink')->willReturn('some link');
 

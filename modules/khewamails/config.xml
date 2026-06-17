@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>khewamails</name>
+    <displayName><![CDATA[Khewa Mails]]></displayName>
+    <version><![CDATA[1.1.0]]></version>
+    <description><![CDATA[Collects emails from visitors.]]></description>
+    <author><![CDATA[Rushad Mahrez]]></author>
+    <tab><![CDATA[front_office_features]]></tab>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

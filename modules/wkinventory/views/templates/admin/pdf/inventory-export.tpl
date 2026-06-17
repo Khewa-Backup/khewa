@@ -43,7 +43,7 @@
             {$inventory_products}{* HTML CONTENT *}
             <tr style="font-size: 8pt;">
                 <td colspan="4" style="background-color: #4D4D4D; color: #FFF; text-align: right; padding-right: 1px;"><strong>{l s='Stock valuation' mod='wkinventory'}</strong> (<em>{$inventory_count|intval} {l s='product(s)' mod='wkinventory'}</em>)</td>
-                <td style="text-align: right;background-color: #F2F2F2;">{displayPrice price=$stock_valuation}</td>
+                <td style="text-align: right;background-color: #F2F2F2;">{$stock_valuation|escape:'htmlall':'UTF-8'}</td>
             </tr>
         </table>
     </div>

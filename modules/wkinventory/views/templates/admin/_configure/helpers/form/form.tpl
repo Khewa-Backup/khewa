@@ -13,7 +13,7 @@
 
 {block name="description"}
     {if isset($input.desc) && !empty($input.desc)}
-        <p class="{if $is_before_16}preference_description{else}help-block{/if}">
+        <p class="{if $isPS15}preference_description{else}help-block{/if}">
             {if is_array($input.desc)}
                 {foreach $input.desc as $p}
                     {if is_array($p)}
@@ -50,7 +50,7 @@
         </div>
 
         <div class="col-lg-3"><img src="{$this_path|escape:'html':'UTF-8'}/views/img/inventory-img.png" /></div>
-        <div class="col-lg-8">
+        <div class="col-lg-8" style="line-height:22px; font-size:14px">
             <p>{l s='This module is created to manage your stock inventory' mod='wkinventory'} :</p>
             <ul>
                 <li>{l s='Possibility to create and manage [1]multiple inventories[/1]' tags=['<strong>'] mod='wkinventory'}.</li>
@@ -58,7 +58,7 @@
                 <li>{l s='Possibility to [1]manage inventories while leaving open your online store[/1] and [1]keep selling[/1]' tags=['<strong>'] mod='wkinventory'}.</li>
                 <li>{l s='Generate [1]valid EAN and UPC codes to marketplace[/1] for all your products/combinations or only for [1]missing codes[/1] to facilitate management of your stock' tags=['<strong>'] mod='wkinventory'}.</li>
                 <li>{l s='EAN and UPC codes are generated automatically [1]respecting algorithms and specific rules[/1] that respects our module' tags=['<strong>'] mod='wkinventory'}.</li>
-                <li>{l s='Can be used for [1]Multi-shops[/1]' tags=['<strong>'] mod='wkinventory'}.</li>
+                <li>{l s='Can be used by [1]Multi-employees[/1] at the same time and for [1]Multi-shops[/1]' tags=['<strong>'] mod='wkinventory'}.</li>
             </ul>
         </div>
         <div class="clear"></div>

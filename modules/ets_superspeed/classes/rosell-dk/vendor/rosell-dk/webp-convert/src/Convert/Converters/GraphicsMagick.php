@@ -1,38 +1,31 @@
 <?php
 /**
- * 2007-2021 ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
  *
  * NOTICE OF LICENSE
  *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
  * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- * 
+ *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please contact us for extra customization service at an affordable price
+ * versions in the future.
  *
- *  @author ETS-Soft <etssoft.jsc@gmail.com>
- *  @copyright  2007-2021 ETS-Soft
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of ETS-Soft
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
  */
 
 namespace WebPConvert\Convert\Converters;
 
+if (!defined('_PS_VERSION_')) { exit; }
 use WebPConvert\Convert\Converters\AbstractConverter;
 use WebPConvert\Convert\Converters\ConverterTraits\EncodingAutoTrait;
 use WebPConvert\Convert\Converters\ConverterTraits\ExecTrait;
 
-/**
- * Convert images to webp by calling gmagick binary (gm).
- *
- * @package    WebPConvert
- * @author     Bjørn Rosell <it@rosell.dk>
- * @since      Class available since Release 2.0.0
- */
+
 class GraphicsMagick extends AbstractConverter
 {
     use ExecTrait;
@@ -75,11 +68,6 @@ class GraphicsMagick extends AbstractConverter
         return false;
     }
 
-    /**
-     * Check (general) operationality of imagack converter executable
-     *
-     * @throws SystemRequirementsNotMetException  if system requirements are not met
-     */
     public function checkOperationality()
     {
         if($this->checkOperationalityExecTrait())
@@ -94,29 +82,11 @@ class GraphicsMagick extends AbstractConverter
         }
     }
 
-    /**
-     * Build command line options
-     *
-     * @return string
-     */
     private function createCommandLineOptions()
     {
         $commandArguments = [];
-
-        // Unlike imagick binary, it seems gmagick binary uses a fixed
-        // quality (75) when quality is omitted
         $commandArguments[] = '-quality ' . escapeshellarg($this->getCalculatedQuality());
-
-        // encoding
         if ($this->options['encoding'] == 'lossless') {
-            // Btw:
-            // I am not sure if we should set "quality" for lossless.
-            // Quality should not apply to lossless, but my tests shows that it does in some way for gmagick
-            // setting it low, you get bad visual quality and small filesize. Setting it high, you get the opposite
-            // Some claim it is a bad idea to set quality, but I'm not so sure.
-            // https://stackoverflow.com/questions/4228027/
-            // First, I do not just get bigger images when setting quality, as toc777 does.
-            // Secondly, the answer is very old and that bad behaviour is probably fixed by now.
             $commandArguments[] = '-define webp:lossless=true';
         } else {
             $commandArguments[] = '-define webp:lossless=false';

@@ -1,10 +1,11 @@
 {**
- * 2007-2020 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
@@ -12,20 +13,20 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
+ * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
  *}
-
-<div id="gdpr_consent" class="gdpr_module_{$psgdpr_id_module|escape:'htmlall':'UTF-8'}">
-    <span class="custom-checkbox">
-        <label class="psgdpr_consent_message">
-            <input id="psgdpr_consent_checkbox_{$psgdpr_id_module|escape:'htmlall':'UTF-8'}" name="psgdpr_consent_checkbox" type="checkbox" value="1" class="psgdpr_consent_checkboxes_{$psgdpr_id_module|escape:'htmlall':'UTF-8'}">
-            <span><i class="material-icons rtl-no-flip checkbox-checked psgdpr_consent_icon"></i></span>
-            <span>{$psgdpr_consent_message nofilter}</span>{* html data *}
-        </label>
-    </span>
-</div>
+{block name='gdpr_checkbox'}
+    <div class="gdpr_consent gdpr_module_{$psgdpr_id_module|escape:'htmlall':'UTF-8'}">
+        <span class="custom-checkbox">
+            <label class="psgdpr_consent_message">
+                <input id="psgdpr_consent_checkbox_{$psgdpr_id_module|escape:'htmlall':'UTF-8'}" name="psgdpr_consent_checkbox" type="checkbox" value="1" class="psgdpr_consent_checkboxes_{$psgdpr_id_module|escape:'htmlall':'UTF-8'}">
+                <span><i class="material-icons rtl-no-flip checkbox-checked psgdpr_consent_icon"></i></span>
+                <span>{$psgdpr_consent_message nofilter}</span>{* html data *}
+            </label>
+        </span>
+    </div>
+{/block}
 {literal}
 <script type="text/javascript">
     var psgdpr_front_controller = "{/literal}{$psgdpr_front_controller|escape:'htmlall':'UTF-8'}{literal}";
@@ -64,7 +65,7 @@
 
         $(document).on('submit', parentForm, function(event) {
             $.ajax({
-                data: 'POST',
+                type: 'POST',
                 url: psgdpr_front_controller,
                 data: {
                     ajax: true,

@@ -32,7 +32,7 @@
             <div id="swiper-wrapper-column-images" class="swiper-wrapper">
                 {if $product.images}
                     {foreach from=$product.images item=image name=covers}
-                        <div class="product-lmage-large swiper-slide">
+                        <div class="product-lmage-large swiper-slide  {if $image.id_image == $product.default_image.id_image} js-thumb-selected{/if}">
                             <div class="easyzoom easyzoom-product">
                                 <a href="{$image.large.url}" class="js-easyzoom-trigger" rel="nofollow"></a>
                             </div>

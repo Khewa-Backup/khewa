@@ -59,23 +59,19 @@ class GoogleTagProvider
     /**
      * Find by Regex if a Google Tag Analytics (UA-XXXXXXXXX-X) exists in source aimed page
      *
-     * @return array
+     * @return string
      */
-    public function findGoogleTagsAnalytics()
+    public function findGoogleTagsAnalytics(): string
     {
         if (empty($this->shopSource)) {
-            return [];
+            return '';
         }
 
         // get google analytics tags < V4
-        preg_match_all(
-            '/UA-\d{6,}-\d/m',
-            $this->shopSource,
-            $matches
-        );
+        preg_match_all('/UA-\d{6,}-\d/m', $this->shopSource, $matches);
 
         if (!empty($matches[0])) {
-            return $matches[0];
+            return $matches[0][0];
         }
 
         return $this->findGoogleTagsAnalyticsV4();
@@ -84,41 +80,40 @@ class GoogleTagProvider
     /**
      * Find by Regex if a Google Tag Analytics VA (G-XXXXXXXXXX) exists in source aimed page
      *
-     * @return array
+     * @return string
      */
-    public function findGoogleTagsAnalyticsV4()
+    public function findGoogleTagsAnalyticsV4(): string
     {
         if (empty($this->shopSource)) {
-            return [];
+            return '';
         }
 
         // get google analytics tags < V4
-        preg_match_all(
-            '/G-\S{10,}/m',
-            $this->shopSource,
-            $matches
-        );
+        preg_match_all('/G-\S{10,}/m', $this->shopSource, $matches);
 
-        return $matches[0];
+        if (!empty($matches[0])) {
+            return $matches[0][0];
+        }
+
+        return '';
     }
 
     /**
      * Find by Regex if a Google Tag Manager (GTM-XXXXXXX) exists in source aimed page
      *
-     * @return array
+     * @return string
      */
-    public function findGoogleTagsManager()
+    public function findGoogleTagsManager(): string
     {
         if (empty($this->shopSource)) {
-            return [];
+            return '';
         }
 
-        preg_match_all(
-            '/GTM-\w{6,}/m',
-            $this->shopSource,
-            $matches
-        );
+        preg_match_all('/GTM-\w{6,}/m', $this->shopSource, $matches);
+        if (!empty($matches[0])) {
+            return $matches[0][0];
+        }
 
-        return $matches[0];
+        return '';
     }
 }

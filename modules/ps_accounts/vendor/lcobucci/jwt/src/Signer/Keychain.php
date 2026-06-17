@@ -1,11 +1,11 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
-
-namespace Lcobucci\JWT\Signer;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer;
 
 /**
  * A utilitarian class that encapsulates the retrieval of public and private keys
@@ -29,7 +29,6 @@ class Keychain
     {
         return new Key($key, $passphrase);
     }
-
     /**
      * Returns a public key from file path or content
      *

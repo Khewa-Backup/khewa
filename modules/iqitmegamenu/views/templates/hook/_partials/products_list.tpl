@@ -16,7 +16,7 @@
             <div class="product-miniature-container clearfix">
                 <div class="row align-items-center list-small-gutters">
 
-                    <div class="thumbnail-container col-3">
+                    <div class="thumbnail-container col-3">  
                         <a class="thumbnail product-thumbnail" href="{$product.url}" title="{$product.name}">
                             <img class="img-fluid"
                                  src="{$product.cover.bySize.small_default.url}"

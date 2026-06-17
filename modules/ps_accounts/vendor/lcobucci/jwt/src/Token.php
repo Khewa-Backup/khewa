@@ -1,20 +1,20 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
-
-namespace Lcobucci\JWT;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT;
 
 use DateTimeImmutable;
 use DateTimeInterface;
 use Generator;
-use Lcobucci\JWT\Claim\Factory;
-use Lcobucci\JWT\Claim\Validatable;
-use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\Token\DataSet;
-use Lcobucci\JWT\Token\RegisteredClaims;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Claim\Factory;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Claim\Validatable;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Key;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token\DataSet;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token\RegisteredClaims;
 use OutOfBoundsException;
 use function current;
 use function func_num_args;
@@ -23,7 +23,6 @@ use function is_array;
 use function sprintf;
 use function trigger_error;
 use const E_USER_DEPRECATED;
-
 /**
  * Basic structure of the JWT
  *
@@ -38,28 +37,24 @@ class Token
      * @var DataSet
      */
     private $headers;
-
     /**
      * The token claim set
      *
      * @var DataSet
      */
     private $claims;
-
     /**
      * The token signature
      *
      * @var Signature
      */
     private $signature;
-
     /**
      * @internal This serves just as compatibility layer
      *
      * @var Factory
      */
     private $claimFactory;
-
     /**
      * Initializes the object
      *
@@ -69,19 +64,13 @@ class Token
      * @param array $payload
      * @param Factory|null $claimFactory
      */
-    public function __construct(
-        $headers = ['alg' => 'none'],
-        $claims = [],
-        Signature $signature = null,
-        array $payload = ['', ''],
-        Factory $claimFactory = null
-    ) {
+    public function __construct($headers = ['alg' => 'none'], $claims = [], Signature $signature = null, array $payload = ['', ''], Factory $claimFactory = null)
+    {
         $this->headers = $this->convertToDataSet($headers, $payload[0]);
         $this->claims = $this->convertToDataSet($claims, $payload[1]);
         $this->signature = $signature ?: Signature::fromEmptyData();
         $this->claimFactory = $claimFactory ?: new Factory();
     }
-
     /**
      * @param array|DataSet $data
      * @param string $payload
@@ -91,16 +80,13 @@ class Token
         if ($data instanceof DataSet) {
             return $data;
         }
-
         return new DataSet($data, $payload);
     }
-
     /** @return DataSet */
     public function headers()
     {
         return $this->headers;
     }
-
     /**
      * Returns the token headers
      *
@@ -112,19 +98,15 @@ class Token
     public function getHeaders()
     {
         $items = [];
-
         foreach ($this->headers->all() as $name => $value) {
-            if (! in_array($name, RegisteredClaims::ALL, true) || ! $this->claims->has($name)) {
+            if (!in_array($name, RegisteredClaims::ALL, \true) || !$this->claims->has($name)) {
                 $items[$name] = $value;
                 continue;
             }
-
             $items[$name] = $this->claimFactory->create($name, $value);
         }
-
         return $items;
     }
-
     /**
      * Returns if the header is configured
      *
@@ -140,7 +122,6 @@ class Token
     {
         return $this->headers->has($name);
     }
-
     /**
      * Returns the value of a token header
      *
@@ -157,19 +138,16 @@ class Token
      */
     public function getHeader($name, $default = null)
     {
-        if (func_num_args() === 1 && ! $this->headers->has($name)) {
+        if (func_num_args() === 1 && !$this->headers->has($name)) {
             throw new OutOfBoundsException(sprintf('Requested header "%s" is not configured', $name));
         }
-
         return $this->headers->get($name, $default);
     }
-
     /** @return DataSet */
     public function claims()
     {
         return $this->claims;
     }
-
     /**
      * Returns the token claim set
      *
@@ -181,14 +159,11 @@ class Token
     public function getClaims()
     {
         $items = [];
-
         foreach ($this->claims->all() as $name => $value) {
             $items[$name] = $this->claimFactory->create($name, $value);
         }
-
         return $items;
     }
-
     /**
      * Returns if the claim is configured
      *
@@ -204,7 +179,6 @@ class Token
     {
         return $this->claims->has($name);
     }
-
     /**
      * Returns the value of a token claim
      *
@@ -221,26 +195,21 @@ class Token
      */
     public function getClaim($name, $default = null)
     {
-        if (func_num_args() === 1 && ! $this->claims->has($name)) {
+        if (func_num_args() === 1 && !$this->claims->has($name)) {
             throw new OutOfBoundsException(sprintf('Requested header "%s" is not configured', $name));
         }
-
         $value = $this->claims->get($name, $default);
-
-        if ($value instanceof DateTimeImmutable && in_array($name, RegisteredClaims::DATE_CLAIMS, true)) {
+        if ($value instanceof DateTimeImmutable && in_array($name, RegisteredClaims::DATE_CLAIMS, \true)) {
             return $value->getTimestamp();
         }
-
         if ($name === RegisteredClaims::AUDIENCE && is_array($value)) {
-            if (count($value) > 1) {
+            if (\count($value) > 1) {
                 trigger_error('You will only get the first array entry as a string. Use Token::claims()->get() instead.', E_USER_DEPRECATED);
             }
             return current($value);
         }
-
         return $value;
     }
-
     /**
      * Verify if the key matches with the one that created the signature
      *
@@ -255,12 +224,10 @@ class Token
     public function verify(Signer $signer, $key)
     {
         if ($this->headers->get('alg') !== $signer->getAlgorithmId()) {
-            return false;
+            return \false;
         }
-
         return $this->signature->verify($signer, $this->getPayload(), $key);
     }
-
     /**
      * Validates if the token is valid
      *
@@ -275,13 +242,11 @@ class Token
     {
         foreach ($this->getValidatableClaims() as $claim) {
             if (!$claim->validate($data)) {
-                return false;
+                return \false;
             }
         }
-
-        return true;
+        return \true;
     }
-
     /**
      * Determine if the token is expired.
      *
@@ -291,19 +256,15 @@ class Token
      */
     public function isExpired(DateTimeInterface $now = null)
     {
-        if (! $this->claims->has('exp')) {
-            return false;
+        if (!$this->claims->has('exp')) {
+            return \false;
         }
-
         if ($now === null) {
             trigger_error('Not providing the current time is deprecated. Please pass an instance of DateTimeInterface.', E_USER_DEPRECATED);
         }
-
         $now = $now ?: new DateTimeImmutable();
-
         return $now >= $this->claims->get(RegisteredClaims::EXPIRATION_TIME);
     }
-
     /**
      * @param string $audience
      *
@@ -311,9 +272,8 @@ class Token
      */
     public function isPermittedFor($audience)
     {
-        return in_array($audience, $this->claims->get(RegisteredClaims::AUDIENCE, []), true);
+        return in_array($audience, $this->claims->get(RegisteredClaims::AUDIENCE, []), \true);
     }
-
     /**
      * @param string $id
      *
@@ -323,7 +283,6 @@ class Token
     {
         return $this->claims->get(RegisteredClaims::ID) === $id;
     }
-
     /**
      * @param string $subject
      *
@@ -333,7 +292,6 @@ class Token
     {
         return $this->claims->get(RegisteredClaims::SUBJECT) === $subject;
     }
-
     /**
      * @param list<string> $issuers
      *
@@ -341,9 +299,8 @@ class Token
      */
     public function hasBeenIssuedBy(...$issuers)
     {
-        return in_array($this->claims->get(RegisteredClaims::ISSUER), $issuers, true);
+        return in_array($this->claims->get(RegisteredClaims::ISSUER), $issuers, \true);
     }
-
     /**
      * @param DateTimeInterface $now
      *
@@ -353,7 +310,6 @@ class Token
     {
         return $now >= $this->claims->get(RegisteredClaims::ISSUED_AT);
     }
-
     /**
      * @param DateTimeInterface $now
      *
@@ -363,7 +319,6 @@ class Token
     {
         return $now >= $this->claims->get(RegisteredClaims::NOT_BEFORE);
     }
-
     /**
      * Yields the validatable claims
      *
@@ -373,11 +328,10 @@ class Token
     {
         foreach ($this->getClaims() as $claim) {
             if ($claim instanceof Validatable) {
-                yield $claim;
+                (yield $claim);
             }
         }
     }
-
     /**
      * Returns the token payload
      *
@@ -390,7 +344,6 @@ class Token
     {
         return $this->payload();
     }
-
     /**
      * Returns the token payload
      *
@@ -400,13 +353,11 @@ class Token
     {
         return $this->headers->toString() . '.' . $this->claims->toString();
     }
-
     /** @return Signature */
     public function signature()
     {
         return $this->signature;
     }
-
     /**
      * Returns an encoded representation of the token
      *
@@ -419,12 +370,9 @@ class Token
     {
         return $this->toString();
     }
-
     /** @return string */
     public function toString()
     {
-        return $this->headers->toString() . '.'
-             . $this->claims->toString() . '.'
-             . $this->signature->toString();
+        return $this->headers->toString() . '.' . $this->claims->toString() . '.' . $this->signature->toString();
     }
 }

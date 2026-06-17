@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
  * @version    1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  * PHPExcel_CachedObjectStorage_APC
@@ -64,7 +66,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
         if ($this->_currentCellIsDirty) {
             $this->_currentObject->detach();
 
-            if (!apc_store($this->_cachePrefix.$this->_currentObjectID.'.cache',serialize($this->_currentObject),$this->_cacheTime)) {
+            if (!apc_store($this->_cachePrefix.$this->_currentObjectID.'.cache',json_encode($this->_currentObject),$this->_cacheTime)) {
                 $this->__destruct();
                 throw new PHPExcel_Exception('Failed to store cell '.$this->_currentObjectID.' in APC');
             }
@@ -153,7 +155,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
 
         //    Set current entry to the requested entry
         $this->_currentObjectID = $pCoord;
-        $this->_currentObject = unserialize($obj);
+        $this->_currentObject = json_decode($obj);
         //    Re-attach this as the cell's parent
         $this->_currentObject->attach($this);
 

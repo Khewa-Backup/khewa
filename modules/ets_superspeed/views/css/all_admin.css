@@ -41,3 +41,53 @@
 .icon-AdminSuperSpeed:before{
     content: "\F0E4";
 }
+#growls-default .growl-title{
+    display:none;
+}
+
+
+
+
+@media (max-width:767px){
+    #tab-AdminSuperSpeed {
+        cursor: pointer;
+        position: relative;
+    }
+    #tab-AdminSuperSpeed:before {
+        content: "";
+        border-bottom: 2px solid #fff;
+        border-left: 2px solid #fff;
+        position: absolute;
+        right: 12px;
+        top: 17px;
+        width: 6px;
+        border-radius: 2px;
+        height: 6px;
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+    }
+    #tab-AdminSuperSpeed.show_active:before {
+        top: 21px;
+        transform: rotate(135deg);
+        -webkit-transform: rotate(135deg);
+    }
+    #subtab-AdminSuperSpeedStatistics,
+    #subtab-AdminSuperSpeedPageCachesAndMinfication,
+    #subtab-AdminSuperSpeedImage,
+    #subtab-AdminSuperSpeedDatabase,
+    #subtab-AdminSuperSpeedSystemAnalytics,
+    #subtab-AdminSuperSpeedHelps{
+        display:none;
+    }
+    #subtab-AdminSuperSpeedStatistics.show_active,
+    #subtab-AdminSuperSpeedPageCachesAndMinfication.show_active,
+    #subtab-AdminSuperSpeedImage.show_active,
+    #subtab-AdminSuperSpeedDatabase.show_active,
+    #subtab-AdminSuperSpeedSystemAnalytics.show_active,
+    #subtab-AdminSuperSpeedHelps.show_active{
+        display:block;
+    }
+}
+
+
+

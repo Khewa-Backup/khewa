@@ -1,148 +1,80 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/OSL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to https://devdocs.prestashop.com/ for more information.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ */
 
 namespace PrestaShop\Module\PsEventbus\Repository;
 
-use Context;
-use Db;
-use DbQuery;
-use mysqli_result;
-use PDOStatement;
-use PrestaShopDatabaseException;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class CategoryRepository
+class CategoryRepository extends AbstractRepository implements RepositoryInterface
 {
-    /**
-     * @var Db
-     */
-    private $db;
+    const TABLE_NAME = 'category_shop';
 
     /**
-     * @var array
-     */
-    private $categoryLangCache;
-
-    /**
-     * @var Context
-     */
-    private $context;
-
-    public function __construct(Db $db, Context $context)
-    {
-        $this->db = $db;
-        $this->context = $context;
-    }
-
-    /**
-     * @param int $shopId
      * @param string $langIso
+     * @param bool $withSelecParameters
      *
-     * @return DbQuery
+     * @return void
+     *
+     * @throws \PrestaShopException
      */
-    public function getBaseQuery($shopId, $langIso)
+    public function generateFullQuery($langIso, $withSelecParameters)
     {
-        $query = new DbQuery();
-        $query->from('category_shop', 'cs')
+        $this->generateMinimalQuery(self::TABLE_NAME, 'cs');
+
+        $this->query
             ->innerJoin('category', 'c', 'cs.id_category = c.id_category')
             ->leftJoin('category_lang', 'cl', 'cl.id_category = cs.id_category')
             ->leftJoin('lang', 'l', 'l.id_lang = cl.id_lang')
-            ->where('cs.id_shop = ' . (int) $shopId)
+            ->where('cs.id_shop = ' . parent::getShopContext()->id)
             ->where('cl.id_shop = cs.id_shop')
-            ->where('l.iso_code = "' . pSQL($langIso) . '"');
+            ->where('l.iso_code = "' . pSQL($langIso) . '"')
+        ;
 
-        return $query;
-    }
+        if ($withSelecParameters) {
+            $this->query
+                ->select('CONCAT(cs.id_category, "-", l.iso_code) as unique_category_id')
+                ->select('cs.id_category')
+                ->select('c.id_parent')
+                ->select('cl.name')
+                ->select('cl.description')
+                ->select('cl.link_rewrite')
+                ->select('cl.meta_title')
+                ->select('cl.meta_description')
+                ->select('l.iso_code')
+                ->select('c.date_add as created_at')
+                ->select('c.date_upd as updated_at')
+            ;
 
-    /**
-     * @param int $topCategoryId
-     * @param int $langId
-     * @param int $shopId
-     *
-     * @return array
-     */
-    public function getCategoryPaths($topCategoryId, $langId, $shopId)
-    {
-        if ((int) $topCategoryId === 0) {
-            return [
-                'category_path' => '',
-                'category_id_path' => '',
-            ];
-        }
-
-        $categories = [];
-
-        try {
-            $categoriesWithParentsInfo = $this->getCategoriesWithParentInfo($langId, $shopId);
-        } catch (PrestaShopDatabaseException $e) {
-            return [
-                'category_path' => '',
-                'category_id_path' => '',
-            ];
-        }
-
-        $this->buildCategoryPaths($categoriesWithParentsInfo, $topCategoryId, $categories);
-
-        $categories = array_reverse($categories);
-
-        return [
-            'category_path' => implode(' > ', array_map(function ($category) {
-                return $category['name'];
-            }, $categories)),
-            'category_id_path' => implode(' > ', array_map(function ($category) {
-                return $category['id_category'];
-            }, $categories)),
-        ];
-    }
-
-    /**
-     * @param array $categoriesWithParentsInfo
-     * @param int $currentCategoryId
-     * @param array $categories
-     *
-     * @return void
-     */
-    private function buildCategoryPaths($categoriesWithParentsInfo, $currentCategoryId, &$categories)
-    {
-        foreach ($categoriesWithParentsInfo as $category) {
-            if ($category['id_category'] == $currentCategoryId) {
-                $categories[] = $category;
-                $this->buildCategoryPaths($categoriesWithParentsInfo, $category['id_parent'], $categories);
+            // REMOVED HERE: https://github.com/PrestaShop/PrestaShop/commit/f37a8f61017654bae160b528a1a2eaf49edbdac0
+            if (defined('_PS_VERSION_') && version_compare(_PS_VERSION_, '9.0', '<')) {
+                $this->query->select('cl.meta_keywords');
             }
         }
-    }
-
-    /**
-     * @param int $langId
-     * @param int $shopId
-     *
-     * @return array
-     *
-     * @throws PrestaShopDatabaseException
-     */
-    public function getCategoriesWithParentInfo($langId, $shopId)
-    {
-        if (!isset($this->categoryLangCache[$langId])) {
-            $query = new DbQuery();
-
-            $query->select('c.id_category, cl.name, c.id_parent')
-                ->from('category', 'c')
-                ->leftJoin(
-                    'category_lang',
-                    'cl',
-                    'cl.id_category = c.id_category AND cl.id_shop = ' . (int) $shopId
-                )
-                ->where('cl.id_lang = ' . (int) $langId)
-                ->orderBy('cl.id_category');
-
-            $result = $this->db->executeS($query);
-
-            if (is_array($result)) {
-                $this->categoryLangCache[$langId] = $result;
-            } else {
-                throw new PrestaShopDatabaseException('No categories found');
-            }
-        }
-
-        return $this->categoryLangCache[$langId];
     }
 
     /**
@@ -150,65 +82,87 @@ class CategoryRepository
      * @param int $limit
      * @param string $langIso
      *
-     * @return array|bool|mysqli_result|PDOStatement|resource|null
+     * @return array<mixed>
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws \PrestaShopDatabaseException
      */
-    public function getCategories($offset, $limit, $langIso)
+    public function retrieveContentsForFull($offset, $limit, $langIso)
     {
-        $query = $this->getBaseQuery($this->context->shop->id, $langIso);
+        $this->generateFullQuery($langIso, true);
 
-        $this->addSelectParameters($query);
+        $this->query->limit((int) $limit, (int) $offset);
 
-        $query->limit($limit, $offset);
+        return $this->runQuery();
+    }
 
-        return $this->db->executeS($query);
+    /**
+     * @param int $limit
+     * @param array<mixed> $contentIds
+     * @param string $langIso
+     *
+     * @return array<mixed>
+     *
+     * @throws \PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     */
+    public function retrieveContentsForIncremental($limit, $contentIds, $langIso)
+    {
+        $this->generateFullQuery($langIso, true);
+
+        $this->query
+            ->where("cs.id_category IN('" . implode("','", array_map('intval', $contentIds ?: [-1])) . "')")
+            ->limit($limit)
+        ;
+
+        return $this->runQuery();
     }
 
     /**
      * @param int $offset
+     * @param int $limit
      * @param string $langIso
      *
      * @return int
+     *
+     * @throws \PrestaShopException
+     * @throws \PrestaShopDatabaseException
      */
-    public function getRemainingCategoriesCount($offset, $langIso)
+    public function countFullSyncContentLeft($offset, $limit, $langIso)
     {
-        $query = $this->getBaseQuery($this->context->shop->id, $langIso)
-            ->select('(COUNT(cs.id_category) - ' . (int) $offset . ') as count');
+        $this->generateFullQuery($langIso, false);
 
-        return (int) $this->db->getValue($query);
+        $this->query->select('(COUNT(*) - ' . (int) $offset . ') as count');
+
+        $result = $this->runQuery(true);
+
+        return !empty($result[0]['count']) ? $result[0]['count'] : 0;
     }
 
     /**
-     * @param int $limit
-     * @param string $langIso
-     * @param array $categoryIds
+     * @param int $langId
+     * @param int $shopId
      *
-     * @return array|bool|mysqli_result|PDOStatement|resource|null
+     * @return array<mixed>
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
-    public function getCategoriesIncremental($limit, $langIso, $categoryIds)
+    public function getCategoriesWithParentInfo($langId, $shopId)
     {
-        $query = $this->getBaseQuery($this->context->shop->id, $langIso);
+        $this->generateMinimalQuery('category', 'c');
 
-        $this->addSelectParameters($query);
+        $this->query
+            ->leftJoin('category_lang', 'cl', 'cl.id_category = c.id_category AND cl.id_shop = ' . (int) $shopId)
+            ->where('cl.id_lang = ' . (int) $langId)
+            ->orderBy('cl.id_category')
+        ;
 
-        $query->where('c.id_category IN(' . implode(',', array_map('intval', $categoryIds)) . ')')
-            ->limit($limit);
+        $this->query
+            ->select('c.id_category')
+            ->select('cl.name')
+            ->select('c.id_parent')
+        ;
 
-        return $this->db->executeS($query);
-    }
-
-    /**
-     * @param DbQuery $query
-     *
-     * @return void
-     */
-    private function addSelectParameters(DbQuery $query)
-    {
-        $query->select('CONCAT(cs.id_category, "-", l.iso_code) as unique_category_id, cs.id_category,
-         c.id_parent, cl.name, cl.description, cl.link_rewrite, cl.meta_title, cl.meta_keywords, cl.meta_description,
-         l.iso_code, c.date_add as created_at, c.date_upd as updated_at');
+        return $this->runQuery(true);
     }
 }

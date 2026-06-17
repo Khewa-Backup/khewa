@@ -1032,7 +1032,6 @@ class AdminControllerCore extends Controller
     }
 
     /**
-     * 
      * Object Delete images.
      *
      * @return ObjectModel|false

@@ -1,10 +1,9 @@
 <?php
 
-namespace Lcobucci\JWT\Token;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token;
 
 use InvalidArgumentException;
-use Lcobucci\JWT\Exception;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 final class UnsupportedHeaderFound extends InvalidArgumentException implements Exception
 {
     /** @return self */

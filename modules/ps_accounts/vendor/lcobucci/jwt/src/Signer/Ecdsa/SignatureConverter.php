@@ -1,5 +1,6 @@
 <?php
-namespace Lcobucci\JWT\Signer\Ecdsa;
+
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Ecdsa;
 
 /**
  * Manipulates the result of a ECDSA signature (points R and S) according to the
@@ -25,7 +26,6 @@ interface SignatureConverter
      * @return string
      */
     public function fromAsn1($signature, $length);
-
     /**
      * Converts the JWA signature into something OpenSSL understands
      *

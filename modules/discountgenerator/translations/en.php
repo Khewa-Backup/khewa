@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{discountgenerator}prestashop>discountgenerator_87a9f31e78bf9c1ccf0d4240c481f0d3'] = 'Discount generator';
 $_MODULE['<{discountgenerator}prestashop>discountgenerator_070c80c1aaf227f9fe8382fc991ae775'] = 'This module gives you an ability to generate discount vouchers with unique promo-codes in great numbers.';
 $_MODULE['<{discountgenerator}prestashop>discountgenerator_9ea7a8314098521cefbe5a4c49abef01'] = 'Are you sure to uninstall the module?';

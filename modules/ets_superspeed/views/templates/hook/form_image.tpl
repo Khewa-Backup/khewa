@@ -1,5 +1,5 @@
 {*
-* 2007-2020 ETS-Soft
+* 2007-2022 ETS-Soft
 *
 * NOTICE OF LICENSE
 *
@@ -14,7 +14,7 @@
 * needs, please contact us for extra customization service at an affordable price
 *
 *  @author ETS-Soft <etssoft.jsc@gmail.com>
-*  @copyright  2007-2021 ETS-Soft
+*  @copyright  2007-2022 ETS-Soft
 *  @license    Valid for 1 website (or project) for each purchase of license
 *  International Registered Trademark & Property of ETS-Soft
 *}

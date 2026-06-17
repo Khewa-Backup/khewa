@@ -1,20 +1,18 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
-
-namespace Lcobucci\JWT\Parsing;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Parsing;
 
 use JsonException;
-use Lcobucci\JWT\Encoding\CannotEncodeContent;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Encoding\CannotEncodeContent;
 use RuntimeException;
-
 use function json_encode;
 use function json_last_error;
 use function json_last_error_msg;
-
 /**
  * Class that encodes data according with the specs of RFC-4648
  *
@@ -35,23 +33,19 @@ class Encoder
      */
     public function jsonEncode($data)
     {
-        if (PHP_VERSION_ID < 70300) {
+        if (\PHP_VERSION_ID < 70300) {
             $json = json_encode($data);
-
-            if (json_last_error() != JSON_ERROR_NONE) {
+            if (json_last_error() != \JSON_ERROR_NONE) {
                 throw CannotEncodeContent::jsonIssues(new JsonException(json_last_error_msg()));
             }
-
             return $json;
         }
-
         try {
-            return json_encode($data, JSON_THROW_ON_ERROR);
+            return json_encode($data, \JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw CannotEncodeContent::jsonIssues($exception);
         }
     }
-
     /**
      * Encodes to base64url
      *
@@ -60,6 +54,6 @@ class Encoder
      */
     public function base64UrlEncode($data)
     {
-        return str_replace('=', '', strtr(base64_encode($data), '+/', '-_'));
+        return \str_replace('=', '', \strtr(\base64_encode($data), '+/', '-_'));
     }
 }

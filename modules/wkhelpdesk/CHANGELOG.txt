@@ -1,0 +1,111 @@
+-----------------------------
+Change Log : V4.2.1 to V5.0.0
+-----------------------------
+Bug Fixed:
+- Fixed Typo
+- Design issue fixed
+- Translation fixed
+
+Improvement
+- Create ticket from IMAP email server.
+- Customer can reply on ticket by email.
+- Add custom ticket status.
+- Spam mail option added.
+- Add cron for ticket creation.
+- Add view ticket button on order listing page.
+
+Add Back Office controller:
+	- SpamTicket
+    - TicketStatus
+
+Table structure changed:
+
+Alter table -
+    wk_hd_ticket - New 2 columns added
+    wk_hd_customer - New columns added
+    wk_hd_status_mapping_shop - new 2 columns added
+
+Create Table -
+	- wk_hd_status_code
+	- wk_hd_status_code_shop
+    - wk_hd_status_code_lang
+    - wk_customer_message_sync_imap
+    - wk_customer_reply_sync_imap
+    - wk_customer_reply_sync_imap_shop
+
+-----------------------------
+Change Log : V4.2.0 to V4.2.1
+-----------------------------
+Bug Fixed:
+- Fixed Bugs related to Multistore compatibility
+
+Improvement
+- The fileSize validation will validate all file inputs
+- Prevent double click on Create ticket button
+- Only super admin access restriction for assigning agents removed. Now the assigned admin can assign agents.
+
+-----------------------------
+Change Log : V4.1.3 to V4.2.0
+-----------------------------
+New Features
+- Google recaptcha added in Create ticket and viw ticket pages.
+- Ticket status not visible in ticketlist also.
+- Guest ticket allow/disallow configuration
+
+Improvement
+- File manager updated to latest version (9.14.0).
+- Fixed multiple file upload fail error.
+
+-----------------------------
+Change Log : V4.1.2 to V4.1.3
+-----------------------------
+Bug Fixed:
+- tinyMCE security bug fixed.
+
+
+-----------------------------
+Change Log : V4.1.1 to V4.1.2
+-----------------------------
+
+Improvement:
+- Error message spelling bug fixed.
+- Validated on Prestashop validator.
+- Admin view ticket conversation message sequence bug fixed.
+- Add translation of French, Russian, Italian, Catalan, Spanish, Galician, German, Portuguese and Polish languages.
+
+
+-----------------------------
+Change Log : V4.1.0 to V4.1.1
+-----------------------------
+
+Improvement:
+- GDPR Complaint
+- Code Improved
+- License Updated
+- PrestaShop Validated
+
+--------------------------------------
+Change Log : HelpDesk V4.0.0 to V4.1.0
+--------------------------------------
+
+Bug Fixed :
+- Multiple super admin bug fixed.
+- Update super admin to another profile or any profile to super admin profile employee bug fixed.
+- When delete prestashop customer update ps customer in help desk customer bug fixed.
+- Module updated with PSR2 standadrd.
+
+-----------------------------------------------------------------------
+Change Log : HelpDesk V1.0.0 to V4.0.0 | COMPATIBLE:: PRESTASHOP V1.7 |
+-----------------------------------------------------------------------
+
+Compatible:
+- New admin parent tab, 'AdminHelpDesk' added.
+- parent::__construct() moved to top in admin tab __construct().
+- hook/helpdeskcontactus.tpl and helpdeskmyaccountmenu.tpl tabs design compatible.
+- front setTemplate() updated, {extends file=$layout} and {block name='content'} on tpl added.
+- submit btn css fixed.
+- $this->registerStylesheet and registerJavascript added.
+- html escape removed from tpls.
+- main page 'display()' changed in 'fetch()'.
+- actionFrontControllerSetMedia hook added for hook css.
+- change 'getModuleLink' to '{url}'.

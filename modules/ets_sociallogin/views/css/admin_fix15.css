@@ -1,0 +1,152 @@
+body.social_networks .form-wrapper > div:not(.ets_solo_form_tabs):not(.ets_solo_form) {
+    max-width: calc(100% - 280px);
+    max-width: -webkit-calc(100% - 280px);
+}
+.solo_admin_content .defaultForm legend {
+    display: none;
+}
+.row_ets_solo_display_social_page td label {
+  text-align: left;
+}
+.solo_admin_wrapper, .solo_admin_wrapper * {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+.solo_admin_content .toolbarBox.toolbarHead {
+  display: none;
+}
+p.preference_description {
+    padding-top: 5px;
+}
+input[type="submit"] {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 7px 10px;
+  text-transform: uppercase;
+}
+.solo_admin_filter_date select {
+    min-width: 100px;
+}
+.row_ets_solo_display_social_page a {
+    color: #3293D6;
+}
+.prestashop-switch label {
+  float: none;
+  width: auto;
+}
+.radio label {
+  margin-right: 7px;
+  width: auto;
+}
+label.ets_sl_switch {
+    padding: 0;
+    margin-top: 5px;
+}
+label.ets_sl_switch:before{
+    top: 1px;
+}
+select[name="ETS_SOLO_DISCOUNT_NETWORKS[]"] {
+  min-width: 110px;
+}
+.row_ets_solo_additional_desc + .margin-form {
+  clear: both;
+}
+.ets_solo_social_wrapper.slw_and_alw .btn.btn-primary {
+    cursor: pointer;
+    border: 1px solid #ccc;
+}
+label.ets_sl_neworks_label {
+    margin-bottom: 15px;
+}
+.solo_admin_content .form-group-wrapper {
+  float: left;
+  width: 70%;
+}
+.solo_admin_content fieldset {
+  background: transparent none repeat scroll 0 0;
+  border: medium none;
+}
+.ets_solo_required {
+  clear: both;
+}
+.form-group-wrapper + .margin-form {
+  clear: both;
+}
+.solo_admin_wrapper_content li {
+  list-style: inside;
+}
+
+
+
+.solo_admin_tabs {
+    position: static;
+    width: 100%;
+    margin-top: 0;
+    z-index: 2;
+    margin-left: 0;
+}
+.solo_admin_content {
+    margin-top: 20px;
+}
+.solo_admin_content  .margin-form {
+    padding: 0 0 1em 0;
+}
+.solo_admin_content .form-group-wrapper .margin-form {
+    float: left;
+    margin-right: 10px;
+}
+.solo_admin_content.settings .form-group-wrapper label {
+    width: 55%;
+}
+.solo_admin_content input[type="submit"] ,.solo_admin_filter .solo_admin_filter_button button{
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 7px 10px;
+    text-transform: uppercase;
+    background: no-repeat;
+    border: 1px solid #dedede;
+    color: #363a41;
+    box-shadow: 0 0;    border-radius: 3px;
+}
+.solo_admin_content input[type="submit"]:hover,.solo_admin_filter .solo_admin_filter_button button:hover {
+  
+       background-color: #00aff0;
+    border-color: #008abd;
+    color: #fff;
+
+}
+.ets_solo_panel + .form-wrapper {
+    float: left;
+    margin-bottom: 20px;
+    width: 74%;
+}
+label.ets_solo_switch:before, label.ets_solo_position:before {
+    top: 1px;
+}
+span.ets_sl_slider_label.off, span.ets_solo_slider_label.off, .ets_solo_position_label.off {
+    top: 0px;
+}
+.ets_sl_slider_label.on, .ets_solo_slider_label.on, .ets_solo_position_label.on {
+    top: 0;
+}
+ul.ets_solo_social_networks {
+    float: left;
+    width: 100%;
+    padding: 0;
+    margin: 0 -15px;
+    display: block;
+}
+.ets_solo_social_item {
+    padding: 0 15px;
+    width: 24.87%;
+    margin: 7px 0;
+}
+@media (max-width: 780px){
+.ets_solo_social_item {
+    padding: 0 15px;
+    width: 50%;
+}
+
+}

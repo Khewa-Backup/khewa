@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class FeaturedProductsClass extends ObjectModel
 {
     public $id_featuredproducts;
@@ -418,9 +422,9 @@ class FeaturedProductsClass extends ObjectModel
                 }
             }
         } else {
-            $home_old = unserialize(Configuration::get('GOMAKOIL_HOMEPAGE_CONFIG'));
-            $cat_old = unserialize(Configuration::get('GOMAKOIL_CATEGORY_PAGE_CONFIG'));
-            $prod_old = unserialize(Configuration::get('GOMAKOIL_PRODUCT_PAGE_CONFIG'));
+            $home_old = Tools::unSerialize(Configuration::get('GOMAKOIL_HOMEPAGE_CONFIG'));
+            $cat_old = Tools::unSerialize(Configuration::get('GOMAKOIL_CATEGORY_PAGE_CONFIG'));
+            $prod_old = Tools::unSerialize(Configuration::get('GOMAKOIL_PRODUCT_PAGE_CONFIG'));
             $sliders_table_data = $home_old + $cat_old + $prod_old;
 
             foreach ($sliders_table_data as $old_data_key => $old_data_val) {

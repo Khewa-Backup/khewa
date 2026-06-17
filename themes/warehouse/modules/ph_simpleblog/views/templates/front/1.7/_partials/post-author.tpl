@@ -10,7 +10,7 @@
                 {if $showAllPostsBtn|default:true}
 
                     <a href="{$author->getUrl()}" class="btn btn-primary float-xs-right ml-3 authorMiniature__btn">
-                        {l s='See the author\'s articles' mod='ph_simpleblog'}
+                        {l s='See the author\'s articles' d='Modules.Simpleblog.Shop'}
                     </a>
 
                 {/if}

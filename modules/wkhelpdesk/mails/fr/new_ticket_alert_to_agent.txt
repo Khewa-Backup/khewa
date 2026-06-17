@@ -1,0 +1,13 @@
+Hello {agent_name},
+
+A new ticket created by a {isCustomer}.
+
+Customer details as below:
+Customer Name: {customer_name}
+Email id: {customer_email}
+
+Ticket details as below:
+Ticket id: #{ticket_id}
+Query type: {query_type}
+Subject: {subject}
+Message: {message}

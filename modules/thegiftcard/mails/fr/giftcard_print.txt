@@ -1,6 +1,6 @@
 [{shop_url}]
 
-Bonjour {customer}
+Bonjour {name}
 
 Voici votre carte cadeau d'une une valeur de {giftcard_amount}.
 

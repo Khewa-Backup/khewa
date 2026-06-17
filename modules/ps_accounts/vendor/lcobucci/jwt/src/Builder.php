@@ -1,20 +1,19 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
-
-namespace Lcobucci\JWT;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT;
 
 use DateTimeImmutable;
-use Lcobucci\JWT\Claim\Factory as ClaimFactory;
-use Lcobucci\JWT\Parsing\Encoder;
-use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\Token\DataSet;
-use Lcobucci\JWT\Token\RegisteredClaimGiven;
-use Lcobucci\JWT\Token\RegisteredClaims;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Claim\Factory as ClaimFactory;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Parsing\Encoder;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Key;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token\DataSet;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token\RegisteredClaimGiven;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token\RegisteredClaims;
 use function array_diff;
 use function array_filter;
 use function array_key_exists;
@@ -27,7 +26,6 @@ use function is_array;
 use function is_bool;
 use function trigger_error;
 use const E_USER_DEPRECATED;
-
 /**
  * This class makes easier the token creation process
  *
@@ -41,53 +39,44 @@ class Builder
      *
      * @var array
      */
-    private $headers = ['typ'=> 'JWT', 'alg' => 'none'];
-
+    private $headers = ['typ' => 'JWT', 'alg' => 'none'];
     /**
      * The token claim set
      *
      * @var array
      */
     private $claims = [];
-
     /**
      * The data encoder
      *
      * @var Encoder
      */
     private $encoder;
-
     /**
      * The factory of claims
      *
      * @var ClaimFactory
      */
     private $claimFactory;
-
     /**
      * @var Signer|null
      */
     private $signer;
-
     /**
      * @var Key|null
      */
     private $key;
-
     /**
      * Initializes a new builder
      *
      * @param Encoder $encoder
      * @param ClaimFactory $claimFactory
      */
-    public function __construct(
-        Encoder $encoder = null,
-        ClaimFactory $claimFactory = null
-    ) {
+    public function __construct(Encoder $encoder = null, ClaimFactory $claimFactory = null)
+    {
         $this->encoder = $encoder ?: new Encoder();
         $this->claimFactory = $claimFactory ?: new ClaimFactory();
     }
-
     /**
      * Configures the audience
      *
@@ -99,11 +88,10 @@ class Builder
      *
      * @return Builder
      */
-    public function canOnlyBeUsedBy($audience, $replicateAsHeader = false)
+    public function canOnlyBeUsedBy($audience, $replicateAsHeader = \false)
     {
         return $this->permittedFor($audience, $replicateAsHeader);
     }
-
     /**
      * Configures the audience
      *
@@ -114,21 +102,15 @@ class Builder
     public function permittedFor(...$audiences)
     {
         $claim = RegisteredClaims::AUDIENCE;
-
-        $replicateAsHeader = false;
-
+        $replicateAsHeader = \false;
         if ($audiences !== [] && is_bool($audiences[count($audiences) - 1])) {
-            $replicateAsHeader = array_pop($audiences);
+            $replicateAsHeader = \array_pop($audiences);
         }
-
         $audiences = array_filter($audiences, 'is_string');
-
         $configured = array_key_exists($claim, $this->claims) ? $this->claims[$claim] : [];
-        $toAppend   = array_diff($audiences, $configured);
-
+        $toAppend = array_diff($audiences, $configured);
         return $this->setRegisteredClaim($claim, array_merge($configured, $toAppend), $replicateAsHeader);
     }
-
     /**
      * Configures the audience
      *
@@ -140,11 +122,10 @@ class Builder
      *
      * @return Builder
      */
-    public function setAudience($audience, $replicateAsHeader = false)
+    public function setAudience($audience, $replicateAsHeader = \false)
     {
         return $this->permittedFor($audience, $replicateAsHeader);
     }
-
     /**
      * Configures the expiration time
      *
@@ -153,11 +134,10 @@ class Builder
      *
      * @return Builder
      */
-    public function expiresAt($expiration, $replicateAsHeader = false)
+    public function expiresAt($expiration, $replicateAsHeader = \false)
     {
         return $this->setRegisteredClaim('exp', $this->convertToDate($expiration), $replicateAsHeader);
     }
-
     /**
      * @param int|DateTimeImmutable $value
      *
@@ -165,15 +145,12 @@ class Builder
      */
     private function convertToDate($value)
     {
-        if (! $value instanceof DateTimeImmutable) {
+        if (!$value instanceof DateTimeImmutable) {
             trigger_error('Using integers for registered date claims is deprecated, please use DateTimeImmutable objects instead.', E_USER_DEPRECATED);
-
             return new DateTimeImmutable('@' . $value);
         }
-
         return $value;
     }
-
     /**
      * Configures the expiration time
      *
@@ -185,11 +162,10 @@ class Builder
      *
      * @return Builder
      */
-    public function setExpiration($expiration, $replicateAsHeader = false)
+    public function setExpiration($expiration, $replicateAsHeader = \false)
     {
         return $this->expiresAt($expiration, $replicateAsHeader);
     }
-
     /**
      * Configures the token id
      *
@@ -198,11 +174,10 @@ class Builder
      *
      * @return Builder
      */
-    public function identifiedBy($id, $replicateAsHeader = false)
+    public function identifiedBy($id, $replicateAsHeader = \false)
     {
         return $this->setRegisteredClaim('jti', (string) $id, $replicateAsHeader);
     }
-
     /**
      * Configures the token id
      *
@@ -214,11 +189,10 @@ class Builder
      *
      * @return Builder
      */
-    public function setId($id, $replicateAsHeader = false)
+    public function setId($id, $replicateAsHeader = \false)
     {
         return $this->identifiedBy($id, $replicateAsHeader);
     }
-
     /**
      * Configures the time that the token was issued
      *
@@ -227,11 +201,10 @@ class Builder
      *
      * @return Builder
      */
-    public function issuedAt($issuedAt, $replicateAsHeader = false)
+    public function issuedAt($issuedAt, $replicateAsHeader = \false)
     {
         return $this->setRegisteredClaim('iat', $this->convertToDate($issuedAt), $replicateAsHeader);
     }
-
     /**
      * Configures the time that the token was issued
      *
@@ -243,11 +216,10 @@ class Builder
      *
      * @return Builder
      */
-    public function setIssuedAt($issuedAt, $replicateAsHeader = false)
+    public function setIssuedAt($issuedAt, $replicateAsHeader = \false)
     {
         return $this->issuedAt($issuedAt, $replicateAsHeader);
     }
-
     /**
      * Configures the issuer
      *
@@ -256,11 +228,10 @@ class Builder
      *
      * @return Builder
      */
-    public function issuedBy($issuer, $replicateAsHeader = false)
+    public function issuedBy($issuer, $replicateAsHeader = \false)
     {
         return $this->setRegisteredClaim('iss', (string) $issuer, $replicateAsHeader);
     }
-
     /**
      * Configures the issuer
      *
@@ -272,11 +243,10 @@ class Builder
      *
      * @return Builder
      */
-    public function setIssuer($issuer, $replicateAsHeader = false)
+    public function setIssuer($issuer, $replicateAsHeader = \false)
     {
         return $this->issuedBy($issuer, $replicateAsHeader);
     }
-
     /**
      * Configures the time before which the token cannot be accepted
      *
@@ -285,11 +255,10 @@ class Builder
      *
      * @return Builder
      */
-    public function canOnlyBeUsedAfter($notBefore, $replicateAsHeader = false)
+    public function canOnlyBeUsedAfter($notBefore, $replicateAsHeader = \false)
     {
         return $this->setRegisteredClaim('nbf', $this->convertToDate($notBefore), $replicateAsHeader);
     }
-
     /**
      * Configures the time before which the token cannot be accepted
      *
@@ -301,11 +270,10 @@ class Builder
      *
      * @return Builder
      */
-    public function setNotBefore($notBefore, $replicateAsHeader = false)
+    public function setNotBefore($notBefore, $replicateAsHeader = \false)
     {
         return $this->canOnlyBeUsedAfter($notBefore, $replicateAsHeader);
     }
-
     /**
      * Configures the subject
      *
@@ -314,11 +282,10 @@ class Builder
      *
      * @return Builder
      */
-    public function relatedTo($subject, $replicateAsHeader = false)
+    public function relatedTo($subject, $replicateAsHeader = \false)
     {
         return $this->setRegisteredClaim('sub', (string) $subject, $replicateAsHeader);
     }
-
     /**
      * Configures the subject
      *
@@ -330,11 +297,10 @@ class Builder
      *
      * @return Builder
      */
-    public function setSubject($subject, $replicateAsHeader = false)
+    public function setSubject($subject, $replicateAsHeader = \false)
     {
         return $this->relatedTo($subject, $replicateAsHeader);
     }
-
     /**
      * Configures a registered claim
      *
@@ -347,16 +313,12 @@ class Builder
     protected function setRegisteredClaim($name, $value, $replicate)
     {
         $this->configureClaim($name, $value);
-
         if ($replicate) {
             trigger_error('Replicating claims as headers is deprecated and will removed from v4.0. Please manually set the header if you need it replicated.', E_USER_DEPRECATED);
-
             $this->headers[$name] = $value;
         }
-
         return $this;
     }
-
     /**
      * Configures a header item
      *
@@ -368,10 +330,8 @@ class Builder
     public function withHeader($name, $value)
     {
         $this->headers[(string) $name] = $value;
-
         return $this;
     }
-
     /**
      * Configures a header item
      *
@@ -387,7 +347,6 @@ class Builder
     {
         return $this->withHeader($name, $value);
     }
-
     /**
      * Configures a claim item
      *
@@ -403,7 +362,6 @@ class Builder
     {
         return $this->withClaim($name, $value);
     }
-
     /**
      * @param string $name
      * @param mixed $value
@@ -413,10 +371,8 @@ class Builder
     private function configureClaim($name, $value)
     {
         $this->claims[(string) $name] = $value;
-
         return $this;
     }
-
     /**
      * Configures a claim item
      *
@@ -429,13 +385,11 @@ class Builder
      */
     public function withClaim($name, $value)
     {
-        if (in_array($name, RegisteredClaims::ALL, true)) {
+        if (in_array($name, RegisteredClaims::ALL, \true)) {
             trigger_error('The use of the method "withClaim" is deprecated for registered claims. Please use dedicated method instead.', E_USER_DEPRECATED);
         }
-
         return $this->forwardCallToCorrectClaimMethod($name, $value);
     }
-
     private function forwardCallToCorrectClaimMethod($name, $value)
     {
         switch ($name) {
@@ -455,7 +409,6 @@ class Builder
                 return $this->configureClaim($name, $value);
         }
     }
-
     /**
      * Configures a claim item
      *
@@ -471,7 +424,6 @@ class Builder
     {
         return $this->forwardCallToCorrectClaimMethod($name, $value);
     }
-
     /**
      * Signs the data
      *
@@ -485,18 +437,14 @@ class Builder
      */
     public function sign(Signer $signer, $key)
     {
-        if (! $key instanceof Key) {
+        if (!$key instanceof Key) {
             trigger_error('Implicit conversion of keys from strings is deprecated. Please use InMemory or LocalFileReference classes.', E_USER_DEPRECATED);
-
             $key = new Key($key);
         }
-
         $this->signer = $signer;
         $this->key = $key;
-
         return $this;
     }
-
     /**
      * Removes the signature from the builder
      *
@@ -509,10 +457,8 @@ class Builder
     {
         $this->signer = null;
         $this->key = null;
-
         return $this;
     }
-
     /**
      * Returns the resultant token
      *
@@ -523,33 +469,15 @@ class Builder
         if ($signer === null || $key === null) {
             trigger_error('Not specifying the signer and key to Builder#getToken() is deprecated. Please move the arguments from Builder#sign() to Builder#getToken().', E_USER_DEPRECATED);
         }
-
         $signer = $signer ?: $this->signer;
         $key = $key ?: $this->key;
-
         if ($signer instanceof Signer) {
             $signer->modifyHeader($this->headers);
         }
-
-        $headers = new DataSet(
-            $this->headers,
-            $this->encoder->base64UrlEncode($this->encoder->jsonEncode($this->convertItems($this->headers)))
-        );
-
-        $claims = new DataSet(
-            $this->claims,
-            $this->encoder->base64UrlEncode($this->encoder->jsonEncode($this->convertItems($this->claims)))
-        );
-
-        return new Token(
-            $headers,
-            $claims,
-            $this->createSignature($headers->toString() . '.' . $claims->toString(), $signer, $key),
-            ['', ''],
-            $this->claimFactory
-        );
+        $headers = new DataSet($this->headers, $this->encoder->base64UrlEncode($this->encoder->jsonEncode($this->convertItems($this->headers))));
+        $claims = new DataSet($this->claims, $this->encoder->base64UrlEncode($this->encoder->jsonEncode($this->convertItems($this->claims))));
+        return new Token($headers, $claims, $this->createSignature($headers->toString() . '.' . $claims->toString(), $signer, $key), ['', ''], $this->claimFactory);
     }
-
     /**
      * @param array<string, mixed> $items
      *
@@ -558,22 +486,17 @@ class Builder
     private function convertItems(array $items)
     {
         foreach (RegisteredClaims::DATE_CLAIMS as $name) {
-            if (! array_key_exists($name, $items) || ! $items[$name] instanceof DateTimeImmutable) {
+            if (!array_key_exists($name, $items) || !$items[$name] instanceof DateTimeImmutable) {
                 continue;
             }
-
             $items[$name] = $items[$name]->getTimestamp();
         }
-
         $audience = RegisteredClaims::AUDIENCE;
-
         if (array_key_exists($audience, $items) && is_array($items[$audience]) && count($items[$audience]) === 1) {
             $items[$audience] = current($items[$audience]);
         }
-
         return $items;
     }
-
     /**
      * @param string $payload
      *
@@ -584,9 +507,7 @@ class Builder
         if ($signer === null || $key === null) {
             return Signature::fromEmptyData();
         }
-
         $hash = $signer->sign($payload, $key)->hash();
-
         return new Signature($hash, $this->encoder->base64UrlEncode($hash));
     }
 }

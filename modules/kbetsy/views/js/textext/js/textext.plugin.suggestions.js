@@ -173,4 +173,3 @@
 		self.setSuggestions(self.itemManager().filter(suggestions, data.query));
 	};
 })(jQuery);
-

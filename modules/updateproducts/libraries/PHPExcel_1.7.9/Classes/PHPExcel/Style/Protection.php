@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version    1.4.5, 2007-08-23
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  * PHPExcel_Style_Protection

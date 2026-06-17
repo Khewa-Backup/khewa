@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -52,7 +52,6 @@ class BT_AdminDisplay implements BT_IAdmin
             case 'tabs': // use case - display first page with all tabs
             case 'stepPopup': // use case - advice basics settings page
             case 'basics': // use case - display basics settings page
-            case 'gsa': // use case for shoppingAction login form
             case 'prerequisites': // use case - display prerequisites
             case 'feed': // use case - display feed settings page
             case 'advancedFeed': // use case - display feed settings page
@@ -69,6 +68,7 @@ class BT_AdminDisplay implements BT_IAdmin
             case 'excludeValue': // use case - the exclusion rules values
             case 'rulesSummary': // use case - exclusion rules summary
             case 'exclusionRuleProducts': // use case - the product concerned by an exclusion rules
+            case 'inventory': // use case - for iventory feed
                 // include
                 require_once(_GMCP_PATH_LIB_DAO . 'module-dao_class.php');
 
@@ -114,14 +114,10 @@ class BT_AdminDisplay implements BT_IAdmin
             'sFaqLang' => BT_GmcProModuleTools::getFaqLang(GMerchantCenterPro::$sCurrentLang),
             'sTs' => time(),
             'bAjaxMode' => (GMerchantCenterPro::$sQueryMode == 'xhr' ? true : false),
-            'bCompare16' => GMerchantCenterPro::$bCompare16,
-            'bPsVersion1606' => GMerchantCenterPro::$bCompare1606,
-            'bCompare1608' => GMerchantCenterPro::$bCompare1608,
             'sLoadingImg' => _GMCP_URL_IMG . _GMCP_LOADER_GIF,
             'sHeaderInclude' => BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_HEADER),
             'sErrorInclude' => BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_ERROR),
             'sConfirmInclude' => BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_CONFIRM),
-            'sGSaOverview' => BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_GSA_OVERVIEW),
             'bCompare17' => GMerchantCenterPro::$bCompare17,
             'bConfigureStep1' => GMerchantCenterPro::$conf['GMCP_CONF_STEP_1'],
             'bConfigureStep2' => GMerchantCenterPro::$conf['GMCP_CONF_STEP_2'],
@@ -224,11 +220,6 @@ class BT_AdminDisplay implements BT_IAdmin
 
         $aAssign = array_merge($aAssign, $aData['assign']);
 
-        // use case - get display data of gsa settings
-        $aData = $this->displayGsa($aPost);
-
-        $aAssign = array_merge($aAssign, $aData['assign']);
-
         // use case - get display data of feed data settings
         $aData = $this->displayFeed($aPost);
 
@@ -254,15 +245,27 @@ class BT_AdminDisplay implements BT_IAdmin
 
         $aAssign = array_merge($aAssign, $aData['assign']);
 
+        // use case - get display data of feed list settings
+        $aData = $this->displayInventory($aPost);
+
+        $aAssign = array_merge($aAssign, $aData['assign']);
+
+        // use case - get display data of feed list settings
+        $aData = $this->displayInventoryFeed($aPost);
+
+        $aAssign = array_merge($aAssign, $aData['assign']);
+
+
         // assign all included templates files
         $aAssign['sWelcome'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_WELCOME);
         $aAssign['sPrerequisitesInclude'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_PREREQUISITES);
-        $aAssign['sShoppingAction'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_GSA);
         $aAssign['sBasicsInclude'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_BASICS);
         $aAssign['sFeedInclude'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_FEED_SETTINGS);
         $aAssign['sGoogleInclude'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_GOOGLE_SETTINGS);
         $aAssign['sAdvanceFeed'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_ADVANCED_SETTINGS);
+        $aAssign['sLocalInventoryFeed'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_INVENTORY_FEED);
         $aAssign['sFeedListInclude'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_FEED_LIST);
+        $aAssign['sFeedListLiaInclude'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_FEED_LIA_LIST);
         $aAssign['sReportingInclude'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_REPORTING);
         $aAssign['sTopBar'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_TOP);
         $aAssign['sModuleVersion'] = GMerchantCenterPro::$oModule->version;
@@ -315,15 +318,11 @@ class BT_AdminDisplay implements BT_IAdmin
             'sProductTitle' => GMerchantCenterPro::$conf['GMCP_P_TITLE'],
             'bSimpleId' => GMerchantCenterPro::$conf['GMCP_SIMPLE_PROD_ID'],
             'bIdentifierExist' => GMerchantCenterPro::$conf['GMCP_FORCE_IDENTIFIER'],
+            'bUseProductSize' => GMerchantCenterPro::$conf['GMCP_PRODUCT_DIMENSION'],
         );
 
         $aCategories = Category::getCategories(intval(GMerchantCenterPro::$iCurrentLang), false);
-        $aAssign['aHomeCat'] = BT_GmcProModuleTools::recursiveCategoryTree(
-            $aCategories,
-            array(),
-            current(current($aCategories)),
-            1
-        );
+        $aAssign['aHomeCat'] = BT_GmcProModuleTools::recursiveCategoryTree($aCategories, array(), current(current($aCategories)), 1);
 
         // get all active languages in order to loop on field form which need to manage translation
         $aAssign['aLangs'] = Language::getLanguages();
@@ -373,66 +372,6 @@ class BT_AdminDisplay implements BT_IAdmin
     }
 
     /**
-     * displays gsa
-     *
-     * @param array $aPost
-     * @return array
-     */
-    private function displayGsa(array $aPost = null)
-    {
-        // Use for gsa client
-        require_once(_GMCP_PATH_LIB_GSA . 'gsa-client_class.php');
-
-        $oShop = new ShopUrl(GMerchantCenterPro::$iShopId);
-        $iGsaShopId =  GsaClient::getShopId(GMerchantCenterPro::$conf['GMCP_API_KEY']);
-
-        $aAssign = array(
-            'sApiKey' => GMerchantCenterPro::$conf['GMCP_API_KEY'],
-            'aGroups' => Group::getGroups(GMerchantCenterPro::$iCurrentLang, GMerchantCenterPro::$iShopId),
-            'bShopLink' => GMerchantCenterPro::$conf['GMCP_SHOP_LINK_API'],
-            'iDefaultCustomerGroup' => GMerchantCenterPro::$conf['GMCP_GSA_CUSTOMER_GROUP'],
-            'sMerchantId' => GMerchantCenterPro::$conf['GMCP_MERCHANT_ID'],
-            'aCarriers' => Carrier::getCarriers(GMerchantCenterPro::$iCurrentLang, false, false, false, null, 'ALL_CARRIERS'),
-            'iCarrierId' => GMerchantCenterPro::$conf['GMCP_GSA_DEFAULT_CARRIER'],
-            'sShopUrl' => rtrim((string) $oShop->getURL(), '/'),
-            'iGsaShopId' => (!empty($iGsaShopId) && is_object($iGsaShopId)) ? $iGsaShopId->result : false,
-            'sApiUrl' => _GMCP_API_URL,
-            'sApiUrlRegister' => _GMCP_API_URL . '/register',
-            'aGsaCarriers' => $GLOBALS['GMCP_GSA_CARRIERS_DATA'],
-            'aGsaCarriersMapped' => is_string(GMerchantCenterPro::$conf['GMCP_GSA_CARRIERS_MAP']) ? unserialize(GMerchantCenterPro::$conf['GMCP_GSA_CARRIERS_MAP']) : '',
-        );
-
-        // If shop is activated we send information to API
-        if (!empty($iGsaShopId->result)) {
-
-            //Use case to build the module configuration return URL
-            if (empty(GMerchantCenterPro::$bCompare17)) {
-                $sAdminFolder = array_pop((array_slice(explode('/', _PS_ADMIN_DIR_), -1)));
-            }
-
-            $sModuleConfiguration = !empty(GMerchantCenterPro::$bCompare17) ? Context::getContext()->link->getAdminLink('AdminModules') : _PS_BASE_URL_ . __PS_BASE_URI__ . $sAdminFolder . '/' . Context::getContext()->link->getAdminLink('AdminModules');
-
-            $aConf = array(
-                'api_key' => GMerchantCenterPro::$conf['GMCP_API_KEY'],
-                'merchant_id' => GMerchantCenterPro::$conf['GMCP_MERCHANT_ID'],
-                'module_name' => GMerchantCenterPro::$oModule->name,
-                'module_url' => str_replace('controller=AdminModules', 'controller=AdminModules&configure=' . GMerchantCenterPro::$oModule->name, $sModuleConfiguration),
-                'backoffice_url' =>  !empty(GMerchantCenterPro::$bCompare17) ? Context::getContext()->link->getAdminLink('AdminModules') : _PS_BASE_URL_ . __PS_BASE_URI__ . $sAdminFolder . '/' . Context::getContext()->link->getAdminLink('AdminDashboard'),
-                'backoffice_orders_url' => !empty(GMerchantCenterPro::$bCompare17) ? Context::getContext()->link->getAdminLink('AdminModules') : _PS_BASE_URL_ . __PS_BASE_URI__ . $sAdminFolder . '/' . Context::getContext()->link->getAdminLink('AdminOrders'),
-                'module_conf' => GMerchantCenterPro::$conf,
-                'module_version' => GMerchantCenterPro::$conf['GMCP_VERSION'],
-            );
-
-            GsaClient::updateModuleConfigurationForGsa(GMerchantCenterPro::$conf['GMCP_API_KEY'], $aConf);
-        }
-
-        return array(
-            'tpl' => _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_GSA,
-            'assign' => $aAssign,
-        );
-    }
-
-    /**
      * displays feeds settings
      *
      * @param array $aPost
@@ -474,6 +413,7 @@ class BT_AdminDisplay implements BT_IAdmin
             'bIncludeUnitpricingMeasure' => GMerchantCenterPro::$conf['GMCP_INC_UNIT_PRICING'],
             'bIncludeUnitBasepricingMeasure' => GMerchantCenterPro::$conf['GMCP_INC_B_UNIT_PRICING'],
             'bShippingUse' => GMerchantCenterPro::$conf['GMCP_SHIPPING_USE'],
+            'bDimensionUse' => GMerchantCenterPro::$conf['GMCP_DIMENSION'],
             'aExcludedProducts' => GMerchantCenterPro::$conf['GMCP_PROD_EXCL'],
             'sGtinPreference' => GMerchantCenterPro::$conf['GMCP_GTIN_PREF'],
             'aShippingCarriers' => array(),
@@ -483,8 +423,10 @@ class BT_AdminDisplay implements BT_IAdmin
             'sIncludeSize' => GMerchantCenterPro::$conf['GMCP_INC_SIZE'],
             'bRewriteNumAttrValues' => GMerchantCenterPro::$conf['GMCP_URL_NUM_ATTR_REWRITE'],
             'bUrlInclAttrId' => GMerchantCenterPro::$conf['GMCP_URL_ATTR_ID_INCL'],
-            'bUrlError' => GMerchantCenterPro::$conf['GMCP_URL_PROD_ERROR'],
-            'bPS16013' => GMerchantCenterPro::$bCompare16013
+            'sComboSeparator' => GMerchantCenterPro::$conf['GMCP_COMBO_SEPARATOR'],
+            'bExcludedCountry' => GMerchantCenterPro::$conf['GMCP_EXCLUDED_COUNTRY'],
+            'shipsFrom' => GMerchantCenterPro::$conf['GMCP_SHIPS_FROM'],
+            'freeShippingPrice' => GMerchantCenterPro::$conf['GMCP_FREE_SHIPPING_PRICE'],
         );
 
         // handle product IDs and Names list to format them for the autocomplete feature
@@ -498,11 +440,7 @@ class BT_AdminDisplay implements BT_IAdmin
 
                 // check if we export with combinations
                 if (!empty($aProdIds[0])) {
-                    $oProduct->name .= BT_GmcProModuleTools::getProductCombinationName(
-                        $aProdIds[1],
-                        GMerchantCenterPro::$iCurrentLang,
-                        GMerchantCenterPro::$iShopId
-                    );
+                    $oProduct->name .= BT_GmcProModuleTools::getProductCombinationName($aProdIds[1], GMerchantCenterPro::$iCurrentLang, GMerchantCenterPro::$iShopId);
 
                     $sProdIds .= $sProdId . '-';
                     $sProdNames .= $oProduct->name . '||';
@@ -530,11 +468,7 @@ class BT_AdminDisplay implements BT_IAdmin
 
                 // check if we export with combinations
                 if (!empty($aProdIds[1])) {
-                    $oProduct->name .= BT_GmcProModuleTools::getProductCombinationName(
-                        $aProdIds[1],
-                        GMerchantCenterPro::$iCurrentLang,
-                        GMerchantCenterPro::$iShopId
-                    );
+                    $oProduct->name .= BT_GmcProModuleTools::getProductCombinationName($aProdIds[1], GMerchantCenterPro::$iCurrentLang, GMerchantCenterPro::$iShopId);
                 }
 
                 $sProdIds .= $sProdId . '-';
@@ -651,6 +585,10 @@ class BT_AdminDisplay implements BT_IAdmin
     private function displayAdvancedFeed(array $aPost = null)
     {
 
+        if (GMerchantCenterPro::$sQueryMode == 'xhr') {
+            // clean headers
+            @ob_end_clean();
+        }
         $aCartRulesChannel = array();
 
         // to get information for preview display
@@ -669,7 +607,7 @@ class BT_AdminDisplay implements BT_IAdmin
             GMerchantCenterPro::$conf['GMCP_DSC_CUMULABLE']
         );
 
-        // Handle the channel value 
+        // Handle the channel value
         if (is_array($aDisplayDiscount) && !empty($aDisplayDiscount)) {
             foreach ($aDisplayDiscount as $aData) {
                 if (!empty($aData['id_cart_rule'])) {
@@ -679,7 +617,6 @@ class BT_AdminDisplay implements BT_IAdmin
                 }
             }
         }
-
 
         $aAssign = array(
             'bFilterName' => GMerchantCenterPro::$conf['GMCP_DSC_FILT_NAME'],
@@ -704,7 +641,8 @@ class BT_AdminDisplay implements BT_IAdmin
             'bInvStock' => GMerchantCenterPro::$conf['GMCP_INV_STOCK'],
             'bSalePrice' => GMerchantCenterPro::$conf['GMCP_INV_SALE_PRICE'],
             'bGsnippetsReviews' => BT_GmcProModuleTools::isInstalled('gsnippetsreviews'),
-            'bProductComment' => BT_GmcProModuleTools::isInstalled('productcomments')
+            'bProductComment' => BT_GmcProModuleTools::isInstalled('productcomments'),
+            'aPromotionDestination' =>  unserialize(GMerchantCenterPro::$conf['GMCP_PROMO_DEST']),
         );
 
         $aDataForbidden = unserialize(GMerchantCenterPro::$conf['GMCP_FORBIDDEN_WORDS']);
@@ -749,6 +687,7 @@ class BT_AdminDisplay implements BT_IAdmin
             'sUtmCampaign' => GMerchantCenterPro::$conf['GMCP_UTM_CAMPAIGN'],
             'sUtmSource' => GMerchantCenterPro::$conf['GMCP_UTM_SOURCE'],
             'sUtmMedium' => GMerchantCenterPro::$conf['GMCP_UTM_MEDIUM'],
+            'bUtmContent' => GMerchantCenterPro::$conf['GMCP_UTM_CONTENT'],
         );
 
         foreach ($aAssign['aCountryTaxonomies'] as $sIsoCode => &$aTaxonomy) {
@@ -785,7 +724,6 @@ class BT_AdminDisplay implements BT_IAdmin
             'iTotalProductToExport' => BT_GmcProModuleDao::getProductIds(GMerchantCenterPro::$iShopId, (int) GMerchantCenterPro::$conf['GMCP_EXPORT_MODE'], true),
             'iTotalDiscountToExport' => BT_GmcProCartRulesDao::getCartRulesId(),
             'iTotalProduct' => BT_GmcProModuleDao::countProducts(GMerchantCenterPro::$iShopId, (int) GMerchantCenterPro::$conf['GMCP_P_COMBOS']),
-            'bCheckOutputFile' => BT_GmcProModuleTools::checkOutputFile(),
             'aFeedFileList' => array(),
             'aFeedFileListReviews' => array(),
             'aFlyFileList' => array(),
@@ -810,13 +748,7 @@ class BT_AdminDisplay implements BT_IAdmin
                     foreach (GMerchantCenterPro::$aAvailableLangCurrencyCountry as $sKey => $aData) {
 
                         // SET THE XML FILE SUFFIX
-                        $sFileSuffix = BT_GmcProModuleTools::buildFileSuffix(
-                            $aData['langIso'],
-                            $aData['countryIso'],
-                            $aData['currencyIso'],
-                            0,
-                            $sType
-                        );
+                        $sFileSuffix = BT_GmcProModuleTools::buildFileSuffix($aData['langIso'], $aData['countryIso'], $aData['currencyIso'], 0, $sType);
 
                         $sFileName = GMerchantCenterPro::$sFilePrefix . '.' . $sFileSuffix . '.xml';
 
@@ -827,14 +759,8 @@ class BT_AdminDisplay implements BT_IAdmin
                                 $aAssign['aFeedFileList' . ucfirst($sType)][] = array(
                                     'link' => $aAssign['sGmcLink'] . __PS_BASE_URI__ . $sFileName,
                                     'filename' => $sFileName,
-                                    'filemtime' => date(
-                                        "d-m-Y H:i:s",
-                                        filemtime(_GMCP_SHOP_PATH_ROOT . $sFileName)
-                                    ),
-                                    'checked' => (in_array(
-                                        $aData['langIso'] . '_' . $aData['countryIso'] . '_' . $aData['currencyIso'],
-                                        $aAssign['aCronLang' . ucfirst($sType)]
-                                    ) ? true : false),
+                                    'filemtime' => date("d-m-Y H:i:s", filemtime(_GMCP_SHOP_PATH_ROOT . $sFileName)),
+                                    'checked' => (in_array($aData['langIso'] . '_' . $aData['countryIso'] . '_' . $aData['currencyIso'], $aAssign['aCronLang' . ucfirst($sType)]) ? true : false),
                                     'country' => $aData['countryIso'],
                                     'countryName' => $aData['countryName'],
                                     'lang' => $aData['langIso'],
@@ -844,14 +770,11 @@ class BT_AdminDisplay implements BT_IAdmin
                                     'langId' => $aData['langId'],
                                 );
 
-                                // Array for CRON list
-                                $sLink = $aAssign['sGmcLink'] . _GMCP_MODULE_URL . 'cron.php?id_shop=' . GMerchantCenterPro::$iShopId . '&id_lang=' . (int) $aData['langId'] . '&country=' . $aData['countryIso'] . '&currency_iso=' . $aData['currencyIso'] . '&feed_type=' . $sType . '&token=' . GMerchantCenterPro::$conf['GMCP_FEED_TOKEN'];
-
                                 $aAssign['aCronList' . ucfirst($sType)][] = array(
                                     'currencyIsoCron' => $aData['currencyIso'],
                                     'country' => $aData['countryIso'],
                                     'lang' => $aData['langIso'],
-                                    'link' => $sLink,
+                                    'link' => Context::getContext()->link->getModuleLink(_GMCP_MODULE_SET_NAME, _GMCP_CTRL_CRON, array('id_shop' =>  GMerchantCenterPro::$iShopId, 'gmcp_lang_id' => $aData['langId'], 'country' => $aData['countryIso'], 'currency_iso' => $aData['currencyIso'], 'token' => GMerchantCenterPro::$conf['GMCP_FEED_TOKEN'], 'sType' => 'cron', 'feed_type' => $sType)),
                                     'currencySign' => $aData['currencySign'],
                                     'countryName' => $aData['countryName'],
                                     'langName' => $aData['langName'],
@@ -861,30 +784,21 @@ class BT_AdminDisplay implements BT_IAdmin
                     }
 
                     // FLY OUTPUT
-                    if (!empty($aAssign['bCheckOutputFile'])) {
-                        foreach (GMerchantCenterPro::$aAvailableLangCurrencyCountry as $sKey => $aData) {
-                            $sLink = $aAssign['sGmcLink'] . __PS_BASE_URI__ . _GMCP_XML_PHP_NAME . '?id_shop=' . GMerchantCenterPro::$iShopId . '&id_lang=' . (int) $aData['langId'] . '&country=' . $aData['countryIso'] . '&currency_iso=' . $aData['currencyIso'] . '&feed_type=' . $sType . '&token=' . GMerchantCenterPro::$conf['GMCP_FEED_TOKEN'];
-
-                            $aAssign['aFlyFileList' . ucfirst($sType)][] = array(
-                                'currencyIso' => $aData['currencyIso'],
-                                'iso_code' => $aData['langIso'],
-                                'countryIso' => $aData['countryIso'],
-                                'link' => $sLink,
-                                'currencySign' => $aData['currencySign'],
-                                'countryName' => $aData['countryName'],
-                                'langName' => $aData['langName'],
-                            );
-                        }
+                    foreach (GMerchantCenterPro::$aAvailableLangCurrencyCountry as $sKey => $aData) {
+                        $aAssign['aFlyFileList' . ucfirst($sType)][] = array(
+                            'currencyIso' => $aData['currencyIso'],
+                            'iso_code' => $aData['langIso'],
+                            'countryIso' => $aData['countryIso'],
+                            'link' => Context::getContext()->link->getModuleLink(_GMCP_MODULE_SET_NAME, _GMCP_CTRL_FLY, array('id_shop' =>  GMerchantCenterPro::$iShopId, 'gmcp_lang_id' => $aData['langId'], 'country' => $aData['countryIso'], 'currency_iso' => $aData['currencyIso'], 'token' => GMerchantCenterPro::$conf['GMCP_FEED_TOKEN'], 'sType' => 'flyOutput', 'feed_type' => $sType)),
+                            'currencySign' => $aData['currencySign'],
+                            'countryName' => $aData['countryName'],
+                            'langName' => $aData['langName'],
+                        );
                     }
                 }
 
                 // handle the cron URL for each data feed type
-                $aAssign['sCronUrl' . ucfirst($sType)] = $aAssign['sGmcLink'] . _GMCP_MODULE_URL . 'cron.php?id_shop=' . GMerchantCenterPro::$iShopId . '&feed_type=' . $sType;
-
-                // check if the feed protection is activated
-                if (!empty(GMerchantCenterPro::$conf['GMCP_FEED_TOKEN'])) {
-                    $aAssign['sCronUrl' . ucfirst($sType)] .= '&token=' . GMerchantCenterPro::$conf['GMCP_FEED_TOKEN'];
-                }
+                $aAssign['sCronUrl' . ucfirst($sType)] = Context::getContext()->link->getModuleLink(_GMCP_MODULE_SET_NAME, _GMCP_CTRL_CRON, array('id_shop' => GMerchantCenterPro::$iShopId, 'feed_type' => $sType, 'token' => GMerchantCenterPro::$conf['GMCP_FEED_TOKEN']));
             }
         }
 
@@ -1054,7 +968,6 @@ class BT_AdminDisplay implements BT_IAdmin
                     if (!empty($iProdId)) {
                         $sProdIds .= $iProdId['id_product'] . '-';
                         $sProdNames .= $iProdId['product_name'] . '||';
-
                         $aAssign['aProducts'][] = array(
                             'id' => $iProdId['id_product'],
                             'name' => $iProdId['product_name']
@@ -1245,7 +1158,7 @@ class BT_AdminDisplay implements BT_IAdmin
                                 // if combination
                                 if (!empty($iAttributeId)) {
                                     // get the combination URL
-                                    $aProdValue['productUrl'] = BT_GmcProModuleDao::getProductComboLink($aProdValue['productUrl'], $iAttributeId, $iLangId, GMerchantCenterPro::$iShopId);
+                                    $aProdValue['productUrl'] = Context::getContext()->link->getProductLink($oProduct, $iLangId, Tools::strtolower($oCategory->link_rewrite));
 
                                     // get the combination attributes to format the product name
                                     $aCombinationAttr = BT_GmcProModuleDao::getProductComboAttributes($iAttributeId, $iLangId, GMerchantCenterPro::$iShopId);
@@ -1288,19 +1201,13 @@ class BT_AdminDisplay implements BT_IAdmin
                 );
             } else {
                 $aAssign['aErrors'][] = array(
-                    'msg' => GMerchantCenterPro::$oModule->l(
-                        'There isn\'t any report for this language and country',
-                        'admin-display_class.php'
-                    ) . ' : ' . $sLangIso . ' - ' . $sCountryIso,
+                    'msg' => GMerchantCenterPro::$oModule->l('There isn\'t any report for this language and country', 'admin-display_class.php') . ' : ' . $sLangIso . ' - ' . $sCountryIso,
                     'code' => 190
                 );
             }
         } else {
             $aAssign['aErrors'][] = array(
-                'msg' => GMerchantCenterPro::$oModule->l(
-                    'Language ISO and country ISO aren\'t well formatted',
-                    'admin-display_class.php'
-                ),
+                'msg' => GMerchantCenterPro::$oModule->l('Language ISO and country ISO aren\'t well formatted', 'admin-display_class.php'),
                 'code' => 191
             );
         }
@@ -1322,10 +1229,23 @@ class BT_AdminDisplay implements BT_IAdmin
      */
     private function displayAdvancedTagCategory(array $aPost = null)
     {
+        require_once(_GMCP_PATH_LIB . 'module-tools_class.php');
         // clean headers
         @ob_end_clean();
 
+        $aCountriesToHandle = array();
+        $aAvailableLanguage = array();
         $aShopCategories = BT_GmcProModuleDao::getShopCategories(GMerchantCenterPro::$iShopId, GMerchantCenterPro::$iCurrentLang, GMerchantCenterPro::$conf['GMCP_HOME_CAT_ID']);
+
+        // Handle the country to handle in according to Google available language
+        $aAvailableLanguage = BT_GmcProModuleTools::getAvailableLanguages(GMerchantCenterPro::$iShopId);
+        $aCountries = BT_GmcProModuleTools::getLangCurrencyCountry($aAvailableLanguage, $GLOBALS[_GMCP_MODULE_NAME . '_AVAILABLE_COUNTRIES']);
+
+        foreach ($aCountries as $key => $aCountry) {
+
+            $aCountriesToHandle[] =  $aCountry['countryIso'];
+        }
+
 
         foreach ($aShopCategories as &$aCat) {
             // get feature by category Id
@@ -1346,6 +1266,7 @@ class BT_AdminDisplay implements BT_IAdmin
                 $aCat['unit_pricing_measure'] = $aFeatures['unit_pricing_measure'];
                 $aCat['base_unit_pricing_measure'] = $aFeatures['base_unit_pricing_measure'];
                 $aCat['excluded_destination'] = !empty($aFeatures['excluded_destination']) ? explode(' ', $aFeatures['excluded_destination']) : '';
+                $aCat['excluded_country'] = !empty($aFeatures['excluded_country']) ? explode(' ', $aFeatures['excluded_country']) : '';
             } else {
                 $aCat['material'] = '';
                 $aCat['pattern'] = '';
@@ -1366,6 +1287,7 @@ class BT_AdminDisplay implements BT_IAdmin
 
         $aAssign = array(
             'aShopCategories' => $aShopCategories,
+            'aCountries' => array_unique($aCountriesToHandle),
             'aFeatures' => Feature::getFeatures(GMerchantCenterPro::$iCurrentLang),
             'sUseTag' => Tools::getValue('sUseTag'),
             'bMaterial' => GMerchantCenterPro::$conf['GMCP_INC_MATER'],
@@ -1380,6 +1302,8 @@ class BT_AdminDisplay implements BT_IAdmin
             'bUnitpricingMeasure' => GMerchantCenterPro::$conf['GMCP_INC_UNIT_PRICING'],
             'bUnitBasepricingMeasure' => GMerchantCenterPro::$conf['GMCP_INC_B_UNIT_PRICING'],
             'bExcludedDest' => GMerchantCenterPro::$conf['GMCP_EXCLUDED_DEST'],
+            'aExcludedDest' => $GLOBALS['GMCP_EXCLUDED_DEST_VALUE'],
+            'bExcludedCountry' => GMerchantCenterPro::$conf['GMCP_EXCLUDED_COUNTRY'],
         );
 
         // force xhr mode
@@ -1632,10 +1556,16 @@ class BT_AdminDisplay implements BT_IAdmin
      */
     private function displayExclusionRule(array $aPost = null)
     {
+        // Clean the database with tmp rules
+        require_once(_GMCP_PATH_LIB_EXCLUSION . 'exclusion-dao_class.php');
+        BT_GmcProExclusionDao::cleanTmpRules();
+        BT_GmcProExclusionDao::resetIncrement();
+
         $aAssign = array();
         // clean headers
         @ob_end_clean();
         $iRuleId = Tools::getValue('iRuleId');
+        $aDataRules = BT_GmcProExclusionDao::getExclusionRulesById((int) $iRuleId);
 
         $aAssign['bRefreshRules '] = false;
 
@@ -1648,14 +1578,9 @@ class BT_AdminDisplay implements BT_IAdmin
             'iRuleId' => !empty($iRuleId) ? $iRuleId : '',
         );
 
-        // Clean the database with tmp rules
-        require_once(_GMCP_PATH_LIB_EXCLUSION . 'exclusion-dao_class.php');
-        BT_GmcProExclusionDao::cleanTmpRules();
-        BT_GmcProExclusionDao::resetIncrement();
-
         // Use case for update rule
         if (!empty($iRuleId)) {
-            $aAssign['aDataRule'] = BT_GmcProExclusionDao::getExclusionRulesById((int) $iRuleId);
+            $aAssign['aDataRule'] =  $aDataRules;
         }
 
         // force xhr mode
@@ -1688,6 +1613,120 @@ class BT_AdminDisplay implements BT_IAdmin
 
         return $sFlagIds;
     }
+
+    /**
+     * displays inventory
+     *
+     * @param array $aPost
+     * @return array
+     */
+    private function displayInventory(array $aPost = null)
+    {
+        $aAssign = array(
+            'sStoreCode' => GMerchantCenterPro::$conf['GMCP_STORE_CODE'],
+            'aLiaPickup' => array(
+                array(
+                    'value' => 'buy',
+                    'label' => GMerchantCenterpro::$oModule->l('Buy', 'admin-update_class'),
+                ),
+                array(
+                    'value' => 'reserve',
+                    'label' => GMerchantCenterpro::$oModule->l('Reserve', 'admin-update_class'),
+                ),
+                array(
+                    'value' => 'ship to store',
+                    'label' => GMerchantCenterpro::$oModule->l('Ship to store', 'admin-update_class'),
+                ),
+                array(
+                    'value' => 'not supported',
+                    'label' => GMerchantCenterpro::$oModule->l('Not supported', 'admin-update_class'),
+                ),
+            ),
+            'sLiaPikcup' => GMerchantCenterPro::$conf['GMCP_LIA_PICKUP'],
+            'aLiaPickupSla' => array(
+                array(
+                    'value' => 'same day',
+                    'label' => GMerchantCenterpro::$oModule->l('Same day', 'admin-update_class'),
+                ),
+                array(
+                    'value' => 'next day',
+                    'label' => GMerchantCenterpro::$oModule->l('Next day', 'admin-update_class'),
+                ),
+                array(
+                    'value' => '2-day',
+                    'label' => GMerchantCenterpro::$oModule->l('2 days', 'admin-update_class'),
+                ),
+                array(
+                    'value' => '3-day',
+                    'label' => GMerchantCenterpro::$oModule->l('3 days', 'admin-update_class'),
+                ),
+                array(
+                    'value' => '4-day',
+                    'label' => GMerchantCenterpro::$oModule->l('4 days', 'admin-update_class'),
+                ),
+                array(
+                    'value' => '5-day',
+                    'label' => GMerchantCenterpro::$oModule->l('5 days', 'admin-update_class'),
+                ),
+                array(
+                    'value' => '6-day',
+                    'label' => GMerchantCenterpro::$oModule->l('6 days', 'admin-update_class'),
+                ),
+                array(
+                    'value' => 'multi-week',
+                    'label' => GMerchantCenterpro::$oModule->l('More than one week', 'admin-update_class'),
+                ),
+            ),
+            'sLiaPikcupSla' => GMerchantCenterPro::$conf['GMCP_LIA_PICKUP_SLA'],
+        );
+        
+        return array(
+            'tpl' => _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_INVENTORY_FEED,
+            'assign' => $aAssign,
+        );
+    }
+
+    /**
+     * displays inventory feed
+     *
+     * @param array $aPost
+     * @return array
+     */
+    private function displayInventoryFeed(array $aPost = null)
+    {
+        $aAssign = array(
+            'iShopId' => GMerchantCenterPro::$iShopId,
+            'sGmcLink' => GMerchantCenterPro::$conf['GMCP_LINK'],
+            'bReporting' => GMerchantCenterPro::$conf['GMCP_REPORTING'],
+            'iTotalProductToExport' => BT_GmcProModuleDao::getProductIds(GMerchantCenterPro::$iShopId, (int)GMerchantCenterPro::$conf['GMCP_EXPORT_MODE'], true),
+            'iTotalDiscountToExport' => BT_GmcProCartRulesDao::getCartRulesId(),
+            'iTotalProduct' => BT_GmcProModuleDao::countProducts(GMerchantCenterPro::$iShopId, (int)GMerchantCenterPro::$conf['GMCP_P_COMBOS']),
+        );
+
+        if (!empty($aAssign['sGmcLink'])) {
+            if (!empty(GMerchantCenterPro::$aAvailableLangCurrencyCountry)) {
+                foreach (GMerchantCenterPro::$aAvailableLangCurrencyCountry as $aData) {
+                    foreach (GMerchantCenterPro::$aAvailableLangCurrencyCountry as $sKey => $aData) {
+                        $aAssign['aFlyFileListLocal'][] = array(
+                            'currencyIso' => $aData['currencyIso'],
+                            'iso_code' => $aData['langIso'],
+                            'countryIso' => $aData['countryIso'],
+                            'link' => Context::getContext()->link->getModuleLink(_GMCP_MODULE_SET_NAME, _GMCP_CTRL_FLY, array('id_shop' =>  GMerchantCenterPro::$iShopId, 'gmcp_lang_id' => $aData['langId'], 'country' => $aData['countryIso'], 'currency_iso' => $aData['currencyIso'], 'token' => GMerchantCenterPro::$conf['GMCP_FEED_TOKEN'], 'sType' => 'flyOutput', 'feed_type' => 'local')),
+                            'currencySign' => $aData['currencySign'],
+                            'countryName' => $aData['countryName'],
+                            'langName' => $aData['langName'],
+                        );
+                    }
+                }
+            }
+        }
+
+        return array(
+            'tpl' => _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_FEED_LIA_LIST,
+            'assign' => $aAssign,
+        );
+    }
+
 
     /**
      * sets ids used for PrestaShop flags displaying

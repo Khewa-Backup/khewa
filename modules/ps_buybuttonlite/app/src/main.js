@@ -9,4 +9,3 @@ Vue.use(ElementUI, { locale })
 new Vue({
     render: h => h(App)
 }).$mount('#ps_buybuttonlite')
-

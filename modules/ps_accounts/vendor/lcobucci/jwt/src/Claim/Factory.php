@@ -1,19 +1,18 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
-
-namespace Lcobucci\JWT\Claim;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Claim;
 
 use DateTimeImmutable;
-use Lcobucci\JWT\Claim;
-use Lcobucci\JWT\Token\RegisteredClaims;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Claim;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token\RegisteredClaims;
 use function current;
 use function in_array;
 use function is_array;
-
 /**
  * Class that create claims
  *
@@ -30,7 +29,6 @@ class Factory
      * @var array
      */
     private $callbacks;
-
     /**
      * Initializes the factory, registering the default callbacks
      *
@@ -38,20 +36,8 @@ class Factory
      */
     public function __construct(array $callbacks = [])
     {
-        $this->callbacks = array_merge(
-            [
-                'iat' => [$this, 'createLesserOrEqualsTo'],
-                'nbf' => [$this, 'createLesserOrEqualsTo'],
-                'exp' => [$this, 'createGreaterOrEqualsTo'],
-                'iss' => [$this, 'createEqualsTo'],
-                'aud' => [$this, 'createEqualsTo'],
-                'sub' => [$this, 'createEqualsTo'],
-                'jti' => [$this, 'createEqualsTo']
-            ],
-            $callbacks
-        );
+        $this->callbacks = \array_merge(['iat' => [$this, 'createLesserOrEqualsTo'], 'nbf' => [$this, 'createLesserOrEqualsTo'], 'exp' => [$this, 'createGreaterOrEqualsTo'], 'iss' => [$this, 'createEqualsTo'], 'aud' => [$this, 'createEqualsTo'], 'sub' => [$this, 'createEqualsTo'], 'jti' => [$this, 'createEqualsTo']], $callbacks);
     }
-
     /**
      * Create a new claim
      *
@@ -62,21 +48,17 @@ class Factory
      */
     public function create($name, $value)
     {
-        if ($value instanceof DateTimeImmutable && in_array($name, RegisteredClaims::DATE_CLAIMS, true)) {
+        if ($value instanceof DateTimeImmutable && in_array($name, RegisteredClaims::DATE_CLAIMS, \true)) {
             $value = $value->getTimestamp();
         }
-
         if ($name === RegisteredClaims::AUDIENCE && is_array($value)) {
             $value = current($value);
         }
-
         if (!empty($this->callbacks[$name])) {
-            return call_user_func($this->callbacks[$name], $name, $value);
+            return \call_user_func($this->callbacks[$name], $name, $value);
         }
-
         return $this->createBasic($name, $value);
     }
-
     /**
      * Creates a claim that can be compared (greator or equals)
      *
@@ -89,7 +71,6 @@ class Factory
     {
         return new GreaterOrEqualsTo($name, $value);
     }
-
     /**
      * Creates a claim that can be compared (greator or equals)
      *
@@ -102,7 +83,6 @@ class Factory
     {
         return new LesserOrEqualsTo($name, $value);
     }
-
     /**
      * Creates a claim that can be compared (equals)
      *
@@ -115,7 +95,6 @@ class Factory
     {
         return new EqualsTo($name, $value);
     }
-
     /**
      * Creates a basic claim
      *

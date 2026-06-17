@@ -1,0 +1,1 @@
+- Module V5.0.0 compatible with PrestaShop V1.7.x.x

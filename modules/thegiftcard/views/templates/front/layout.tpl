@@ -15,9 +15,9 @@
 * versions in the future.
 *
 * @author Keyrnel
-* @copyright  2017 - Keyrnel SARL
+* @copyright  2023 - Keyrnel
 * @license commercial
-* International Registered Trademark & Property of Keyrnel SARL
+* International Registered Trademark & Property of Keyrnel
 *}
 
 {extends file='page.tpl'}

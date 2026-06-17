@@ -2,8 +2,9 @@
 *
 * Google merchant center Pro
 *
-* @author BusinessTech.fr
-* @copyright Business Tech
+* @author    BusinessTech.fr - https://www.businesstech.fr
+* @copyright Business Tech - https://www.businesstech.fr
+* @license   Commercial
 *
 *           ____    _______
 *          |  _ \  |__   __|
@@ -27,11 +28,6 @@
 		{literal}
 		<script type="text/javascript">
 			var id_language = Number({/literal}{$iCurrentLang|intval}{literal});
-
-			{/literal}
-			{* USE CASE - use the new language flags system from PS 1.6 *}
-			{if empty($bCompare16)}
-			{literal}
 			function hideOtherLanguage(id) {
 				$('.translatable-field').hide();
 				$('.lang-' + id).show();
@@ -39,9 +35,6 @@
 				var id_old_language = id_language;
 				id_language = id;
 			}
-			{/literal}
-			{/if}
-			{literal}
 		</script>
 		{/literal}
 
@@ -66,6 +59,7 @@
 				<a class="list-group-item" id="tab-010" data-toggle="collapse" href="#collapseTwo"><span class="icon-tag"></span>&nbsp;&nbsp;{l s='Special offers / inventory / product ratings feeds' mod='gmerchantcenterpro'}<span class="pull-right"><i class="icon-caret-down"></i></span> </a>
 				<div id="collapseTwo" class="panel-collapse collapse">
 					<a class="list-group-item" id="tab-010" href="#gmcp-management-dropdown1"><i class="submenu fa fa-cogs"></i>&nbsp;{l s='Special offers data feed configuration' mod='gmerchantcenterpro'}</a>
+					<a class="list-group-item" id="tab-011" href="#gmcp-management-dropdown2"><i class="submenu fa fa-shopping-cart"></i>&nbsp;{l s='Local inventory data feed configuration' mod='gmerchantcenterpro'}</a>
 					<a class="list-group-item" id="tab-012" href="#gmcp-management-dropdown3"><i class="submenu fa fa-star"></i>&nbsp;{l s='Product ratings data feed configuration' mod='gmerchantcenterpro'}</a>
 				</div>
 				<a class="list-group-item" id="tab-020" data-toggle="collapse" href="#collapseThree"><span class="fa fa-google"></span>&nbsp;&nbsp;{l s='Google management' mod='gmerchantcenterpro'}<span class="pull-right"><i class="icon-caret-down"></i></span> </a>
@@ -79,25 +73,10 @@
 					<a class="list-group-item" id="tab-030" href="#gmcp-management-dropdown1"><i class="submenu fa fa-book"></i>&nbsp;{l s='Products data feed' mod='gmerchantcenterpro'}</a>
 					<a class="list-group-item" id="tab-031" href="#gmcp-management-dropdown2"><i class="submenu fa fa-bookmark-o"></i>&nbsp;{l s='Special offers data feed' mod='gmerchantcenterpro'}</a>
 					<a class="list-group-item" id="tab-033" href="#gmcp-management-dropdown3"><i class="submenu fa fa-star"></i>&nbsp;{l s='Product ratings data feed' mod='gmerchantcenterpro'}</a>
+					<a class="list-group-item" id="tab-034" href="#gmcp-management-dropdown4"><i class="submenu fa fa-shopping-cart"></i>&nbsp;{l s='Local product inventory data feed' mod='gmerchantcenterpro'}</a>
 				</div>
 				
 				<a class="list-group-item pointer" id="tab-4"><span class="icon-play"></span>&nbsp;&nbsp;{l s='Reporting' mod='gmerchantcenterpro'}</a>
-			</div>
-
-			{* Gsa *}
-			<div class="list-group workTabs">
-				<a id="tab-040" class="list-group-item pointer new-bg">
-					<div class="row">
-						<div class="col-xs-2">
-							<img class="img-responsive" height="20px" width="20px" src="{$smarty.const._GMCP_URL_IMG|escape:'htmlall':'UTF-8'}admin/icone-gsa.png" alt="" /> 
-						</div>
-						<div class="col-xs-10">
-							<b>{l s='New!' mod='gmerchantcenterpro'}</b>
-								<br/>
-								{l s='Google Shopping Actions' mod='gmerchantcenterpro'}
-						</div>
-					</div>
-				</a>
 			</div>
 
 			{* Doc & FAQ links*}
@@ -105,7 +84,6 @@
 				<a class="list-group-item list-group-item-success" target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/product/68"><span class="icon-info-circle"></span>&nbsp;&nbsp;{l s='Online FAQ' mod='gmerchantcenterpro'}</a>
 				<a type="button" class="list-group-item" data-toggle="modal" data-target="#myHelpModale"><span class="icon-user"></span>&nbsp;&nbsp;{l s='Contact support' mod='gmerchantcenterpro'}</a>
 			</div>
-
 
 			<!-- Modal -->
 			<div id="myHelpModale" class="modal fade" role="dialog">
@@ -188,27 +166,6 @@
 				</div>
 				{* /BASICS SETTINGS *}
 
-				{* GSA SETTINGS *}
-					{if !empty($bMultiShop)}
-						<div class="alert alert-danger">
-							{l s='First of all, you cannot configure your module in the "all shops" or "shops group" mode. Please select one of your shops before moving on into the configuration.' mod='gmerchantcenterpro'}
-						</div>
-					{else}
-						<div id="content-tab-040" class="tab-pane panel">
-							<div id="bt_gsa-settings">
-								{include file="`$sShoppingAction`" }
-							</div>
-							<div class="clr_20"></div>
-							<div id="loadingGsaDiv" style="display: none;">
-								<div class="alert alert-info">
-									<p style="text-align: center !important;"><img src="{$sLoadingImg|escape:'htmlall':'UTF-8'}" alt="Loading" /></p><div class="clr_20"></div>
-									<p style="text-align: center !important;">{l s='Your configuration updating is in progress...' mod='gmerchantcenterpro'}</p>
-								</div>
-							</div>
-						</div>
-					{/if}	
-					{* GSA SETTINGS *}	
-
 				{* FEED MANAGEMENT SETTINGS *}
 				<div id="content-tab-001" class="tab-pane panel">
 					{if !empty($bMultiShop)}
@@ -275,7 +232,6 @@
 					{/if}
 				</div>
 
-
 				<div id="content-tab-006" class="tab-pane panel">
 					{if !empty($bMultiShop)}
 						<div class="alert alert-danger">
@@ -318,8 +274,8 @@
 						{l s='First of all, you cannot configure your module in the "all shops" or "shops group" mode. Please select one of your shops before moving on into the configuration.' mod='gmerchantcenterpro'}
 					</div>
 					{else}
-						<div id="bt_advanced-settings-inventory">
-							{include file="`$sAdvanceFeed`" sDisplay="inventory"}
+						<div id="bt_local_inventory_div">
+							{include file="`$sLocalInventoryFeed`"}
 						</div>
 						<div class="clr_20"></div>
 					{/if}
@@ -454,6 +410,20 @@
 					{/if}
 				</div>
 
+				<div id="content-tab-034" class="tab-pane panel">
+					<div id="bt_feed-list-lia">
+						{include file="`$sFeedListLiaInclude`"}
+					</div>
+					<div class="clr_20"></div>
+				</div>
+
+				<div id="loadingFeedLiaDiv" style="display: none;">
+					<div class="alert alert-info">
+						<p style="text-align: center !important;"><img src="{$sLoadingImg|escape:'htmlall':'UTF-8'}" alt="Loading" /></p><div class="clr_20"></div>
+						<p style="text-align: center !important;">{l s='Your configuration updating is in progress...' mod='gmerchantcenterpro'}</p>
+					</div>
+				</div>
+
 				<div id="loadingFeedListDiv" style="display: none;">
 					<div class="alert alert-info">
 						<p style="text-align: center !important;"><img src="{$sLoadingImg|escape:'htmlall':'UTF-8'}" alt="Loading" /></p><div class="clr_20"></div>
@@ -495,13 +465,6 @@
 				{if !empty($bMultishopGroupStopExec)}
 					<div class="alert alert-danger">
 						{l s='For performance reasons, this module cannot be configured within a shops group context. You must configure it one shop at a time.' mod='gmerchantcenterpro'}.
-					</div>
-				{/if}
-
-				{if !empty($bWeightUnitStopExec)}
-					<div class="alert alert-danger">
-						{l s='You need to have correct weight units set in your back-office. Read the' mod='gmerchantcenterpro'}<a href="https://support.google.com/merchants/answer/7052112?hl={$sCurrentIso|escape:'htmlall':'UTF-8'}" target="_blank">&nbsp;{l s='Google documentation' mod='gmerchantcenterpro'}</a>
-						{l s='about supported weight units and go to your PrestaShop "Localization" tab -> "Localization", to adjust your weight unit.' mod='gmerchantcenterpro'}
 					</div>
 				{/if}
 			{/if}
@@ -590,15 +553,6 @@
 			});
 			$('#bt_disp-advice').trigger('click');
 			{/literal}{/if}{literal}
-
-			// Use case for GSA menu click
-			$("#tab-040").click(function(event){
-				$(this).removeClass('new-bg');
-			});
-
-			$("#mainMenu").click(function(event){
-				$('#tab-040').addClass('new-bg');
-			});
 		});
 	</script>
 {/literal}

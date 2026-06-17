@@ -2,8 +2,8 @@
 <module>
     <name>statspersonalinfos</name>
     <displayName><![CDATA[Informations clients]]></displayName>
-    <version><![CDATA[2.0.3]]></version>
-    <description><![CDATA[Ajoute des informations &agrave; propos de vos clients (comme le genre et l&#039;&acirc;ge) dans le tableau de bord des statistiques.]]></description>
+    <version><![CDATA[2.0.4]]></version>
+    <description><![CDATA[Enrichissez vos statistiques en obtenant plus d&rsquo;informations sur vos clients inscrits et en apprenant &agrave; les conna&icirc;tre.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[analytics_stats]]></tab>
     <is_configurable>0</is_configurable>

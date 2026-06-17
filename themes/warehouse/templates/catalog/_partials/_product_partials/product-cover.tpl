@@ -27,12 +27,12 @@
 
         {include file='catalog/_partials/product-flags.tpl'}
 
-
         <div id="product-images-large" class="product-images-large swiper-container">
             <div class="swiper-wrapper">
+           
                 {if $product.images}
                     {foreach from=$product.images item=image name=covers}
-                        <div class="product-lmage-large swiper-slide">
+                        <div class="product-lmage-large swiper-slide {if $image.id_image == $product.default_image.id_image} js-thumb-selected{/if}">
                             <div class="easyzoom easyzoom-product">
                                 <a href="{$image.large.url}" class="js-easyzoom-trigger" rel="nofollow"></a>
                             </div>
@@ -40,8 +40,7 @@
                             <img
                                     data-src="{$image.bySize.large_default.url}"
                                     data-image-large-src="{$image.large.url}"
-                                    alt="{if !empty($image.legend)}{$image.legend}{else}{$product.name|truncate:40:'...'}{/if}"
-                                    title="{if !empty($image.legend)}{$image.legend}{else}{$product.name|truncate:40:'...'}{/if}"
+                                    alt="{if !empty($image.legend)}{$image.legend}{else}{$product.name|truncate:50:'...'}{/if}"
                                     content="{$image.bySize.large_default.url}"
                                     width="{$image.bySize.large_default.width}"
                                     height="{$image.bySize.large_default.height}"
@@ -68,3 +67,4 @@
         </div>
     </div>
 {/block}
+

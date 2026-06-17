@@ -13,18 +13,19 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
- */
-
-/**
+ *
  * Class AdminMailchimpProConfigController
  *
  * @property Mailchimppro $module
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class AdminMailchimpProConfigController extends ModuleAdminController
 {
-    public $bootstrap = 'true';
+    public $bootstrap = true;
 
     private static $formName = 'MailchimpPro_config_form';
 
@@ -47,7 +48,7 @@ class AdminMailchimpProConfigController extends ModuleAdminController
             if (Tools::getValue($configKey . "_{$language['id_lang']}", false)) {
                 Configuration::updateValue(
                     $configKey,
-                    array($language['id_lang'] => (string)Tools::getValue($configKey . '_' . $language['id_lang'], '')),
+                    [$language['id_lang'] => (string)Tools::getValue($configKey . '_' . $language['id_lang'], '')],
                     true
                 );
             }
@@ -68,7 +69,7 @@ class AdminMailchimpProConfigController extends ModuleAdminController
         Configuration::updateValue(MailchimpProConfig::MAILCHIMP_SCRIPT_VERIFIED, '0');
         Configuration::loadConfiguration();
 
-        $this->confirmations[] = $this->l('Configuration updated');
+        $this->confirmations[] = $this->trans('Configuration updated', [], 'Modules.Mailchimppro.Adminmailchimpproconfig');
     }
 
     public function processDeleteEcommerceData()
@@ -83,7 +84,7 @@ class AdminMailchimpProConfigController extends ModuleAdminController
             $command->setMethod($command::SYNC_METHOD_DELETE);
             $command->setSyncMode($command::SYNC_MODE_REGULAR);
             $command->execute();
-            $this->confirmations[] = $this->l('E-commerce data has been deleted');
+            $this->confirmations[] = $this->trans('E-commerce data has been deleted', [], 'Modules.Mailchimppro.Adminmailchimpproconfig');
         } catch (Exception $exception) {
             $this->errors[] = "Error during deleting e-commerce data";
         }
@@ -97,78 +98,78 @@ class AdminMailchimpProConfigController extends ModuleAdminController
     public function renderStateMappingForm()
     {
         $orderStates = OrderState::getOrderStates($this->context->language->id);
-        $fields_form = array(
-            'form' => array(
-                'legend' => array('title' => $this->l('Order state mapping'), 'icon' => 'icon-envelope'),
-                'input'  => array(
-                    array(
+        $fields_form = [
+            'form' => [
+                'legend' => ['title' => $this->trans('Order state mapping', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'), 'icon' => 'icon-envelope'],
+                'input'  => [
+                    [
                         'type'     => 'select',
                         'multiple' => true,
-                        'label'    => $this->l('Status for pending'),
+                        'label'    => $this->trans('Status for pending', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
                         'name'     => MailchimpProConfig::STATUSES_FOR_PENDING,
                         'size'     => count($orderStates),
-                        'options'  => array(
+                        'options'  => [
                             'query' => $orderStates,
                             'id'    => 'id_order_state',
                             'name'  => 'name',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'type'     => 'select',
                         'multiple' => true,
-                        'label'    => $this->l('Status for refunded'),
+                        'label'    => $this->trans('Status for refunded', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
                         'name'     => MailchimpProConfig::STATUSES_FOR_REFUNDED,
                         'size'     => count($orderStates),
-                        'options'  => array(
+                        'options'  => [
                             'query' => $orderStates,
                             'id'    => 'id_order_state',
                             'name'  => 'name',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'type'     => 'select',
                         'multiple' => true,
-                        'label'    => $this->l('Status for cancelled'),
+                        'label'    => $this->trans('Status for cancelled', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
                         'name'     => MailchimpProConfig::STATUSES_FOR_CANCELLED,
                         'size'     => count($orderStates),
-                        'options'  => array(
+                        'options'  => [
                             'query' => $orderStates,
                             'id'    => 'id_order_state',
                             'name'  => 'name',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'type'     => 'select',
                         'multiple' => true,
-                        'label'    => $this->l('Status for shipped'),
+                        'label'    => $this->trans('Status for shipped', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
                         'name'     => MailchimpProConfig::STATUSES_FOR_SHIPPED,
                         'size'     => count($orderStates),
-                        'options'  => array(
+                        'options'  => [
                             'query' => $orderStates,
                             'id'    => 'id_order_state',
                             'name'  => 'name',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'type'     => 'select',
                         'multiple' => true,
-                        'label'    => $this->l('Status for paid'),
+                        'label'    => $this->trans('Status for paid', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
                         'name'     => MailchimpProConfig::STATUSES_FOR_PAID,
                         'size'     => count($orderStates),
-                        'options'  => array(
+                        'options'  => [
                             'query' => $orderStates,
                             'id'    => 'id_order_state',
                             'name'  => 'name',
-                        ),
-                    ),
-                ),
-                'submit' => array(
-                    'title' => $this->l('Save'),
+                        ],
+                    ],
+                ],
+                'submit' => [
+                    'title' => $this->trans('Save', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
                     'class' => 'btn btn-primary btn-mc pull-right',
                     'id'    => 'state-save-btn'
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $helper = new HelperForm();
         $helper->show_toolbar = false;
         $helper->table = 'states';
@@ -179,13 +180,13 @@ class AdminMailchimpProConfigController extends ModuleAdminController
         $helper->submit_action = self::$formName;
         $helper->currentIndex = $this->context->link->getAdminLink($this->controller_name, false);
         $helper->token = Tools::getAdminTokenLite($this->controller_name);
-        $helper->tpl_vars = array(
+        $helper->tpl_vars = [
             'fields_value' => MailchimpProConfig::getConfigurationValues(),
             'languages'    => $this->context->controller->getLanguages(),
             'id_language'  => $this->context->language->id,
-        );
+        ];
 
-        return $helper->generateForm(array($fields_form));
+        return $helper->generateForm([$fields_form]);
     }
 
     /**
@@ -196,44 +197,50 @@ class AdminMailchimpProConfigController extends ModuleAdminController
     public function renderForm()
     {
         try {
-            $lists = $this->module->getApiClient()->get('lists', array('fields' => 'lists.name,lists.id'));
+            $lists = $this->module->getApiClient()->get('lists', ['fields' => 'lists.name,lists.id']);
         } catch (Exception $exception) {
             $this->errors[] = $exception->getMessage();
-            $lists = array(
-                'lists' => array(),
-            );
+            $lists = [
+                'lists' => [],
+            ];
         }
-        $fields_form = array(
-            'form' => array(
-                'legend' => array('title' => $this->l('General settings'), 'icon' => 'icon-envelope'),
-                'input'  => array(
-                    array(
+        $fields_form = [
+            'form' => [
+                'legend' => ['title' => $this->trans('General settings', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'), 'icon' => 'icon-envelope'],
+                'input'  => [
+                    [
                         'type'     => 'select',
                         'multiple' => false,
-                        'label'    => $this->l('Product image size'),
+                        'label'    => $this->trans('Product image size', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
                         'name'     => MailchimpProConfig::PRODUCT_IMAGE_SIZE,
-                        'desc'     => $this->module->l('Remember to resync products if you change this'),
-                        'options'  => array(
+                        'desc'     => $this->trans('Remember to resync products if you change this', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
+                        'options'  => [
                             'query' => $this->getImageSizes(),
                             'id'    => 'name',
                             'name'  => 'name',
-                        ),
-                    ),
-                    //                    [
-                    //                        'type'     => 'text',
-                    //                        'label'    => $this->l('API Key'),
-                    //                        'name'     => MailchimpProConfig::MAILCHIMP_API_KEY,
-                    //                        'lang'     => false,
-                    //                        'required' => true,
-                    //                        'hint'     => $this->l('API Key'),
-                    //                    ],
-                ),
-                'submit' => array(
-                    'title' => $this->l('Save'),
+                        ],
+                    ],
+                    [
+                        'type'     => 'switch',
+                        'label'    => $this->trans('Multi instance mode', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
+                        'name'     => MailchimpProConfig::MULTI_INSTANCE_MODE,
+                        'desc'     => $this->trans('Prefix the shop ID with the domain to enable a multiple Prestashop instances on the same account. REQUIRES RE-SYNC after change', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
+                        'lang'     => false,
+                        'required' => false,
+                        'hint'     => $this->trans('API Key', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
+                        'values' => [
+                            ['value' => 1, 'id' => 2, 'label' => "Yes"],
+                            ['value' => 0, 'id' => 1, 'label' => "No"],
+
+                        ]
+                    ],
+                ],
+                'submit' => [
+                    'title' => $this->trans('Save', [], 'Modules.Mailchimppro.Adminmailchimpproconfig'),
                     'class' => 'btn btn-primary btn-mc pull-right',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $helper = new HelperForm();
         $helper->show_toolbar = false;
         $helper->table = 'misc';
@@ -244,13 +251,13 @@ class AdminMailchimpProConfigController extends ModuleAdminController
         $helper->submit_action = self::$formName;
         $helper->currentIndex = $this->context->link->getAdminLink($this->controller_name, false);
         $helper->token = Tools::getAdminTokenLite($this->controller_name);
-        $helper->tpl_vars = array(
+        $helper->tpl_vars = [
             'fields_value' => MailchimpProConfig::getConfigurationValues(),
             'languages'    => $this->context->controller->getLanguages(),
             'id_language'  => $this->context->language->id,
-        );
+        ];
 
-        return $helper->generateForm(array($fields_form));
+        return $helper->generateForm([$fields_form]);
     }
 
     /**
@@ -282,9 +289,9 @@ class AdminMailchimpProConfigController extends ModuleAdminController
             if (!$this->module->getApiClient()->success()) {
                 return '';
             }
-            $this->context->smarty->assign(array(
+            $this->context->smarty->assign([
                 'info' => $info,
-            ));
+            ]);
             return $this->context->smarty->fetch(
                 $this->module->getLocalPath() . 'views/templates/admin/config/account-info.tpl'
             );
@@ -303,9 +310,9 @@ class AdminMailchimpProConfigController extends ModuleAdminController
             if (!$this->module->getApiClient()->success()) {
                 return '';
             }
-            $this->context->smarty->assign(array(
+            $this->context->smarty->assign([
                 'info' => $info,
-            ));
+            ]);
             return $this->context->smarty->fetch(
                 $this->module->getLocalPath() . 'views/templates/admin/config/delete-ecommerce-data.tpl'
             );
@@ -340,7 +347,7 @@ class AdminMailchimpProConfigController extends ModuleAdminController
             return Db::getInstance()->executeS($query);
         } catch (Exception $exception) {
             $this->errors[] = $exception->getMessage();
-            return array();
+            return [];
         }
     }
 }

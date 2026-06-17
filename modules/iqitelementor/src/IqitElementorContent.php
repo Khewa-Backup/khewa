@@ -76,7 +76,7 @@ class IqitElementorContent extends ObjectModel
 
     public static function getSelectableHooks()
     {
-        $usableHooks = ['displayBanner', 'displayProductAfterTabs', 'displayShoppingCartFooter', 'displayAboveMobileMenu', 'displayBelowMobileMenu',
+        $usableHooks = ['displayBanner', 'displayHeaderLeft', 'displayProductAfterTabs', 'displayShoppingCartFooter', 'displayHeaderCategory','displayAboveMobileMenu', 'displayBelowMobileMenu',
             'displayFooterProduct', 'displayAboveProductsTabs', 'displayMyAccountDashboard', 'displayCheckoutFooter', 'displayShoppingCart', 'displayFooter', 'displayFooterBefore', 'displayFooterAfter',
             'displayLeftColumn', 'displayRightColumn',  'displayWrapperTopInContainer', 'displayWrapperTop',  'displayWrapperBottom', 'displayWrapperBottomInContainer',
             'displayCartAjaxInfoModal', 'displayCartAjaxInfoBlock', 'displayTop', 'displayHeaderTop', 'displayNotFound',

@@ -13,15 +13,18 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  */
 
 namespace PrestaChamps\MailchimpPro\Controllers;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 use JasonGrimes\Paginator;
-use \DrewM\MailChimp\MailChimp;
+use PrestaChamps\MailChimpAPI;
 use PrestaChamps\PrestaShop\Helpers\LinkHelper;
+use PrestaChamps\PrestaShop\Traits\ShopIdTrait;
 
 /**
  * Class BaseMCObjectController
@@ -30,6 +33,8 @@ use PrestaChamps\PrestaShop\Helpers\LinkHelper;
  */
 abstract class BaseMCObjectController extends \ModuleAdminController
 {
+    use ShopIdTrait;
+    
     public $bootstrap = true;
     public $mailchimp;
 
@@ -42,6 +47,8 @@ abstract class BaseMCObjectController extends \ModuleAdminController
     protected $totalPageNumber = 1;
     protected $totalEntities   = 0;
     protected $entity;
+    protected $queryParameters = [];
+    
 
     /**
      * @var int Mailchimp store ID
@@ -57,9 +64,19 @@ abstract class BaseMCObjectController extends \ModuleAdminController
     public function __construct()
     {
         parent::__construct();
-        $this->mcStoreId = $this->context->shop->id;
+
+        if (!\Configuration::get(\MailchimpProConfig::MAILCHIMP_API_KEY) || !\Configuration::get(\MailchimpProConfig::MAILCHIMP_LIST_ID) || !\Configuration::get(\MailchimpProConfig::MAILCHIMP_STORE_SYNCED)) {
+            \Tools::redirectAdmin($this->context->link->getAdminLink('AdminMailchimpProConfiguration'));
+        }
+
+        $this->mcStoreId = \Mailchimppro::shopIdTransformer($this->context->shop);
         try {
-            $this->mailchimp = new MailChimp(\Configuration::get(\MailchimpProConfig::MAILCHIMP_API_KEY));
+
+            $idStore = \Context::getContext()->shop->id;
+            $this->mailchimp = new \PrestaChamps\MailChimpAPI(\Configuration::get(\MailchimpProConfig::MAILCHIMP_API_KEY,null,null,$idStore));
+
+            $this->mailchimp->setUserAgent($this->module->version);
+            
         } catch (\Exception $exception) {
             $this->errors[] = $exception->getMessage();
         }
@@ -83,11 +100,15 @@ abstract class BaseMCObjectController extends \ModuleAdminController
     protected function getEntities()
     {
         if (!$this->mailchimp) {
-            return array();
+            return [];
         }
+
+        $this->queryParameters['count'] = $this->entitiesPerPage;
+        $this->queryParameters['offset'] = ($this->currentPage - 1) * $this->entitiesPerPage;
+        
         $result = $this->mailchimp->get(
             $this->getListApiEndpointUrl(),
-            array('count' => $this->entitiesPerPage, 'offset' => ($this->currentPage - 1) * $this->entitiesPerPage),
+            $this->queryParameters,
             999
         );
         if ($this->mailchimp->success()) {
@@ -105,18 +126,27 @@ abstract class BaseMCObjectController extends \ModuleAdminController
      */
     public function initContent()
     {
-        $this->addCSS($this->module->getLocalPath() . 'views/css/main.css');
-        $this->content .= $this->context->smarty->fetch(
+        $this->addCSS([
+            $this->module->getLocalPath() . 'views/css/main.css',
+            $this->module->getLocalPath() . 'views/css/configuration.css'
+        ]);
+        $this->content = $this->context->smarty->fetch(
             $this->module->getLocalPath() . 'views/templates/admin/config/navbar.tpl'
-        );
+        ) . $this->content;
         try {
-            if (empty($this->action) || $this->action === 'page') {
+
+            if (empty($this->action) || $this->action === 'page' || $this->action === 'entitydelete') {
                 $this->renderEntityList();
             }
-            parent::initContent();
+            //parent::initContent();
         } catch (\Exception $exception) {
             $this->errors[] = $exception->getMessage();
         }
+        
+        $this->context->smarty->assign(['content' => $this->content]);
+        $this->content = $this->context->smarty->fetch(
+            $this->module->getLocalPath() . 'views/templates/admin/config/content.tpl'
+        );
         parent::initContent();
     }
 
@@ -126,11 +156,11 @@ abstract class BaseMCObjectController extends \ModuleAdminController
      */
     protected function renderEntityList()
     {
-        $this->context->smarty->assign(array($this->entityPlural => $this->getEntities()));
-        $this->renderPagination();
+        $this->context->smarty->assign([$this->entityPlural => $this->getEntities()]);        
         $this->content .= $this->context->smarty->fetch(
             $this->module->getLocalPath() . "views/templates/admin/entity_list/{$this->entityPlural}.tpl"
         );
+        $this->renderPagination();
     }
 
     /**
@@ -145,11 +175,11 @@ abstract class BaseMCObjectController extends \ModuleAdminController
             LinkHelper::getAdminLink(
                 $this->controller_name,
                 true,
-                array(),
-                array(
+                [],
+                [
                     'action' => 'page',
                     'page' => '(:num)',
-                )
+                ]
             )
         );
     }
@@ -186,9 +216,10 @@ abstract class BaseMCObjectController extends \ModuleAdminController
 
         if ($entityId) {
             if ($this->deleteEntity($entityId)) {
-                $this->confirmations[] = $this->module->l('Entity deleted');
+                $this->confirmations[] = $this->trans('Entity deleted', [], 'Modules.Mailchimppro.Basemcobject');
+                $this->redirect_after = self::$currentIndex . '&conf=1&token=' . $this->token;
             } else {
-                $this->errors[] = $this->module->l('Could not delete the entity');
+                $this->errors[] = $this->trans('Could not delete the entity', [], 'Modules.Mailchimppro.Basemcobject');
             }
         }
     }
@@ -208,13 +239,29 @@ abstract class BaseMCObjectController extends \ModuleAdminController
     {
         $entityId = \Tools::getValue('entity_id');
         if (!$entityId) {
-            $this->errors[] = $this->module->l('Invalid entity id');
+            $this->errors[] = $this->trans('Invalid entity id', [], 'Modules.Mailchimppro.Basemcobject');
             return;
         }
         $this->entity = $this->mailchimp->get($this->getSingleApiEndpointUrl($entityId));
-        $this->context->smarty->assign(array('entity' => $this->entity));
+        $this->context->smarty->assign(['entity' => $this->entity]);
         $this->content .= $this->context->smarty->fetch(
             $this->module->getLocalPath() . "views/templates/admin/entity_single/{$this->entitySingular}.tpl"
         );
+    }
+
+    /**
+     * Get list ID from store
+     *
+     * @return string
+     */
+    protected function getListIdFromStore()
+    {
+        $idStore = $this->context->shop->id;
+
+        if(\Configuration::get(\MailchimpProConfig::MAILCHIMP_LIST_ID, null, null, $idStore)) {
+            return \Configuration::get(\MailchimpProConfig::MAILCHIMP_LIST_ID, null, null, $idStore);
+        }
+
+        throw new \UnexpectedValueException("Can't determine LIST id from store");
     }
 }

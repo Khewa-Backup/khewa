@@ -2,8 +2,8 @@
 <module>
     <name>statsbestvouchers</name>
     <displayName><![CDATA[Meilleurs coupons de r&eacute;duction]]></displayName>
-    <version><![CDATA[2.0.0]]></version>
-    <description><![CDATA[Ajoute une liste des meilleurs coupons de r&eacute;duction sur votre tableau de bord des statistiques.]]></description>
+    <version><![CDATA[2.0.1]]></version>
+    <description><![CDATA[Enrichissez vos statistiques en ajoutant une liste des bons de r&eacute;duction les plus utilis&eacute;s au tableau de bord.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[analytics_stats]]></tab>
     <is_configurable>0</is_configurable>

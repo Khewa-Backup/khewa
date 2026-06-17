@@ -349,7 +349,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
             $fd = fopen($this->getLocalPath() . $file_name, 'w+');
             file_put_contents($this->getLocalPath() . 'export/' . $file_name, print_r(serialize($var), true));
             fclose($fd);
-            Tools::redirect(_PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/' . $this->name . '/export/' . $file_name);
+            Tools::redirect(_PS_BASE_URL_SSL_ . __PS_BASE_URI__ . 'modules/' . $this->name . '/export/' . $file_name);
         } elseif (Tools::isSubmit('importConfiguration')) {
             if (isset($_FILES['uploadConfig']) && isset($_FILES['uploadConfig']['tmp_name'])) {
                 $str = Tools::file_get_contents($_FILES['uploadConfig']['tmp_name']);
@@ -369,7 +369,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
             $fd = fopen($this->getLocalPath() . $file_name, 'w+');
             file_put_contents($this->getLocalPath() . 'export/' . $file_name, print_r(serialize($var), true));
             fclose($fd);
-            Tools::redirect(_PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/' . $this->name . '/export/' . $file_name);
+            Tools::redirect(_PS_BASE_URL_SSL_ . __PS_BASE_URI__ . 'modules/' . $this->name . '/export/' . $file_name);
         } elseif (Tools::isSubmit('importTabs')) {
             if (isset($_FILES['uploadTabs']) && isset($_FILES['uploadTabs']['tmp_name'])) {
                 $str = Tools::file_get_contents($_FILES['uploadTabs']['tmp_name']);
@@ -3363,9 +3363,10 @@ class IqitMegaMenu extends Module implements WidgetInterface
                 case 'CMS_CAT':
                     $category = new CMSCategory((int)$id, (int)$id_lang);
                     if (is_object($category)) {
-                        $mobile_menu[$item]['title'] = $category->name;
+                        $mobile_menu[$item] = $this->transformToLink($item, true, $id_lang, $id_shop);
                         $mobile_menu[$item]['children'] = $this->getCMSMenuItems($category->id);
                     }
+                  
                     break;
 
                 default:
@@ -3393,8 +3394,8 @@ class IqitMegaMenu extends Module implements WidgetInterface
                 $childs = $this->getCMSMenuItems($category['id_cms_category'],
                     (int)$depth + 1);
 
-                if (count($childs)){
-                    $cmspages['cms_cat' . $category['id_cms_category']]['title'] = $category['name'];
+                if (count($childs)){         
+                    $cmspages['cms_cat' . $category['id_cms_category']] = $this->transformToLink('CMS_CAT'.$category['id_cms_category'], true, $id_lang);
                     $cmspages['cms_cat' . $category['id_cms_category']]['children'] = $childs;
                 }
             }

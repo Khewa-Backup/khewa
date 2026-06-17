@@ -46,7 +46,6 @@ img.ls-is-cached + .ets_loading{
     -webkit-transition: all 1s;
 }
 
-/*********/
 .lds-spinner {
     display: inline-block;
     position: relative;
@@ -266,7 +265,7 @@ img.ls-is-cached + .ets_loading{
         transform: rotate(360deg);
     }
 }
-/**/
+
 .lds-ring {
     display: inline-block;
     position: relative;
@@ -304,7 +303,7 @@ img.ls-is-cached + .ets_loading{
         transform: rotate(360deg);
     }
 }
-/**/
+
 .spinner_1 {
     position: relative;
     border-left: 2px solid #ddd;
@@ -331,7 +330,7 @@ img.ls-is-cached + .ets_loading{
         transform: rotate(360deg);
     }
 }
-/**/
+
 
 img[data-sizes="auto"] { display: block; width: 100%; }
 .product-thumbnail{

@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyProductListing.php');
 
@@ -66,7 +69,7 @@ class AdminEtsyImportController extends ModuleAdminController
             'listing_status' => array(
                 'title' => $this->module->l('Listing Status', 'AdminEtsyProductsListingController'),
                 'type' => 'select',
-                'list' => array('Pending' => $this->l('Pending'), 'Listed' => $this->l('Listed'), 'Updated' => $this->l('Updated'), 'Inactive' => $this->l('Inactive'), 'Deletion Pending' => $this->l('Deletion Pending'), 'Expired' => $this->l('Expired'), 'Relisting' => $this->l('Marked for Relist')),
+                'list' => array('Pending' => $this->module->l('Pending'), 'Listed' => $this->module->l('Listed'), 'Updated' => $this->module->l('Updated'), 'Inactive' => $this->module->l('Inactive'), 'Deletion Pending' => $this->module->l('Deletion Pending'), 'Expired' => $this->module->l('Expired'), 'Relisting' => $this->module->l('Marked for Relist')),
                 'callback' => 'getTranslatedListingStatus',
                 'filter_key' => 'listing_status'
             ),
@@ -112,36 +115,36 @@ class AdminEtsyImportController extends ModuleAdminController
         $this->module->list_no_link = true;
         $this->bulk_actions = array(
             'delete' => array(
-                'text' => $this->l('Delete selected'),
+                'text' => $this->module->l('Delete selected'),
                 'icon' => 'icon-trash',
-                'confirm' => $this->l('Delete selected items?')
+                'confirm' => $this->module->l('Delete selected items?')
             ),
             /* Commented by Ashish on 1st Nov 2019. We will enable the same later as variation status condition needs to be handled for these
             'relist' => array(
-                'text' => $this->l('Relist selected'),
+                'text' => $this->module->l('Relist selected'),
                 'icon' => 'icon-refresh',
-                'confirm' => $this->l('Relist selected items?')
+                'confirm' => $this->module->l('Relist selected items?')
             ),
             'revise' => array(
-                'text' => $this->l('Renew selected'),
+                'text' => $this->module->l('Renew selected'),
                 'icon' => 'icon-gear',
-                'confirm' => $this->l('Renew selected items?')
+                'confirm' => $this->module->l('Renew selected items?')
             ),
             'halt' => array(
-                'text' => $this->l('Halt selected'),
+                'text' => $this->module->l('Halt selected'),
                 'icon' => 'icon-ban',
-                'confirm' => $this->l('Halt selected items?')
+                'confirm' => $this->module->l('Halt selected items?')
             ),
             */
             'activate' => array(
-                'text' => $this->l('Enable selected'),
+                'text' => $this->module->l('Enable selected'),
                 'icon' => 'icon-power-off text-success',
-                'confirm' => $this->l('Enable selected items?')
+                'confirm' => $this->module->l('Enable selected items?')
             ),
             'deactivate' => array(
-                'text' => $this->l('Disable selected'),
+                'text' => $this->module->l('Disable selected'),
                 'icon' => 'icon-power-off text-danger',
-                'confirm' => $this->l('Disable selected items?')
+                'confirm' => $this->module->l('Disable selected items?')
             ),
         );
 
@@ -180,14 +183,14 @@ class AdminEtsyImportController extends ModuleAdminController
     /** Callback function to display listing status in the helper list */
     public function getTranslatedListingStatus($status, $row_data)
     {
-        $status_array = array('Pending' => $this->l('Pending'), 'Disabled' => $this->l('Disabled'), 'Updated' => $this->l('Updated'), 'Deletion Pending' => $this->l('Deletion Pending'), 'Listed' => $this->l('Listed'), 'Inactive' => $this->l('Inactive'), 'Expired' => $this->l('Expired'), 'Sold Out' => $this->l('Sold Out'), 'Relisting' => $this->l('Marked for Relist'));
+        $status_array = array('Pending' => $this->module->l('Pending'), 'Disabled' => $this->module->l('Disabled'), 'Updated' => $this->module->l('Updated'), 'Deletion Pending' => $this->module->l('Deletion Pending'), 'Listed' => $this->module->l('Listed'), 'Inactive' => $this->module->l('Inactive'), 'Expired' => $this->module->l('Expired'), 'Sold Out' => $this->module->l('Sold Out'), 'Relisting' => $this->module->l('Marked for Relist'));
         return $status_array[$status];
     }
 
     /** Callback function to display enabled status in the helper list */
     public function getTranslatedEnabledStatus($status, $row_data)
     {
-        $status_array = array('0' => $this->l('No'), '1' => $this->l('Yes'));
+        $status_array = array('0' => $this->module->l('No'), '1' => $this->module->l('Yes'));
         return $status_array[$status];
     }
     
@@ -262,13 +265,13 @@ class AdminEtsyImportController extends ModuleAdminController
     {
         $secure_key = Configuration::get('KBETSY_SECURE_KEY');
         
-        $productDetails = DB::getInstance()->getRow("SELECT id_product, active, listing_id, listing_status FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) $id . "'", true, false);
+        $productDetails = Db::getInstance()->getRow("SELECT id_product, active, listing_id, listing_status FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) $id . "'", true, false);
         if (!empty($productDetails)) {
             if ($productDetails['active'] == 1) {
                 if ($productDetails['listing_id'] == null || $productDetails['listing_status'] == 'Updated') {
                     $this->context->smarty->assign(array(
                         'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncProductsListing', 'id_product' => $productDetails['id_product'], 'secure_key' => $secure_key)),
-                        'action' => $this->l('Sync'),
+                        'action' => $this->module->l('Sync'),
                         'icon' => 'refresh'
                     ));
                     return $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/list/list_action_tab.tpl');
@@ -284,7 +287,7 @@ class AdminEtsyImportController extends ModuleAdminController
     /** Display view action link  */
     public function displayRenewLink($token = null, $id = null, $name = null)
     {
-        $productDetails = DB::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_products_list WHERE active = 1 and listing_id != '' AND listing_id != 0 AND listing_id IS NOT NULL AND id_product_attribute = '0' AND id_etsy_products_list = '" . (int) $id . "'");
+        $productDetails = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_products_list WHERE active = 1 and listing_id != '' AND listing_id != 0 AND listing_id IS NOT NULL AND id_product_attribute = '0' AND id_etsy_products_list = '" . (int) $id . "'");
         if (empty($productDetails)) {
             return null;
         }
@@ -302,7 +305,7 @@ class AdminEtsyImportController extends ModuleAdminController
             } else {
                 $this->context->smarty->assign(array(
                     'href' => $this->context->link->getAdminlink('AdminEtsyProductsListing') . '&' . $this->identifier . '=' . $id . '&action=revise',
-                    'action' => $this->l('Revise'),
+                    'action' => $this->module->l('Revise'),
                     'icon' => 'refresh'
                 ));
                 return $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/list/list_action.tpl');
@@ -310,7 +313,7 @@ class AdminEtsyImportController extends ModuleAdminController
         } else {
             $this->context->smarty->assign(array(
                 'href' => $this->context->link->getAdminlink('AdminEtsyProductsListing') . '&' . $this->identifier . '=' . $id . '&action=halt',
-                'action' => $this->l('Stop Deletion'),
+                'action' => $this->module->l('Stop Deletion'),
                 'icon' => 'ban'
             ));
 
@@ -321,7 +324,7 @@ class AdminEtsyImportController extends ModuleAdminController
     /** Display view action link  */
     public function displayDeleteLink($token = null, $id = null, $name = null)
     {
-        $productDetails = DB::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_product_attribute = '0' AND id_etsy_products_list = '" . (int) $id . "'");
+        $productDetails = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_product_attribute = '0' AND id_etsy_products_list = '" . (int) $id . "'");
 
         if (empty($productDetails)) {
             return null;
@@ -348,16 +351,16 @@ class AdminEtsyImportController extends ModuleAdminController
             }
             $this->context->smarty->assign(array(
                 'href' => $this->context->link->getAdminlink('AdminEtsyProductsListing') . '&' . $this->identifier . '=' . $id . '&action=relist',
-                'action' => $this->l('Relist'),
+                'action' => $this->module->l('Relist'),
                 'icon' => 'list'
             ));
             return $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/list/list_action.tpl');
         } else {
             $this->context->smarty->assign(array(
                 'href' => $this->context->link->getAdminlink('AdminEtsyProductsListing') . '&' . $this->identifier . '=' . $id . '&delete' . $this->table,
-                'action' => $this->l('Delete'),
+                'action' => $this->module->l('Delete'),
                 'icon' => 'trash',
-                'warning_message' => $this->l('Are you sure to delete the item? Item status wil be set as Inactive in the etsy account.')
+                'warning_message' => $this->module->l('Are you sure to delete the item? Item status wil be set as Inactive in the etsy account.')
             ));
             return $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/list/list_action_confirmation.tpl');
         }
@@ -366,12 +369,12 @@ class AdminEtsyImportController extends ModuleAdminController
     /** Display view listing error link */
     public function displayErrorLink($token = null, $id = null, $name = null)
     {
-        $productDetails = DB::getInstance()->getRow("SELECT listing_error, active FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) $id . "'", true, false);
+        $productDetails = Db::getInstance()->getRow("SELECT listing_error, active FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) $id . "'", true, false);
         if (!empty($productDetails['listing_error'])) {
             if ($productDetails['active'] == 1) {
                 $this->context->smarty->assign(array(
                     'href' => 'etsy-error-' . $id,
-                    'action' => $this->l('View Error'),
+                    'action' => $this->module->l('View Error'),
                     'icon' => 'search-plus',
                     'text' => !empty($productDetails['listing_error']) ? $productDetails['listing_error'] : 'No Listing Error Found.'
                 ));
@@ -388,13 +391,13 @@ class AdminEtsyImportController extends ModuleAdminController
     /** Display view listing error link */
     public function displayStatusLink($token = null, $id = null, $name = null)
     {
-        $productDetails = DB::getInstance()->getRow("SELECT active, listing_id FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) $id . "'", true, false);
+        $productDetails = Db::getInstance()->getRow("SELECT active, listing_id FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) $id . "'", true, false);
         if (!empty($productDetails)) {
             if ($productDetails['active'] == 1) {
                 if (empty($productDetails['listing_id'])) {
                     $this->context->smarty->assign(array(
                         'href' => $this->context->link->getAdminlink('AdminEtsyProductsListing') . '&' . $this->identifier . '=' . $id . '&action=disable',
-                        'action' => $this->l('Disable'),
+                        'action' => $this->module->l('Disable'),
                         'icon' => 'power-off text-danger'
                     ));
                 } else {
@@ -403,7 +406,7 @@ class AdminEtsyImportController extends ModuleAdminController
             } else {
                 $this->context->smarty->assign(array(
                     'href' => $this->context->link->getAdminlink('AdminEtsyProductsListing') . '&' . $this->identifier . '=' . $id . '&action=enable',
-                    'action' => $this->l('Enable'),
+                    'action' => $this->module->l('Enable'),
                     'icon' => 'power-off text-success'
                 ));
             }
@@ -430,35 +433,35 @@ class AdminEtsyImportController extends ModuleAdminController
         } else if ($this->action == 'bulkdeactivate') {
             $this->processBulkdeactivate();
         } else if (!Tools::isEmpty(trim(Tools::getValue('action'))) && !Tools::isEmpty(trim(Tools::getValue('id_etsy_products_list')))) {
-            $product_details = DB::getInstance()->getRow("SELECT pl.name, epl.id_product, epl.listing_id  FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.id_etsy_products_list = '" . (int) Tools::getValue('id_etsy_products_list') . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'");
+            $product_details = Db::getInstance()->getRow("SELECT pl.name, epl.id_product, epl.listing_id  FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.id_etsy_products_list = '" . (int) Tools::getValue('id_etsy_products_list') . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'");
             if (Tools::getValue('action') == 'revise') {
-                DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Updated', renew_flag = '0', is_error = 0, delete_flag = '0' WHERE  id_product = '" . (int) $product_details['id_product'] . "'");
+                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Updated', renew_flag = '0', is_error = 0, delete_flag = '0' WHERE  id_product = '" . (int) $product_details['id_product'] . "'");
                 $auditLogEntryString = 'Revise of product recorded successfully';
                 EtsyModule::auditLogEntry($auditLogEntryString, $method_name);
                 Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyProductsListing') . '&etsyConf=4');
             } else if (Tools::getValue('action') == 'halt') {
-                $checkDeleteFlag = DB::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) Tools::getValue('id_etsy_products_list') . "' AND delete_flag = '1'");
-                if (DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET renew_flag = '0', delete_flag = '0', listing_status = 'Listed', is_error = 0 WHERE id_product = '" . (int) $product_details['id_product'] . "'")) {
+                $checkDeleteFlag = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) Tools::getValue('id_etsy_products_list') . "' AND delete_flag = '1'");
+                if (Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET renew_flag = '0', delete_flag = '0', listing_status = 'Listed', is_error = 0 WHERE id_product = '" . (int) $product_details['id_product'] . "'")) {
                     EtsyModule::auditLogEntry('Product deletion stopped. ' . $product_details['name'], $method_name);
                 }
                 Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyProductsListing') . '&etsyConf=66');
             } else if (Tools::getValue('action') == 'haltrenew') {
-                if (DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET renew_flag = '0', delete_flag = '0', listing_status = 'Expired', is_error = 0 WHERE id_product = '" . (int) $product_details['id_product'] . "'")) {
+                if (Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET renew_flag = '0', delete_flag = '0', listing_status = 'Expired', is_error = 0 WHERE id_product = '" . (int) $product_details['id_product'] . "'")) {
                     EtsyModule::auditLogEntry('Product deletion stopped. ' . $product_details['name'], $method_name);
                 }
                 Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyProductsListing') . '&etsyConf=5');
             } else if (Tools::getValue('action') == 'relist') {
-                DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Relisting', delete_flag = '0', is_error = 0, renew_flag = '1' WHERE  id_product = '" . (int) $product_details['id_product'] . "'");
+                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Relisting', delete_flag = '0', is_error = 0, renew_flag = '1' WHERE  id_product = '" . (int) $product_details['id_product'] . "'");
                 EtsyModule::auditLogEntry('Product has been marked for relisting.' . $product_details['name'], $method_name);
                 Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyProductsListing') . '&etsyConf=6');
             } else if (Tools::getValue('action') == 'enable') {
                 /* Enable the product */
-                DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET active = '1' WHERE id_product = '" . (int) $product_details['id_product'] . "'");
+                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET active = '1' WHERE id_product = '" . (int) $product_details['id_product'] . "'");
                 EtsyModule::auditLogEntry('Product enabled.' . $product_details['name'], $method_name);
                 Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyProductsListing') . '&etsyConf=64');
             } else if (Tools::getValue('action') == 'disable') {
                 /* Disable the product */
-                DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET active = '0' WHERE id_product = '" . (int) $product_details['id_product'] . "'");
+                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET active = '0' WHERE id_product = '" . (int) $product_details['id_product'] . "'");
                 EtsyModule::auditLogEntry('Product enabled.' . $product_details['name'], $method_name);
                 Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyProductsListing') . '&etsyConf=65');
             }
@@ -472,7 +475,7 @@ class AdminEtsyImportController extends ModuleAdminController
     {
         $method_name = 'AdminEtsyProductsListing::processDelete()';
         if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_products_list')))) {
-            $product_details = DB::getInstance()->getRow("SELECT pl.name, listing_id, epl.id_product FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.id_etsy_products_list = '" . (int) Tools::getValue('id_etsy_products_list') . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'");
+            $product_details = Db::getInstance()->getRow("SELECT pl.name, listing_id, epl.id_product FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.id_etsy_products_list = '" . (int) Tools::getValue('id_etsy_products_list') . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'");
             if (!empty($product_details)) {
                 /* If listing ID is not null, mark for deletion, else set status to pending & active to 0 so that product can be avaliable for listing */
                 if (!empty($product_details['listing_id'])) {
@@ -493,7 +496,7 @@ class AdminEtsyImportController extends ModuleAdminController
         $method_name = 'AdminEtsyProductsListing::processBulkDelete()';
         if (is_array($this->boxes) && !empty($this->boxes)) {
             foreach ($this->boxes as $id_etsy_products_list) {
-                $product_details = DB::getInstance()->getRow("SELECT pl.name, listing_id, epl.id_product FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.id_etsy_products_list = '" . (int) $id_etsy_products_list . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'");
+                $product_details = Db::getInstance()->getRow("SELECT pl.name, listing_id, epl.id_product FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.id_etsy_products_list = '" . (int) $id_etsy_products_list . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'");
                 if (!empty($product_details)) {
                     /* If listing ID is not null, mark for deletion, else set status to pending & active to 0 so that product can be avaliable for listing */
                     if (!empty($product_details['listing_id'])) {
@@ -514,9 +517,9 @@ class AdminEtsyImportController extends ModuleAdminController
             $dbQuery = Db::getInstance();
             foreach ($this->boxes as $id_etsy_products_list) {
                 $selectSQL = "SELECT pl.name, epl.id_product, epl.active  FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.active = 1 AND epl.id_etsy_products_list = '" . (int) $id_etsy_products_list . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'";
-                $getProductListingDetails = DB::getInstance()->executeS($selectSQL, true, false);
+                $getProductListingDetails = Db::getInstance()->executeS($selectSQL, true, false);
                 if ((int) $getProductListingDetails[0]['active']) {
-                    if (DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Pending', is_error = 0, delete_flag = '0', renew_flag = '0' WHERE  id_product = '" . (int) $getProductListingDetails[0]['id_product'] . "'")) {
+                    if (Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Pending', is_error = 0, delete_flag = '0', renew_flag = '0' WHERE  id_product = '" . (int) $getProductListingDetails[0]['id_product'] . "'")) {
                         //Audit Log Entry
                         $auditLogEntryString = 'Listing of Product - <b>' . $getProductListingDetails[0]['name'] . '</b> Resumed Successfully';
                         $auditMethodName = 'AdminEtsyProductsListing::processBulkrelist()';
@@ -532,17 +535,17 @@ class AdminEtsyImportController extends ModuleAdminController
     {
         if (is_array($this->boxes) && !empty($this->boxes)) {
             foreach ($this->boxes as $id_etsy_products_list) {
-                $getProductListingDetails = DB::getInstance()->executeS("SELECT pl.name, epl.id_product, epl.active  FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.active = 1 AND epl.id_etsy_products_list = '" . (int) $id_etsy_products_list . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'");
-                $checkDeleteFlag = DB::getInstance()->executeS("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) $id_etsy_products_list . "' AND listing_id != '' AND listing_id != 0 AND listing_id IS NOT NULL AND (delete_flag = '1' OR delete_flag = '2' OR listing_status = 'Inactive')");
+                $getProductListingDetails = Db::getInstance()->executeS("SELECT pl.name, epl.id_product, epl.active  FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.active = 1 AND epl.id_etsy_products_list = '" . (int) $id_etsy_products_list . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'");
+                $checkDeleteFlag = Db::getInstance()->executeS("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) $id_etsy_products_list . "' AND listing_id != '' AND listing_id != 0 AND listing_id IS NOT NULL AND (delete_flag = '1' OR delete_flag = '2' OR listing_status = 'Inactive')");
 
                 if (!empty($checkDeleteFlag) && ($checkDeleteFlag[0]['count'] != 0) && ((int) $getProductListingDetails[0]['active'])) {
-                    if (DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET renew_flag = '1', is_error = 0, delete_flag = '0' WHERE  id_product = '" . (int) $getProductListingDetails[0]['id_product'] . "'")) {
+                    if (Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET renew_flag = '1', is_error = 0, delete_flag = '0' WHERE  id_product = '" . (int) $getProductListingDetails[0]['id_product'] . "'")) {
                         $selectid_prod = "SELECT epl.id_product FROM " . _DB_PREFIX_ . "etsy_products_list epl WHERE epl.id_etsy_products_list = '" . (int) $id_etsy_products_list . "'";
-                        $getprodid = DB::getInstance()->executeS($selectid_prod, true, false);
+                        $getprodid = Db::getInstance()->executeS($selectid_prod, true, false);
 
                         if (!empty($getprodid)) {
                             $updateSQL = "UPDATE " . _DB_PREFIX_ . "etsy_translation SET status = 'Update', date_updated = NOW() WHERE id_product = '" . (int) $getprodid[0]['id_product'] . "' AND status = 'Listed'";
-                            DB::getInstance()->execute($updateSQL);
+                            Db::getInstance()->execute($updateSQL);
                         }
                         //Audit Log Entry
                         $auditLogEntryString = 'Revise of Product - <b>' . $getProductListingDetails[0]['name'] . '</b> Recorded Successfully';
@@ -566,12 +569,12 @@ class AdminEtsyImportController extends ModuleAdminController
             $dbQuery = Db::getInstance();
             foreach ($this->boxes as $id_etsy_products_list) {
                 $selectSQL = "SELECT pl.name , epl.id_product, epl.active FROM " . _DB_PREFIX_ . "etsy_products_list epl, " . _DB_PREFIX_ . "product_lang pl WHERE epl.active = 1 AND epl.id_etsy_products_list = '" . (int) $id_etsy_products_list . "' AND epl.id_product = pl.id_product AND pl.id_lang = '" . (int) $this->context->language->id . "'";
-                $getProductListingDetails = DB::getInstance()->executeS($selectSQL, true, false);
+                $getProductListingDetails = Db::getInstance()->executeS($selectSQL, true, false);
                 $selectSQL = "SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_etsy_products_list = '" . (int) $id_etsy_products_list . "' AND delete_flag = '1'";
-                $checkDeleteFlag = DB::getInstance()->executeS($selectSQL, true, false);
+                $checkDeleteFlag = Db::getInstance()->executeS($selectSQL, true, false);
 
                 if (!empty($checkDeleteFlag) && ($checkDeleteFlag[0]['count'] == 0) && ((int) $getProductListingDetails[0]['active'])) {
-                    if (DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET renew_flag = '0', is_error = 0 WHERE id_product = '" . (int) $getProductListingDetails[0]['id_product'] . "'")) {
+                    if (Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET renew_flag = '0', is_error = 0 WHERE id_product = '" . (int) $getProductListingDetails[0]['id_product'] . "'")) {
                         //Audit Log Entry
                         $auditLogEntryString = 'Renewal of Product - <b>' . $getProductListingDetails[0]['name'] . '</b> Stopped Successfully';
                         $auditMethodName = 'AdminEtsyProductsListing::processBulkhalt()';
@@ -653,19 +656,19 @@ class AdminEtsyImportController extends ModuleAdminController
         $this->page_header_toolbar_btn['kb_sync_profile_products'] = array(
             'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'localSync', 'secure_key' => $secure_key)),
             'target' => '_blank',
-            'desc' => $this->l('Local Sync'),
+            'desc' => $this->module->l('Local Sync'),
             'icon' => 'process-icon-update'
         );
         $this->page_header_toolbar_btn['kb_sync_product_list'] = array(
             'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncProductsListing', 'secure_key' => $secure_key)),
             'target' => '_blank',
-            'desc' => $this->l('Sync Products'),
+            'desc' => $this->module->l('Sync Products'),
             'icon' => 'process-icon-update'
         );
         $this->page_header_toolbar_btn['kb_sync_product_status'] = array(
             'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncProductsListingStatus', 'secure_key' => $secure_key)),
             'target' => '_blank',
-            'desc' => $this->l('Sync Product Status'),
+            'desc' => $this->module->l('Sync Product Status'),
             'icon' => 'process-icon-update'
         );
         parent::initPageHeaderToolbar();

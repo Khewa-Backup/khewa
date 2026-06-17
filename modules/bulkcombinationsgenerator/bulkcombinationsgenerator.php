@@ -1,16 +1,9 @@
 <?php
 /**
-* 2007-2019 Amazzing
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-*
-*  @author    Amazzing <mail@amazzing.ru>
-*  @copyright 2007-2019 Amazzing
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*/
-
+ *  @author    Amazzing <mail@mirindevo.com>
+ *  @copyright Amazzing
+ *  @license   https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
 class BulkCombinationsGenerator extends Module
 {
     public function __construct()
@@ -20,7 +13,8 @@ class BulkCombinationsGenerator extends Module
         }
         $this->name = 'bulkcombinationsgenerator';
         $this->tab = 'administration';
-        $this->version = '2.1.1';
+        $this->version = '2.1.4';
+        $this->ps_versions_compliancy = ['min' => '1.6.0.4', 'max' => _PS_VERSION_];
         $this->author = 'Amazzing';
         $this->need_instance = 0;
         $this->module_key = '76fa37d23dff4b3ad6afc517d8a25c44';
@@ -29,18 +23,10 @@ class BulkCombinationsGenerator extends Module
         $this->displayName = $this->l('Bulk combinations generator');
         $this->description = $this->l('Bulk combinations generator');
         $this->db = Db::GetInstance();
-        $this->combinations_num_left = 300;
+        $this->combinations_num = ['max' => 300, 'added' => 0, 'updated' => 0, 'deleted' => 0];
+        $this->max_combinations_per_product = 800;
         $this->time_before_reset = 60;
-    }
-
-    public function install()
-    {
-        return parent::install();
-    }
-
-    public function uninstall()
-    {
-        return parent::uninstall();
+        $this->x = []; // quick cache
     }
 
     public function getContent()
@@ -52,10 +38,12 @@ class BulkCombinationsGenerator extends Module
             $this->exportSettings();
         }
         $this->context->controller->addJquery();
-        $this->context->controller->js_files[] = $this->_path.'views/js/back.js?'.$this->version;
-        $this->context->controller->css_files[$this->_path.'views/css/back.css?'.$this->version] = 'all';
-        $this->context->smarty->assign(array(
-            'grouped_attributes' => $this->getGroupedAttributes(),
+        $this->context->controller->js_files[] = $this->_path . 'views/js/back.js?' . $this->version;
+        $this->context->controller->css_files[$this->_path . 'views/css/back.css?' . $this->version] = 'all';
+        $this->context->smarty->assign([
+            'bcg_js_vars' => [
+                'l' => $this->getTranslatableTexts(),
+            ],
             'product_filters' => $this->getProductFilters(),
             'combination_fields' => $this->getCombinationFields(),
             'attribute_options_fields' => $this->getAttributeOptionsFields(),
@@ -63,87 +51,91 @@ class BulkCombinationsGenerator extends Module
             'reference_variables' => $this->getRefVariables(),
             'version' => $this->version,
             'info_links' => $this->getInfoLinks(),
-        ));
-        $js_def = array(
-            'l' => array(
-                'loading' => $this->l('Loading...'),
-                'complete' => $this->l('COMPLETE!'),
-                'dont_close' => $this->l('Please do not close this browser tab'),
-                'products_processed' => $this->l('Products processed: %s'),
-                'time_spent' => $this->l('Time spent: %s'),
-                'time_remaining' => $this->l('Approximate remaining time: %s'),
-                'check_console' => $this->l('Error. Check console log'),
-            ),
-        );
-        $js = $this->addJsDef($js_def);
-        return $js.$this->display(__FILE__, 'views/templates/admin/configure.tpl');
+        ]);
+
+        return $this->display(__FILE__, 'views/templates/admin/configure.tpl');
     }
 
-    public function addJsDef($js_def)
+    public function getTranslatableTexts()
     {
-        $js = '<script type="text/javascript">'; // plain js for retro-compatibility
-        foreach ($js_def as $name => $value) {
-            $value = is_array($value) ? Tools::jsonEncode($value) : '\''.str_replace("'", "\'", $value).'\'';
-            $js .= "\nvar $name = $value;";
-        }
-        $js .= "\n </script>";
-        return $js;
+        return [
+            'loading' => $this->l('Loading...'),
+            'complete' => $this->l('COMPLETE!'),
+            'saved' => $this->l('Saved'),
+            'dont_close' => $this->l('Please do not close this browser tab'),
+            'products_processed' => $this->l('Products processed: %s'),
+            'combs_added' => $this->l('Combinations created: %s'),
+            'combs_updated' => $this->l('Combinations updated: %s'),
+            'combs_deleted' => $this->l('Combinations deleted: %s'),
+            'upd_existing' => $this->l('Selected attributes will be added to existing combinations'),
+            'add_new_maybe' => $this->l('New combinations may be created, if required'),
+            'override_all' => $this->l('%s will be updated for all existing combinations'),
+            'override_selected' => $this->l('%s will be updated for existing combinations with selected attributes'),
+            'add_new' => $this->l('New combinations will be created from selected attributes'),
+            'if_dont_exist' => $this->l('if they do not already exist'),
+            'delete_all' => $this->l('All existing combinations will be deleted'),
+            'delete_selected' => $this->l('Combinations with selected attributes will be deleted'),
+            'time_spent' => $this->l('Time spent: %s'),
+            'time_remaining' => $this->l('Estimated remaining time: %s'),
+            'check_console' => $this->l('Error. Check console log'),
+        ];
     }
 
     public function getProductFilters()
     {
-         $filters = array(
-            'id_category' => array(
+        $filters = [
+            'id_category' => [
                 'label' => $this->l('Categories'),
                 'options' => $this->getOptions('category'),
                 'id_parent' => Configuration::get('PS_ROOT_CATEGORY'),
-                'col' => array('group' => 12, 'label' => 2, 'value' => 10),
-            ),
-            'id_manufacturer' => array(
+                'col' => ['group' => 12, 'label' => 2, 'value' => 10],
+            ],
+            'id_manufacturer' => [
                 'label' => $this->l('Manufacturers'),
                 'options' => $this->getOptions('manufacturer'),
-                'col' => array('group' => 4, 'label' => 2, 'value' => 3),
-            ),
-            'id_supplier' => array(
+                'col' => ['group' => 4, 'label' => 2, 'value' => 3],
+            ],
+            'id_supplier' => [
                 'label' => $this->l('Suppliers'),
                 'options' => $this->getOptions('supplier'),
-                'col' => array('group' => 4, 'label' => 2, 'value' => 3),
-            ),
-            'id_product' => array(
+                'col' => ['group' => 4, 'label' => 2, 'value' => 3],
+            ],
+            'id_product' => [
                 'label' => $this->l('Product IDs'),
                 'tooltip' => $this->l('Separated by commas'),
-                'col' => array('group' => 4, 'label' => 2, 'value' => 3),
-            ),
-        );
+                'col' => ['group' => 4, 'label' => 2, 'value' => 3],
+            ],
+        ];
+
         return $filters;
     }
 
     public function getOptions($type)
     {
-        $options = array();
+        $options = [];
         $id_lang = $this->context->language->id;
         switch ($type) {
             case 'manufacturer':
             case 'supplier':
-                $items = $this->db->executeS('SELECT * FROM '._DB_PREFIX_.pSQL($type));
-                $options  = array();
+                $items = $this->db->executeS('SELECT * FROM `' . _DB_PREFIX_ . bqSQL($type) . '`');
                 foreach ($items as $row) {
-                    $options[$row['id_'.$type]] = $row['name'];
+                    $options[$row['id_' . $type]] = $row['name'];
                 }
                 break;
             case 'category':
                 $categories = $this->db->executeS('
-                    SELECT * FROM '._DB_PREFIX_.'category c
-                    '.Shop::addSqlAssociation('category', 'c').'
-                    LEFT JOIN '._DB_PREFIX_.'category_lang cl
+                    SELECT * FROM ' . _DB_PREFIX_ . 'category c
+                    ' . Shop::addSqlAssociation('category', 'c') . '
+                    LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cl
                         ON c.id_category = cl.id_category
-                    WHERE id_lang = '.(int)$id_lang.'
+                    WHERE id_lang = ' . (int) $id_lang . '
                 ');
                 foreach ($categories as $cat) {
                     $options[$cat['id_parent']][$cat['id_category']] = $cat['name'];
                 }
                 break;
         }
+
         return $options;
     }
 
@@ -151,161 +143,165 @@ class BulkCombinationsGenerator extends Module
     {
         $p_suffix = Currency::getDefaultCurrency()->sign;
         $w_suffix = Configuration::get('PS_WEIGHT_UNIT');
-        $fields = array( // keys should be exactly same as in database
-            'price' => array('name' => $this->l('Price impact'), 'suffix' => $p_suffix),
-            'unit_price_impact' => array('name' => $this->l('Unit price impact'), 'suffix' => $p_suffix),
-            'wholesale_price' => array('name' => $this->l('Wholesale price impact'), 'suffix' => $p_suffix),
-            'weight' => array('name' => $this->l('Weight impact'), 'suffix' => $w_suffix),
-        );
+        $fields = [ // keys should be exactly same as in database
+            'price' => ['name' => $this->l('Price impact'), 'suffix' => $p_suffix],
+            'unit_price_impact' => ['name' => $this->l('Unit price impact'), 'suffix' => $p_suffix],
+            'wholesale_price' => ['name' => $this->l('Wholesale price impact'), 'suffix' => $p_suffix],
+            'weight' => ['name' => $this->l('Weight impact'), 'suffix' => $w_suffix],
+        ];
+
         return $fields;
     }
 
     public function getAttributeOptionsFields()
     {
-        $fields = array(
-            'default_combination' => array(
+        $fields = [
+            'default_combination' => [
                 'label' => $this->l('Default combination'),
-                'options' => array(
+                'options' => [
                     '0' => $this->l('First available'),
                     'min_price' => $this->l('With lowest price'),
                     'max_price' => $this->l('With highest price'),
                     'min_weight' => $this->l('With lowest weight'),
                     'max_weight' => $this->l('With highest weight'),
-                ),
-            ),
-            'quantity' => array(
-                'label' => $this->l('Default qty'),
+                ],
+            ],
+            'quantity' => [
+                'label' => $this->l('Quantity'),
                 'value' => 100,
                 'override' => 0,
-            ),
-            'minimal_quantity' => array(
-                'label' => $this->l('Min qty for order'),
+            ],
+            'minimal_quantity' => [
+                'label' => $this->l('Min quantity for order'),
                 'value' => 1,
                 'override' => 0,
-            ),
-            'reference' => array(
+            ],
+            'reference' => [
                 'label' => $this->l('Reference'),
                 'override' => 0,
-            ),
-            'complex_percentage' => array(
+            ],
+            'complex_percentage' => [
                 'label' => $this->l('Calculate percentage'),
-                'options' => array(
-                    '0' => $this->l('Basing on initial value'),
-                    '1' => $this->l('Basing on final value including other impacts')
-                ),
+                'options' => [
+                    '' => $this->l('From base value'),
+                    '1' => $this->l('From base value + other impacts'),
+                ],
                 'class' => 'complex-percentage hidden',
-            ),
-        );
+            ],
+        ];
+
         return $fields;
     }
 
     public function getDuplicateFields()
     {
-         $fields = array(
-            'id_product_original' => array(
+        $fields = [
+            'id_product_original' => [
                 'label' => $this->l('Original product ID'),
-            ),
-            'new_reference' => array(
+            ],
+            'new_reference' => [
                 'label' => $this->l('Pattern for new references'),
-            )
-        );
+            ],
+        ];
+
         return $fields;
     }
 
     public function ajaxAction()
     {
-        $ret = array();
+        $ret = [];
         $action = Tools::getValue('action');
         switch ($action) {
             case 'getFilteredProductsNum':
                 $filters = Tools::getValue('filters');
-                $total = count($this->getProductIDs($filters));
-                $txt = sprintf($this->l('%d products are ready to be processed'), $total);
-                $ret['log_txt'] = utf8_encode($txt);
+                $ret['products_num'] = count($this->getProductIDs($filters));
+                $ret['log_txt'] = sprintf($this->l('%d products are ready to be processed'), $ret['products_num']);
                 break;
             case 'showAttributes':
-                $this->context->smarty->assign(array('available_items' => $this->getGroupedAttributes()));
-                $ret['content'] = utf8_encode($this->display(__FILE__, 'views/templates/admin/available-items.tpl'));
-                $ret['title'] = utf8_encode($this->l('Available attributes'));
+                $this->context->smarty->assign(['available_items' => $this->getGroupedAttributes()]);
+                $ret['content'] = $this->display(__FILE__, 'views/templates/admin/available-items.tpl');
+                $ret['title'] = $this->l('Available attributes');
                 break;
             case 'getDynamicRows':
-                $this->context->smarty->assign(array(
-                    'rows' => $this->getAttributeRowsData(Tools::getValue('ids')),
+                $this->context->smarty->assign([
+                    'rows' => $this->getAttributeRows(['att_ids' => Tools::getValue('ids')]),
                     'combination_fields' => $this->getCombinationFields(),
-                ));
-                $ret['rows_html'] = utf8_encode($this->display(__FILE__, 'views/templates/admin/dynamic-rows.tpl'));
+                ]);
+                $ret['rows_html'] = $this->display(__FILE__, 'views/templates/admin/dynamic-rows.tpl');
                 break;
-            case 'regenerateCombinations':
-            case 'updateCombinations':
-            case 'deleteCombinations':
-            case 'duplicateCombinations':
+            case 'update':
+            case 'updateByAtts':
+            case 'addNew':
+            case 'regenerate':
+            case 'deleteByAtts':
+            case 'delete':
+            case 'duplicate':
                 $ret += $this->processItems($action);
                 break;
             case 'getCombinationsSummary':
                 $ret['summary'] = $this->getCombinationsSummary(Tools::getValue('id_product'));
                 break;
+            case 'eraseData':
+                $this->eraseData();
+                break;
         }
-        exit(Tools::jsonEncode($ret));
+        exit(json_encode($ret));
     }
 
-    public function getAttributeRowsData($ids)
+    public function getAttributeRows($params = [])
     {
-        $data = array();
-        if ($imploded_ids = $this->formatIDs($ids)) {
-            $id_lang = $this->context->language->id;
-            $data = $this->db->executeS('
-                SELECT a.id_attribute AS id, a.id_attribute_group AS id_group, al.name, agl.name AS group_name
-                FROM '._DB_PREFIX_.'attribute a '.Shop::addSqlAssociation('attribute', 'a').'
-                LEFT JOIN '._DB_PREFIX_.'attribute_lang al
-                    ON a.id_attribute = al.id_attribute AND al.id_lang = '.(int)$id_lang.'
-                LEFT JOIN '._DB_PREFIX_.'attribute_group_lang agl
-                    ON a.id_attribute_group = agl.id_attribute_group AND agl.id_lang = '.(int)$id_lang.'
-                WHERE a.id_attribute IN ('.pSQL($imploded_ids).')
-                GROUP BY a.id_attribute
-                ORDER BY FIELD(a.id_attribute, '.pSQL($imploded_ids).')
-            ');
+        $id_lang = $this->context->language->id;
+        $q = new DbQuery();
+        $q->select('a.id_attribute AS id, a.id_attribute_group AS id_group,
+            al.name, agl.name AS group_name, a.position');
+        $q->from('attribute', 'a')->join(Shop::addSqlAssociation('attribute', 'a'));
+        $q->leftJoin('attribute_lang', 'al', '
+            a.id_attribute = al.id_attribute AND al.id_lang = ' . (int) $id_lang);
+        $q->leftJoin('attribute_group_lang', 'agl', '
+            a.id_attribute_group = agl.id_attribute_group AND agl.id_lang = ' . (int) $id_lang);
+        $q->groupBy('a.id_attribute');
+        if (isset($params['att_ids'])) {
+            if (!$att_ids_ = $this->sqlIDs($params['att_ids'])) {
+                return [];
+            }
+            $q->where('a.id_attribute IN (' . $att_ids_ . ')');
+            $q->orderBy('FIELD(a.id_attribute, ' . $att_ids_ . ')');
+        } else {
+            $q->orderBy('id_group, a.position');
         }
-        return $data;
+
+        return $this->db->executeS($q);
     }
 
     public function getGroupedAttributes()
     {
-        $id_lang = $this->context->language->id;
-         $sorted_attributes = $grouped_attributes = array();
-        foreach (Attribute::getAttributes($id_lang, true) as $a) {
-            $a['id'] = $a['id_attribute'];
-            $a['id_group'] = $a['id_attribute_group'];
-            $sorted_attributes[$a['id_group']][$a['id']] = $a;
+        $grouped_attributes = [];
+        foreach ($this->getAttributeRows() as $row) {
+            $grouped_attributes[$row['group_name']][$row['id']] = $row;
         }
-        // not using AttributeGroup::getAttributesGroups($id_lang) because of sorting
-        $att_groups = $this->db->executeS('
-            SELECT ag.id_attribute_group, agl.name FROM '._DB_PREFIX_.'attribute_group ag
-            '.Shop::addSqlAssociation('attribute_group', 'ag').'
-            INNER JOIN '._DB_PREFIX_.'attribute_group_lang agl
-                ON (ag.id_attribute_group = agl.id_attribute_group AND id_lang = '.(int)$id_lang.')
-            ORDER BY ag.id_attribute_group ASC
-        ');
-        foreach ($att_groups as $group) {
-            $grouped_attributes[$group['name']] = $sorted_attributes[$group['id_attribute_group']];
-        }
+
         return $grouped_attributes;
     }
 
     public function getCombinationsSummary($id_product)
     {
         if ($name = $this->db->getValue('
-            SELECT name FROM '._DB_PREFIX_.'product_lang
-            WHERE id_product = '.(int)$id_product.' AND id_lang = '.(int)$this->context->language->id.'
+            SELECT name FROM ' . _DB_PREFIX_ . 'product_lang
+            WHERE id_product = ' . (int) $id_product . ' AND id_lang = ' . (int) $this->context->language->id . '
         ')) {
-            $ret = $name.' | '.$this->l('Total combinations').': '.count($this->getExistingCombinations($id_product));
+            $ret = $name . ' | ' . $this->l('Total combinations') . ': ' . count($this->getExistingCombinations($id_product));
         } else {
             $ret = $this->l('No product found with this ID');
         }
+
         return $ret;
     }
 
     public function getProductIDs($filters, $throw_error = true)
     {
+        if ($throw_error && !array_filter($filters)) {
+            $this->throwError($this->l('Please select products, that should be processed'), 'warning');
+        }
         $query = new DbQuery();
         $query->select('DISTINCT p.id_product');
         $query->from('product', 'p');
@@ -313,54 +309,45 @@ class BulkCombinationsGenerator extends Module
         // combinations are not available for virtual products and packs
         $query->where('p.is_virtual < 1 AND p.cache_is_pack < 1');
         foreach ($filters as $name => $value) {
-            if ($imploded_ids = $this->formatIDs($value)) {
-                $identifier_name = $name;
-                $name = str_replace('id_', '', $name);
+            if (is_string($value)) {
+                $value = $this->getIDsFromString($value);
+            }
+            if ($ids_ = $this->sqlIDs($value)) {
                 $alias = 'p';
-                switch ($name) {
-                    case 'category':
-                    case 'supplier':
-                        $table = $name == 'category' ? $name.'_product' : 'product_'.$name;
-                        $alias = $name[0].$alias;
-                        $query->innerJoin($table, $alias, 'p.id_product = '.pSQL($alias).'.id_product');
-                        break;
+                if ($name == 'id_category') {
+                    $alias = 'cp';
+                    $query->innerJoin('category_product', $alias, 'p.id_product = `' . bqSQL($alias) . '`.id_product');
+                } elseif ($name == 'id_supplier') {
+                    $alias = 'sp';
+                    $query->innerJoin('product_supplier', $alias, 'p.id_product = `' . bqSQL($alias) . '`.id_product');
                 }
-                $query->where(pSQL($alias).'.'.pSQL($identifier_name).' IN ('.pSQL($imploded_ids).')');
+                $query->where('`' . bqSQL($alias) . '`.`' . bqSQL($name) . '` IN (' . $ids_ . ')');
             }
         }
-        if ($exclude_ids = $this->getExcludedIds()) {
-            $query->where('p.id_product NOT IN ('.pSQL($exclude_ids).')');
+        if ($exclude_ids_ = $this->sqlIDs($this->getExcludedIDs())) {
+            $query->where('p.id_product NOT IN (' . $exclude_ids_ . ')');
         }
         $query->orderBy('product_shop.date_add DESC');
-        // d($query->build());
-        $ids = array();
-        foreach ($this->db->executeS($query) as $row) {
-            $ids[$row['id_product']] = $row['id_product'];
+        $ids = array_column($this->db->executeS($query), 'id_product', 'id_product');
+        if ($throw_error && !$ids) {
+            $this->throwError($this->l('No matching products'));
         }
-        if ($throw_error) {
-            if (!$ids) {
-                $this->throwError($this->l('No matching products'));
-            } elseif (empty($filters['id_product'])) {
-                unset($filters['id_product']);
-                if (empty($filters)) {
-                    $this->throwError($this->l('Please select products, that should be processed'), 'warning');
-                }
-            }
-        }
+
         return $ids;
     }
 
-    public function getExcludedIds()
+    public function getExcludedIDs()
     {
         if (!$exclude_ids = Tools::getValue('exclude_ids')) {
-            if (Tools::getValue('action') == 'duplicateCombinations') {
+            if (Tools::getValue('action') == 'duplicate') {
                 $a = Tools::getValue('a');
                 if (!empty($a['id_product_original'])) {
                     $exclude_ids = $a['id_product_original'];
                 }
             }
         }
-        return $this->formatIDs($exclude_ids);
+
+        return $exclude_ids;
     }
 
     public function dataCanBeReset($data_type)
@@ -368,46 +355,68 @@ class BulkCombinationsGenerator extends Module
         $age = time() - filemtime($this->getDataPath($data_type));
         $time_diff = $this->time_before_reset - $age;
         if ($time_diff > 1) {
-            $err = $this->l('Please wait, someone else is generating combinations').
-            '. '.sprintf($this->l('%s seconds left before automatic reset.'), $time_diff);
+            $err = $this->l('Please wait, someone else is generating combinations') .
+            '. ' . sprintf($this->l('%s seconds left before automatic reset.'), $time_diff);
             $this->throwError($err);
         }
+
         return true;
     }
 
-    public function processItems($action, $count_processed = true)
+    public function processItems($action)
     {
         $filters = Tools::getValue('filters');
         $identifier = Tools::getValue('identifier');
         if (!$products_data = $this->getData('products')) {
             $this->eraseData();
-            $products_data = array(
-                'processed' => array(),
-                'deleted_combinations' => 0,
+            $products_data = [
+                'num' => ['processed' => 0, 'to_process' => 0],
+                'combs_num' => ['added' => 0, 'updated' => 0, 'deleted' => 0],
+                'deleted_combinations' => '',
                 'to_process' => $this->getProductIDs($filters),
-                'filters' => $filters, // can be used for resuming in next versions
                 'identifier' => $identifier,
-            );
+            ];
+            $products_data['num']['to_process'] = count($products_data['to_process']);
+            $this->saveData('products', $products_data);
         } elseif ($products_data['identifier'] != $identifier) {
             if ($this->dataCanBeReset('products')) {
                 $this->eraseData();
-                return $this->processItems($action, $count_processed);
+
+                return $this->processItems($action);
             }
         }
-
         if (!$a = $this->getData('a')) {
-            $a = $this->prepareAttributesData(Tools::getValue('a'));
+            $a = Tools::getValue('a');
+            $a['complex_percentage'] = !empty($a['options']['complex_percentage']);
+            $a['action'] = $action;
+            if (!isset($a['values']) || $action == 'delete') {
+                $a['values'] = [];
+            }
+            if (isset($a['impacts'])) {
+                foreach ($a['impacts'] as $type => $att_impacts) {
+                    foreach ($att_impacts as $id_att => $impact) {
+                        if ($impact['value'] === '') {
+                            unset($a['impacts'][$type][$id_att]);
+                        }
+                    }
+                    if (empty($a['impacts'][$type])) {
+                        unset($a['impacts'][$type]);
+                    }
+                }
+            } else {
+                $a['impacts'] = [];
+            }
             $this->saveData('a', $a);
         }
-
         if ($id_product = current($products_data['to_process'])) {
             $complete = true;
             $this->validateEssentialData($action, $a);
+            SpecificPriceRule::disableAnyApplication();
             switch ($action) {
-                case 'regenerateCombinations':
-                case 'duplicateCombinations':
+                case 'regenerate':
+                case 'duplicate':
                     if ($products_data['deleted_combinations'] != $id_product) {
-                        if ($complete &= $this->deleteCombinations($id_product)) {
+                        if ($complete &= $this->deleteCombinations($id_product, $a)) {
                             $products_data['deleted_combinations'] = $id_product;
                         }
                     }
@@ -415,19 +424,28 @@ class BulkCombinationsGenerator extends Module
                         $complete &= $this->updateCombinations($id_product, $a);
                     }
                     break;
-                case 'updateCombinations':
+                case 'update':
+                case 'updateByAtts':
+                case 'addNew':
                     $complete &= $this->updateCombinations($id_product, $a);
                     break;
-                case 'deleteCombinations':
-                    $complete &= $this->deleteCombinations($id_product);
+                case 'delete':
+                case 'deleteByAtts':
+                    $complete &= $this->deleteCombinations($id_product, $a);
                     break;
             }
+            foreach (['added', 'updated', 'deleted'] as $key) {
+                $products_data['combs_num'][$key] += $this->combinations_num[$key];
+            }
             if ($complete) {
-                if (is_callable(array('Tools', 'clearColorListCache'))) {
+                if (is_callable(['Tools', 'clearColorListCache'])) {
                     Tools::clearColorListCache($id_product); // retro-compatibility
                 }
-                $products_data['processed'][] = $id_product;
+                SpecificPriceRule::enableAnyApplication();
+                SpecificPriceRule::applyAllRules([$id_product]);
                 unset($products_data['to_process'][$id_product]);
+                ++$products_data['num']['processed'];
+                --$products_data['num']['to_process'];
             }
         }
         if ($products_data['to_process']) {
@@ -435,222 +453,130 @@ class BulkCombinationsGenerator extends Module
         } else {
             $this->eraseData();
         }
-        if ($count_processed) {
-            $products_data['processed'] = count($products_data['processed']);
-            $products_data['to_process'] = count($products_data['to_process']);
-        }
+
         return $products_data;
     }
 
     public function validateEssentialData($action, $a)
     {
-        if ($action == 'regenerateCombinations' && empty($a['values'])) {
-            $this->throwError($this->l('Please add attributes for new combinations'));
-        } elseif ($action == 'duplicateCombinations' && empty($a['id_product_original'])) {
+        $values_required = ['updateByAtts' => 1, 'addNew' => 1, 'regenerate' => 1, 'deleteByAtts' => 1];
+        $check_limit = ['update' => 1, 'addNew' => 1, 'regenerate' => 1];
+        if (!empty($a['values'])) {
+            if (isset($check_limit[$action])
+                && $this->getPossibleCombinationsNum($a['values']) > $this->max_combinations_per_product) {
+                $this->throwError('You are trying to generate too many combinations per product.
+                    Please decrease the number of attributes, or contact module developer to remove this limitation.');
+            }
+        } elseif (isset($values_required[$action])) {
+            $this->throwError($this->l('Please specify attributes'));
+        }
+        if ($action == 'duplicate' && empty($a['id_product_original'])) {
             $this->throwError($this->l('Please specify Original product ID'));
         }
-        if (isset($a['options']['minimal_quantity']) && (int)$a['options']['minimal_quantity'] < 1) {
+        if (isset($a['options']['minimal_quantity']) && (int) $a['options']['minimal_quantity'] < 1) {
             $this->throwError('Incorrect value for "Min qty for order"');
         }
     }
 
-    public function prepareAttributesData($a)
+    public function getPossibleCombinationsNum($grouped_values)
     {
-        $combinations = $this->createCombinations(array_values($a['values']));
-
-        // temporary fix. TODO: update createCombinations()
-        $att_groups = array();
-        foreach ($a['values'] as $id_group => $attributes) {
-            $att_groups += array_fill_keys($attributes, $id_group);
-        }
-        foreach ($combinations as $i => $c) {
-            $c_updated = array();
-            foreach ($c as $id_att) {
-                $c_updated[$att_groups[$id_att]] = $id_att;
+        if ($num = (int) $grouped_values) {
+            foreach ($grouped_values as $values) {
+                $num *= count($values);
             }
-            ksort($c_updated); // order by id group
-            $combinations[$i] = $c_updated;
         }
-        //
 
-        $a['combinations'] = $combinations;
-        return $a;
+        return $num;
     }
 
-    public function createCombinations($list)
+    public function getPossibleCombinations($data, &$all = [], $comb = [], $first_call = true)
     {
-        if (count($list) <= 1) {
-            return count($list) ? array_map(create_function('$v', 'return (array($v));'), $list[0]) : $list;
-        }
-        $res = array();
-        $first = array_pop($list);
-        foreach ($first as $attribute) {
-            $tab = $this->createCombinations($list);
-            foreach ($tab as $to_add) {
-                $res[] = is_array($to_add) ? array_merge($to_add, array($attribute)) : array($to_add, $attribute);
+        if ($data) {
+            if ($first_call) {
+                ksort($data); // make sure $data is sorted by id_group
             }
+            $id_group = current(array_keys($data));
+            $atts_in_group = $data[$id_group];
+            unset($data[$id_group]);
+            foreach ($atts_in_group as $id_att) {
+                $comb[$id_group] = $id_att;
+                $this->getPossibleCombinations($data, $all, $comb, false);
+            }
+        } elseif ($comb) {
+            $all[] = $comb;
         }
-        return $res;
-    }
 
-    public function prepareCombinationsForUpdate($id_product, $a)
-    {
-        $to_update = $dont_update = $used_comb_ids = array();
-        $update_all = isset($a['id_product_original']) || !empty($a['override_options']) ||
-        Tools::strpos($a['options']['reference'], '{iterate}') !== false;
-        $required_atts_num = 0;
-        $new_combinations = isset($a['combinations']) ? $a['combinations'] : array();
-        $source_product_id = isset($a['id_product_original']) ? $a['id_product_original'] : $id_product;
-        foreach ($this->getExistingCombinations($source_product_id) as $id_comb => $atts) {
-            foreach ($new_combinations as $new_atts) {
-                $upd_atts = $atts + $new_atts; // atts are sorted by group ASC
-                $imploded_att_ids = implode('-', $upd_atts);
-                if ($upd_atts != $atts || $update_all) {
-                    $id_comb_new = !isset($used_comb_ids[$id_comb]) ? $id_comb : 0;
-                    $used_comb_ids[$id_comb] = 1;
-                    if (!isset($to_update[$imploded_att_ids])) { // do not override id_comb_new
-                        $to_update[$imploded_att_ids] = array('id_comb' => $id_comb_new, 'id_orig' => $id_comb);
-                    }
-                } else {
-                    $dont_update[$imploded_att_ids] = $id_comb;
-                }
-                if (!$required_atts_num) {
-                    $required_atts_num = count($upd_atts);
-                }
-            }
-            if (!$new_combinations && $update_all) {
-                $implded_atts = implode('-', $atts);
-                $to_update[$implded_atts] = array('id_comb' => $id_comb, 'id_orig' => $id_comb);
-                if (isset($a['id_product_original'])) {
-                    $to_update[$implded_atts]['id_comb'] = 0;
-                    $to_update[$implded_atts]['id_product_original'] = $a['id_product_original'];
-                }
-            }
-        }
-        if (!$required_atts_num || ($required_atts_num == count(current($new_combinations)))) {
-            // add new combinations if number of attributes is enough and they were not used
-            foreach ($new_combinations as $new_atts) {
-                $imploded_atts = implode('-', $new_atts);
-                if (!isset($to_update[$imploded_atts]) && !isset($dont_update[$imploded_atts])) {
-                    $to_update[$imploded_atts] = array('id_comb' => 0, 'id_orig' => 0);
-                }
-            }
-        }
-        $existing_impacts = $this->getExistingImpactsMultishop($source_product_id);
-        foreach ($to_update as &$u) {
-            $u['initial_impacts'] = isset($existing_impacts[$u['id_orig']]) ?
-            $existing_impacts[$u['id_orig']] : array();
-        }
-        // d([$this->getExistingCombinations($id_product), $a]);
-        // d($to_update);
-        return $to_update;
-    }
-
-    public function getExistingImpactsMultishop($id_product)
-    {
-        $combination_field_names = array_keys($this->getCombinationFields());
-        $where = $select = array();
-        foreach ($combination_field_names as $name) {
-            $name = 'product_attribute_shop.'.$name;
-            $where[] = pSQL($name).' <> 0';
-            $select[] = pSQL($name);
-        }
-        $data = $this->db->executeS('
-            SELECT pa.id_product_attribute AS id_comb,
-            product_attribute_shop.id_shop, '.implode(', ', $select).'
-            FROM '._DB_PREFIX_.'product_attribute pa
-            '.Shop::addSqlAssociation('product_attribute', 'pa').'
-            WHERE pa.id_product = '.(int)$id_product.'
-            AND ('.implode(' OR ', $where).')
-            AND pa.id_product_attribute > 0
-        ');
-        $impacts = array();
-        foreach ($data as $d) {
-            foreach ($combination_field_names as $name) {
-                if ($d[$name] <> 0) {
-                    $impacts[$d['id_comb']][$name][$d['id_shop']] = $d[$name];
-                }
-            }
-        }
-        return $impacts;
-    }
-
-    public function combinationExistsInCurrentShopContext($id_combination)
-    {
-        if ((int)$id_combination) {
-            return (bool)$this->db->getValue('
-                SELECT id_product_attribute FROM '._DB_PREFIX_.'product_attribute_shop
-                WHERE id_product_attribute = '.(int)$id_combination.'
-                AND id_shop IN ('.pSQL($this->getContextShopIds(true)).')
-            ');
-        }
+        return $all;
     }
 
     public function updateCombinations($id_product, $a)
     {
         $ret = true;
-        $updated_combinations = $sql = $rows = array();
         if (!isset($a['combinations_to_update'][$id_product])) {
-            $a['combinations_to_update'][$id_product] = $this->prepareCombinationsForUpdate($id_product, $a);
+            $a['combinations_to_update'][$id_product] = $this->getCombinationsToUpdate($id_product, $a);
         }
-        $combinations_to_update = $a['combinations_to_update'][$id_product];
-        foreach ($combinations_to_update as $imploded_atts => $c) {
-            if (!$this->combinations_num_left--) {
+        $att_rows = $att_rows_comb_ids = $upd_qty = [];
+        foreach ($a['combinations_to_update'][$id_product] as $c_key => $c) {
+            if (!$this->combinations_num['max']--) {
                 $ret &= false;
                 break;
             }
-            $c['options'] = array();
-            foreach (array('quantity', 'minimal_quantity', 'reference') as $name) {
-                if ((!$this->combinationExistsInCurrentShopContext($c['id_comb']) ||
-                    !empty($a['override_options'][$name])) && isset($a['options'][$name])) {
-                    $c['options'][$name] = $a['options'][$name];
-                }
-            }
-
+            $c['options'] = [];
             if (!empty($c['id_product_original']) && !empty($a['new_reference'])) {
                 $c['options']['reference'] = $a['new_reference']; // update reference for duplicated combinations
             }
-
-            $c['id_product'] = $id_product;
-            $c['att_ids'] = explode('-', $imploded_atts);
-            $combination = $this->updateCombinationObj($c);
-            $id_comb = $combination->id;
-            foreach ($c['att_ids'] as $id_att) {
-                $rows['product_attribute_combination'][] = array(
-                    'id_attribute' => $id_att,
-                    'id_product_attribute' => $id_comb
-                );
+            foreach (['quantity', 'minimal_quantity', 'reference'] as $name) {
+                if (isset($a['options'][$name]) && (!$c['id_orig'] || !empty($a['override_options'][$name]))) {
+                    $c['options'][$name] = $a['options'][$name];
+                }
             }
-            $updated_combinations[$id_comb] = $c;
-            unset($a['combinations_to_update'][$id_product][$imploded_atts]);
+            foreach ($c['shop_ids'] as $id_shop) {
+                if (!empty($a['impacts']) && (!$c['id_orig'] || !empty($a['override_options']['impacts']))) {
+                    $c['options'] += $this->calculateImpacts($c, $a, $id_shop);
+                }
+                if (!empty($c['options']) || !$c['id_comb']) {
+                    $combination = $this->updateCombinationObj($c, $id_shop);
+                    $c['id_comb'] = $combination->id;
+                    $upd_qty[$id_shop][$combination->id] = $combination->quantity;
+                }
+            }
+            if ($c['upd_atts'] && $c['id_comb']) {
+                $att_rows_comb_ids[$c['id_comb']] = $c['id_comb'];
+                foreach ($c['att_ids'] as $id_att) {
+                    $att_rows[$id_att . '-' . $c['id_comb']] = '(' . (int) $id_att . ', ' . (int) $c['id_comb'] . ')';
+                }
+            }
+            if ($c['id_comb'] != $c['id_orig']) {
+                ++$this->combinations_num['added'];
+            } elseif ($c['upd_atts'] || !empty($c['options'])) {
+                ++$this->combinations_num['updated'];
+            }
+            unset($a['combinations_to_update'][$id_product][$c_key]);
         }
-
         $this->saveData('a', $a);
-
-        if ($updated_combinations && !empty($rows['product_attribute_combination'])) {
-            $sql['del_product_attribute_combination'] = 'DELETE FROM '._DB_PREFIX_.'product_attribute_combination
-            WHERE id_product_attribute IN ('.pSQL(implode(',', array_keys($updated_combinations))).')';
+        if ($att_rows && $comb_ids_ = $this->sqlIDs($att_rows_comb_ids)) {
+            $sql = [
+                'DELETE FROM ' . _DB_PREFIX_ . 'product_attribute_combination
+                    WHERE id_product_attribute IN (' . $comb_ids_ . ')',
+                'REPLACE INTO ' . _DB_PREFIX_ . 'product_attribute_combination
+                    VALUES ' . implode(', ', $att_rows),
+            ];
+            $ret &= $this->runSql($sql);
         }
-        $rows += $this->prepareMultishopRows($id_product, $updated_combinations, $a);
-        foreach ($rows as $table_name => $table_rows) {
-            if (!empty($table_rows)) {
-                $duplicate_update = array();
-                $col_names = array_keys(current($table_rows));
-                foreach ($col_names as $c) {
-                    $duplicate_update[] = $c.'=VALUES('.$c.')';
+        if ($upd_qty) {
+            $this->backupContext();
+            foreach ($upd_qty as $id_shop => $quantities) {
+                Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
+                foreach ($quantities as $id_comb => $qty) {
+                    StockAvailable::setQuantity($id_product, $id_comb, $qty, $id_shop);
                 }
-                foreach ($table_rows as $key => $row) {
-                    $table_rows[$key] = '('.implode(', ', array_map('pSQL', $row)).')';
-                }
-                $sql['upd_'.$table_name] = 'INSERT INTO '._DB_PREFIX_.pSQL($table_name).'
-                ('.pSQL(implode(', ', $col_names)).') VALUES '.implode(', ', $table_rows).'
-                ON DUPLICATE KEY UPDATE '.pSQL(implode(', ', $duplicate_update));
             }
+            $this->restoreContext();
         }
-
-        if ($ret &= $this->runSql($sql)) {
+        if ($ret && !$a['combinations_to_update'][$id_product]) {
             $ret &= $this->updateDefaultCombinationAndSaveProduct($id_product, $a);
         }
+
         return $ret;
     }
 
@@ -659,63 +585,76 @@ class BulkCombinationsGenerator extends Module
         $address = Address::initialize();
         $tax_manager = TaxManagerFactory::getManager($address, $id_tax_rules_group);
         $tax_calculator = $tax_manager->getTaxCalculator();
-        return $tax_calculator->getTotalRate()/100;
+
+        return $tax_calculator->getTotalRate() / 100;
     }
 
-    public function prepareMultishopRows($id_product, $updated_combinations, $a)
+    public function impactKeys()
     {
-        $imact_keys = array_keys($this->getCombinationFields());
-        $complex_percentage = !empty($a['options']['complex_percentage']);
-        $rows = array();
-        foreach ($this->getContextShopIds() as $id_shop) {
-            $product_data = $this->getProductData($id_product, $id_shop);
-            $tax_impact = $a['options']['tax_incl'] ? $this->getTaxesRate($product_data['id_tax_rules_group']) : 0;
-            foreach ($updated_combinations as $id_comb => $c) {
-                $row = array('id_product_attribute' => $id_comb);
-                foreach ($imact_keys as $key) {
-                    $value = isset($c['initial_impacts'][$key][$id_shop]) ? $c['initial_impacts'][$key][$id_shop] : 0;
-                    $percentage_impacts = array();
-                    foreach ($c['att_ids'] as $id_att) {
-                        if (!empty($a['impacts'][$key][$id_att]['value'])) {
-                            $att_impact = $a['impacts'][$key][$id_att];
-                            $number = $this->getImpactNumericValue($att_impact);
-                            if ($key == 'price' && $tax_impact) {
-                                $number = $number/(1 + $tax_impact);
-                            }
-                            if ($att_impact['suffix'] == '%') {
-                                $percentage_impacts[] = $number;
-                            } else {
-                                $value += $number;
-                            }
+        if (!isset($this->impact_keys)) {
+            $this->impact_keys = array_keys($this->getCombinationFields());
+        }
+
+        return $this->impact_keys;
+    }
+
+    public function calculateImpacts($c, $a, $id_shop)
+    {
+        $impacts = [];
+        $base_values = $this->getBaseProductValues($c['id_product'], $id_shop, $a['options']['tax_incl']);
+        foreach ($this->impactKeys() as $key) {
+            $new_impacts_available = !empty($a['impacts'][$key])
+            && array_intersect($c['att_ids'], array_keys($a['impacts'][$key]));
+            if ($c['id_comb'] && !$new_impacts_available) {
+                continue;
+            }
+            $value = 0;
+            if (isset($c['initial_impacts'][$id_shop][$key])
+                && (!$new_impacts_available || empty($a['override_options']['erase_impacts']))) {
+                $value = $c['initial_impacts'][$id_shop][$key];
+            }
+            $percentage_impacts = [];
+            foreach ($c['att_ids'] as $id_att) {
+                if (!empty($a['impacts'][$key][$id_att]['value'])) {
+                    $att_impact = $a['impacts'][$key][$id_att];
+                    $number = $this->getImpactNumericValue($att_impact);
+                    if ($att_impact['suffix'] == '%') {
+                        $percentage_impacts[] = $number;
+                    } else {
+                        if ($key == 'price' && $base_values['tax_impact']) {
+                            $number = $number / (1 + $base_values['tax_impact']);
                         }
+                        $value += $number;
                     }
-                    foreach ($percentage_impacts as $pi) {
-                        $base_key = $key == 'weight' ? 'weight' : 'price';
-                        $value += ($product_data[$base_key] + ($complex_percentage ? $value : 0)) * $pi / 100;
-                    }
-                    $value = ($product_data[$key] + $value < 0) ? -$product_data[$key] : $value;
-                    $row[$key] = $value;
-                }
-                $rows['product_attribute_shop'][$id_comb.'_'.$id_shop] = $row + array('id_shop' => $id_shop);
-                if (!isset($rows['product_attribute'][$id_comb])) {
-                    $rows['product_attribute'][$id_comb] = $row;
                 }
             }
+            foreach ($percentage_impacts as $pi) {
+                $value += ($base_values[$key] + ($a['complex_percentage'] ? $value : 0)) * $pi / 100;
+            }
+            if ($value < -$base_values[$key]) {
+                $value = -$base_values[$key];
+            }
+            $impacts[$key] = round($value, 6);
         }
-        // d($rows);
-        return $rows;
+
+        return $impacts;
     }
 
     public function getImpactNumericValue($impact)
     {
-        $value = (float)preg_replace('/[^0-9.]/', '', str_replace(',', '.', $impact['value']));
+        $value = (float) preg_replace('/[^0-9.]/', '', str_replace(',', '.', $impact['value']));
         $multiplier = $impact['prefix'] == '-' ? -1 : 1;
+
         return $value * $multiplier;
     }
 
-    public function updateCombinationObj($c)
+    public function updateCombinationObj($c, $id_shop)
     {
-        $obj = new Combination($c['id_orig']);
+        if (!isset($c['id_orig'])) {
+            $c['id_orig'] = $c['id_comb'];
+        }
+        $obj = new Combination($c['id_orig'], null, $id_shop);
+        $obj->id_shop_list = [$id_shop];
         $obj->id_product = $c['id_product'];
         $obj->id = $c['id_comb'];
         if (isset($c['id_product_original'])) {
@@ -725,54 +664,45 @@ class BulkCombinationsGenerator extends Module
             $obj->default_on = '';
             $obj->reference = '';
         }
+        if ($obj->default_on) {
+            // avoid possible Duplicate entry for key 'product_default' in complex multishop scenarios
+            $this->eraseDefaultCombinationRecordFromMainTable($obj->id_product);
+        }
         if ($c['id_orig'] && !isset($c['options']['quantity'])) {
-            $obj->quantity = $this->db->getValue('
-                SELECT sa.quantity FROM '._DB_PREFIX_.'stock_available sa
-                '.Shop::addSqlAssociation('product_attribute', 'sa').'
-                WHERE sa.id_product_attribute = '.(int)$c['id_orig'].'
+            $obj->quantity = (int) $this->db->getValue('
+                SELECT sa.quantity FROM ' . _DB_PREFIX_ . 'stock_available sa
+                WHERE sa.id_product_attribute = ' . (int) $c['id_orig'] . '
+                AND sa.id_shop = ' . (int) $id_shop . '
             ');
         }
         foreach ($c['options'] as $name => $value) {
             $obj->$name = $this->formatCombinationValue($value, $name, $c);
         }
         $obj->save();
-        StockAvailable::setQuantity($obj->id_product, $obj->id, $obj->quantity);
-        return $obj;
-        // debug
-        // if (!$obj->id) $obj->id = $this->getNextAutoInctementValue('product_attribute');
-        // return $obj;
-    }
 
-    public function getNextAutoInctementValue($table_name)
-    {
-        $data = $this->db->executeS('SHOW TABLE STATUS LIKE \''._DB_PREFIX_.pSQL($table_name).'\'');
-        $value = isset($data[0]['Auto_increment']) ? $data[0]['Auto_increment'] + 1 : 0;
-        // test
-        $this->ta = isset($this->ta) ? $this->ta : 0;
-        $value += $this->ta++;
-        // test
-        return $value;
+        return $obj;
     }
 
     public function getImplodedAttNames($c, $max_chars_per_word)
     {
         $data = $this->db->executeS('
-            SELECT al.id_attribute, al.name FROM '._DB_PREFIX_.'attribute_lang al
-            INNER JOIN '._DB_PREFIX_.'attribute a ON a.id_attribute = al.id_attribute
-            INNER JOIN '._DB_PREFIX_.'attribute_group ag ON ag.id_attribute_group = a.id_attribute_group
-            WHERE al.id_lang = '.(int)Configuration::get('PS_LANG_DEFAULT').'
-            AND al.id_attribute IN ('.pSQL($this->formatIDs($c['att_ids'])).')
+            SELECT al.id_attribute, al.name FROM ' . _DB_PREFIX_ . 'attribute_lang al
+            INNER JOIN ' . _DB_PREFIX_ . 'attribute a ON a.id_attribute = al.id_attribute
+            INNER JOIN ' . _DB_PREFIX_ . 'attribute_group ag ON ag.id_attribute_group = a.id_attribute_group
+            WHERE al.id_lang = ' . (int) Configuration::get('PS_LANG_DEFAULT') . '
+            AND al.id_attribute IN (' . $this->sqlIDs($c['att_ids']) . ')
             ORDER BY ag.position ASC
         ');
-        $names = array();
+        $names = [];
         foreach ($data as $d) {
-            $name = str_replace(array(',', '.', '*'), '-', $d['name']);
+            $name = str_replace([',', '.', '*'], '-', $d['name']);
             $name = explode('-', Tools::str2url($name));
             foreach ($name as &$word) {
                 $word = Tools::substr($word, 0, $max_chars_per_word);
             }
             $names[$d['id_attribute']] = implode('_', $name);
         }
+
         return implode('_', $names);
     }
 
@@ -780,11 +710,11 @@ class BulkCombinationsGenerator extends Module
     {
         switch ($name) {
             case 'reference':
-                $replacements = array(
-                   '{id_product}' => $c['id_product'],
-                   '{base_ref}'   => $this->getProductReference($c['id_product']),
-                   '{iterate}'  => $this->getNextIterationNum($c),
-                );
+                $replacements = [
+                    '{id_product}' => $c['id_product'],
+                    '{base_ref}' => $this->getProductReference($c['id_product']),
+                    '{iterate}' => $this->getNextIterationNum($c),
+                ];
                 if (isset($c['id_product_original']) && isset($c['orig_ref'])) {
                     $replacements['{orig_ref}'] = $c['orig_ref'];
                     $base_ref_orig = $this->getProductReference($c['id_product_original']);
@@ -792,207 +722,371 @@ class BulkCombinationsGenerator extends Module
                 }
                 if (strpos($value, '{att_names_') !== false) {
                     $max_chars = explode('{att_names_', $value);
-                    $max_chars = isset($max_chars[1]) && (int)$max_chars[1] ? (int)$max_chars[1] : 5;
-                    $replacements['{att_names_'.$max_chars.'}'] = $this->getImplodedAttNames($c, $max_chars);
+                    $max_chars = isset($max_chars[1]) && (int) $max_chars[1] ? (int) $max_chars[1] : 5;
+                    $replacements['{att_names_' . $max_chars . '}'] = $this->getImplodedAttNames($c, $max_chars);
                 }
                 $value = str_replace(array_keys($replacements), $replacements, $value);
                 $value = Tools::substr($value, 0, 32); // max allowed length for $combination->reference
                 break;
-            default:
-                $value = (int)$value;
+            case 'quantity':
+            case 'minimal_quantity':
+                $value = (int) $value;
+                break;
+            default: // impacts
+                $value = (float) $value;
                 break;
         }
+
         return strip_tags($value);
     }
 
     public function getRefVariables()
     {
         $iso_lang = Tools::strtoupper(Language::getIsoById(Configuration::get('PS_LANG_DEFAULT')));
-        $variables = array(
+        $variables = [
             '{id_product}' => $this->l('ID of product'),
             '{base_ref}' => $this->l('Base reference of product'),
             '{att_names_5}' => sprintf($this->l('Abbreviated attribute names, 5 characters per word (%s)'), $iso_lang),
             '{iterate}' => $this->l('Iteration number for new combination'),
             '{orig_ref}' => $this->l('Reference of original combination'),
             '{orig_ref_without_base}' => $this->l('same as {orig_ref}, but without base reference'),
-        );
+        ];
+
         return $variables;
     }
 
     public function getProductReference($id_product)
     {
-        $var = 'ref_'.$id_product;
+        $var = 'ref_' . $id_product;
         $this->$var = isset($this->$var) ? $this->$var : $this->db->getValue('
-            SELECT reference FROM '._DB_PREFIX_.'product WHERE id_product = '.(int)$id_product.'
+            SELECT reference FROM ' . _DB_PREFIX_ . 'product WHERE id_product = ' . (int) $id_product . '
         ');
+
         return $this->$var;
     }
 
     public function getNextIterationNum($c)
     {
         $num = $this->db->getValue('
-            SELECT COUNT(id_product_attribute) FROM '._DB_PREFIX_.'product_attribute
-            WHERE id_product = '.(int)$c['id_product']
-            .($c['id_comb'] ? ' AND id_product_attribute < '.(int)$c['id_comb'] : '').'
+            SELECT COUNT(id_product_attribute) FROM ' . _DB_PREFIX_ . 'product_attribute
+            WHERE id_product = ' . (int) $c['id_product']
+            . ($c['id_comb'] ? ' AND id_product_attribute < ' . (int) $c['id_comb'] : '') . '
         ');
-        return (int)$num + 1;
+
+        return (int) $num + 1;
     }
 
-    public function getProductData($id_product, $id_shop)
+    public function getBaseProductValues($id_product, $id_shop, $tax_incl)
     {
-        return $this->db->getRow('
-            SELECT p.*, ps.*, sa.out_of_stock FROM '._DB_PREFIX_.'product p
-            INNER JOIN '._DB_PREFIX_.'product_shop ps
-                ON ps.id_product = p.id_product AND ps.id_shop = '.(int)$id_shop.'
-            INNER JOIN '._DB_PREFIX_.'stock_available sa
-                ON sa.id_product = p.id_product AND sa.id_product_attribute = 0 AND sa.id_shop = '.(int)$id_shop.'
-            WHERE p.id_product = '.(int)$id_product.'
-        ');
+        $cache_key = 'base_values_' . (int) $id_product . '_' . (int) $id_shop . '_' . (int) $tax_incl;
+        if (!isset($this->x[$cache_key])) {
+            $data = $this->db->getRow('
+                SELECT * FROM ' . _DB_PREFIX_ . 'product p
+                INNER JOIN ' . _DB_PREFIX_ . 'product_shop ps
+                    ON ps.id_product = p.id_product AND ps.id_shop = ' . (int) $id_shop . '
+                WHERE p.id_product = ' . (int) $id_product . '
+            ');
+            // use same keys as in combination: price, unit_price_impact, etc.
+            $this->x[$cache_key] = [
+                'price' => $data['price'],
+                'unit_price_impact' => $data['unit_price_ratio'] > 0 ?
+                $data['price'] / $data['unit_price_ratio'] : 0,
+                'wholesale_price' => $data['wholesale_price'],
+                'weight' => $data['weight'],
+                'tax_impact' => $tax_incl ? $this->getTaxesRate($data['id_tax_rules_group']) : 0,
+            ];
+        }
+
+        return $this->x[$cache_key];
     }
 
-    public function deleteCombinations($id_product)
+    public function deleteCombinations($id_product, $a)
     {
         $ret = true;
-        $combinations = new PrestaShopCollection('Combination');
-        $combinations->where('id_product', '=', $id_product);
-        foreach ($combinations as $combination) {
-            if (!$this->combinations_num_left--) {
+        $shop_ids = $this->shopIDs();
+        $selected_atts = $a['action'] == 'deleteByAtts' ? $a['values'] : [];
+        $combination_ids = $this->getExistingCombinations($id_product, $shop_ids, $selected_atts);
+        foreach ($combination_ids as $id_comb) {
+            if (!$this->combinations_num['max']--) {
                 $ret &= false;
                 break;
             }
-            $ret &= $combination->delete();
+            $c_obj = new Combination($id_comb);
+            $ret &= $c_obj->delete();
+            ++$this->combinations_num['deleted'];
         }
         if ($ret) {
-            Hook::exec(
-                'actionProductAttributeDelete',
-                array(
-                    'id_product_attribute' => 0,
-                    'id_product' => (int)$id_product,
-                    'deleteAllAttributes' => true
-                )
-            );
-            SpecificPriceRule::applyAllRules(array($id_product));
+            if ($selected_atts && $this->getExistingCombinations($id_product, $shop_ids)) {
+                $this->updateDefaultCombinationAndSaveProduct($id_product, $a);
+            } else {
+                Hook::exec(
+                    'actionProductAttributeDelete',
+                    [
+                        'id_product_attribute' => 0,
+                        'id_product' => (int) $id_product,
+                        'deleteAllAttributes' => true,
+                    ]
+                );
+            }
         }
+
         return $ret;
     }
 
-    /*
-    * @return all available combinations in all shops
-    */
-    public function getExistingCombinations($id_product)
+    public function getCombinationsToUpdate($id_product, $a)
     {
+        $existing_combinations = $to_update = $used_comb_ids = $existing_atts = [];
+        $shop_ids = $this->shopIDs();
+        $source_product_id = isset($a['id_product_original']) ? $a['id_product_original'] : $id_product;
         $data = $this->db->executeS('
-            SELECT pac.id_product_attribute as id_comb,
-            pac.id_attribute as id_att, a.id_attribute_group as id_group
-            FROM '._DB_PREFIX_.'product_attribute_combination pac
-            INNER JOIN '._DB_PREFIX_.'attribute a ON a.id_attribute = pac.id_attribute
-            INNER JOIN '._DB_PREFIX_.'product_attribute pa
-                ON pac.id_product_attribute = pa.id_product_attribute
-                AND pa.id_product = '.(int)$id_product.'
-            ORDER BY a.id_attribute_group ASC
+            SELECT
+                pac.id_product_attribute AS id_comb, pac.id_attribute AS id_att,
+                a.id_attribute_group AS id_group, pa.id_product, pas.id_shop,
+                pas.`' . implode('`, pas.`', array_map('bqSQL', $this->impactKeys())) . '`
+            FROM ' . _DB_PREFIX_ . 'product_attribute_combination pac
+            INNER JOIN ' . _DB_PREFIX_ . 'attribute a ON a.id_attribute = pac.id_attribute
+            INNER JOIN ' . _DB_PREFIX_ . 'product_attribute pa
+                ON pa.id_product_attribute = pac.id_product_attribute
+                AND pa.id_product = ' . (int) $source_product_id . '
+            INNER JOIN ' . _DB_PREFIX_ . 'product_attribute_shop pas
+                ON pas.id_product_attribute = pa.id_product_attribute
+                AND pas.id_shop IN (' . $this->sqlIDs($shop_ids) . ')
+            ORDER BY pac.id_product_attribute ASC, a.id_attribute_group ASC'
+                . (count($shop_ids) > 1 ? ', FIELD(pas.id_shop,' . $this->sqlIDs($shop_ids) . ')' : '') . '
         ');
-        $combinations = array();
-        foreach ($data as $d) {
-            $combinations[$d['id_comb']][$d['id_group']] = $d['id_att'];
+        foreach ($data as $row) {
+            $id_comb = $row['id_comb'];
+            $id_shop = $row['id_shop'];
+            if (!isset($existing_combinations[$id_comb])) {
+                $existing_combinations[$id_comb] = [
+                    'att_ids' => [],
+                    'initial_impacts' => [],
+                    'shop_ids' => [],
+                ];
+            }
+            if (!isset($existing_combinations[$id_comb]['initial_impacts'][$id_shop])) {
+                $existing_combinations[$id_comb]['shop_ids'][$id_shop] = $id_shop;
+                foreach ($this->impactKeys() as $key) {
+                    $existing_combinations[$id_comb]['initial_impacts'][$id_shop][$key] = $row[$key];
+                }
+            }
+            $existing_combinations[$id_comb]['att_ids'][$row['id_group']] = $row['id_att'];
+            $existing_atts[$row['id_group']][$row['id_att']] = $row['id_att'];
         }
-        ksort($combinations);
-        return $combinations;
+        if ($a['action'] == 'duplicate') {
+            foreach ($existing_combinations as $id_comb => $c) {
+                $to_update[] = $c + [
+                    'id_product' => $id_product,
+                    'id_product_original' => $a['id_product_original'],
+                    'id_comb' => 0,
+                    'id_orig' => $id_comb,
+                    'upd_atts' => true,
+                ];
+            }
+        } else {
+            if ($a['action'] != 'updateByAtts' && $required_atts = $a['values']) {
+                if ($a['action'] == 'update') {
+                    foreach ($existing_atts as $id_group => $atts) {
+                        foreach ($atts as $id_att) {
+                            $required_atts[$id_group][$id_att] = $id_att;
+                        }
+                    }
+                }
+                $possible_combinations = $this->getPossibleCombinations($required_atts);
+            } elseif (isset($a['override_options']) && array_filter($a['override_options'])) {
+                $possible_combinations = array_column($existing_combinations, 'att_ids'); // update existing
+            } else {
+                $possible_combinations = []; // skip all, only updateDefaultCombinationAndSaveProduct
+            }
+            foreach ($possible_combinations as $att_ids) {
+                $comb = [
+                    'id_product' => $id_product,
+                    'id_comb' => 0,
+                    'id_orig' => 0,
+                    'att_ids' => $att_ids,
+                    'initial_impacts' => [],
+                    'shop_ids' => $shop_ids,
+                    'upd_atts' => true,
+                ];
+                foreach ($existing_combinations as $id_comb => $c) {
+                    $exactly_same_atts = $att_ids == $c['att_ids'];
+                    if ($a['action'] == 'addNew') {
+                        if ($comb['skip'] = $exactly_same_atts) {
+                            break;
+                        }
+                    } elseif (array_intersect($c['att_ids'], $att_ids) == $c['att_ids']) {
+                        $comb['id_comb'] = !isset($used_comb_ids[$id_comb]) ? $id_comb : 0;
+                        $used_comb_ids[$id_comb] = 1;
+                        $comb['id_orig'] = $id_comb;
+                        $comb['initial_impacts'] = $c['initial_impacts'];
+                        $comb['shop_ids'] = $c['shop_ids'];
+                        if ($comb['id_comb']) {
+                            $comb['upd_atts'] = !$exactly_same_atts;
+                            $comb['skip'] = !$comb['upd_atts'] && !$this->matchingSelectedAtts($att_ids, $a['values']);
+                        }
+                        break;
+                    }
+                }
+                if (empty($comb['skip'])) {
+                    $to_update[] = $comb;
+                }
+            }
+        }
+
+        return $to_update;
+    }
+
+    public function matchingSelectedAtts($current_atts, $selected_atts)
+    {
+        $matching = true;
+        foreach ($selected_atts as $atts_in_group) {
+            $matching &= (bool) array_intersect($current_atts, $atts_in_group);
+        }
+
+        return $matching;
+    }
+
+    public function getExistingCombinations($id_product, $shop_ids = [], $selected_atts = [])
+    {
+        $query = new DbQuery();
+        $query->select('pa.id_product_attribute AS id_comb');
+        $query->from('product_attribute', 'pa');
+        if ($shop_ids_ = $this->sqlIDs($shop_ids)) {
+            $on = 'pas.id_product_attribute = pa.id_product_attribute AND pas.id_shop IN (' . $shop_ids_ . ')';
+            $query->innerJoin('product_attribute_shop', 'pas', $on);
+        }
+        $query->where('pa.id_product = ' . (int) $id_product);
+        $comb_ids = array_column($this->db->executeS($query), 'id_comb', 'id_comb');
+        if ($selected_atts && $comb_ids_ = $this->sqlIDs($comb_ids)) {
+            $comb_atts = [];
+            $rows = $this->db->executeS('
+                SELECT pac.id_product_attribute AS id_comb,
+                pac.id_attribute AS id_att, a.id_attribute_group AS id_group
+                FROM ' . _DB_PREFIX_ . 'product_attribute_combination pac
+                INNER JOIN ' . _DB_PREFIX_ . 'attribute a ON a.id_attribute = pac.id_attribute
+                WHERE pac.id_product_attribute IN (' . $comb_ids_ . ')
+            ');
+            foreach ($rows as $row) {
+                $comb_atts[$row['id_comb']][$row['id_group']] = $row['id_att'];
+            }
+            foreach ($comb_atts as $id_comb => $atts) {
+                foreach ($selected_atts as $id_group => $atts_in_group) {
+                    if (!array_intersect($atts, $atts_in_group)) {
+                        unset($comb_ids[$id_comb]);
+                    }
+                }
+            }
+        }
+
+        return $comb_ids;
     }
 
     public function updateDefaultCombinationAndSaveProduct($id_product, $a)
     {
-        $order = array(
-            'min_price'  => 'pas.price ASC',
-            'max_price'  => 'pas.price DESC',
-            'min_weight' => 'pas.weight ASC',
-            'max_weight' => 'pas.weight DESC',
-        );
-        $custom_order = '';
-        if (isset($a['options']['default_combination']) && isset($order[$a['options']['default_combination']])) {
-            $custom_order = $order[$a['options']['default_combination']].', ';
+        $custom_order = [
+            'min_price' => ['by' => 'pas.price', 'way' => 'ASC'],
+            'max_price' => ['by' => 'pas.price', 'way' => 'DESC'],
+            'min_weight' => ['by' => 'pas.weight', 'way' => 'ASC'],
+            'max_weight' => ['by' => 'pas.weight', 'way' => 'DESC'],
+        ];
+        $order = false;
+        if (isset($a['options']['default_combination'])
+            && isset($custom_order[$a['options']['default_combination']])) {
+            $order = $custom_order[$a['options']['default_combination']];
+        }
+        $shop_ids = $this->shopIDs();
+        $default_shop_id = Configuration::get('PS_SHOP_DEFAULT');
+        if (isset($shop_ids[$default_shop_id])) {
+            unset($shop_ids[$default_shop_id]);
+            $shop_ids[$default_shop_id] = $default_shop_id; // move to the end
         }
         $this->backupContext();
-        foreach ($this->getContextShopIds() as $id_shop) {
+        foreach ($shop_ids as $id_shop) {
             Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
             if ($id_combination_default = $this->db->getValue('
-                SELECT pa.id_product_attribute FROM '._DB_PREFIX_.'product_attribute pa
-                INNER JOIN '._DB_PREFIX_.'product_attribute_shop pas
+                SELECT pa.id_product_attribute FROM ' . _DB_PREFIX_ . 'product_attribute pa
+                INNER JOIN ' . _DB_PREFIX_ . 'product_attribute_shop pas
                     ON pa.id_product_attribute = pas.id_product_attribute
-                    AND pas.id_shop = '.(int)$id_shop.'
-                WHERE pa.id_product = '.(int)$id_product.'
-                ORDER BY '.pSQL($custom_order).'pas.default_on DESC, pa.id_product_attribute ASC
+                    AND pas.id_shop = ' . (int) $id_shop . '
+                WHERE pa.id_product = ' . (int) $id_product . '
+                ORDER BY ' . ($order ? $this->sqlOrder($order) . ', ' : '')
+                    . 'pas.default_on DESC, pa.id_product_attribute ASC
             ')) {
                 try {
                     $product = new Product($id_product);
                     $product->deleteDefaultAttributes();
+                    $this->eraseDefaultCombinationRecordFromMainTable($id_product);
                     $product->setDefaultAttribute($id_combination_default);
-                    Hook::exec('actionProductUpdate', array('id_product' => $product->id, 'product' => $product));
+                    Hook::exec('actionProductUpdate', ['id_product' => $product->id, 'product' => $product]);
                     if ($product->depends_on_stock) {
-                         StockAvailable::synchronize($product->id);
+                        StockAvailable::synchronize($product->id);
                     }
                     // $this->updateSupplierReferences($product->id);
                 } catch (Exception $e) {
-                    $this->throwError($this->l('Product [ID='.$id_product.']').': '.$e->getMessage());
+                    $this->throwError($this->l('Product [ID=' . $id_product . ']') . ': ' . $e->getMessage());
                 }
             }
         }
+        if (end($shop_ids) != $default_shop_id) {
+            // update default combination records in ps_product, ps_product_attribute
+            Shop::setContext(Shop::CONTEXT_SHOP, $default_shop_id);
+            Product::updateDefaultAttribute($this->id_product);
+        }
         $this->restoreContext();
+
         return true;
     }
 
+    public function eraseDefaultCombinationRecordFromMainTable($id_product)
+    {
+        return $this->db->execute('
+            UPDATE ' . _DB_PREFIX_ . 'product_attribute SET default_on = NULL
+            WHERE id_product = ' . (int) $id_product . ' AND default_on = 1
+        ');
+    }
+
+    /*
+    * Temporarily not used
+    */
     public function updateSupplierReferences($id_product)
     {
-        // Temporarily not used
-        $combination_ids = array_keys($this->getExistingCombinations($id_product));
-        $supplier_ids = $this->getProductSuppliers($id_product);
-        $rows = array();
+        $combination_ids = $this->getExistingCombinations($id_product);
+        $supplier_ids = array_column($this->db->executeS('
+            SELECT DISTINCT(id_supplier) FROM ' . _DB_PREFIX_ . 'product_supplier
+            WHERE id_product = ' . (int) $id_product . ' AND id_product_attribute = 0
+        '), 'id_supplier');
+        $rows = [];
         foreach ($supplier_ids as $id_supplier) {
             foreach ($combination_ids as $id_comb) {
-                $rows[] = '(\'\', '.(int)$id_product.', '.(int)$id_comb.', '.(int)$id_supplier.', \'\')';
+                $rows[] = '(\'\', ' . (int) $id_product . ', ' . (int) $id_comb . ', ' . (int) $id_supplier . ', \'\')';
             }
         }
         if ($rows) {
             $this->db->execute('
-                INSERT INTO '._DB_PREFIX_.'product_supplier
-                (id_product_supplier, id_product,id_product_attribute, id_supplier, product_supplier_reference)
-                VALUES '.implode(', ', $rows).' ON DUPLICATE KEY UPDATE id_supplier=VALUES(id_supplier)
+                INSERT INTO ' . _DB_PREFIX_ . 'product_supplier
+                (id_product, id_product_attribute, id_supplier)
+                VALUES ' . implode(', ', $rows) . ' ON DUPLICATE KEY UPDATE id_supplier=VALUES(id_supplier)
             ');
         }
     }
 
-    public function getProductSuppliers($id_product)
-    {
-        $suppliers = $this->db->executeS('
-            SELECT DISTINCT(id_supplier) FROM '._DB_PREFIX_.'product_supplier
-            WHERE id_product = '.(int)$id_product.' AND id_product_attribute = 0
-        ');
-        foreach ($suppliers as &$sup) {
-            $sup = $sup['id_supplier'];
-        }
-        return $suppliers;
-    }
-
-    public function getContextShopIds($imploded = false)
-    {
-        $shop_ids = Shop::getContextListShopID();
-        return $imploded ? implode(',', $shop_ids) : $shop_ids;
-    }
-
     public function getDataPath($type)
     {
-        return $this->local_path.'data/'.$type.'.txt';
+        return $this->local_path . 'data/' . $type . '.txt';
     }
 
     public function getData($type)
     {
         $path = $this->getDataPath($type);
-        return file_exists($path) ? Tools::jsonDecode(Tools::file_get_contents($path), true) : array();
+
+        return file_exists($path) ? json_decode(Tools::file_get_contents($path), true) : [];
     }
 
     public function saveData($type, $data, $append = false)
     {
         $path = $this->getDataPath($type);
-        $data = is_string($data) ? $data : Tools::jsonEncode($data);
+        $data = is_string($data) ? $data : json_encode($data);
+
         return $append ? file_put_contents($path, $data, FILE_APPEND) : file_put_contents($path, $data);
     }
 
@@ -1002,12 +1096,13 @@ class BulkCombinationsGenerator extends Module
         foreach (glob($this->getDataPath('*')) as $file) {
             $erased &= unlink($file);
         }
+
         return $erased;
     }
 
     public function backupContext()
     {
-        $this->backup_context = array('shop_context' => Shop::getContext(), 'shop_context_id' => null);
+        $this->backup_context = ['shop_context' => Shop::getContext(), 'shop_context_id' => null];
         if ($this->backup_context['shop_context'] == Shop::CONTEXT_GROUP) {
             $this->backup_context['shop_context_id'] = $this->context->shop->id_shop_group;
         } elseif ($this->backup_context['shop_context'] == Shop::CONTEXT_SHOP) {
@@ -1029,7 +1124,35 @@ class BulkCombinationsGenerator extends Module
                 return false;
             }
         }
+
         return true;
+    }
+
+    public function sqlIDs($ids)
+    {
+        return $this->formatIDs($ids, true);
+    }
+
+    public function sqlColumn($column_name)
+    {
+        return strpos($column_name, '.') === false ? '`' . bqSQL($column_name) . '`'
+            : '`' . implode('`.`', array_map('bqSQL', explode('.', $column_name))) . '`'; // has alias
+    }
+
+    public function sqlOrder($order)
+    {
+        return $this->sqlColumn($order['by']) . ' '
+            . (isset($order['way']) && strtoupper($order['way']) == 'DESC' ? 'DESC' : 'ASC');
+    }
+
+    public function shopIDs($type = 'context', $implode = false)
+    {
+        if (!isset($this->x['shop_ids'][$type])) {
+            $this->x['shop_ids'][$type] = $type == 'context' ? Shop::getContextListShopID()
+                : Shop::getShops(false, null, true);
+        }
+
+        return $this->formatIDs($this->x['shop_ids'][$type], $implode);
     }
 
     public function formatIDs($ids, $return_string = true)
@@ -1038,50 +1161,74 @@ class BulkCombinationsGenerator extends Module
         $ids = array_map('intval', $ids);
         $ids = array_combine($ids, $ids);
         unset($ids[0]);
+
         return $return_string ? implode(',', $ids) : $ids;
+    }
+
+    public function getIDsFromString($string_of_ids)
+    {
+        $ids = explode(',', $string_of_ids);
+        if (strpos($string_of_ids, '-') !== false) {
+            $upd_ids = [];
+            foreach ($ids as $id) {
+                if (strpos($id, '-')) { // 0 if $id starts from '-'
+                    $r = explode('-', $id);
+                    foreach (range((int) $r[0], (int) $r[1]) as $id_in_range) {
+                        $upd_ids[] = $id_in_range;
+                    }
+                } else {
+                    $upd_ids[] = (int) $id;
+                }
+            }
+            $ids = $upd_ids;
+        }
+
+        return array_unique($ids);
     }
 
     public function getInfoLinks()
     {
-        $links = array(
-            'documentation' => array(
+        $links = [
+            'documentation' => [
                 'title' => $this->l('Documentation'),
                 'icon' => 'file-text',
-                'url' => $this->_path.'readme_en.pdf?v='.$this->version,
-            ),
-            'changelog' => array(
+                'url' => $this->_path . 'readme_en.pdf?v=' . $this->version,
+            ],
+            'changelog' => [
                 'title' => $this->l('Changelog'),
                 'icon' => 'code-fork',
-                'url' => $this->_path.'Readme.md?v='.$this->version,
-            ),
-            'contact' => array(
+                'url' => $this->_path . 'Readme.md?v=' . $this->version,
+            ],
+            'contact' => [
                 'title' => $this->l('Contact us'),
                 'icon' => 'envelope',
                 'url' => 'https://addons.prestashop.com/en/contact-us?id_product=18240',
-            ),
-            'modules' => array(
+            ],
+            'modules' => [
                 'title' => $this->l('Our modules'),
                 'icon' => 'download',
                 'url' => 'https://addons.prestashop.com/en/2_community-developer?contributor=64815',
-            ),
-        );
+            ],
+        ];
+
         return $links;
     }
 
     public function exportSettings()
     {
-        $data = array();
+        $data = [];
         parse_str(Tools::getValue('serialized_data'), $data);
-        $file_content = Tools::jsonEncode($data);
-        $file_name = 'bcg-settings-'.date('d-m-Y').'.txt';
-        header('Content-disposition: attachment; filename='.$file_name);
+        $file_content = json_encode($data);
+        $file_name = 'bcg-settings-' . date('d-m-Y') . '.txt';
+        header('Content-disposition: attachment; filename=' . $file_name);
         header('Content-type: text/plain');
         echo $file_content;
-        exit();
+        exit;
     }
 
     public function throwError($error_text, $class = 'error')
     {
-        die(Tools::jsonEncode(array('error' => utf8_encode($error_text), 'class' => $class)));
+        $this->eraseData();
+        exit(json_encode(['error' => $error_text, 'class' => $class]));
     }
 }

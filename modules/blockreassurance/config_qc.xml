@@ -2,8 +2,8 @@
 <module>
     <name>blockreassurance</name>
     <displayName><![CDATA[R&eacute;assurance]]></displayName>
-    <version><![CDATA[5.0.0]]></version>
-    <description><![CDATA[Cr&eacute;ez du lien avec vos clients et rassurez-les en mettant en valeur vos services : paiement s&eacute;curis&eacute;, livraison gratuite, retours, etc.]]></description>
+    <version><![CDATA[5.1.0]]></version>
+    <description><![CDATA[Entrez en contact avec vos visiteurs et parlez-leur de votre syst&egrave;me de paiement s&eacute;curis&eacute;, de la livraison gratuite et des retours.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[seo]]></tab>
 	<confirmUninstall><![CDATA[Êtes-vous sûr de vouloir désinstaller ce module ?]]></confirmUninstall>

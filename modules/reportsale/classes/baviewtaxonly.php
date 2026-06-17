@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2021 PrestaShop
+ * 2007-2023 PrestaShop
  *
  * NOTICE OF LICENSE
  *
@@ -19,17 +19,15 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  *  @author    PrestaShop SA <contact@buy-addons.com>
- *  @copyright 2007-2021 PrestaShop SA
+ *  @copyright 2007-2023 PrestaShop SA
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
-
 class BaViewTaxOnly extends ReportSale
 {
-
     private $orderby;
     private $orderway;
-    private $ps_searchable_fields = array('id_shop','shop_name', 'order_id',
+    private $ps_searchable_fields = ['id_shop', 'shop_name', 'order_id',
         'order_number',
         'invoice_number', 'invoice_status', 'products_name',
         'cart_id', 'total_products_no_tax',
@@ -38,27 +36,30 @@ class BaViewTaxOnly extends ReportSale
         'discounts_tax_amount', 'total_wrapping_tax_excl',
         'wrapping_tax_amount', 'total_shipping_without_tax',
         'shipping_tax_amount', 'total_tax', 'last_name',
-        'first_name', 'country', 'id_country', 'company', 'reference', 'state');
+        'first_name', 'country', 'id_country', 'company', 'reference', 'state', ];
+
     public function setWhereClauseDate($helper)
     {
         $sql = null;
-        $orderDateArr_order_date = Tools::getValue($helper->list_id . "Filter_order_add_date", null);
+        $orderDateArr_order_date = Tools::getValue($helper->list_id . 'Filter_order_add_date', null);
         if ($orderDateArr_order_date !== null) {
             $d = $orderDateArr_order_date;
-            $this->context->cookie->{$helper->list_id.'Filter_order_add_date'} = serialize($d);
+            $this->context->cookie->{$helper->list_id . 'Filter_order_add_date'} = serialize($d);
         }
         if (!empty($orderDateArr_order_date[0])) {
-            $sql.=" AND order_add_date >= '" . pSQL($orderDateArr_order_date[0]) . " 00:00:00' ";
+            $sql .= " AND order_add_date >= '" . pSQL($orderDateArr_order_date[0]) . " 00:00:00' ";
         }
         if (!empty($orderDateArr_order_date[1])) {
-            $sql.=" AND order_add_date <= '" . pSQL($orderDateArr_order_date[1]) . " 23:59:59' ";
+            $sql .= " AND order_add_date <= '" . pSQL($orderDateArr_order_date[1]) . " 23:59:59' ";
         }
+
         return $sql;
     }
+
     public function setWhereClause($helper)
     {
         foreach ($this->ps_searchable_fields as $search_field) {
-            $search_value = trim(Tools::getValue($helper->list_id . "Filter_" . $search_field, null));
+            $search_value = trim(Tools::getValue($helper->list_id . 'Filter_' . $search_field, null));
             if ($search_value !== null) {
                 $this->ps_where[] = " $search_field LIKE '%" . pSQL($search_value) . "%' ";
                 $this->context->cookie->{$helper->list_id . 'Filter_' . $search_field} = pSQL($search_value);
@@ -67,160 +68,151 @@ class BaViewTaxOnly extends ReportSale
             }
         }
         if (!empty($this->ps_where)) {
-            $whereClause = " WHERE " . implode(" AND ", $this->ps_where);
+            $whereClause = ' WHERE ' . implode(' AND ', $this->ps_where);
         } else {
             $whereClause = '';
         }
-        $whereClause.=$this->setWhereClauseDate($helper);
+        $whereClause .= $this->setWhereClauseDate($helper);
+
         return $whereClause;
     }
+
     public function resetList()
     {
         $helper_list_id = $this->name . 'ba_report_taxonly';
         foreach ($this->ps_searchable_fields as $search_field) {
             $this->context->cookie->{$helper_list_id . 'Filter_' . $search_field} = null;
         }
-        Configuration::updateValue($this->name.'_taxes_where', null);
+        Configuration::updateValue($this->name . '_taxes_where', null);
     }
+
     public function viewtaxonlylist()
     {
         $helper = new HelperList();
-        $fields_list = array(
-            'id_shop' => array(
+        $fields_list = [
+            'id_shop' => [
                 'title' => $this->l('ID shop'),
-                'type' => 'text'
-            ),
-            'shop_name' => array(
+                'type' => 'text',
+            ],
+            'shop_name' => [
                 'title' => $this->l('Shop name'),
-                'type' => 'text'
-            ),
-            'order_id' => array(
+                'type' => 'text',
+            ],
+            'order_id' => [
                 'title' => $this->l('Order ID'),
-                'type' => 'text'
-            ),
-            'reference' => array(
+                'type' => 'text',
+            ],
+            'reference' => [
                 'title' => $this->l('Reference'),
-                'type' => 'text'
-            ),
-            'order_add_date' => array(
+                'type' => 'text',
+            ],
+            'order_add_date' => [
                 'title' => $this->l('Order Add Date'),
-                'type' => 'date'
-            ),
-            'products_name' => array(
+                'type' => 'date',
+            ],
+            'products_name' => [
                 'title' => $this->l('Products'),
                 'type' => 'text',
                 'width' => 300,
                 'orderby' => false,
                 'callback' => 'displayProducts',
-                'callback_object' => $this
-            ),
-            'total_products_no_tax' => array(
+                'callback_object' => $this,
+            ],
+            'total_products_no_tax' => [
                 'title' => $this->l('Total Products No Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'product_tax' => array(
+                'callback_object' => $this,
+            ],
+            'product_tax' => [
                 'title' => $this->l('Product Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'including_ecotax_tax_excl' => array(
+                'callback_object' => $this,
+            ],
+            'including_ecotax_tax_excl' => [
                 'title' => $this->l('Including Ecotax Tax Excl'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'including_ecotax_tax_amount' => array(
+                'callback_object' => $this,
+            ],
+            'including_ecotax_tax_amount' => [
                 'title' => $this->l('Including Ecotax Tax Amount'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'total_discounts_tax_excl' => array(
+                'callback_object' => $this,
+            ],
+            'total_discounts_tax_excl' => [
                 'title' => $this->l('Total Discounts Tax Excl'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'discounts_tax_amount' => array(
+                'callback_object' => $this,
+            ],
+            'discounts_tax_amount' => [
                 'title' => $this->l('Discounts Tax Amount'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'total_wrapping_tax_excl' => array(
+                'callback_object' => $this,
+            ],
+            'total_wrapping_tax_excl' => [
                 'title' => $this->l('Total Wrapping Tax Excl'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'wrapping_tax_amount' => array(
+                'callback_object' => $this,
+            ],
+            'wrapping_tax_amount' => [
                 'title' => $this->l('Wrapping Tax Amount'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'total_shipping_without_tax' => array(
+                'callback_object' => $this,
+            ],
+            'total_shipping_without_tax' => [
                 'title' => $this->l('Total Shipping Without Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'shipping_tax_amount' => array(
+                'callback_object' => $this,
+            ],
+            'shipping_tax_amount' => [
                 'title' => $this->l('Shipping Tax Amount'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'total_tax_5' => array(
-                'title' => $this->l('Total Tax 5%'),
-                'type' => 'text',
-                'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-			'total_tax_9975' => array(
-                'title' => $this->l('Total Tax 9.975%'),
-                'type' => 'text',
-                'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-			'total_tax' => array(
+                'callback_object' => $this,
+            ],
+            'total_tax' => [
                 'title' => $this->l('Total Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyTaxOnly',
-                'callback_object' => $this
-            ),
-            'last_name' => array(
+                'callback_object' => $this,
+            ],
+            'last_name' => [
                 'title' => $this->l('Last Name'),
-                'type' => 'text'
-            ),
-            'first_name' => array(
+                'type' => 'text',
+            ],
+            'first_name' => [
                 'title' => $this->l('First Name'),
-                'type' => 'text'
-            ),
-            'country' => array(
+                'type' => 'text',
+            ],
+            'country' => [
                 'title' => $this->l('Country'),
-                'type' => 'text'
-            ),
-            'id_country' => array(
+                'type' => 'text',
+            ],
+            'id_country' => [
                 'title' => $this->l('ID Country'),
-                'type' => 'text'
-            ),
-            'state' => array(
+                'type' => 'text',
+            ],
+            'state' => [
                 'title' => $this->l('State'),
-                'type' => 'text'
-            ),
-            'company' => array(
+                'type' => 'text',
+            ],
+            'company' => [
                 'title' => $this->l('Company'),
-                'type' => 'text'
-            ),
-            'iso_currency' => array(
+                'type' => 'text',
+            ],
+            'iso_currency' => [
                 'title' => $this->l('Currency ISO'),
-                'type' => 'text'
-            ),
-        );
+                'type' => 'text',
+            ],
+        ];
         $helper->shopLinkType = '';
         $helper->identifier = 'id_report';
         $helper->show_toolbar = true;
@@ -229,25 +221,25 @@ class BaViewTaxOnly extends ReportSale
         $helper->title = $this->l('Report Taxes');
         $helper->table = $this->name . 'ba_report_taxonly';
         $helper->list_id = $this->name . 'ba_report_taxonly';
-        $this->orderby = pSQL(Tools::getValue($helper->list_id . "Orderby", "order_id"));
-        $this->orderway = pSQL(Tools::getValue($helper->list_id . "Orderway", "ASC"));
+        $this->orderby = pSQL(Tools::getValue($helper->list_id . 'Orderby', 'order_id'));
+        $this->orderway = pSQL(Tools::getValue($helper->list_id . 'Orderway', 'ASC'));
         $c1 = AdminController::$currentIndex;
         $n1 = $this->name;
         $ad1 = Tools::getAdminTokenLite('AdminModules');
-        $rp1 = "reportsaleba_report_taxonlyOrderby";
-        $rp2 = "reportsaleba_report_taxonlyOrderway";
+        $rp1 = 'reportsaleba_report_taxonlyOrderby';
+        $rp2 = 'reportsaleba_report_taxonlyOrderway';
         $o1 = $this->orderby;
         $o2 = $this->orderway;
-        $helper->toolbar_btn['export'] = array(
-            'href' => $c1.'&configure='.$n1.'&token='.$ad1.'&task=taxes&'.$rp1.'='.$o1.'&'.$rp2.'='.$o2.'&csv=taxes',
-            'desc' => $this->l('export csv')
-        );
+        $helper->toolbar_btn['export'] = [
+            'href' => $c1 . '&configure=' . $n1 . '&token=' . $ad1 . '&task=taxes&' . $rp1 . '=' . $o1 . '&' . $rp2 . '=' . $o2 . '&csv=taxes',
+            'desc' => $this->l('export csv'),
+        ];
         $helper->orderBy = $this->orderby;
         $helper->orderWay = Tools::strtoupper($this->orderway);
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name . '&task=taxes';
-        $helper->currentIndex .= '&'.$helper->list_id . "Orderby=".$helper->orderBy;
-        $helper->currentIndex .= '&'.$helper->list_id . "Orderway=".$helper->orderWay;
+        $helper->currentIndex .= '&' . $helper->list_id . 'Orderby=' . $helper->orderBy;
+        $helper->currentIndex .= '&' . $helper->list_id . 'Orderway=' . $helper->orderWay;
         $con = (int) $this->countData($helper);
         $helper->listTotal = $con;
         if ($this->context->cookie->{$helper->list_id . '_pagination'} < 20) {/* get value pagination */
@@ -262,10 +254,11 @@ class BaViewTaxOnly extends ReportSale
         if (!$page) {
             $page = 1;
         }
-        $start = ($page - 1 ) * $selected_pagination;
+        $start = ($page - 1) * $selected_pagination;
         $rows = $this->selectdatataxonly($helper, $start, $selected_pagination);
         $table_helper = $helper->generateList($rows, $fields_list);
         $table_helper .= $this->getSummaryBlock($helper, $fields_list);
+
         return $table_helper;
     }
 
@@ -274,12 +267,14 @@ class BaViewTaxOnly extends ReportSale
         $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_tax_only ';
         $where = $this->setWhereClause($helper);
         $sql .= $where;
-        Configuration::updateValue($this->name.'_taxes_where', $where);
-        $sql.=' ORDER BY ' . pSQL($this->orderby) . ' ' . pSQL($this->orderway)
+        Configuration::updateValue($this->name . '_taxes_where', $where);
+        $sql .= ' ORDER BY ' . pSQL($this->orderby) . ' ' . pSQL($this->orderway)
         . ' LIMIT ' . (int) $start . ', ' . (int) $selected_pagination;
         $rows = Db::getInstance()->executeS($sql, true, false);
-        return($rows);
+
+        return $rows;
     }
+
     public function insertreporttaxonly($id_order)
     {
         $order = new Order($id_order);
@@ -299,7 +294,7 @@ class BaViewTaxOnly extends ReportSale
             $value['original_wholesale_price'] = Tools::convertPriceFull($o, $c_from, $c_to);
             $o = $value['wholesale_price'];
             $value['wholesale_price'] = Tools::convertPriceFull($o, $c_from, $c_to);
-            
+
             $this->inserttaxonly($value, $order);
             echo $key;
         }
@@ -309,26 +304,27 @@ class BaViewTaxOnly extends ReportSale
         $reference = $order->reference;
         // tính lại total tax
         $query = 'UPDATE ' . _DB_PREFIX_ . 'ba_report_tax_only SET '
-                ."total_discounts_tax_excl=total_discounts_tax_excl+"
-                .(double) $order_total_discount["total_discounts_tax_excl"]
-                .", discounts_tax_amount=discounts_tax_amount+".(double) $order_total_discount["discounts_tax_amount"]
-                .", total_tax=total_tax+shipping_tax_amount+wrapping_tax_amount-"
-                .(double) $order_total_discount["discounts_tax_amount"]
-                .', products_name = "'.pSQL($products_name).'"'
-                .', reference = "'.pSQL($reference).'"'
-                . ' WHERE order_id=' . (int)$id_order;
-        
+                . 'total_discounts_tax_excl=total_discounts_tax_excl+'
+                . (float) $order_total_discount['total_discounts_tax_excl']
+                . ', discounts_tax_amount=discounts_tax_amount+' . (float) $order_total_discount['discounts_tax_amount']
+                . ', total_tax=total_tax+shipping_tax_amount+wrapping_tax_amount-'
+                . (float) $order_total_discount['discounts_tax_amount']
+                . ', products_name = "' . pSQL($products_name) . '"'
+                . ', reference = "' . pSQL($reference) . '"'
+                . ' WHERE order_id=' . (int) $id_order;
+
         Db::getInstance()->query($query);
-		$this->updateTaxesBreakdown('ba_report_tax_only', 'order_id', $order);
+
         return true;
     }
+
     public function inserttaxonly($product, $order)
     {
         $address = new Address($order->id_address_invoice);
         $unit_price = $product['unit_price_tax_excl'];
         $tax_rate = $product['tax_rate'];
         $total_quantity = $product['product_quantity'];
-        $shop_name = $this->getShopName((int)$order->id_shop);
+        $shop_name = $this->getShopName((int) $order->id_shop);
         $order_id = $order->id;
         $id_currency = $order->id_currency;
         $order_add_date = $order->date_add;
@@ -338,13 +334,13 @@ class BaViewTaxOnly extends ReportSale
         $invoice_status = '';
         $cart_id = $order->id_cart;
         $delivery_date = $order->delivery_date;
-        $total_products_no_tax = (double) $unit_price * (int) $total_quantity;
-        $product_tax = ((double) ($tax_rate / 100) * ($unit_price)) * (int) $total_quantity;
+        $total_products_no_tax = (float) $unit_price * (int) $total_quantity;
+        $product_tax = ((float) ($tax_rate / 100) * $unit_price) * (int) $total_quantity;
         /** eco TAX **/
         $ecotax_incl = $product['ecotax'];
         $ecotax_tax_rate = $product['ecotax_tax_rate'];
-        $ecotax_tax_excl = ($ecotax_incl/ (1+$ecotax_tax_rate/100));
-        $including_ecotax_tax_amount = ($ecotax_incl -  $ecotax_tax_excl) * $total_quantity;
+        $ecotax_tax_excl = ($ecotax_incl / (1 + $ecotax_tax_rate / 100));
+        $including_ecotax_tax_amount = ($ecotax_incl - $ecotax_tax_excl) * $total_quantity;
         $including_ecotax_tax_excl = $ecotax_tax_excl * $total_quantity;
         $total_discounts_tax_excl = '';
         $discounts_tax_amount = '';
@@ -369,7 +365,7 @@ class BaViewTaxOnly extends ReportSale
         $country = $address->country;
         $id_country = $address->id_country;
         // since 1.0.27+
-        $state_name = "";
+        $state_name = '';
         $id_state = (int) $address->id_state;
         if (!empty($id_state)) {
             $state_name = State::getNameById($id_state);
@@ -387,63 +383,65 @@ class BaViewTaxOnly extends ReportSale
             $total_tax = $total_tax + $get_data['total_tax'];
             $including_ecotax_tax_excl = $including_ecotax_tax_excl + $get_data['including_ecotax_tax_excl'];
             $including_ecotax_tax_amount = $including_ecotax_tax_amount + $get_data['including_ecotax_tax_amount'];
-            $total_discounts_tax_excl=$total_discounts_tax_excl+$get_data['total_discounts_tax_excl'];
-            $discounts_tax_amount=$discounts_tax_amount+$get_data['discounts_tax_amount'];
+            $total_discounts_tax_excl = $total_discounts_tax_excl + $get_data['total_discounts_tax_excl'];
+            $discounts_tax_amount = $discounts_tax_amount + $get_data['discounts_tax_amount'];
 
             $query = 'UPDATE ' . _DB_PREFIX_ . 'ba_report_tax_only SET '
-                    . 'total_products_no_tax="' . (double)$total_products_no_tax . '",'
-                    . 'product_tax="' . (double)$product_tax . '",'
-                    . 'including_ecotax_tax_excl="' . (double)$including_ecotax_tax_excl . '",'
-                    . 'including_ecotax_tax_amount="' . (double)$including_ecotax_tax_amount . '",'
-                    . 'total_discounts_tax_excl="' . (double)$total_discounts_tax_excl . '",'
-                    . 'discounts_tax_amount="' . (double)$discounts_tax_amount . '",'
-                    . 'total_tax="' . (double)$total_tax . '",'
+                    . 'total_products_no_tax="' . (float) $total_products_no_tax . '",'
+                    . 'product_tax="' . (float) $product_tax . '",'
+                    . 'including_ecotax_tax_excl="' . (float) $including_ecotax_tax_excl . '",'
+                    . 'including_ecotax_tax_amount="' . (float) $including_ecotax_tax_amount . '",'
+                    . 'total_discounts_tax_excl="' . (float) $total_discounts_tax_excl . '",'
+                    . 'discounts_tax_amount="' . (float) $discounts_tax_amount . '",'
+                    . 'total_tax="' . (float) $total_tax . '",'
                     . 'sign_currency="' . $sign_currency . '",'
                     . 'iso_currency="' . $iso_currency . '",'
                     . 'id_currency="' . $id_currency . '"'
-                    . 'WHERE order_id="' . (int)$order_id . '"';
+                    . 'WHERE order_id="' . (int) $order_id . '"';
             Db::getInstance()->query($query);
         }
         if ($data == null) {
-            Db::getInstance()->insert('ba_report_tax_only', array(
-                'id_shop' => (int)$order->id_shop,
+            Db::getInstance()->insert('ba_report_tax_only', [
+                'id_shop' => (int) $order->id_shop,
                 'shop_name' => pSQL($shop_name),
-                'order_id' => (int)$order_id,
+                'order_id' => (int) $order_id,
                 'order_add_date' => pSQL($order_add_date),
-                'order_number' => (int)$order_number,
+                'order_number' => (int) $order_number,
                 'invoice_add_date' => pSQL($invoice_add_date),
-                'invoice_number' => (int)$invoice_number,
-                'invoice_status' => (int)$invoice_status,
-                'cart_id' => (int)$cart_id,
+                'invoice_number' => (int) $invoice_number,
+                'invoice_status' => (int) $invoice_status,
+                'cart_id' => (int) $cart_id,
                 'delivery_date' => pSQL($delivery_date),
-                'total_products_no_tax' => (double)$total_products_no_tax,
-                'product_tax' => (double)$product_tax,
-                'including_ecotax_tax_excl' => (double)$including_ecotax_tax_excl,
-                'including_ecotax_tax_amount' => (double)$including_ecotax_tax_amount,
-                'total_discounts_tax_excl' => (double)$total_discounts_tax_excl,
-                'discounts_tax_amount' => (double)$discounts_tax_amount,
-                'total_wrapping_tax_excl' => (double)$total_wrapping_tax_excl,
-                'wrapping_tax_amount' => (double)$wrapping_tax_amount,
-                'total_shipping_without_tax' => (double)$total_shipping_without_tax,
-                'shipping_tax_amount' => (double)$shipping_tax_amount,
+                'total_products_no_tax' => (float) $total_products_no_tax,
+                'product_tax' => (float) $product_tax,
+                'including_ecotax_tax_excl' => (float) $including_ecotax_tax_excl,
+                'including_ecotax_tax_amount' => (float) $including_ecotax_tax_amount,
+                'total_discounts_tax_excl' => (float) $total_discounts_tax_excl,
+                'discounts_tax_amount' => (float) $discounts_tax_amount,
+                'total_wrapping_tax_excl' => (float) $total_wrapping_tax_excl,
+                'wrapping_tax_amount' => (float) $wrapping_tax_amount,
+                'total_shipping_without_tax' => (float) $total_shipping_without_tax,
+                'shipping_tax_amount' => (float) $shipping_tax_amount,
                 'total_tax' => $total_tax,
                 'last_name' => pSQL($last_name),
                 'first_name' => pSQL($first_name),
                 'country' => pSQL($country),
-                'id_country' => (int)$id_country,
+                'id_country' => (int) $id_country,
                 'company' => pSQL($company),
                 'sign_currency' => $sign_currency,
                 'iso_currency' => $iso_currency,
                 'id_currency' => $id_currency,
                 'id_state' => $id_state,
                 'state' => $state_name,
-            ));
+            ]);
         }
+
         return true;
     }
+
     public function updateAllTaxOnly($order_id)
     {
-        $query = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_tax_only WHERE order_id=' . (int)$order_id;
+        $query = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_tax_only WHERE order_id=' . (int) $order_id;
         $data = DB::getInstance()->executeS($query, true, false);
         $get_data = $data[0];
         $product_tax = $get_data['product_tax'];
@@ -451,24 +449,30 @@ class BaViewTaxOnly extends ReportSale
         $dis_tax_amount = $get_data['discounts_tax_amount'];
         $wrapping_tax_amount = $get_data['wrapping_tax_amount'];
         $shipping_tax_amount = $get_data['shipping_tax_amount'];
-        $total_tax = $product_tax+$iclecotax_tax_amount - $dis_tax_amount + $wrapping_tax_amount + $shipping_tax_amount;
-        $query = 'UPDATE ' . _DB_PREFIX_ . 'ba_report_tax_only SET total_tax="' . (double)$total_tax . '"'
-                . ' WHERE order_id=' . (int)$order_id;
+        $total_tax = $product_tax + $iclecotax_tax_amount - $dis_tax_amount + $wrapping_tax_amount + $shipping_tax_amount;
+        $query = 'UPDATE ' . _DB_PREFIX_ . 'ba_report_tax_only SET total_tax="' . (float) $total_tax . '"'
+                . ' WHERE order_id=' . (int) $order_id;
         Db::getInstance()->query($query);
+
         return true;
     }
+
     public function getreportTaxOnly($order_id)
     {
-        $query = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_tax_only WHERE order_id="' . (int)$order_id . '"';
+        $query = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_tax_only WHERE order_id="' . (int) $order_id . '"';
         $data = DB::getInstance()->executeS($query, true, false);
+
         return $data;
     }
+
     public function convertMoneyTaxOnly($value, $row)
     {
         $a = round($value, 2);
         $order = new Order($row['order_id']);
-        return Tools::displayPrice($a, (int)$order->id_currency);
+
+        return Tools::displayPrice($a, (int) $order->id_currency);
     }
+
     public function getSummaryBlock($helper, $fields_list)
     {
         $sql = 'SELECT COUNT(DISTINCT id_shop) as id_shop';
@@ -487,7 +491,7 @@ class BaViewTaxOnly extends ReportSale
         $sql .= ', COUNT(DISTINCT country) as country';
         $sql .= ', COUNT(DISTINCT id_country) as id_country';
         $sql .= ", COUNT(DISTINCT state) - COUNT(DISTINCT case when state='' then 1 end)";
-        $sql .= " as state";
+        $sql .= ' as state';
         $sql .= ', COUNT(DISTINCT company) as company';
         $sql .= ", SUM(CASE WHEN company IS NOT NULL AND company !='' THEN 1 ELSE 0 END) as notempty_c";
         $sql .= ', COUNT(DISTINCT iso_currency) as iso_currency';
@@ -511,8 +515,6 @@ class BaViewTaxOnly extends ReportSale
         $sql .= ', SUM(wrapping_tax_amount) as wrapping_tax_amount';
         $sql .= ', SUM(total_shipping_without_tax) as total_shipping_without_tax';
         $sql .= ', SUM(shipping_tax_amount) as shipping_tax_amount';
-        $sql .= ', SUM(total_tax_5) as total_tax_5';
-        $sql .= ', SUM(total_tax_9975) as total_tax_9975';
         $sql .= ', SUM(total_tax) as total_tax';
         $sql .= ' FROM ' . _DB_PREFIX_ . 'ba_report_tax_only ';
         $sql .= $this->setWhereClause($helper);
@@ -521,7 +523,7 @@ class BaViewTaxOnly extends ReportSale
         if (empty($item2)) {
             return false;
         }
-        $data = array(
+        $data = [
             'total_products_no_tax' => 0,
             'product_tax' => 0,
             'including_ecotax_tax_excl' => 0,
@@ -532,10 +534,8 @@ class BaViewTaxOnly extends ReportSale
             'wrapping_tax_amount' => 0,
             'total_shipping_without_tax' => 0,
             'shipping_tax_amount' => 0,
-            'total_tax_5' => 0,
-            'total_tax_9975' => 0,
             'total_tax' => 0,
-        );
+        ];
         $default_currency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
         $c_to = new Currency($default_currency);
         foreach ($item2 as $value) {
@@ -557,125 +557,118 @@ class BaViewTaxOnly extends ReportSale
             $data['total_shipping_without_tax'] += Tools::convertPriceFull($t, $c_from, $c_to);
             $data['shipping_tax_amount'] += Tools::convertPriceFull($value['shipping_tax_amount'], $c_from, $c_to);
             $data['total_tax'] += Tools::convertPriceFull($value['total_tax'], $c_from, $c_to);
-            $data['total_tax_5'] += Tools::convertPriceFull($value['total_tax_5'], $c_from, $c_to);
-            $data['total_tax_9975'] += Tools::convertPriceFull($value['total_tax_9975'], $c_from, $c_to);
         }
         $data = array_merge($item1, $data);
-        $summary = array();
-        $summary['id_shop'] = array(
+        $summary = [];
+        $summary['id_shop'] = [
             $this->l('#ID shop'),
-            number_format($data['id_shop'])
-        );
-        $summary['shop_name'] = array(
+            number_format($data['id_shop']),
+        ];
+        $summary['shop_name'] = [
             $this->l('#Shop name'),
-            number_format($data['shop_name'])
-        );
-        $summary['order_id'] = array(
+            number_format($data['shop_name']),
+        ];
+        $summary['order_id'] = [
             $this->l('#Order ID'),
-            number_format($data['order_id'])
-        );
-        $summary['reference'] = array(
+            number_format($data['order_id']),
+        ];
+        $summary['reference'] = [
             $this->l('#Reference'),
-            number_format($data['reference'])
-        );
-        $summary['order_add_date'] = array(
+            number_format($data['reference']),
+        ];
+        $summary['order_add_date'] = [
             $this->l('Order add date'),
-            $this->l('From: ').Tools::displayDate($data['min_order_add_date']),
-            $this->l('To: ').Tools::displayDate($data['max_order_add_date']),
-        );
-        $summary['products_name'] = array(
+            $this->l('From: ') . Tools::displayDate($data['min_order_add_date']),
+            $this->l('To: ') . Tools::displayDate($data['max_order_add_date']),
+        ];
+        $summary['products_name'] = [
             $this->l('Products'),
-            $this->l('-')
-        );
-        $summary['total_products_no_tax'] = array(
+            $this->l('-'),
+        ];
+        $summary['total_products_no_tax'] = [
             $this->l('Total Products No Tax'),
-            Tools::displayPrice($data['total_products_no_tax'], $c_to)
-        );
-        $summary['product_tax'] = array(
+            Tools::displayPrice($data['total_products_no_tax'], $c_to),
+        ];
+        $summary['product_tax'] = [
             $this->l('Product Tax'),
-            Tools::displayPrice($data['product_tax'], $c_to)
-        );
-        $summary['including_ecotax_tax_excl'] = array(
+            Tools::displayPrice($data['product_tax'], $c_to),
+        ];
+        $summary['including_ecotax_tax_excl'] = [
             $this->l('Including Ecotax Tax Excl'),
-            Tools::displayPrice($data['including_ecotax_tax_excl'], $c_to)
-        );
-        $summary['including_ecotax_tax_amount'] = array(
+            Tools::displayPrice($data['including_ecotax_tax_excl'], $c_to),
+        ];
+        $summary['including_ecotax_tax_amount'] = [
             $this->l('Including Ecotax Tax Amount'),
-            Tools::displayPrice($data['including_ecotax_tax_amount'], $c_to)
-        );
-        $summary['total_discounts_tax_excl'] = array(
+            Tools::displayPrice($data['including_ecotax_tax_amount'], $c_to),
+        ];
+        $summary['total_discounts_tax_excl'] = [
             $this->l('Total Discounts Tax Excl'),
-            Tools::displayPrice($data['total_discounts_tax_excl'], $c_to)
-        );
-        $summary['discounts_tax_amount'] = array(
+            Tools::displayPrice($data['total_discounts_tax_excl'], $c_to),
+        ];
+        $summary['discounts_tax_amount'] = [
             $this->l('Discounts Tax Amount'),
-            Tools::displayPrice($data['discounts_tax_amount'], $c_to)
-        );
-        $summary['total_wrapping_tax_excl'] = array(
+            Tools::displayPrice($data['discounts_tax_amount'], $c_to),
+        ];
+        $summary['total_wrapping_tax_excl'] = [
             $this->l('Total Wrapping Tax Excl'),
-            Tools::displayPrice($data['total_wrapping_tax_excl'], $c_to)
-        );
-        $summary['wrapping_tax_amount'] = array(
+            Tools::displayPrice($data['total_wrapping_tax_excl'], $c_to),
+        ];
+        $summary['wrapping_tax_amount'] = [
             $this->l('Wrapping Tax Amount'),
-            Tools::displayPrice($data['wrapping_tax_amount'], $c_to)
-        );
-        $summary['total_shipping_without_tax'] = array(
+            Tools::displayPrice($data['wrapping_tax_amount'], $c_to),
+        ];
+        $summary['total_shipping_without_tax'] = [
             $this->l('Total Shipping Without Tax'),
-            Tools::displayPrice($data['total_shipping_without_tax'], $c_to)
-        );
-        $summary['shipping_tax_amount'] = array(
+            Tools::displayPrice($data['total_shipping_without_tax'], $c_to),
+        ];
+        $summary['shipping_tax_amount'] = [
             $this->l('Shipping Tax Amount'),
-            Tools::displayPrice($data['shipping_tax_amount'], $c_to)
-        );
-        $summary['total_tax_5'] = array(
-            $this->l('Total Tax 5%'),
-            Tools::displayPrice($data['total_tax_5'], $c_to)
-        );
-		$summary['total_tax_9975'] = array(
-            $this->l('Total Tax 9.975%'),
-            Tools::displayPrice($data['total_tax_9975'], $c_to)
-        );
-		$summary['total_tax'] = array(
+            Tools::displayPrice($data['shipping_tax_amount'], $c_to),
+        ];
+        $summary['total_tax'] = [
             $this->l('Total Tax'),
-            Tools::displayPrice($data['total_tax'], $c_to)
-        );
-        $summary['last_name'] = array(
+            Tools::displayPrice($data['total_tax'], $c_to),
+        ];
+        $summary['last_name'] = [
             $this->l('Last Name'),
-            $this->l('-')
-        );
-        $summary['first_name'] = array(
+            $this->l('-'),
+        ];
+        $summary['first_name'] = [
             $this->l('First Name'),
-            $this->l('-')
-        );
-        $summary['country'] = array(
+            $this->l('-'),
+        ];
+        $summary['country'] = [
             $this->l('#Country'),
-            number_format($data['country'])
-        );
-        $summary['id_country'] = array(
+            number_format($data['country']),
+        ];
+        $summary['id_country'] = [
             $this->l('#ID Country'),
-            number_format($data['id_country'])
-        );
-        $summary['state'] = array(
+            number_format($data['id_country']),
+        ];
+        $summary['state'] = [
             $this->l('#State'),
-            number_format($data['state'])
-        );
-        $summary['company'] = array(
+            number_format($data['state']),
+        ];
+        $summary['company'] = [
             $this->l('#Company'),
-            number_format($data['company'])
-        );
-        $summary['iso_currency'] = array(
+            number_format($data['company']),
+        ];
+        $summary['iso_currency'] = [
             $this->l('#Currency ISO'),
-            number_format($data['iso_currency'])
-        );
+            number_format($data['iso_currency']),
+        ];
         $this->smarty->assign('summary', $summary);
         $this->smarty->assign('fields_list', $fields_list);
+
         return $this->shortDisplay('views/templates/admin/summary_table.tpl');
     }
+
     public function countData($helper)
     {
         $sql = 'SELECT count(*) FROM ' . _DB_PREFIX_ . 'ba_report_tax_only '
                 . $this->setWhereClause($helper);
         $data = DB::getInstance()->getValue($sql, false);
+
         return $data;
     }
 }

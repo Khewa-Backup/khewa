@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version    1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  * PHPExcel_CachedObjectStorage_Memcache
@@ -68,7 +70,7 @@ class PHPExcel_CachedObjectStorage_Memcache extends PHPExcel_CachedObjectStorage
 		if ($this->_currentCellIsDirty) {
 			$this->_currentObject->detach();
 
-			$obj = serialize($this->_currentObject);
+			$obj = json_encode($this->_currentObject);
 			if (!$this->_memcache->replace($this->_cachePrefix.$this->_currentObjectID.'.cache',$obj,NULL,$this->_cacheTime)) {
 				if (!$this->_memcache->add($this->_cachePrefix.$this->_currentObjectID.'.cache',$obj,NULL,$this->_cacheTime)) {
 					$this->__destruct();
@@ -157,7 +159,7 @@ class PHPExcel_CachedObjectStorage_Memcache extends PHPExcel_CachedObjectStorage
 
 		//	Set current entry to the requested entry
 		$this->_currentObjectID = $pCoord;
-		$this->_currentObject = unserialize($obj);
+		$this->_currentObject = json_decode($obj);
         //    Re-attach this as the cell's parent
         $this->_currentObject->attach($this);
 

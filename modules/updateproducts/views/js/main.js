@@ -108,10 +108,10 @@ $(document).ready(function(){
     $('.updateproducts #'+page+'  .field_list_'+tab+'  .block_base_fields li.checked').each(function(e) {
       var field_id = $(this).attr("data-value");
       specific_price_fields.onAdd(page, field_id, tab);
-
       var el = $(this).clone().removeClass('checked').append('<i class="icon-arrows icon-arrows-select-fields"></i>');
       $('.updateproducts #'+page+'  .block_selected_fields .selected_fields').append(el[0]);
       $(this).remove();
+      addPackFields(field_id, tab);
     });
   });
 
@@ -148,6 +148,7 @@ $(document).ready(function(){
 
         $('.updateproducts  #'+page+' .field_list_'+tab+' .block_base_fields').append(el[0]);
         $(this).remove();
+        removePackFields(field_id, tab);
       }
     });
 
@@ -182,7 +183,7 @@ $(document).ready(function(){
     });
   });
 
-  $("#filter_fields .fields_list .list-group-item").live('click', function(){
+  $(document).on('click', "#filter_fields .fields_list .list-group-item", function(){
     if(!$(this).hasClass('active')){
       var tab = $(this).attr('data-tab');
       $('#filter_fields .block_all_fields .field_list_base').removeClass('active');
@@ -192,7 +193,7 @@ $(document).ready(function(){
     }
   });
 
-  $("#update .fields_list .list-group-item").live('click', function(){
+  $(document).on('click', "#update .fields_list .list-group-item", function(){
     if(!$(this).hasClass('active')){
       var tab = $(this).attr('data-tab');
       $('#update .block_all_fields .field_list_base').removeClass('active');
@@ -363,9 +364,9 @@ $(document).ready(function(){
     var id_shop = $("input[name=id_shop]").val();
     var shopGroupId = $("input[name=shopGroupId]").val();
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&add_product=true&id_product='+$(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=addproduct&id_product='+$(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json'
     });
   });
@@ -379,9 +380,9 @@ $(document).ready(function(){
     var id_shop = $("input[name=id_shop]").val();
     var shopGroupId = $("input[name=shopGroupId]").val();
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&add_manufacturer=true&id_manufacturer='+$(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=addManufacturer&id_manufacturer='+$(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json'
     });
   });
@@ -390,9 +391,9 @@ $(document).ready(function(){
     var id_shop = $("input[name=id_shop]").val();
     var shopGroupId = $("input[name=shopGroupId]").val();
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&add_supplier=true&id_supplier='+$(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=addSupplier&id_supplier='+$(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json'
     });
   });
@@ -417,8 +418,6 @@ $(document).ready(function(){
     });
   });
 
-
-
   $(document).on('click', '.product_list #show_checked', function(e){
     e.preventDefault();
     $(".product_list .col-lg-6 .search_checkbox_table").val("");
@@ -426,9 +425,9 @@ $(document).ready(function(){
     var id_shop = $("input[name=id_shop]").val();
     var shopGroupId = $("input[name=shopGroupId]").val();
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&show_checked_products=true' +'&id_shop='+id_shop+'&id_lang='+id_lang + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=showCheckedProducts&id_shop='+id_shop+'&id_lang='+id_lang + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -443,9 +442,9 @@ $(document).ready(function(){
     var shopGroupId = $("input[name=shopGroupId]").val();
     $(".manufacturer_list .col-lg-6 .search_checkbox_table").val("");
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&show_checked_manufacturers=true&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=showCheckedManufacturers&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json', 
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -460,9 +459,9 @@ $(document).ready(function(){
     var shopGroupId = $("input[name=shopGroupId]").val();
     $(".supplier_list .col-lg-6 .search_checkbox_table").val("");
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&show_checked_suppliers=true&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=showCheckedSuppliers&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -479,9 +478,9 @@ $(document).ready(function(){
     var id_lang = $("select[name=id_lang]").val();
     var id_shop = $("input[name=id_shop]").val();
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&show_all_products=true' + '&id_shop='+id_shop+'&id_lang='+id_lang + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=showAllProducts&id_shop='+id_shop+'&id_lang='+id_lang + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -496,9 +495,9 @@ $(document).ready(function(){
     var shopGroupId = $("input[name=shopGroupId]").val();
     $(".manufacturer_list .col-lg-6 .search_checkbox_table").val("");
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&show_all_manufacturers=true&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=showAllManufacturers&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -513,9 +512,9 @@ $(document).ready(function(){
     var shopGroupId = $("input[name=shopGroupId]").val();
     $(".supplier_list .col-lg-6 .search_checkbox_table").val("");
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&show_all_suppliers=true&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=showAllSuppliers&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -530,9 +529,9 @@ $(document).ready(function(){
     var shopGroupId = $("input[name=shopGroupId]").val();
     var self = $(this);
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&search_product=' + $(this).val() +'&id_shop='+id_shop+'&id_lang='+id_lang + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=searchProduct&search_product=' + $(this).val() +'&id_shop='+id_shop+'&id_lang='+id_lang + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -548,9 +547,9 @@ $(document).ready(function(){
     var id_shop = $("input[name=id_shop]").val();
     var shopGroupId = $("input[name=shopGroupId]").val();
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&search_manufacturer=' + $(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=searchManufacturer&search_manufacturer=' + $(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -566,9 +565,9 @@ $(document).ready(function(){
     var id_shop = $("input[name=id_shop]").val();
     var shopGroupId = $("input[name=shopGroupId]").val();
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&search_supplier=' + $(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=searchSupplier&search_supplier=' + $(this).val() + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -584,9 +583,9 @@ $(document).ready(function(){
     var id_shop = $("input[name=id_shop]").val();
     var shopGroupId = $("input[name=shopGroupId]").val();
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&removeSetting=true&id=' + id + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=removeSetting&id=' + id + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -602,9 +601,9 @@ $(document).ready(function(){
     var id_shop = $("input[name=id_shop]").val();
     var shopGroupId = $("input[name=shopGroupId]").val();
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&removeSettingUpdate=true&id=' + id + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=removeSettingUpdate&id=' + id + '&id_shop=' + id_shop + '&shopGroupId=' + shopGroupId,
       dataType: 'json',
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
@@ -635,23 +634,23 @@ $(document).ready(function(){
     }
 
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&saveSettings=true&' + $('form.updateproducts').serialize()+data,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=saveSettings&' + $('form.updateproducts').serialize()+data,
       dataType: 'json',
       beforeSend: function(){
-        if( $('.progres_bar_ex').length < 1 ){
-          $("body").append('<div class="progres_bar_ex"><div class="loading_block"><div class="loading"></div><div class="exporting_notification"></div></div></div>');
+        if( $('.progres_bar_ex_updateproducts').length < 1 ){
+          $("body").append('<div class="progres_bar_ex_updateproducts"><div class="loading_block"><div class="loading"></div><div class="exporting_notification"></div></div></div>');
         }
       },
       complete: function(){
-        $(".progres_bar_ex").hide();
+        $(".progres_bar_ex_updateproducts").hide();
       },
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
         if( !json ){
           $('.alert-danger, .alert-success').remove();
-          $(".progres_bar_ex").remove();
+          $(".progres_bar_ex_updateproducts").remove();
           $(document).scrollTop(0);
           $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please contact us!</div>');
         }
@@ -660,7 +659,7 @@ $(document).ready(function(){
         }
         if( json['error_list'] ){
 
-          $(".progres_bar_ex").remove();
+          $(".progres_bar_ex_updateproducts").remove();
           $('.alert-danger, .alert-success').remove();
           $(document).scrollTop(0);
 
@@ -681,7 +680,7 @@ $(document).ready(function(){
       },
       error: function(){
         $('.alert-danger, .alert-success').remove();
-        $(".progres_bar_ex").remove();
+        $(".progres_bar_ex_updateproducts").remove();
         $(document).scrollTop(0);
         $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please contact us!</div>');
       }
@@ -695,30 +694,30 @@ $(document).ready(function(){
     });
 
     $.ajax({
-      url: '../modules/updateproducts/send.php',
+      url: adminUpdateProductsAjaxUrl,
       type: 'post',
-      data: 'ajax=true&saveSettingsUpdate=true&' + $('form.updateproducts').serialize()+data,
+      data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=saveSettingsUpdate&' + $('form.updateproducts').serialize()+data,
       dataType: 'json',
       beforeSend: function(){
-        if( $('.progres_bar_ex').length < 1 ){
-          $("body").append('<div class="progres_bar_ex"><div class="loading_block"><div class="loading"></div><div class="exporting_notification"></div></div></div>');
+        if( $('.progres_bar_ex_updateproducts').length < 1 ){
+          $("body").append('<div class="progres_bar_ex_updateproducts"><div class="loading_block"><div class="loading"></div><div class="exporting_notification"></div></div></div>');
         }
       },
       complete: function(){
-        $(".progres_bar_ex").hide();
+        $(".progres_bar_ex_updateproducts").hide();
       },
       success: function(json) {
         $('.alert, .alert-danger, .alert-success').remove();
         if( !json ){
           $('.alert-danger, .alert-success').remove();
-          $(".progres_bar_ex").remove();
+          $(".progres_bar_ex_updateproducts").remove();
           $(document).scrollTop(0);
           $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please contact us!</div>');
         }
 
         if( json['error_list'] ){
 
-          $(".progres_bar_ex").remove();
+          $(".progres_bar_ex_updateproducts").remove();
           $('.alert-danger, .alert-success').remove();
           $(document).scrollTop(0);
 
@@ -740,7 +739,7 @@ $(document).ready(function(){
       },
       error: function(){
         $('.alert-danger, .alert-success').remove();
-        $(".progres_bar_ex").remove();
+        $(".progres_bar_ex_updateproducts").remove();
         $(document).scrollTop(0);
         $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please contact us!</div>');
       }
@@ -749,10 +748,7 @@ $(document).ready(function(){
 
   $(document).on('click', 'button.update', function(e){
     updateProducts(0);
-
-
-
-  })
+  });
 });
 
 function updateProducts(pageLimit) {
@@ -770,37 +766,39 @@ function updateProducts(pageLimit) {
   xlsxData.append('id_lang_update', $("select[name=id_lang_update]").val());
   xlsxData.append('id_lang', $("input[name=current_lang_id]").val());
   xlsxData.append('format_file', $("input[name=format_file_update]:checked").val());
-  xlsxData.append('update', true);
   xlsxData.append('ajax', true);
   xlsxData.append('page_limit', pageLimit);
+  xlsxData.append('token', AdminUpdateProductsToken);
+  xlsxData.append('controller', 'AdminUpdateProducts');
+  xlsxData.append('action', 'update');
 
   $.each( $('#update .selected_fields li'), function() {
     xlsxData.append('field_update['+$(this).attr('data-value')+']',$(this).attr('data-name'));
   });
 
   $.ajax({
-    url: '../modules/updateproducts/send.php',
+    url: adminUpdateProductsAjaxUrl,
     type: 'post',
     data: xlsxData,
     dataType: 'json',
     processData: false,
     contentType: false,
     beforeSend: function(){
-      if( $('.progres_bar_ex').length < 1 ){
-        $("body").append('<div class="progres_bar_ex"><div class="loading_block"><div class="loading"></div><div class="exporting_notification"></div></div></div>');
+      if( $('.progres_bar_ex_updateproducts').length < 1 ){
+        $("body").append('<div class="progres_bar_ex_updateproducts"><div class="loading_block"><div class="loading"></div><div class="exporting_notification"></div></div></div>');
       }
     },
     success: function(json) {
       $('.alert, .alert-danger, .alert-success').remove();
       if( !json ){
         $('.alert-danger, .alert-success').remove();
-        $(".progres_bar_ex").remove();
+        $(".progres_bar_ex_updateproducts").remove();
         $(document).scrollTop(0);
-        $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please check <a href="../modules/updateproducts/error.log" target="_blank">error.log</a> file or contact us!</div>');
+        $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please check <a href="../modules/updateproducts/error/error.log" target="_blank">error.log</a> file or contact us!</div>');
       }
       if (json['error']) {
         clearInterval(refreshIntervalId);
-        $(".progres_bar_ex").remove();
+        $(".progres_bar_ex_updateproducts").remove();
         $('.alert-danger, .alert-success').remove();
         $(document).scrollTop(0);
         $('#bootstrap_products').before('<div class="alert alert-danger">' + json['error'] + '</div>');
@@ -808,7 +806,7 @@ function updateProducts(pageLimit) {
       else {
         if( json.success ){
           clearInterval(refreshIntervalId);
-          $(".progres_bar_ex").remove();
+          $(".progres_bar_ex_updateproducts").remove();
           $('.alert-danger, .alert-success').remove();
           $(document).scrollTop(0);
           
@@ -833,9 +831,9 @@ function updateProducts(pageLimit) {
     error: function(){
       clearInterval(refreshIntervalId);
       $('.alert-danger, .alert-success').remove();
-      $(".progres_bar_ex").remove();
+      $(".progres_bar_ex_updateproducts").remove();
       $(document).scrollTop(0);
-      $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please check <a href="../modules/updateproducts/error.log" target="_blank">error.log</a> file or contact us!</div>');
+      $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please check <a href="../modules/updateproducts/error/error.log" target="_blank">error.log</a> file or contact us!</div>');
     }
   });
 }
@@ -863,26 +861,26 @@ function exportProducts( pageLimit ) {
   data += '&page_limit='+pageLimit;
 
   $.ajax({
-    url: '../modules/updateproducts/send.php',
+    url: adminUpdateProductsAjaxUrl,
     type: 'post',
-    data: 'ajax=true&export=true&' + $('form.updateproducts').serialize()+data,
+    data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=export&' + $('form.updateproducts').serialize()+data,
     dataType: 'json',
     beforeSend: function(){
-      if( $('.progres_bar_ex').length < 1 ){
-        $("body").append('<div class="progres_bar_ex"><div class="loading_block"><div class="loading"></div><div class="exporting_notification"></div></div></div>');
+      if( $('.progres_bar_ex_updateproducts').length < 1 ){
+        $("body").append('<div class="progres_bar_ex_updateproducts"><div class="loading_block"><div class="loading"></div><div class="exporting_notification"></div></div></div>');
       }
     },
     success: function(json) {
       if( !json ){
         clearInterval(refreshIntervalId);
         $('.alert-danger, .alert-success').remove();
-        $(".progres_bar_ex").remove();
+        $(".progres_bar_ex_updateproducts").remove();
         $(document).scrollTop(0);
-        $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please check <a href="../modules/updateproducts/error.log" target="_blank">error.log</a> file or contact us!</div>');
+        $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please check <a href="../modules/updateproducts/error/error.log" target="_blank">error.log</a> file or contact us!</div>');
       }
       if (json['error']) {
         clearInterval(refreshIntervalId);
-        $(".progres_bar_ex").remove();
+        $(".progres_bar_ex_updateproducts").remove();
         $('.alert-danger, .alert-success').remove();
         $(document).scrollTop(0);
         $('#bootstrap_products').before('<div class="alert alert-danger">' + json['error'] + '</div>');
@@ -890,14 +888,14 @@ function exportProducts( pageLimit ) {
       else {
         if( json.file ){
           clearInterval(refreshIntervalId);
-          $(".progres_bar_ex").remove();
+          $(".progres_bar_ex_updateproducts").remove();
           $('.alert-danger, .alert-success').remove();
           location.href = json.file;
         }
 
         if( json['error_list'] ){
 
-          $(".progres_bar_ex").remove();
+          $(".progres_bar_ex_updateproducts").remove();
           $('.alert-danger, .alert-success').remove();
           clearInterval(refreshIntervalId);
           $(document).scrollTop(0);
@@ -922,18 +920,18 @@ function exportProducts( pageLimit ) {
     error: function(){
       clearInterval(refreshIntervalId);
       $('.alert-danger, .alert-success').remove();
-      $(".progres_bar_ex").remove();
+      $(".progres_bar_ex_updateproducts").remove();
       $(document).scrollTop(0);
-      $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please check <a href="../modules/updateproducts/error.log" target="_blank">error.log</a> file or contact us!</div>');
+      $('#bootstrap_products').before('<div class="alert alert-danger">Some error occurred please check <a href="../modules/updateproducts/error/error.log" target="_blank">error.log</a> file or contact us!</div>');
     }
   });
 }
 
 function returnExportedProducts(id_shop){
   $.ajax({
-    url: '../modules/updateproducts/send.php',
+    url: adminUpdateProductsAjaxUrl,
     type: 'post',
-    data: 'ajax=true&returnExportCount=true&id_shop='+id_shop,
+    data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=returnExportCount&id_shop='+id_shop,
     dataType: 'json',
     success: function(json) {
       if (json['export_notification']) {
@@ -945,9 +943,9 @@ function returnExportedProducts(id_shop){
 
 function returnUpdatedProducts(id_shop){
   $.ajax({
-    url: '../modules/updateproducts/send.php',
+    url: adminUpdateProductsAjaxUrl,
     type: 'post',
-    data: 'ajax=true&returnUpdateCount=true&id_shop='+id_shop,
+    data: 'ajax=true&token='+AdminUpdateProductsToken+'&controller=AdminUpdateProducts&action=returnUpdateCount&id_shop='+id_shop,
     dataType: 'json',
     success: function(json) {
       if (json['update_notification']) {
@@ -1021,5 +1019,43 @@ function activeErrorTab( tab, field ){
     }
 
   }
-
 }
+
+function addPackFields(fieldId, tab) {
+  var packFields = ['pack_items_id',
+    'pack_items_id_pack_product_attribute',
+    'pack_items_quantity',
+  ];
+
+  if( $.inArray(fieldId, packFields) !== -1 ){
+    $(packFields).each(function(key, value) {
+      if( value != fieldId ){
+        $('.block_base_fields li[data-tab='+tab+'][data-value='+value+']').addClass('checked');
+        $('.updateproducts .add_base_filds').trigger('click');
+      }
+    });
+  }
+}
+
+function removePackFields(fieldId, tab) {
+  var packFields = ['pack_items_id',
+    'pack_items_id_pack_product_attribute',
+    'pack_items_quantity',
+  ];
+
+  if( $.inArray(fieldId, packFields) !== -1 ){
+    $(packFields).each(function(key, value) {
+      if( value != fieldId ){
+        $('.selected_fields li[data-tab='+tab+'][data-value='+value+']').addClass('checked');
+        $('.updateproducts .remove_base_filds').trigger('click');
+      }
+    });
+  }
+}
+
+$(document).on("click", ".updateproducts .nav-tabs a[href='#support']", function(e) {
+  var url = $('.support_url').val();
+  var win = window.open(url, '_blank');
+  win.focus();
+  $(".updateproducts .nav-tabs a[href=#general]").click();
+});

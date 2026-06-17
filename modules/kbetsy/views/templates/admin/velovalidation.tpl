@@ -72,6 +72,12 @@
         not_image: "{l s='Uploaded file is not an image' mod='kbetsy'}",
         image_size: "{l s='Uploaded file size must be less than #.' mod='kbetsy'}",
     });
+    /**
+    * Set validation error for the Order Shipped Status field
+    * @date 09-04-2023
+    * @author Tanisha Gupta
+    */
+    var empty_error = "{l s='Field can not be empty.' mod='kbetsy'}";    
     var lang_err = "{l s='You can not select default language in sync languages.' mod='kbetsy'}";
     var amount_err = "{l s='Please enter valid amount (e.g. 3.50).' mod='kbetsy'}";
     var amount_max_err = "{l s='Cost must be between 0.00 to 20000.00' mod='kbetsy'}";
@@ -89,4 +95,15 @@
     var store_cat_proc = "{l s='Please select store category to proceed.' mod='kbetsy'}";
     var store_profile_product = "{l s='Please select atleast one product to contine.' mod='kbetsy'}";
     var size_chart_image_missing = "{l s='Size chart Image missing.Please upload the same..' mod='kbetsy'}";
+    /**
+     * Set Product fetch URL to the js variable so same can be used in the js file.
+     * @date 11-04-2023
+     * @author Tanisha Gupta
+     */
+    {if isset($kb_fetch_product_link)}
+        var kb_fetch_product_link = "{$kb_fetch_product_link nofilter}"; {*Variable contains URL content,escape not required*}
+    {else}    
+        var kb_fetch_product_link = "";
+    {/if}
+    
 </script>

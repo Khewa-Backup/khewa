@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -46,16 +47,13 @@ abstract class BT_GmcProReviewCtrl
                     if ($oReflection->isInstantiable()) {
                         return $oReflection->newInstance($aParams);
                     } else {
-                        throw new Exception(GMerchantCenterPro::$oModule->l('Internal server error => controller isn\'t instantiable',
-                            'base-ctrl_class'), 900);
+                        throw new Exception(GMerchantCenterPro::$oModule->l('Internal server error => controller isn\'t instantiable', 'base-ctrl_class'), 900);
                     }
                 } catch (ReflectionException $e) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('Internal server error => invalid controller',
-                        'base-ctrl_class'), 901);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('Internal server error => invalid controller', 'base-ctrl_class'), 901);
                 }
             } else {
-                throw new Exception(GMerchantCenterPro::$oModule->l('Internal server error => the controller file doesn\'t exist',
-                    'base-ctrl_class'), 902);
+                throw new Exception(GMerchantCenterPro::$oModule->l('Internal server error => the controller file doesn\'t exist', 'base-ctrl_class'), 902);
             }
         }
     }

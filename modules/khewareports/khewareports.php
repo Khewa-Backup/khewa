@@ -3,7 +3,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-
 class Khewareports extends Module
 {
     // Default order state IDs (can be overridden in settings)
@@ -23,9 +22,11 @@ class Khewareports extends Module
     const DEFAULT_PM_INTERAC = 'Interac';
     const DEFAULT_PM_GIFT_CARD = 'Gift card, Carte Cadeau, InStore Gift Card';
     const DEFAULT_PM_VOUCHER = 'Voucher';
-    const DEFAULT_PM_CREDIT_SLIP = 'Credit Slip';
+    const DEFAULT_PM_CREDIT_SLIP = 'Credit Slip, Avoir, avoir, credit slip';
     const DEFAULT_PM_POS_MODULE = 'hspointofsalepro';
     
+
+
     public function __construct()
     {
         $this->name = 'khewareports';
@@ -646,6 +647,86 @@ class Khewareports extends Module
         }
         
         return '(' . implode(' OR ', $conditions) . ')';
+    }
+
+    /**
+     * Case-insensitive LIKE on LOWER(column) for multiple patterns (SBPM / Sales matching).
+     *
+     * @param array $patterns
+     * @param string $columnName SQL column expression (e.g. 'op.payment_method')
+     * @return string SQL condition
+     */
+    public static function buildLowerLikeCondition($patterns, $columnName)
+    {
+        if (empty($patterns)) {
+            return '1=0';
+        }
+        $conditions = array();
+        foreach ($patterns as $pattern) {
+            $escaped = pSQL(Tools::strtolower($pattern));
+            $conditions[] = 'LOWER(' . $columnName . ') LIKE "%' . $escaped . '%"';
+        }
+        return '(' . implode(' OR ', $conditions) . ')';
+    }
+
+    /**
+     * Credit slip on order_payment (configured patterns + legacy token "slip").
+     */
+    public static function buildCreditSlipOrderPaymentMatchSql($columnName)
+    {
+        $patterns = self::getPaymentMethodPatterns()['credit_slip'];
+        $parts = array();
+        if (!empty($patterns)) {
+            $parts[] = self::buildLowerLikeCondition($patterns, $columnName);
+        }
+        $parts[] = 'LOWER(' . $columnName . ') LIKE "%slip%"';
+        return '(' . implode(' OR ', $parts) . ')';
+    }
+
+    /**
+     * Credit slip on cart rule line: order_cart_rule.name, cart_rule.description, optional cart_rule_lang.name.
+     * Uses IFNULL on text fields so NULL descriptions do not exclude a row.
+     * Used with payment exclusion so the same order is not counted twice.
+     *
+     * @param string|null $crLangNameCol e.g. crl_cs.name (PrestaShop stores rule title in cart_rule_lang)
+     */
+    public static function buildCreditSlipCartRuleMatchSql($ocrNameCol, $crDescCol, $crLangNameCol = null)
+    {
+        $patterns = self::getPaymentMethodPatterns()['credit_slip'];
+        $parts = array();
+        $ocrSafe = 'IFNULL(' . $ocrNameCol . ', \'\' )';
+        $descSafe = 'IFNULL(' . $crDescCol . ', \'\' )';
+        if (!empty($patterns)) {
+            $parts[] = self::buildLowerLikeCondition($patterns, $ocrSafe);
+            $parts[] = self::buildLowerLikeCondition($patterns, $descSafe);
+        }
+        if ($crLangNameCol !== null && $crLangNameCol !== '') {
+            $langSafe = 'IFNULL(' . $crLangNameCol . ', \'\' )';
+            if (!empty($patterns)) {
+                $parts[] = self::buildLowerLikeCondition($patterns, $langSafe);
+            }
+        }
+        $parts[] = 'LOWER(' . $descSafe . ') LIKE "%slip%"';
+        $parts[] = 'LOWER(' . $ocrSafe . ') LIKE "%slip%"';
+        return '(' . implode(' OR ', $parts) . ')';
+    }
+
+    /**
+     * Fallback: credit slip stored only on order_cart_rule.name (POS) when cart_rule join would miss it.
+     */
+    public static function buildCreditSlipOrderCartRuleFallbackMatchSql($ocrNameCol)
+    {
+        $ocrSafe = 'IFNULL(' . $ocrNameCol . ', \'\' )';
+        $patterns = self::getPaymentMethodPatterns()['credit_slip'];
+        $parts = array();
+        if (!empty($patterns)) {
+            $parts[] = self::buildLowerLikeCondition($patterns, $ocrSafe);
+        }
+        $parts[] = 'LOWER(' . $ocrSafe . ') LIKE "%avoir%"';
+        $parts[] = 'LOWER(' . $ocrSafe . ') LIKE "%crédit%"';
+        $parts[] = 'LOWER(' . $ocrSafe . ') LIKE "%credit slip%"';
+        $parts[] = '(LOWER(' . $ocrSafe . ') LIKE "%credit%" AND LOWER(' . $ocrSafe . ') LIKE "%slip%")';
+        return '(' . implode(' OR ', $parts) . ')';
     }
     
     /**

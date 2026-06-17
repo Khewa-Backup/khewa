@@ -21,6 +21,10 @@ article.product-miniature.js-product-miniature .pw-fav-toggle .pw-fav-btn-text {
 article.product-miniature.js-product-miniature .pw-fav-toggle {
   position: absolute;
   right: 0;
+  left: auto;
+  bottom: auto;
+  width: auto;
+  height: auto;
   margin: 8px;
 }
 

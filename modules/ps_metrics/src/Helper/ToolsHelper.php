@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -29,7 +30,7 @@ class ToolsHelper
      *
      * @return string
      */
-    public function getShopDomainSsl($http)
+    public function getShopDomainSsl(bool $http): string
     {
         return Tools::getShopDomainSsl($http);
     }
@@ -37,18 +38,18 @@ class ToolsHelper
     /**
      * @return bool
      */
-    public function usingSecureMode()
+    public function usingSecureMode(): bool
     {
         return Tools::usingSecureMode();
     }
 
     /**
      * @param string $value
-     * @param mixed $default_value
+     * @param false|mixed $default_value
      *
      * @return false|mixed
      */
-    public function getValue($value, $default_value = false)
+    public function getValue(string $value, $default_value = false)
     {
         return Tools::getValue($value, $default_value);
     }
@@ -58,7 +59,7 @@ class ToolsHelper
      *
      * @return void
      */
-    public function redirectAdmin($url)
+    public function redirectAdmin(string $url): void
     {
         Tools::redirectAdmin($url);
     }
@@ -68,7 +69,7 @@ class ToolsHelper
      *
      * @return void
      */
-    public function redirect($url)
+    public function redirect(string $url): void
     {
         Tools::redirect($url);
     }

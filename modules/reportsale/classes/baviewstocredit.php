@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2021 PrestaShop
+ * 2007-2023 PrestaShop
  *
  * NOTICE OF LICENSE
  *
@@ -19,43 +19,45 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  *  @author    PrestaShop SA <contact@buy-addons.com>
- *  @copyright 2007-2021 PrestaShop SA
+ *  @copyright 2007-2023 PrestaShop SA
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
-
 class BaViewStoCredit extends ReportSale
 {
     private $orderby;
     private $orderway;
-    private $ps_searchable_fields = array('shop_name', 'id_cart',
+    private $ps_searchable_fields = ['shop_name', 'id_cart',
         'order_id', 'order_number', 'invoice_number',
         'invoice_status', 'credit_slip_id', 'first_name',
         'last_name',
         'payment_method', 'total_products_no_tax',
         'products_tax', 'total_shipping_without_tax',
         'shipping_tax_amount', 'total_no_tax',
-        'total_tax', 'total_tax_incl','reference','state','country','id_country');
+        'total_tax', 'total_tax_incl', 'reference', 'state', 'country', 'id_country', ];
+
     public function setWhereClauseDate($helper)
     {
         $sql = null;
-        $credit_slip_date = Tools::getValue($helper->list_id . "Filter_credit_slip_date", null);
+        $credit_slip_date = Tools::getValue($helper->list_id . 'Filter_credit_slip_date', null);
         if ($credit_slip_date !== null) {
             $d = $credit_slip_date;
-            $this->context->cookie->{$helper->list_id.'Filter_credit_slip_date'} = serialize($d);
+            $this->context->cookie->{$helper->list_id . 'Filter_credit_slip_date'} = serialize($d);
         }
         if (!empty($credit_slip_date[0])) {
-            $sql.=" AND credit_slip_date >= '" . pSQL($credit_slip_date[0]) . " 00:00:00' ";
+            $sql .= " AND credit_slip_date >= '" . pSQL($credit_slip_date[0]) . " 00:00:00' ";
         }
         if (!empty($credit_slip_date[1])) {
-            $sql.=" AND credit_slip_date <= '" . pSQL($credit_slip_date[1]) . " 23:59:59' ";
+            $sql .= " AND credit_slip_date <= '" . pSQL($credit_slip_date[1]) . " 23:59:59' ";
         }
+
         return $sql;
     }
+
     public function setWhereClause($helper)
     {
         foreach ($this->ps_searchable_fields as $search_field) {
-            $search_value = Tools::getValue($helper->list_id . "Filter_" . $search_field, null);
+            $search_value = Tools::getValue($helper->list_id . 'Filter_' . $search_field, null);
             if ($search_value !== null) {
                 $this->ps_where[] = " $search_field LIKE '%" . pSQL($search_value) . "%' ";
                 $this->context->cookie->{$helper->list_id . 'Filter_' . $search_field} = pSQL($search_value);
@@ -64,112 +66,115 @@ class BaViewStoCredit extends ReportSale
             }
         }
         if (!empty($this->ps_where)) {
-            $whereClause = " WHERE " . implode(" AND ", $this->ps_where);
+            $whereClause = ' WHERE ' . implode(' AND ', $this->ps_where);
         } else {
             $whereClause = '';
         }
-        $whereClause.=$this->setWhereClauseDate($helper);
+        $whereClause .= $this->setWhereClauseDate($helper);
+
         return $whereClause;
     }
+
     public function resetList()
     {
         $helper_list_id = $this->name . 'ba_report_storecredit';
         foreach ($this->ps_searchable_fields as $search_field) {
             $this->context->cookie->{$helper_list_id . 'Filter_' . $search_field} = null;
         }
-        Configuration::updateValue($this->name.'_credit_where', null);
+        Configuration::updateValue($this->name . '_credit_where', null);
     }
+
     public function viewstocreditlist()
     {
         $helper = new HelperList();
-        $fields_list = array(
-            'shop_name' => array(
+        $fields_list = [
+            'shop_name' => [
                 'title' => $this->l('Shop name'),
-                'type' => 'text'
-            ),
-            'credit_slip_id' => array(
+                'type' => 'text',
+            ],
+            'credit_slip_id' => [
                 'title' => $this->l('Credit Slip ID'),
-                'type' => 'text'
-            ),
-            'id_order' => array(
+                'type' => 'text',
+            ],
+            'id_order' => [
                 'title' => $this->l('ID Order'),
-                'type' => 'text'
-            ),
-            'reference' => array(
+                'type' => 'text',
+            ],
+            'reference' => [
                 'title' => $this->l('Reference'),
-                'type' => 'text'
-            ),
-            'first_name' => array(
+                'type' => 'text',
+            ],
+            'first_name' => [
                 'title' => $this->l('First Name'),
-                'type' => 'text'
-            ),
-            'last_name' => array(
+                'type' => 'text',
+            ],
+            'last_name' => [
                 'title' => $this->l('Last Name'),
-                'type' => 'text'
-            ),
-            'credit_slip_date' => array(
+                'type' => 'text',
+            ],
+            'credit_slip_date' => [
                 'title' => $this->l('Credit Slip Date'),
-                'type' => 'date'
-            ),
-            'payment_method' => array(
+                'type' => 'date',
+            ],
+            'payment_method' => [
                 'title' => $this->l('Payment Method'),
-                'type' => 'text'
-            ),
-            'total_products_no_tax' => array(
+                'type' => 'text',
+            ],
+            'total_products_no_tax' => [
                 'title' => $this->l('Total Products No Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyStocredit',
-                'callback_object' => $this
-            ),
-            'products_tax' => array(
+                'callback_object' => $this,
+            ],
+            'products_tax' => [
                 'title' => $this->l('Products Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyStocredit',
-                'callback_object' => $this
-            ),
-            'total_shipping_without_tax' => array(
+                'callback_object' => $this,
+            ],
+            'total_shipping_without_tax' => [
                 'title' => $this->l('Total Shipping Without Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyStocredit',
-                'callback_object' => $this
-            ),
-            'shipping_tax_amount' => array(
+                'callback_object' => $this,
+            ],
+            'shipping_tax_amount' => [
                 'title' => $this->l('Shipping Tax Amount'),
                 'type' => 'text',
                 'callback' => 'convertMoneyStocredit',
-                'callback_object' => $this
-            ),
-            'total_no_tax' => array(
+                'callback_object' => $this,
+            ],
+            'total_no_tax' => [
                 'title' => $this->l('Total No Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyStocredit',
-                'callback_object' => $this
-            ),
-            'total_tax' => array(
+                'callback_object' => $this,
+            ],
+            'total_tax' => [
                 'title' => $this->l('Total Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyStocredit',
-                'callback_object' => $this
-            ),
-            'total_tax_incl' => array(
+                'callback_object' => $this,
+            ],
+            'total_tax_incl' => [
                 'title' => $this->l('Total Tax Incl'),
                 'type' => 'text',
                 'callback' => 'convertMoneyStocredit',
-                'callback_object' => $this
-            ),
-            'iso_currency' => array(
+                'callback_object' => $this,
+            ],
+            'iso_currency' => [
                 'title' => $this->l('Currency ISO'),
-                'type' => 'text'
-            ),
-            'country' => array(
+                'type' => 'text',
+            ],
+            'country' => [
                 'title' => $this->l('Country'),
-                'type' => 'text'
-            ),
-            'state' => array(
+                'type' => 'text',
+            ],
+            'state' => [
                 'title' => $this->l('State'),
-                'type' => 'text'
-            ),
-        );
+                'type' => 'text',
+            ],
+        ];
         $helper->shopLinkType = '';
         $helper->identifier = 'id_report';
         $helper->show_toolbar = true;
@@ -178,27 +183,27 @@ class BaViewStoCredit extends ReportSale
         $helper->title = $this->l('Report Credit Slips');
         $helper->table = $this->name . 'ba_report_storecredit';
         $helper->list_id = $this->name . 'ba_report_storecredit';
-        $this->orderby = pSQL(Tools::getValue($helper->list_id . "Orderby", "credit_slip_id"));
-        $this->orderway = pSQL(Tools::getValue($helper->list_id . "Orderway", "ASC"));
+        $this->orderby = pSQL(Tools::getValue($helper->list_id . 'Orderby', 'credit_slip_id'));
+        $this->orderway = pSQL(Tools::getValue($helper->list_id . 'Orderway', 'ASC'));
         $helper->orderBy = $this->orderby;
         $helper->orderWay = Tools::strtoupper($this->orderway);
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $c1 = AdminController::$currentIndex;
         $n1 = $this->name;
         $ad1 = Tools::getAdminTokenLite('AdminModules');
-        $o1 = "reportsaleba_report_storecreditOrderby";
-        $o2 = "reportsaleba_report_storecreditOrderway";
+        $o1 = 'reportsaleba_report_storecreditOrderby';
+        $o2 = 'reportsaleba_report_storecreditOrderway';
         $od1 = $this->orderby;
         $od2 = $this->orderway;
-        $l1 = "csv=creditslips";
-        $l2 = "task=creditslips";
-        $helper->toolbar_btn['export'] = array(
-            'href' => $c1. '&configure='.$n1.'&token='.$ad1.'&'.$l2.'&'.$o1.'='.$od1.'&'.$o2.'='.$od2.'&'.$l1.'',
-            'desc' => $this->l('export csv')
-        );
+        $l1 = 'csv=creditslips';
+        $l2 = 'task=creditslips';
+        $helper->toolbar_btn['export'] = [
+            'href' => $c1 . '&configure=' . $n1 . '&token=' . $ad1 . '&' . $l2 . '&' . $o1 . '=' . $od1 . '&' . $o2 . '=' . $od2 . '&' . $l1 . '',
+            'desc' => $this->l('export csv'),
+        ];
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name . '&task=creditslips';
-        $helper->currentIndex .= '&'.$helper->list_id . "Orderby=".$helper->orderBy;
-        $helper->currentIndex .= '&'.$helper->list_id . "Orderway=".$helper->orderWay;
+        $helper->currentIndex .= '&' . $helper->list_id . 'Orderby=' . $helper->orderBy;
+        $helper->currentIndex .= '&' . $helper->list_id . 'Orderway=' . $helper->orderWay;
         $con = (int) $this->countData($helper);
         $helper->listTotal = $con;
 
@@ -214,29 +219,31 @@ class BaViewStoCredit extends ReportSale
         if (!$page) {
             $page = 1;
         }
-        $start = ($page - 1 ) * $selected_pagination;
+        $start = ($page - 1) * $selected_pagination;
         $rows = $this->selectdatastocredit($helper, $start, $selected_pagination);
         $table_helper = $helper->generateList($rows, $fields_list);
         $table_helper .= $this->getSummaryBlock($helper, $fields_list);
+
         return $table_helper;
     }
+
     public function getSummaryBlock($helper, $fields_list)
     {
         $sql = 'SELECT COUNT(DISTINCT id_shop) as id_shop';
         $sql .= ', COUNT(DISTINCT shop_name) as shop_name';
-        $sql .= ", COUNT(DISTINCT credit_slip_id) - COUNT(DISTINCT case when credit_slip_id=0 then 1 end)";
-        $sql .= " as credit_slip_id";
-        $sql .= ", COUNT(DISTINCT id_order) - COUNT(DISTINCT case when order_id=0 then 1 end) as id_order";
-        $sql .= ", COUNT(DISTINCT reference) as reference";
-        $sql .= ", MIN(credit_slip_date) as min_credit_slip_date";
-        $sql .= ", MAX(credit_slip_date) as max_credit_slip_date";
+        $sql .= ', COUNT(DISTINCT credit_slip_id) - COUNT(DISTINCT case when credit_slip_id=0 then 1 end)';
+        $sql .= ' as credit_slip_id';
+        $sql .= ', COUNT(DISTINCT id_order) - COUNT(DISTINCT case when order_id=0 then 1 end) as id_order';
+        $sql .= ', COUNT(DISTINCT reference) as reference';
+        $sql .= ', MIN(credit_slip_date) as min_credit_slip_date';
+        $sql .= ', MAX(credit_slip_date) as max_credit_slip_date';
         $sql .= ", COUNT(DISTINCT payment_method) - COUNT(DISTINCT case when payment_method='' then 1 end)";
-        $sql .= " as payment_method";
+        $sql .= ' as payment_method';
         $sql .= ", COUNT(DISTINCT iso_currency) - COUNT(DISTINCT case when iso_currency='' then 1 end) as iso_currency";
         $sql .= ', COUNT(DISTINCT country) as country';
         $sql .= ', COUNT(DISTINCT id_country) as id_country';
         $sql .= ", COUNT(DISTINCT state) - COUNT(DISTINCT case when state='' then 1 end)";
-        $sql .= " as state";
+        $sql .= ' as state';
         $sql .= ' FROM ' . _DB_PREFIX_ . 'ba_report_store_credit ';
         $sql .= $this->setWhereClause($helper);
         $item1 = DB::getInstance()->getRow($sql, false);
@@ -259,7 +266,7 @@ class BaViewStoCredit extends ReportSale
         if (empty($item2)) {
             return false;
         }
-        $data = array(
+        $data = [
             'total_products_no_tax' => 0,
             'products_tax' => 0,
             'total_shipping_without_tax' => 0,
@@ -267,7 +274,7 @@ class BaViewStoCredit extends ReportSale
             'total_no_tax' => 0,
             'total_tax' => 0,
             'total_tax_incl' => 0,
-        );
+        ];
         $default_currency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
         $c_to = new Currency($default_currency);
         // Convert all amount to default currency before calculate
@@ -284,132 +291,138 @@ class BaViewStoCredit extends ReportSale
             $data['total_tax_incl'] += Tools::convertPriceFull($value['total_tax_incl'], $c_from, $c_to);
         }
         $data = array_merge($item1, $data);
-        $summary = array();
-        $summary['shop_name'] = array(
+        $summary = [];
+        $summary['shop_name'] = [
             $this->l('#Shop name'),
-            number_format($data['shop_name'])
-        );
-        $summary['credit_slip_id'] = array(
+            number_format($data['shop_name']),
+        ];
+        $summary['credit_slip_id'] = [
             $this->l('#Credit Slip ID'),
-            number_format($data['credit_slip_id'])
-        );
-        $summary['id_order'] = array(
+            number_format($data['credit_slip_id']),
+        ];
+        $summary['id_order'] = [
             $this->l('#ID Order'),
-            number_format($data['id_order'])
-        );
-        $summary['reference'] = array(
+            number_format($data['id_order']),
+        ];
+        $summary['reference'] = [
             $this->l('#Reference'),
-            number_format($data['reference'])
-        );
-        $summary['first_name'] = array(
+            number_format($data['reference']),
+        ];
+        $summary['first_name'] = [
             $this->l('First Name'),
-            $this->l('-')
-        );
-        $summary['last_name'] = array(
+            $this->l('-'),
+        ];
+        $summary['last_name'] = [
             $this->l('Last Name'),
-            $this->l('-')
-        );
-        $summary['credit_slip_date'] = array(
+            $this->l('-'),
+        ];
+        $summary['credit_slip_date'] = [
             $this->l('Credit Date'),
-            $this->l('From: ').Tools::displayDate($data['min_credit_slip_date']),
-            $this->l('To: ').Tools::displayDate($data['max_credit_slip_date']),
-        );
-        $summary['payment_method'] = array(
+            $this->l('From: ') . Tools::displayDate($data['min_credit_slip_date']),
+            $this->l('To: ') . Tools::displayDate($data['max_credit_slip_date']),
+        ];
+        $summary['payment_method'] = [
             $this->l('#Payment Method'),
-            number_format($data['payment_method'])
-        );
-        $summary['total_products_no_tax'] = array(
+            number_format($data['payment_method']),
+        ];
+        $summary['total_products_no_tax'] = [
             $this->l('Total Products No Tax'),
-            Tools::displayPrice($data['total_products_no_tax'], $c_to)
-        );
-        $summary['products_tax'] = array(
+            Tools::displayPrice($data['total_products_no_tax'], $c_to),
+        ];
+        $summary['products_tax'] = [
             $this->l('Products Tax'),
-            Tools::displayPrice($data['products_tax'], $c_to)
-        );
-        $summary['total_shipping_without_tax'] = array(
+            Tools::displayPrice($data['products_tax'], $c_to),
+        ];
+        $summary['total_shipping_without_tax'] = [
             $this->l('Total Shipping Without Tax'),
-            Tools::displayPrice($data['total_shipping_without_tax'], $c_to)
-        );
-        $summary['shipping_tax_amount'] = array(
+            Tools::displayPrice($data['total_shipping_without_tax'], $c_to),
+        ];
+        $summary['shipping_tax_amount'] = [
             $this->l('Shipping Tax Amount'),
-            Tools::displayPrice($data['shipping_tax_amount'], $c_to)
-        );
-        $summary['total_no_tax'] = array(
+            Tools::displayPrice($data['shipping_tax_amount'], $c_to),
+        ];
+        $summary['total_no_tax'] = [
             $this->l('Total No Tax'),
-            Tools::displayPrice($data['total_no_tax'], $c_to)
-        );
-        $summary['total_tax'] = array(
+            Tools::displayPrice($data['total_no_tax'], $c_to),
+        ];
+        $summary['total_tax'] = [
             $this->l('Total Tax'),
-            Tools::displayPrice($data['total_tax'], $c_to)
-        );
-        $summary['total_tax_incl'] = array(
+            Tools::displayPrice($data['total_tax'], $c_to),
+        ];
+        $summary['total_tax_incl'] = [
             $this->l('Total Tax Incl'),
-            Tools::displayPrice($data['total_tax_incl'], $c_to)
-        );
-        $summary['iso_currency'] = array(
+            Tools::displayPrice($data['total_tax_incl'], $c_to),
+        ];
+        $summary['iso_currency'] = [
             $this->l('#Currency ISO'),
-            number_format($data['iso_currency'])
-        );
-        $summary['country'] = array(
+            number_format($data['iso_currency']),
+        ];
+        $summary['country'] = [
             $this->l('#Country'),
-            number_format($data['country'])
-        );
-        $summary['id_country'] = array(
+            number_format($data['country']),
+        ];
+        $summary['id_country'] = [
             $this->l('#ID Country'),
-            number_format($data['id_country'])
-        );
-        $summary['state'] = array(
+            number_format($data['id_country']),
+        ];
+        $summary['state'] = [
             $this->l('#State'),
-            number_format($data['state'])
-        );
+            number_format($data['state']),
+        ];
         $this->smarty->assign('summary', $summary);
         $this->smarty->assign('fields_list', $fields_list);
+
         return $this->shortDisplay('views/templates/admin/summary_table.tpl');
     }
+
     public function selectdatastocredit($helper, $start, $selected_pagination)
     {
         $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_store_credit ';
         $where = $this->setWhereClause($helper);
         $sql .= $where;
-        Configuration::updateValue($this->name.'_credit_where', $where);
-        $sql.=' ORDER BY ' . pSQL($this->orderby) . ' ' . pSQL($this->orderway)
+        Configuration::updateValue($this->name . '_credit_where', $where);
+        $sql .= ' ORDER BY ' . pSQL($this->orderby) . ' ' . pSQL($this->orderway)
         . ' LIMIT ' . (int) $start . ', ' . (int) $selected_pagination;
         $rows = Db::getInstance()->executeS($sql, true, false);
-        return($rows);
+
+        return $rows;
     }
+
     public function insertreportcredit($id_order)
     {
-        $date_to = Configuration::get('SC_credit_date_to') . " 23:59:59";
-        $date_from = Configuration::get('SC_credit_date_from') . " 00:00:00";
-        $sql_order_slip='SELECT * FROM '._DB_PREFIX_.'order_slip WHERE id_order = '.(int)$id_order;
-        if (Configuration::get('SC_credit_date_from')!= null) {
-            $sql_order_slip.=' AND date_add >= "'.$date_from.'"';
+        $date_to = Configuration::get('SC_credit_date_to') . ' 23:59:59';
+        $date_from = Configuration::get('SC_credit_date_from') . ' 00:00:00';
+        $sql_order_slip = 'SELECT * FROM ' . _DB_PREFIX_ . 'order_slip WHERE id_order = ' . (int) $id_order;
+        if (Configuration::get('SC_credit_date_from') != null) {
+            $sql_order_slip .= ' AND date_add >= "' . $date_from . '"';
         }
-        if (Configuration::get('SC_credit_date_to')!= null) {
-            $sql_order_slip.=' AND date_add <= "'.$date_to.'"';
+        if (Configuration::get('SC_credit_date_to') != null) {
+            $sql_order_slip .= ' AND date_add <= "' . $date_to . '"';
         }
-        $order_slip=Db::getInstance()->executeS($sql_order_slip, true, false);
-        if (count($order_slip)!=0) {
-            for ($i=0; $i < count($order_slip); $i++) {
-                $slip_data=$order_slip[$i];
+        $order_slip = Db::getInstance()->executeS($sql_order_slip, true, false);
+        if (count($order_slip) != 0) {
+            for ($i = 0; $i < count($order_slip); ++$i) {
+                $slip_data = $order_slip[$i];
                 $this->insertcredit($slip_data, $id_order);
             }
         }
+
         return true;
     }
+
     public function insertcredit($slip_data, $id_order)
     {
-        $order=new Order($id_order);
+        $order = new Order($id_order);
         $id_currency = $order->id_currency;
-        $shop_name=$this->getShopName((int)$order->id_shop);
-        $total_products_tax_excl=$slip_data['total_products_tax_excl'];
-        $total_products_tax_incl=$slip_data['total_products_tax_incl'];
-        $products_tax=$total_products_tax_incl-$total_products_tax_excl;
-        $total_shipping_without_tax=$slip_data['total_shipping_tax_excl'];
-        $shipping_tax_amount=$slip_data['total_shipping_tax_incl']-$total_shipping_without_tax;
-        $total_no_tax=$total_products_tax_excl+$total_shipping_without_tax;
-        $total_tax=$products_tax+$shipping_tax_amount;
-        $total_tax_incl=$total_no_tax+$total_tax;
+        $shop_name = $this->getShopName((int) $order->id_shop);
+        $total_products_tax_excl = $slip_data['total_products_tax_excl'];
+        $total_products_tax_incl = $slip_data['total_products_tax_incl'];
+        $products_tax = $total_products_tax_incl - $total_products_tax_excl;
+        $total_shipping_without_tax = $slip_data['total_shipping_tax_excl'];
+        $shipping_tax_amount = $slip_data['total_shipping_tax_incl'] - $total_shipping_without_tax;
+        $total_no_tax = $total_products_tax_excl + $total_shipping_without_tax;
+        $total_tax = $products_tax + $shipping_tax_amount;
+        $total_tax_incl = $total_no_tax + $total_tax;
 
         $currency = new Currency($id_currency);
         $sign_currency = $currency->sign;
@@ -420,36 +433,36 @@ class BaViewStoCredit extends ReportSale
         $address = new Address($order->id_address_invoice);
         $country = $address->country;
         $id_country = $address->id_country;
-        $state_name = "";
+        $state_name = '';
         $id_state = (int) $address->id_state;
         if (!empty($id_state)) {
             $state_name = State::getNameById($id_state);
         }
-        Db::getInstance()->insert('ba_report_store_credit', array(
+        Db::getInstance()->insert('ba_report_store_credit', [
             'shop_name' => pSQL($shop_name),
             'id_shop' => (int) $order->id_shop,
             'id_cart' => $order->id_cart,
-            'id_order' => (int)$id_order,
-            'order_id' => (int)$id_order,
-            'order_add_date' =>'' ,
-            'invoice_add_date' =>'' ,
+            'id_order' => (int) $id_order,
+            'order_id' => (int) $id_order,
+            'order_add_date' => '',
+            'invoice_add_date' => '',
             'delivery_date' => '',
             'order_number' => '',
-            'invoice_number' =>'' ,
+            'invoice_number' => '',
             'invoice_status' => '',
-            'credit_slip_id' =>(int)$slip_data['id_order_slip'],
+            'credit_slip_id' => (int) $slip_data['id_order_slip'],
             'last_name' => pSQL($customer->lastname),
             'first_name' => pSQL($customer->firstname),
-            'order_invoice_date' =>pSQL(''),
+            'order_invoice_date' => pSQL(''),
             'credit_slip_date' => pSQL($slip_data['date_add']),
             'payment_method' => pSQL($order->payment),
-            'total_products_no_tax' =>(double) $total_products_tax_excl,
-            'products_tax' => (double)$products_tax,
-            'total_shipping_without_tax' =>(double)$total_shipping_without_tax,
-            'shipping_tax_amount' => (double)$shipping_tax_amount,
-            'total_no_tax' =>(double)$total_no_tax,
-            'total_tax' => (double)$total_tax,
-            'total_tax_incl' => (double)$total_tax_incl,
+            'total_products_no_tax' => (float) $total_products_tax_excl,
+            'products_tax' => (float) $products_tax,
+            'total_shipping_without_tax' => (float) $total_shipping_without_tax,
+            'shipping_tax_amount' => (float) $shipping_tax_amount,
+            'total_no_tax' => (float) $total_no_tax,
+            'total_tax' => (float) $total_tax,
+            'total_tax_incl' => (float) $total_tax_incl,
             'sign_currency' => $sign_currency,
             'iso_currency' => $iso_currency,
             'id_currency' => $id_currency,
@@ -458,9 +471,11 @@ class BaViewStoCredit extends ReportSale
             'id_country' => pSQL($id_country),
             'id_state' => pSQL($id_state),
             'state' => pSQL($state_name),
-        ));
+        ]);
+
         return true;
     }
+
     public function updateAllStoreCredit($order_id)
     {
         $query = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_store_credit WHERE id_order=' . (int) $order_id;
@@ -468,26 +483,31 @@ class BaViewStoCredit extends ReportSale
         $get_data = $data[0];
         $products_tax = $get_data['products_tax'];
         $shipping_tax_amount = $get_data['shipping_tax_amount'];
-        $total_no_tax=$get_data['total_products_no_tax']+$get_data['total_shipping_without_tax'];
+        $total_no_tax = $get_data['total_products_no_tax'] + $get_data['total_shipping_without_tax'];
         $total_tax = $products_tax + $shipping_tax_amount;
-        $total_tax_incl=$total_tax+$total_no_tax;
-        $query = 'UPDATE ' . _DB_PREFIX_ . 'ba_report_store_credit SET total_tax="' . (double)$total_tax . '",'
-                . 'total_tax_incl="' . (double)$total_tax_incl . '",total_no_tax="'.(double)$total_no_tax.'"'
-                . ' WHERE id_order=' . (int)$order_id;
+        $total_tax_incl = $total_tax + $total_no_tax;
+        $query = 'UPDATE ' . _DB_PREFIX_ . 'ba_report_store_credit SET total_tax="' . (float) $total_tax . '",'
+                . 'total_tax_incl="' . (float) $total_tax_incl . '",total_no_tax="' . (float) $total_no_tax . '"'
+                . ' WHERE id_order=' . (int) $order_id;
         Db::getInstance()->query($query);
+
         return true;
     }
+
     public function convertMoneyStocredit($value, $row)
     {
         $a = round($value, 2);
         $order = new Order($row['id_order']);
-        return Tools::displayPrice($a, (int)$order->id_currency);
+
+        return Tools::displayPrice($a, (int) $order->id_currency);
     }
+
     public function countData($helper)
     {
         $sql = 'SELECT count(*) FROM ' . _DB_PREFIX_ . 'ba_report_store_credit '
                 . $this->setWhereClause($helper);
         $data = DB::getInstance()->getValue($sql, false);
+
         return $data;
     }
 }

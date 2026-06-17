@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,26 +21,25 @@
 
 namespace PrestaShop\Module\Ps_metrics\Helper;
 
-use PrestaShop\Module\Ps_metrics\Environment\SegmentEnv;
 use Segment;
 
 class SegmentHelper
 {
     /**
-     * @var SegmentEnv
+     * @var ConfigHelper
      */
-    private $segmentEnv;
+    private $configHelper;
 
     /**
      * SegmentHelper constructor.
      *
-     * @param SegmentEnv $segmentEnv
+     * @param ConfigHelper $configHelper
      *
      * @return void
      */
-    public function __construct(SegmentEnv $segmentEnv)
+    public function __construct(ConfigHelper $configHelper)
     {
-        $this->segmentEnv = $segmentEnv;
+        $this->configHelper = $configHelper;
     }
 
     /**
@@ -47,9 +47,9 @@ class SegmentHelper
      *
      * @return void
      */
-    public function init()
+    public function init(): void
     {
-        Segment::init($this->segmentEnv->getSegmentApiKey());
+        Segment::init($this->configHelper->getSegmentApiKey());
     }
 
     /**
@@ -57,7 +57,7 @@ class SegmentHelper
      *
      * @return void
      */
-    public function track($message)
+    public function track($message): void
     {
         Segment::track($message);
     }
@@ -67,7 +67,7 @@ class SegmentHelper
      *
      * @return void
      */
-    public function flush()
+    public function flush(): void
     {
         Segment::flush();
     }

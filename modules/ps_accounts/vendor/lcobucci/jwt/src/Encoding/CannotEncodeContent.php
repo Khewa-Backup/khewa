@@ -1,11 +1,10 @@
 <?php
 
-namespace Lcobucci\JWT\Encoding;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Encoding;
 
 use JsonException;
-use Lcobucci\JWT\Exception;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 use RuntimeException;
-
 final class CannotEncodeContent extends RuntimeException implements Exception
 {
     /**

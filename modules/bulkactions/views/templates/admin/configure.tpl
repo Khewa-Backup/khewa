@@ -1,17 +1,13 @@
 {*
-* 2007-2019 Amazzing
-*
-* NOTICE OF LICENSE
-*
-*  @author    Amazzing <mail@amazzing.ru>
-*  @copyright 2007-2019 Amazzing
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  @author    Amazzing <mail@mirindevo.com>
+*  @copyright Amazzing
+*  @license   https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
 <div class="panel ba">
 	<p>
 		<span class="confirmation">{l s='Module is ready to use' mod='bulkactions'} <i class="icon-check"></i></span>
-		{l s='No any additional setup is required' mod='bulkactions'}</p>
+		{l s='No additional setup is required' mod='bulkactions'}</p>
 	<p>
 		{l s='Bulk action tools are available for [1]products[/1], [1]combinations[/1], [1]categories[/1] and [1]customers[/1]' mod='bulkactions' tags=['<b>']}
 	</p>
@@ -30,4 +26,4 @@
 		</a>
 	</p>
 </div>
-{* since 1.1.0 *}
+{* since 1.2.3 *}

@@ -32,8 +32,9 @@
          {
 
              $this->page_name = 'module-iqitsearch-searchiqit';
-
+          
              parent::init();
+             $this->php_self = 'module-iqitsearch-searchiqit';
 
              $this->search_string = Tools::getValue('s');
              if (!$this->search_string) {

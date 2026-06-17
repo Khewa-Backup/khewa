@@ -1,10 +1,9 @@
 <?php
 
-namespace Lcobucci\JWT\Validation;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Validation;
 
-use Lcobucci\JWT\Exception;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 use RuntimeException;
-
 final class NoConstraintsGiven extends RuntimeException implements Exception
 {
 }

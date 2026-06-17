@@ -18,9 +18,12 @@
  */
 
 namespace PrestaChamps\MailchimpPro\Commands;
-
-use DrewM\MailChimp\MailChimp;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+use PrestaChamps\MailChimpAPI;
 use PrestaChamps\MailchimpPro\Exceptions\MailChimpException;
+use PrestaChamps\PrestaShop\Traits\ShopIdTrait;
 
 /**
  * Class BaseApiCommand
@@ -29,6 +32,8 @@ use PrestaChamps\MailchimpPro\Exceptions\MailChimpException;
  */
 abstract class BaseApiCommand
 {
+    use ShopIdTrait;
+
     abstract public function execute();
 
     protected $method = 'POST';
@@ -36,7 +41,7 @@ abstract class BaseApiCommand
     protected $syncMode = self::SYNC_MODE_REGULAR;
 
     /**
-     * @var $mailchimp MailChimp
+     * @var $mailchimp MailChimpAPI
      */
     protected $mailchimp;
 
@@ -53,14 +58,14 @@ abstract class BaseApiCommand
     const SYNC_METHOD_DELETE = 'DELETE';
     const SYNC_METHOD_PUT    = 'PUT';
 
-    const SUPPORTED_METHODS = array(
+    const SUPPORTED_METHODS = [
         self::SYNC_METHOD_POST,
         self::SYNC_METHOD_PATCH,
         self::SYNC_METHOD_DELETE,
         self::SYNC_METHOD_PUT
-    );
+    ];
 
-    protected $responses = array();
+    protected $responses = [];
 
     /**
      * Set the method based on object create, update, etc
@@ -86,7 +91,7 @@ abstract class BaseApiCommand
      */
     public function setSyncMode($mode)
     {
-        if (in_array($mode, array(self::SYNC_MODE_REGULAR, self::SYNC_MODE_BATCH), true)) {
+        if (in_array($mode, [self::SYNC_MODE_REGULAR, self::SYNC_MODE_BATCH], true)) {
             $this->syncMode = $mode;
         } else {
             throw new \Exception('Unknow mode');
@@ -98,12 +103,15 @@ abstract class BaseApiCommand
      *
      * @return string
      */
-    protected function getListIdFromStore()
+    protected function getListIdFromStore($idStore = null)
     {
-        $listId = $this->mailchimp->get("/ecommerce/stores/{$this->context->shop->id}", array('fields' => 'list_id'));
+        if(!$idStore){
+            $idStore = $this->context->shop->id;
+        }
 
-        if (isset($listId['list_id']) && $this->mailchimp->success()) {
-            return $listId['list_id'];
+        if(\Configuration::get(\MailchimpProConfig::MAILCHIMP_LIST_ID, null, null, $idStore)){
+            // cached list ID exists in Config variable 
+            return \Configuration::get(\MailchimpProConfig::MAILCHIMP_LIST_ID, null, null, $idStore);
         }
 
         throw new \UnexpectedValueException("Can't determine LIST id from store");
@@ -118,7 +126,11 @@ abstract class BaseApiCommand
      */
     protected function getListRequiresDOI($listId)
     {
-        $list = $this->mailchimp->get("/lists/{$listId}", array('fields' => 'double_optin'));
+        $list = $this->mailchimp->get("/lists/{$listId}", ['fields' => 'double_optin']);
+
+        if (!isset($list['double_optin'])) {
+            return false;
+        }
 
         if (isset($list['double_optin']) && $this->mailchimp->success()) {
             return (bool)$list['double_optin'];

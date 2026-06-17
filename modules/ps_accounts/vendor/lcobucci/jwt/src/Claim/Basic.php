@@ -1,14 +1,13 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Claim;
 
-namespace Lcobucci\JWT\Claim;
-
-use Lcobucci\JWT\Claim;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Claim;
 /**
  * The default claim
  *
@@ -23,12 +22,10 @@ class Basic implements Claim
      * @var string
      */
     private $name;
-
     /**
      * @var mixed
      */
     private $value;
-
     /**
      * Initializes the claim
      *
@@ -40,7 +37,6 @@ class Basic implements Claim
         $this->name = $name;
         $this->value = $value;
     }
-
     /**
      * {@inheritdoc}
      */
@@ -48,7 +44,6 @@ class Basic implements Claim
     {
         return $this->name;
     }
-
     /**
      * {@inheritdoc}
      */
@@ -56,7 +51,6 @@ class Basic implements Claim
     {
         return $this->value;
     }
-
     /**
      * {@inheritdoc}
      */
@@ -64,7 +58,6 @@ class Basic implements Claim
     {
         return $this->value;
     }
-
     /**
      * {@inheritdoc}
      */

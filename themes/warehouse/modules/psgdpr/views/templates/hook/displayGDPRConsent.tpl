@@ -46,7 +46,7 @@
         let parentForm = $('.gdpr_module_' + psgdpr_id_module).closest('form');
 
         let toggleFormActive = function() {
-
+  
             let parentForm = $('.gdpr_module_' + psgdpr_id_module).closest('form');
             let checkbox = $('#psgdpr_consent_checkbox_' + psgdpr_id_module);
             let element = $('.gdpr_module_' + psgdpr_id_module);
@@ -67,7 +67,7 @@
         }
 
 
-
+   
         // Triggered on page loading
         toggleFormActive();
 
@@ -98,7 +98,7 @@
         let parentForm = $('.gdpr_module_' + psgdpr_id_module).closest('form');
 
         let toggleFormActive = function() {
-
+  
             let parentForm = $('.gdpr_module_' + psgdpr_id_module).closest('form');
             let checkbox = $('#psgdpr_consent_checkbox_' + psgdpr_id_module);
             let element = $('.gdpr_module_' + psgdpr_id_module);
@@ -119,10 +119,10 @@
         }
 
 
+   
 
 
-
-
+ 
 
         // Triggered on page loading
         toggleFormActive();

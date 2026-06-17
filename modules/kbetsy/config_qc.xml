@@ -2,7 +2,7 @@
 <module>
     <name>kbetsy</name>
     <displayName><![CDATA[Knowband Etsy]]></displayName>
-    <version><![CDATA[2.0.4]]></version>
+    <version><![CDATA[2.0.9]]></version>
     <description><![CDATA[Module to sync products on Etsy Marketplace.]]></description>
     <author><![CDATA[Knowband]]></author>
     <tab><![CDATA[market_place]]></tab>

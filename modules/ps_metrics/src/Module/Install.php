@@ -22,11 +22,9 @@
 namespace PrestaShop\Module\Ps_metrics\Module;
 
 use Hook;
-use Language;
 use PrestaShop\Module\Ps_metrics\Repository\ConfigurationRepository;
 use PrestaShop\Module\Ps_metrics\Repository\HookModuleRepository;
 use Ps_metrics;
-use Tab;
 
 class Install
 {
@@ -46,11 +44,6 @@ class Install
     private $hookModuleRepository;
 
     /**
-     * @var string
-     */
-    private $psVersion;
-
-    /**
      * Install constructor.
      *
      * @param Ps_metrics $module
@@ -64,7 +57,6 @@ class Install
         $this->module = $module;
         $this->configurationRepository = $configurationRepository;
         $this->hookModuleRepository = $hookModuleRepository;
-        $this->psVersion = _PS_VERSION_;
     }
 
     /**
@@ -75,15 +67,19 @@ class Install
      *
      * @return bool
      */
-    public function updateModuleHookPosition($hookName, $position)
+    public function updateModuleHookPosition(string $hookName, int $position): bool
     {
-        $hookId = Hook::getIdByName($hookName);
+        if ((bool) version_compare(_PS_VERSION_, '1.7.7.7', '>=')) {
+            $hookId = Hook::getIdByName($hookName, true, true);
+        } else {
+            $hookId = Hook::getIdByName($hookName);
+        }
 
         if (false == $hookId) {
             return false;
         }
 
-        return $this->hookModuleRepository->setModuleHookPosition($hookId, $this->module->id, $position);
+        return $this->hookModuleRepository->setModuleHookPosition($hookId, (int) $this->module->id, $position);
     }
 
     /**
@@ -91,43 +87,9 @@ class Install
      *
      * @return bool
      */
-    public function setConfigurationValues()
+    public function setConfigurationValues(): bool
     {
         return $this->configurationRepository->saveActionGoogleLinked(false) &&
-            $this->configurationRepository->saveGoogleTagLinked(false) &&
-            $this->configurationRepository->saveDashboardModulesToToggle() &&
-            $this->configurationRepository->saveFirstTimeOnboarded(false);
-    }
-
-    /**
-     * This method is often use to create an ajax controller
-     *
-     * @return bool
-     *
-     * @todo Change Language by context lang ?
-     */
-    public function installTabs()
-    {
-        $installTabCompleted = true;
-
-        foreach ($this->module->controllers as $controllerName) {
-            if (Tab::getIdFromClassName($controllerName)) {
-                continue;
-            }
-
-            $tab = new Tab();
-            $tab->name = array_fill_keys(
-                Language::getIDs(false),
-                $this->module->displayName
-            );
-            $tab->id_parent = -1;
-            $tab->class_name = $controllerName;
-            $tab->active = true;
-            $tab->module = $this->module->name;
-
-            $installTabCompleted = $installTabCompleted && $tab->add();
-        }
-
-        return $installTabCompleted;
+            $this->configurationRepository->saveGoogleTagLinked(false);
     }
 }

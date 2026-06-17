@@ -16,6 +16,10 @@
  * @copyright PrestaChamps
  * @license   commercial
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+use PrestaChamps\PrestaShop\Traits\ShopIdTrait;
 
 /**
  * Class AdminMailchimpProPromoRulesController
@@ -24,7 +28,9 @@
  */
 class AdminMailchimpProPromoCodesController extends \PrestaChamps\MailchimpPro\Controllers\BaseMCObjectController
 {
-    public $entityPlural   = 'promo_codes';
+    use ShopIdTrait;
+
+    public $entityPlural = 'promo_codes';
     public $entitySingular = 'promo_code';
     public $rule_id;
 
@@ -36,11 +42,11 @@ class AdminMailchimpProPromoCodesController extends \PrestaChamps\MailchimpPro\C
 
     protected function getListApiEndpointUrl()
     {
-        return "/ecommerce/stores/{$this->context->shop->id}/promo-rules/{$this->rule_id}/promo-codes/";
+        return "/ecommerce/stores/{$this->getShopId()}/promo-rules/{$this->rule_id}/promo-codes/";
     }
 
     protected function getSingleApiEndpointUrl($entityId)
     {
-        return "/ecommerce/stores/{$this->context->shop->id}/promo-rules/{$this->rule_id}/promo-codes/$entityId";
+        return "/ecommerce/stores/{$this->getShopId()}/promo-rules/{$this->rule_id}/promo-codes/{$entityId}";
     }
 }

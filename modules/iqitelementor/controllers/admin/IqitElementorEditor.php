@@ -656,16 +656,18 @@ class IqitElementorEditorController  extends ModuleAdminController
     public function ajaxProcessGetProducts()
     {
         header('Content-Type: application/json');
-
-        $product_ids = Tools::getValue('ids');
-
+        
+        $product_ids =  Tools::getValue('ids');
+  
         if (!$product_ids) {
             $return = array(
                 'success' => true,
                 'data' => '',
             );
-        die(json_encode($return));
+             die(json_encode($return));
         }
+
+        $product_ids_array = explode(',', $product_ids);
 
         $id_shop = (int) $this->context->shop->id;
         $id_lang = (int) $this->context->language->id;
@@ -682,8 +684,8 @@ class IqitElementorEditorController  extends ModuleAdminController
 				LEFT JOIN `'._DB_PREFIX_.'image_shop` image_shop
 					ON (image_shop.`id_product` = p.`id_product` AND image_shop.cover=1 AND image_shop.id_shop='.(int) $id_shop.')
 	  
-				WHERE p.id_product IN ('.$product_ids.')'.'
-				ORDER BY FIELD(product_shop.id_product, '.$product_ids.')';
+				WHERE p.id_product IN ('. implode(',', array_map('intval', $product_ids_array)) .')'.'
+				ORDER BY FIELD(product_shop.id_product, '. implode(',', array_map('intval', $product_ids_array)) .')';
         if (!$results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql)) {
             return false;
         }

@@ -248,6 +248,7 @@ class PosCart extends Cart
                     $qty = '+ ' . (int) $quantity;
 
                     if (!PosProduct::isEnabledOrderOutOfStock((int) $result2['out_of_stock'])) {
+
                         if ($new_qty > $product_qty) {
                             return PosConstants::NOT_ENOUGH_PRODUCT;
                         }

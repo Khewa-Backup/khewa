@@ -80,6 +80,9 @@ final class OrderGridDataFactory implements GridDataFactoryInterface
      */
     public function getData(SearchCriteriaInterface $searchCriteria)
     {
+//        var_dump(get_class($this->dataFactory));
+//        die();
+
         $data = $this->dataFactory->getData($searchCriteria);
         $records = $data->getRecords()->all();
 

@@ -240,4 +240,3 @@
 		this._suggestions = data.result;
 	};
 })(jQuery);
-

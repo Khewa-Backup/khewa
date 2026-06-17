@@ -21,7 +21,7 @@ class PH_SimpleBlogAuthorModuleFrontController extends DefaultListBlogForPrestaS
             header('Status: 404 Not Found');
             Tools::redirect($this->context->link->getPageLink('404'));
         }
-                    
+
         $this->blogAuthor = $SimpleBlogAuthor;
 
         // Assign meta tags

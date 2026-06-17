@@ -239,4 +239,3 @@ log = process.argv.length >= 4 ? process.argv[3] : false;
 // Start the server
 server = new GuzzleServer(port, log);
 server.start();
-

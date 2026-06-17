@@ -71,7 +71,7 @@
 	        	{include file="module:ph_simpleblog/views/templates/front/1.7/_partials/post-miniature.tpl" masonry=$useMasonry}
 		    {/foreach}
 	        {else}
-			<div class="warning alert alert-warning col-xs-12">{l s='There are no posts' mod='ph_simpleblog'}</div>
+			<div class="warning alert alert-warning col-xs-12">{l s='There are no posts' d='Modules.Simpleblog.Shop'}</div>
 	        {/if}
 		</div><!-- .row -->
 	</div><!-- .simpleblog__listing -->

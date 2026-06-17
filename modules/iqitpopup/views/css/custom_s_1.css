@@ -28,7 +28,4 @@
 #iqitpopup .iqitpopup-newsletter-form .newsletter-input::-webkit-input-placeholder {
   color: #ffffff !important; }
 
-		 #iqitpopup.showed-iqitpopup, #iqitpopup-overlay.showed-iqitpopupo{
-					-webkit-transition-delay: 0s, 3s;
-    				transition-delay: 0s, 3s;
-			}
+		

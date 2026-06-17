@@ -10,7 +10,7 @@ Votre commande ayant pour référence {order_name} sur {shop_name} a été annul
 
 Pour en savoir plus, rendez-vous sur votre compte client.
 
-Si vous avez un compte invité, vous pouvez suivre votre commande via la section [Suivi de commande]({guest_tracking_url}) sur notre boutique.
+Si vous avez un compte invité, vous pouvez suivre votre commande via la section [Suivi des visiteurs]({guest_tracking_url}) sur notre boutique.
 
 [{shop_name}]({shop_url})
 

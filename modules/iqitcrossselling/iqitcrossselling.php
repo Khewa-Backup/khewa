@@ -158,7 +158,7 @@ class IqitCrossselling extends Module implements WidgetInterface
 
         $orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($q_orders);
 
-        if (0 < count($orders)) {
+        if (is_array($orders) && (0 < count($orders))) {
             $list = '';
             foreach ($orders as $order) {
                 $list .= (int)$order['id_order'].',';

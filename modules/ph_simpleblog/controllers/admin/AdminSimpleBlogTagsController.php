@@ -63,7 +63,7 @@ class AdminSimpleBlogTagsController extends ModuleAdminController
 
     public function postProcess()
     {
-        if ($this->tabAccess['edit'] === '1' && Tools::getValue('submitAdd' . $this->table)) {
+        if (isset($this->tabAccess['edit']) && $this->tabAccess['edit'] === '1' && Tools::getValue('submitAdd' . $this->table)) {
             if (($id = (int) Tools::getValue($this->identifier)) && ($obj = new $this->className($id)) && Validate::isLoadedObject($obj)) {
                 $previousPosts = $obj->getPosts();
                 $removedPosts = [];

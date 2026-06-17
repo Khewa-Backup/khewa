@@ -28,7 +28,7 @@ class ResponseMiddleware extends Middleware
      *
      * @return array
      */
-    public function execute($response)
+    public function execute($response): array
     {
         return parent::execute($response);
     }

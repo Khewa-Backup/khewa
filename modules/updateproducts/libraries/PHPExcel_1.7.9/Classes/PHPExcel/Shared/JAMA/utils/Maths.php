@@ -11,6 +11,9 @@
  *
  *	r = sqrt(a^2 + b^2) without under/overflow.
  */
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 function hypo($a, $b) {
 	if (abs($a) > abs($b)) {
 		$r = $b / $a;

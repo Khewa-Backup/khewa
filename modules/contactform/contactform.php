@@ -485,6 +485,7 @@ class Contactform extends Module implements WidgetInterface
             || $clientToken !== $serverToken
             || $clientTokenTTL < time()
         ) {
+            // dump($url, $serverToken, $clientToken, $clientTokenTTL, time(), $this->context->customer);die;
             $this->context->controller->errors[] = $this->trans(
                 'An error occurred while sending the message, please try again.',
                 [],

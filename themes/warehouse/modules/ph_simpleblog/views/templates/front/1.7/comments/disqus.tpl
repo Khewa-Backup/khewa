@@ -23,7 +23,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 <div class="simpleblog__addComment blog-mb">
-	<h2 class="section-title"><span>{l s='Comments' mod='ph_simpleblog'}</span></h2>
+	<h2 class="section-title"><span>{l s='Comments' d='Modules.Simpleblog.Shop'}</span></h2>
 	<div id="disqus_thread"></div>
 	<script type="text/javascript">
 	    var disqus_shortname = '{Configuration::get('PH_BLOG_DISQUS_SHORTNAME')}';

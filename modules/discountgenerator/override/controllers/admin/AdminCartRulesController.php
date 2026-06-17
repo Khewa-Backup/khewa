@@ -1,13 +1,31 @@
 <?php
 /**
- * DiscountGenerator Prestashop Module
+ * 2007-2025 PrestaShop SA and Contributors
  *
- * @author    iRessources <support-prestashop@iressources.com>
- * @copyright Copyright &copy; 2015-2019 iRessources
- * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- * @link http://www.iressources.com/
- * @version 1.4.1
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    PrestaShop SA <contact@prestashop.com>
+ *  @copyright 2007-2025 PrestaShop SA and Contributors
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of PrestaShop SA
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class AdminCartRulesController extends AdminCartRulesControllerCore
 {
@@ -53,7 +71,7 @@ class AdminCartRulesController extends AdminCartRulesControllerCore
 
                 if (Tools::getValue('code_mask') == ''
                     || Tools::getValue('code_mask') == $moduleInstance->l('Code mask')
-                    || !preg_match("~[xy]+~i", Tools::getValue('code_mask'))
+                    || !preg_match('~[xy]+~i', Tools::getValue('code_mask'))
                 ) {
                     $this->errors[] = $moduleInstance->l('Invalid coupons mask');
                 }
@@ -73,7 +91,7 @@ class AdminCartRulesController extends AdminCartRulesControllerCore
     public function processAdd()
     {
         if (Tools::getValue('show_group_discount') == 1 && count($this->errors) <= 0) {
-            Db::getInstance()->Execute("INSERT INTO `" . _DB_PREFIX_ . "discountgenerator_group` (`date`) VALUES(NOW())");
+            Db::getInstance()->Execute('INSERT INTO `' . _DB_PREFIX_ . 'discountgenerator_group` (`date`) VALUES(NOW())');
             $group_id = Db::getInstance()->Insert_ID();
 
             foreach (Language::getLanguages() as $language) {
@@ -81,12 +99,12 @@ class AdminCartRulesController extends AdminCartRulesControllerCore
                 if (Tools::getIsset('name_' . $language['id_lang']) && !empty($name)) {
                     $name = pSQL(Tools::getValue('name_' . $language['id_lang']));
                 } else {
-                    $name = pSQL(Tools::getValue('name_' . (int)(Configuration::get('PS_LANG_DEFAULT'))));
+                    $name = pSQL(Tools::getValue('name_' . (int) Configuration::get('PS_LANG_DEFAULT')));
                 }
-                Db::getInstance()->Execute("INSERT INTO `" . _DB_PREFIX_ . "discountgenerator_group_lang` (`id_group`,`id_lang`,`name`) VALUES({$group_id},{$language['id_lang']},'{$name}')");
+                Db::getInstance()->Execute('INSERT INTO `' . _DB_PREFIX_ . "discountgenerator_group_lang` (`id_group`,`id_lang`,`name`) VALUES({$group_id},{$language['id_lang']},'{$name}')");
             }
 
-            for ($i = 1; $i <= Tools::getValue('coupon_quantity'); $i++) {
+            for ($i = 1; $i <= Tools::getValue('coupon_quantity'); ++$i) {
                 do {
                     $code = Tools::strtoupper(Tools::getValue('code_prefix'));
                     $letters = str_split(Tools::strtolower(Tools::getValue('code_mask')));
@@ -107,7 +125,7 @@ class AdminCartRulesController extends AdminCartRulesControllerCore
                     $this->errors[] = Tools::displayError('An error occurred while creating object.') . ' <b>' . $this->table . '</b>';
                     break;
                 }
-                Db::getInstance()->Execute("INSERT INTO `" . _DB_PREFIX_ . "discountgenerator_list` (`id_cart_rule`,`id_group`) VALUES({$cart_rule->id},{$group_id})");
+                Db::getInstance()->Execute('INSERT INTO `' . _DB_PREFIX_ . "discountgenerator_list` (`id_cart_rule`,`id_group`) VALUES({$cart_rule->id},{$group_id})");
             }
 
             return isset($cart_rule) ? $cart_rule : null;
@@ -116,7 +134,7 @@ class AdminCartRulesController extends AdminCartRulesControllerCore
                 $this->context->smarty->assign('new_cart_rule', $cart_rule);
             }
             if (Tools::getValue('submitFormAjax')) {
-                $this->redirect_after = false;
+                $this->redirect_after = null;
             }
 
             return $cart_rule;
@@ -143,12 +161,12 @@ class AdminCartRulesController extends AdminCartRulesControllerCore
     public function renderForm()
     {
         $this->context->smarty->assign(
-            array(
+            [
                 'show_group_discount' => Tools::getValue('show_group_discount'),
                 'coupon_quantity' => Tools::getValue('coupon_quantity'),
                 'code_prefix' => Tools::getValue('code_prefix'),
-                'code_mask' => Tools::getValue('code_mask')
-            )
+                'code_mask' => Tools::getValue('code_mask'),
+            ]
         );
 
         return parent::renderForm();

@@ -13,12 +13,14 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  */
 
 namespace PrestaChamps\MailchimpPro\Formatters;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class StoreFormatter
  *
@@ -45,22 +47,22 @@ class StoreFormatter
     {
         $store_state = (\State::getNameById($this->store->getAddress()->id_state) ?
             \State::getNameById($this->store->getAddress()->id_state) : '');
-        $store_country_iso = \Country::getIsoById($this->store->getAddress()->id_country);
+        // $store_country_iso = \Country::getIsoById($this->store->getAddress()->id_country);
+        $store_country_iso = \Country::getIsoById(\Configuration::get("PS_COUNTRY_DEFAULT"));
         $store_currency_iso = \Tools::strtoupper(\Currency::getDefaultCurrency()->iso_code);
         $store_currency_format = \Currency::getDefaultCurrency()->sign;
-        $formatted_store_address = array(
+        $formatted_store_address = [
             'address1' => (string)$this->store->getAddress()->address1,
             'address2' => (string)$this->store->getAddress()->address2,
             'city' => (string)$this->store->getAddress()->city,
             'country' => $store_country_iso,
             'zip' => (string)$this->store->getAddress()->postcode,
-        );
+        ];
         $formatted_store_address['company'] = $this->store->getAddress()->company;
-        if (isset($store_state)) {
-            $formatted_store_address['state'] = $store_state;
-        }
-        $data = array(
-            'id' => (string)$this->store->id,
+        $formatted_store_address['state'] = $store_state;
+
+        $data = [
+            'id' => (string)\Mailchimppro::shopIdTransformer($this->store),
             'name' => $this->store->name,
             'address' => $formatted_store_address,
             'list_id' => \Configuration::get(\MailchimpProConfig::MAILCHIMP_LIST_ID),
@@ -71,7 +73,7 @@ class StoreFormatter
             'currency_code' => $store_currency_iso,
             'money_format' => $store_currency_format,
             'is_active' => (bool)$this->store->active,
-        );
+        ];
 
         return $data;
     }

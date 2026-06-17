@@ -18,6 +18,9 @@
  *	@version 1.1
  *	@license PHP v3.0
  */
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 class PHPExcel_Shared_JAMA_LUDecomposition {
 
 	const MatrixSingularException	= "Can only perform operation on singular matrix.";

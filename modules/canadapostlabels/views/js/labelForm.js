@@ -327,4 +327,3 @@ var CanadaPost = {
 $(function() {
   CanadaPost.initTabs();
 });
-

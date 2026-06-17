@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 //Include Etsy Module Class to inherit some common functions and callbacks
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 
@@ -97,7 +100,7 @@ class AdminEtsySalesReportController extends ModuleAdminController
                 $data['table'] = $tpl;
                 $data['graph'] = $json['data_graph'];
                 header('Content-Type: application/json', true);
-                echo Tools::jsonEncode($data);
+                echo json_encode($data);
                 die;
             }
             die;

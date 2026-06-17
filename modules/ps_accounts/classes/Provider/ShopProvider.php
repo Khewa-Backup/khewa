@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PsAccounts\Provider;
 
 use PrestaShop\Module\PsAccounts\Adapter\Link;
 use PrestaShop\Module\PsAccounts\Context\ShopContext;
+use PrestaShop\Module\PsAccounts\Service\ShopLinkAccountService;
 
 class ShopProvider
 {
@@ -50,31 +51,92 @@ class ShopProvider
     }
 
     /**
+     * @param array $shopData
      * @param string $psxName
+     * @param bool $refreshTokens
      *
      * @return array
      *
      * @throws \PrestaShopException
      */
-    public function getCurrentShop($psxName = '')
+    public function formatShopData($shopData, $psxName = '', $refreshTokens = true)
     {
-        $shop = \Shop::getShop($this->shopContext->getContext()->shop->id);
+        $configuration = $this->shopContext->getConfiguration();
+        $userToken = $this->shopContext->getUserToken();
 
-        return [
-            'id' => $shop['id_shop'],
-            'name' => $shop['name'],
-            'domain' => $shop['domain'],
-            'domainSsl' => $shop['domain_ssl'],
+        $shopId = $configuration->getShopId();
+
+        $configuration->setShopId($shopData['id_shop']);
+
+        /** @var \Ps_accounts $module */
+        $module = \Module::getInstanceByName('ps_accounts');
+
+        /** @var RsaKeysProvider $rsaKeyProvider */
+        $rsaKeyProvider = $module->getService(RsaKeysProvider::class);
+
+        $data = [
+            'id' => (string) $shopData['id_shop'],
+            'name' => $shopData['name'],
+            'domain' => $shopData['domain'],
+            'domainSsl' => $shopData['domain_ssl'],
+            'physicalUri' => $this->getShopPhysicalUri($shopData['id_shop']),
+            'virtualUri' => $this->getShopVirtualUri($shopData['id_shop']),
+            'frontUrl' => $this->getShopUrl($shopData),
+
+            // LinkAccount
+            'uuid' => $configuration->getShopUuid() ?: null,
+            'publicKey' => $rsaKeyProvider->getOrGenerateAccountsRsaPublicKey() ?: null,
+            'employeeId' => (int) $configuration->getEmployeeId() ?: null,
+            'user' => [
+                'email' => $userToken->getTokenEmail() ?: null,
+                'uuid' => $userToken->getTokenUuid() ?: null,
+                //'emailIsValidated' => $userToken->getTokenEmailVerified(),
+            ],
+
             'url' => $this->link->getAdminLink(
                 'AdminModules',
                 true,
                 [],
                 [
                     'configure' => $psxName,
-                    'setShopContext' => 's-' . $shop['id_shop'],
+                    'setShopContext' => 's-' . $shopData['id_shop'],
                 ]
             ),
+            //'isLinkedV4' => $shopLinkAccountService->isAccountLinkedV4(),
+            'unlinkedAuto' => $configuration->getShopUnlinkedAuto(),
         ];
+
+        if ($refreshTokens) {
+            /** @var ShopLinkAccountService $shopLinkAccountService */
+            $shopLinkAccountService = $module->getService(ShopLinkAccountService::class);
+
+            $data['user']['emailIsValidated'] = $userToken->getTokenEmailVerified();
+            $data['isLinkedV4'] = $shopLinkAccountService->isAccountLinkedV4();
+        }
+
+        $configuration->setShopId($shopId);
+
+        return $data;
+    }
+
+    // TODO Add public function to get main shop
+
+    /**
+     * @param string $psxName
+     *
+     * @return array
+     *
+     * @throws \PrestaShopException|\Exception
+     */
+    public function getCurrentShop($psxName = '')
+    {
+        $data = $this->formatShopData((array) \Shop::getShop($this->shopContext->getContext()->shop->id), $psxName);
+
+        return array_merge($data, [
+            'multishop' => $this->shopContext->isMultishopActive(),
+            'moduleName' => $psxName,
+            'psVersion' => _PS_VERSION_,
+        ]);
     }
 
     /**
@@ -88,38 +150,73 @@ class ShopProvider
     {
         $shopList = [];
 
-        if (true === $this->shopContext->isShopContext()) {
-            return $shopList;
-        }
-
         foreach (\Shop::getTree() as $groupId => $groupData) {
             $shops = [];
             foreach ($groupData['shops'] as $shopId => $shopData) {
-                $shops[] = [
-                    'id' => $shopId,
-                    'name' => $shopData['name'],
-                    'domain' => $shopData['domain'],
-                    'domainSsl' => $shopData['domain_ssl'],
-                    'url' => $this->link->getAdminLink(
-                        'AdminModules',
-                        true,
-                        [],
-                        [
-                            'configure' => $psxName,
-                            'setShopContext' => 's-' . $shopId,
-                        ]
-                    ),
-                ];
+                $data = $this->formatShopData((array) $shopData, $psxName);
+
+                $shops[] = array_merge($data, [
+                    'multishop' => $this->shopContext->isMultishopActive(),
+                    'moduleName' => $psxName,
+                    'psVersion' => _PS_VERSION_,
+                ]);
             }
 
             $shopList[] = [
-                'id' => $groupId,
+                'id' => (string) $groupId,
                 'name' => $groupData['name'],
                 'shops' => $shops,
+                'multishop' => $this->shopContext->isMultishopActive(),
+                'moduleName' => $psxName,
+                'psVersion' => _PS_VERSION_,
             ];
         }
 
         return $shopList;
+    }
+
+    /**
+     * @param string $psxName
+     * @param int $employeeId
+     *
+     * @return array
+     *
+     * @throws \PrestaShopException
+     */
+    public function getUnlinkedShops($psxName, $employeeId)
+    {
+        $shopTree = $this->getShopsTree($psxName);
+        $shops = [];
+
+        switch ($this->getShopContext()->getShopContext()) {
+            case \Shop::CONTEXT_ALL:
+                $shops = array_reduce($shopTree, function ($carry, $shopGroup) {
+                    return array_merge($carry, $shopGroup['shops']);
+                }, []);
+                break;
+            case \Shop::CONTEXT_GROUP:
+                $shops = array_reduce($shopTree, function ($carry, $shopGroup) {
+                    if ($shopGroup['id'] != $this->getShopContext()->getShopContextId()) {
+                        return $carry;
+                    }
+
+                    return array_merge($carry, $shopGroup['shops']);
+                }, []);
+                break;
+            case \Shop::CONTEXT_SHOP:
+                $shops = [$this->getCurrentShop($psxName)];
+                break;
+        }
+
+        $unlinkedShops = array_filter($shops, function ($shop) {
+            return $shop['uuid'] === null || ($shop['uuid'] && $shop['isLinkedV4']);
+        });
+
+        return array_map(function ($shop) use ($employeeId) {
+            $shop['employeeId'] = (string) $employeeId;
+
+            return $shop;
+        }, $unlinkedShops);
     }
 
     /**
@@ -128,5 +225,46 @@ class ShopProvider
     public function getShopContext()
     {
         return $this->shopContext;
+    }
+
+    /**
+     * @param int $shopId
+     *
+     * @return false|string
+     */
+    private function getShopPhysicalUri($shopId)
+    {
+        return \Db::getInstance()->getValue(
+            'SELECT physical_uri FROM ' . _DB_PREFIX_ . 'shop_url WHERE id_shop=' . (int) $shopId . ' AND main=1'
+        );
+    }
+
+    /**
+     * @param int $shopId
+     *
+     * @return false|string
+     */
+    private function getShopVirtualUri($shopId)
+    {
+        return \Db::getInstance()->getValue(
+            'SELECT virtual_uri FROM ' . _DB_PREFIX_ . 'shop_url WHERE id_shop=' . (int) $shopId . ' AND main=1'
+        );
+    }
+
+    /**
+     * @param array $shopData
+     *
+     * @return string|null
+     */
+    private function getShopUrl($shopData)
+    {
+        if (!$shopData['domain']) {
+            return null;
+        }
+
+        return
+            ($shopData['domain_ssl'] ? 'https://' : 'http://') .
+            ($shopData['domain_ssl'] ?: $shopData['domain']) .
+            $shopData['uri'];
     }
 }

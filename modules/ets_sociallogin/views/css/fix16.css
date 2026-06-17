@@ -1,0 +1,63 @@
+.ets_solo_networks_login th {
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.ets_social_login {
+  list-style: outside none none;
+  padding-left: 0;
+  padding-right: 0;
+  width: 100%;
+}
+.popup_content td {
+    border: medium none;
+    min-width: 30px;
+}
+.ets_solo_social_wrapper.slw_and_alw .form-group.row {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+.ets_solo_title > .icon.icon-user {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+.popup_content .cart_quantity .cart_quantity_input {
+    line-height: inherit;
+}
+.solo-login-form-alw .forgot-password a, .solo-login-form-alw .no-account a {
+    padding: 0;
+    background: transparent!important;
+}
+.ets_solo_social_title {
+  color: #555454;
+  font-family: "Open Sans",sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.popup_content td.cart_total {
+    text-align: center;
+}
+
+.popup_content td.cart_description small {
+    clear: both;
+    display: block;
+}
+
+.aband_show_popup_reminder .popup_content .product-name {
+    margin-bottom: 3px;
+}
+
+.aband_show_popup_reminder .popup_content .product-name a {
+    font-size: 14px;
+}
+
+.aband_email_product_list tr {
+  border-bottom: 1px solid #ddd;
+}
+
+.popup_content td.cart_unit li {
+  text-align: right;
+}
+

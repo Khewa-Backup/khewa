@@ -2,7 +2,7 @@
 <module>
     <name>canadapostlabels</name>
     <displayName><![CDATA[Canada Post: Rates, Bulk Labels, Returns, Tracking, Estimator]]></displayName>
-    <version><![CDATA[4.0.8]]></version>
+    <version><![CDATA[4.1.1]]></version>
     <description><![CDATA[Offer real-time rates to customers, create bulk order labels in one click, allow customers to track their orders, and provide shipping quotes on the product and cart pages.]]></description>
     <author><![CDATA[ZH Media]]></author>
     <tab><![CDATA[shipping_logistics]]></tab>

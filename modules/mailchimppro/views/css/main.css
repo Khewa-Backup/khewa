@@ -47,3 +47,62 @@ img.mail-chimp {
     /*border-color: #e6c600;*/
 /*}*/
 
+body.adminmailchimpproconfig .btn-group {
+    display: flex !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+}
+
+body.adminmailchimpproconfig .btn-group .btn-default {
+    display: flex !important;
+    padding: 5px !important;
+    align-items: center !important;
+    border-bottom-right-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    order: 2 !important; 
+}
+
+body.adminmailchimpproconfig .btn-group .btn-default.hidden {
+    order: 1 !important;
+}
+
+body.adminmailchimpproconfig .btn-group .btn-group {
+    order: 3 !important;
+}
+
+body.adminmailchimpproconfig .btn-group .btn-group button {
+    column-gap: 5px !important;
+    padding: 5px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-left-radius: 4px !important;
+
+}
+
+body.adminmailchimpproemailtemplates .mailchimp-pro-content-container table .img-thumbnail {
+    max-width: 50px;
+}
+
+.mailchimp-pro-content-container .add-new-modal .panel {
+	margin-bottom: 0 !important;
+}
+.mailchimp-pro-content-container .add-new-modal form ~ .close-modal-button {
+    position: absolute;
+    bottom: 13px;
+    left: 15px;
+}
+.mailchimp-pro-content-container /* .add-new-modal */ form .control-label {
+	width: auto;
+    margin-bottom: 5px;
+}
+
+.mailchimp-pro-content-container .add-new-modal form .mce-edit-area > iframe {
+	min-height: 100px;
+}
+.mailchimp-pro-content-container .add-new-modal .div-default-templates {
+	padding: 15px;
+}
+
+.mailchimp-pro-content-container .add-new-modal:not(.editing) .panel-heading-editing,
+.mailchimp-pro-content-container .add-new-modal.editing .panel-heading-new {
+	display: none;
+}

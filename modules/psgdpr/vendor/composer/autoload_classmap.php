@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'APIFAQ' => $baseDir . '/classes/APIFAQClass.php',
     'AdminAjaxPsgdprController' => $baseDir . '/controllers/admin/AdminAjaxPsgdprController.php',
     'AdminDownloadInvoicesPsgdprController' => $baseDir . '/controllers/admin/AdminDownloadInvoicesPsgdprController.php',
     'GDPRConsent' => $baseDir . '/classes/GDPRConsent.php',

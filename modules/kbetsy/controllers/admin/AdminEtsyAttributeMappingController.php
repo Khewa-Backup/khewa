@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyAttributeMappings.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 
@@ -53,10 +56,10 @@ class AdminEtsyAttributeMappingController extends ModuleAdminController
 
         /** Join product attribute with attribute table to get avaliable atrributes & then join with etsy attribute mapping to get corrospnding mapped etsy attribute */
         $this->_join = "INNER JOIN " . _DB_PREFIX_ . "attribute attr ON a.id_attribute_group = attr.id_attribute_group "
-                . "INNER JOIN " . _DB_PREFIX_ . "product_attribute_combination pac ON attr.id_attribute = pac.id_attribute "
-                . "INNER JOIN " . _DB_PREFIX_ . "product_attribute pa ON pa.id_product_attribute = pac.id_product_attribute "
-                . "LEFT JOIN " . _DB_PREFIX_ . "etsy_attribute_mapping1 eam ON a.id_attribute_group = eam.id_attribute_group "
-                . "LEFT JOIN " . _DB_PREFIX_ . "etsy_attributes ea ON ea.attribute_id = eam.property_id";
+            . "INNER JOIN " . _DB_PREFIX_ . "product_attribute_combination pac ON attr.id_attribute = pac.id_attribute "
+            . "INNER JOIN " . _DB_PREFIX_ . "product_attribute pa ON pa.id_product_attribute = pac.id_product_attribute "
+            . "LEFT JOIN " . _DB_PREFIX_ . "etsy_attribute_mapping1 eam ON a.id_attribute_group = eam.id_attribute_group "
+            . "LEFT JOIN " . _DB_PREFIX_ . "etsy_attributes ea ON ea.attribute_id = eam.property_id";
 
         $this->_where = " = 1 AND a.id_lang = '" . $this->context->language->id . "'";
         $this->_group = "GROUP BY  a.id_attribute_group";
@@ -64,11 +67,11 @@ class AdminEtsyAttributeMappingController extends ModuleAdminController
 
         /** Query to check if there any attribute which are mapped to products */
         $mappedPrestashopAttribute = Db::getInstance()->getRow("SELECT count(*) as total FROM `" . _DB_PREFIX_ . "product_attribute` pa "
-                . "INNER JOIN " . _DB_PREFIX_ . "product_attribute_combination pac ON pa.id_product_attribute = pac.id_product_attribute "
-                . "INNER JOIN " . _DB_PREFIX_ . "attribute a ON pac.id_attribute = a.id_attribute "
-                . "INNER JOIN " . _DB_PREFIX_ . "attribute_group_lang agl ON agl.id_attribute_group = a.id_attribute_group "
-                . "WHERE agl.id_lang = " . (int) $this->context->language->id . " "
-                . "GROUP BY agl.id_attribute_group");
+            . "INNER JOIN " . _DB_PREFIX_ . "product_attribute_combination pac ON pa.id_product_attribute = pac.id_product_attribute "
+            . "INNER JOIN " . _DB_PREFIX_ . "attribute a ON pac.id_attribute = a.id_attribute "
+            . "INNER JOIN " . _DB_PREFIX_ . "attribute_group_lang agl ON agl.id_attribute_group = a.id_attribute_group "
+            . "WHERE agl.id_lang = " . (int) $this->context->language->id . " "
+            . "GROUP BY agl.id_attribute_group");
         $this->mappedAttributeCount = $mappedPrestashopAttribute['total'];
 
         //This is to show notification messages to admin

@@ -1,11 +1,10 @@
 <?php
 
-namespace Lcobucci\JWT\Encoding;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Encoding;
 
 use JsonException;
-use Lcobucci\JWT\Exception;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 use RuntimeException;
-
 final class CannotDecodeContent extends RuntimeException implements Exception
 {
     /**
@@ -17,7 +16,6 @@ final class CannotDecodeContent extends RuntimeException implements Exception
     {
         return new self('Error while decoding from JSON', 0, $previous);
     }
-
     /** @return self */
     public static function invalidBase64String()
     {

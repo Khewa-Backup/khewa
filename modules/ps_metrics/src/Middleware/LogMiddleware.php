@@ -30,9 +30,9 @@ class LogMiddleware extends Middleware
      */
     private $loggerAdapter;
 
-    public function __construct(LoggerAdapter $loggerHelper)
+    public function __construct(LoggerAdapter $loggerAdapter)
     {
-        $this->loggerAdapter = $loggerHelper;
+        $this->loggerAdapter = $loggerAdapter;
     }
 
     /**
@@ -40,7 +40,7 @@ class LogMiddleware extends Middleware
      *
      * @return array
      */
-    public function execute($response)
+    public function execute($response): array
     {
         if (!empty($response['error'])) {
             $this->loggerAdapter->error($response['error'], ['error_code' => $response['code']]);

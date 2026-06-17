@@ -46,9 +46,9 @@ class ActionsHandler
     /**
      * Values conveyored by the classes
      *
-     * @var array
+     * @var \ConveyorModel
      */
-    protected $conveyor = [];
+    protected $conveyor = null;
 
     /**
      * List of actions
@@ -74,7 +74,7 @@ class ActionsHandler
     /**
      * Set the conveyor
      *
-     * @param array $conveyorData
+     * @param \ConveyorModel $conveyorData
      *
      * @return $this
      */
@@ -88,7 +88,7 @@ class ActionsHandler
     /**
      * Return data in conveyor
      *
-     * @return array
+     * @return \ConveyorModel
      */
     public function getConveyor()
     {

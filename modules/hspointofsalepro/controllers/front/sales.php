@@ -30,7 +30,6 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
         'getDiscountInfo',
     );
 
-    
     /**
      * An actual action which DOES something.
      *
@@ -422,7 +421,6 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
      * }
      * </pre>
      */
-    
     public function ajaxProcessInitShop()
     {
         $root_category = PosCategory::getRootCategory();

@@ -1,22 +1,20 @@
 /**
- * 2007-2020 ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
  *
  * NOTICE OF LICENSE
  *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
  * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- * 
+ *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please contact us for extra customization service at an affordable price
+ * versions in the future.
  *
- *  @author ETS-Soft <etssoft.jsc@gmail.com>
- *  @copyright  2007-2021 ETS-Soft
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of ETS-Soft
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
  */
 var ets_sp_images = "";
 var ets_sp_browsed_images = [];
@@ -79,6 +77,8 @@ $(document).ready(function(){
                         $.growl.notice({ message: json.success });
                         $this.parent().parent().remove();
                     }
+                    if(json.error)
+                        showErrorMessage(json.error);
                 },
                 error: function(xhr, status, error)
                 {     
@@ -110,6 +110,8 @@ $(document).ready(function(){
                         $('input#'+json.image_id).parent().parent().find('>li.all input[type="checkbox"]').removeAttr('disabled').removeAttr('checked');
                     }
                 }
+                if(json.error)
+                    showErrorMessage(json.error);
             },
             error: function(xhr, status, error)
             {
@@ -123,7 +125,7 @@ $(document).ready(function(){
         {
             if(!confirm(comfirm_all_image))
             {
-                $(this).removeAttr('checked');
+                $(this).prop('checked',false);
                 return false;
             }
         }
@@ -133,9 +135,9 @@ $(document).ready(function(){
                if($(this).attr('disabled')!='disabled')
                 {
                    if(check_all)
-                        $(this).attr('checked','checked');
+                        $(this).prop('checked',true);
                    else
-                        $(this).removeAttr('checked');
+                        $(this).prop('checked',false);
                    sp_add_image_browse_to_list($(this));
                 } 
             });
@@ -165,9 +167,9 @@ $(document).ready(function(){
                             if($(this).attr('disabled')!='disabled')
                             {
                                 if(check_all)
-                                    $(this).attr('checked','checked');
+                                    $(this).prop('checked',true);
                                else
-                                    $(this).removeAttr('checked');
+                                    $(this).prop('checked',false);
                                sp_add_image_browse_to_list($(this));
                             }
                         });
@@ -184,9 +186,9 @@ $(document).ready(function(){
                     if($(this).attr('disabled')!='disabled')
                     {
                        if(check_all)
-                            $(this).attr('checked','checked');
+                            $(this).prop('checked',true);
                        else
-                            $(this).removeAttr('checked');
+                            $(this).prop('checked',false);
                        sp_add_image_browse_to_list($(this));
                     }
                 });
@@ -199,9 +201,9 @@ $(document).ready(function(){
                if($(this).attr('disabled')!='disabled')
                {
                     if(check_all)
-                        $(this).attr('checked','checked');
+                        $(this).prop('checked',true);
                     else
-                        $(this).removeAttr('checked');
+                        $(this).prop('checked',false);
                     sp_add_image_browse_to_list($(this));
                }
             });
@@ -215,21 +217,21 @@ $(document).ready(function(){
         {
             if($(this).parent().parent().find('> li.file input[type="checkbox"]').length==$(this).parent().parent().find('> li.file input[type="checkbox"]:checked').length)
             {
-                $(this).parent().parent().find('>li.all input[type="checkbox"]').attr('checked','checked');
+                $(this).parent().parent().find('>li.all input[type="checkbox"]').prop('checked',true);
             }
         }    
         else
         {  
-            $(this).parent().parent().find('>li.all input[type="checkbox"]').removeAttr('checked');
+            $(this).parent().parent().find('>li.all input[type="checkbox"]').prop('checked',false);
         }
         sp_ajax_compress_image_browse();
     });
     $(document).on('click','.list-browse-images > li.folder .open-close-folder',function(){
         var $this= $(this);
         $this.parent().toggleClass('folder-hide');
-        $('.block-browse-image-left').addClass('loading');
         if($this.parent().find('.list-browse-images').length==0)
         {
+            $('.block-browse-image-left').addClass('loading');
             $.ajax({
                 url: '',
                 data: {
@@ -286,7 +288,7 @@ function ets_sp_show_added_files(file_images)
 				{
 					html_li += '<li class="upload" id="image-'+ets_sp_browsed_images.length+'-'+image_id+'">';
                     html_li += '<div class="before"><span class="image_name" title="'+ets_sp_images[i].name+'">'+(ets_sp_images[i].name.length > 23 ? ets_sp_images[i].name.substr(0,11)+' . . . '+ets_sp_images[i].name.substr(ets_sp_images[i].name.length-12):ets_sp_images[i].name  )+' ('+ets_sp_actual_fileSize+')</span></div>';
-                    html_li += '<div class="progress waiting"><div class="bar" style="width: 0%;"></div><div class="status">'+image_waiting_text+'</div></div>';
+                    html_li += '<div class="progress waiting"><div class="progress_bar"><div class="bar" style="width: 0%;"></div><div class="status">'+image_waiting_text+'</div></div></div>';
                     html_li +='<div class="after"><span class="size"></span><span class="sp_cancel_upload_image">'+cancel_text+'</span></div>';
                     html_li +='</li>';
 				}
@@ -311,10 +313,6 @@ function ets_sp_read_file(vpb_e)
 function vpb_submit_added_files()
 {
     if(ets_sp_browsed_images.length > 0) {
-		//for(var k=0; k < ets_sp_browsed_images.length; k++){
-//			var file = ets_sp_browsed_images[k];
-//			ets_sp_ajaxuploadmultipleimage(file,0);
-//		}
         $('#ets_sp_multiple_imamges').attr('disabled','disabled');
         ets_sp_ajaxuploadmultipleimage(ets_sp_browsed_images[ets_sp_browsed_images.length-1],0);
 	}
@@ -381,8 +379,8 @@ function ets_sp_ajaxuploadmultipleimage(file,file_counter)
                                     html += '<div class="popup-title"><h3>'+optimize_title_text+'</h3><span class="optimize_stop" title="Close">Close</span></div>';
                                     html += '<div class="popup_error"><p>'+popup_error+'</p>'+json.error+'<div class="popup_continue"><p>'+(json.script_continue=='php' ? continue_question : continue_question_webp)+'</p> <button class="btn btn-default optimize_upload_continue">'+continue_text+'</button>  <button class="btn btn-default optimize_upload_stop">'+no_continue_text+'</button></div></div>';
                                     html += '</div></div>';
-                                    if(!$('#module_form .popup_optimizeing_wapper').length)
-                                        $('#module_form .panel-footer').before(html); 
+                                    if(!$('#configuration_form .popup_optimizeing_wapper').length)
+                                        $('#configuration_form .panel-footer').before(html);
                                     $('#list_added_images li#image-'+ets_sp_id_images_uploading_cusrrent+' .progress').removeClass('uploading').removeClass('compressing').addClass('waiting');
                                     $('#list_added_images li#image-'+ets_sp_id_images_uploading_cusrrent+' .progress .status').html(image_waiting_text);
                                 }
@@ -506,10 +504,12 @@ function sp_add_image_browse_to_list($input)
                         $html += '<span class="image_name" title="'+image_name+'">'+(image_name.length >23 ? image_name.substr(0,11)+' . . . '+image_name.substr(image_name.length-12):image_name)+' ('+$input.data('file_size')+')</span>';
                     $html += '</div>';
                     $html += '<div class="progress waiting">';
-                        $html += '<input type="hidden" name="browse_images[]" value="'+$input.val()+'" data-id="'+$input.attr('id')+'" />';
-                        $html += '<div class="image_dir"></div>';
-                        $html += '<div class="bar" style="width: 100%;"></div>';
-                        $html += '<div class="status">'+image_waiting_text+'</div>';
+                        $html += '<div class="progress_bar">';
+                            $html += '<input type="hidden" name="browse_images[]" value="'+$input.val()+'" data-id="'+$input.attr('id')+'" />';
+                            $html += '<div class="image_dir"></div>';
+                            $html += '<div class="bar" style="width: 100%;"></div>';
+                            $html += '<div class="status">'+image_waiting_text+'</div>';
+                        $html += '</div>';
                     $html += '</div>';
                     $html += '<div class="after">';
                         $html += '<span class="size"></span>';
@@ -565,8 +565,8 @@ function sp_ajax_compress_image_browse()
                     html += '<div class="popup-title"><h3>'+optimize_title_text+'</h3><span class="optimize_stop" title="Close">Close</span></div>';
                     html += '<div class="popup_error"><p>'+popup_error+'</p>'+json.error+'<div class="popup_continue"><p>'+(json.script_continue=='php' ? continue_question : continue_question_webp)+'</p> <button class="btn btn-default optimize_browse_continue">'+continue_text+'</button>  <button class="btn btn-default optimize_browse_stop">'+no_continue_text+'</button></div></div>';
                     html += '</div></div>';
-                    if(!$('#module_form .popup_optimizeing_wapper').length)
-                        $('#module_form .panel-footer').before(html); 
+                    if(!$('#configuration_form .popup_optimizeing_wapper').length)
+                        $('#configuration_form .panel-footer').before(html);
                     $('#list_added_browse_images li#image-'+ets_sp_id_images_compressing_cusrrent+' .progress').removeClass('compressing').addClass('waiting');
                 }
                 else{
@@ -577,6 +577,7 @@ function sp_ajax_compress_image_browse()
                         $('#list_added_browse_images li#image-'+ets_sp_id_images_compressing_cusrrent+' .after .size').after('<a class="restore_image_browse" href="'+json.link_restore+'"><i class="fa fa-undo" aria-hidden="true"></i> '+restore_text+'</a>');
                         $('#list_added_browse_images li#image-'+ets_sp_id_images_compressing_cusrrent+' .after .size').after('<a class="" href="'+json.link_download+'"><i class="fa fa-download" aria-hidden="true"></i> '+download_text+'</a>');
                         $('#list_added_browse_images li#image-'+ets_sp_id_images_compressing_cusrrent+' .progress .image_dir').html(json.image_dir+' (<span class="saved">'+save_text+' '+json.saved+'</span>)');
+                        $('#list_added_browse_images li#image-'+ets_sp_id_images_compressing_cusrrent+' .progress .status').remove();
                     }
                     sp_ajax_compress_image_browse();
                 }

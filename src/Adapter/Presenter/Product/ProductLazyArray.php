@@ -613,6 +613,10 @@ class ProductLazyArray extends AbstractLazyArray
             return false;
         }
 
+        if (!$this->configuration->getBoolean('PS_STOCK_MANAGEMENT')) {
+            return false;
+        }
+
         // Displayed only if the order of out of stock product is denied.
         if ($product['out_of_stock'] == OutOfStockType::OUT_OF_STOCK_AVAILABLE
             || (
@@ -654,6 +658,9 @@ class ProductLazyArray extends AbstractLazyArray
             $language
         );
 
+//        var_dump(__LINE__);
+//        print_r($productImages);
+
         // Get filtered product images matching the specified id_product_attribute
         $this->product['images'] = $this->filterImagesForCombination($productImages, $product['id_product_attribute']);
 
@@ -691,6 +698,8 @@ class ProductLazyArray extends AbstractLazyArray
         if (!isset($this->product['cover'])) {
             $this->product['cover'] = $this->product['default_image'];
         }
+//        var_dump(__LINE__);
+//        print_r($this->product['images']);
     }
 
     /**

@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 <div class="table-responsive">
@@ -30,7 +30,7 @@
             <th>{l s='Shipping' mod='mailchimppro'}</th>
             <th>{l s='Processed at' mod='mailchimppro'}</th>
             <th>{l s='Products' mod='mailchimppro'}</th>
-            <th>#</th>
+            <th>{l s='Actions' mod='mailchimppro'}</th>
         </tr>
         </thead>
         <tbody>

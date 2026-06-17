@@ -580,26 +580,63 @@ class StockAvailableCore extends ObjectModel
         if ($id_shop === null && Shop::getContext() != Shop::CONTEXT_GROUP) {
             $id_shop = (int) $context->shop->id;
         }
+        //debug
+        // $debug_time_start = microtime(true);
+        //end
         $depends_on_stock = StockAvailable::dependsOnStock($id_product);
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
+
         //Try to set available quantity if product does not depend on physical stock
         if (!$depends_on_stock) {
             $stockManager = ServiceLocator::get('\\PrestaShop\\PrestaShop\\Core\\Stock\\StockManager');
 
+            //debug
+            // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+            // $debug_time_start = microtime(true);
+            //end
+
             $id_stock_available = (int) StockAvailable::getStockAvailableIdByProductId($id_product, $id_product_attribute, $id_shop);
+            //debug
+            // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+            // $debug_time_start = microtime(true);
+            //end
             if ($id_stock_available) {
                 $stock_available = new StockAvailable($id_stock_available);
+                //debug
+                // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+                // $debug_time_start = microtime(true);
+                //end
 
                 $deltaQuantity = (int) $quantity - (int) $stock_available->quantity;
 
                 $stock_available->quantity = (int) $quantity;
                 $stock_available->update();
+                //debug
+                // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+                // $debug_time_start = microtime(true);
+                //end
 
                 if (true === $add_movement && 0 != $deltaQuantity) {
                     $stockManager->saveMovement($id_product, $id_product_attribute, $deltaQuantity);
                 }
+                //debug
+                // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+                // $debug_time_start = microtime(true);
+                //end
             } else {
                 $out_of_stock = StockAvailable::outOfStock($id_product, $id_shop);
+                //debug
+                // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+                // $debug_time_start = microtime(true);
+                //end
                 $stock_available = new StockAvailable();
+                //debug
+                // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+                // $debug_time_start = microtime(true);
+                //end
                 $stock_available->out_of_stock = (int) $out_of_stock;
                 $stock_available->id_product = (int) $id_product;
                 $stock_available->id_product_attribute = (int) $id_product_attribute;
@@ -609,6 +646,10 @@ class StockAvailableCore extends ObjectModel
                 } else {
                     $shop_group = new ShopGroup((int) Shop::getGroupFromShop((int) $id_shop));
                 }
+                //debug
+                // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+                // $debug_time_start = microtime(true);
+                //end
                 // if quantities are shared between shops of the group
                 if ($shop_group->share_stock) {
                     $stock_available->id_shop = 0;
@@ -618,12 +659,20 @@ class StockAvailableCore extends ObjectModel
                     $stock_available->id_shop_group = 0;
                 }
                 $stock_available->add();
+                //debug
+                // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+                // $debug_time_start = microtime(true);
+                //end
 
                 if (true === $add_movement && 0 != $quantity) {
                     $stockManager->saveMovement($id_product, $id_product_attribute, (int) $quantity);
                 }
             }
-
+            //debug
+            // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took before actionUpdateQuantity: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+            // $debug_time_start = microtime(true);
+//            if(13165 != $id_product){
+            //end
             Hook::exec(
                 'actionUpdateQuantity',
                 [
@@ -632,6 +681,11 @@ class StockAvailableCore extends ObjectModel
                     'quantity' => $stock_available->quantity,
                 ]
             );
+            //debug
+//            }
+            // file_put_contents(_PS_ROOT_DIR_.'/'.$id_product.'.log', 'Time took after actionUpdateQuantity: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+            // $debug_time_start = microtime(true);
+            //end
         }
         Cache::clean('StockAvailable::getQuantityAvailableByProduct_' . (int) $id_product . '*');
     }

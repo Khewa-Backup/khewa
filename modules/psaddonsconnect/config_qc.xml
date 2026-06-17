@@ -2,8 +2,8 @@
 <module>
     <name>psaddonsconnect</name>
     <displayName><![CDATA[Tips and Updates module]]></displayName>
-    <version><![CDATA[2.1.2]]></version>
-    <description><![CDATA[2 in 1: Make security and functional updates easier for all modules in your store, and take advantage of an e-commerce tip each week to help you on your way.]]></description>
+    <version><![CDATA[2.1.0]]></version>
+    <description><![CDATA[Thanks to this module, connect to your Addons account from the dashboard of your back-office]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall this module?]]></confirmUninstall>

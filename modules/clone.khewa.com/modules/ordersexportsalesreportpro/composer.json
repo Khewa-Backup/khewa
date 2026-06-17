@@ -1,0 +1,8 @@
+{
+    "config": {
+        "prepend-autoloader": false
+    },
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.5"
+    }
+}

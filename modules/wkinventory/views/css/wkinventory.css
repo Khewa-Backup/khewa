@@ -139,12 +139,22 @@
 /*********/
 
 .left-free-block {
+	font-family:"Ubuntu Condensed", Helvetica, Arial, sans-serif;
+	font-size:0.95em;
+	text-shadow: 0 1px black;
+	font-weight: bold;
+	letter-spacing:0.08em;
 	width:100%;
 	border-left:1px solid #999;
 	border-right:1px solid #999;
 	border-bottom:1px solid #999;
 	border-top:none;
 	background-color: #b0b0b0;
+	color: #FFC;
+	padding: 5px;
+	margin-top:0;
+	margin:0;
+	text-transform:uppercase;
 	-moz-border-radius-bottomleft: 5px;
 	-webkit-border-bottom-left-radius: 5px;
 	-khtml-border-bottom-left-radius: 5px;
@@ -153,15 +163,6 @@
 	-webkit-border-bottom-right-radius: 5px;
 	-khtml-border-bottom-right-radius: 5px;
 	border-bottom-right-radius: 5px;
-	color:#FFF;
-	padding: 5px;
-	margin-top:0;
-	text-transform:uppercase;
-	font-family:"Ubuntu Condensed", Helvetica, Arial, sans-serif;
-	font-size:0.95em;
-	text-shadow: 0 1px black;
-	font-weight: normal;
-	letter-spacing:1px;
 }
 .bootstrap .page-head .toolbarBox .btn-toolbar .btn-help {
 	display:none
@@ -177,8 +178,9 @@
 	width:140px;
 }
 .adminstocktake .bootstrap .page-head .toolbarBox .btn-toolbar li #page-header-desc-wkinventory_product-update_end_inv {
-	width:132px;
+	width:142px;
 	font-weight:bold!important;
+	font-size:11px!important;
 }
 /* 
  * CSS FOR POPUP TO EDIT LOCATIONS
@@ -257,23 +259,34 @@
 	margin-bottom:2px;
 }
 .bootstrap .table>tbody>tr.success>td {
-	background-color:#f4f8fb!Important;
+	background-color:#bdf9c3!Important;
 }
 .bootstrap .table>tbody>tr.info>td {
-	background-color:#d3f1f7;
+	background-color:#d3f1f7!Important;
 }
 .bootstrap .table>tbody>tr.warning>td {
-	background-color:#fef1d3;
+	background-color:#fef1d3!Important;
 }
 #page-header-desc-wkinventory_product-update_end_inv {
 	text-transform:uppercase;
 	font-size:12px
 }
+.bootstrap .page-head .page-title {
+	font-size:18px!important;
+	text-transform:uppercase!important;
+	font-weight:bold;
+}
+#addons-rating-container a:link, #addons-rating-container a:visited {
+	color:#09F;
+	font-size:11px
+}
+.ui-resizable-se { bottom: 27px!important; right: 18px!important; }
+
 @media (max-width: 992px) {
-	/* Hide the filter bar */
+	/* Hide the filter bar
 	#form-wkinventory_product thead .filter, #form-wkinventory_product thead tr:first-child {
 		display:none;
-	}
+	} */
 	.wkinventory_product tbody td:nth-child(4), .wkinventory_product thead th:nth-child(4) {
 		width: auto!Important;
 	}

@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version    1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  * PHPExcel_CachedObjectStorage_DiscISAM
@@ -70,7 +72,7 @@ class PHPExcel_CachedObjectStorage_DiscISAM extends PHPExcel_CachedObjectStorage
 
 			fseek($this->_fileHandle,0,SEEK_END);
 			$offset = ftell($this->_fileHandle);
-			fwrite($this->_fileHandle, serialize($this->_currentObject));
+			fwrite($this->_fileHandle, json_encode($this->_currentObject));
 			$this->_cellCache[$this->_currentObjectID]	= array('ptr' => $offset,
 																'sz'  => ftell($this->_fileHandle) - $offset
 															   );
@@ -123,7 +125,7 @@ class PHPExcel_CachedObjectStorage_DiscISAM extends PHPExcel_CachedObjectStorage
 		//	Set current entry to the requested entry
 		$this->_currentObjectID = $pCoord;
 		fseek($this->_fileHandle,$this->_cellCache[$pCoord]['ptr']);
-		$this->_currentObject = unserialize(fread($this->_fileHandle,$this->_cellCache[$pCoord]['sz']));
+		$this->_currentObject = json_decode(fread($this->_fileHandle,$this->_cellCache[$pCoord]['sz']));
         //    Re-attach this as the cell's parent
         $this->_currentObject->attach($this);
 

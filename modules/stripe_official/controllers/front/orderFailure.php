@@ -1,28 +1,44 @@
 <?php
+
 /**
- * 2007-2019 PrestaShop
+ * Copyright (c) since 2010 Stripe, Inc. (https://stripe.com)
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
+ * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    202-ecommerce <tech@202-ecommerce.com>
- * @copyright Copyright (c) Stripe
- * @license   Commercial license
+ * @author    Stripe <https://support.stripe.com/contact/email>
+ * @copyright Since 2010 Stripe, Inc.
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 class stripe_officialOrderFailureModuleFrontController extends ModuleFrontController
 {
     /**
@@ -32,14 +48,46 @@ class stripe_officialOrderFailureModuleFrontController extends ModuleFrontContro
     {
         parent::initContent();
 
-        $this->context->smarty->assign(array(
-            'stripe_order_url' => $this->context->link->getPageLink('order')
-        ));
+        $cartId = Tools::getValue('cartId');
+        $key = Tools::getValue('key');
 
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $this->setTemplate('module:stripe_official/views/templates/front/order-confirmation-failed-17.tpl');
-        } else {
-            $this->setTemplate('order-confirmation-failed-16.tpl');
+        StripeOfficial\Classes\StripeProcessLogger::logInfo('Order failure page accessed with cartId: ' . $cartId, 'OrderFailureController', $cartId);
+
+        if (empty($key) || !PrestashopCartService::validateCartUniqueKey($cartId, $key)) {
+            StripeOfficial\Classes\StripeProcessLogger::logError('Invalid or missing cart key for cartId: ' . $cartId, 'OrderFailureController', $cartId);
+
+            return Tools::redirect(
+                $this->context->link->getPageLink('history', true)
+            );
         }
+
+        $returnUrl = $this->context->link->getPageLink('order');
+        $newOrderFlow = !(int) Configuration::get(Stripe_official::ORDER_FLOW);
+        if ($newOrderFlow) {
+            $order = null;
+            if ($cartId) {
+                $orderId = Order::getIdByCartId((int) $cartId);
+                $order = new Order($orderId);
+            }
+
+            if ($order->id) {
+                $returnUrl = $this->context->link->getPageLink(
+                    'order',
+                    true,
+                    null,
+                    ['submitReorder' => '1', 'id_order' => $order->id]);
+                if (!in_array($order->getCurrentState(), [(int) Configuration::get('PS_OS_ERROR'), (int) Configuration::get('PS_OS_PAYMENT')])) {
+                    StripeOfficial\Classes\StripeProcessLogger::logInfo('Setting order status to FAILED for order: ' . $order->id . ' Current status: ' . $order->getCurrentState(), 'OrderFailureController', $cartId);
+                    $order->setCurrentState((int) Configuration::get('PS_OS_ERROR'));
+                    $order->save();
+                }
+            }
+        }
+
+        $this->context->smarty->assign([
+            'stripe_order_url' => $returnUrl,
+        ]);
+
+        $this->setTemplate('module:stripe_official/views/templates/front/order-confirmation-failed.tpl');
     }
 }

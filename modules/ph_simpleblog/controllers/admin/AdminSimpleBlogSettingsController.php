@@ -270,15 +270,6 @@ class AdminSimpleBlogSettingsController extends ModuleAdminController
                         'type' => 'bool',
                     ], // PH_BLOG_FB_INIT
 
-                    'PH_BLOG_ADVERTISING' => [
-                        'title' => $this->l('Display ads and notifications in back-office?'),
-                        'validation' => 'isBool',
-                        'cast' => 'intval',
-                        'desc' => $this->l('Sometimes you\'ll see notifications about module updates, our new products etc.'),
-                        'required' => true,
-                        'type' => 'bool',
-                    ], // PH_BLOG_ADVERTISING
-
                     // @todo - 2.0.0
                     // 'PH_BLOG_LOAD_FA' => array(
                     //     'title' => $this->l('Load FontAwesome?'),

@@ -18,9 +18,14 @@
  */
 
 namespace PrestaChamps\MailchimpPro\Commands;
-
-use DrewM\MailChimp\MailChimp;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+use Context;
+use PrestaChamps\MailChimpAPI;
+use MailchimpProConfig;
 use PrestaChamps\MailchimpPro\Formatters\ProductFormatter;
+use PrestaChamps\PrestaShop\Traits\ShopIdTrait;
 
 /**
  * Class ProductSyncService
@@ -29,33 +34,38 @@ use PrestaChamps\MailchimpPro\Formatters\ProductFormatter;
  */
 class ProductSyncCommand extends BaseApiCommand
 {
+    use ShopIdTrait;
+
     protected $context;
     protected $productIds;
     protected $mailchimp;
     protected $batch;
     protected $batchPrefix = '';
-    protected $method      = 'POST';
-    protected $commands    = array();
+    protected $method = 'POST';
+    protected $commands = [];
+
+    protected $idStore;
 
     /**
      * @var \Category[]
      */
-    protected $categoryCache = array();
+    protected $categoryCache = [];
 
     /**
      * ProductSyncService constructor.
      *
-     * @param \Context  $context
-     * @param MailChimp $mailchimp
+     * @param \Context $context
+     * @param MailChimpAPI $mailchimp
      * @param           $productIds
      */
-    public function __construct(\Context $context, MailChimp $mailchimp, $productIds)
+    public function __construct(Context $context, MailChimpAPI $mailchimp, $productIds, $idStore = null)
     {
         $this->context = $context;
         $this->mailchimp = $mailchimp;
         $this->batchPrefix = uniqid("PRODUCT_SYNC_{$this->method}_", true);
         $this->batch = $this->mailchimp->new_batch($this->batchPrefix);
         $this->productIds = $productIds;
+        $this->idStore = $idStore ? $idStore : $this->context->shop->id;
     }
 
     /**
@@ -65,20 +75,59 @@ class ProductSyncCommand extends BaseApiCommand
      */
     public function execute()
     {
-        $this->buildProducts();
-        if ($this->method == self::SYNC_MODE_BATCH) {
-            return $this->batch->execute();
-        }
-        $method = \Tools::strtolower($this->method);
-        foreach ($this->commands as $entityId => $params) {
-            try {
-                $this->responses[$entityId] = $this->mailchimp->$method($params['route'], $params['data']);
-            } catch (\Exception $exception) {
-                $this->responses[$entityId] = $this->mailchimp->getLastResponse();
-                continue;
+        if (\Configuration::get(MailchimpProConfig::SYNC_PRODUCTS) || $this->method === self::SYNC_METHOD_DELETE) {
+            $this->responses = [];
+
+            $this->batchPrefix = uniqid("PRODUCT_SYNC_{$this->method}_", true);
+
+            $this->buildProducts();
+
+            if ($this->syncMode === self::SYNC_MODE_BATCH) {
+                $this->responses['batch'] = $this->batch->execute();
             }
+
+            $allRequestsSuccess = true;
+            $requestErrors = [];
+            if ($this->syncMode === self::SYNC_MODE_REGULAR) {
+                $method = \Tools::strtolower($this->method);
+                foreach ($this->commands as $entityId => $params) {
+                    try {
+                        //$this->responses[$entityId] = $this->mailchimp->$method($params['route'], $params['data']);
+                        $this->mailchimp->$method($params['route'], $params['data']);
+                        /* \Configuration::updateValue(MailchimpProConfig::LAST_SYNCED_PRODUCT_ID, $entityId); */
+                    } catch (\Exception $exception) {
+                        //$this->responses[$entityId] = $this->mailchimp->getLastResponse();
+                        //\PrestaShopLogger::addLog("[MAILCHIMP]: {$exception->getMessage()}");
+                        continue;
+                    }
+
+                    if (!$this->mailchimp->success()) {
+                        $allRequestsSuccess = false;
+                        $requestErrors[$entityId] = $this->mailchimp->getLastError();
+                    }
+                    else {
+                        \Configuration::updateValue(MailchimpProConfig::LAST_SYNCED_PRODUCT_ID, $entityId);
+                    }
+
+                    $this->responses['entities'][$entityId]['requestSuccess'] = $this->mailchimp->success();
+                    $this->responses['entities'][$entityId]['requestLastResponse'] = $this->mailchimp->getLastResponse();
+                    $this->responses['entities'][$entityId]['requestLastError'] = $this->mailchimp->getLastError();
+                }
+            }
+
+            $this->responses['requestMethod'] = $this->method;
+            if (empty($this->responses['requestSuccess'])) {
+                $this->responses['requestSuccess'] = $this->syncMode === self::SYNC_MODE_REGULAR ? $allRequestsSuccess : $this->mailchimp->success();
+            }
+            if (!$this->responses['requestSuccess']) {
+                $this->responses['requestLastErrors'] = $this->syncMode === self::SYNC_MODE_REGULAR ? $requestErrors : $this->mailchimp->getLastError();
+            }
+            $this->responses['requestLastResponse'] = $this->mailchimp->getLastResponse();
+            $this->responses['requestSyncMode'] = $this->syncMode === self::SYNC_MODE_REGULAR ? 'regular' : 'batch';
+
+            return $this->responses;
         }
-        return $this->responses;
+        return ['requestSuccess' => true];
     }
 
     /**
@@ -87,54 +136,100 @@ class ProductSyncCommand extends BaseApiCommand
      */
     protected function buildProducts()
     {
-        foreach ($this->productIds as $key => $product) {
-            $product = new \Product($product, false, $this->context->language->id);
-            $category = $this->getCategory($product->getDefaultCategory());
-            $productFormatter = new ProductFormatter(
-                $product,
-                $category,
-                $this->context
-            );
+        foreach ($this->productIds as $key => $productID) {
+            $productFormatter = null;
+            $product = new \Product($productID, false, $this->context->language->id, $this->idStore);
+            if(\Validate::isLoadedObject($product)){
+                $category = $this->getCategory($product->getDefaultCategory());
+                $productFormatter = new ProductFormatter(
+                    $product,
+                    $category,
+                    $this->context,
+                    $this->idStore
+                );
+            }else{
+                $this->method = self::SYNC_METHOD_DELETE;
+            }
             if ($this->method === self::SYNC_METHOD_POST) {
                 if ($this->syncMode == self::SYNC_MODE_BATCH) {
                     $this->batch->post(
-                        $this->batchPrefix . '_' . $key,
-                        "/ecommerce/stores/{$this->context->shop->id}/products",
+                        "{$this->batchPrefix}_{$key}",
+                        "/ecommerce/stores/{$this->getShopId($this->idStore)}/products",
                         $productFormatter->format()
                     );
-                } else {
-                    $this->commands[$product->id] = array(
-                        'route' => "/ecommerce/stores/{$this->context->shop->id}/products",
+                } elseif ($this->syncMode === self::SYNC_MODE_REGULAR) {
+                    $this->commands[$product->id] = [
+                        'route' => "/ecommerce/stores/{$this->getShopId($this->idStore)}/products",
                         'data' => $productFormatter->format(),
-                    );
+                    ];
                 }
             } elseif ($this->method === self::SYNC_METHOD_PATCH) {
                 if ($this->syncMode == self::SYNC_MODE_BATCH) {
                     $this->batch->patch(
-                        $this->batchPrefix . '_' . $key,
-                        "/ecommerce/stores/{$this->context->shop->id}/products/{$product->id}",
+                        "{$this->batchPrefix}_{$key}",
+                        "/ecommerce/stores/{$this->getShopId($this->idStore)}/products/{$product->id}",
                         $productFormatter->format()
                     );
-                } else {
-                    $this->commands[$product->id] = array(
-                        'route' => "/ecommerce/stores/{$this->context->shop->id}/products/{$product->id}",
+                } elseif ($this->syncMode === self::SYNC_MODE_REGULAR) {
+                    $this->commands[$product->id] = [
+                        'route' => "/ecommerce/stores/{$this->getShopId($this->idStore)}/products/{$product->id}",
                         'data' => $productFormatter->format(),
-                    );
+                    ];
                 }
-            } else {
+            } elseif ($this->method === self::SYNC_METHOD_PUT) {
+                if ($this->syncMode == self::SYNC_MODE_BATCH) {
+                    $this->batch->put(
+                        "{$this->batchPrefix}_{$key}",
+                        "/ecommerce/stores/{$this->getShopId($this->idStore)}/products/{$product->id}",
+                        $productFormatter->format()
+                    );
+                } elseif ($this->syncMode === self::SYNC_MODE_REGULAR) {
+                    $this->commands[$product->id] = [
+                        'route' => "/ecommerce/stores/{$this->getShopId($this->idStore)}/products/{$product->id}",
+                        'data' => $productFormatter->format(),
+                    ];
+                }            
+            } elseif ($this->method === self::SYNC_METHOD_DELETE) {
                 if ($this->syncMode == self::SYNC_MODE_BATCH) {
                     $this->batch->delete(
-                        $this->batchPrefix . '_' . $key,
-                        "/ecommerce/stores/{$this->context->shop->id}/products/{$product->id}"
+                        "{$this->batchPrefix}_{$key}",
+                        "/ecommerce/stores/{$this->getShopId($this->idStore)}/products/{$productID}"
                     );
-                } else {
-                    $this->commands[$product->id] = array(
-                        'route' => "/ecommerce/stores/{$this->context->shop->id}/products/{$product->id}",
-                        'data' => array(),
-                    );
+                } elseif ($this->syncMode === self::SYNC_MODE_REGULAR) {
+                    $this->commands[$product->id] = [
+                        'route' => "/ecommerce/stores/{$this->getShopId($this->idStore)}/products/{$productID}",
+                        'data' => [],
+                    ];
                 }
             }
         }
+    }
+
+    /**
+     * @param int    $productId
+     * @param string $shopId
+     * @param bool   $returnFields
+     *
+     * @return bool|array
+     */
+    public function getProductExists($productId, $shopId = null, $returnFields = null)
+    {
+        if (!$shopId) {
+            $shopId = $this->getShopId($this->idStore);
+        }
+        $result = $this->mailchimp->get(
+            "/ecommerce/stores/{$shopId}/products/{$productId}",
+            ['fields' => ['id']]
+        );
+
+        if ($this->mailchimp->success()) {
+            if ($returnFields) {
+                return $result;
+            }
+            return true;
+        }
+
+        return false;
     }
 
     /**

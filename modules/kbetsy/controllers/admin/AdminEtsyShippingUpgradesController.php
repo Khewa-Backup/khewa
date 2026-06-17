@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 //Include Etsy Module Class to inherit some common functions and callbacks
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyShippingTemplates.php');
@@ -32,34 +35,34 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
         parent::__construct();
         $this->fields_list = array(
             'id_etsy_shipping_upgrades' => array(
-                'title' => $this->l('ID'),
+                'title' => $this->module->l('ID'),
                 'align' => 'text-center',
                 'class' => 'fixed-width-xs'
             ),
             'shipping_template_title' => array(
-                'title' => $this->l('Shipping Template Title'),
+                'title' => $this->module->l('Shipping Template Title'),
             ),
             'shipping_origin_country' => array(
-                'title' => $this->l('Shipping Origin Country'),
+                'title' => $this->module->l('Shipping Origin Country'),
             ),
             'shipping_upgrade_title' => array(
-                'title' => $this->l('Shipping Upgrade Title'),
+                'title' => $this->module->l('Shipping Upgrade Title'),
             ),
             'shipping_upgrade_destination' => array(
                 'type' => 'select',
                 'filter_key' => 'shipping_upgrade_destination',
-                'list' => array('1'=>$this->l('International') ,  '0' => $this->l('Domestic')),
+                'list' => array('1'=>$this->module->l('International') ,  '0' => $this->module->l('Domestic')),
                 'filter_type' => 'int',
                 'callback' => 'getUpgradeDestination',
                 'order_key' => 'shipping_upgrade_destination',
-                'title' => $this->l('Shipping Upgrade Destination'),
+                'title' => $this->module->l('Shipping Upgrade Destination'),
             ),
             'shipping_upgrade_primary_cost' => array(
-                'title' => $this->l('Primary Cost'),
+                'title' => $this->module->l('Primary Cost'),
                 'search' => false
             ),
             'shipping_upgrade_secondary_cost' => array(
-                'title' => $this->l('Secondary Cost'),
+                'title' => $this->module->l('Secondary Cost'),
                 'search' => false
             ),
         );
@@ -86,7 +89,7 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
 
     public function getUpgradeDestination($row_data, $tr)
     {
-        $arr = array('1'=>$this->l('International') ,  '0' => $this->l('Domestic'));
+        $arr = array('1'=>$this->module->l('International') ,  '0' => $this->module->l('Domestic'));
         return $arr[$row_data];
     }
 
@@ -106,7 +109,7 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
 
         if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_shipping_templates')))) {
             $this->toolbar_btn['new'] = array(
-                'desc' => $this->l('Add New'),
+                'desc' => $this->module->l('Add New'),
                 'href' => $this->context->link->getAdminlink('AdminEtsyShippingUpgrades') . '&addetsy_shipping_upgrades&id_etsy_shipping_templates=' . Tools::getValue('id_etsy_shipping_templates')
             );
             return $this->toolbar_btn;
@@ -148,11 +151,11 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
         $destinationTypes = array(
             array(
                 'id_option' => '1',
-                'name' => $this->l('International')
+                'name' => $this->module->l('International')
             ),
             array(
                 'id_option' => '0',
-                'name' => $this->l('Domestic')
+                'name' => $this->module->l('Domestic')
             )
         );
         $disabled = false;
@@ -161,7 +164,7 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
         }
         $this->fields_form = array(
             'legend' => array(
-                'title' => !Tools::isEmpty(trim(Tools::getValue('id_etsy_shipping_upgrades'))) ? $this->l('Update Shipping Upgrade') : $this->l('Add New Shipping Upgrade'),
+                'title' => !Tools::isEmpty(trim(Tools::getValue('id_etsy_shipping_upgrades'))) ? $this->module->l('Update Shipping Upgrade') : $this->module->l('Add New Shipping Upgrade'),
                 'icon' => 'icon-cogs'
             ),
             'input' => array(
@@ -179,8 +182,8 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
 //                ),
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Shipping Template Title'),
-                    'desc' => $this->l('This is Shipping Template Title'),
+                    'label' => $this->module->l('Shipping Template Title'),
+                    'desc' => $this->module->l('This is Shipping Template Title'),
                     'name' => 'shipping_template_title',
                     'maxlength' => 255,
 //                    'required' => true,
@@ -188,8 +191,8 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Origin Country'),
-                    'desc' => $this->l('This is an origin country of Shipment'),
+                    'label' => $this->module->l('Origin Country'),
+                    'desc' => $this->module->l('This is an origin country of Shipment'),
                     'name' => 'shipping_origin_country_id',
 //                    'required' => true,
                     'options' => array(
@@ -209,8 +212,8 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Shipping Upgrade Title'),
-                    'desc' => $this->l('This is Shipping Upgrade Title'),
+                    'label' => $this->module->l('Shipping Upgrade Title'),
+                    'desc' => $this->module->l('This is Shipping Upgrade Title'),
                     'name' => 'shipping_upgrade_title',
                     'maxlength' => 50,
                     'required' => true,
@@ -218,8 +221,8 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Destination Type'),
-                    'desc' => $this->l('Choose a destination type as domestic or international'),
+                    'label' => $this->module->l('Destination Type'),
+                    'desc' => $this->module->l('Choose a destination type as domestic or international'),
                     'name' => 'destination_type',
                     'required' => true,
                     'options' => array(
@@ -233,16 +236,16 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
 
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Primary Cost'),
-                    'desc' => $this->l('Provide shipping primary cost for a shipment'),
+                    'label' => $this->module->l('Primary Cost'),
+                    'desc' => $this->module->l('Provide shipping primary cost for a shipment'),
                     'name' => 'shipping_upgrade_primary_cost',
                     'class' => 'velsof_number_field',
                     'required' => true
                 ),
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Secondary Cost'),
-                    'desc' => $this->l('Provide shipping cost for each additional item'),
+                    'label' => $this->module->l('Secondary Cost'),
+                    'desc' => $this->module->l('Provide shipping cost for each additional item'),
                     'name' => 'shipping_upgrade_secondary_cost',
                     'class' => 'velsof_number_field',
                     'required' => true
@@ -253,7 +256,7 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submit' . $this->name,
                     'js' => "validation('etsy_shipping_upgrades_form')",
-                    'title' => $this->l('Save'),
+                    'title' => $this->module->l('Save'),
                     'icon' => 'process-icon-save'
                 )
             )
@@ -409,7 +412,7 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
     {
 
         if (!array_key_exists('Delete', self::$cache_lang)) {
-            self::$cache_lang['Delete'] = $this->l('Delete', 'Helper');
+            self::$cache_lang['Delete'] = $this->module->l('Delete', 'Helper');
         }
 
         if (!empty($id)) {
@@ -433,7 +436,7 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
     {
 
         if (!array_key_exists('Edit', self::$cache_lang)) {
-            self::$cache_lang['Edit'] = $this->l('Edit', 'Helper');
+            self::$cache_lang['Edit'] = $this->module->l('Edit', 'Helper');
         }
 
         if (!empty($id)) {
@@ -487,7 +490,7 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
             if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_shipping_templates')))) {
                 $this->page_header_toolbar_btn['new_template'] = array(
                     'href' => $this->context->link->getAdminlink('AdminEtsyShippingUpgrades') . '&addetsy_shipping_upgrades&id_etsy_shipping_templates=' . Tools::getValue('id_etsy_shipping_templates'),
-                    'desc' => $this->l('Add new'),
+                    'desc' => $this->module->l('Add new'),
                     'icon' => 'process-icon-new'
                 );
             }
@@ -496,7 +499,7 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
         if (Tools::getValue('id_etsy_shipping_upgrades') || Tools::isSubmit('id_etsy_shipping_upgrades') || Tools::isSubmit('addetsy_shipping_upgrades')) {
             $this->page_header_toolbar_btn['kb_cancel_action'] = array(
                 'href' => self::$currentIndex . '&token=' . $this->token,
-                'desc' => $this->l('Cancel'),
+                'desc' => $this->module->l('Cancel'),
                 'icon' => 'process-icon-cancel'
             );
         }

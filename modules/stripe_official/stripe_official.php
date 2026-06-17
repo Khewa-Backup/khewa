@@ -25,6 +25,7 @@ use Stripe\Account;
 use Stripe\Exception\ApiConnectionException;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
+use StripeOfficial\Classes\factories\StripeProductLazyArrayFactory;
 use StripeOfficial\Classes\services\InstallOrderState\CaptureWaitingHandler;
 use StripeOfficial\Classes\services\InstallOrderState\OxxoWaitingHandler;
 use StripeOfficial\Classes\services\InstallOrderState\PartialRefundHandler;
@@ -119,8 +120,17 @@ class Stripe_official extends PaymentModule
     const GOOGLE_PAY_BUTTON_TYPE = 'STRIPE_GOOGLE_PAY_BUTTON_TYPE';
     const PAY_PAL_BUTTON_THEME = 'STRIPE_PAY_PAL_BUTTON_THEME';
     const PAY_PAL_BUTTON_TYPE = 'STRIPE_PAY_PAL_BUTTON_TYPE';
+    const KLARNA_BUTTON_THEME = 'STRIPE_KLARNA_BUTTON_THEME';
+    const KLARNA_BUTTON_TYPE = 'STRIPE_KLARNA_BUTTON_TYPE';
     const ORDER_FLOW = 'STRIPE_ORDER_FLOW';
     const ENABLE_SAVE_PAYMENT_METHOD = 'STRIPE_ENABLE_SAVE_PAYMENT_METHOD';
+    const ENABLE_EXTENDED_LOGGING = 'STRIPE_ENABLE_EXTENDED_LOGGING';
+    const ENABLE_APPLE_PAY = 'STRIPE_ENABLE_APPLE_PAY';
+    const ENABLE_GOOGLE_PAY = 'STRIPE_ENABLE_GOOGLE_PAY';
+    const ENABLE_PAY_PAL = 'STRIPE_ENABLE_PAY_PAL';
+    const ENABLE_KLARNA_EXPRESS = 'STRIPE_ENABLE_KLARNA_EXPRESS';
+    const ENABLE_AMAZON_PAY = 'STRIPE_ENABLE_AMAZON_PAY';
+    const ENABLE_LINK_EXPRESS = 'STRIPE_ENABLE_LINK_EXPRESS';
 
     const TYPE_SAVE_PAYMENT_METHOD_OFF = 'off';
     const TYPE_SAVE_PAYMENT_METHOD_ON_SESSION = 'on_session';
@@ -202,6 +212,9 @@ class Stripe_official extends PaymentModule
         'displayProductAdditionalInfo',
         'displayProductActions',
         'displayExpressCheckout',
+        'displayProductButtons',
+        'actionFrontControllerInitBefore',
+        'actionEmailSendBefore',
     ];
 
     /**
@@ -283,7 +296,7 @@ class Stripe_official extends PaymentModule
     {
         $this->name = 'stripe_official';
         $this->tab = 'payments_gateways';
-        $this->version = '3.6.8';
+        $this->version = '3.7.3';
         $this->author = 'Stripe';
         $this->bootstrap = true;
         $this->display = 'view';
@@ -316,13 +329,17 @@ class Stripe_official extends PaymentModule
             ? $this->translationService->translate('Stripe')
             : $this->l('Stripe');
 
-        $this->displayName = $this->translationService->hasNewTranslationSystem()
-            ? $this->translationService->translate('Stripe payment module')
-            : $this->l('Stripe payment module');
+        if ($this->translationService->hasNewTranslationSystem()) {
+            $this->displayName = $this->translationService->translate('Stripe payment module');
+        } else {
+            $this->displayName = $this->l('Stripe payment module');
+        }
 
-        $this->description = $this->translationService->hasNewTranslationSystem()
-            ? $this->translationService->translate('Start accepting stripe payments today, directly from your shop!')
-            : $this->l('Start accepting stripe payments today, directly from your shop!');
+        if ($this->translationService->hasNewTranslationSystem()) {
+            $this->description = $this->translationService->translate('Start accepting stripe payments today, directly from your shop!');
+        } else {
+            $this->description = $this->l('Start accepting stripe payments today, directly from your shop!');
+        }
 
         $this->confirmUninstall = $this->translationService->hasNewTranslationSystem()
             ? $this->translationService->translate('Are you sure you want to uninstall?')
@@ -369,7 +386,7 @@ class Stripe_official extends PaymentModule
         });
 
         $oldErrHandler = set_error_handler(null);
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($errorFlags, $oldErrHandler) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline, $context = []) use ($errorFlags, $oldErrHandler) {
             if (in_array($errno, $errorFlags) || strpos($errfile, 'stripe_official') !== false) {
                 StripeProcessLogger::logError(
                     'Uncaught error ' . $errno . ': ' . $errstr . ' at: ' . $errfile . ':' . $errline,
@@ -378,7 +395,7 @@ class Stripe_official extends PaymentModule
                 );
             }
             if ($oldErrHandler) {
-                $oldErrHandler($errno, $errstr, $errfile, $errline);
+                $oldErrHandler($errno, $errstr, $errfile, $errline, $context);
             }
         });
 
@@ -495,7 +512,15 @@ class Stripe_official extends PaymentModule
                 || !Configuration::updateValue(self::ENABLE_AFFIRM, 0, false, $shopGroupId, $shopId)
                 || !Configuration::updateValue(self::ENABLE_LINK, 0, false, $shopGroupId, $shopId)
                 || !Configuration::updateValue(self::ENABLE_ALIPAY, 0, false, $shopGroupId, $shopId)
-                || !Configuration::updateValue(self::ENABLE_OXXO, 0, false, $shopGroupId, $shopId)) {
+                || !Configuration::updateValue(self::ENABLE_OXXO, 0, false, $shopGroupId, $shopId)
+                || !Configuration::updateValue(self::ENABLE_EXTENDED_LOGGING, 0, false, $shopGroupId, $shopId)
+                || !Configuration::updateValue(self::ENABLE_BANCONTACT, 0, false, $shopGroupId, $shopId)
+                || !Configuration::updateValue(self::ENABLE_GOOGLE_PAY, 0, false, $shopGroupId, $shopId)
+                || !Configuration::updateValue(self::ENABLE_PAY_PAL, 0, false, $shopGroupId, $shopId)
+                || !Configuration::updateValue(self::ENABLE_KLARNA_EXPRESS, 0, false, $shopGroupId, $shopId)
+                || !Configuration::updateValue(self::ENABLE_AMAZON_PAY, 0, false, $shopGroupId, $shopId)
+                || !Configuration::updateValue(self::ENABLE_LINK_EXPRESS, 0, false, $shopGroupId, $shopId)
+            ) {
                 return false;
             }
 
@@ -503,10 +528,11 @@ class Stripe_official extends PaymentModule
                 return false;
             }
 
-            /*
-             * Clear both Smarty and Symfony cache.
-             */
-            Tools::clearAllCache();
+            if (method_exists(Tools::class, 'clearAllCache')) {
+                Tools::clearAllCache();
+            } else {
+                Tools::clearCache();
+            }
 
             return true;
         } catch (Exception $e) {
@@ -533,12 +559,12 @@ class Stripe_official extends PaymentModule
 
             $productLazyArray = null;
             try {
-                $productLazyArray = StripeOfficial\Classes\factories\StripeProductLazyArrayFactory::createProductLazyArrayFromProductId($id_product, $this->context);
+                $productLazyArray = StripeProductLazyArrayFactory::createProductLazyArrayFromProductId($this->context, $id_product);
             } catch (Throwable $e) {
                 StripeProcessLogger::logError('Cannot get ProductLazyArray: ' . $e->getMessage() . ' - ' . $e->getTraceAsString(), 'stripe_official');
             }
 
-            Hook::exec('displayProductActions', !empty($productLazyArray) ? ['product' => $productLazyArray] : $params);
+            $this->triggerHook('displayProductActions', !empty($productLazyArray) ? ['product' => $productLazyArray] : $params);
         }
 
         $this->context->smarty->assign([
@@ -914,7 +940,10 @@ class Stripe_official extends PaymentModule
                 && in_array(Tools::getValue('controller'), ['AdminModules', 'AdminModulesManage'])
                 && Tools::getValue('configure') == $this->name
             ) {
-                $router = PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance()->get('router');
+                $router = null;
+                if (class_exists('\PrestaShop\PrestaShop\Adapter\SymfonyContainer')) {
+                    $router = PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance()->get('router');
+                }
                 if (version_compare(_PS_VERSION_, '1.7.5', '<=')) {
                     $csrfToken = StripeOfficial\Classes\services\PrestashopAdminTokenService::getToken('AdminStripeOfficialCloudsync');
                     Media::addJsDef([
@@ -932,7 +961,9 @@ class Stripe_official extends PaymentModule
                         'cloudsync_clear_cache_url' => $router->generate('stripe_official_cloudsync_clear_cache'),
                     ]);
                 }
-                $this->context->controller->addJquery();
+                if (method_exists($this->context->controller, 'addJquery')) {
+                    $this->context->controller->addJquery();
+                }
                 $this->context->controller->addJS($this->_path . 'views/js/back.js');
             }
         } catch (Throwable $e) {
@@ -1009,65 +1040,14 @@ class Stripe_official extends PaymentModule
             $order = $params['order'];
         }
 
-        $stripePayment = new StripePayment();
-        $stripePayment->getStripePaymentByCart($order->id_cart);
-
-        $stripeCapture = new StripeCapture();
-        $stripeCapture->getByIdPaymentIntent($stripePayment->getIdPaymentIntent());
-
-        $dispute = false;
-        if (!empty($stripePayment->getIdStripe())) {
-            $stripeDispute = new StripeDispute();
-            $dispute = $stripeDispute->orderHasDispute($stripePayment->getIdStripe(), $order->id_shop);
-        }
-
-        $riskLevel = $riskScore = $stripeCustomerID = $paymentMethod = $intent = null;
+        $paramsFactory = new StripeOfficial\Classes\factories\AdminOrderContentParamsFactory($order);
         try {
-            if ($stripePayment->getIdPaymentIntent()) {
-                $intent = PaymentIntent::retrieve(
-                    $stripePayment->getIdPaymentIntent()
-                );
-            }
-
-            if ($intent && isset($intent->charges->data[0])) {
-                $riskLevel = $intent->charges->data[0]->outcome->risk_level;
-                $riskScore = $intent->charges->data[0]->outcome->risk_score;
-                $stripeCustomerID = $intent->charges->data[0]->customer;
-                $paymentMethod = $intent->charges->data[0]->payment_method_details->type;
-            }
+            $this->context->smarty->assign($paramsFactory->getParams());
         } catch (Exception $e) {
-            StripeProcessLogger::logError('Hook Display Admin Order Content Order' . $e->getMessage(), 'stripe_official');
+            StripeProcessLogger::logWarning('Hook Display Admin Order Content Order: ' . $order->id . ' - Exception: ' . $e->getMessage(), 'stripe_official');
 
-            return false;
+            return $this->getTranslationService()->translate('Could not load Stripe payment information. See logs for more details');
         }
-
-        $stripePartialRefunded = false;
-        $stripeRefundedAmount = 0;
-        $currency = new Currency($order->id_currency);
-        $orderCurrencyIsoCode = $currency->iso_code ?? null;
-        if ((int) $order->current_state === (int) Configuration::get(self::PARTIAL_REFUND)) {
-            $stripePartialRefunded = true;
-            $stripeRefundedAmount = $orderCurrencyIsoCode ? $stripePayment->getRefund() . ' ' . $orderCurrencyIsoCode : $stripePayment->getRefund();
-        }
-
-        $this->context->smarty->assign([
-            'stripe_charge' => $stripePayment->getIdStripe(),
-            'stripe_paymentIntent' => $stripePayment->getIdPaymentIntent(),
-            'stripe_dashboardUrl' => $stripePayment->getDashboardUrl(),
-            'stripe_paymentType' => $stripePayment->getType(),
-            'stripe_paymentMethod' => $paymentMethod,
-            'stripe_dateCatch' => $stripeCapture->getDateCatch(),
-            'stripe_dateAuthorize' => $stripeCapture->getDateAuthorize(),
-            'stripe_expired' => $stripeCapture->getExpired(),
-            'stripe_dispute' => $dispute,
-            'stripe_voucher_expire' => $stripePayment->getVoucherExpire(),
-            'stripe_voucher_validate' => $stripePayment->getVoucherValidate(),
-            'stripe_riskLevel' => $riskLevel,
-            'stripe_riskScore' => $riskScore,
-            'stripe_customerID' => $stripeCustomerID,
-            'stripe_partialRefunded' => $stripePartialRefunded,
-            'stripe_refundedAmount' => $stripeRefundedAmount,
-        ]);
 
         return $this->display(__FILE__, 'views/templates/hook/admin_content_order.tpl');
     }
@@ -1139,9 +1119,10 @@ class Stripe_official extends PaymentModule
         if (isset($priceAmount) && isset($productId)) {
             $shopId = Context::getContext()->shop->id;
             $outOfStockFlag = StockAvailable::outOfStock($productId, $shopId);
+            $allowBackorder = Product::isAvailableWhenOutOfStock((int) $outOfStockFlag);
 
             // if out of stock and not allowed to order -> hide express checkout
-            if (StockAvailable::getQuantityAvailableByProduct($productId) <= 0 && (int) $outOfStockFlag !== 1) {
+            if (StockAvailable::getQuantityAvailableByProduct($productId) <= 0 && (int) $allowBackorder !== 1) {
                 return null;
             }
 
@@ -1157,7 +1138,7 @@ class Stripe_official extends PaymentModule
             $isZeroDecimalCurrency = self::isZeroDecimalCurrency($isoCode);
 
             Media::addJsDef([
-                'stripe_product_out_of_stock' => (int) $outOfStockFlag,
+                'stripe_product_out_of_stock' => (int) $allowBackorder,
                 'stripe_express_amount' => $stripeExpressAmount,
                 'stripe_express_currency_iso' => $isoCode,
                 'stripe_express_cart_id' => $cartId,
@@ -1167,10 +1148,14 @@ class Stripe_official extends PaymentModule
                 'stripe_express_return_url' => $this->context->link->getModuleLink(
                     'stripe_official',
                     'orderConfirmationReturn',
-                    ['cartId' => $this->context->cart->id],
+                    [
+                        'cartId' => $this->context->cart->id,
+                        'key' => PrestashopCartService::getCartUniqueKey($this->context->cart->id),
+                    ],
                     true
                 ),
                 'isZeroDecimalCurrency' => $isZeroDecimalCurrency,
+                'restrictedExpressCheckout' => false,
             ]);
 
             return $this->context->smarty->fetch(
@@ -1205,7 +1190,27 @@ class Stripe_official extends PaymentModule
         $cartProducts = $cart->getProducts();
         $productsOutOfStock = Stripe_official::anyCartProductOutOfStock($cartProducts);
         $isZeroDecimalCurrency = self::isZeroDecimalCurrency($currency->iso_code);
+        $deliveryOptionList = $cart->getDeliveryOptionList(null, true);
+        $restrictedExpressCheckout = false;
+        $idAddress = (int) $cart->id_address_delivery;
 
+        //        if (empty($deliveryOptionList) || empty($deliveryOptionList[$idAddress])) {
+        //            $restrictedExpressCheckout = true;
+        //        }
+
+        foreach ($deliveryOptionList as $idAddress => $options) {
+            foreach (array_keys($options) as $key) {
+                // option keys look like "12," or "12,34"
+                $carrierIds = array_filter(explode(',', rtrim($key, ',')));
+                StripeProcessLogger::logInfo(
+                    'CalculateShipping - stripeOfficial => ' . json_encode($carrierIds),
+                    'stripe_official'
+                );
+                if (count($carrierIds) > 1) {
+                    $restrictedExpressCheckout = true;
+                }
+            }
+        }
         Media::addJsDef([
             'stripe_express_amount' => $stripeExpressAmount,
             'stripe_express_currency_iso' => $isoCode,
@@ -1216,10 +1221,14 @@ class Stripe_official extends PaymentModule
             'stripe_express_return_url' => $this->context->link->getModuleLink(
                 'stripe_official',
                 'orderConfirmationReturn',
-                ['cartId' => $this->context->cart->id],
+                [
+                    'cartId' => $this->context->cart->id,
+                    'key' => PrestashopCartService::getCartUniqueKey($this->context->cart->id),
+                ],
                 true
             ),
             'isZeroDecimalCurrency' => $isZeroDecimalCurrency,
+            'restrictedExpressCheckout' => $restrictedExpressCheckout,
         ]);
 
         return $this->context->smarty->fetch(
@@ -1366,6 +1375,9 @@ class Stripe_official extends PaymentModule
             $productId = (int) $product['id_product'];
 
             $outOfStockFlag = StockAvailable::outOfStock($productId, $shopId);
+            if (Product::isAvailableWhenOutOfStock($outOfStockFlag)) {
+                return false;
+            }
 
             // if product is out of stock and not allowed to be ordered -> return true
             if ((int) $product['quantity_available'] <= 0 && (int) $outOfStockFlag !== 1) {
@@ -1407,6 +1419,15 @@ class Stripe_official extends PaymentModule
         return $moduleManager->isInstalled('ps_eventbus') && $moduleManager->isInstalled('ps_accounts') && $moduleManager->isInstalled('ps_mbo');
     }
 
+    public function isCloudSyncEnabled()
+    {
+        if (version_compare(_PS_VERSION_, '1.7.3', '<=')) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static function isEnabledForShopId(int $shopId): bool
     {
         $id_module = Module::getModuleIdByName('stripe_official');
@@ -1422,5 +1443,77 @@ class Stripe_official extends PaymentModule
         $id_module = Module::getModuleIdByName('stripe_official');
 
         return Db::getInstance()->executeS('SELECT id_shop FROM ' . _DB_PREFIX_ . 'module_shop WHERE id_module = ' . (int) $id_module);
+    }
+
+    public function hookActionFrontControllerInitBefore($params)
+    {
+        // access this section only from ps default modules or stripe module
+        if (!empty($params['controller']->module) && $params['controller']->module->name != $this->name) {
+            return;
+        }
+
+        // activate only when duplicate is set
+        if (!empty($this->context->cookie->duplicated_original_cart_id) && !empty($this->context->cookie->duplicated_cart_id)) {
+            StripeProcessLogger::debugLog('hookActionFrontControllerInit accessing through ' . $params['controller']->page_name);
+            // if it accesses the site, and the duplicate is set, then remove that
+            $currentCartId = $this->context->cookie->duplicated_cart_id;
+            $originalCartId = $this->context->cookie->duplicated_original_cart_id;
+            StripeProcessLogger::debugLog("hookActionFrontControllerInit cart was cloned: original $originalCartId current $currentCartId");
+            $createdOrder = Order::getByCartId($originalCartId);
+            if ($createdOrder) {
+                StripeProcessLogger::debugLog("hookActionFrontControllerInit order was created using cart: $originalCartId orderId: {$createdOrder->id} and state: {$createdOrder->getCurrentState()}");
+                $cart = new Cart((int) $currentCartId);
+                if (Validate::isLoadedObject($cart)) {
+                    StripeProcessLogger::debugLog("hookActionFrontControllerInit cart is deleted with id: $currentCartId");
+                    $cart->delete();
+                    unset($this->context->cookie->duplicated_original_cart_id);
+                    unset($this->context->cookie->duplicated_cart_id);
+                }
+            }
+        }
+    }
+
+    /**
+     * @throws PrestaShopException
+     */
+    public function triggerHook($hookName, array $params = []): void
+    {
+        // Whitelist of hooks this module is allowed to trigger
+        static $allowedHooks = [
+            'displayExpressCheckout' => true,
+            'displayProductActions' => true,
+            'actionStripeModifyOrderPageNames' => true,
+        ];
+
+        if (!isset($allowedHooks[$hookName])) {
+            StripeProcessLogger::logWarning('Blocked unexpected hook execution: ' . $hookName, 'stripe_official');
+
+            return;
+        }
+
+        // Hook::exec is PrestaShop hook dispatcher
+        Hook::exec($hookName, $params);
+    }
+
+    public function hookActionEmailSendBefore($params)
+    {
+        // Try to get Order ID from template vars
+        if (!empty($params['templateVars']['{id_order}'])) {
+            $idOrder = (int) $params['templateVars']['{id_order}'];
+        } elseif (!empty($params['templateVars']['{order_reference}'])) {
+            $idOrder = (int) Order::getIdByReference(
+                $params['templateVars']['{order_reference}']
+            );
+        } else {
+            return;
+        }
+
+        $order = new Order($idOrder);
+        if ((int) $order->current_state === (int) Configuration::get('STRIPE_PAYMENT_WAITING')) {
+            // STOP EMAIL SENDING
+            StripeProcessLogger::debugLog("hookActionEmailSendBefore: Stopping email for order #$idOrder in STRIPE_PAYMENT_WAITING state");
+
+            return false;
+        }
     }
 }

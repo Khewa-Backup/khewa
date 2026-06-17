@@ -21,20 +21,12 @@
 
 namespace PrestaShop\Module\Ps_metrics\Module;
 
-use Module;
 use PrestaShop\Module\Ps_metrics\Api\AnalyticsApi;
 use PrestaShop\Module\Ps_metrics\Repository\ConfigurationRepository;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
-use Ps_metrics;
-use Validate;
 
 class Uninstall
 {
-    /**
-     * @var Ps_metrics|Module
-     */
-    private $module;
-
     /**
      * @var ConfigurationRepository
      */
@@ -53,17 +45,14 @@ class Uninstall
     /**
      * Uninstall constructor.
      *
-     * @param Module $module
      * @param ConfigurationRepository $configurationRepository
      * @param AnalyticsApi $analyticsApi
      */
     public function __construct(
-        Module $module,
         PsAccounts $psAccountsFacade,
         ConfigurationRepository $configurationRepository,
         AnalyticsApi $analyticsApi
     ) {
-        $this->module = $module;
         $this->psAccountsFacade = $psAccountsFacade;
         $this->configurationRepository = $configurationRepository;
         $this->analyticsApi = $analyticsApi;
@@ -74,36 +63,9 @@ class Uninstall
      *
      * @return bool
      */
-    public function resetConfigurationValues()
+    public function resetConfigurationValues(): bool
     {
-        return $this->configurationRepository->saveActionGoogleLinked(false) &&
-            $this->configurationRepository->saveFirstTimeOnboarded(false);
-    }
-
-    /**
-     * uninstall tabs
-     *
-     * @return bool
-     */
-    public function uninstallTabs()
-    {
-        $query = 'SELECT id_tab FROM ' . _DB_PREFIX_ . 'tab WHERE module = "' . $this->module->name . '"';
-        $result = \Db::getInstance()->executeS($query);
-
-        if (false === $result || !is_array($result)) {
-            return true;
-        }
-
-        $uninstallTabCompleted = true;
-        foreach ($result as $tab) {
-            $tab = new \Tab($tab['id_tab']);
-
-            if (Validate::isLoadedObject($tab)) {
-                $uninstallTabCompleted = $uninstallTabCompleted && $tab->delete();
-            }
-        }
-
-        return $uninstallTabCompleted;
+        return $this->configurationRepository->saveActionGoogleLinked(false);
     }
 
     /**
@@ -111,7 +73,7 @@ class Uninstall
      *
      * @return bool
      */
-    public function unsubscribePsEssentials()
+    public function unsubscribePsEssentials(): bool
     {
         // if the user is not onboarded, don't process unsubscribe
         if (!$this->isOnboardedWithAccountAndGoogle()) {
@@ -126,8 +88,12 @@ class Uninstall
      *
      * @return bool
      */
-    private function isOnboardedWithAccountAndGoogle()
+    private function isOnboardedWithAccountAndGoogle(): bool
     {
+        if (false === \Module::isInstalled('ps_accounts')) {
+            return false;
+        }
+
         $shopUuidV4 = $this->psAccountsFacade->getPsAccountsService()->getShopUuidV4();
 
         if (

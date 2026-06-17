@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -33,25 +34,24 @@ class BT_GmcProModuleUpdate
         $sType = empty($sType) ? 'tables' : $sType;
 
         switch ($sType) {
-            case 'tables' : // use case - update tables
-            case 'fields' : // use case - update fields
-            case 'hooks' : // use case - update hooks
-            case 'templates' : // use case - update templates
-            case 'moduleAdminTab' : // use case - update old module admin tab version
-            case 'xmlFiles' : // use case - initialize XML files
-            case 'orderState':
+            case 'tables': // use case - update tables
+            case 'fields': // use case - update fields
+            case 'hooks': // use case - update hooks
+            case 'templates': // use case - update templates
+            case 'moduleAdminTab': // use case - update old module admin tab version
+            case 'xmlFiles': // use case - initialize XML files
                 // execute match function
                 call_user_func_array(array($this, 'update' . ucfirst($sType)), array($aParam));
                 break;
-            case 'configuration' : // use case - update configuration
+            case 'configuration': // use case - update configuration
                 // execute match function
                 call_user_func(array($this, 'update' . ucfirst($sType)), $aParam);
                 break;
-            case 'fromGmc' :
+            case 'fromGmc':
                 // execute match function
                 call_user_func(array($this, 'update' . ucfirst($sType)), $aParam);
                 break;
-            default :
+            default:
                 break;
         }
     }
@@ -82,12 +82,13 @@ class BT_GmcProModuleUpdate
                     // use case - KO update
                     if (!BT_InstallCtrl::run('install', 'sql', _GMCP_PATH_SQL . $sSqlFile)) {
                         $this->aErrors[] = array(
-                            'msg' => GMerchantCenterPro::$oModule->l('There is an error around the SQL table update!',
-                                'module-update_class'),
+                            'msg' => GMerchantCenterPro::$oModule->l('There is an error around the SQL table update', 'module-update_class'),
                             'code' => intval(190 + $iCount),
                             'file' => $sSqlFile,
-                            'context' => GMerchantCenterPro::$oModule->l('Issue around table update for: ',
-                                    'module-update_class') . $sTable
+                            'context' => GMerchantCenterPro::$oModule->l(
+                                'Issue around table update for: ',
+                                'module-update_class'
+                            ) . $sTable
                         );
                         ++$iCount;
                     }
@@ -133,12 +134,13 @@ class BT_GmcProModuleUpdate
                             'file' => $aOption['file']
                         );
                         $this->aErrors[] = array(
-                            'msg' => GMerchantCenterPro::$oModule->l('There is an error around the SQL field update!',
-                                'module-update_class'),
+                            'msg' => GMerchantCenterPro::$oModule->l(
+                                'There is an error around the SQL field update!',
+                                'module-update_class'
+                            ),
                             'code' => intval(180 + $iCount),
                             'file' => $aOption['file'],
-                            'context' => GMerchantCenterPro::$oModule->l('Issue around field update for: ',
-                                    'module-update_class') . $sFieldName
+                            'context' => GMerchantCenterPro::$oModule->l('Issue around field update for: ', 'module-update_class') . $sFieldName
                         );
                         ++$iCount;
                     }
@@ -166,11 +168,15 @@ class BT_GmcProModuleUpdate
         // use case - hook register ko
         if (!BT_InstallCtrl::run('install', 'config', array('bHookOnly' => true))) {
             $this->aErrors[] = array(
-                'msg' => GMerchantCenterPro::$oModule->l('There is an error around the HOOKS update!',
-                    'module-update_class'),
+                'msg' => GMerchantCenterPro::$oModule->l(
+                    'There is an error around the HOOKS update!',
+                    'module-update_class'
+                ),
                 'code' => 170,
-                'file' => GMerchantCenterPro::$oModule->l('see the variable $GLOBALS[\'GMCP_HOOKS\'] in the conf/common.conf.php file',
-                    'module-update_class'),
+                'file' => GMerchantCenterPro::$oModule->l(
+                    'see the variable $GLOBALS[\'GMCP_HOOKS\'] in the conf/common.conf.php file',
+                    'module-update_class'
+                ),
                 'context' => GMerchantCenterPro::$oModule->l('Issue around hook update', 'module-update_class')
             );
         }
@@ -195,11 +201,7 @@ class BT_GmcProModuleUpdate
         ));
 
         if (!empty($aTplFiles)) {
-            if (version_compare(_PS_VERSION_, '1.5', '>=')) {
-                $smarty = Context::getContext()->smarty;
-            } else {
-                global $smarty;
-            }
+            $smarty = Context::getContext()->smarty;
 
             if (method_exists($smarty, 'clearCompiledTemplate')) {
                 $smarty->clearCompiledTemplate();
@@ -248,7 +250,8 @@ class BT_GmcProModuleUpdate
         $oUpdate = BT_AdminUpdate::create();
         $oUpdate->run('customLabelDate');
 
-        if (!empty($aParam['aAvailableData'])
+        if (
+            !empty($aParam['aAvailableData'])
             && is_array($aParam['aAvailableData'])
         ) {
             // require
@@ -259,51 +262,56 @@ class BT_GmcProModuleUpdate
             foreach ($aParam['aAvailableData'] as $aData) {
 
                 // check if file exist
-                $sFileSuffix = BT_GmcProModuleTools::buildFileSuffix($aData['langIso'], $aData['countryIso'],
-                    $aData['currencyIso'], GMerchantCenterPro::$iShopId, 'product');
+                $sFileSuffix = BT_GmcProModuleTools::buildFileSuffix($aData['langIso'], $aData['countryIso'], $aData['currencyIso'], GMerchantCenterPro::$iShopId, 'product');
                 $sFilePath = GMerchantCenterPro::$sFilePrefix . '.' . $sFileSuffix . '.xml';
-                $sFileSuffixReviews = BT_GmcProModuleTools::buildFileSuffix($aData['langIso'],
-                    $aData['countryIso'],
-                    $aData['currencyIso'], GMerchantCenterPro::$iShopId, 'reviews');
+                $sFileSuffixReviews = BT_GmcProModuleTools::buildFileSuffix($aData['langIso'], $aData['countryIso'], $aData['currencyIso'], GMerchantCenterPro::$iShopId, 'reviews');
                 $sFilePathReviews = GMerchantCenterPro::$sFilePrefix . '.' . $sFileSuffixReviews . '.xml';
+                $sFileSuffixLocal = BT_GmcProModuleTools::buildFileSuffix($aData['langIso'], $aData['countryIso'], $aData['currencyIso'], GMerchantCenterPro::$iShopId, 'local');
+                $sFilePathLocal = GMerchantCenterPro::$sFilePrefix . '.' . $sFileSuffixLocal . '.xml';
+                $bLocalFileExists = true;
 
-                if (!is_file(_GMCP_SHOP_PATH_ROOT . $sFilePath)
+                if (
+                    !is_file(_GMCP_SHOP_PATH_ROOT . $sFilePath)
                     && !is_file(_GMCP_SHOP_PATH_ROOT . $sFilePathReviews)
+                    && !is_file(_GMCP_SHOP_PATH_ROOT . $sFilePathLocal)
                 ) {
                     try {
                         BT_File::create()->write(_GMCP_SHOP_PATH_ROOT . $sFilePath, '');
                         BT_File::create()->write(_GMCP_SHOP_PATH_ROOT . $sFilePathReviews, '');
+                        BT_File::create()->write(_GMCP_SHOP_PATH_ROOT . $sFilePathLocal, '');
 
                         // test if file exists
                         $bProductFileExists = is_file(_GMCP_SHOP_PATH_ROOT . $sFilePath);
                         $bReviewsFileExists = is_file(_GMCP_SHOP_PATH_ROOT . $sFilePathReviews);
+                        $bReviewsFileExists = is_file(_GMCP_SHOP_PATH_ROOT . $sFilePathLocal);
                     } catch (Exception $e) {
                         $bProductFileExists = false;
                         $bReviewsFileExists = false;
+                        $bLocalFileExists = false;
                     }
 
-                    if (!$bProductFileExists
+                    if (
+                        !$bProductFileExists
                         || !$bReviewsFileExists
+                        || !$bLocalFileExists
                     ) {
                         $aError = array(
-                            'msg' => GMerchantCenterPro::$oModule->l('There is an error around the data feed XML file generated in the shop\'s root directory',
-                                'module-update_class'),
+                            'msg' => GMerchantCenterPro::$oModule->l('There is an error around the creation of the data feed XML file in the shop\'s root directory', 'module-update_class'),
                             'code' => intval(160 + $iCount),
                             'file' => _GMCP_SHOP_PATH_ROOT . $sFilePath,
-                            'context' => GMerchantCenterPro::$oModule->l('Issue around the xml files which have to be generated in the shop\'s root directory',
-                                'module-update_class'),
-                            'howTo' => GMerchantCenterPro::$oModule->l('Please follow our FAQ link on how to get your XML files generated to your shop\'s root directory',
-                                    'module-update_class') . '&nbsp;=>&nbsp;<i class="icon-question-sign"></i>&nbsp;<a href="' . _GMCP_BT_FAQ_MAIN_URL . 'faq.php?id=21" target="_blank">FAQ</a>'
+                            'context' => GMerchantCenterPro::$oModule->l(
+                                'Issue around the xml files which have to be generated in the shop\'s root directory',
+                                'module-update_class'
+                            ),
+                            'howTo' => GMerchantCenterPro::$oModule->l('Please follow our FAQ about problems when creating XML files at the root of your shop', 'module-update_class') . '&nbsp;=>&nbsp;<i class="icon-question-sign"></i>&nbsp;<a href="' . _GMCP_BT_FAQ_MAIN_URL . 'faq.php?id=21" target="_blank">FAQ</a>'
                         );
                         $this->aErrors[] = $aError;
                         $iCount++;
                     }
                 }
-
             }
         }
     }
-
 
     /**
      * update specific configuration options
@@ -313,7 +321,7 @@ class BT_GmcProModuleUpdate
     private function updateConfiguration($sType)
     {
         switch ($sType) {
-            case 'languages' :
+            case 'languages':
                 $aHomeCat = Configuration::get('GMCP_HOME_CAT');
                 if (empty($aHomeCat)) {
                     $aHomeCat = array();
@@ -327,7 +335,7 @@ class BT_GmcProModuleUpdate
                     Configuration::updateValue('GMCP_HOME_CAT', serialize(GMerchantCenterPro::$conf['GMCP_HOME_CAT']));
                 }
                 break;
-            case 'color' :
+            case 'color':
                 if (!empty(GMerchantCenterPro::$conf['GMCP_COLOR_OPT'])) {
                     if (is_numeric(GMerchantCenterPro::$conf['GMCP_COLOR_OPT'])) {
                         GMerchantCenterPro::$conf['GMCP_COLOR_OPT'] = array(GMerchantCenterPro::$conf['GMCP_COLOR_OPT']);
@@ -340,7 +348,7 @@ class BT_GmcProModuleUpdate
                     }
                 }
                 break;
-            case 'size' :
+            case 'size':
                 if (!empty(GMerchantCenterPro::$conf['GMCP_SIZE_OPT'])) {
                     if (is_numeric(GMerchantCenterPro::$conf['GMCP_SIZE_OPT'])) {
                         GMerchantCenterPro::$conf['GMCP_SIZE_OPT'] = array(GMerchantCenterPro::$conf['GMCP_SIZE_OPT']);
@@ -358,7 +366,6 @@ class BT_GmcProModuleUpdate
         }
     }
 
-
     /**
      * update configuration from GMC
      *
@@ -371,7 +378,8 @@ class BT_GmcProModuleUpdate
         $bUpdate = GMerchantCenterPro::$conf['GMCP_IMPORT_FROM_GMC'];
 
         //test if the module gmerchantcenter is installed for importation tool
-        if (!empty($bGmcInstalled)
+        if (
+            !empty($bGmcInstalled)
             && !empty($bUpdate)
         ) {
             $bSucess = 0;
@@ -387,28 +395,10 @@ class BT_GmcProModuleUpdate
 
             if (!empty($bSucess)) {
                 if (!Configuration::updateValue('GMCP_IMPORT_FROM_GMC', 0)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during import var update conf',
-                            'admin-update_class') . '.', 700);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during configuration import', 'admin-update_class') . '.', 700);
                 }
             }
         }
-    }
-
-    /**
-     * initialize order state
-     *
-     * @param array $aParam
-     */
-    private function updateOrderState(array $aParam = null)
-    {
-        //Processsing in progress during the half hour
-        BT_GmcProModuleTools::addOrderState('Validation in Progress (Google Shopping Action)', '#27FF00', false, _GMCP_MODULE_SET_NAME, '');
-
-        //Use case for validate order state when an order is placed from GSA
-        BT_GmcProModuleTools::addOrderState('Google order pending shipment', '#27FF00', false, _GMCP_MODULE_SET_NAME, '', true, true, false, true);
-
-        //Use case for cancel customer on GSA order state
-        BT_GmcProModuleTools::addOrderState('Cancel by the customer (Google Shopping Action)', '#DC143C', false, _GMCP_MODULE_SET_NAME, '', false);
     }
 
     /**

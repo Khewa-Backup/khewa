@@ -42,9 +42,11 @@ $(document).ready(() => {
     getAccordion('#product-infos-tabs', 576);
   }
 
-  $('body').on('click', '[data-button-action="add-to-cart"]', (event) => {
+  $('[data-button-action="add-to-cart"]').on('click', (event) => {
     event.preventDefault();
     $(event.target).addClass('processing-add');
+    const $form = $(event.currentTarget.form);
+    $form.find("input[name='token']").val(prestashop.static_token);
   },
   );
 
@@ -95,6 +97,7 @@ $(document).ready(() => {
           crossFade: true,
         },
         preloadImages: false,
+        initialSlide: $('#product-images-large').find('.js-thumb-selected').first().index(),
         lazy: {
           loadPrevNext: true,
         },
@@ -130,6 +133,7 @@ $(document).ready(() => {
               prevEl: '.swiper-button-prev',
             },
             preloadImages: false,
+            initialSlide: $('#product-images-large').find('.js-thumb-selected').first().index(),
             lazy: {
               loadPrevNext: true,
             },
@@ -163,9 +167,11 @@ $(document).ready(() => {
             autoScrollOffset: 1,
           };
         }
+
         coverSwiper = new Swiper('#product-images-large', {
           loop: false,
           effect: 'fade',
+          initialSlide: $('#product-images-large').find('.js-thumb-selected').first().index(),
           fadeEffect: {
             crossFade: true,
           },
@@ -238,7 +244,7 @@ $(document).ready(() => {
 
   function createInputFile() {
     const $input = $(prestashop.themeSelectors.fileInput);
-    $input.filestyle({buttonText: $input.data('buttontext')});
+    $input.filestyle({ buttonText: $input.data('buttontext') });
     $input.on('change', (event) => {
       let target; let
         file;
@@ -320,9 +326,9 @@ $(document).ready(() => {
         $tabs_content;
 
       let concat = '';
-      obj_tabs = $(`${$element_id} li`).toArray();
+      obj_tabs = $(`${$element_id} > li`).toArray();
       $tabs_content = $('#product-infos-tabs-content');
-      obj_cont = $tabs_content.find('.tab-pane').toArray();
+      obj_cont = $tabs_content.children('.tab-pane').toArray();
 
       concat = '<div class="card">';
       jQuery.each(obj_tabs, (n, val) => {
@@ -334,8 +340,8 @@ $(document).ready(() => {
         }
 
         concat += `${val.innerText}`
-                    + '<i class="fa fa-angle-down float-right angle-down" aria-hidden="true"></i><i class="fa fa-angle-up float-right angle-up" aria-hidden="true"></i>'
-                    + '</a>';
+          + '<i class="fa fa-angle-down float-right angle-down" aria-hidden="true"></i><i class="fa fa-angle-up float-right angle-up" aria-hidden="true"></i>'
+          + '</a>';
 
         concat += '</div>';
 
@@ -360,5 +366,5 @@ $(document).ready(() => {
       $tabs_content.remove();
     }
   }
-    /* eslint-enable */
+  /* eslint-enable */
 });

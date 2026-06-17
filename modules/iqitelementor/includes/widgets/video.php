@@ -663,7 +663,7 @@ class Widget_Video extends Widget_Base {
                 $params .= '&showinfo=0';
             }
 
-            $iframe = '<iframe width="' . $wdth . '" height="' . $hth . '" src="https://www.youtube.com/embed/' . $step2[0] . $params . '" frameborder="0" allowfullscreen></iframe>';
+            $iframe = '<iframe width="' . $wdth . '" height="' . $hth . '" src="https://www.youtube-nocookie.com/embed/' . $step2[0] . $params . '" frameborder="0" allowfullscreen></iframe>';
 
         } else if (strpos($url, 'vimeo') !== FALSE) {
             if (isset($settings['autoplay']) && $settings['autoplay']) {

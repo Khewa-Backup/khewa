@@ -17,7 +17,7 @@ class featuredproducts extends Module
     {
         $this->name = 'featuredproducts';
         $this->tab = 'front_office_features';
-        $this->version = '3.0.5';
+        $this->version = '3.1.0';
         $this->author = 'MyPrestaModules';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
@@ -50,7 +50,7 @@ class featuredproducts extends Module
     {
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             $hooks_for_registration = array(
-                'header',
+                'displayHeader',
                 'actionAdminControllerSetMedia',
                 'displayWrapperTop',
                 'displayWrapperBottom',
@@ -66,7 +66,7 @@ class featuredproducts extends Module
             );
         } else {
             $hooks_for_registration = array(
-                'header',
+                'displayHeader',
                 'actionAdminControllerSetMedia',
                 'displayTop',
                 'displayTopColumn',
@@ -223,7 +223,7 @@ class featuredproducts extends Module
         return false;
     }
 
-    public function hookHeader($params)
+    public function hookDisplayHeader($params)
     {
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             $this->context->controller->registerJavascript('featuredproducts', 'modules/featuredproducts/views/js/featuredproducts.js', array('media' => 'all', 'position' => 'bottom', 'priority' => 150));
@@ -386,7 +386,7 @@ class featuredproducts extends Module
         if (!$slider_object->active) {
             return false;
         }
-
+        $id_product = false;
         $type = $slider_object->type_products_show;
         $productIds = $slider_object->productIds;
         $catIds = $slider_object->catIds;
@@ -472,7 +472,35 @@ class featuredproducts extends Module
     {
         $products = SliderProduct::getProductsByIds($product_ids, $order_by, $limit);
 
-        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+        if (version_compare(_PS_VERSION_, '9.0.0', '>=')) {
+
+            $assembler = new ProductAssembler($this->context);
+            $presenterFactory = new ProductPresenterFactory($this->context);
+            $presentationSettings = $presenterFactory->getPresentationSettings();
+            $presenter = new \PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductListingPresenter(
+                new PrestaShop\PrestaShop\Adapter\Image\ImageRetriever(
+                    $this->context->link
+                ),
+                $this->context->link,
+                new PrestaShop\PrestaShop\Adapter\Product\PriceFormatter(),
+                new PrestaShop\PrestaShop\Adapter\Product\ProductColorsRetriever(),
+                $this->context->getTranslator()
+            );
+
+            $array_result = array();
+            foreach ($products as $prow) {
+                $array_result[] = $presenter->present(
+                    $presentationSettings,
+                    $assembler->assembleProduct($prow),
+                    $this->context->language
+                );
+            }
+
+            return $array_result;
+
+        }
+
+        elseif (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             $assembler = new ProductAssembler($this->context);
             $presenterFactory = new ProductPresenterFactory($this->context);
             $presentationSettings = $presenterFactory->getPresentationSettings();

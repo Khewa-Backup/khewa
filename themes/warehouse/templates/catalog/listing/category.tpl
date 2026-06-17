@@ -53,7 +53,17 @@
 {block name='hook_display_wrapper_top_container' append}
     {if $iqitTheme.cat_desc == 'above-s'}
         {if $category.description}
-            <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">{$category.description nofilter}</div>
+            <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
+        {/if}
+        {hook h='displayCategoryElementor'}
+    {/if}
+{/block}
+
+
+{block name='hook_display_wrapper_bottom_container' append}
+    {if $iqitTheme.cat_desc == 'below-s'}
+        {if $category.description}
+            <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
         {/if}
         {hook h='displayCategoryElementor'}
     {/if}
@@ -78,7 +88,7 @@
             <div class="category-image {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
                 {if $iqitTheme.cat_desc == 'onimage'}
                     {if $category.description}
-                        <div class="category-description category-description-image">{$category.description nofilter}</div>
+                        <div class="category-description category-description-image"> <div class="rte-content">{$category.description nofilter}</div></div>
                     {/if}
                 {/if}
                 <img src="{$category.image.bySize.category_default.url}" alt="{if !empty($category.image.legend)}{$category.image.legend}{else}{$category.name}{/if}"
@@ -87,7 +97,7 @@
         {else}
             {if $iqitTheme.cat_desc == 'onimage'}
                 {if $category.description}
-                    <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">{$category.description nofilter}</div>
+                    <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
                 {/if}
             {/if}
         {/if}
@@ -96,7 +106,7 @@
 
     {if $iqitTheme.cat_desc == 'above'}
         {if $category.description}
-            <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">{$category.description nofilter}</div>
+            <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
         {/if}
         {hook h='displayCategoryElementor'}
     {/if}
@@ -104,7 +114,7 @@
 
     {if $iqitTheme.cat_desc == 'above-d'}
         {if $category.description}
-                <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">{$category.description nofilter}</div>
+                <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
         {/if}
     {/if}
 
@@ -127,7 +137,7 @@
     {if $listing.pagination.items_shown_from == 1}
     {if $iqitTheme.cat_desc == 'below'}
         {if $category.description}
-            <div class="category-description category-description-bottom {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"><hr />{$category.description nofilter}</div>
+            <div class="category-description category-description-bottom {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"><hr /> <div class="rte-content">{$category.description nofilter}</div></div>
         {/if}
         {hook h='displayCategoryElementor'}
     {/if}
@@ -139,7 +149,7 @@
         {if $iqitTheme.cat_desc == 'below-d'}
             {if $category.description}
 
-                <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if} mt-4"><hr />{$category.description nofilter}</div>
+                <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if} mt-4"><hr /> <div class="rte-content">{$category.description nofilter}</div></div>
             {/if}
         {/if}
 

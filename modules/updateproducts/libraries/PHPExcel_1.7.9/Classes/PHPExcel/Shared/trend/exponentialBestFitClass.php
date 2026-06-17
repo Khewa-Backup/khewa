@@ -25,7 +25,9 @@
  * @version    1.7.9, 2013-06-02
  */
 
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 require_once(PHPEXCEL_ROOT . 'PHPExcel/Shared/trend/bestFitClass.php');
 
 

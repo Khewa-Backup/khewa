@@ -1,57 +1,117 @@
-![alt tag](views/img/logo-ps-metrics.png)
+![PrestaShop Metrics preview](.github/pics/metrics-preview.webp)
+
+# PrestaShop Metrics
+
+[![Storybook CI/CD](https://github.com/PrestaShopCorp/ps_metrics/actions/workflows/ci-cd-storybook.yml/badge.svg)](https://github.com/PrestaShopCorp/ps_metrics/actions/workflows/ci-cd-storybook.yml)
+[![PHP tests](https://github.com/PrestaShopCorp/ps_metrics/actions/workflows/php.yml/badge.svg)](https://github.com/PrestaShopCorp/ps_metrics/actions/workflows/php.yml)
 
 ## About
 
-Module for Prestashop Metrics
+[PrestaShop Metrics](https://addons.prestashop.com/analytics-statistics/) allow you to drive your ecommerce performance and improve your business efficiency using a data-driven approach. Get a complete view of your business in real time and execute actionable optimization plans from your back-office.
 
-## Contributing
+**Take control of your ecommerce statistics**
 
-Prestashop Metrics is compatible with all versions of PrestaShop 1.7 and 1.6
+- An intuitive and easy to use dashboard that saves time, no more switching between different applications
+- Synchronization with Google Analytics: Easily install of a Google Analytics Tag and synchronize with your account to retrieve reliable traffic data. Compatible with Google Analytics v4.
+- Cross-reference sales, orders, shopping carts and traffic data from the most reliable sources such as Google Analytics or your PrestaShop online store in a single interface
+- Compare your activity by periods, visualize the evolution of your performance up to 24 months.
+- Connect your store to Google Merchant Center and synchroniwe your entire product catalog in a few clicks. Product attributes such as price and availability will be automatically updated everyday.
 
-### Requirements
+**Save time with a revamped interface**
 
-Contributors **must** follow the following rules:
+- Your key figures grouped in a way that makes it easier to read and to analyze them
+- Traffic detailed by acquisition channel
+- Understandable, usable, and relevant data
+- Benefit from the customizable reporting tools such as CSV export or email reporting.
 
-- **Make your Pull Request on the "master" branch**.
-- Do NOT update the module's version number.
-- Follow [the coding standards][1].
-- Commit rules
-  _ref : https://www.conventionalcommits.org/en/v1.0.0/#summary_
+**Turn insights into actions**
 
-**_type[optional scope]:_**
+Make informed decisions, create action plans and improve results through data integration.
 
-**_[optional body]_**
+## Download & Installation
 
-**_[optional footer(s)]_**
+Modules archives can be found and downloaded:
 
-The commit contains the following structural elements, to communicate intent to the consumers of your library:
+- On the [PrestaShop Addons Marketplace](https://addons.prestashop.com/analytics-statistics/49583-prestashop-metrics.html) (Latest stable release only)
+- On the [releases page](https://github.com/PrestaShopCorp/ps_metrics/releases) of this repository (Stable & beta releases available)
 
-- fix: a commit of the type fix patches a bug in your codebase (this correlates with PATCH in semantic versioning).
+Downloaded archives can be uploaded on PrestaShop instances, as detailed in the [user documentation](https://doc.prestashop.com/display/PS17/Modules+Selection#ModulesSelection-Uploadingamodulemanually).
 
-- feat: a commit of the type feat introduces a new feature to the codebase (this correlates with MINOR in semantic versioning).
+## Developer
 
-- BREAKING CHANGE: a commit that has a footer BREAKING CHANGE:, or appends a ! after the type/scope, introduces a breaking API change (correlating with MAJOR in semantic versioning). A BREAKING CHANGE can be part of commits of any type.
+The project is divided in two sub project. The PHP is responsible for all PrestaShop oriented stuff and allow the installation of the module.
+Front side is handled by a vuejs application that is hosted via a CDN (on GCP).
+The following steps will explain how to build these different part and run the project locally.
 
-- types other than fix: and feat: are allowed, for example @commitlint/config-conventional (based on the the Angular convention) recommends build:, chore:, ci:, docs:, style:, refactor:, perf:, test:, and others.
+### PHP
 
-- footers other than BREAKING CHANGE: may be provided and follow a convention similar to git trailer format.
+Retrieve dependencies with composer
 
-### Process in details
+```
+composer install
+```
 
-Contributors wishing to edit a module's files should follow the following process:
+In some cases, when you add or update php class, you may need to run `composer dump-autoload` in order to refresh the classmap.
 
-1. Create your GitHub account, if you do not have one already.
-2. Fork the ps_googleanalytics project to your GitHub account.
-3. Clone your fork to your local machine in the `/modules` directory of your PrestaShop installation.
-4. Create a branch in your local clone of the module for your changes.
-5. Change the files in your branch. Be sure to follow [the coding standards][1]!
-6. Push your changed branch to your fork in your GitHub account.
-7. Create a pull request for your changes **on the _'dev'_ branch** of the module's project. Be sure to follow [the commit message norm][2] in your pull request. If you need help to make a pull request, read the [Github help page about creating pull requests][3].
-8. Wait for one of the core developers either to include your change in the codebase, or to comment on possible improvements you should make to your code.
+### VUEJS
 
-That's it: you have contributed to this open-source project! Congratulations!
+The following commands need to be run in the `apps/ui/` folder.
 
-[1]: http://doc.prestashop.com/display/PS16/Coding+Standards
-[2]: http://doc.prestashop.com/display/PS16/How+to+write+a+commit+message
-[3]: https://help.github.com/articles/using-pull-requests
-[4]: https://support.google.com/analytics/answer/6032539
+To build the application in production mode:
+
+```
+npm install
+npm run build
+```
+
+The output directory is located in `apps/ui/dist/` directory.
+
+To compiles and watch for new changes (development mode) once `npm install` was done:
+
+```
+npm run dev
+```
+
+### Tests / lint
+
+**work in progress**
+
+### Storybook
+
+**Integration**
+
+To trigger storybook CI/CD, create a new pull request
+Tag with label Storybook Test will trigger the workflow.
+
+Storybook will be available at this following url : [storybook](https://storybook-metrics.psessentials-integration.net)
+
+**Production**
+
+Production storybook CI/CD will automatically be triggered on push on develop.
+
+Storybook will be available at this following url : [storybook](https://storybook-metrics.psessentials.net)
+
+## Docker
+
+**work in progress**
+
+## CDN deploy
+
+Release and pre release will trigger a storage action on [services-deployment](https://github.com/PrestaShopCorp/services-deployment) repository.
+This action will build vuejs project and push assets to GCP storage.
+
+On pre-release trigger, a new version will be stored and available at : https://storage.googleapis.com/psxmetrics/v1.1.1 (according to your tag name)
+
+On release, 3 versions (major and minor) will be stored at :
+
+- https://storage.googleapis.com/psxmetrics/latest
+- https://storage.googleapis.com/psxmetrics/v1.1.x
+- https://storage.googleapis.com/psxmetrics/v1.x.x
+
+## Husky conventions
+
+**work in progress**
+
+## License
+
+This module is released under the Academic Free License 3.0

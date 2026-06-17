@@ -1,0 +1,15 @@
+[{shop_url}]
+
+Bonjour {customer}
+
+Voici votre carte cadeau d'une une valeur de {giftcard_amount}.
+
+Montant : {giftcard_amount}
+
+Code : {giftcard_code}
+
+Date d'expiration : {giftcard_expiration}
+
+Valable {giftcard_expiration_date} à partir de sa date d'achat, la carte cadeau est utilisable sur l'ensemble de la boutique {shop_name}. Elle peut être utilisée en plusieurs fois, y compris pendant les soldes, et peut être complétée par un autre moyen de paiement. Pour utiliser les fonds de votre carte cadeau, copier simplement le code ci-dessus lors du processus de réglement de votre prochaine commande.
+
+{shop_name} [{shop_url}]

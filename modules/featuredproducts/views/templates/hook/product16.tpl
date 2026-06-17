@@ -150,8 +150,6 @@
                              {elseif $settings->show_product_quickview && !$settings->show_product_button_add && !$settings->show_product_link_to_full_page}
                                 padding: 0;
                              {/if}">
-
-
                     <a class="quick-view" href="{$product.link|escape:'html':'UTF-8'}" rel="{$product.link|escape:'html':'UTF-8'}" data-fancybox-target="{$product.link|escape:'html':'UTF-8'}" title="Quickview">
                         <i class="m-search"></i>
                     </a>
@@ -160,7 +158,7 @@
         {/if}
 
         {if $settings->show_product_description}
-            <div class="mpm-featuredproducts-product-description-block">{$product.description_short|truncate:100:'...' nofilter}</div>
+            <div class="mpm-featuredproducts-product-description-block">{$product.description_short|strip_tags|truncate:100:'...' nofilter}</div>
         {/if}
     </div>
 </article>

@@ -25,7 +25,9 @@
  * @version    1.7.9, 2013-06-02
  */
 
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 /** PHPExcel root directory */
 if (!defined('PHPEXCEL_ROOT')) {
     define('PHPEXCEL_ROOT', dirname(__FILE__) . '/');
@@ -619,7 +621,7 @@ class PHPExcel
     public function __clone() {
         foreach($this as $key => $val) {
             if (is_object($val) || (is_array($val))) {
-                $this->{$key} = unserialize(serialize($val));
+                $this->{$key} = json_decode(json_encode($val), true);
             }
         }
     }

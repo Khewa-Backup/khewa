@@ -1,27 +1,21 @@
 <?php
 /**
- * 2007-2020 PrestaShop.
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 class MailAlert extends ObjectModel
 {
@@ -78,7 +72,7 @@ class MailAlert extends ObjectModel
 			AND `id_product_attribute` = ' . (int) $id_product_attribute . '
 			AND `id_shop` = ' . (int) $id_shop;
 
-        return count(Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql));
+        return count(Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($sql));
     }
 
     public static function deleteAlert($id_customer, $customer_email, $id_product, $id_product_attribute, $id_shop = null)
@@ -121,8 +115,8 @@ class MailAlert extends ObjectModel
                 continue;
             }
 
-            if (isset($products[$i]['id_product_attribute']) &&
-                Validate::isUnsignedInt($products[$i]['id_product_attribute'])) {
+            if (isset($products[$i]['id_product_attribute'])
+                && Validate::isUnsignedInt($products[$i]['id_product_attribute'])) {
                 $attributes = self::getProductAttributeCombination($products[$i]['id_product_attribute'], $id_lang);
                 $products[$i]['attributes_small'] = '';
 
@@ -170,16 +164,18 @@ class MailAlert extends ObjectModel
     public static function sendCustomerAlert($id_product, $id_product_attribute)
     {
         $link = new Link();
-        $context = Context::getContext()->cloneContext();
-        $customers = self::getCustomers($id_product, $id_product_attribute);
+        $context = Context::getContext();
+        $id_product = (int) $id_product;
+        $id_product_attribute = (int) $id_product_attribute;
+        $current_shop = $context->shop->id;
+        $customers = self::getCustomers($id_product, $id_product_attribute, $current_shop);
 
         foreach ($customers as $customer) {
             $id_shop = (int) $customer['id_shop'];
             $id_lang = (int) $customer['id_lang'];
             $context->shop->id = $id_shop;
-            $context->language->id = $id_lang;
 
-            $product = new Product((int) $id_product, false, $id_lang, $id_shop);
+            $product = new Product($id_product, false, $id_lang, $id_shop);
             $product_name = Product::getProductName($product->id, $id_product_attribute, $id_lang);
             $product_link = $link->getProductLink($product, $product->link_rewrite, null, null, $id_lang, $id_shop, $id_product_attribute);
             $template_vars = [
@@ -189,11 +185,11 @@ class MailAlert extends ObjectModel
 
             if ($customer['id_customer']) {
                 $customer = new Customer((int) $customer['id_customer']);
-                $customer_email = $customer->email;
+                $customer_email = (string) $customer->email;
                 $customer_id = (int) $customer->id;
             } else {
                 $customer_id = 0;
-                $customer_email = $customer['customer_email'];
+                $customer_email = (string) $customer['customer_email'];
             }
 
             $iso = Language::getIsoById($id_lang);
@@ -201,15 +197,15 @@ class MailAlert extends ObjectModel
 
             $translator = Context::getContext()->getTranslatorFromLocale($locale);
 
-            if (file_exists(dirname(__FILE__) . '/mails/' . $iso . '/customer_qty.txt') &&
-                file_exists(dirname(__FILE__) . '/mails/' . $iso . '/customer_qty.html')) {
+            if (file_exists(dirname(__FILE__) . '/mails/' . $iso . '/customer_qty.txt')
+                && file_exists(dirname(__FILE__) . '/mails/' . $iso . '/customer_qty.html')) {
                 try {
                     Mail::Send(
                         $id_lang,
                         'customer_qty',
                         $translator->trans('Product available', [], 'Emails.Subject', $locale),
                         $template_vars,
-                        (string) $customer_email,
+                        $customer_email,
                         null,
                         (string) Configuration::get('PS_SHOP_EMAIL', null, null, $id_shop),
                         (string) Configuration::get('PS_SHOP_NAME', null, null, $id_shop),
@@ -246,13 +242,14 @@ class MailAlert extends ObjectModel
             );
 
             self::deleteAlert(
-                (int) $customer_id,
-                (string) $customer_email,
-                (int) $id_product,
-                (int) $id_product_attribute,
+                $customer_id,
+                $customer_email,
+                $id_product,
+                $id_product_attribute,
                 $id_shop
             );
         }
+        $context->shop->id = $current_shop;
     }
 
     /*
@@ -280,7 +277,7 @@ class MailAlert extends ObjectModel
 			AND (ma.`id_customer` = ' . (int) $customer->id . ' OR ma.`customer_email` = \'' . pSQL($customer->email) . '\')
 			AND pl.`id_lang` = ' . (int) $id_lang . Shop::addSqlRestriction(false, 'ma');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($sql);
     }
 
     /*
@@ -299,19 +296,23 @@ class MailAlert extends ObjectModel
 			' . Shop::addSqlAssociation('product_attribute', 'pa') . '
 			WHERE pac.`id_product_attribute` = ' . (int) $id_product_attribute;
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($sql);
     }
 
     /*
      * Get customers waiting for alert on the specified product/product attribute
+     * in shop `$id_shop` and if the shop group shares the stock in all shops of the shop group
      */
-    public static function getCustomers($id_product, $id_product_attribute)
+    public static function getCustomers($id_product, $id_product_attribute, $id_shop)
     {
         $sql = '
-			SELECT id_customer, customer_email, id_shop, id_lang
-			FROM `' . _DB_PREFIX_ . self::$definition['table'] . '`
-			WHERE `id_product` = ' . (int) $id_product . ' AND `id_product_attribute` = ' . (int) $id_product_attribute;
+			SELECT mc.id_customer, mc.customer_email, mc.id_shop, mc.id_lang
+			FROM `' . _DB_PREFIX_ . self::$definition['table'] . '` mc
+			INNER JOIN `' . _DB_PREFIX_ . 'shop` s on s.id_shop = mc.id_shop
+			INNER JOIN `' . _DB_PREFIX_ . 'shop_group` sg on s.id_shop_group = sg.id_shop_group and (s.id_shop = ' . (int) $id_shop . ' or sg.share_stock = 1)
+			INNER JOIN `' . _DB_PREFIX_ . 'shop` s2 on s2.id_shop = mc.id_shop and s2.id_shop = ' . (int) $id_shop . '
+			WHERE mc.`id_product` = ' . (int) $id_product . ' AND mc.`id_product_attribute` = ' . (int) $id_product_attribute;
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($sql);
     }
 }

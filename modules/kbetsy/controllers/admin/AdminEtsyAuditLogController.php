@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 
 class AdminEtsyAuditLogController extends ModuleAdminController
@@ -26,7 +29,7 @@ class AdminEtsyAuditLogController extends ModuleAdminController
         $this->table = 'etsy_audit_log';
 
         parent::__construct();
-        
+
         $this->fields_list = array(
             'id_etsy_audit_log' => array(
                 'title' => $this->module->l('ID', 'AdminEtsyAuditLogController'),

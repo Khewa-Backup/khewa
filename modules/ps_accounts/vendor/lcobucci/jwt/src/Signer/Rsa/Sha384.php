@@ -1,14 +1,13 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Rsa;
 
-namespace Lcobucci\JWT\Signer\Rsa;
-
-use Lcobucci\JWT\Signer\Rsa;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Rsa;
 /**
  * Signer for RSA SHA-384
  *
@@ -24,12 +23,11 @@ class Sha384 extends Rsa
     {
         return 'RS384';
     }
-
     /**
      * {@inheritdoc}
      */
     public function getAlgorithm()
     {
-        return OPENSSL_ALGO_SHA384;
+        return \OPENSSL_ALGO_SHA384;
     }
 }

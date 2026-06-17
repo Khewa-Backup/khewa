@@ -1,11 +1,10 @@
 <?php
-
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -66,6 +65,7 @@ class BT_XmlDiscount extends BT_BaseXml
     public function buildDiscountXml($aParams)
     {
         $aDiscount = $this->loadCartRules();
+        $aPromotionDestination = unserialize(GMerchantCenterPro::$conf['GMCP_PROMO_DEST']);
 
         // clean table association before generate XML
         BT_GmcProCartRulesDao::cleanAssocCartRules();
@@ -81,6 +81,7 @@ class BT_XmlDiscount extends BT_BaseXml
             $sCurrencyDiscount = $this->getCurrencyCode((int) $aCurrentDiscount['reduction_currency']);
             $sCurrencyMinAmount = $this->getCurrencyCode((int) $aCurrentDiscount['minimum_amount_currency']);
             $sOfferType = BT_GmcProCartRulesDao::hasAssociateItem($iCartRuleId);
+            $iQuantity = (int)$aCurrentDiscount['quantity'];
 
             // manage database insert for product association
             // 1st et get all discount code available
@@ -137,6 +138,12 @@ class BT_XmlDiscount extends BT_BaseXml
                 $sContent .= "\t\t" . '<g:offer_type>NO_CODE</g:offer_type>' . "\n";
             }
             $sContent .= "\t\t" . '<g:long_title>' . BT_GmcProModuleTools::formatTextForGoogle($sDiscountTitle) . '</g:long_title>' . "\n";
+
+            //Use case for description
+            if (!empty($aCurrentDiscount['description'])) {
+                $sContent .= "\t\t" . '<g:description><![CDATA[' . $aCurrentDiscount['description'] . ']]></g:description>' . "\n";
+            }
+
             $sContent .= "\t\t" . '<g:promotion_effective_dates>' . BT_GmcProModuleTools::formatDateISO8601($aCurrentDiscount['date_from']) . '/' . BT_GmcProModuleTools::formatDateISO8601($aCurrentDiscount['date_to']) . '</g:promotion_effective_dates>' . "\n";
             $sContent .= "\t\t" . '<g:redemption_channel>ONLINE</g:redemption_channel>' . "\n";
             $sContent .= "\t\t" . '<g:promotion_display_dates>' . BT_GmcProModuleTools::formatDateISO8601($aCurrentDiscount['date_from']) . '/' . BT_GmcProModuleTools::formatDateISO8601($aCurrentDiscount['date_to']) . '</g:promotion_display_dates>' . "\n";
@@ -155,31 +162,38 @@ class BT_XmlDiscount extends BT_BaseXml
 
             //Use case for add tag for the amount off
             if (!empty($fAmountInCurrency)) {
-                $sContent .= "\t\t" . '<g:money_off_amount>' . $fAmountInCurrency . '</g:money_off_amount>' . "\n";
+                $sContent .= "\t\t" . '<g:money_off_amount>' . $fAmountInCurrency . ' ' . $sCurrencyDiscount . '</g:money_off_amount>' . "\n";
             }
 
+            // Use case for gift product
             if (!empty($aCurrentDiscount['gift_product'])) {
                 $sContent .= "\t\t" . '<g:free_gift_item_id>' . $aCurrentDiscount['gift_product'] . '</g:free_gift_item_id>' . "\n";
 
                 $oProduct = new Product($aCurrentDiscount['gift_product'], GMerchantCenterPro::$iCurrentLang);
                 if (is_object($oProduct)) {
-                    $sContent .= "\t\t" . '<g:free_gift_value>' . floatval(Product::getPriceStatic(
-                        (int) $aCurrentDiscount['gift_product'],
-                        true,
-                        null,
-                        2
-                    )) . '</g:free_gift_value>' . "\n";
+                    $sContent .= "\t\t" . '<g:free_gift_value>' . floatval(Product::getPriceStatic((int) $aCurrentDiscount['gift_product'], true, null, 2)) . '</g:free_gift_value>' . "\n";
 
                     //get the current lang id for the data feed
                     $iCurrentLang = Tools::getValue('id_lang');
 
-                    $sContent .= "\t\t" . '<g:free_gift_description><![CDATA[' . $this->getProductDesc(
-                        $oProduct->description[(int) $iCurrentLang],
-                        $oProduct->description_short[(int) $iCurrentLang],
-                        $oProduct->meta_description[(int) $iCurrentLang]
-                    ) . ']]></g:free_gift_description>' . "\n";
+                    $sContent .= "\t\t" . '<g:free_gift_description><![CDATA[' . $this->getProductDesc($oProduct->description[(int) $iCurrentLang], $oProduct->description_short[(int) $iCurrentLang], $oProduct->meta_description[(int) $iCurrentLang]) . ']]></g:free_gift_description>' . "\n";
                 }
             }
+
+            // Use case for promotion destination
+            if (!empty($aPromotionDestination)) {
+                foreach ($aPromotionDestination as $aCurrentDiscountChannel) {
+                    foreach ($aCurrentDiscountChannel as $sCurrentDiscountChannel) {
+                        $sContent .= "\t\t" . '<g:promotion_destination>' . $sCurrentDiscountChannel . '</g:promotion_destination>' . "\n";
+                    }
+                }
+            }
+
+            // Use case for quantity available for promotion and very important with Google Shopping actions to stop promotion diffusion when the quantity is 0
+            if (!empty($iQuantity)) {
+                $sContent .= "\t\t" . '<g:end_promo_max_applies>' . $iQuantity . '</g:end_promo_max_applies>' . "\n";
+            }
+
             $sContent .= "\t" . '</item>' . "\n";
         }
 
@@ -215,10 +229,6 @@ class BT_XmlDiscount extends BT_BaseXml
                 break;
         }
         return (
-            (function_exists('mb_substr') ? mb_substr(
-                BT_GmcProModuleTools::cleanUp($sDesc),
-                0,
-                100
-            ) : Tools::substr(BT_GmcProModuleTools::cleanUp($sDesc), 0, 100)));
+            (function_exists('mb_substr') ? mb_substr(BT_GmcProModuleTools::cleanUp($sDesc), 0, 100) : Tools::substr(BT_GmcProModuleTools::cleanUp($sDesc), 0, 100)));
     }
 }

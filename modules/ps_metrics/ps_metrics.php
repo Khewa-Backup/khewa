@@ -18,55 +18,37 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
 
-require_once __DIR__ . '/vendor/autoload.php';
+use PrestaShop\Module\Ps_metrics\Handler\NativeStatsHandler;
+use PrestaShop\Module\Ps_metrics\Helper\ConfigHelper;
+use PrestaShop\Module\Ps_metrics\Helper\ModuleHelper;
+use PrestaShop\Module\Ps_metrics\Helper\PrestaShopHelper;
+use PrestaShop\Module\Ps_metrics\Helper\ToolsHelper;
+use PrestaShop\Module\Ps_metrics\LegacyModuleInstaller;
+use PrestaShop\Module\Ps_metrics\Module\Uninstall;
+use PrestaShop\Module\Ps_metrics\Tracker\Segment;
+use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Environment as TwigEnvironment;
+
+if (!defined('_PS_VERSION_')) {
+    exit();
+}
 
 class Ps_metrics extends Module
 {
-    /** @var string */
-    public $oauthAdminController;
-
-    /** @var array */
-    public $controllers;
-
-    /** @var bool */
-    public $psVersionIs17;
-
-    /** @var array */
-    public $moduleSubstitution;
-
-    /** @var string */
-    public $graphqlController;
-
-    /** @var string */
-    public $ajaxDashboardController;
-
-    /** @var string */
-    public $ajaxSettingsController;
-
-    /** @var string */
-    public $metricsStatsController;
-
-    /** @var string */
-    public $metricsSettingsController;
-
-    /** @var string */
-    public $legacyStatsController;
-
-    /** @var string */
-    public $metricsUpgradeController;
+    /**
+     * @var ServiceContainer
+     */
+    private $serviceContainer;
 
     /** @var bool */
     public $bootstrap;
 
     /** @var string */
     public $confirmUninstall;
-
-    /** @var PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer */
-    private $container;
 
     /** @var string */
     public $idPsAccounts;
@@ -81,54 +63,46 @@ class Ps_metrics extends Module
     public $emailSupport;
 
     /** @var string */
-    public $ajaxMetricsController;
+    public $termsOfServiceUrl;
+
+    /** @var string */
+    public $supportUrl;
 
     public function __construct()
     {
         $this->name = 'ps_metrics';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.5.0';
+        $this->version = '3.6.2';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->module_key = '697657ffe038d20741105e95a10b12d1';
         $this->bootstrap = false;
-        $this->oauthAdminController = 'AdminOauthCallback';
-        $this->ajaxDashboardController = 'AdminAjaxDashboard';
-        $this->graphqlController = 'AdminGraphql';
-        $this->ajaxSettingsController = 'AdminAjaxSettings';
-        $this->metricsSettingsController = 'AdminMetricsSettings';
-        $this->metricsUpgradeController = 'AdminMetricsUpgrade';
-        $this->ajaxMetricsController = 'AdminAjaxMetrics';
         $this->idPsAccounts = '49648';
         $this->idPsMetrics = '49583';
-        $this->emailSupport = 'support-metrics@prestashop.com';
-        $this->controllers = [
-            $this->oauthAdminController,
-            $this->graphqlController,
-            $this->ajaxDashboardController,
-            $this->ajaxSettingsController,
-            $this->metricsSettingsController,
-            $this->metricsUpgradeController,
-            $this->ajaxMetricsController,
-        ];
-        $this->moduleSubstitution = [
-            'dashactivity',
-            'dashtrends',
-            'dashgoals',
-            'dashproducts',
-        ];
+        $this->emailSupport = 'support-ps-metrics@prestashop.com';
+        $this->supportUrl = 'https://help-center.prestashop.com/contact?psx=ps_metrics&shop_domain=' . $_SERVER['HTTP_HOST'];
+        $this->termsOfServiceUrl = 'https://www.prestashop.com/en/prestashop-account-privacy';
 
         parent::__construct();
 
         $this->displayName = $this->l('PrestaShop Metrics');
-        $this->description = $this->l('Module for Prestashop Metrics.');
-        $this->psVersionIs17 = (bool) version_compare(_PS_VERSION_, '1.7', '>=');
+        $this->description = $this->l('Optimize your business with a data-driven approach by gaining a complete view of your business in real time.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
-        $this->ps_versions_compliancy = ['min' => '1.6', 'max' => _PS_VERSION_];
+
+        $this->ps_versions_compliancy = [
+            'min' => '1.7.5',
+            'max' => _PS_VERSION_,
+        ];
+
         $this->template_dir = '../../../../modules/' . $this->name . '/views/templates/admin/';
 
-        if ($this->container === null) {
-            $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer($this->name, $this->getLocalPath());
+        require_once __DIR__ . '/vendor/autoload.php';
+
+        if ($this->serviceContainer === null) {
+            $this->serviceContainer = new ServiceContainer(
+                (string) $this->name,
+                $this->getLocalPath()
+            );
         }
     }
 
@@ -139,19 +113,17 @@ class Ps_metrics extends Module
      */
     public function install()
     {
-        /** @var PrestaShop\Module\Ps_metrics\Module\Install $installModule */
-        $installModule = $this->getService('ps_metrics.module.install');
+        parent::install();
 
-        /** @var PrestaShop\Module\Ps_metrics\Handler\NativeStatsHandler $nativeStats */
-        $nativeStats = $this->container->getService('ps_metrics.handler.native.stats');
+        $legacyModuleInstaller = new LegacyModuleInstaller($this);
+        $installModule = $legacyModuleInstaller->legacyModuleInstaller();
+        $nativeStats = $legacyModuleInstaller->legacyNativeStatsHandler();
 
-        return parent::install() &&
-            $this->registerHook('displayAdminAfterHeader') &&
+        return $this->registerHook('displayAdminAfterHeader') &&
             $this->registerHook('actionAdminControllerSetMedia') &&
             $this->registerHook('dashboardZoneTwo') &&
             $installModule->updateModuleHookPosition('dashboardZoneTwo', 0) &&
             $installModule->setConfigurationValues() &&
-            $installModule->installTabs() &&
             $nativeStats->install();
     }
 
@@ -162,22 +134,21 @@ class Ps_metrics extends Module
      */
     public function uninstall()
     {
-        /** @var PrestaShop\Module\Ps_metrics\Module\Uninstall $uninstallModule */
+        /** @var Uninstall $uninstallModule */
         $uninstallModule = $this->getService('ps_metrics.module.uninstall');
 
-        /** @var PrestaShop\Module\Ps_metrics\Tracker\Segment $segment */
-        $segment = $this->container->getService('ps_metrics.tracker.segment');
+        /** @var Segment $segment */
+        $segment = $this->getService('ps_metrics.tracker.segment');
         $segment->setMessage('[MTR] Uninstall Module');
         $segment->track();
 
-        /** @var PrestaShop\Module\Ps_metrics\Handler\NativeStatsHandler $nativeStats */
-        $nativeStats = $this->container->getService('ps_metrics.handler.native.stats');
+        /** @var NativeStatsHandler $nativeStats */
+        $nativeStats = $this->getService('ps_metrics.handler.native.stats');
 
-        return parent::uninstall() &&
-            $uninstallModule->resetConfigurationValues() &&
-            $uninstallModule->uninstallTabs() &&
+        return $uninstallModule->resetConfigurationValues() &&
             $uninstallModule->unsubscribePsEssentials() &&
-            $nativeStats->uninstall();
+            $nativeStats->uninstall() &&
+            parent::uninstall();
     }
 
     /**
@@ -189,12 +160,15 @@ class Ps_metrics extends Module
      */
     public function enable($force_all = false)
     {
-        /** @var PrestaShop\Module\Ps_metrics\Tracker\Segment $segment */
-        $segment = $this->container->getService('ps_metrics.tracker.segment');
+        parent::enable($force_all);
+
+        $legacyModuleInstaller = new LegacyModuleInstaller($this);
+
+        $segment = $legacyModuleInstaller->legacyModuleInstallerSegment();
         $segment->setMessage('[MTR] Enable Module');
         $segment->track();
 
-        return parent::enable($force_all);
+        return true;
     }
 
     /**
@@ -206,12 +180,14 @@ class Ps_metrics extends Module
      */
     public function disable($force_all = false)
     {
-        /** @var PrestaShop\Module\Ps_metrics\Tracker\Segment $segment */
-        $segment = $this->container->getService('ps_metrics.tracker.segment');
+        parent::disable($force_all);
+
+        /** @var Segment $segment */
+        $segment = $this->getService('ps_metrics.tracker.segment');
         $segment->setMessage('[MTR] Disable Module');
         $segment->track();
 
-        return parent::disable($force_all);
+        return true;
     }
 
     /**
@@ -221,9 +197,13 @@ class Ps_metrics extends Module
      */
     public function hookDashboardZoneTwo()
     {
-        $this->loadDashboardAssets();
+        $assets = $this->loadAssets();
+        Media::addJsDef($assets);
 
-        return $this->display(__FILE__, '/views/templates/hook/HookDashboardZoneTwo.tpl');
+        return $this->display(
+            __FILE__,
+            '/views/templates/hook/HookDashboardZoneTwo.tpl'
+        );
     }
 
     /**
@@ -231,40 +211,233 @@ class Ps_metrics extends Module
      *
      * @return string
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function getContent()
     {
-        /** @var PrestaShop\Module\Ps_metrics\Adapter\LinkAdapter $link */
-        $link = $this->container->getService('ps_metrics.adapter.link');
+        $link = $this->context->link;
 
-        \Tools::redirectAdmin($link->getAdminLink($this->metricsSettingsController));
+        if (null == $link) {
+            throw new \PrestaShopException('Link is null');
+        }
+
+        \Tools::redirectAdmin(
+            $link->getAdminLink('MetricsController', true, [
+                'route' => 'metrics_page',
+            ]) . '#/settings'
+        );
     }
 
     /**
-     * Load VueJs App Dashboard and set JS variable for Vuex
+     * hook Backoffice top pages
      *
-     * @param string $responseApiMessage
-     * @param int $countProperty
+     * @return string|false
+     */
+    public function hookDisplayAdminAfterHeader()
+    {
+        /** @var PrestaShopHelper $prestashopHelper */
+        $prestashopHelper = $this->getService('ps_metrics.helper.prestashop');
+
+        if (!Module::isEnabled($this->name)) {
+            return false;
+        }
+        if ($prestashopHelper->getControllerName() === 'AdminStats') {
+            return $this->display(
+                __FILE__,
+                '/views/templates/hook/HookDashboardZoneTwo.tpl'
+            );
+        }
+
+        // INFO: Feature doesn't work anymore on PrestaShop 8. Disable the feature temporally.
+        // if ($prestashopHelper->getControllerName() === 'AdminOrders') {
+        //     $assets = $this->loadAssets('AdminOrders', false);
+        //
+        //     $twig = $this->loadInstance('twig');
+        //
+        //     return $twig->render(
+        //         '@Modules/ps_metrics/views/templates/hook/HookBlockLegacyPages.html.twig',
+        //         $assets
+        //     );
+        // }
+
+        return false;
+    }
+
+    /**
+     * Load an instance of the service
+     *
+     * @param string $instance_name
+     *
+     * @return mixed
+     */
+    private function loadInstance($instance_name)
+    {
+        /** @var ContainerInterface $instance */
+        $instance = PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance();
+
+        return $instance->get($instance_name);
+    }
+
+    /**
+     * Hook set media for old stats pages for loading dashboard box
      *
      * @return void
      */
-    private function loadDashboardAssets($responseApiMessage = 'null', $countProperty = 0)
+    public function hookActionAdminControllerSetMedia()
     {
-        $this->context->smarty->assign('pathMetricsApp', $this->_path . 'views/js/app-metrics.' . $this->version . '.js');
-        $this->context->smarty->assign('pathVendorMetrics', $this->_path . 'views/js/chunk-vendor-metrics.' . $this->version . '.js');
-        $this->context->smarty->assign('pathMetricsAssets', $this->_path . 'views/css/style-metrics.' . $this->version . '.css');
+        /** @var PrestaShopHelper $prestashopHelper */
+        $prestashopHelper = $this->getService('ps_metrics.helper.prestashop');
 
-        /** @var PrestaShop\Module\Ps_metrics\Presenter\Store\StorePresenter $storePresenter */
-        $storePresenter = $this->getService('ps_metrics.presenter.store.store');
-        $storePresenter->setProperties(null, (string) $responseApiMessage, (int) $countProperty);
+        if (!Module::isEnabled($this->name)) {
+            return;
+        }
+        if ($prestashopHelper->getControllerName() === 'AdminStats') {
+            $assets = $this->loadAssets('AdminStats');
+            Media::addJsDef($assets);
+        }
 
-        Media::addJsDef([
-            'storePsMetrics' => $storePresenter->present(),
-        ]);
+        // INFO: Feature doesn't work anymore on PrestaShop 8. Disable the feature temporally.
+        // if ($prestashopHelper->getControllerName() === 'AdminOrders') {
+        //     $assets = $this->loadAssets('AdminOrders', false);
+        // }
     }
 
     /**
-     * Retrieve service
+     * Load VueJs App Dashboard and set JS variable for Vue
+     *
+     * @param string $currentPage
+     * @param bool $legacy
+     *
+     * @return array
+     */
+    private function loadAssets($currentPage = 'dashboard', $legacy = true)
+    {
+        $assets = $this->buildAssets($currentPage);
+
+        if ($legacy) {
+            if (null != $this->context->smarty) {
+                $this->context->smarty->assign(
+                    'useLocalVueApp',
+                    $assets['useLocalVueApp']
+                );
+                $this->context->smarty->assign(
+                    'useBuildModeOnly',
+                    $assets['useBuildModeOnly']
+                );
+                $this->context->smarty->assign(
+                    'pathAppBuilded',
+                    $assets['pathAppBuilded']
+                );
+                $this->context->smarty->assign(
+                    'pathAppCdn',
+                    $assets['pathAppCdn']
+                );
+                $this->context->smarty->assign(
+                    'pathAssetsBuilded',
+                    $assets['pathAssetsBuilded']
+                );
+                $this->context->smarty->assign(
+                    'pathAssetsCdn',
+                    $assets['pathAssetsCdn']
+                );
+            }
+        } else {
+            /** @var TwigEnvironment $twig */
+            $twig = $this->loadInstance('twig');
+
+            $twig->addGlobal('useLocalVueApp', $assets['useLocalVueApp']);
+            $twig->addGlobal('useBuildModeOnly', $assets['useBuildModeOnly']);
+            $twig->addGlobal('pathAppBuilded', $assets['pathAppBuilded']);
+            $twig->addGlobal('pathAppCdn', $assets['pathAppCdn']);
+            $twig->addGlobal('pathAssetsBuilded', $assets['pathAssetsBuilded']);
+            $twig->addGlobal('pathAssetsCdn', $assets['pathAssetsCdn']);
+        }
+
+        return $assets;
+    }
+
+    /**
+     * Build assets to set them in smarty or Twig
+     *
+     * @param string $currentPage
+     *
+     * @return array
+     *
+     * @throws \PrestaShopException
+     */
+    private function buildAssets($currentPage = 'dashboard')
+    {
+        /** @var ConfigHelper $configHelper */
+        $configHelper = $this->getService('ps_metrics.helper.config');
+
+        /** @var PrestaShopHelper $prestashopHelper */
+        $prestashopHelper = $this->getService('ps_metrics.helper.prestashop');
+
+        /** @var ToolsHelper $toolsHelper */
+        $toolsHelper = $this->getService('ps_metrics.helper.tools');
+
+        /** @var ModuleHelper $moduleHelper */
+        $moduleHelper = $this->getService('ps_metrics.helper.module');
+
+        $pathAppBuilded = '/modules/' . $this->name . '/ui-dist/js/metrics.js';
+        $pathAppCdn = $configHelper->getPsMetricsCdnUrl() . 'js/metrics.js';
+
+        $pathAssetsBuilded = '/modules/' . $this->name . '/ui-dist/css/style.css';
+        $pathAssetsCdn = $configHelper->getPsMetricsCdnUrl() . 'css/style.css';
+
+        $link = $this->context->link;
+
+        if (null == $link) {
+            throw new \PrestaShopException('Link is null');
+        }
+
+        $graphqlEndpoint = '';
+
+        $graphqlEndpoint = $link->getAdminLink(
+            'MetricsGraphqlController',
+            true,
+            ['route' => 'metrics_graphql']
+        );
+
+        return [
+            'useLocalVueApp' => $configHelper->getUseLocalVueApp(),
+            'useBuildModeOnly' => $configHelper->getUseBuildModeOnly(),
+            'pathAppBuilded' => $pathAppBuilded,
+            'pathAppCdn' => $pathAppCdn,
+            'pathAssetsBuilded' => $pathAssetsBuilded,
+            'pathAssetsCdn' => $pathAssetsCdn,
+            'contextPsAccounts' => $this->loadPsAccountsAssets(),
+            'oAuthGoogleErrorMessage' => $toolsHelper->getValue(
+                'google_message_error'
+            ),
+            'metricsApiUrl' => $prestashopHelper->getLinkWithoutToken(
+                'MetricsResolverController',
+                'metrics_api_resolver'
+            ),
+            'adminToken' => $prestashopHelper->getTokenFromAdminLink(
+                'MetricsResolverController',
+                'metrics_api_resolver'
+            ),
+            'metricsModule' => $moduleHelper->buildModuleInformations(
+                'ps_metrics'
+            ),
+            'eventBusModule' => $moduleHelper->buildModuleInformations(
+                'ps_eventbus'
+            ),
+            'accountsModule' => $moduleHelper->buildModuleInformations(
+                'ps_accounts'
+            ),
+            'graphqlEndpoint' => $graphqlEndpoint,
+            'isoCode' => $prestashopHelper->getLanguageIsoCode(),
+            'currencyIsoCode' => $prestashopHelper->getCurrencyIsoCode(),
+            'currentPage' => $currentPage,
+            'fullscreen' => false,
+        ];
+    }
+
+    /**
+     * Method that dispatch to the correct service container to use
      *
      * @param string $serviceName
      *
@@ -272,13 +445,54 @@ class Ps_metrics extends Module
      */
     public function getService($serviceName)
     {
-        if ($this->container === null) {
-            $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
-                $this->name,
-                $this->getLocalPath()
-            );
+        $splitServiceNamespace = explode('.', $serviceName);
+        $firstLevelNamespace = $splitServiceNamespace[0];
+
+        // if serviceName is not a service coming from ps_metrics
+        if ($firstLevelNamespace !== 'ps_metrics' && $firstLevelNamespace !== 'ps_accounts') {
+            // use symfony service container from prestashop
+            try {
+                $service = $this->get($serviceName);
+            } catch (\Exception $e) {
+                $container = SymfonyContainer::getInstance();
+
+                if ($container == null) {
+                    throw new \PrestaShopException('Symfony container is null or invalid');
+                }
+
+                $service = $container->get($serviceName);
+            }
+
+            return $service;
         }
 
-        return $this->container->getService($serviceName);
+        // otherwise use the service container from the module
+        return $this->serviceContainer->getService($serviceName);
+    }
+
+    /**
+     * See https://github.com/PrestaShopCorp/prestashop-accounts-installer
+     *
+     * @return array
+     */
+    public function loadPsAccountsAssets()
+    {
+        if (\Module::isInstalled('ps_accounts')) {
+            /** @var PsAccounts $accounts */
+            $accounts = $this->getService('ps_accounts.facade');
+
+            $psAccounts = $accounts->getPsAccountsService();
+
+            if (null != $this->context->smarty) {
+                $this->context->smarty->assign(
+                    'urlAccountsVueCdn',
+                    $psAccounts->getAccountsVueCdn()
+                );
+            }
+
+            return $accounts->getPsAccountsPresenter()->present($this->name);
+        }
+
+        return [];
     }
 }

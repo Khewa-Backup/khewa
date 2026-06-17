@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -55,9 +55,6 @@ class BT_AdminCtrl extends BT_GmcBaseCtrl
                 require_once(_GMCP_PATH_LIB_ADMIN . 'admin-display_class.php');
                 require_once(_GMCP_PATH_LIB . 'warning_class.php');
 
-                // check warning for prerequisites
-                BT_GmcProWarning::create()->bStopExecution = (BT_GmcProModuleTools::checkOutputFile() == true ? false : true);
-
                 $oAdminType = BT_AdminDisplay::create();
 
                 // update new module keys
@@ -72,7 +69,7 @@ class BT_AdminCtrl extends BT_GmcBaseCtrl
                     'GMCP_CHECK_EXPORT_STOCK',
                     'GMCP_PROD_EXCL',
                     'GMCP_FEED_TAX',
-                    'GMCP_FREE_SHIP_PROD'
+                    'GMCP_FREE_SHIP_PROD',
                 ));
 
                 // set js msg translation

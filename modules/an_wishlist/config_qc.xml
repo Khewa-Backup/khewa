@@ -2,7 +2,7 @@
 <module>
     <name>an_wishlist</name>
     <displayName><![CDATA[Anvanto Wishlist]]></displayName>
-    <version><![CDATA[2.2.5]]></version>
+    <version><![CDATA[2.2.8]]></version>
     <description><![CDATA[Extend default functionality by adding Wishlist &mdash; users can add products to it and buy them later. Wishlisted products are offered to buy in the cart to increase average cart value. Feedback on the most wishlisted products is available in live mode.]]></description>
     <author><![CDATA[Anvanto]]></author>
     <tab><![CDATA[others]]></tab>

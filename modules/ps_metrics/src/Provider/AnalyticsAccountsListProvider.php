@@ -22,7 +22,6 @@
 namespace PrestaShop\Module\Ps_metrics\Provider;
 
 use PrestaShop\Module\Ps_metrics\Api\AnalyticsApi;
-use PrestaShop\Module\Ps_metrics\Helper\JsonHelper;
 use PrestaShop\Module\Ps_metrics\Repository\ConfigurationRepository;
 
 class AnalyticsAccountsListProvider
@@ -31,11 +30,6 @@ class AnalyticsAccountsListProvider
      * @var array
      */
     private $accountsList;
-
-    /**
-     * @var JsonHelper
-     */
-    private $jsonHelper;
 
     /**
      * @var ConfigurationRepository
@@ -51,18 +45,15 @@ class AnalyticsAccountsListProvider
      * AnalyticsAccountsListProvider constructor.
      *
      * @param ConfigurationRepository $configurationRepository
-     * @param JsonHelper $jsonHelper
      * @param AnalyticsApi $analyticsApi
      */
     public function __construct(
         ConfigurationRepository $configurationRepository,
-        JsonHelper $jsonHelper,
         AnalyticsApi $analyticsApi
     ) {
         $this->analyticsApi = $analyticsApi;
         $this->accountsList = [];
         $this->configurationRepository = $configurationRepository;
-        $this->jsonHelper = $jsonHelper;
     }
 
     /**
@@ -77,9 +68,7 @@ class AnalyticsAccountsListProvider
         }
         $apiReturn = $this->analyticsApi->getAccountsList();
 
-        return $this->formatAccountListArray(
-            $apiReturn
-        );
+        return $this->formatAccountListArray($apiReturn);
     }
 
     /**
@@ -97,7 +86,7 @@ class AnalyticsAccountsListProvider
             }
         }
 
-        return (object) [];
+        return null;
     }
 
     /**
@@ -134,6 +123,9 @@ class AnalyticsAccountsListProvider
             foreach ($accounts as $account) {
                 foreach ($account as $key => $property) {
                     $this->accountsList[$key] = $property;
+                    $this->accountsList[$key]['webPropertyId'] = $key;
+                    $this->accountsList[$key]['typeSource'] =
+                        $property['type_source'];
                 }
             }
         }

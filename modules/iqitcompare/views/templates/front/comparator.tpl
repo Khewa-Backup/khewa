@@ -46,13 +46,21 @@
                                     {assign var='product_id' value=$product.id_product}
                                     {assign var='feature_id' value=$feature.id_feature}
 
+                                
+
                                     {if isset($listFeatures[$product_id])}
                                         {assign var='tab' value=$listFeatures[$product_id]}
                                         <td class="{$classname} iqitcompare-feature-td js-iqitcompare-product-{$product.id_product}">
-                                            {if (isset($tab[$feature_id]))}
-                                                {foreach from=$tab[$feature_id] item=tabfeature}
-                                                    {$tabfeature|escape:'htmlall'|nl2br nofilter}
-                                                {/foreach}
+                                        
+                                
+                                                {if $product.grouped_features}
+                                                    {foreach from=$product.grouped_features item=feature}
+                                                        {if $feature.id_feature == $feature_id}
+                                                            {$feature.value|escape:'htmlall'|nl2br nofilter}
+                                                        {/if}
+                                                    {/foreach}
+                            
+                                        
                                                 {/if}
                                         </td>
                                     {else}

@@ -92,13 +92,13 @@ class Installer
      * @param string $module
      * @param string $psxName
      *
-     * @return string | null
+     * @return string|null
      *
      * @throws \PrestaShopException
      */
     public function getInstallUrl($module, $psxName)
     {
-        if ($this->shopContext->isShop17()) {
+        if ($this->shopContext->isShop173()) {
             $router = SymfonyContainer::getInstance()->get('router');
 
             return Tools::getHttpHost(true) . $router->generate('admin_module_manage_action', [
@@ -118,13 +118,13 @@ class Installer
      * @param string $module
      * @param string $psxName
      *
-     * @return string | null
+     * @return string|null
      *
      * @throws \PrestaShopException
      */
     public function getEnableUrl($module, $psxName)
     {
-        if ($this->shopContext->isShop17()) {
+        if ($this->shopContext->isShop173()) {
             $router = SymfonyContainer::getInstance()->get('router');
 
             return Tools::getHttpHost(true) . $router->generate('admin_module_manage_action', [
@@ -136,8 +136,7 @@ class Installer
         return $this->link->getAdminLink('AdminModules', true, [], [
             'module_name' => $psxName,
             'configure' => $psxName,
-            //'enable' => $module,
-            'install' => $module,
+            'enable' => $module,
         ]);
     }
 
@@ -149,8 +148,9 @@ class Installer
     public function isInstalled($module)
     {
         if (false === $this->shopContext->isShop17()) {
-            return Module::isInstalled('ps_eventbus');
+            return Module::isInstalled($module);
         }
+
         $moduleManager = ModuleManagerBuilder::getInstance()->build();
 
         return $moduleManager->isInstalled($module);

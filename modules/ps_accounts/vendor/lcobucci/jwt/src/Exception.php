@@ -1,8 +1,8 @@
 <?php
 
-namespace Lcobucci\JWT;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT;
 
-if (PHP_MAJOR_VERSION === 5) {
+if (\PHP_MAJOR_VERSION === 5) {
     interface Exception
     {
     }

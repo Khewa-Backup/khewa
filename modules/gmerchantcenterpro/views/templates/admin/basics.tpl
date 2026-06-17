@@ -2,8 +2,9 @@
 *
 * Google merchant center Pro
 *
-* @author BusinessTech.fr
-* @copyright Business Tech
+* @author    BusinessTech.fr - https://www.businesstech.fr
+* @copyright Business Tech - https://www.businesstech.fr
+* @license   Commercial
 *
 *           ____    _______
 *          |  _ \  |__   __|
@@ -210,6 +211,24 @@
 				</div>
 		</div>
 
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-md-3 col-lg-3"><b>{l s='Do you want to include the dimensions of the product?' mod='gmerchantcenterpro'}</b></label>
+			<div class="col-xs-12 col-md-5 col-lg-3">
+				<span class="switch prestashop-switch fixed-width-lg">
+					<input type="radio" name="bt_manage_product_size" id="bt_manage_product_size_on" value="1" {if !empty($bUseProductSize)}checked="checked"{/if}/>
+					<label for="bt_manage_product_size_on" class="radioCheck">
+						{l s='Yes' mod='gmerchantcenterpro'}
+					</label>
+					<input type="radio" name="bt_manage_product_size" id="bt_manage_product_size_off" value="0" {if empty($bUseProductSize)}checked="checked"{/if}/>
+					<label for="bt_manage_product_size_off" class="radioCheck">
+						{l s='No' mod='gmerchantcenterpro'}
+					</label>
+					<a class="slide-button btn"></a>
+				</span>
+			</div>
+			<a class="badge badge-info" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/452" target="_blank"><i class="icon icon-link"></i>&nbsp;{l s='FAQ about the dimensions of the package' mod='gmerchantcenterpro'}</a>
+		</div>
+				
 		<div class="form-group">
 			<label class="control-label col-xs-12 col-md-3 col-lg-3"><span class="label-tooltip" data-toggle="tooltip" title data-original-title="{l s='If you want to force the identifier_exists tag select YES' mod='gmerchantcenterpro'}"><b>{l s='Force the identifier_exists tag?' mod='gmerchantcenterpro'}</b></span></label>
 			<div class="col-xs-5 col-md-5 col-lg-6">

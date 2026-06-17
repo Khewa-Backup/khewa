@@ -33,6 +33,9 @@
  * @package    PHPExcel_Shared_Trend
  * @copyright  Copyright (c) 2006 - 2013 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 class PHPExcel_Best_Fit
 {
 	/**

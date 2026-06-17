@@ -10,7 +10,7 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 {* TOOLBAR FOR PS 1.5 *}
-{if $is_before_16}
+{if $isPS15}
 	{include file="toolbar.tpl" toolbar_btn=$toolbar_btn toolbar_scroll=$toolbar_scroll title={$title_page|escape:'html':'UTF-8'}}
 {/if}
 
@@ -58,7 +58,7 @@
                         <li>{l s='The codes we generate are compatible with marketplaces through digit control' mod='wkinventory'}.</li>
                     </ul>
                 </div>
-                <button class="btn btn-primary btn-lg btn-block{if !$isModuleFolderWritable} disabled{/if}" id="genCodeEmptyProducts" type="button"/><span class="icon-barcode"></span> {l s='Start the generation' mod='wkinventory'} <span class="icon-arrow-circle-right"></span></button>
+                <button class="btn btn-primary btn-lg btn-block{if !$isModuleFolderWritable} disabled{/if}" id="genCodeEmptyProducts" type="button"/><span class="icon-barcode"></span>&nbsp;{l s='Start the generation' mod='wkinventory'}&nbsp;<span class="icon-arrow-circle-right"></span></button>
             </div>
 
             {***** MESSAGE WHEN PROCESSING TASKS *****}
@@ -78,7 +78,7 @@
                         <li><div class="badge badge-warning">{l s='Be carefull, All EAN and UPC will be regenerated even if they exist' mod='wkinventory'}.</div></li>
                     </ul>
                 </div>
-                <button class="btn btn-primary btn-lg btn-block{if !$isModuleFolderWritable} disabled{/if}" id="genCodeForceProducts" type="button"/><span class="icon-barcode"></span> {l s='Start the generation' mod='wkinventory'} <span class="icon-arrow-circle-right"></span></button>
+                <button class="btn btn-primary btn-lg btn-block{if !$isModuleFolderWritable} disabled{/if}" id="genCodeForceProducts" type="button"/><span class="icon-barcode"></span>&nbsp;{l s='Start the generation' mod='wkinventory'}&nbsp;<span class="icon-arrow-circle-right"></span></button>
             </div>
         </div>
     </div>

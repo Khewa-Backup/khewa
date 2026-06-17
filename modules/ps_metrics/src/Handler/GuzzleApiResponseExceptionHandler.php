@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -30,7 +31,7 @@ class GuzzleApiResponseExceptionHandler
     /**
      * @var mixed
      */
-    private $body;
+    private $content;
 
     /**
      * @var int
@@ -40,7 +41,7 @@ class GuzzleApiResponseExceptionHandler
     /**
      * @return string
      */
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;
     }
@@ -50,7 +51,7 @@ class GuzzleApiResponseExceptionHandler
      *
      * @return void
      */
-    public function setReasonPhrase($reasonPhrase)
+    public function setReasonPhrase(string $reasonPhrase): void
     {
         $this->reasonPhrase = $reasonPhrase;
     }
@@ -58,25 +59,25 @@ class GuzzleApiResponseExceptionHandler
     /**
      * @return mixed
      */
-    public function getBody()
+    public function getContent()
     {
-        return $this->body;
+        return $this->content;
     }
 
     /**
-     * @param mixed $body
+     * @param mixed $content
      *
      * @return void
      */
-    public function setBody($body)
+    public function setContent($content): void
     {
-        $this->body = $body;
+        $this->content = $content;
     }
 
     /**
      * @return int
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
@@ -86,7 +87,7 @@ class GuzzleApiResponseExceptionHandler
      *
      * @return void
      */
-    public function setStatusCode($statusCode)
+    public function setStatusCode(int $statusCode): void
     {
         $this->statusCode = $statusCode;
     }
@@ -103,10 +104,10 @@ class GuzzleApiResponseExceptionHandler
      *
      * @return $this
      */
-    public function get($errorMessage)
+    public function get(string $errorMessage): self
     {
         $this->setStatusCode(500);
-        $this->setBody(null);
+        $this->setContent(null);
         $this->setReasonPhrase($errorMessage);
 
         return $this;

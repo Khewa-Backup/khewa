@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+2.2.1
+-----
+* Fixed not display product deleted
+* Fixed position favorite for listing product
+
 2.0.0
 -----
 * Use our new module architecture

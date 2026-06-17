@@ -21,8 +21,7 @@
 
 namespace PrestaShop\Module\Ps_metrics\Tracker;
 
-use PrestaShop\Module\Ps_metrics\Context\PrestaShopContext;
-use PrestaShop\Module\Ps_metrics\Environment\SegmentEnv;
+use PrestaShop\Module\Ps_metrics\Helper\PrestaShopHelper;
 use PrestaShop\Module\Ps_metrics\Helper\SegmentHelper;
 use PrestaShop\Module\Ps_metrics\Helper\ShopHelper;
 
@@ -39,19 +38,14 @@ class Segment implements TrackerInterface
     private $options = [];
 
     /**
-     * @var SegmentEnv
-     */
-    private $segmentEnv;
-
-    /**
      * @var SegmentHelper
      */
     private $segmentHelper;
 
     /**
-     * @var PrestaShopContext
+     * @var PrestaShopHelper
      */
-    private $prestaShopContext;
+    private $prestaShopHelper;
 
     /**
      * @var ShopHelper
@@ -61,20 +55,17 @@ class Segment implements TrackerInterface
     /**
      * Segment constructor.
      *
-     * @param SegmentEnv $segmentEnv
      * @param SegmentHelper $segmentHelper
-     * @param PrestaShopContext $prestaShopContext
+     * @param PrestaShopHelper $prestaShopHelper
      * @param ShopHelper $shopHelper
      */
     public function __construct(
-        SegmentEnv $segmentEnv,
         SegmentHelper $segmentHelper,
-        PrestaShopContext $prestaShopContext,
+        PrestaShopHelper $prestaShopHelper,
         ShopHelper $shopHelper
     ) {
-        $this->segmentEnv = $segmentEnv;
         $this->segmentHelper = $segmentHelper;
-        $this->prestaShopContext = $prestaShopContext;
+        $this->prestaShopHelper = $prestaShopHelper;
         $this->shopHelper = $shopHelper;
         $this->init();
     }
@@ -84,7 +75,7 @@ class Segment implements TrackerInterface
      *
      * @return void
      */
-    private function init()
+    private function init(): void
     {
         $this->segmentHelper->init();
     }
@@ -92,11 +83,11 @@ class Segment implements TrackerInterface
     /**
      * Track event on segment
      *
-     * @return bool
+     * @return void
      *
      * @throws \PrestaShopException
      */
-    public function track()
+    public function track(): void
     {
         if (empty($this->message)) {
             throw new \PrestaShopException('Message cannot be empty. Need to set it with setMessage() method.');
@@ -104,40 +95,42 @@ class Segment implements TrackerInterface
 
         // Dispatch track depending on context shop
         $this->dispatchTrack();
-
-        return true;
     }
 
     /**
      * Add track
      *
-     * @param int $userId
+     * @param mixed $userId
      *
      * @return void
      */
-    private function segmentTrack($userId)
+    private function segmentTrack($userId): void
     {
-        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-        $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
-        $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $referer = isset($_SERVER['HTTP_REFERER'])
+            ? $_SERVER['HTTP_REFERER']
+            : '';
+        $url =
+            (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'
+                ? 'https'
+                : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
         $this->segmentHelper->track([
             'userId' => $userId,
             'event' => $this->message,
             'channel' => 'browser',
             'context' => [
-                'ip' => $ip,
-                'userAgent' => $userAgent,
-                'locale' => (new PrestashopContext())->getLanguageIsoCode(),
+                'locale' => (new PrestaShopHelper())->getLanguageIsoCode(),
                 'page' => [
                     'referrer' => $referer,
                     'url' => $url,
                 ],
             ],
-            'properties' => array_merge([
-                'module' => 'ps_metrics',
-            ], $this->options),
+            'properties' => array_merge(
+                [
+                    'module' => 'ps_metrics',
+                ],
+                $this->options
+            ),
         ]);
 
         $this->segmentHelper->flush();
@@ -172,9 +165,9 @@ class Segment implements TrackerInterface
      *
      * @return void
      */
-    private function trackShop()
+    private function trackShop(): void
     {
-        $userId = $this->prestaShopContext->getShopDomain();
+        $userId = $this->prestaShopHelper->getShopDomain();
         $this->segmentTrack($userId);
     }
 
@@ -183,9 +176,12 @@ class Segment implements TrackerInterface
      *
      * @return void
      */
-    private function trackShopGroup()
+    private function trackShopGroup(): void
     {
-        $shops = $this->shopHelper->getShops(true, $this->shopHelper->getContextShopGroupID());
+        $shops = $this->shopHelper->getShops(
+            true,
+            $this->shopHelper->getContextShopGroupID()
+        );
         foreach ($shops as $shop) {
             $this->segmentTrack($shop['domain']);
         }
@@ -196,7 +192,7 @@ class Segment implements TrackerInterface
      *
      * @return void
      */
-    private function trackAllShops()
+    private function trackAllShops(): void
     {
         $shops = $this->shopHelper->getShops();
         foreach ($shops as $shop) {
@@ -207,7 +203,7 @@ class Segment implements TrackerInterface
     /**
      * @return string
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
@@ -217,7 +213,7 @@ class Segment implements TrackerInterface
      *
      * @return void
      */
-    public function setMessage($message)
+    public function setMessage(string $message): void
     {
         $this->message = $message;
     }
@@ -225,7 +221,7 @@ class Segment implements TrackerInterface
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -235,7 +231,7 @@ class Segment implements TrackerInterface
      *
      * @return void
      */
-    public function setOptions($options)
+    public function setOptions(array $options): void
     {
         $this->options = $options;
     }

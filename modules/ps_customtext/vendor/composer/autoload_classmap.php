@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'CustomText' => $baseDir . '/classes/CustomText.php',
     'MigrateData' => $baseDir . '/classes/MigrateData.php',
     'Ps_Customtext' => $baseDir . '/ps_customtext.php',

@@ -1,10 +1,9 @@
 <?php
 
-namespace Lcobucci\JWT\Token;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token;
 
 use InvalidArgumentException;
-use Lcobucci\JWT\Exception;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 final class InvalidTokenStructure extends InvalidArgumentException implements Exception
 {
     /** @return self */
@@ -12,7 +11,6 @@ final class InvalidTokenStructure extends InvalidArgumentException implements Ex
     {
         return new self('The JWT string must have two dots');
     }
-
     /**
      * @param string $part
      *
@@ -22,7 +20,6 @@ final class InvalidTokenStructure extends InvalidArgumentException implements Ex
     {
         return new self($part . ' must be an array');
     }
-
     /**
      * @param string $value
      *

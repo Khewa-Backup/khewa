@@ -137,7 +137,7 @@
                         <div  class="translationsFields tab-content">
                             {foreach from=$languages item=language}
                                 {if $language.active}
-                                    <div data-locale="{$language.iso_code}" class="translationsFields-iqitadditionaltabs_title_p_{$tab.id_iqitadditionaltab}_{$language.id_lang} {if $id_language == $language.id_lang} show active{/if}   translation-field  translation-label-{$language.iso_code}">::tabTitle{$language.id_lang}::</div>
+                                    <div data-locale="{$language.iso_code}" class="translationsFields-iqitadditionaltabs_title_p_{$language.id_lang} {if $id_language == $language.id_lang} show active{/if}   translation-field  translation-label-{$language.iso_code}">::tabTitle{$language.id_lang}::</div>
                                 {/if}
                             {/foreach}
                         </div>

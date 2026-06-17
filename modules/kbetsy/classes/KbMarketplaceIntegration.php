@@ -476,9 +476,9 @@ class KbMarketplaceIntegration extends ObjectModel
                                     $tax_rate = $tax->getProductTaxRate($products['id_product'], $id_address);
                                     $products['id_tax_rules_group'] = (int) Product::getIdTaxRulesGroupByIdProduct($products['id_product']);
                                     if (isset($tax_rate) && $tax_rate > 0) {
-                                        $products['price'] = Tools::ps_round($products['price_wt']/(0.01*$tax_rate + 1), 2);
+                                        $products['price'] = Tools::ps_round($products['price_wt']*(0.01*$tax_rate + 1), 2);
                                         $products['total'] = $products['price'] * $products['cart_quantity'];
-                                        $total_tax += ($products['total_wt'] - $products['total']);
+                                        $total_tax += ($products['total'] - $products['total_wt']);
                                     }
                                 }
                                 /*
@@ -496,8 +496,9 @@ class KbMarketplaceIntegration extends ObjectModel
                 /*
                 * changes by rishabh jain for tax rule
                 */
-                $total_paid_tax_excl -= $total_tax;
-                $total_products -= $total_tax;
+                //$total_paid_tax_excl -= $total_tax;//Line Commented By Ashish on 6th May
+                //$total_products -= $total_tax; //Line Commented By Ashish on 6th May
+                
                 /*
                  * changes over
                  */
@@ -519,7 +520,22 @@ class KbMarketplaceIntegration extends ObjectModel
 
                 $order = new Order();
                 $order->product_list = $package['product_list'];
-
+                /*
+                 * Add items into the cart product table to avoid error i.e. Order and Cart are out of sync error as we were not added the items into the cart, while editing the order from the admin
+                 * @author Tanisha Gupta
+                 * @date 12-04-2023
+                 */
+                $products = $package['product_list'];
+                foreach ($products as $product) {
+                    /**
+                    * if product id is greater than 0, only then add items into the cart
+                    * @author Tanisha Gupta
+                    * @date 12-04-2023
+                    */
+                    if($product['id_product'] > 0){
+                        $cart->updateQty($product['cart_quantity'], $product['id_product'], $product['id_product_attribute']);
+                    }
+                }
                 $order->id_carrier = $id_carrier;
 
                 $order->id_customer = $id_customer;
@@ -744,16 +760,33 @@ class KbMarketplaceIntegration extends ObjectModel
             if (isset($result['id_address'])) {
                 $id_address = (int) $result['id_address'];
             } else {
+                /**
+                 * Removed mb_convert_encoding as we have handled this issue in the etsyModule file
+                 * @date 15-04-2023
+                 * @modifier Tanisha Gupta
+                 */
+                       /**
+                        * @author Ravi Kant Gupta
+                        * @date 24-02-2025
+                        * @purpose To fix the issue due to which the customer name and address was getting wrong decoded
+                        */
                 Db::getInstance()->insert('address', array(
-                    'firstname' => pSQL($firstname),
-                    'lastname' => pSQL($lastname),
+                    'firstname' => pSQL(self::kb_decode($firstname)),
+                    'lastname' => pSQL(self::kb_decode($lastname)),
                     'id_customer' => (int) $id_customer,
-                    'address1' => pSQL($address1),
-                    'address2' => pSQL($address2),
+                    'address1' => pSQL(self::kb_decode($address1)),
+                    'address2' => pSQL(self::kb_decode($address2)),
                     'postcode' => pSQL($postcode),
                     'city' => pSQL($city),
                     'id_state' => (int) $id_state,
                     'id_country' => (int) $id_country,
+                    /* changes made by vibhaas */
+                    'company' => '',
+                    'other' => '',
+                    'dni' => '',
+                    'phone' => '',
+                    'vat_number' =>'',
+                    /* changes over */
                     'phone_mobile' => pSQL($phone_mobile)
                 ));
 
@@ -790,8 +823,13 @@ class KbMarketplaceIntegration extends ObjectModel
             // Add new customer if the provided email does not exist
             if ($is_available == 0) {
                 Db::getInstance()->insert('customer', array(
-                    'firstname' => pSQL($firstname),
-                    'lastname' => pSQL($lastname),
+                        /**
+                        * @author Ravi Kant Gupta
+                        * @date 24-02-2025
+                        * @purpose To fix the issue due to which the customer name was getting wrong decoded
+                        */
+                    'firstname' => pSQL(self::kb_decode($firstname)),
+                    'lastname' => pSQL(self::kb_decode($lastname)),
                     'email' => pSQL($email),
                     'is_guest' => (int) $is_guest,
                     'id_default_group' => (int) $id_default_group
@@ -861,7 +899,6 @@ class KbMarketplaceIntegration extends ObjectModel
     public static function getCurrencyId($currency_iso_code)
     {
         $result_array = array();
-        // SELECT id_currency from currency WHERE iso_code = 'INR'
         $query = "SELECT id_currency from " . _DB_PREFIX_ . "currency WHERE iso_code = '" . pSQL($currency_iso_code) . "'";
         $result = Db::getInstance()->getRow($query);
         $result_array['success'] = $result['id_currency'];
@@ -981,5 +1018,23 @@ class KbMarketplaceIntegration extends ObjectModel
             $query_get_translations = 'SELECT * FROM ' . _DB_PREFIX_ . 'etsy_translation WHERE status = "Pending" AND lang_code != "' . pSQL($language) . '"' . $sync_lang_cond;
         }
         return Db::getInstance()->executeS($query_get_translations);
+    }
+
+    /**
+     * 
+     * @author Ravi Kant Gupta
+     * @date 24-02-2025
+     * @purpose To fix the issue due to which the special characters were not getting decoded properly
+     */
+    public static function kb_decode($string)
+    {
+        preg_match_all("/&#?\w+;/", $string, $entities, PREG_SET_ORDER);
+        $entities = array_unique(array_column($entities, 0));
+        foreach ($entities as $entity) {
+            $decoded = mb_convert_encoding($entity, 'UTF-8', 'HTML-ENTITIES');
+            $string = str_replace($entity, $decoded, $string);
+        }
+
+        return $string;
     }
 }

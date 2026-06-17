@@ -8,8 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Monolog\Handler;
+namespace PrestaShop\Module\PsAccounts\Vendor\Monolog\Handler;
 
 /**
  * Forwards records to multiple handlers suppressing failures of each handler
@@ -26,10 +25,9 @@ class WhatFailureGroupHandler extends GroupHandler
     {
         if ($this->processors) {
             foreach ($this->processors as $processor) {
-                $record = call_user_func($processor, $record);
+                $record = \call_user_func($processor, $record);
             }
         }
-
         foreach ($this->handlers as $handler) {
             try {
                 $handler->handle($record);
@@ -39,10 +37,8 @@ class WhatFailureGroupHandler extends GroupHandler
                 // What failure?
             }
         }
-
-        return false === $this->bubble;
+        return \false === $this->bubble;
     }
-
     /**
      * {@inheritdoc}
      */
@@ -52,13 +48,12 @@ class WhatFailureGroupHandler extends GroupHandler
             $processed = array();
             foreach ($records as $record) {
                 foreach ($this->processors as $processor) {
-                    $record = call_user_func($processor, $record);
+                    $record = \call_user_func($processor, $record);
                 }
                 $processed[] = $record;
             }
             $records = $processed;
         }
-
         foreach ($this->handlers as $handler) {
             try {
                 $handler->handleBatch($records);

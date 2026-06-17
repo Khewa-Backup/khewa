@@ -2,9 +2,17 @@ admin_mbo_catalog_module:
   path: /addons/modules/catalog
   methods: [GET]
   defaults:
-    _controller: mbo.controller.modules.catalog:indexAction
+    _controller: mbo.controller.modules:catalogAction
     _legacy_controller: AdminPsMboModule
     _legacy_link: AdminPsMboModule
+
+admin_module_catalog:
+    path: /improve/modules/catalog
+    methods: [GET]
+    defaults:
+        _controller: mbo.controller.modules:catalogAction
+        _legacy_controller: AdminModulesCatalog
+        _legacy_link: AdminModulesCatalog
 
 admin_mbo_catalog_module_selection:
   path: /addons/modules/catalog/selection
@@ -29,3 +37,33 @@ admin_mbo_catalog_theme:
     _controller: mbo.controller.themes.catalog:indexAction
     _legacy_controller: AdminPsMboTheme
     _legacy_link: AdminPsMboTheme
+
+admin_module_catalog_refresh:
+  path: /catalog/refresh/{category}/{keyword}
+  methods: [GET]
+  defaults:
+    category:
+    keyword:
+    _controller: mbo.controller.modules:refreshCatalogAction
+    _legacy_controller: AdminModulesCatalog
+    _legacy_link: AdminModulesCatalog:refresh
+
+admin_mbo_module_cdc_error:
+    path: /cdc_error
+    methods: [ GET ]
+    defaults:
+        _controller: mbo.controller.modules:cdcErrorAction
+
+admin_mbo_security:
+    path: /mbo/me
+    methods: [POST]
+    defaults:
+        _controller: mbo.controller.security:meAction
+
+admin_mbo_uninstalled_modules:
+    path: /addons/modules/uninstalled
+    methods: [GET]
+    defaults:
+        _controller: mbo.controller.modules:uninstalledAction
+        _legacy_controller: AdminPsMboUninstalledModules
+        _legacy_link: AdminPsMboUninstalledModules

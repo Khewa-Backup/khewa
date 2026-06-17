@@ -15,11 +15,12 @@
  * @author    PrestaChamps <leo@prestachamps.com>
  * @copyright PrestaChamps
  * @license   commercial
- */
-
-/**
+ *
  * Class AdminMailchimpProListMembersController
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class AdminMailchimpProListMembersController extends \PrestaChamps\MailchimpPro\Controllers\BaseMCObjectController
 {
     public $entityPlural   = 'members';
@@ -44,7 +45,7 @@ class AdminMailchimpProListMembersController extends \PrestaChamps\MailchimpPro\
 
     protected function renderPaginationQ()
     {
-        $this->context->smarty->assign(array(
+        $this->context->smarty->assign([
             'controller_name' => $this->controller_name,
             'totalEntities' => $this->totalEntities,
             'offset' => $this->offset,
@@ -52,7 +53,7 @@ class AdminMailchimpProListMembersController extends \PrestaChamps\MailchimpPro\
             'currentPage' => $this->currentPage,
             'count' => $this->entitiesPerPage,
             'list_id' => Tools::getValue('list_id')
-        ));
+        ]);
         $this->content .= $this->context->smarty->fetch(
             $this->module->getLocalPath() . 'views/templates/admin/entity_list/_pagination_list-members.tpl'
         );
@@ -69,12 +70,12 @@ class AdminMailchimpProListMembersController extends \PrestaChamps\MailchimpPro\
             LinkHelper::getAdminLink(
                 $this->controller_name,
                 true,
-                array(),
-                array(
+                [],
+                [
                     'action' => 'page',
                     'page' => '(:num)',
                     'list_id' => $this->list_id,
-                )
+                ]
             )
         );
     }

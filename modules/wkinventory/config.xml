@@ -2,7 +2,7 @@
 <module>
     <name>wkinventory</name>
     <displayName><![CDATA[Wk Inventory Management]]></displayName>
-    <version><![CDATA[2.1.63]]></version>
+    <version><![CDATA[2.8.90]]></version>
     <description><![CDATA[Manage easily and quickly your inventory]]></description>
     <author><![CDATA[Khoufi Wissem]]></author>
     <tab><![CDATA[shipping_logistics]]></tab>

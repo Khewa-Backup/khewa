@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 //Include Etsy Module Class to inherit some common functions and callbacks
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 
@@ -185,7 +188,7 @@ class AdminEtsyOrderSettingsController extends ModuleAdminController
         $this->page_header_toolbar_btn['kb_sync_templates'] = array(
             'href' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'syncOrdersStatus', 'secure_key' => $secure_key)),
             'target'=> '_blank',
-            'desc' => $this->l('Update Order Status On Etsy'),
+            'desc' => $this->module->l('Update Order Status On Etsy'),
             'icon' => 'process-icon-update'
         );
 

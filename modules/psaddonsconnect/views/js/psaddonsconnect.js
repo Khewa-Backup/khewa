@@ -55,4 +55,3 @@ $(document).ready(function(){
 function psGetModal() {
   $(".addons_connect").click();
 }
-

@@ -1,4 +1,4 @@
-imports:
-  - { resource: ../common.yml }
-  - { resource: ../front/repository.yml }
-  - { resource: ../front/services.yml }
+services:
+  PrestaShop\Module\PsEventbus\Service\PresenterService:
+    class: PrestaShop\Module\PsEventbus\Service\PresenterService
+    public: true

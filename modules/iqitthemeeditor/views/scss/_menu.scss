@@ -388,15 +388,18 @@
     @include st2(background, $mm_background_l3);
   }
 
-  > li > a {
+  > ul > li > a {
     border-bottom: $mm_inner_border;
   }
 }
 
 //push
 .col-mobile-menu-push {
-  #_mobile_iqitmegamenu-mobile {
+  #iqitmegamenu-mobile{
     border: $mm_border;
+  }
+
+  #_mobile_iqitmegamenu-mobile {
     @if $mm_boxshadow != none {
       box-shadow: $mm_boxshadow;
     }

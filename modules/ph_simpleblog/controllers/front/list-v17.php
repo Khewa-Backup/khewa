@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Blog for PrestaShop module by PrestaHome Team.
  *
@@ -11,9 +12,6 @@ class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaSho
 {
     public $context;
     public $sb_category = false;
-    public $simpleblog_search;
-    public $simpleblog_keyword;
-    public $is_search = false;
     public $is_category = false;
 
     protected $blogCategory;
@@ -27,9 +25,6 @@ class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaSho
         parent::init();
 
         $sb_category = Tools::getValue('sb_category');
-        $module_controller = Tools::getValue('controller');
-        $simpleblog_search = Tools::getValue('simpleblog_search');
-        $simpleblog_keyword = Tools::getValue('simpleblog_keyword');
         $this->listController = Tools::getValue('controller');
 
         if ($sb_category) {
@@ -42,12 +37,6 @@ class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaSho
         if ($this->listController == 'category' && !$this->sb_category) {
             Tools::redirect($this->context->link->getModuleLink('ph_simpleblog', 'list'));
             $this->controller_name = 'category';
-        }
-
-        if ($simpleblog_search && $simpleblog_keyword) {
-            $this->simpleblog_search = $simpleblog_search;
-            $this->simpleblog_keyword = $simpleblog_keyword;
-            $this->is_search = true;
         }
 
         if ($this->sb_category != '') {
@@ -98,7 +87,7 @@ class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaSho
                 $page['canonical'] = $this->blogCategory->url;
             }
 
-            $page['body_classes']['blog-for-prestashop-category-'.$this->blogCategory->id] = true;
+            $page['body_classes']['blog-for-prestashop-category-' . $this->blogCategory->id] = true;
 
             return $page;
         } else {
@@ -129,47 +118,9 @@ class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaSho
 
             $this->context->smarty->assign('blogCategory', $this->blogCategory);
             $this->context->smarty->assign('category_rewrite', $this->blogCategory->link_rewrite);
-        } elseif ($this->is_search) {
-            // @todo: complete refactoring "authors" to 2.0.0
-            // Posts by author
-            $this->context->smarty->assign('is_search', true);
-
-            // echo SimpleBlogPost::getSearchLink('author', 'kpodemski', $id_lang);
-            // @todo: meta titles, blog title, specific layout
-            switch ($this->simpleblog_search) {
-                case 'author':
-                    break;
-                case 'tag':
-                    break;
-            }
-
-            $this->context->smarty->assign('meta_title', $this->l('Posts by', 'list-v17') . ' ' . $this->simpleblog_author . ' - ' . $this->l('Blog', 'list-v17'));
-
-            $this->posts = SimpleBlogPost::findPosts($this->simpleblog_search, $this->simpleblog_keyword, $id_lang, $this->posts_per_page, $this->p);
-
-            $this->context->smarty->assign('pagination', $getTemplateVarPagination());
-
-            $this->context->smarty->assign('posts', $this->posts);
         } else {
             $finder = new BlogPostsFinder();
             $this->posts = $finder->findPosts();
-            // if (Tools::getValue('y', 0)) {
-            //     // archive
-            //     $ids = [];
-
-            //     foreach ($posts as $key => $post) {
-            //         $dateAdd = strtotime($post['date_add']);
-            //         if (date('Y', $dateAdd) != (int) Tools::getValue('y')) {
-            //             unset($posts[$key]);
-            //         } else {
-            //             $ids[] = $post['id_simpleblog_post'];
-            //         }
-            //     }
-
-            //     $posts = SimpleBlogPost::getPosts($id_lang, $this->posts_per_page, null, $this->p, true, false, false, null, false, false, null, 'IN', $ids);
-            // } else {
-            //     $posts = SimpleBlogPost::getPosts($id_lang, $this->posts_per_page, null, $this->p);
-            // }
             $blogCategories = SimpleBlogCategory::getCategories();
             $this->context->smarty->assign('blogCategories', $blogCategories);
         }
@@ -193,10 +144,8 @@ class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaSho
     {
         $breadcrumb = parent::getBreadcrumbLinks();
 
-        $id_lang = $this->context->language->id;
-
         if (Validate::isLoadedObject($this->blogCategory)) {
-            if ($this->blogCategory->id_parent){ 
+            if ($this->blogCategory->id_parent) {
                 $parentCategory = $this->blogCategory->getParent();
                 $breadcrumb['links'][] = [
                     'title' => $parentCategory->name,

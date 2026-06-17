@@ -1,13 +1,15 @@
 <?php
+
 /**
- * 2007-2020 PrestaShop.
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
+ * https://opensource.org/licenses/OSL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
@@ -16,40 +18,31 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://devdocs.prestashop.com/ for more information.
  *
- *  @author    PrestaShop SA <contact@prestashop.com>
- *  @copyright 2007-2020 PrestaShop SA
- *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- *  International Registered Trademark & Property of PrestaShop SA
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  */
+
+// DONT'T USE "use" STATEMENT HERE, IT'S NOT COMPAT WITH 1.6
+// PREFER "use" IN CLASS DIRECTLY
+
+require_once __DIR__ . '/vendor/autoload.php';
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once __DIR__ . '/vendor/autoload.php';
-
 class Ps_eventbus extends Module
 {
+    // All hooks is here
+    use PrestaShop\Module\PsEventbus\Traits\UseHooks;
+
     /**
-     * @var array
+     * @var array<mixed>
      */
     public $adminControllers;
-
-    /**
-     * @var string
-     */
-    const VERSION = '1.4.0';
-
-    /**
-     * @var array
-     */
-    const REQUIRED_TABLES = [
-        'eventbus_type_sync',
-        'eventbus_job',
-        'eventbus_deleted_objects',
-        'eventbus_incremental_sync',
-    ];
 
     /**
      * @var string
@@ -57,75 +50,72 @@ class Ps_eventbus extends Module
     public $version;
 
     /**
-     * List of hook to install at the installation of the module
-     *
-     * @var array
+     * @var PrestaShop\Module\PsEventbus\ServiceContainer\ServiceContainer
      */
-    private $hookToInstall = [
-        'actionObjectProductAddAfter',
-        'actionObjectProductUpdateAfter',
-        'actionObjectProductDeleteAfter',
-        'actionObjectCategoryAddAfter',
-        'actionObjectCategoryUpdateAfter',
-        'actionObjectCategoryDeleteAfter',
-        'actionObjectOrderAddAfter',
-        'actionObjectOrderUpdateAfter',
-        'actionObjectCartAddAfter',
-        'actionObjectCartUpdateAfter',
-        'actionObjectCarrierAddAfter',
-        'actionObjectCarrierUpdateAfter',
-        'actionObjectCarrierDeleteAfter',
-        'actionObjectCountryAddAfter',
-        'actionObjectCountryUpdateAfter',
-        'actionObjectCountryDeleteAfter',
-        'actionObjectStateAddAfter',
-        'actionObjectStateUpdateAfter',
-        'actionObjectStateDeleteAfter',
-        'actionObjectZoneAddAfter',
-        'actionObjectZoneUpdateAfter',
-        'actionObjectZoneDeleteAfter',
-        'actionObjectTaxAddAfter',
-        'actionObjectTaxUpdateAfter',
-        'actionObjectTaxDeleteAfter',
-        'actionObjectTaxRulesGroupAddAfter',
-        'actionObjectTaxRulesGroupUpdateAfter',
-        'actionObjectTaxRulesGroupDeleteAfter',
-        'actionShippingPreferencesPageSave',
-    ];
+    private $container;
 
     /**
-     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
+     * @var int the unique shop identifier (uuid v4)
      */
-    private $serviceContainer;
+    private $shopId;
+
+    /**
+     * @var int Defines the multistore compatibility level of the module
+     */
+    public $multistoreCompatibility;
+
+    /**
+     * @var string contact email of the maintainers (please consider using github issues)
+     */
+    public $emailSupport;
+
+    /**
+     * @var string available terms of services
+     */
+    public $termsOfServiceUrl;
 
     /**
      * __construct.
      */
     public function __construct()
     {
+        if (defined('_PS_VERSION_') && version_compare(_PS_VERSION_, '1.7.8.0', '>=')) {
+            $this->multistoreCompatibility = parent::MULTISTORE_COMPATIBILITY_YES;
+        }
+
+        // @see https://devdocs.prestashop-project.org/8/modules/concepts/module-class/
         $this->name = 'ps_eventbus';
         $this->tab = 'administration';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->bootstrap = true;
-        $this->version = '1.4.0';
+        $this->version = '4.0.13';
         $this->module_key = '7d76e08a13331c6c393755886ec8d5ce';
 
         parent::__construct();
 
-        $this->displayName = $this->l('PrestaShop Eventbus');
-        $this->description = $this->l('Link your PrestaShop account to synchronize your shop\'s data to the partners you want . Don&#039;t uninstall this module if you are already using a service, as it will prevent it from working.');
-        $this->confirmUninstall = $this->l('This action will prevent immediately your PrestaShop services and Community services from working as they are using PrestaShop Eventbus module for syncing.');
-        $this->ps_versions_compliancy = ['min' => '1.6', 'max' => _PS_VERSION_];
+        $this->emailSupport = 'cloudsync-support@prestashop.com';
+        $this->termsOfServiceUrl = 'https://www.prestashop.com/en/prestashop-account-privacy';
+        $this->displayName = $this->l('PrestaShop EventBus');
+        $this->description = $this->l('Link your PrestaShop account to synchronize your shop data to a tech partner of your choice. Do not uninstall this module if you are already using a service, as it will prevent it from working.');
+        $this->confirmUninstall = $this->l('This action will immediately prevent your PrestaShop services and Community services from working as they are using PrestaShop CloudSync for syncing.');
+        $this->ps_versions_compliancy = ['min' => '1.6.1.11', 'max' => _PS_VERSION_];
         $this->adminControllers = [];
-        $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
-            $this->name,
-            $this->getLocalPath()
-        );
+
+        // If PHP is not compliant, we will not load composer and the autoloader
+        if (!$this->isPhpVersionCompliant()) {
+            return;
+        }
+
+        if ($this->context->shop === null) {
+            throw new PrestaShopException('No shop context');
+        }
+
+        $this->shopId = (int) $this->context->shop->id;
     }
 
     /**
-     * @return \Context
+     * @return Context
      */
     public function getContext()
     {
@@ -133,7 +123,7 @@ class Ps_eventbus extends Module
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getAdminControllers()
     {
@@ -145,12 +135,19 @@ class Ps_eventbus extends Module
      */
     public function install()
     {
+        if (!$this->isPhpVersionCompliant()) {
+            $this->_errors[] = $this->l('This requires PHP 5.6 to work properly. Please upgrade your server configuration.');
+
+            // We return true during the installation of PrestaShop to not stop the whole process,
+            // Otherwise we warn properly the installation failed.
+            return defined('PS_INSTALLATION_IN_PROGRESS');
+        }
+
         $installer = new PrestaShop\Module\PsEventbus\Module\Install($this, Db::getInstance());
 
-        return $installer->installInMenu()
-            && $installer->installDatabaseTables()
+        return $installer->installDatabaseTables()
             && parent::install()
-            && $this->registerHook($this->hookToInstall);
+            && $this->registerHook($this->getHooks());
     }
 
     /**
@@ -166,491 +163,42 @@ class Ps_eventbus extends Module
     }
 
     /**
+     * @return PrestaShop\Module\PsEventbus\ServiceContainer\ServiceContainer
+     *
+     * @throws Exception
+     */
+    public function getServiceContainer()
+    {
+        if (null === $this->container) {
+            $this->container = PrestaShop\Module\PsEventbus\ServiceContainer\ServiceContainer::createInstance(
+                __DIR__ . '/config.php'
+            );
+        }
+
+        return $this->container;
+    }
+
+    /**
+     * This function allows you to patch bugs that can be found related to "ServiceNotFoundException".
+     * It ensures that you have access to the SymfonyContainer, and also that you have access to FO services.
+     *
      * @param string $serviceName
      *
      * @return mixed
      */
     public function getService($serviceName)
     {
-        return $this->serviceContainer->getService($serviceName);
+        return $this->getServiceContainer()->getService($serviceName);
     }
 
     /**
-     * @param array $parameters
+     * Set PHP compatibility to 5.6
      *
-     * @return void
+     * @return bool
      */
-    public function hookActionObjectProductDeleteAfter($parameters)
+    private function isPhpVersionCompliant()
     {
-        $product = $parameters['object'];
-
-        $this->insertDeletedObject(
-            $product->id,
-            'products',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function hookActionObjectProductAddAfter($parameters)
-    {
-        $product = $parameters['object'];
-
-        $this->insertIncrementalSyncObject(
-            $product->id,
-            'products',
-            date(DATE_ATOM),
-            $this->context->shop->id,
-            true
-        );
-    }
-
-    /**
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function hookActionObjectProductUpdateAfter($parameters)
-    {
-        $product = $parameters['object'];
-
-        $this->insertIncrementalSyncObject(
-            $product->id,
-            'products',
-            date(DATE_ATOM),
-            $this->context->shop->id,
-            true
-        );
-    }
-
-    /**
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function hookActionObjectCategoryAddAfter($parameters)
-    {
-        $category = $parameters['object'];
-
-        $this->insertIncrementalSyncObject(
-            $category->id,
-            'categories',
-            date(DATE_ATOM),
-            $this->context->shop->id,
-            true
-        );
-    }
-
-    /**
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function hookActionObjectCategoryUpdateAfter($parameters)
-    {
-        $category = $parameters['object'];
-
-        $this->insertIncrementalSyncObject(
-            $category->id,
-            'categories',
-            date(DATE_ATOM),
-            $this->context->shop->id,
-            true
-        );
-    }
-
-    /**
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function hookActionObjectCategoryDeleteAfter($parameters)
-    {
-        $category = $parameters['object'];
-
-        $this->insertDeletedObject(
-            $category->id,
-            'categories',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function hookActionObjectCartAddAfter($parameters)
-    {
-        $cart = $parameters['object'];
-
-        $this->insertIncrementalSyncObject(
-            $cart->id,
-            'carts',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function hookActionObjectCartUpdateAfter($parameters)
-    {
-        $cart = $parameters['object'];
-
-        $this->insertIncrementalSyncObject(
-            $cart->id,
-            'carts',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function hookActionObjectOrderAddAfter($parameters)
-    {
-        $order = $parameters['object'];
-
-        $this->insertIncrementalSyncObject(
-            $order->id,
-            'orders',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function hookActionObjectOrderUpdateAfter($parameters)
-    {
-        $order = $parameters['object'];
-
-        $this->insertIncrementalSyncObject(
-            $order->id,
-            'orders',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectCarrierAddAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectCarrierUpdateAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectCarrierDeleteAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectCountryAddAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectCountryUpdateAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectCountryDeleteAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectStateAddAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectStateUpdateAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectStateDeleteAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectZoneAddAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectZoneUpdateAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectZoneDeleteAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectTaxAddAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectTaxUpdateAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectTaxDeleteAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectTaxRulesGroupAddAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectTaxRulesGroupUpdateAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionObjectTaxRulesGroupDeleteAfter()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionShippingPreferencesPageSave()
-    {
-        $this->insertIncrementalSyncObject(
-            0,
-            'carrier',
-            date(DATE_ATOM),
-            $this->context->shop->id
-        );
-    }
-
-    /**
-     * @param int $objectId
-     * @param string $type
-     * @param string $date
-     * @param int $shopId
-     * @param bool $hasMultiLang
-     *
-     * @return void
-     */
-    private function insertIncrementalSyncObject($objectId, $type, $date, $shopId, $hasMultiLang = false)
-    {
-        /** @var \PrestaShop\Module\PsEventbus\Repository\IncrementalSyncRepository $incrementalSyncRepository */
-        $incrementalSyncRepository = $this->getService(
-            \PrestaShop\Module\PsEventbus\Repository\IncrementalSyncRepository::class
-        );
-
-        /** @var \PrestaShop\Module\PsEventbus\Repository\LanguageRepository $languageRepository */
-        $languageRepository = $this->getService(
-            \PrestaShop\Module\PsEventbus\Repository\LanguageRepository::class
-        );
-
-        if ($hasMultiLang) {
-            $languagesIsoCodes = $languageRepository->getLanguagesIsoCodes();
-
-            foreach ($languagesIsoCodes as $languagesIsoCode) {
-                $incrementalSyncRepository->insertIncrementalObject($objectId, $type, $date, $shopId, $languagesIsoCode);
-            }
-        } else {
-            $languagesIsoCode = $languageRepository->getDefaultLanguageIsoCode();
-
-            $incrementalSyncRepository->insertIncrementalObject($objectId, $type, $date, $shopId, $languagesIsoCode);
-        }
-    }
-
-    /**
-     * @param int $id
-     * @param string $type
-     * @param string $date
-     * @param int $shopId
-     *
-     * @return void
-     */
-    private function insertDeletedObject($id, $type, $date, $shopId)
-    {
-        /** @var \PrestaShop\Module\PsEventbus\Repository\DeletedObjectsRepository $deletedObjectsRepository */
-        $deletedObjectsRepository = $this->getService(
-            \PrestaShop\Module\PsEventbus\Repository\DeletedObjectsRepository::class
-        );
-
-        /** @var \PrestaShop\Module\PsEventbus\Repository\IncrementalSyncRepository $incrementalSyncRepository */
-        $incrementalSyncRepository = $this->getService(
-            \PrestaShop\Module\PsEventbus\Repository\IncrementalSyncRepository::class
-        );
-
-        $deletedObjectsRepository->insertDeletedObject($id, $type, $date, $shopId);
-        $incrementalSyncRepository->removeIncrementalSyncObject($type, $id);
+        /* @phpstan-ignore-next-line */
+        return PHP_VERSION_ID >= 50600;
     }
 }

@@ -2,9 +2,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -24,10 +24,7 @@ class BT_XmlGenerateProduct
     /**
      * @param array $aParams
      */
-    public function __construct($sType = null, $aParams)
-    {
-
-    }
+    public function __construct($sType = null, $aParams){}
 
     /**
      * generate get the XML for current data feed type
@@ -45,9 +42,9 @@ class BT_XmlGenerateProduct
 
             $oUpdate = BT_AdminUpdate::create();
             $oUpdate->run('customLabelDate');
+            $oUpdate->run('customCheck');
         }
 
-        return BT_BaseProductStrategy::get('product',
-            array('type' => 'product'))->generate(array('reporting' => Tools::getValue('bReporting')));
+        return BT_BaseProductStrategy::get('product', array('type' => 'product'))->generate(array('reporting' => Tools::getValue('bReporting')));
     }
 }

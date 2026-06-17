@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 <div class="table-responsive">
@@ -37,7 +37,7 @@
             <th>{l s='List is active' mod='mailchimppro'}</th>
             <th>{l s='Created at' mod='mailchimppro'}</th>
             <th>{l s='Updated at' mod='mailchimppro'}</th>
-            <th></th>
+            <th>{l s='Actions' mod='mailchimppro'}</th>
         </tr>
         </thead>
         <tbody>
@@ -63,7 +63,7 @@
                         <div class="well">
                             <p><b>{$name|escape:'htmlall':'UTF-8'}</b></p>
                             {* HTML code, no need for escape *}
-                            <pre>{json_encode($automation, $JSON_PRETTY_PRINT)}</pre>
+                            <pre>{json_encode($automation, $JSON_PRETTY_PRINT)|escape:'htmlall':'UTF-8'}</pre> {* HTML comment, no escape necessary *}
                         </div>
                     {/foreach}
                 </td>
@@ -71,9 +71,12 @@
                 <td>{$store.created_at|escape:'htmlall':'UTF-8'}</td>
                 <td>{$store.updated_at|escape:'htmlall':'UTF-8'}</td>
                 <td>
-                    <a href="{LinkHelper::getAdminLink('AdminMailchimpProStores', true, [], ['action' => 'entitydelete', 'entity_id' => $store.id])|escape:'htmlall':'UTF-8'}">
-                        Delete
-                    </a>
+                    <div class="btn-group btn-group-xs">
+                        <a class="btn btn-default" href="{LinkHelper::getAdminLink('AdminMailchimpProStores', true, [], ['action' => 'entitydelete', 'entity_id' => $store.id])|escape:'htmlall':'UTF-8'}" title="{l s='Delete' mod='mailchimppro'}">
+                            <i class="icon icon-trash" aria-hidden="true"></i>
+                            <span>{l s='Delete' mod='mailchimppro'}</span>
+                        </a>
+                    </div>
                 </td>
             </tr>
         {/foreach}

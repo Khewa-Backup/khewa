@@ -46,6 +46,10 @@
 {$product_miniature_selector} .pw-fav-toggle {
   position: absolute;
   right: 0;
+  left: auto;
+  bottom: auto;
+  width: auto;
+  height: auto;
   margin: 8px;
 }
 

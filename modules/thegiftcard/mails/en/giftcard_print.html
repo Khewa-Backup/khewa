@@ -45,8 +45,7 @@
         </style>
     </head>
     <body style="-webkit-text-size-adjust:none;background-color:#fff;width:650px;font-family:Open-sans, sans-serif;color:#555454;font-size:13px;line-height:18px;margin:auto">
-        <p></p>
-<table class="table table-mail" style="width: 100%; margin-top: 10px; -moz-box-shadow: 0 0 5px #afafaf; -webkit-box-shadow: 0 0 5px #afafaf; -o-box-shadow: 0 0 5px #afafaf; box-shadow: 0 0 5px #afafaf; filter: progid:DXImageTransform.Microsoft.Shadow(color=#afafaf,Direction=134,Strength=5);">
+        <table class="table table-mail" style="width: 100%; margin-top: 10px; -moz-box-shadow: 0 0 5px #afafaf; -webkit-box-shadow: 0 0 5px #afafaf; -o-box-shadow: 0 0 5px #afafaf; box-shadow: 0 0 5px #afafaf; filter: progid:DXImageTransform.Microsoft.Shadow(color=#afafaf,Direction=134,Strength=5);">
 <tbody>
 <tr>
 <td class="space" style="width: 20px; padding: 7px 0;">&nbsp;</td>
@@ -57,7 +56,7 @@
 <td class="logo" style="border-bottom: 4px solid #333333; padding: 7px 0;" align="center"><a style="color: #337ff1;" title="{shop_name}" href="{shop_url}"> <img src="{shop_logo}" alt="{shop_name}" /> </a></td>
 </tr>
 <tr>
-<td class="titleblock" style="padding: 7px 0;" align="center"><span style="color: #555454; font-family: Open-sans, sans-serif; font-size: small;"><span class="title" style="font-weight: 500; font-size: 28px; text-transform: uppercase; line-height: 33px;">Hi {customer}</span><br /> <span class="subtitle" style="font-weight: 500; font-size: 16px; text-transform: uppercase; line-height: 25px;">Here is your gift card worth {giftcard_amount}.</span> </span></td>
+<td class="titleblock" style="padding: 7px 0;" align="center"><span style="color: #555454; font-family: Open-sans, sans-serif; font-size: small;"><span class="title" style="font-weight: 500; font-size: 28px; text-transform: uppercase; line-height: 33px;">Hi {name}</span><br /><span class="subtitle" style="font-weight: 500; font-size: 16px; text-transform: uppercase; line-height: 25px;">Here is your gift card worth {giftcard_amount}</span> </span></td>
 </tr>
 <tr>
 <td class="space_footer" style="padding: 0!important;">&nbsp;</td>
@@ -75,8 +74,26 @@
 <tr>
 <td style="padding: 7px 0;" width="10">&nbsp;</td>
 <td style="padding: 7px 0;">
+<p style="border-bottom: 1px solid #D6D4D4; margin: 3px 0 7px; text-transform: uppercase; font-weight: 500; font-size: 18px; padding-bottom: 10px;" data-html-only="1">Message</p>
+<span style="color: #555454; font-family: Open-sans, sans-serif; font-size: small;"><span style="color: #777;"> {giftcard_message} </span> </span></td>
+<td style="padding: 7px 0;" width="10">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td class="space_footer" style="padding: 0!important;">&nbsp;</td>
+</tr>
+<tr>
+<td class="box" style="border: 1px solid #D6D4D4; background-color: #f8f8f8; padding: 7px 0;">
+<table class="table" style="width: 100%;">
+<tbody>
+<tr>
+<td style="padding: 7px 0;" width="10">&nbsp;</td>
+<td style="padding: 7px 0;">
 <p style="border-bottom: 1px solid #D6D4D4; margin: 3px 0 7px; text-transform: uppercase; font-weight: 500; font-size: 18px; padding-bottom: 10px;" data-html-only="1">Information about the gift card</p>
-<span style="color: #555454; font-family: Open-sans, sans-serif; font-size: small;"><span style="color: #777;">Amount : {giftcard_amount}</span><br /> <span style="color: #777;">Code : {giftcard_code}</span><br /> <span style="color: #777;">Expiry date : {giftcard_expiration}</span><br /> </span></td>
+<span style="color: #555454; font-family: Open-sans, sans-serif; font-size: small;"><span style="color: #777;">Amount : {giftcard_amount}</span><br /><span style="color: #777;">Code : {giftcard_code}</span><br /><span style="color: #777;">Expiry date : {giftcard_expiration}</span><br /></span></td>
 <td style="padding: 7px 0;" width="10">&nbsp;</td>
 </tr>
 </tbody>
@@ -94,8 +111,7 @@
 <td style="padding: 7px 0;" width="10">&nbsp;</td>
 <td style="padding: 7px 0;">
 <p style="border-bottom: 1px solid #D6D4D4; margin: 3px 0 7px; text-transform: uppercase; font-weight: 500; font-size: 18px; padding-bottom: 10px;" data-html-only="1">How to use the gift card</p>
-<p class="MsoNormal">Available {giftcard_expiration_date} from the purchase date, the gift card can be used throughout the store {shop_name}. For online use simply copy/paste the above code at check out. For in-store use please keep a record of your code and present it at checkout.<o:p></o:p></p>
-</td>
+<span style="color: #555454; font-family: Open-sans, sans-serif; font-size: small;"><span style="color: #777;">Available {giftcard_expiration_date} from the purchase date, the gift card is usable throughout the store {shop_name}. It can be used in several times, including sale seasons, and can be combined with another payment method. To use the gift card, simply copy/paste the code above during the payment process of your next order.</span> </span></td>
 <td style="padding: 7px 0;" width="10">&nbsp;</td>
 </tr>
 </tbody>

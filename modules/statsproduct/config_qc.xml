@@ -2,8 +2,8 @@
 <module>
     <name>statsproduct</name>
     <displayName><![CDATA[D&eacute;tail produit]]></displayName>
-    <version><![CDATA[2.0.3]]></version>
-    <description><![CDATA[Ajoute des statistiques d&eacute;taill&eacute;es pour chaque produit au tableau de bord des statistiques.]]></description>
+    <version><![CDATA[2.1.1]]></version>
+    <description><![CDATA[Enrichissez vos statistiques en ajoutant des informations d&eacute;taill&eacute;es sur chaque produit de votre catalogue.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[analytics_stats]]></tab>
     <is_configurable>0</is_configurable>

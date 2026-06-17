@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -42,25 +43,25 @@ class BT_GmcProExclusionTools
         $aOutputData = array();
 
         switch ($aData['sTypeValue']) {
-            case 'word' : // use case - rules based on word
+            case 'word': // use case - rules based on word
                 $aOutputData = array(
                     'filter_1' => $aData['sWordType'],
                     'filter_2' => $aData['sWordValue'],
                 );
                 break;
-            case 'feature' : // use case - rules based on feature
+            case 'feature': // use case - rules based on feature
                 $aOutputData = array(
                     'filter_1' => $aData['sFeature'],
                     'filter_2' => $aData['sFeatureValue'],
                 );
                 break;
-            case 'attribute' : // use case - rules based on attribute
+            case 'attribute': // use case - rules based on attribute
                 $aOutputData = array(
                     'filter_1' => $aData['sAttribute'],
                     'filter_2' => $aData['sAttributeValue'],
                 );
                 break;
-            case 'specificProduct' : // use case - rules based on attribute
+            case 'specificProduct': // use case - rules based on attribute
 
                 $aProductIds = array();
                 $sExcludedIds = $aData['sProductIds'];
@@ -71,23 +72,24 @@ class BT_GmcProExclusionTools
                 }
 
                 // Loop to manage product ids
-                foreach ($aExcludedIds as $sProductId) {
+                foreach ($aExcludedIds as $key => $sProductId) {
                     list($iProdId, $iAttrId) = explode('¤', $sProductId);
-                    $aProductIds[$iProdId] = $iAttrId;
+                    $aProductIds[][$iProdId] = $iAttrId;
                 }
 
                 $aOutputData = array(
                     'filter_1' => $aProductIds,
                 );
+
                 break;
-            case 'supplier' : // use case - rules based on supplier
+            case 'supplier': // use case - rules based on supplier
                 $aProductIds = explode(',', $aData['aSuppliers']);
 
                 $aOutputData = array(
                     'filter_2' => $aProductIds,
                 );
                 break;
-            default :
+            default:
                 break;
         }
 
@@ -99,7 +101,6 @@ class BT_GmcProExclusionTools
         $aTmpRules = BT_GmcProExclusionDao::getTmpRules();
 
         return $aTmpRules;
-
     }
 
 
@@ -117,7 +118,6 @@ class BT_GmcProExclusionTools
         $sRulesName = $GLOBALS[_GMCP_MODULE_NAME . '_RULES_LABEL_TYPE'][$sData][$sLang];
 
         return $sRulesName;
-
     }
 
     /**
@@ -135,12 +135,16 @@ class BT_GmcProExclusionTools
             $aProducts = array();
 
             switch ($sType) {
-                case 'supplier' : // use case - rules based on supplier
+                case 'supplier': // use case - rules based on supplier
 
-                    if (is_array($aData['filter_2'])
-                        && !empty($aData['filter_2'])) {
-                        $aProducts = BT_GmcProExclusionDao::getProductFromSuppliers($aData['filter_2'],
-                            GMerchantCenterpro::$iShopId);
+                    if (
+                        is_array($aData['filter_2'])
+                        && !empty($aData['filter_2'])
+                    ) {
+                        $aProducts = BT_GmcProExclusionDao::getProductFromSuppliers(
+                            $aData['filter_2'],
+                            GMerchantCenterpro::$iShopId
+                        );
                     }
                     // Get the supplier name for the rules summary display
                     foreach ($aData['filter_2'] as $iSupplierId) {
@@ -156,8 +160,9 @@ class BT_GmcProExclusionTools
                     $aOutputData['iSupplierId'] = $aData['filter_2'];
                     $aOutputData['aSupplierName'] = $aOutputDataSupplierName;
                     break;
-                case 'word' : // use case - rules based on word
-                    if (is_string($aData['filter_2'])
+                case 'word': // use case - rules based on word
+                    if (
+                        is_string($aData['filter_2'])
                         && !empty($aData['filter_2'])
                         && !empty($aData['filter_1'])
                     ) {
@@ -170,27 +175,28 @@ class BT_GmcProExclusionTools
                         'iNumberOfProducts' => count($aProducts),
                     );
                     break;
-                case 'feature' : // use case - rules based on feature
+                case 'feature': // use case - rules based on feature
                     $aOutputData = array();
                     // Get all features values
                     $aFeaturesValues = FeatureValue::getFeatureValuesWithLang(GMerchantCenterpro::$iCurrentLang, (int)$aData['filter_1']);
 
                     //Set the 1st filter
-                    $aOutputData['filter_1'] = Feature::getFeature(GMerchantCenterpro::$iCurrentLang,
-                        (int)$aData['filter_1'])['name'];
+                    $aOutputData['filter_1'] = Feature::getFeature(
+                        GMerchantCenterpro::$iCurrentLang,
+                        (int)$aData['filter_1']
+                    )['name'];
 
                     // Search the good value nane
                     foreach ($aFeaturesValues as $aFeaturesValue) {
                         if ($aFeaturesValue['id_feature_value'] == $aData['filter_2']) {
                             $aOutputData['filter_2'] = $aFeaturesValue['value'];
                         }
-
                     }
                     $aOutputData['sType'] = $sType;
                     $aOutputData['iNumberOfProducts'] = count(BT_GmcProModuleDao::getProductIdsByFeature((int)$aData['filter_2']));
 
                     break;
-                case 'attribute' : // use case - rules based on attribute
+                case 'attribute': // use case - rules based on attribute
                     $aAttributes = AttributeGroup::getAttributesGroups(GMerchantCenterpro::$iCurrentLang);
                     $aAttributesValues = Attribute::getAttributes(GMerchantCenterpro::$iCurrentLang);
 
@@ -204,23 +210,21 @@ class BT_GmcProExclusionTools
                         if ($aAttributesValue['id_attribute'] == $aData['filter_2']) {
                             $aOutputData['filter_2'] = $aAttributesValue['name'];
                         }
-
                     }
                     $aOutputData['sType'] = $sType;
                     $aOutputData['iNumberOfProducts'] = count(BT_GmcProModuleDao::getProductsIdFromAttribute((int)$aData['filter_2']));
                     break;
-                case 'specificProduct' : // use case - rules based on specific product
+                case 'specificProduct': // use case - rules based on specific product
 
                     $aOutputData['sType'] = $sType;
                     $aOutputData['iNumberOfProducts'] = count($aData['filter_1']);
                     break;
-                default :
+                default:
                     break;
             }
         }
 
         return $aOutputData;
-
     }
 
     /**
@@ -278,8 +282,10 @@ class BT_GmcProExclusionTools
 
             //Use case on word
             if ($aRule['type'] == 'word') {
-                $aProductIds = BT_GmcProExclusionDao::getProductFromWords($aFilterValues['filter_1'],
-                    $aFilterValues['filter_2']);
+                $aProductIds = BT_GmcProExclusionDao::getProductFromWords(
+                    $aFilterValues['filter_1'],
+                    $aFilterValues['filter_2']
+                );
 
                 if (!empty($aProductIds)) {
                     foreach ($aProductIds as $aProductId) {
@@ -337,7 +343,6 @@ class BT_GmcProExclusionTools
                         }
                     }
                 }
-
             }
 
             //Use case on attribute
@@ -364,24 +369,28 @@ class BT_GmcProExclusionTools
                 $aProductIds = $aFilterValues['filter_1'];
 
                 if (!empty($aProductIds)) {
-                    foreach ($aProductIds as $iProductId => $iAttrId) {
-                        //Use case for exportation without the combination
-                        if (empty(GMerchantCenterpro::$conf['GMCP_P_COMBOS'])) {
-                            $aProductIdsToExclude[] = $iProductId;
-                        } else {
-                            $aProductIdsToExclude[] = array(
-                                'id_product' => $iProductId,
-                                'id_product_attribute' => $iAttrId
-                            );
+                    if (!empty(GMerchantCenterpro::$conf['GMCP_P_COMBOS'])) {
+                        foreach ($aProductIds as $iProductId => $iAttrId) {
+                            //Use case for exportation without the combination
+                            foreach ($iAttrId as $product_id => $ipa) {
+                                $aProductIdsToExclude[] = array(
+                                    'id_product' => $product_id,
+                                    'id_product_attribute' => $ipa
+                                );
+                            }
+                        }
+                    } else {
+                        foreach ($aProductIds as $iProductId => $iAttrId) {
+                            //Use case for exportation without the combination
+                            foreach ($iAttrId as $product_id => $ipa) {
+                                $aProductIdsToExclude[] = $product_id;
+                            }
                         }
                     }
                 }
             }
 
-            unset($oProduct);
-
             return $aProductIdsToExclude;
         }
     }
-
 }

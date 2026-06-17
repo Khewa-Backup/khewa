@@ -1,10 +1,9 @@
 <?php
 
-namespace Lcobucci\JWT\Signer\Ecdsa;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Ecdsa;
 
 use InvalidArgumentException;
-use Lcobucci\JWT\Exception;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 final class ConversionFailed extends InvalidArgumentException implements Exception
 {
     /** @return self */
@@ -12,13 +11,11 @@ final class ConversionFailed extends InvalidArgumentException implements Excepti
     {
         return new self('Invalid signature length.');
     }
-
     /** @return self */
     public static function incorrectStartSequence()
     {
         return new self('Invalid data. Should start with a sequence.');
     }
-
     /** @return self */
     public static function integerExpected()
     {

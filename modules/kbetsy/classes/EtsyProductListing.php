@@ -12,7 +12,9 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class EtsyProductListing extends ObjectModel
 {
 

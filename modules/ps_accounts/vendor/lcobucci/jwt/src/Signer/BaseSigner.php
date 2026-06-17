@@ -1,17 +1,16 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer;
 
-namespace Lcobucci\JWT\Signer;
-
-use Lcobucci\JWT\Signature;
-use Lcobucci\JWT\Signer;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signature;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer;
 use function trigger_error;
 use const E_USER_DEPRECATED;
-
 /**
  * Base class for signers
  *
@@ -29,7 +28,6 @@ abstract class BaseSigner implements Signer
     {
         $headers['alg'] = $this->getAlgorithmId();
     }
-
     /**
      * {@inheritdoc}
      */
@@ -37,7 +35,6 @@ abstract class BaseSigner implements Signer
     {
         return new Signature($this->createHash($payload, $this->getKey($key)));
     }
-
     /**
      * {@inheritdoc}
      */
@@ -45,7 +42,6 @@ abstract class BaseSigner implements Signer
     {
         return $this->doVerify($expected, $payload, $this->getKey($key));
     }
-
     /**
      * @param Key|string $key
      *
@@ -53,15 +49,12 @@ abstract class BaseSigner implements Signer
      */
     private function getKey($key)
     {
-        if (is_string($key)) {
+        if (\is_string($key)) {
             trigger_error('Implicit conversion of keys from strings is deprecated. Please use InMemory or LocalFileReference classes.', E_USER_DEPRECATED);
-
             $key = new Key($key);
         }
-
         return $key;
     }
-
     /**
      * Creates a hash with the given data
      *
@@ -72,8 +65,7 @@ abstract class BaseSigner implements Signer
      *
      * @return string
      */
-    abstract public function createHash($payload, Key $key);
-
+    public abstract function createHash($payload, Key $key);
     /**
      * Performs the signature verification
      *
@@ -85,5 +77,5 @@ abstract class BaseSigner implements Signer
      *
      * @return boolean
      */
-    abstract public function doVerify($expected, $payload, Key $key);
+    public abstract function doVerify($expected, $payload, Key $key);
 }

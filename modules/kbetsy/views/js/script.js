@@ -50,17 +50,41 @@ $(function () {
                         presta_cat = '1';
                         presta_cat_list = presta_cat_list + $(this).val() + ','
                     }
-                });
+            });
+        
+    
+
         if (presta_cat == '') {
             error = store_cat_proc;
-            $('<p class="error_message" style="color:red">' + error + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-9'));
+         /**
+          * @Author Ravi Kant Gupta
+          * @Date 05-03-2025
+          * Added check if the col-lg-9 class do not exists then use the col-lg-8 class for showing the error message as on the PS 8.2 the .col-lg-9 class was not using while in the PS 1.7 the .col-lg-8 class was using
+          * 
+         */ 
+            if ($('#prestashop_category').closest('.col-lg-9').length > 0) {
+                $('<p class="error_message" style="color:red">' + error + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-9'));
+            } else if ($('#prestashop_category').closest('.col-lg-8').length > 0) {
+                $('<p class="error_message" style="color:red">' + error + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-8'));
+            }
         }
 
         if (!error) {
             var error_data = CheckCategoryExist($("select#etsy_category_code").val(), presta_cat_list);
             if ((error_data != '') && (error_data != 'undefined')) {
                 error = true;
-                $('<p class="error_message" style="color:red">' + error_data + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-9'));
+
+          /*
+          * @Author Ravi Kant Gupta
+          * @Date 05-03-2025
+          * Added check if the col-lg-9 class do not exists then use the col-lg-8 class for showing the error message as on the PS 8.2 the .col-lg-9 class was not using while in the PS 1.7 the .col-lg-8 class was using
+         */ 
+                if ($('#prestashop_category').closest('.col-lg-9').length > 0) {
+                    $('<p class="error_message" style="color:red">' + error_data + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-9'));
+                } else if ($('#prestashop_category').closest('.col-lg-8').length > 0) {
+                    $('<p class="error_message" style="color:red">' + error_data + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-8'));
+                }
+
             }
         }
         if (!error)
@@ -150,7 +174,7 @@ function getOptionsFromJson(json) {
 //Function to show listing error in FancyBox
 function show_etsy_listing_error(c)
 {
-    $('.' + c).fancybox();
+    //$('.' + c).fancybox();
 }
 
 //Form Validation
@@ -246,6 +270,19 @@ function validation(form_id, callback)
                 $("select[name^=etsy_sync_lang]").after('<span class="error_message">' + lang_err + '</span>');
             }
         }
+        /**
+         * Added validation on the Order Shipped Status field
+         * @date 09-04-2023
+         * @author Tanisha Gupta
+         */
+        var order_shipping_status = $("select[name^=etsy_order_shipped_status]").val();
+        if (order_shipping_status == '' || order_shipping_status == null) {
+            error = true;
+            $("select[name^=etsy_order_shipped_status]").addClass('error_field');
+            $("#etsy_order_shipped_status").addClass('error_field');
+            $("select[name^=etsy_order_shipped_status]").after('<span class="error_message">' + empty_error + '</span>');
+            
+        }
         /*Knowband validation end*/
     }
 
@@ -266,6 +303,13 @@ function validation(form_id, callback)
         $("#etsy_api_host").removeClass('error_field');
         $("#etsy_api_version").removeClass('error_field');
         $("select[name^=etsy_sync_lang]").removeClass('error_field');
+        /**
+         * Added validation on the Order Shipped Status field
+         * @date 09-04-2023
+         * @author Tanisha Gupta
+         */
+        $("select[name^=etsy_order_shipped_status]").removeClass('error_field');
+        //End here
         $("#etsy_default_lang").removeClass('error_field');
         $("#min_threshold_quant").removeClass('error_field');
         $("#etsy_currency").removeClass('error_field');
@@ -345,7 +389,6 @@ function validation(form_id, callback)
                 $('input[name="min_threshold_quant"]').addClass('error_field');
                 $('input[name="min_threshold_quant"]').after('<span class="error_message">' + min_qty_num + '</span>');
             }
-
         }
         /*Knowband validation end*/
 
@@ -361,7 +404,19 @@ function validation(form_id, callback)
             }
         }
         /*Knowband validation end*/
-
+        /**
+         * Added validation on the Order Shipped Status field
+         * @date 09-04-2023
+         * @author Tanisha Gupta
+         */
+        var order_shipping_status = $("select[name^=etsy_order_shipped_status]").val();
+        if (order_shipping_status == '' || order_shipping_status == null) {
+            error = true;
+            $("select[name^=etsy_order_shipped_status]").addClass('error_field');
+            $("#etsy_order_shipped_status").addClass('error_field');
+            $("select[name^=etsy_order_shipped_status]").after('<span class="error_message">' + empty_error + '</span>');
+            
+        }
         form_id = 'configuration_form';
     }
     //Validating Shipping Template Form
@@ -372,7 +427,12 @@ function validation(form_id, callback)
         var origin_country = $("#shipping_origin_country_id").val();
         var min_processing_days = $("#shipping_min_process_days").val();
         var max_processing_days = $("#shipping_max_process_days").val();
-
+        /**
+         * Validate the postal code field
+         * @date 10-04-2023
+         * @author Tanisha Gupta
+         */
+        var postal_code	 = $("#postal_code").val();
         //Hide error message default
         $('input[name*="shipping_primary_cost"]').each(function () {
             $(this).removeClass('error_field');
@@ -395,7 +455,18 @@ function validation(form_id, callback)
         $('select[name*="shipping_destination_region"]').each(function () {
             $(this).removeClass('error_field');
         });
-
+        $('select[name*="shipping_entry_min_delivery_days"]').each(function () {
+            $(this).removeClass('error_field');
+        });
+        $('select[name*="shipping_upgrade_min_delivery_days"]').each(function () {
+            $(this).removeClass('error_field');
+        });
+        $('select[name*="shipping_carrier_id"]').each(function () {
+            $(this).removeClass('error_field');
+        });
+         $('select[name*="shipping_upgrade_carrier_id"]').each(function () {
+            $(this).removeClass('error_field');
+        });
 
 //        $(".error_message").hide();
         $(".error_message").remove();
@@ -403,7 +474,27 @@ function validation(form_id, callback)
         $("#shipping_origin_country_id").removeClass('error_field');
         $("#shipping_min_process_days").removeClass('error_field');
         $("#shipping_max_process_days").removeClass('error_field');
-
+        /**
+         * Remove error from the postal code field and validate the postal code field value
+         * @date 10-04-2023
+         * @author Tanisha Gupta
+         */
+        $("#postal_code	").removeClass('error_field');
+        var postal_code_err = velovalidation.checkMandatory($("#postal_code"));
+        if (postal_code_err != true)
+        {
+            error = true;
+            $("#postal_code").addClass('error_field');
+            $("#postal_code").after('<span class="error_message">' + postal_code_err + '</span>');
+        }else {
+            var postal_code_err1 = velovalidation.checkZip($("#postal_code"));
+            if (postal_code_err1 != true) {
+                error = true;
+                $("#postal_code").addClass('error_field');
+                $("#postal_code").after('<span class="error_message">' + postal_code_err1 + '</span>');
+            }
+        }
+        
         var ship_title_err = velovalidation.checkMandatory($("#shipping_template_title"));
         if (ship_title_err != true)
         {
@@ -494,7 +585,12 @@ function validation(form_id, callback)
                 $(this).addClass('error_field');
                 $(this).after('<span class="error_message">' + amount_shipping_secoundary_cost + '</span>');
             } else if($(this).parent().parent().parent().find('input[name*="shipping_primary_cost"]').val() != ""){
-                if(parseFloat($(this).parent().parent().parent().find('input[name*="shipping_primary_cost"]').val())<=parseFloat($(this).val())){
+                /**
+                 * Removed = sign so that user can add the 0 cose during creation of the shipping profile
+                 * @date 15-04-2023
+                 * @modifier Tanisha Gupta
+                 */
+                if(parseFloat($(this).parent().parent().parent().find('input[name*="shipping_primary_cost"]').val())<parseFloat($(this).val())){
                     error = true;
                 $(this).addClass('error_field');
                 $(this).after('<span class="error_message">' + greater_amount_shipping_secoundary_cost + '</span>');
@@ -513,7 +609,29 @@ function validation(form_id, callback)
             }
 
         });
-
+        /**
+         * Added validation for the shipping minimum and maximum delivery time
+         * @date 15-04-2023
+         * @author Tanisha Gupta
+         */
+        $('select[name*="shipping_entry_transmit_type"]').each(function () {
+            if($(this).val() == 'shipping_carrier'){
+                if($(this).parent().parent().parent().find('select[name*="shipping_carrier_id"]').val() == '' || $(this).parent().parent().parent().find('select[name*="shipping_carrier_id"]').val() == null){
+                    error = true;
+                    $(this).parent().parent().parent().find('select[name*="shipping_carrier_id"]').addClass('error_field');
+                    $(this).parent().parent().parent().find('select[name*="shipping_carrier_id"]').after('<span class="error_message">' + kb_carrier_error + '</span>');
+                }   
+            } else {
+                var kb_min_deliver_time = $(this).parent().parent().parent().find('select[name*="shipping_entry_min_delivery_days"]').val();
+                var kb_max_deliver_time = $(this).parent().parent().parent().find('select[name*="shipping_entry_max_delivery_days"]').val();
+                if(parseInt(kb_min_deliver_time) > parseInt(kb_max_deliver_time)){
+                    error = true;
+                    $(this).parent().parent().parent().find('select[name*="shipping_entry_min_delivery_days"]').addClass('error_field');
+                    $(this).parent().parent().parent().find('select[name*="shipping_entry_min_delivery_days"]').after('<span class="error_message">' + delivery_time_err + '</span>');
+                }
+            }
+            
+        });
         if ($('#shipping_template_entry').children().hasClass('form-group') == false) {
             error = true;
             $('#shipping_template_entry').children().addClass('error_field');
@@ -554,7 +672,29 @@ function validation(form_id, callback)
                 }
             }
         });
-
+        /**
+         * Added validation for the shipping minimum and maximum delivery time
+         * @date 15-04-2023
+         * @author Tanisha Gupta
+         */
+        $('select[name*="shipping_upgrade_transmit_type"]').each(function () {
+            if($(this).val() == 'shipping_carrier'){
+                if($(this).parent().parent().parent().find('select[name*="shipping_upgrade_carrier_id"]').val() == '' || $(this).parent().parent().parent().find('select[name*="shipping_upgrade_carrier_id"]').val() == null){
+                    error = true;
+                    $(this).parent().parent().parent().find('select[name*="shipping_upgrade_carrier_id"]').addClass('error_field');
+                    $(this).parent().parent().parent().find('select[name*="shipping_upgrade_carrier_id"]').after('<span class="error_message">' + kb_carrier_error + '</span>');
+                }   
+            }else{
+                var kb_min_deliver_time = $(this).parent().parent().parent().find('select[name*="shipping_upgrade_min_delivery_days"]').val();
+                var kb_max_deliver_time = $(this).parent().parent().parent().find('select[name*="shipping_upgrade_max_delivery_days"]').val();
+                if(parseInt(kb_min_deliver_time) > parseInt(kb_max_deliver_time)){
+                    error = true;
+                    $(this).parent().parent().parent().find('select[name*="shipping_upgrade_min_delivery_days"]').addClass('error_field');
+                    $(this).parent().parent().parent().find('select[name*="shipping_upgrade_min_delivery_days"]').after('<span class="error_message">' + delivery_time_err + '</span>');
+                }
+            }
+            
+        });
         $('input[name*="shipping_upgrade_title"]').each(function () {
             var kb_upgrade_title = velovalidation.checkMandatory($(this));
             var upgrade_amount_shipping_secoundary_cost = velovalidation.checkAmount($(this));
@@ -950,7 +1090,17 @@ function validation(form_id, callback)
             });
             if (presta_cat == '') {
                 error = store_cat_proc;
-                $('<p class="error_message" style="color:red">' + error + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-9'));
+         /**
+          * @Author Ravi Kant Gupta
+          * @Date 05-03-2025
+          * Added check if the col-lg-9 class do not exists then use the col-lg-8 class for showing the error message as on the PS 8.2 the .col-lg-9 class was not using while in the PS 1.7 the .col-lg-8 class was using
+          * 
+           */ 
+                if ($('#prestashop_category').closest('.col-lg-9').length > 0) {
+                    $('<p class="error_message" style="color:red">' + error + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-9'));
+                } else if ($('#prestashop_category').closest('.col-lg-8').length > 0) {
+                    $('<p class="error_message" style="color:red">' + error + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-8'));
+                }
             }
         } else {
             if ($('#kbetsy_selected_products').val() == "") {
@@ -991,7 +1141,17 @@ function validation(form_id, callback)
                 var error_data = CheckCategoryExist($("select#etsy_category_code").val(), presta_cat_list);
                 if ((error_data != '') && (error_data != 'undefined')) {
                     error = true;
-                    $('<p class="error_message" style="color:red">' + error_data + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-9'));
+         /**
+          * @Author Ravi Kant Gupta
+          * @Date 05-03-2025
+          * Added check if the col-lg-9 class do not exists then use the col-lg-8 class for showing the error message as on the PS 8.2 the .col-lg-9 class was not using while in the PS 1.7 the .col-lg-8 class was using
+          * 
+           */ 
+                    if ($('#prestashop_category').closest('.col-lg-9').length > 0) {
+                        $('<p class="error_message" style="color:red">' + error_data + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-9'));
+                    } else if ($('#prestashop_category').closest('.col-lg-8').length > 0) {
+                        $('<p class="error_message" style="color:red">' + error_data + '</p>').appendTo(document.getElementById('prestashop_category').closest('.col-lg-8'));
+                }
                 }
             }
         }
@@ -1083,7 +1243,6 @@ $(document).ready(function () {
                 $('#etsy_selected_shipment_name').closest('.form-group').show();
             }
         });
-
     }
 
     if ($('input[name="banner_image"]').length) {
@@ -1126,25 +1285,196 @@ $(document).ready(function () {
             }
         });
     }
-   $(".destination_type").each(function() {
-       $(this).on("change", function() {
-            if ($(this).val() == '1') {
-                $(this).parent().parent().parent().find(".country_list").show();
-                $(this).parent().parent().parent().find(".region_list").hide();
-            } else {
-                $(this).parent().parent().parent().find(".country_list").hide();
-                $(this).parent().parent().parent().find(".region_list").show();
+    /**
+    * Changed by Tanisha 
+    * @date 10-04-2023
+    * @author Tanisha Gupta
+    */
+    $('body').on('click', '.destination_type', function() {
+        if ($(this).val() == '1') {
+            $(this).parent().parent().parent().find(".country_list").show();
+            $(this).parent().parent().parent().find(".region_list").hide();
+            /**
+             * Show carrier list on changing the destination type
+             * @date 15-04-2023
+             * @author Tanisha Gupta
+             */
+            var origin_country_id = $("#shipping_origin_country_id option:selected").val();
+            var destination_id = $(this).parent().parent().parent().find('select[name*="shipping_desination_country"]').val(); 
+            if(destination_id != '' && $(this).parent().parent().parent().find('.entry_transmit_type').val() == 'shipping_carrier' && origin_country_id != ''){
+                var destination_id = $(this).parent().parent().parent().find('select[name*="shipping_desination_country"]').val();
+                if(destination_id == origin_country_id){
+                    getDomesticShippingServices($(this));
+                } else {
+                    //Etsy001-Mar-2024 etsy-handle-template-sync Element selector updated to display to shipping tranmit type error in the correct div
+                    getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                }
+                    
+            }  
+        } else {
+            $(this).parent().parent().parent().find(".country_list").hide();
+            $(this).parent().parent().parent().find(".region_list").show();
+            /**
+             * Show carrier list on changing the destination type
+             * @date 15-04-2023
+             * @author Tanisha Gupta
+             */
+            var origin_country_id = $("#shipping_origin_country_id option:selected").val();
+            var destination_id = $(this).parent().parent().parent().find('select[name*="shipping_destination_region"]').val(); 
+            if(destination_id != '' && $(this).parent().parent().parent().find('.entry_transmit_type').val() == 'shipping_carrier' && origin_country_id != '') {
+                getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
             }
-       });
-   })
+        }
+    });
+
+   $('body').on('change', 'select[name*="shipping_desination_country"]', function() {
+        var origin_country_id = $("#shipping_origin_country_id option:selected").val();
+        if($(this).val() != '' && $(this).parent().parent().parent().find('select[name*="shipping_entry_transmit_type"]').val() == 'shipping_carrier') {
+            var destination_id = $(this).parent().parent().parent().find('select[name*="shipping_desination_country"]').val();
+            if(destination_id == origin_country_id){
+                getDomesticShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+            } else {
+                getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+            }
+        } 
+   });
 
    //changes by vishal for adding velovalidation in shipping template
-   $('select[name*="destination_type"]').change(function(){
-      if($(this).parent().parent().next().children().children().hasClass('error_field')){
-          $(this).parent().parent().next().children().children().removeClass('error_field');
-      }
+   $('select[name*="template_entry"]').change(function(){
+        if($(this).parent().parent().next().children().children().hasClass('error_field')) {
+            $(this).parent().parent().next().children().children().removeClass('error_field');
+        }
    });
-   //
+
+   /**
+    * Show and hide shipping carrier field and min or max delivery time fields on changes of Transmit type 
+    * @date 10-04-2023
+    * @author Tanisha Gupta
+    */
+   $(".entry_transmit_type").each(function() {
+       if ($(this).val() == 'shipping_carrier') {
+            $(this).parent().parent().parent().find(".carrier_list").show();
+            $(this).parent().parent().parent().find(".min_delivery_days").hide();
+            $(this).parent().parent().parent().find(".max_delivery_days").hide();
+        } else {
+            $(this).parent().parent().parent().find(".carrier_list").hide();
+            $(this).parent().parent().parent().find(".min_delivery_days").show();
+            $(this).parent().parent().parent().find(".max_delivery_days").show();
+        }
+   });
+
+   $('body').on('change', 'select[name*="shipping_entry_transmit_type"]', function() {
+        //Etsy001-Mar-2024 etsy-handle-template-sync Delete shipping tranmit type error
+        $(".kb_empty_carrier_error").remove();
+        if ($(this).val() == 'shipping_carrier') {
+            $(this).parent().parent().parent().find(".min_delivery_days").hide();
+            $(this).parent().parent().parent().find(".max_delivery_days").hide();
+            /**
+             * Show shipping carrier list on changes of transmit type
+             * @date 15-04-2023
+             * @author Tanisha Gupta
+             */
+            var origin_country_id = $("#shipping_origin_country_id option:selected").val();
+            var destination_id = $(this).parent().parent().parent().find('select[name*="shipping_desination_country"]').val();
+            var destination_type = $(this).parent().parent().parent().find('select[name*="destination_type"]').val();
+            var region_id =  $(this).parent().parent().parent().find('select[name*="shipping_destination_region"]').val();
+            if($(this).parent().parent().parent().find(".existing_entry").val() != '1'){      
+                if(region_id != '' && origin_country_id != '' && destination_type == '2'){
+                    getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                } else if(destination_id != '' && origin_country_id != '' && destination_type == '1'){
+                    if(destination_id == origin_country_id){
+                        getDomesticShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                    } else {
+                        getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                    }
+                }  
+            } else {
+                if($(this).parent().parent().parent().find('select[name*="shipping_carrier_id"]').val() == '' || $(this).parent().parent().parent().find('select[name*="shipping_carrier_id"]').val() == null){      
+                    if(region_id != '' && origin_country_id != '' && destination_type == '2'){
+                        getInternationalShippingServices($(this));
+                    } else if(destination_id != '' && origin_country_id != '' && destination_type == '1') {
+                        if(destination_id == origin_country_id){
+                            getDomesticShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                        } else {
+                            getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                        }
+                    }   
+                }    
+            }
+            $(this).parent().parent().parent().find(".carrier_list").show();
+        } else {
+            $(this).parent().parent().parent().find(".carrier_list").hide();
+            $(this).parent().parent().parent().find(".min_delivery_days").show();
+            $(this).parent().parent().parent().find(".max_delivery_days").show();
+        }
+   });
+
+   $(".upgrade_transmit_type").each(function() {
+       if ($(this).val() == 'shipping_carrier') {
+            $(this).parent().parent().parent().find(".carrier_list").show();
+            $(this).parent().parent().parent().find(".min_delivery_days").hide();
+            $(this).parent().parent().parent().find(".max_delivery_days").hide();
+        } else {
+            $(this).parent().parent().parent().find(".carrier_list").hide();
+            $(this).parent().parent().parent().find(".min_delivery_days").show();
+            $(this).parent().parent().parent().find(".max_delivery_days").show();
+        }
+   });
+   
+   $('body').on('change', 'select[name*="shipping_upgrade_transmit_type"]', function() {
+
+        if ($(this).val() == 'shipping_carrier') {
+            /**
+             * Show shipping carrier list on changes of transmit type
+             * @date 15-04-2023
+             * @author Tanisha Gupta
+             */
+            var origin_country_id = $("#shipping_origin_country_id option:selected").val();
+            var destination_type =  $(this).parent().parent().parent().find('select[name*="shipping_upgrade_destination"]').val();
+            if($(this).parent().parent().parent().find(".existing_entry").val() != '1'){      
+                if(origin_country_id != '' && destination_type == '1'){
+                    getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                } else {
+                    getDomesticShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                }  
+            } else {
+                if($(this).parent().parent().parent().find('select[name*="shipping_upgrade_carrier_id"]').val() == '' || $(this).parent().parent().parent().find('select[name*="shipping_upgrade_carrier_id"]').val() == null){      
+                    if(origin_country_id != '' && destination_type == '1'){
+                        getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                    } else {
+                        getDomesticShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                    } 
+                }    
+            }
+            $(this).parent().parent().parent().find(".carrier_list").show();
+            $(this).parent().parent().parent().find(".min_delivery_days").hide();
+            $(this).parent().parent().parent().find(".max_delivery_days").hide();
+            
+        } else {
+            $(this).parent().parent().parent().find(".carrier_list").hide();
+            $(this).parent().parent().parent().find(".min_delivery_days").show();
+            $(this).parent().parent().parent().find(".max_delivery_days").show();
+        }
+    });
+
+    $('body').on('change', 'select[name*="shipping_upgrade_destination"]', function() {
+        //code
+        if ($(this).parent().parent().parent().find('select[name*="shipping_upgrade_transmit_type"]').val() == 'shipping_carrier') {
+            /**
+            * Show shipping carrier list on changes of transmit type
+            * @date 15-04-2023
+            * @author Tanisha Gupta
+            */
+           var origin_country_id = $("#shipping_origin_country_id option:selected").val();
+           if(origin_country_id != '') {      
+                if($(this).val() == '1') {
+                    getInternationalShippingServices($(this));
+                } else {
+                    getDomesticShippingServices($(this));
+                }  
+           }
+       } 
+    });
 });
 
 function switchEntryDestinationTypes(val)
@@ -1157,14 +1487,115 @@ function setOriginCountry()
 {
     var val = $("#shipping_origin_country_id option:selected").text();
     $("#shipping_origin_country").val(val);
+    var origin_country_id = $("#shipping_origin_country_id option:selected").val();
+    if(origin_country_id != ''){
+        $(".entry_transmit_type").each(function() { 
+            if($(this).val() == 'shipping_carrier'){
+                var destination_id = $(this).parent().parent().parent().find('select[name*="shipping_desination_country"]').val();
+                var region_id = $(this).parent().parent().parent().find('select[name*="shipping_destination_region"]').val();
+                if( $(this).parent().parent().parent().find(".destination_type").val() == '1' && (destination_id != '') && destination_id == origin_country_id){
+                    getDomesticShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                }else if(($(this).parent().parent().parent().find(".destination_type").val() == '1' && (destination_id != '') && destination_id != origin_country_id) || ($(this).parent().parent().parent().find(".destination_type").val() == '2' && (region_id != '')) ){
+                    getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                }
+            }
+        });
+        $(".upgrade_transmit_type").each(function() { 
+            if($(this).val() == 'shipping_carrier'){
+                var upgrade_destination = $(this).parent().parent().parent().find('select[name*="shipping_upgrade_destination"]').val();
+                if(upgrade_destination == '0'){
+                    getDomesticShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                } else {
+                    getInternationalShippingServices($(this).parents(".form-group").find('select[name*="shipping_entry_transmit_type"]'));
+                }
+            }
+        });
+    }    
+}
+/**
+ * Function to fetch domestic shipping carriers from the controller file and append to the shipping carrier select box 
+ * @date 13-04-2023
+ * @author Tanisha Gupta
+ * @param {type} ele
+ * @returns {undefined}
+ */
+function getDomesticShippingServices(ele) {
+    $(".kb_empty_carrier_error").remove();
+    var origin_country_id = $("#shipping_origin_country_id option:selected").val();
+    $.ajax({
+        url: controller_url,
+        data: 'type=domesticShipping&origin_country_id=' + origin_country_id,
+        dataType: 'json',
+        beforeSend: function () {
+        },
+        success: function (json) {
+            if (json.length == 0) {
+                ele.after('<div class="error_message kb_empty_carrier_error" id="kb_empty_carrier_error"><span class="text-danger">' + $("#kb_empty_carrier_msg").val() +'</span></div>');
+                ele.parent().parent().parent().find('.carrier_list').hide('slow');
+            } else {
+                $('.error_message').remove();
+                ele.parent().parent().parent().find('.carrier_list').show();
+                var html = "";
+                $.each(json, function (key,value) {
+                    html += '<optgroup label="' + value['etsy_shipping_carrier_name'] + '">';
+                    $.each(value['carrier_list'], function (key1,value1) {
+                        html += '<option value="' + value['etsy_shipping_carrier_id']  + '.' + value1['mail_class_key'] + '">' + value1['name'] + '</option>';
+                    });
+                    html += '</optgroup>';
+                });
+                ele.parent().parent().parent().find('select[name*="shipping_carrier_id"]').html(html);
+                ele.parent().parent().parent().find('select[name*="shipping_upgrade_carrier_id"]').html(html);
+            }
+            
+        }
+    });
 }
 
+/**
+ * Function to fetch domestic shipping carriers from the controller file and append to the shipping carrier select box 
+ * @date 13-04-2023
+ * @author Tanisha Gupta
+ * @param {type} ele
+ * @returns {undefined}
+ */
+function getInternationalShippingServices(ele) {
+        $(".kb_empty_carrier_error").remove();
+        var origin_country_id = $("#shipping_origin_country_id option:selected").val();
+        $.ajax({
+            url: controller_url,
+            data: 'type=internationalShipping&origin_country_id=' + origin_country_id,
+            dataType: 'json',
+            beforeSend: function () {
+            },
+            success: function (json) {
+                if (json.length == 0) {
+                    ele.after('<div class="error_message kb_empty_carrier_error" id="kb_empty_carrier_error"><span class="text-danger">' + $("#kb_empty_carrier_msg").val() +'</span></div>');
+                    ele.parent().parent().parent().find('.carrier_list').hide('slow');
+                } else {
+                    $('.error_message').remove();
+                    ele.parent().parent().parent().find('.carrier_list').show();
+                    var html = "";
+                    $.each(json, function (key,value) {
+                        html += '<optgroup label="' + value['etsy_shipping_carrier_name'] + '">';
+                        $.each(value['carrier_list'], function (key1,value1) {
+                           html += '<option value="' + value['etsy_shipping_carrier_id']  + '.' + value1['mail_class_key'] + '">' + value1['name'] + '</option>';
+                        });
+                        html += '</optgroup>';
+                    });
+                    ele.parent().parent().parent().find('select[name*="shipping_carrier_id"]').html(html);
+                    ele.parent().parent().parent().find('select[name*="shipping_upgrade_carrier_id"]').html(html);
+                }
+                
+            }
+        });
+    }
 //Function definition to set destination region of Shipping Template Entry Form
 function setEntryDestinationRegion()
 {
     var val = $("#shipping_entry_destination_region_id option:selected").text();
     $("#shipping_entry_destination_region").val(val);
 }
+
 
 //Function definition to set destination country of Shipping Template Entry Form
 function setEntryDestinationCountry()
@@ -1506,7 +1937,7 @@ function sync_inventory()
 $(document).ready(function () {
     if (typeof KbcurrentToken != 'undefined') {
         $('.etsy_selected_products').autocomplete(
-                'ajax-tab.php', {
+                kb_fetch_product_link, {
                     minChars: 2,
                     max: 50,
                     delay: 100,
@@ -1650,5 +2081,4 @@ $(document).ready(function () {
             $('#etsy_custom_pricing').show(200);
         }
     });
-
 });

@@ -37,7 +37,7 @@
             {/if}
           </span>
           <span class="value">
-            {if 'discount' == $subtotal.type}-&nbsp;{/if}{$subtotal.value}
+            {if 'discount' == $subtotal.type}-&nbsp;{/if}{if $subtotal.type == 'shipping' && !preg_match('/[\d]+/', $subtotal.value)}{else}{$subtotal.value}{/if}
           </span>
           {if $subtotal.type === 'shipping'}
               <div><small class="value">{hook h='displayCheckoutSubtotalDetails' subtotal=$subtotal}</small></div>

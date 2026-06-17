@@ -1096,7 +1096,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
             }
         }
 
-        die(Tools::jsonEncode([$image_uploader->getName() => $files]));
+        die(json_encode([$image_uploader->getName() => $files]));
     }
 
     public function ajaxProcessUpdateImagePosition()
@@ -1105,7 +1105,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
         if ($json = Tools::getValue('json')) {
             $response = true;
             $json = stripslashes($json);
-            $images = Tools::jsonDecode($json, true);
+            $images = json_decode($json, true);
             foreach ($images as $id_simpleblog_post_image => $position) {
                 $SimpleBlogPostImage = new SimpleBlogPostImage((int) $id_simpleblog_post_image);
                 $SimpleBlogPostImage->position = (int) $position;
@@ -1127,7 +1127,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
         $response &= $SimpleBlogPostImage->delete();
 
         if ($response) {
-            die(Tools::jsonEncode(
+            die(json_encode(
                 [
                     'status' => 'ok',
                     'id' => $SimpleBlogPostImage->id_simpleblog_post_image,
@@ -1187,10 +1187,11 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
 
                 $cover = Product::getCover($result['id_product']);
                 if ($cover) {
-                    $result['image'] = $context->link->getImageLink($result['link_rewrite'], $cover['id_image'], ImageType::getFormatedName('small'));
+                    $imageSize = is_callable(['ImageType', 'getFormattedName']) ? ImageType::getFormattedName('small') : ImageType::getFormatedName('small');
+                    $result['image'] = $context->link->getImageLink($result['link_rewrite'], $cover['id_image'], $imageSize);
                 }
             }
-            die(Tools::jsonEncode($results));
+            die(json_encode($results));
         } else {
             $this->jsonError(Tools::displayError('Nothing found.'));
         }

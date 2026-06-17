@@ -16,10 +16,13 @@
  * @copyright Mailchimp
  * @license   commercial
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class LinkHelper
  */
 class LinkHelper extends \PrestaChamps\PrestaShop\Helpers\LinkHelper
 {
+
 }

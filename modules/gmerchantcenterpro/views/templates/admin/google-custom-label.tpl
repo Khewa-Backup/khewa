@@ -2,8 +2,9 @@
 *
 * Google merchant center Pro
 *
-* @author BusinessTech.fr
-* @copyright Business Tech
+* @author    BusinessTech.fr - https://www.businesstech.fr
+* @copyright Business Tech - https://www.businesstech.fr
+* @license   Commercial
 *
 *           ____    _______
 *          |  _ \  |__   __|
@@ -121,7 +122,7 @@
 				<div class="col-xs-3">
 					<div class="col-xs-8">
 						<div class="input-group">
-							<span class="input-group-addon"><i class="icon icon-calendar"/> </span>
+							<span class="input-group-addon"><i class="icon icon-calendar"></i> </span>
 							<input type="text" name="bt_cl_date_end" id="bt_cl_date_end"  class="date-picker" value="{$sDate}" />
 						</div>
 					</div>
@@ -132,7 +133,7 @@
 
 				<div class="row">
 
-					<div class="col-xs-12" id="bt_cl_configure_new_products"">
+					<div class="col-xs-12" id="bt_cl_configure_new_products">
 
 						<div class="form-group">
 							<label class="control-label col-xs-2">
@@ -140,7 +141,7 @@
 							</label>
 							<div class="col-xs-2">
 								<div class="input-group">
-									<span class="input-group-addon"><i class="icon icon-calendar"/> &nbsp; </span>
+									<span class="input-group-addon"><i class="icon icon-calendar"></i> &nbsp; </span>
 									<input type="text" name="bt_cl_dyn_date_start" id="bt_cl_dyn_date_start"  class="date-picker" value="{$sDateNewPoduct|escape:'htmlall':'UTF-8'}" />
 								</div>
 							</div>
@@ -330,6 +331,26 @@
 					</div>
 				</div>
 
+				<div class="col-xs-12" id="bt_cl_configure_last_order">
+					<label class="control-label col-xs-2">
+						<b>{l s='Set your order period' mod='gmerchantcenterpro'}</b>
+					</label>
+
+					<div class="col-xs-2">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="icon icon-calendar"></i> &nbsp; {l s='From' mod='gmerchantcenterpro'} </span>
+							<input type="text" name="bt_dyn_last_order_start" id="bt_dyn_last_order_start" class="date-picker"  value="{$sStartDateLastOrdered}"/>
+						</div>
+					</div>
+
+					<div class="col-xs-2">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="icon icon-calendar"></i> &nbsp; {l s='To' mod='gmerchantcenterpro'} </span>
+							<input type="text" name="bt_dyn_last_order_end" id="bt_dyn_last_order_end"  class="date-picker" value="{$sEndDateLastOrdered}"/>
+						</div>
+					</div>
+				</div>
+				
 				<div class="col-xs-12" id="bt_cl_configure_best_sales">
 					<div class="form-group">
 						<label class="control-label col-xs-3">
@@ -375,11 +396,11 @@
 							<div class="alert alert-info">
 								{l s='Set the date fields below knowing that' mod='gmerchantcenterpro'} :
 								<br/>
-								<i class="icon icon-chevron-right"/>&nbsp;{l s='If you select start and end date, you will get all best sales for this date range' mod='gmerchantcenterpro'}
+								<i class="icon icon-chevron-right"></i>&nbsp;{l s='If you select start and end date, you will get all best sales for this date range' mod='gmerchantcenterpro'}
 								<br/>
-								<i class="icon icon-chevron-right"/>&nbsp;{l s='If you select start, you will get all best sales since the start date' mod='gmerchantcenterpro'}
+								<i class="icon icon-chevron-right"></i>&nbsp;{l s='If you select start, you will get all best sales since the start date' mod='gmerchantcenterpro'}
 								<br/>
-								<i class="icon icon-chevron-right"/>&nbsp;{l s='If you select end date, you will get all best sales before the end date' mod='gmerchantcenterpro'}
+								<i class="icon icon-chevron-right"></i>&nbsp;{l s='If you select end date, you will get all best sales before the end date' mod='gmerchantcenterpro'}
 							</div>
 						</div>
 					</div>
@@ -393,14 +414,14 @@
 
 						<div class="col-xs-3">
 							<div class="input-group">
-								<span class="input-group-addon"><i class="icon icon-calendar"/> &nbsp; {l s='From' mod='gmerchantcenterpro'} </span>
+								<span class="input-group-addon"><i class="icon icon-calendar"></i> &nbsp; {l s='From' mod='gmerchantcenterpro'} </span>
 								<input type="text" name="bt_dyn_best_sale_start" id="bt_dyn_best_sale_start" class="date-picker"  value="{$sStartDate|escape:'htmlall':'UTF-8'}"/>
 							</div>
 						</div>
 
 						<div class="col-xs-3">
 							<div class="input-group">
-								<span class="input-group-addon"><i class="icon icon-calendar"/> &nbsp; {l s='To' mod='gmerchantcenterpro'} </span>
+								<span class="input-group-addon"><i class="icon icon-calendar"></i> &nbsp; {l s='To' mod='gmerchantcenterpro'} </span>
 								<input type="text" name="bt_dyn_best_sale_end" id="bt_dyn_best_sale_end"  class="date-picker" value="{$sEndDate|escape:'htmlall':'UTF-8'}"/>
 							</div>
 						</div>

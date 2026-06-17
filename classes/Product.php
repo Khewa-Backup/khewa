@@ -824,8 +824,9 @@ class ProductCore extends ObjectModel
             ], 'id_product = ' . (int) $this->id . ' AND id_product_attribute = 0');
         }
 
-        Hook::exec('actionProductSave', ['id_product' => (int) $this->id, 'product' => $this]);
-        Hook::exec('actionProductUpdate', ['id_product' => (int) $this->id, 'product' => $this]);
+        Hook::exec('actionProductSave', ['id_product' => (int)$this->id, 'product' => $this]);
+        Hook::exec('actionProductUpdate', ['id_product' => (int)$this->id, 'product' => $this]);
+        
         if ($this->getType() == Product::PTYPE_VIRTUAL && $this->active && !Configuration::get('PS_VIRTUAL_PROD_FEATURE_ACTIVE')) {
             Configuration::updateGlobalValue('PS_VIRTUAL_PROD_FEATURE_ACTIVE', '1');
         }
@@ -4068,7 +4069,7 @@ class ProductCore extends ObjectModel
 
         $id_currency = (int) $context->currency->id;
         $ids = Address::getCountryAndState((int) $context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
-        $id_country = $ids['id_country'] ? (int) $ids['id_country'] : (int) Configuration::get('PS_COUNTRY_DEFAULT');
+        $id_country = (int) ($ids['id_country'] ?? Configuration::get('PS_COUNTRY_DEFAULT'));
 
         return (bool) SpecificPrice::getSpecificPrice((int) $id_product, $context->shop->id, $id_currency, $id_country, $id_group, $quantity, null, 0, 0, $quantity);
     }
@@ -4531,12 +4532,25 @@ class ProductCore extends ObjectModel
                     AND agl.`id_lang` = ' . (int) $id_lang . '
                 ';
 
+
+
         if ($id_product_attribute !== null) {
             $sql .= ' AND product_attribute_shop.`id_product_attribute` = ' . (int) $id_product_attribute . ' ';
         }
 
         $sql .= 'GROUP BY id_attribute_group, id_product_attribute
                 ORDER BY ag.`position` ASC, a.`position` ASC, agl.`name` ASC';
+
+        //debug
+//        if($this->id == 13165) {
+//            echo $sql;
+//            echo '<pre>';
+//            print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+//            echo '</pre>';
+//
+//            die();
+//        }
+        //end
 
         return Db::getInstance()->executeS($sql);
     }

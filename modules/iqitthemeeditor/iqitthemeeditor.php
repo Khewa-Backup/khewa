@@ -31,7 +31,7 @@ class IqitThemeEditor extends Module
     {
         $this->name = 'iqitthemeeditor';
         $this->tab = 'front_office_features';
-        $this->version = '4.5.3';
+        $this->version = '4.5.5';
         $this->author = 'IQIT-COMMERCE.COM';
         $this->bootstrap = true;
         $this->cfgName = 'iqitthemeed_';
@@ -706,6 +706,18 @@ class IqitThemeEditor extends Module
     }
 
     public function registerCustomHooks(){
+        $hook_name = 'displayHeaderLeft';
+        $id_hook = Hook::getIdByName($hook_name);
+        // If hook does not exist, we create it
+        if (!$id_hook) {
+            $new_hook = new Hook();
+            $new_hook->name = pSQL($hook_name);
+            $new_hook->title = pSQL($hook_name);
+            $new_hook->position = 1;
+            $new_hook->add();
+        }
+
+
         $hook_name = 'displayHeaderButtons';
         $id_hook = Hook::getIdByName($hook_name);
         // If hook does not exist, we create it
@@ -1224,7 +1236,7 @@ class IqitThemeEditor extends Module
         //products per row - global
         $options['pl_slider_ld'] = $options['pl_grid_ld'] - $columns;
         $options['pl_slider_d'] = $options['pl_grid_d'] - $columns;
-        $options['pl_slider_t'] = $options['pl_grid_t'] - $columns;;
+        $options['pl_slider_t'] = $options['pl_grid_t'] - $columns;
         $options['pl_slider_p'] = $options['pl_grid_p'];
 
 

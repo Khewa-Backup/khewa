@@ -13,9 +13,17 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+use PrestaChamps\MailChimpAPI;
+use PrestaChamps\MailchimpPro\Commands\OrderSyncCommand;
+use PrestaChamps\Queue\Jobs\CartRuleSyncJob;
+use PrestaChamps\Queue\Jobs\CustomerSyncJob;
+use PrestaChamps\Queue\Jobs\ProductSyncJob;
 
 /**
  * Class AdminMailchimpProWizardController
@@ -35,21 +43,19 @@ class AdminMailchimpProWizardController extends ModuleAdminController
         $this->addCSS($this->module->getLocalPath() . 'views/css/main.css');
         if (\Shop::getContext() !== \Shop::CONTEXT_SHOP) {
             $this->content = '';
-            $this->warnings[] = $this->module->l('Please select a shop');
+            $this->warnings[] = $this->trans('Please select a shop', [], 'Modules.Mailchimppro.Adminmailchimpprowizard');
         } else {
-            Media::addJsDef(array('wizardUrl' => $this->context->link->getAdminLink($this->controller_name)));
+            Media::addJsDef(['wizardUrl' => $this->context->link->getAdminLink($this->controller_name)]);
             $this->addCSS($this->module->getLocalPath() . 'views/css/smart_wizard.css');
-            $this->addCSS($this->module->getLocalPath() . 'views/css/smart_wizard_theme_dots.css');
-            $this->addCSS($this->module->getLocalPath() . 'views/css/toastr.css');
-            $this->addCSS($this->module->getLocalPath() . 'views/css/spinner.css');
-            $this->addJS($this->module->getLocalPath() . 'views/js/jquery.smartWizard.js');
-            $this->addJS($this->module->getLocalPath() . 'views/js/setup-wizard.js');
-            $this->addJS($this->module->getLocalPath() . 'views/js/toastr.min.js');
-            $this->addJS($this->module->getLocalPath() . 'views/js/ajaxq.js');
-            $this->addJS($this->module->getLocalPath() . 'views/js/array.chunk.js');
-
-
-            Media::addJsDef(array(
+            $orderStates = [];
+            foreach (OrderState::getOrderStates($this->context->language->id) as $orderState) {
+                $orderStates[] = [
+                    'text' => $orderState['name'],
+                    'value' => $orderState['id_order_state']
+                ];
+            }
+            Media::addJsDef([
+                'orderStates' => $orderStates,
                 'statePending' => MailchimpProConfig::STATUSES_FOR_PENDING,
                 'stateRefunded' => MailchimpProConfig::STATUSES_FOR_REFUNDED,
                 'stateCancelled' => MailchimpProConfig::STATUSES_FOR_CANCELLED,
@@ -63,24 +69,41 @@ class AdminMailchimpProWizardController extends ModuleAdminController
                 'orderIds' => $this->getOrderIds(),
                 'customerIds' => array_column(Customer::getCustomers(true), 'id_customer'),
                 'syncUrl' => $this->context->link->getAdminLink($this->controller_name),
+                'workerUrl' => $this->context->link->getAdminLink('AdminMailchimpProQueue'),
                 'middlewareUrl' => Mailchimppro::MC_MIDDLEWARE,
                 'itemsPerRequest' => 50,
-            ));
-            $this->context->smarty->assign(array(
-                'apiKey' => Configuration::get(MailchimpProConfig::MAILCHIMP_API_KEY),
-                'mcEmail' => $this->getMailchimpUserEmail(Configuration::get(MailchimpProConfig::MAILCHIMP_API_KEY)),
-            ));
+                'token' =>
+                    Configuration::get(MailchimpProConfig::MAILCHIMP_API_KEY),
+                'userName' => $this->getMailchimpUserEmail(
+                    Configuration::get(MailchimpProConfig::MAILCHIMP_API_KEY)
+                ),
+            ]);
+            $this->context->smarty->assign([
+                'mainJsPath' =>
+                    Media::getJSPath(
+                        $this->module->getLocalPath() . 'views/js/sync-wizard/main.js'
+                    ),
+                'JsLybraryPath' =>
+                    Media::getJSPath(
+                        $this->module->getLocalPath() . 'views/js/'
+                    ),
+                'apiKey' =>
+                    Configuration::get(MailchimpProConfig::MAILCHIMP_API_KEY),
+                'mcEmail' => $this->getMailchimpUserEmail(
+                    Configuration::get(MailchimpProConfig::MAILCHIMP_API_KEY)
+                ),
+            ]);
             $this->content .= $this->context->smarty->fetch(
-                $this->module->getLocalPath() . 'views/templates/admin/wizard.tpl'
+                $this->module->getLocalPath() . 'views/templates/admin/sync-wizard/main.tpl'
             );
             if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
                 $this->content = '';
-                $this->context->controller->warnings[] = $this->module->l('Please select a shop');
+                $this->context->controller->warnings[] = $this->trans('Please select a shop', [], 'Modules.Mailchimppro.Adminmailchimpprowizard');
             }
 
             if (!Tools::usingSecureMode()) {
                 $this->content = '';
-                $this->context->controller->warnings[] = $this->module->l('Please use HTTPS for authenticating to Mailchimp');
+                $this->context->controller->warnings[] = $this->trans('Please use HTTPS for authenticating to Mailchimp', [], 'Modules.Mailchimppro.Adminmailchimpprowizard');
             }
             parent::initContent();
         }
@@ -89,7 +112,7 @@ class AdminMailchimpProWizardController extends ModuleAdminController
     protected function getMailchimpUserEmail($apiKey)
     {
         try {
-            $mc = new \DrewM\MailChimp\MailChimp($apiKey);
+            $mc = new MailChimpAPI($apiKey);
             $response = $mc->get('/');
         } catch (Exception $exception) {
             return null;
@@ -124,38 +147,58 @@ class AdminMailchimpProWizardController extends ModuleAdminController
         $query->from('orders');
         $query->select('id_order');
         if ($shopId) {
-            $query->where("id_shop = {$shopId}");
+            $query->where("id_shop = " . (int)$shopId);
         }
 
         return array_column(Db::getInstance()->executeS($query), 'id_order');
     }
 
-    public function processApiKey()
+    protected function getProductIds()
+    {
+        $shopId = Shop::getContextShopID();
+        $query = new DbQuery();
+        $query->from('products');
+        $query->select('id_product');
+        if ($shopId) {
+            $query->where("id_shop = " . (int)$shopId);
+        }
+
+        return array_column(Db::getInstance()->executeS($query), 'id_order');
+    }
+
+    public function getJsonPayloadValue($key, $defaultValue = null)
+    {
+        $body = json_decode(Tools::file_get_contents('php://input'), true);
+
+        return isset($body[$key]) ? $body[$key] : $defaultValue;
+    }
+
+    public function ajaxProcessApiKey()
     {
         try {
-            $apiKey = Tools::getValue('apiKey');
-            $mc = new \DrewM\MailChimp\MailChimp($apiKey);
+            $apiKey = $this->getJsonPayloadValue('apiKey');
+            $mc = new MailChimpAPI($apiKey);
             $mc->get('ping');
             if ($mc->success()) {
+
                 Configuration::updateValue(MailchimpProConfig::MAILCHIMP_API_KEY, $apiKey);
-                $this->ajaxDie(array('hasError' => false, 'error' => null));
+                $this->ajaxDie(['hasError' => false, 'error' => null]);
             } else {
                 $this->ajaxDie(
-                    array(
+                    [
                         'hasError' => true,
-                        'error' => $this->module->l('Invlid api key'),
-                    ),
+                        'error' => $this->trans('Invlid api key', [], 'Modules.Mailchimppro.Adminmailchimpprowizard'),
+                    ],
                     null,
-                    null,
-                    400
+                    null, 400
                 );
             }
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
-                    'error' => $mc->getLastResponse(),
-                ),
+                    'error' => $exception->getMessage(),
+                ],
                 null,
                 null,
                 400
@@ -168,12 +211,12 @@ class AdminMailchimpProWizardController extends ModuleAdminController
         try {
             $configValues = MailchimpProConfig::getConfigurationValues();
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => false,
-                    'mapping' => array(
+                    'mapping' => [
                         MailchimpProConfig::STATUSES_FOR_PENDING =>
                             $configValues[MailchimpProConfig::STATUSES_FOR_PENDING],
-                        MailchimpProConfig::STATUSES_FOR_PENDING =>
+                        MailchimpProConfig::STATUSES_FOR_REFUNDED =>
                             $configValues[MailchimpProConfig::STATUSES_FOR_REFUNDED],
                         MailchimpProConfig::STATUSES_FOR_CANCELLED =>
                             $configValues[MailchimpProConfig::STATUSES_FOR_CANCELLED],
@@ -181,18 +224,18 @@ class AdminMailchimpProWizardController extends ModuleAdminController
                             $configValues[MailchimpProConfig::STATUSES_FOR_SHIPPED],
                         MailchimpProConfig::STATUSES_FOR_PAID =>
                             $configValues[MailchimpProConfig::STATUSES_FOR_PAID],
-                    ),
-                ),
+                    ],
+                ],
                 null,
                 null,
                 400
             );
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $exception->getMessage(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -200,10 +243,10 @@ class AdminMailchimpProWizardController extends ModuleAdminController
         }
     }
 
-    public function processStateMapping()
+    public function ajaxProcessStateMapping()
     {
         try {
-            $statuses = Tools::getValue('states');
+            $statuses = $this->getJsonPayloadValue('states');
             if (isset($statuses[MailchimpProConfig::STATUSES_FOR_PENDING]) &&
                 isset($statuses[MailchimpProConfig::STATUSES_FOR_REFUNDED]) &&
                 isset($statuses[MailchimpProConfig::STATUSES_FOR_CANCELLED]) &&
@@ -235,15 +278,15 @@ class AdminMailchimpProWizardController extends ModuleAdminController
                     MailchimpProConfig::STATUSES_FOR_PAID,
                     json_encode($statuses[MailchimpProConfig::STATUSES_FOR_PAID])
                 );
-                $this->ajaxDie(array('hasError' => false, 'error' => null));
+                $this->ajaxDie(['hasError' => false, 'error' => null]);
             }
             throw new Exception('Invalid data');
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $exception->getMessage(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -251,17 +294,17 @@ class AdminMailchimpProWizardController extends ModuleAdminController
         }
     }
 
-    public function processGetStates()
+    public function ajaxProcessGetStates()
     {
         try {
             $configValues = MailchimpProConfig::getConfigurationValues();
 
             $orderStates = OrderState::getOrderStates($this->context->language->id);
-            $this->ajaxDie(array(
+            $this->ajaxDie([
                 'hasError' => false,
                 'error' => null,
                 'states' => $orderStates,
-                'mapping' => array(
+                'mapping' => [
                     MailchimpProConfig::STATUSES_FOR_PENDING =>
                         $configValues[MailchimpProConfig::STATUSES_FOR_PENDING],
                     MailchimpProConfig::STATUSES_FOR_REFUNDED =>
@@ -272,14 +315,14 @@ class AdminMailchimpProWizardController extends ModuleAdminController
                         $configValues[MailchimpProConfig::STATUSES_FOR_SHIPPED],
                     MailchimpProConfig::STATUSES_FOR_PAID =>
                         $configValues[MailchimpProConfig::STATUSES_FOR_PAID],
-                ),
-            ));
+                ],
+            ]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $exception->getMessage(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -287,30 +330,29 @@ class AdminMailchimpProWizardController extends ModuleAdminController
         }
     }
 
-    public function processSyncStores()
+    public function ajaxProcessSyncStores()
     {
         try {
-//            $shops = array_column(Shop::getShops(true), 'id_shop');
             $command = new \PrestaChamps\MailchimpPro\Commands\StoreSyncCommand(
                 $this->context,
                 $this->module->getApiClient(),
-                array($this->context->shop->id)
+                [$this->context->shop->id]
             );
             $command->setSyncMode($command::SYNC_MODE_REGULAR);
             $command->setMethod($command::SYNC_METHOD_POST);
             $command->execute();
             $command->setMethod($command::SYNC_METHOD_PATCH);
-            $this->ajaxDie(array(
+            $this->ajaxDie([
                 'hasError' => false,
                 'error' => null,
                 'result' => $command->execute(),
-            ));
+            ]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $exception->getMessage(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -318,161 +360,70 @@ class AdminMailchimpProWizardController extends ModuleAdminController
         }
     }
 
-    public function processSyncCustomers()
+    public function ajaxProcessAddProductsToQueue()
     {
-        try {
-            $results = array();
-            $customerIds = Tools::getValue('items');
-            $command = new \PrestaChamps\MailchimpPro\Commands\CustomerSyncCommand(
-                Context::getContext(),
-                $this->module->getApiClient(),
-                $customerIds
-            );
-            $command->setSyncMode($command::SYNC_MODE_REGULAR);
-            $command->setMethod($command::SYNC_METHOD_PUT);
-            $results[] = $command->execute();
-            $this->ajaxDie(array(
-                'hasError' => false,
-                'error' => null,
-                'result' => $results,
-            ));
-        } catch (Exception $exception) {
-            $this->ajaxDie(
-                array(
-                    'hasError' => true,
-                    'error' => $exception->getMessage(),
-                ),
-                null,
-                null,
-                400
-            );
+        $products = \ProductCore::getSimpleProducts(\Context::getContext()->language->id);
+        $queue = new PrestaChamps\Queue\Queue();
+        foreach ($products as $product) {
+            $job = new ProductSyncJob();
+            $job->productId = $product['id_product'];
+            $queue->push($job, 'setup-wizard');
         }
+
+        $this->ajaxDie(['ok']);
     }
 
-    public function processSyncPromoCodes()
+    public function ajaxProcessAddCustomersToQueue()
     {
-        try {
-            $results = array();
-            $objectIds = Tools::getValue('items');
-            $objects = array();
-
-            foreach ($objectIds as $objectId) {
-                $object = new CartRule($objectId, $this->context->language->id, $this->context->shop->id);
-                if (Validate::isLoadedObject($object)) {
-                    $objects[] = $object;
-                }
-            }
-            $command = new \PrestaChamps\MailchimpPro\Commands\CartRuleSyncCommand(
-                Context::getContext(),
-                $this->module->getApiClient(),
-                $objects
-            );
-            $command->setSyncMode($command::SYNC_MODE_REGULAR);
-            $command->setMethod($command::SYNC_METHOD_POST);
-            $results[] = $command->execute();
-            $command->setMethod($command::SYNC_METHOD_PATCH);
-            $results[] = $command->execute();
-            $this->ajaxDie(array(
-                'hasError' => false,
-                'error' => null,
-                'result' => $results,
-            ));
-        } catch (Exception $exception) {
-            $this->ajaxDie(
-                array(
-                    'hasError' => true,
-                    'error' => $exception->getMessage(),
-                ),
-                null,
-                null,
-                400
-            );
+        $customers = array_column(Customer::getCustomers(true), 'id_customer');
+        $queue = new PrestaChamps\Queue\Queue();
+        foreach ($customers as $customer) {
+            $job = new CustomerSyncJob();
+            $job->customerId = $customer;
+            $queue->push($job, 'setup-wizard');
         }
+
+        $this->ajaxDie(['ok']);
     }
 
-    public function processSyncProducts()
+    public function ajaxProcessAddOrdersToQueue()
     {
-        try {
-            $results = array();
-            /*
-            $productIds = array_column(
-                Product::getSimpleProducts(\Context::getContext()->language->id),
-                'id_product'
-            );*/
-            $productIds = Tools::getValue('items');
-            $command = new \PrestaChamps\MailchimpPro\Commands\ProductSyncCommand(
-                $this->context,
-                $this->module->getApiClient(),
-                $productIds
-            );
-            $command->setSyncMode($command::SYNC_MODE_REGULAR);
-            $command->setMethod($command::SYNC_METHOD_POST);
-            $results[] = $command->execute();
-            $command->setMethod($command::SYNC_METHOD_PATCH);
-            $results[] = $command->execute();
-            $this->ajaxDie(array(
-                'hasError' => false,
-                'error' => null,
-                'result' => $results,
-            ));
-        } catch (Exception $exception) {
-            $this->ajaxDie(
-                array(
-                    'hasError' => true,
-                    'error' => $exception->getMessage(),
-                ),
-                null,
-                null,
-                400
-            );
+        $orders = $this->getOrderIds();
+        $queue = new PrestaChamps\Queue\Queue();
+        foreach ($orders as $order) {
+            $job = new \PrestaChamps\Queue\Jobs\OrderSyncJob();
+            $job->orderId = $order;
+            $queue->push($job, 'setup-wizard');
         }
+
+        $this->ajaxDie(['ok']);
     }
 
-    public function processSyncOrders()
+    public function ajaxProcessAddPromoCodesToQueue()
     {
-        try {
-            $results = array();
-            $orderIds = Tools::getValue('items');
-            $command = new \PrestaChamps\MailchimpPro\Commands\OrderSyncCommand(
-                $this->context,
-                $this->module->getApiClient(),
-                $orderIds
-            );
-            $command->setSyncMode($command::SYNC_MODE_REGULAR);
-            $command->setMethod($command::SYNC_METHOD_POST);
-            $results[] = $command->execute();
-            $command->setMethod($command::SYNC_METHOD_PATCH);
-            $results[] = $command->execute();
-            $this->ajaxDie(array(
-                'hasError' => false,
-                'error' => null,
-                'result' => $results,
-            ));
-        } catch (Exception $exception) {
-            $this->ajaxDie(
-                array(
-                    'hasError' => true,
-                    'error' => $exception->getMessage(),
-                ),
-                null,
-                null,
-                400
-            );
+        $cartRules = $this->getCartRules();
+        $queue = new PrestaChamps\Queue\Queue();
+        foreach ($cartRules as $cartRule) {
+            $job = new CartRuleSyncJob();
+            $job->cartRuleId = $cartRule;
+            $queue->push($job, 'setup-wizard');
         }
+
+        $this->ajaxDie(['ok']);
     }
 
-    public function processListSelect()
+    public function ajaxProcessListSelect()
     {
         try {
-            $listId = Tools::getValue('listId');
+            $listId = $this->getJsonPayloadValue('listId');
             Configuration::updateValue(MailchimpProConfig::MAILCHIMP_LIST_ID, $listId);
-            $this->ajaxDie(array('hasError' => false, 'error' => null));
+            $this->ajaxDie(['hasError' => false, 'error' => null]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $exception->getMessage(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -480,14 +431,14 @@ class AdminMailchimpProWizardController extends ModuleAdminController
         }
     }
 
-    public function processGetLists()
+    public function ajaxProcessGetLists()
     {
         try {
             $lists = $this->module->getApiClient()->get(
                 'lists',
-                array('fields' => 'lists.name,lists.id', 'count' => 999)
+                ['fields' => 'lists.name,lists.id', 'count' => 999]
             );
-            if (!$lists || empty($lists)) {
+            if (!$lists || empty($lists['lists'])) {
                 \PrestaChamps\MailchimpPro\Factories\ListFactory::make(
                     $this->context->shop->name,
                     $this->module->getApiClient(),
@@ -495,46 +446,23 @@ class AdminMailchimpProWizardController extends ModuleAdminController
                 );
                 $lists = $this->module->getApiClient()->get(
                     'lists',
-                    array('fields' => 'lists.name,lists.id', 'count' => 999)
+                    ['fields' => 'lists.name,lists.id', 'count' => 999]
                 );
             }
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => false,
                     'error' => null,
                     'lists' => $lists['lists'],
                     'selectedList' => Configuration::get(MailchimpProConfig::MAILCHIMP_LIST_ID),
-                )
+                ]
             );
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $exception->getMessage(),
-                ),
-                null,
-                null,
-                400
-            );
-        }
-    }
-
-    public function processBatchInfo()
-    {
-        try {
-            $batchId = Tools::getValue('id', false);
-            if (!$batchId) {
-                throw new Exception('Invalid BatchId');
-            }
-            $mc = $this->module->getApiClient();
-
-            $this->ajaxDie(array('hasErrors' => false, 'batch' => $mc->new_batch($batchId)->check_status($batchId)));
-        } catch (Exception $exception) {
-            $this->ajaxDie(
-                array(
-                    'hasError' => true,
-                    'error' => $exception->getMessage(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -546,7 +474,7 @@ class AdminMailchimpProWizardController extends ModuleAdminController
      * @param null $value
      * @param null $controller
      * @param null $method
-     * @param int  $statusCode
+     * @param int $statusCode
      */
     public function ajaxDie($value = null, $controller = null, $method = null, $statusCode = 200)
     {
@@ -556,6 +484,11 @@ class AdminMailchimpProWizardController extends ModuleAdminController
         }
 
         http_response_code($statusCode);
-        parent::ajaxDie($value, $controller, $method);
+        if ((bool)version_compare(_PS_VERSION_, '1.7.5.0', '>=')) {
+            parent::ajaxRender($value, $controller, $method); // from PS 1.7.5.0
+            die();
+        }else{
+            parent::ajaxDie($value, $controller, $method);
+        }
     }
 }

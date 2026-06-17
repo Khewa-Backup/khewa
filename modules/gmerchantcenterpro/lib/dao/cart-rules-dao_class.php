@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -34,11 +34,10 @@ class BT_GmcProCartRulesDao
             . 'AND cr.group_restriction  = 0 '
             . 'AND cr.country_restriction  = 0 '
             . 'AND cr.carrier_restriction  = 0 '
-            . 'AND cr.date_to > "' . date("Y-m-d H:i:s") . '"'
             // exclusions configure by merchant
             . (!empty($sName) ? 'AND crl.name  like "%' . pSQL($sName) . '%"' : '')
             . (!empty($sDateFrom) ? 'AND cr.date_from  >= "' . pSQL($sDateFrom) . '"' : '')
-            . (!empty($sDateTo) ? 'AND cr.date_to  <= "' . pSQL($sDateTo) . '23:59:59' . '"' : '')
+            . (!empty($sDateTo) ? ' AND cr.date_to  <= "' . pSQL($sDateTo)  . '"' : '')
             . (!empty($fMinAmount) ? 'AND cr.minimum_amount  = "' . pSQL($fMinAmount) . '"' : '');
 
         if (!empty($sTypeExport)) {

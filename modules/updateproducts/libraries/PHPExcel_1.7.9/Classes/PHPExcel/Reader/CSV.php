@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version    1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /** PHPExcel root directory */
 if (!defined('PHPEXCEL_ROOT')) {
@@ -272,7 +274,7 @@ class PHPExcel_Reader_CSV extends PHPExcel_Reader_Abstract implements PHPExcel_R
 		}
 
 		// Loop through each line of the file in turn
-		while (($rowData = fgetcsv($fileHandle, 0, $this->_delimiter, $this->_enclosure)) !== FALSE) {
+		while (($rowData = @fgetcsv($fileHandle, 0, $this->_delimiter, $this->_enclosure)) !== FALSE) {
 			$columnLetter = 'A';
 			foreach($rowData as $rowDatum) {
 				if ($rowDatum != '' && $this->_readFilter->readCell($columnLetter, $currentRow)) {

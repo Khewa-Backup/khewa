@@ -96,8 +96,3 @@
 	</div>
 	</form>
 </div>
-
-{if Configuration::get('PH_BLOG_ADVERTISING')}
-<iframe style="overflow:hidden;border:1px solid #f0f0f0;border-radius:10px;width:100%;height:175px;" src="https://api.prestahome.com/check_offer.php?from=ph_simpleblog" border="0"></iframe>
-<small>{l s='You can disable this panel in the Settings' mod='ph_simpleblog'}</small>
-{/if}

@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -39,6 +39,18 @@ class BT_GmcProCustomLabelDao
         Db::getInstance()->Execute($sQuery);
 
         return Db::getInstance()->Insert_ID();
+    }
+
+    /**
+     * get the active tags
+     * 
+     * @param $iShopId
+     * @return mixed
+     */
+    public static function getActiveTag($iShopId)
+    {
+        $sQuery = 'SELECT * FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags` WHERE `id_shop` = "' . (int) $iShopId . '" AND `active` = 1';
+        return Db::getInstance()->ExecuteS($sQuery);
     }
 
     /**
@@ -76,7 +88,7 @@ class BT_GmcProCustomLabelDao
      */
     public static function getTagDate($iShopId)
     {
-        $sQuery = 'SELECT `id_tag`,`end_date` FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags` WHERE `id_shop` = "' . (int) $iShopId . '" AND `end_date` != "NULL"';
+        $sQuery = 'SELECT `id_tag`,`end_date` FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags` WHERE `id_shop` = "' . (int) $iShopId . '" AND `end_date` != "0000-00-00"';
         return Db::getInstance()->ExecuteS($sQuery);
     }
 
@@ -475,14 +487,14 @@ class BT_GmcProCustomLabelDao
     public static function getProductBestSales($sBestSaleType, $fBestSaleAmount, $sBestSaleStartDate = null, $sBestSaleEndDate = null)
     {
         if ($sBestSaleType == "unit") {
-            $sQuery = 'SELECT DISTINCT ps.id_product FROM `' . _DB_PREFIX_ . 'product_sale` ps'
-                . ' LEFT JOIN `' . _DB_PREFIX_ . 'order_detail` pod ON (pod.product_id = ps.id_product)'
-                . ' LEFT JOIN `' . _DB_PREFIX_ . 'orders` po ON (po.id_order = pod.id_order)'
-                . ' WHERE sale_nbr >= ' . $fBestSaleAmount . '';
+            $sQuery = 'SELECT DISTINCT pod.product_id, SUM(pod.product_quantity) as qty FROM `' . _DB_PREFIX_ . 'order_detail` pod'
+                . ' LEFT JOIN `' . _DB_PREFIX_ . 'orders` po ON (po.id_order = pod.id_order)';
 
             // manage date picker vallue if date range is filled out
-            $sQuery .= (!empty($sBestSaleStartDate) ? ' AND po.date_add >= "' . $sBestSaleStartDate . '"' : '');
-            $sQuery .= (!empty($sBestSaleStartEnd) ? ' AND po.date_add <= "' . $sBestSaleEndDate . '"' : '');
+            $sQuery .= (!empty($sBestSaleStartDate) ? ' WHERE po.date_add >= "' . $sBestSaleStartDate . '"' : '');
+            $sQuery .= (!empty($sBestSaleEndDate) ? ' AND po.date_add <= "' . $sBestSaleEndDate . '"' : '');
+
+            $sQuery .= 'GROUP BY pod.product_id HAVING qty >= ' . (int)$fBestSaleAmount;
         } elseif ($sBestSaleType == "price") {
             $sQuery = 'SELECT pod.product_id, SUM(pod.total_price_tax_incl) as total_sale_amount FROM `' . _DB_PREFIX_ . 'order_detail` pod LEFT JOIN `' . _DB_PREFIX_ . 'orders` po ON (po.id_order = pod.id_order)';
             $sQuery .= (!empty($sBestSaleStartDate) ? ' WHERE po.date_add >= "' . pSQL($sBestSaleStartDate) . '"' : '');
@@ -501,17 +513,98 @@ class BT_GmcProCustomLabelDao
     }
 
     /**
+     * insert dynamic last product ordered
+     *
+     * @param int $iTagId
+     * @param string $sDateFrom
+     * @param string $sDateTos
+     * @param string $sProductIds
+     * @return int
+     */
+    public static function insertDynamicLastProductOrdered($iTagId, $sDateFrom = null, $sDateTo = null, $sProductIds)
+    {
+        $sQuery = 'INSERT INTO `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_dynamic_last_product_ordered` (`id_tag` , `start_date` , `end_date` ,`id_product`)
+		 VALUES ("' . (int) $iTagId . '", "' . pSQL($sDateFrom) . '", "' . pSQL($sDateTo) . '", "' . pSQL($sProductIds) . '")';
+
+        Db::getInstance()->Execute($sQuery);
+    }
+
+    /**
+     * clean value for dynamic last ordered
+     *
+     * @param int $iTagId
+     * @return bool
+     */
+    public static function deleteDynamicLastProductOrdered($iTagId)
+    {
+        return Db::getInstance()->Execute('DELETE FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_dynamic_last_product_ordered` WHERE `id_tag` = ' . (int) $iTagId);
+    }
+
+
+    /**
+     * record for last sales from database
+     *
+     * @param int $iTagId
+     * @return bool
+     */
+    public static function getDynamicLastProductOrdered($iTagId)
+    {
+        return Db::getInstance()->GetRow('SELECT * FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_dynamic_last_product_ordered` WHERE `id_tag` = ' . (int) ($iTagId));
+    }
+
+    /**
+     * insert dynamic product promotion
+     *
+     * @param int $iTagId
+     * @param string $sDateFrom
+     * @param string $sDateTos
+     * @param string $sProductIds
+     * @return int
+     */
+    public static function insertDynamicPromotion($iTagId, $sDateFrom = null, $sDateTo = null, $sProductIds)
+    {
+        $sQuery = 'INSERT INTO `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_dynamic_promotion` (`id_tag` , `start_date` , `end_date` ,`id_product`)
+		 VALUES ("' . (int) $iTagId . '", "' . pSQL($sDateFrom) . '", "' . pSQL($sDateTo) . '", "' . pSQL($sProductIds) . '")';
+
+        Db::getInstance()->Execute($sQuery);
+    }
+
+    /**
+     * clean value for dynamic promotion
+     *
+     * @param int $iTagId
+     * @return bool
+     */
+    public static function deleteDynamicPromotion($iTagId)
+    {
+        return Db::getInstance()->Execute('DELETE FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_dynamic_promotion` WHERE `id_tag` = ' . (int) $iTagId);
+    }
+
+    /**
+     * record for promotion cl
+     *
+     * @param int $iTagId
+     * @return bool
+     */
+    public static function getDynamicLastDynamicPromotion($iTagId)
+    {
+        return Db::getInstance()->GetRow('SELECT * FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_dynamic_promotion` WHERE `id_tag` = ' . (int) ($iTagId));
+    }
+
+    /**
      * returns Google tags for XML
      *
      * @param int $iProdId
-     * @param int $iDefaultProdCat
+     * @param array $aCat
      * @param int $iManufacturerId
      * @param int $iSupplierId
      * @param int $iLangId
      * @return array
      */
-    public static function getTagsForXml($iProdId, $iDefaultCat, $iManufacturerId, $iSupplierId, $iLangId)
+    public static function getTagsForXml($iProdId, $aCat, $iManufacturerId, $iSupplierId, $iLangId)
     {
+        $sIn = implode(',', array_map('intval', $aCat));
+
         $sQuery =
             '(SELECT distinct(gt.id_tag), fvl.value as name, gt.type, gt.position'
             . ' FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags` gt'
@@ -539,7 +632,7 @@ class BT_GmcProCustomLabelDao
             . ' LEFT JOIN `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_dynamic_categories` gtdc ON (gt.id_tag = gtdc.id_tag)'
             . ' LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cl ON (cl.id_category = gtdc.id_category)'
             . ' WHERE cl.id_lang = ' . (int) $iLangId . ''
-            . ' AND cl.id_category = ' . $iDefaultCat
+            . ' AND cl.id_category in ( ' . pSQL($sIn) . ')'
             . ' AND gt.active = 1)'
 
             . ' UNION '
@@ -563,7 +656,7 @@ class BT_GmcProCustomLabelDao
             . '(SELECT distinct(gt.id_tag), gt.name, gt.type, gt.position'
             . ' FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags` gt'
             . ' LEFT JOIN `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_cats` gtc ON (gt.id_tag = gtc.id_tag)'
-            . ' WHERE gtc.id_category =' . $iDefaultCat
+            . ' WHERE gtc.id_category in ( ' . pSQL($sIn) . ')'
             . ' AND gt.active = 1)'
 
             . ' UNION'
@@ -582,9 +675,25 @@ class BT_GmcProCustomLabelDao
             . ' WHERE gtdpr.id_product = ' . (int) ($iProdId) . ''
             . ' AND gt.active = 1)'
 
-            . ' UNION ';
+            . ' UNION '
+            
+            . '(SELECT distinct(gt.id_tag),gt.name, gt.type, gt.position'
+            . ' FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags` gt'
+            . ' LEFT JOIN `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_dynamic_last_product_ordered` gtdblo ON (gt.id_tag = gtdblo.id_tag)'
+            . ' WHERE gtdblo.id_product = ' . (int) ($iProdId) . ''
+            . ' AND gt.active = 1)'
 
-        $sQuery .= ' (SELECT distinct(gt.id_tag), gt.name, gt.type, gt.position'
+            . ' UNION '
+
+            . '(SELECT distinct(gt.id_tag),gt.name, gt.type, gt.position'
+            . ' FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags` gt'
+            . ' LEFT JOIN `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_dynamic_promotion` gtdp ON (gt.id_tag = gtdp.id_tag)'
+            . ' WHERE gtdp.id_product = ' . (int) ($iProdId) . ''
+            . ' AND gt.active = 1)'
+            
+            . ' UNION '
+
+            . ' (SELECT distinct(gt.id_tag), gt.name, gt.type, gt.position'
             . ' FROM `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags` gt'
             . ' LEFT JOIN `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_tags_suppliers` gts ON (gt.id_tag = gts.id_tag)'
             . ' WHERE gts.id_supplier IN (SELECT distinct(id_supplier) FROM `' . _DB_PREFIX_ . 'product_supplier` WHERE id_product = ' . (int) $iProdId . ')'

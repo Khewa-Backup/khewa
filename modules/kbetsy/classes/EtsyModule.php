@@ -17,11 +17,14 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once(_PS_MODULE_DIR_ . 'kbetsy/libraries/http.php');
-require_once(_PS_MODULE_DIR_ . 'kbetsy/libraries/oauth_client.php');
+require_once(_PS_MODULE_DIR_ . 'kbetsy/vendor/http.php');
+require_once(_PS_MODULE_DIR_ . 'kbetsy/vendor/oauth_client.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/KbMarketplaceIntegration.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/SyncShopSection.php');
+require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/SyncReturnPolicy.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/SyncTemplate.php');
+require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyProfiles.php');
+require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyShippingTemplates.php');
 
 class EtsyModule extends Module
 {
@@ -33,7 +36,7 @@ class EtsyModule extends Module
         //List of confirmations
         $module = Module::getInstanceByName('kbetsy');
         $this->_etsyConf = array(
-            '1' => $module->l('Settings has been saved & connected to Etsy Marketplace successfully.', 'EtsyModule'),
+            '1' => $module->l('Settings has been saved and connected to Etsy Marketplace successfully.', 'EtsyModule'),
             '2' => $module->l('Disconnected successfully.', 'EtsyModule'),
             '3' => $module->l('Order settings has been saved successfully.', 'EtsyModule'),
             '4' => $module->l('Item is marked successfully for data updation. Item info will be sycned to etsy on next CRON run.', 'EtsyModule'),
@@ -64,6 +67,14 @@ class EtsyModule extends Module
             '60' => $module->l('Shop Section has been added successfully.', 'EtsyModule'),
             '61' => $module->l('Shop Section has been updated successfully.', 'EtsyModule'),
             '62' => $module->l('Shop Section has been deleted successfully.', 'EtsyModule'),
+            /*
+             * Added language strings for return policy success messages
+             * @modifier Himanshu Vishwakarma
+             * @date 15-12-2025
+             */
+            '70' => $module->l('Return Policy has been added successfully.', 'EtsyModule'),
+            '71' => $module->l('Return Policy has been updated successfully.', 'EtsyModule'),
+            '72' => $module->l('Return Policy has been deleted successfully.', 'EtsyModule'),
             '63' => $module->l('Selected products status has been updated successfully.', 'EtsyModule'),
             '64' => $module->l('The product has been enabled successfully.', 'EtsyModule'),
             '65' => $module->l('The product has been disabled successfully.', 'EtsyModule'),
@@ -114,6 +125,14 @@ class EtsyModule extends Module
             '59' => $module->l('Shop Section could not be deleted as it is being used in Profiles.', 'EtsyModule'),
             '64' => $module->l('Shop Section already exists. Please choose another title.', 'EtsyModule'),
             '65' => $module->l('Shop section can not be deleted because it is mapped with the Profile.', 'EtsyModule'),
+            /*
+             * Added language strings for return policy error messages
+             * @modifier Himanshu Vishwakarma
+             * @date 15-12-2025
+             */
+            '68' => $module->l('Return Policy could not be deleted. Please try again later.', 'EtsyModule'),
+            '74' => $module->l('Return Policy already exists. A return policy with the same values (Accepts Returns, Accepts Exchanges, Return Deadline) already exists.', 'EtsyModule'),
+            '75' => $module->l('Return Policy can not be deleted because it is mapped with the Profile.', 'EtsyModule'),
         );
 
         if (!empty($index) && !empty($type) && $type == 'conf') {
@@ -131,7 +150,11 @@ class EtsyModule extends Module
         }
     }
 
-    //Function definition to add an entry of Audit Log into Database
+    /* Function definition to add an entry of Audit Log into Database
+     * @date 23-05-2023
+     * @author
+     * @commenter Tanisha Gupta
+     */
     public static function auditLogEntry($auditLogEntry = '', $auditMethodName = '', $auditLogUser = '')
     {
         $auditLogTime = date("Y-m-d H:i:s");
@@ -232,9 +255,9 @@ class EtsyModule extends Module
             }
 
             if ($etsySuccess) {
-                return Tools::jsonEncode($etsyResponse);
+                return json_encode($etsyResponse);
             } else {
-                return Tools::jsonEncode($etsyResponse);
+                return json_encode($etsyResponse);
             }
         } else {
             return "Invalid Request.";
@@ -242,26 +265,78 @@ class EtsyModule extends Module
     }
 
     //Send cURL request to Etsy & get response
-    public static function etsyGetResponse($etsyRequestURI = '', $etsyRequestMethod = '', $etsyQueryString = '')
+    /*
+     * Added new parameter $etsyContentType that defines data content type
+     * @date 09-04-2023
+     * @author Tanisha Gupta
+     */
+    public static function etsyGetResponse($etsyRequestURI = '', $etsyRequestMethod = '', $etsyQueryString = '', $etsyContentType = '')
     {
-        if (!empty($etsyRequestURI)) {
-            $etsycURL = curl_init();
-            curl_setopt($etsycURL, CURLOPT_URL, $etsyRequestURI);
-            if ($etsyRequestMethod && $etsyQueryString != '') {
-                curl_setopt($etsycURL, CURLOPT_POST, 1);
-                curl_setopt($etsycURL, CURLOPT_POSTFIELDS, $etsyQueryString);
-            }
-            curl_setopt($etsycURL, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($etsycURL, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($etsycURL, CURLOPT_RETURNTRANSFER, 1);
-            $etsyResult = curl_exec($etsycURL);
-            curl_close($etsycURL);
-            return $etsyResult;
+        /**
+         * Added to generate access token when send request on etsy
+         * @date 09-04-2023
+         * @author Tanisha Gupta
+         */
+        $token = self::getAccessToken();
+        $config = Configuration::get('etsy_api_key');
+        /**
+         * Added the secret to the x-api-key header
+         * @modifier Himanshu Vishwakarma
+         * @date 11-12-2025
+         */
+        $secret = Configuration::get('etsy_api_secret');
+        if (!empty($etsyQueryString) && (empty($etsyContentType))) {
+            $headers = array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'x-api-key: ' . $config . ':' . $secret,
+                'Authorization: Bearer ' . $token
+            );
+        } else if (!empty($etsyQueryString) && ($etsyContentType == 'formtype')) {
+            $headers = array(
+                'Content-Type: multipart/form-data',
+                'x-api-key: ' . $config . ':' . $secret,
+                'Authorization: Bearer ' . $token
+            );
         } else {
-            return 'failed';
+            $headers = array(
+                'Content-Type: application/json',
+                'x-api-key: ' . $config . ':' . $secret,
+                'Authorization: Bearer ' . $token
+            );
         }
-    }
+        $connection = curl_init();
+        $url = Configuration::get('etsy_api_host') . Configuration::get('etsy_api_version') . "/application" . $etsyRequestURI;
 
+        /*
+        * Chages done to add the query parameter in the get request
+        * @date 31-03-2026
+        * @modifier Manish
+        * MPMAR2026 module_specific_issues
+        */
+        if ($etsyRequestMethod == 'GET' && !empty($etsyQueryString)) {
+            $url = $url . '?' . $etsyQueryString;
+        }
+        curl_setopt($connection, CURLOPT_URL, $url);
+        if ((!empty($etsyQueryString) && (empty($etsyRequestMethod) || $etsyRequestMethod == 'POST'))) {
+            curl_setopt($connection, CURLOPT_POST, 1);
+            curl_setopt($connection, CURLOPT_POSTFIELDS, $etsyQueryString);
+        } else if (!empty($etsyQueryString) && ($etsyRequestMethod == 'PUT' || $etsyRequestMethod == 'PATCH')) {
+            curl_setopt($connection, CURLOPT_CUSTOMREQUEST, $etsyRequestMethod);
+            curl_setopt($connection, CURLOPT_POSTFIELDS, $etsyQueryString);
+        }
+        if ($etsyRequestMethod == 'DELETE') {
+            curl_setopt($connection, CURLOPT_CUSTOMREQUEST, "DELETE");
+        }
+        curl_setopt($connection, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($connection, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($connection, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($connection, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($connection);
+        $info = curl_getinfo($connection);
+        curl_close($connection);
+        $result_data = json_decode($response, true);
+        return $result_data;
+    }
     //Function definition to test oAuth connection with Etsy Marketplace API
     public static function etsyTestConnection($apiData = array())
     {
@@ -354,7 +429,11 @@ class EtsyModule extends Module
     //To get user etsy shops details
     public static function etsyGetShopDetails()
     {
-        $etsyRequestURI = Configuration::get('etsy_api_host') . Configuration::get('etsy_api_version') . "/users/" . Configuration::get('etsy_api_user_id') . "/shops/?api_key=" . Configuration::get('etsy_api_key');
+        /**
+         * Changed url to fetch shop according to the v3
+         */
+        //$etsyRequestURI = Configuration::get('etsy_api_host') . Configuration::get('etsy_api_version') . "/users/" . Configuration::get('etsy_api_user_id') . "/shops/?api_key=" . Configuration::get('etsy_api_key');
+        $etsyRequestURI = "/users/" . Configuration::get('etsy_api_user_id') . "/shops";
         return self::etsyGetResponse($etsyRequestURI);
     }
 
@@ -364,7 +443,7 @@ class EtsyModule extends Module
         $etsyRequestURI = Configuration::get('etsy_api_host') . Configuration::get('etsy_api_version') . "/countries/?api_key=" . Configuration::get('etsy_api_key');
         $etsyCountriesList = self::etsyGetResponse($etsyRequestURI);
         if (!empty($etsyCountriesList)) {
-            $etsyCountriesList = Tools::jsonDecode($etsyCountriesList);
+            $etsyCountriesList = json_decode($etsyCountriesList);
             if (isset($etsyCountriesList->results)) {
                 $emptyDBCountryList = "TRUNCATE TABLE " . _DB_PREFIX_ . "etsy_countries";
                 if (Db::getInstance()->execute($emptyDBCountryList)) {
@@ -382,7 +461,7 @@ class EtsyModule extends Module
         $etsyRequestURI = Configuration::get('etsy_api_host') . Configuration::get('etsy_api_version') . "/regions/?api_key=" . Configuration::get('etsy_api_key');
         $etsyRegionsList = self::etsyGetResponse($etsyRequestURI);
         if (!empty($etsyRegionsList)) {
-            $etsyRegionsList = Tools::jsonDecode($etsyRegionsList);
+            $etsyRegionsList = json_decode($etsyRegionsList);
             if (isset($etsyRegionsList->results)) {
                 Db::getInstance()->execute("TRUNCATE TABLE " . _DB_PREFIX_ . "etsy_regions");
                 foreach ($etsyRegionsList->results as $etsyRegion) {
@@ -394,7 +473,13 @@ class EtsyModule extends Module
     }
 
     /** To sync profile products from PS table to etsy table */
-    public static function getAllProfileProducts()
+    /**
+     * Changes added by for localsync on profile level. Modified the function params to get the profile id
+     * @modifier pragya maurya
+     * @date 04-06-2024
+     * Etsy-enhancement-profile-level
+     */
+    public static function getAllProfileProducts($kbprofileid = false)
     {
         $method_name = 'EtsyModule::getAllProfileProducts()';
         EtsyModule::auditLogEntry('Local Sync job execution statrted.', $method_name);
@@ -402,9 +487,21 @@ class EtsyModule extends Module
         $productsInserted = 0;
         $productsUpdated = 0;
 
-        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET delete_track = '1'");
+        /**
+         * To fetch the products from that profile only
+         * @modifier pragya maurya
+         * @date 04-06-2024
+         * Etsy-enhancement-profile-level
+         */
+        if ($kbprofileid) {
+            Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET delete_track = '1' where id_etsy_profiles = " . (int) $kbprofileid);
+            $profiles = Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_profiles WHERE active = '1' AND id_etsy_profiles = " . (int) $kbprofileid);
+        } else {
+            Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET delete_track = '1'");
+            $profiles = Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_profiles WHERE active = '1'");
+        }
+        //End changes added
 
-        $profiles = DB::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_profiles WHERE active = '1'");
         if (!empty($profiles)) {
             foreach ($profiles as $profile) {
                 /* If Product Selection Type is Product in the Profile */
@@ -414,28 +511,28 @@ class EtsyModule extends Module
                     if (!empty($etsy_selected_product_array)) {
                         foreach ($etsy_selected_product_array as $etsy_product) {
                             if (!empty($etsy_product)) {
-                                /** Check if product is already exists in DB table */
+                                /** Check if product is already exists in Db table */
                                 $dataExistenceResult = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_product = '" . (int) $etsy_product . "'");
 
                                 $product_info = new Product($etsy_product, false, Context::getContext()->language->id);
                                 if ($dataExistenceResult == 0) {
                                     $insertSQL = "INSERT INTO " . _DB_PREFIX_ . "etsy_products_list SET "
-                                            . "id_etsy_products_list = '', "
-                                            . "id_etsy_profiles = '" . (int) $profile['id_etsy_profiles'] . "',"
-                                            . "id_product = '" . (int) $etsy_product . "', "
-                                            . "reference = '" . pSQL($product_info->reference) . "', "
-                                            . "delete_track = '0',"
-                                            . "date_added = NOW()";
-                                    DB::getInstance()->execute($insertSQL);
+                                        . "id_etsy_products_list = '', "
+                                        . "id_etsy_profiles = '" . (int) $profile['id_etsy_profiles'] . "',"
+                                        . "id_product = '" . (int) $etsy_product . "', "
+                                        . "reference = '" . pSQL($product_info->reference) . "', "
+                                        . "delete_track = '0',"
+                                        . "date_added = NOW()";
+                                    Db::getInstance()->execute($insertSQL);
                                     $productsInserted++;
                                 } else {
                                     $updateSQL = "UPDATE " . _DB_PREFIX_ . "etsy_products_list SET "
-                                            . "id_etsy_profiles = '" . (int) $profile['id_etsy_profiles'] . "',"
-                                            . "reference = '" . pSQL($product_info->reference) . "',"
-                                            . "delete_track = '0', "
-                                            . "is_error = '0'"
-                                            . "WHERE id_product = '" . (int) $etsy_product . "'";
-                                    if (DB::getInstance()->execute($updateSQL)) {
+                                        . "id_etsy_profiles = '" . (int) $profile['id_etsy_profiles'] . "',"
+                                        . "reference = '" . pSQL($product_info->reference) . "',"
+                                        . "delete_track = '0', "
+                                        . "is_error = '0'"
+                                        . "WHERE id_product = '" . (int) $etsy_product . "'";
+                                    if (Db::getInstance()->execute($updateSQL)) {
                                         $productsUpdated++;
                                     }
                                 }
@@ -455,26 +552,26 @@ class EtsyModule extends Module
                                 if (isset($categoryProductsList['error']) && $categoryProductsList['error'] == '') {
                                     foreach ($categoryProductsList['success'] as $categoryProduct) {
 
-                                        /** Check if product is already exists in DB table */
+                                        /** Check if product is already exists in Db table */
                                         $dataExistenceResult = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_product = '" . (int) $categoryProduct['id_product'] . "'");
                                         if ($dataExistenceResult == 0) {
                                             $insertSQL = "INSERT INTO " . _DB_PREFIX_ . "etsy_products_list SET "
-                                                    . "id_etsy_products_list = '', "
-                                                    . "id_etsy_profiles = '" . (int) $profile['id_etsy_profiles'] . "',"
-                                                    . "id_product = '" . (int) $categoryProduct['id_product'] . "', "
-                                                    . "reference = '" . pSQL($categoryProduct['reference']) . "', "
-                                                    . "delete_track = '0',"
-                                                    . "date_added = NOW()";
-                                            DB::getInstance()->execute($insertSQL);
+                                                . "id_etsy_products_list = '', "
+                                                . "id_etsy_profiles = '" . (int) $profile['id_etsy_profiles'] . "',"
+                                                . "id_product = '" . (int) $categoryProduct['id_product'] . "', "
+                                                . "reference = '" . pSQL($categoryProduct['reference']) . "', "
+                                                . "delete_track = '0',"
+                                                . "date_added = NOW()";
+                                            Db::getInstance()->execute($insertSQL);
                                             $productsInserted++;
                                         } else {
                                             $updateSQL = "UPDATE " . _DB_PREFIX_ . "etsy_products_list SET "
-                                                    . "id_etsy_profiles = '" . (int) $profile['id_etsy_profiles'] . "',"
-                                                    . "reference = '" . pSQL($categoryProduct['reference']) . "',"
-                                                    . "delete_track = '0', "
-                                                    . "is_error = '0'"
-                                                    . "WHERE id_product = '" . (int) $categoryProduct['id_product'] . "'";
-                                            if (DB::getInstance()->execute($updateSQL)) {
+                                                . "id_etsy_profiles = '" . (int) $profile['id_etsy_profiles'] . "',"
+                                                . "reference = '" . pSQL($categoryProduct['reference']) . "',"
+                                                . "delete_track = '0', "
+                                                . "is_error = '0'"
+                                                . "WHERE id_product = '" . (int) $categoryProduct['id_product'] . "'";
+                                            if (Db::getInstance()->execute($updateSQL)) {
                                                 $productsUpdated++;
                                             }
                                         }
@@ -487,11 +584,11 @@ class EtsyModule extends Module
             }
         }
 
-        //Set delete flag for the products which are not present the the list (OR directly delete from the DB if products are not listed on etsy)
+        //Set delete flag for the products which are not present the the list (OR directly delete from the Db if products are not listed on etsy)
         //Set Profile ID to 0 for such products so that once item is made inactive on etsy (on deleteItemsFromEtsy function execution). Item will be deleted from the table if profile id is blank as its unmapped from the profile
-        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET id_etsy_profiles = 0, delete_flag = '1' WHERE delete_track = '1' AND listing_id IS NOT NULL");
+        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET id_etsy_profiles = 0, delete_flag = '1' WHERE delete_track = '1' AND listing_id IS NOT NULL");
 
-        DB::getInstance()->execute("DELETE FROM " . _DB_PREFIX_ . "etsy_products_list WHERE delete_track = '1' AND listing_id IS NULL");
+        Db::getInstance()->execute("DELETE FROM " . _DB_PREFIX_ . "etsy_products_list WHERE delete_track = '1' AND listing_id IS NULL");
 
         $auditLogEntryString = 'Local sync execution completed.<br>Total products added - ' . $productsInserted . ' <br>Total Products Updated - ' . $productsUpdated;
         EtsyModule::auditLogEntry($auditLogEntryString, $method_name);
@@ -520,7 +617,13 @@ class EtsyModule extends Module
     }
 
     /** To get products from table which needs to be listed */
-    public static function getProductsToListOnEtsy($limit, $kbproductid = false)
+    /**
+     * Changes added for product sync on etsy on profile level. Modified the function params to get the profile id
+     * @modifier pragya maurya
+     * @date 04-06-2024
+     * Etsy-enhancement-profile-level
+     */
+    public static function getProductsToListOnEtsy($limit, $kbproductid = false, $kbprofileid = false)
     {
         /** TODO Add Producy status condtion& join with product table */
         /*
@@ -528,20 +631,34 @@ class EtsyModule extends Module
          * DOC - 2nd Apr 2020
          * Added stock available condition to avoid products having 0 quantity to sync on etsy
          */
+        /*
+        * Added the missing alias name for the etsy_product_list table in the delete flad and lisitng status.
+        * @date - 31-03-2026
+        * @modifier - Manish
+        * MPMAR2026 module_specific_issue
+        */
         $products_query = "SELECT pl.* FROM " . _DB_PREFIX_ . "etsy_products_list pl "
-                . "INNER JOIN " . _DB_PREFIX_ . "product p ON p.id_product = pl.id_product "
-                . "WHERE p.active = '1'"
-                . "AND delete_flag = '0' "
-                . "AND pl.active = '1'"
-                . "AND (listing_status = 'Updated' OR listing_status = 'Pending' OR listing_status = 'Relisting')";
+            . "INNER JOIN " . _DB_PREFIX_ . "product p ON p.id_product = pl.id_product "
+            . "WHERE p.active = '1'"
+            . "AND pl.delete_flag = '0' "
+            . "AND pl.active = '1'"
+            . "AND (pl.listing_status = 'Updated' OR pl.listing_status = 'Pending' OR pl.listing_status = 'Relisting')";
         // OR listing_status = 'Sold Out' Removed the Sold_Out status as on product update from the admin panel, We are setting the status to Updated. To avoid the following situation: In case of large number of Sold Out Product, CRON will stuck in exectuing starting 20 Sold Out products each time
         if ($kbproductid) {
             $products_query .= ' AND pl.id_product = ' . (int) $kbproductid;
+        }
+        /**
+         * Changes added for product sync on etsy on profile level. modified the query in case if the profile_id is present
+         * @modifier pragya maurya
+         * @date 04-06-2024
+         * Etsy-enhancement-profile-level
+         */ else if ($kbprofileid) {
+            $products_query .= ' AND pl.id_etsy_profiles = ' . (int) $kbprofileid;
         } else {
             $products_query .= ' AND is_error = 0';
         }
         $products_query .= ' LIMIT ' . $limit;
-        return DB::getInstance()->executeS($products_query, true, false);
+        return Db::getInstance()->executeS($products_query, true, false);
     }
 
     /** To prepare array to listing on etsy */
@@ -549,27 +666,47 @@ class EtsyModule extends Module
     {
         $listingArray = array();
         if (isset($product) && count($product) > 0 && !empty($language)) {
-            $profile_details = DB::getInstance()->getRow("SELECT ef.*, ss.shop_section_id FROM " . _DB_PREFIX_ . "etsy_profiles ef "
-                    . "LEFT JOIN " . _DB_PREFIX_ . "etsy_shop_section ss "
-                    . "on (ef.id_etsy_shop_section = ss.id_etsy_shop_section) "
-                    . "WHERE id_etsy_profiles = '" . (int) $product['id_etsy_profiles'] . "'", true, false);
+            /*
+             * Updated query to include return_policy_id from etsy_return_policy table
+             * @modifier Himanshu Vishwakarma
+             * @date 15-12-2024
+             */
+            $profile_details = Db::getInstance()->getRow("SELECT ef.*, ss.shop_section_id, rp.return_policy_id FROM " . _DB_PREFIX_ . "etsy_profiles ef "
+                . "LEFT JOIN " . _DB_PREFIX_ . "etsy_shop_section ss "
+                . "on (ef.id_etsy_shop_section = ss.id_etsy_shop_section) "
+                . "LEFT JOIN " . _DB_PREFIX_ . "etsy_return_policy rp "
+                . "on (ef.id_etsy_return_policy = rp.id_etsy_return_policy) "
+                . "WHERE id_etsy_profiles = '" . (int) $product['id_etsy_profiles'] . "'", true, false);
 
             //Get Product Inventory
             $quantity = KbMarketplaceIntegration::getProductInventory($product['id_product']);
-            /*
-             * changes by ridhabh jain for out of stock product
+            /**
+             * Made changes to fix the issue with out-of-stock products.
+             * TGoct2023 Out-of-stock-issue
+             * @date 12-10-2023
+             * @author Tanisha Gupta
              */
-            if ($quantity <= 0) {
-                $pro_obj = new Product($product['id_product']);
-                $stock = $pro_obj->out_of_stock;
-                if ((int)$stock == 1) {
-                    $quantity = 999;
-                } else if ((int)$stock == 2) {
-                    $out_of_stock = Configuration::get('PS_ORDER_OUT_OF_STOCK');
-                    if ($out_of_stock == 1) {
-                        $quantity = 999;
-                    }
+            $availibilty = false;
+            $pro_obj = new Product($product['id_product']);
+            $allow_oosp = $pro_obj->isAvailableWhenOutOfStock(StockAvailable::outOfStock($pro_obj->id));
+            //If the Item is available_for_order then only check other conditions otherwise Out of stock.
+            //If the Item is having quantity then set it as In stock
+            if ($pro_obj->available_for_order) {
+                if ($quantity > 0) {
+                    // The product is available when quantity is less than or equal to 0
+                    $availibilty = true;
+                } else if ($allow_oosp == 1) {
+                    // The product is available when "allow_oosp" is enabled
+                    $availibilty = true;
                 }
+            }
+            // If the product is not available and lisiting id not exist, return $listingArray 
+            if (!$availibilty && empty($product['listing_id'])) {
+                // If the product is not available, return $listingArray 
+                return $listingArray;
+            } else if ($quantity <= 0) {
+                // Set quantity to '999' when available but with a quantity of 0
+                $quantity = '999';
             }
             /*
              * changes over
@@ -579,7 +716,12 @@ class EtsyModule extends Module
             $tagArray = array();
             $tagTempArray = array();
             $productTags = Tag::getProductTags($product['id_product']);
-            if (count($productTags) && isset($productTags[$language])) {
+            /**
+             * Added empty condition to fix the error
+             * @date 12-04-2023
+             * @author Tanisha Gupta
+             */
+            if (!empty($productTags) && isset($productTags[$language])) {
                 $tagArray = $productTags[$language];
                 if (count($tagArray) > 13) {
                     $tagArray = array_slice($tagArray, 0, 13);
@@ -614,25 +756,38 @@ class EtsyModule extends Module
                     $featureTempArray[] = Tools::substr($feature, 0, 45);
                 }
             }
-
-            /* If Quantity is greater than 0 & Item is marked as Sold Out then mark the item for relist again */
-            //if ($product['sold_flag'] == 1) {
-            //DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Relisting', delete_flag = '0', is_error = 0, renew_flag = '1', sold_flag = '0' WHERE  id_product = '" . (int) $product_details->id . "'");
-            //} else {
             $profileCategory = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'etsy_category_mapping WHERE id_etsy_profiles = ' . (int) $product['id_etsy_profiles'], true, false);
             $etsy_category = self::getEtsyCategorybyProfileANDCategory($profileCategory, $product_details->id_category_default, $profile_details['etsy_product_type']);
 
             //Get Shipping Template ID
-            $shipping_template_id = DB::getInstance()->getValue("SELECT shipping_template_id FROM " . _DB_PREFIX_ . "etsy_shipping_templates WHERE id_etsy_shipping_templates = '" . (int) $profile_details['id_etsy_shipping_templates'] . "'");
+            $shipping_template_id = Db::getInstance()->getValue("SELECT shipping_template_id FROM " . _DB_PREFIX_ . "etsy_shipping_templates WHERE id_etsy_shipping_templates = '" . (int) $profile_details['id_etsy_shipping_templates'] . "'");
 
             $lang_data = new Language($language);
             if (!empty($shipping_template_id)) {
                 if ($quantity > 999) {
                     $quantity = 999;
                 }
+                //changes by gopi for alter quantity
+                /* Alter quantity logic for product */
+                if ($profile_details['alter_quantity'] == "" || $profile_details['alter_quantity'] == 0 || $quantity < $profile_details['alter_quantity']) {
+                    $quantity = $quantity;
+                } else {
+                    $quantity = $profile_details['alter_quantity'];
+                }
+                //changes by gopi end
 
+                /**
+                 * Force default (base) currency to get the price in the base currency
+                 * Added this to fix the issue with the price not calculated according to the excange rate.
+                 * @modifier Himanshu Vishwakarma
+                 * @date 11-12-2025
+                 */
+                $context = Context::getContext();
+
+                // Force default (base) currency
+                $default_currency_id = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+                $context->currency = new Currency($default_currency_id);
                 $price = Product::getPriceStatic($product['id_product'], true, null, 6, null, false, true);
-
                 $customize_price = $profile_details['custom_pricing'];
                 $customize_price_value = $profile_details['custom_price'];
                 $customize_price_type = $profile_details['price_type'];
@@ -645,6 +800,7 @@ class EtsyModule extends Module
                     } else {
                         $price_change = $customize_price_value;
                     }
+
                     if ($customize_price_reduction == 'increase') {
                         $price = $price + $price_change;
                     } else {
@@ -654,49 +810,73 @@ class EtsyModule extends Module
                 if ($price < 0) {
                     $price = 0;
                 }
-
                 $etsy_desc_type = Configuration::get('etsy_desc_type');
                 $etsy_currency_id = Currency::getIdByIsoCode(Configuration::get('etsy_currency'), Context::getContext()->shop->id);
 
+
+                /**
+                 * This code is responsible to check that if the custom product details are present then need to use the description of the same
+                 * @modifier Pragya Maurya
+                 * @date 26-05-2024
+                 * PMMay2024 ebay-custom-product-details
+                 */
+                $query_get_site = 'SELECT * FROM ' . _DB_PREFIX_ . 'kb_etsy_profile_product_custom_details WHERE profile_product_id = ' . (int) $product['id_etsy_products_list'];
                 $strip_tags = array('</p>', '<br />', '<br>', '</div>', '</li>');
-                if ($etsy_desc_type == 'short') {
-                    $description = str_replace($strip_tags, "\n", $product_details->description_short);
-                } else if ($etsy_desc_type == 'long') {
-                    $description = str_replace($strip_tags, "\n", $product_details->description);
+                $site_details = Db::getInstance()->getRow($query_get_site);
+                if ((!empty($site_details['description']) && $site_details['custom_status'] == '1')) {
+                    $desc = str_replace($strip_tags, "\n", $site_details['description']);
+                    $description = trim(strip_tags($desc));
                 } else {
-                    if (Tools::isEmpty($product_details->description_short)) {
+                    if ($etsy_desc_type == 'short') {
+                        $description = str_replace($strip_tags, "\n", $product_details->description_short);
+                    } else if ($etsy_desc_type == 'long') {
                         $description = str_replace($strip_tags, "\n", $product_details->description);
                     } else {
-                        $description = str_replace($strip_tags, "\n", $product_details->description_short . "\n" . $product_details->description);
+                        if (Tools::isEmpty($product_details->description_short)) {
+                            $description = str_replace($strip_tags, "\n", $product_details->description);
+                        } else {
+                            $description = str_replace($strip_tags, "\n", $product_details->description_short . "\n" . $product_details->description);
+                        }
                     }
+                    $description = trim(strip_tags($description));
                 }
-                $description = trim(strip_tags($description));
 
                 $short_description = strip_tags(str_replace($strip_tags, "\n", $product_details->description_short));
-                $customize_title = $profile_details['customize_product_title'];
-                if (!Tools::isEmpty($customize_title)) {
-                    $customize_title = str_replace('{product_title}', $product_details->name, $customize_title);
-                    $customize_title = str_replace('{id_product}', $product_details->id, $customize_title);
-                    $customize_title = str_replace('{manufacturer_name}', Manufacturer::getNameById($product_details->id_manufacturer), $customize_title);
-                    $customize_title = str_replace('{supplier_name}', $product_details->supplier_name, $customize_title);
-                    $customize_title = str_replace('{reference}', $product_details->reference, $customize_title);
-                    $customize_title = str_replace('{ean13}', $product_details->ean13, $customize_title);
-                    $customize_title = str_replace('{short_description}', $short_description, $customize_title);
-                    $customize_title = str_replace('{price}', Tools::convertPrice($price, $etsy_currency_id), $customize_title);
+
+                /**
+                 * This code is responsible to check that if the custom product details are present then need to use the description of the same
+                 * @modifier Pragya Maurya
+                 * @date 26-05-2024
+                 * PMMay2024 ebay-custom-product-details
+                 */
+                if (!empty($site_details['title']) && $site_details['custom_status'] == '1') {
+                    $customize_title = strip_tags($site_details['title']);
                 } else {
-                    $customize_title = $product_details->name;
+                    $customize_title = $profile_details['customize_product_title'];
+                    if (!Tools::isEmpty($customize_title)) {
+                        $customize_title = str_replace('{product_title}', $product_details->name, $customize_title);
+                        $customize_title = str_replace('{id_product}', $product_details->id, $customize_title);
+                        $customize_title = str_replace('{manufacturer_name}', Manufacturer::getNameById($product_details->id_manufacturer), $customize_title);
+                        $customize_title = str_replace('{supplier_name}', $product_details->supplier_name, $customize_title);
+                        $customize_title = str_replace('{reference}', $product_details->reference, $customize_title);
+                        $customize_title = str_replace('{ean13}', $product_details->ean13, $customize_title);
+                        $customize_title = str_replace('{short_description}', $short_description, $customize_title);
+                        $customize_title = str_replace('{price}', Tools::convertPrice($price, $etsy_currency_id), $customize_title);
+                    } else {
+                        $customize_title = $product_details->name;
+                    }
                 }
 
                 if (Tools::isEmpty($description)) {
                     $description = "NA";
                 }
-                
+
                 // As per etsy, title cannot include any of the following characters: $ ^ `.
                 $filtered_title = str_replace(array("$", "^", ".", "`"), array("", "", "", ""), $customize_title);
-                
+
                 //Title cannot contain the characters %, &, or : more than once
                 $filtered_title = self::replaceInstance($filtered_title);
-                
+
                 $filtered_title = Tools::substr(trim($filtered_title), 0, 140);
 
                 $listingArray = array(
@@ -707,59 +887,105 @@ class EtsyModule extends Module
                     'title' => $filtered_title,
                     'description' => $description,
                     'tags' => implode(',', $tagTempArray),
-                    'price' => Tools::convertPrice($price, $etsy_currency_id),
+                    'price' => (float) Tools::convertPrice($price, $etsy_currency_id),
                     'is_customizable' => $profile_details['is_customizable'],
                     'taxonomy_id' => $etsy_category,
                     'who_made' => $profile_details['who_made'],
                     'is_supply' => $profile_details['is_supply'],
                     'when_made' => $profile_details['when_made'],
                     'shop_section_id' => $profile_details['shop_section_id'],
+                    /*
+                     * Added return_policy_id to listing array for product sync
+                     * @modifier Himanshu Vishwakarma
+                     * @date 15-12-2025
+                     */
+                    'return_policy_id' => isset($profile_details['return_policy_id']) ? $profile_details['return_policy_id'] : '',
                     'occassion' => $profile_details['occassion'],
                     'should_auto_renew' => $profile_details['should_auto_renew'],
                     'language' => Tools::strtolower($lang_data->iso_code),
-                    'shipping_template_id' => $shipping_template_id,
+                    /**
+                     * Changed parameter from shipping_template_id to shipping_profile_id
+                     * @date 12-04-2023
+                     * @author Tanisha Gupta 
+                     */
+                    'shipping_profile_id' => $shipping_template_id,
                     'materials' => implode(',', $featureTempArray),
                     'listing_status' => $product['listing_status']
                 );
 
-                //In case recipient is not provided
-//                if (empty($profile_details['recipient'])) {
-//                    unset($listingArray['recipient']);
-//                }
+
+
+
                 //changes by gopi for sycing weight and dimension on 23 march 2021
                 $dimension_unit = Configuration::get('PS_DIMENSION_UNIT');
                 $weight_unit = Configuration::get('PS_WEIGHT_UNIT');
                 //only below mentioned units are allowed on etsy
                 $etsy_allowed_weight_unit = array('oz', 'lb', 'g', 'kg');
                 $etsy_dimension_allowed = array('in', 'ft', 'mm', 'cm', 'm');
-                if ($weight_unit != '' && in_array($weight_unit, $etsy_allowed_weight_unit)) {
-
-                    
-                    $listingArray['item_weight'] = (float) number_format((float) $product_details->weight, 2, '.', '');
-                    if ($weight_unit = 'kg') {
-                        $listingArray['item_weight']  =  $listingArray['item_weight'] *1000;
-                        $weight_unit = 'g';
-                    }
-                    $listingArray['item_weight_unit'] = $weight_unit; 
-
+                /**
+                 * Added condition if length, width, height and item_dimensions_unit should be greater than 0
+                 * @date 12-04-2023
+                 * @author Tanisha Gupta
+                 */
+                if ($weight_unit != '' && in_array($weight_unit, $etsy_allowed_weight_unit) && (float) $product_details->weight > 0) {
+                    /**
+                     * Made changes to refrain from applying a formatting function to the number in order to maintain its original value and avoid changing it to 0.00.
+                     * As it gives output for 0.004 as 0.00
+                     * TG2023may Remove-Formatting
+                     * @date 22-05-2023
+                     * @modifier Tanisha Gupta
+                     */
+                    $listingArray['item_weight'] = (float) $product_details->weight;
+                    $listingArray['item_weight_unit'] = $weight_unit;
                 }
-                
+
                 if ($dimension_unit != '' && in_array($dimension_unit, $etsy_dimension_allowed)) {
-                    $listingArray['item_length'] = (float) number_format((float) $product_details->width, 2, '.', '');
-                    $listingArray['item_width'] = (float) number_format((float) $product_details->height, 2, '.', '');
-                    $listingArray['item_height'] = (float) number_format((float) $product_details->depth, 2, '.', '');
-                    if ($dimension_unit = 'cm') {
-                        $listingArray['item_length'] = $listingArray['item_length']* 10;
-                        $listingArray['item_width'] =  $listingArray['item_width'] * 10;
-                        $listingArray['item_height'] =  $listingArray['item_height'] * 10;
-                        $dimension_unit = 'mm';
+                    if ((float) $product_details->depth > 0) {
+                        /**
+                         * Made changes to refrain from applying a formatting function to the number in order to maintain its original value and avoid changing it to 0.00.
+                         * As it gives output for 0.004 as 0.00
+                         * TG2023may Remove-Formatting
+                         * @date 22-05-2023
+                         * @modifier Tanisha Gupta
+                         */
+                        $listingArray['item_length'] = (float) $product_details->depth;
+                        $listingArray['item_dimensions_unit'] = $dimension_unit;
                     }
-                    $listingArray['item_dimensions_unit'] = $dimension_unit;   
+                    if ((float) $product_details->width > 0) {
+                        /**
+                         * Made changes to refrain from applying a formatting function to the number in order to maintain its original value and avoid changing it to 0.00.
+                         * As it gives output for 0.004 as 0.00
+                         * TG2023may Remove-Formatting
+                         * @date 22-05-2023
+                         * @modifier Tanisha Gupta
+                         */
+                        $listingArray['item_width'] = (float) $product_details->width;
+                        $listingArray['item_dimensions_unit'] = $dimension_unit;
+                    }
+                    if ((float) $product_details->height > 0) {
+                        /**
+                         * Made changes to refrain from applying a formatting function to the number in order to maintain its original value and avoid changing it to 0.00.
+                         * As it gives output for 0.004 as 0.00
+                         * TG2023may Remove-Formatting
+                         * @date 22-05-2023
+                         * @modifier Tanisha Gupta
+                         */
+                        $listingArray['item_height'] = (float) $product_details->height;
+                        $listingArray['item_dimensions_unit'] = $dimension_unit;
+                    }
                 }
-                //print_r($listingArray);die;
                 //changes by gopi end here
                 if (empty($profile_details['shop_section_id'])) {
                     unset($listingArray['shop_section_id']);
+                }
+
+                /*
+                 * Added check to unset return_policy_id if empty
+                 * @modifier Himanshu Vishwakarma
+                 * @date 15-12-2025
+                 */
+                if (empty($profile_details['return_policy_id'])) {
+                    unset($listingArray['return_policy_id']);
                 }
 
                 if (empty($profile_details['is_customizable'])) {
@@ -844,172 +1070,340 @@ class EtsyModule extends Module
         $method_name = 'EtsyModule::etsyCreateListings()';
         self::auditLogEntry('Job execution started to sync item on etsy.', $method_name);
         if (!empty($listingArray) && count($listingArray) > 0) {
-            foreach ($listingArray as $listing) {
-                if (isset($listing['id_product'])) {
-                    /* In case of renew & update product */
-                    $item_inventory = KbMarketplaceIntegration::getProductInventory($listing['id_product']);
-                    
-                    /*
-                     * changes by rishabh jain
-                     */
-                    $quantity = $item_inventory;
-                    if ($quantity <= 0) {
+            /**
+             * Fetch shop id to set the same in the request URL
+             * @date 13-04-2023
+             * @author Tanisha Gupta
+             */
+            $shop = self::etsyGetShopDetails();
+            if (isset($shop['shop_id'])) {
+                foreach ($listingArray as $listing) {
+                    if (isset($listing['id_product'])) {
+                        /* In case of renew & update product */
+                        $item_inventory = KbMarketplaceIntegration::getProductInventory($listing['id_product']);
+                        /*
+                         * changes by rishabh jain
+                         */
+                        $quantity = $item_inventory;
+                        /**
+                         * Made changes to fix the issue with out-of-stock products.
+                         * TGoct2023 Out-of-stock-issue
+                         * @date 12-10-2023
+                         * @author Tanisha Gupta
+                         */
+                        $availibilty = false;
                         $pro_obj = new Product($listing['id_product']);
-                           $stock = $pro_obj->out_of_stock;
-                        if ((int)$stock == 1) {
-                            $quantity = 999;
-                        } else if ((int)$stock == 2) {
-                            $out_of_stock = Configuration::get('PS_ORDER_OUT_OF_STOCK');
-                            if ($out_of_stock == 1) {
-                                $quantity = 999;
+                        $allow_oosp = $pro_obj->isAvailableWhenOutOfStock(StockAvailable::outOfStock($pro_obj->id));
+                        //If the Item is available_for_order then only check other conditions otherwise Out of stock.
+                        //If the Item is having quantity then set it as In stock
+                        if ($pro_obj->available_for_order) {
+                            if ($quantity > 0) {
+                                // The product is available when quantity is less than or equal to 0
+                                $availibilty = true;
+                            } else if ($allow_oosp == 1) {
+                                // The product is available when "allow_oosp" is enabled
+                                $availibilty = true;
                             }
                         }
-                    }
-                    $item_inventory = $quantity;
-                    /*
-                     * changes over
-                     */
-                    if (!empty($listing['listing_id'])) {
-                        $etsyRequestURI = '/listings/' . $listing['listing_id'] . '/';
-                        $etsyRequestMethod = 'PUT';
-                        $etsyQueryString = $listing;
-                        unset($etsyQueryString['property']);
-                        unset($etsyQueryString['id_product']);
-                        //unset($etsyQueryString['quantity']);
-                        unset($etsyQueryString['price']);
-                        unset($etsyQueryString['listing_status']);
 
-                        /** Update current status of item by requesting product info from etsy. */
-                        $request_url = '/listings/' . $listing['listing_id'] . '/';
-                        $listing_status_data = Tools::jsonDecode(self::etsyGetOAuthResponse($request_url, "GET", array()));
-                        //item
-                        //print_r($listing_status_data);die;
-                        /** In case of sold out, Inventory needs to passed so unsettting Inventory in else condition (If item inventory is zero on Etsy) Otherwise Etsy will return the following error i.e. quantity_cannot_be_empty_,_Invalid_edit_attempted_] */
-                        if ($listing_status_data->results[0]->state == 'sold_out') {
-                            if ($listing['quantity'] > 0) {
-                                $etsyQueryString['renew'] = 1;
-                                DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Updated', expiry_date = '" . date("Y-m-d H:i:s", $listing_status_data->results[0]->ending_tsz) . "', sold_flag = '1' WHERE id_product = '" . (int) $listing['id_product'] . "'");
-                            } else {
-                                DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Inactive', expiry_date = '" . date("Y-m-d H:i:s", $listing_status_data->results[0]->ending_tsz) . "', sold_flag = '1' WHERE id_product = '" . (int) $listing['id_product'] . "'");
-                                continue;
+                        if (!$availibilty) {
+                            // If the product is not available, then set quantity as 0. 
+                            $quantity = 0;
+                        } else if ($quantity <= 0) {
+                            // Set quantity to '999' when available but with a quantity of 0
+                            $quantity = '999';
+                        }
+                        $item_inventory = $quantity;
+                        /*
+                         * changes over
+                         */
+                        if (!empty($listing['listing_id'])) {
+                            $etsyRequestMethod = 'PUT';
+                            $etsyQueryString = $listing;
+                            unset($etsyQueryString['property']);
+                            unset($etsyQueryString['id_product']);
+                            //unset($etsyQueryString['quantity']);
+                            unset($etsyQueryString['price']);
+                            unset($etsyQueryString['listing_status']);
+
+                            /*
+                             * Get readiness_state_id using the new centralized method
+                             * This handles both existing and new listings
+                             * @date 15-01-2025
+                             * @modifier Himanshu Vishwakarma
+                             */
+                            $readiness_state_id = self::getShopReadinessStateId($shop['shop_id'], $listing['listing_id'], $listing['id_profile']);
+
+                            /*
+                             * Add readiness_state_id for physical listings if available
+                             * @modifier Himanshu Vishwakarma
+                             * @date 15-01-2025
+                             */
+                            if (!empty($readiness_state_id)) {
+                                $etsyQueryString['readiness_state_id'] = $readiness_state_id;
                             }
-                        } else {
-                            if ($listing_status_data->results[0]->state == 'inactive' || $listing_status_data->results[0]->state == 'edit') {
-                                /* In case renew_flag is not set in the $listing & Item is expired OR Inactive (As per above product status request of etsy), then no need to update the product on the server because without renew flag of the expired/inactive item, relist. In that case, Reset the Update flag in the DB  */
-                                //if(empty($listing['renew_flag'])) {
-                                //    DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Inactive', expiry_date = '".date("Y-m-d H:i:s", $listing_status_data->results[0]->ending_tsz)."', renew_flag = '0', is_error = '0', listing_error = '' WHERE id_product = '" . (int) $listing['id_product'] . "'");
-                                //    continue;
-                                //}
-                            } else if ($listing_status_data->results[0]->state == 'expired') {
-                                if (empty($listing['renew_flag'])) {
-                                    DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Expired', expiry_date = '" . date("Y-m-d H:i:s", $listing_status_data->results[0]->ending_tsz) . "', renew_flag = '0', is_error = '0', listing_error = ''  WHERE id_product = '" . (int) $listing['id_product'] . "'");
-                                    continue;
+
+                            /** Update current status of item by requesting product info from etsy. */
+                            $etsyRequestURI = '/listings/' . $listing['listing_id'];
+                            $listing_status_data = self::etsyGetResponse($etsyRequestURI, "GET", array());
+
+
+                            /** In case of sold out, Inventory needs to passed so unsettting Inventory in else condition (If item inventory is zero on Etsy) Otherwise Etsy will return the following error i.e. quantity_cannot_be_empty_,_Invalid_edit_attempted_] */
+                            if ($listing_status_data['state'] == 'sold_out') {
+                                /**
+                                 * Fixes to add the state active param in the API to make the listing active when item is sold out and reslisting again. 
+                                 * @modifer Manish
+                                 * @date 22-04-2026
+                                 * MPAPR2026 sold_out_item_not_resync_issue
+                                 */
+                               if ($listing['quantity'] > 0) {
+                                    $etsyQueryString['renew'] = 1;
+                                    $etsyQueryString['state'] = 'active';
+                                    Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Updated', expiry_date = '" . date("Y-m-d H:i:s", $listing_status_data['ending_timestamp']) . "', sold_flag = '1' WHERE id_product = '" . (int) $listing['id_product'] . "'");
                                 } else {
-                                    /* In case of relist as well, It item inventory is zero, then don't do anything */
-                                    if ($item_inventory == 0) {
+                                    Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Inactive', expiry_date = '" . date("Y-m-d H:i:s", $listing_status_data['ending_timestamp']) . "', sold_flag = '1' WHERE id_product = '" . (int) $listing['id_product'] . "'");
+                                    continue;
+                                }
+                            } else {
+                                if ($listing_status_data['state'] == 'inactive' || $listing_status_data['state'] == 'edit') {
+                                    /* In case renew_flag is not set in the $listing & Item is expired OR Inactive (As per above product status request of etsy), then no need to update the product on the server because without renew flag of the expired/inactive item, relist. In that case, Reset the Update flag in the Db  */
+                                } else if ($listing_status_data['state'] == 'expired') {
+                                    if (empty($listing['renew_flag'])) {
+                                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Expired', expiry_date = '" . date("Y-m-d H:i:s", $listing_status_data['ending_timestamp']) . "', renew_flag = '0', is_error = '0', listing_error = ''  WHERE id_product = '" . (int) $listing['id_product'] . "'");
                                         continue;
+                                    } else {
+                                        /* In case of relist as well, It item inventory is zero, then don't do anything */
+                                        if ($item_inventory == 0) {
+                                            continue;
+                                        }
                                     }
                                 }
+                                unset($etsyQueryString['quantity']);
                             }
-                            unset($etsyQueryString['quantity']);
-                        }
-
-                        /* In cae of edit, If item is expired, Set the renew flag else remove the renew flag */
-                        if (date("Y-m-d H:i:s", $listing_status_data->results[0]->ending_tsz) > date("Y-m-d H:i:s") && $listing_status_data->results[0]->state != 'sold_out') {
-                            unset($etsyQueryString['renew']);
-                        } else {
-                            $etsyQueryString['renew'] = 1;
-                        }
-                        
-                        /* Parameter to set status as Sold Out in DB in case item is SOLD OUT */
-                        $sold_out = false;
-                        if ($item_inventory == 0 && !empty($listing['listing_id'])) {
-                            $sold_out = true;
-                            /* In case of Sold Out, Set the Status as Inactive on Etsy */
-                            $etsyQueryString['state'] = 'inactive';
-                        }
-                    } else {
-                        /* In case of new item, If inventory is zero then product will not be synced */
-                        if ($item_inventory == 0) {
-                            continue;
-                        }
-                        /* Create new product on etsy */
-                        $etsyRequestURI = '/listings/';
-                        $etsyRequestMethod = 'POST';
-                        $etsyQueryString = $listing;
-                        unset($etsyQueryString['id_product']);
-                        unset($etsyQueryString['id_profile']);
-                    }
-
-                    $response = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
-                    if (!empty($response) && isset($response->results)) {
-                        $listing_id = $response->results[0]->listing_id;
-                        if (!empty($listing_id)) {
-                            /* If listing id was not set in the Original Array, then product was created else product was  updated OR Renewed */
-                            if (empty($listing['listing_id'])) {
-                                $listingsCreated++;
-                                DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_id = '" . (int) $listing_id . "', listing_status = 'Listed', expiry_date = '" . date("Y-m-d H:i:s", $response->results[0]->ending_tsz) . "', date_listed = NOW(), listing_error = '' WHERE id_product = '" . (int) $listing['id_product'] . "' AND id_product_attribute = '0'");
+                            /* In cae of edit, If item is expired, Set the renew flag else remove the renew flag */
+                            if (date("Y-m-d H:i:s", $listing_status_data['ending_timestamp']) > date("Y-m-d H:i:s") && $listing_status_data['state'] != 'sold_out') {
+                                unset($etsyQueryString['renew']);
                             } else {
-                                /* In case of update/renew, Get listing details & set the price/quantity of the item. In case of variation/normal product, price & quantity will be set.
-                                 * Variation will be removed & after variation sync, Variation will be listed again.
-                                 */
+                                $etsyQueryString['renew'] = 1;
+                            }
+
+                            /* Parameter to set status as Sold Out in Db in case item is SOLD OUT */
+                            $sold_out = false;
+                            if ($item_inventory == 0 && !empty($listing['listing_id'])) {
+                                $sold_out = true;
+                                /* In case of Sold Out, Set the Status as Inactive on Etsy */
+                                $etsyQueryString['state'] = 'inactive';
+                            }
+                            if (isset($etsyQueryString['listing_id'])) {
+                                unset($etsyQueryString['listing_id']);
+                            }
+                            $etsyRequestURI = '/shops/' . $shop['shop_id'] . '/listings/' . $listing['listing_id'];
+                            $etsyRequestMethod = 'PATCH';
+
+                            $etsyQueryData = http_build_query($etsyQueryString);
+                            $response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryData);
+
+
+                            /**
+                             * Removed json decode as data will be returned in the array
+                             * Send request to the etsyGetResponse method as made changes to use only method to get etsy data
+                             * @date 14-03-2023
+                             * modifier Tanisha Gupta
+                             */
+
+                            /* In case of update/renew, Get listing details & set the price/quantity of the item. In case of variation/normal product, price & quantity will be set.
+                             * Variation will be removed & after variation sync, Variation will be listed again.
+                             */
+                            if (!empty($response) && isset($response['listing_id'])) {
+                                $listing_id = $response['listing_id'];
                                 $etsyRequestURI = '/listings/' . $listing['listing_id'] . '/inventory';
                                 $etsyRequestMethod = 'GET';
                                 $etsyQueryString = array(
                                     'listing_id' => $listing['listing_id']
                                 );
+                                /**
+                                 * No need to send data as listing id is appended to the url
+                                 * @date 13-04-2023
+                                 * @modified Tanisha Gupta
+                                 */
+                                $listing_response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, array());
 
-                                $listing_response = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
-
-                                if (!empty($listing_response->results)) {
+                                if (isset($listing_response['products'])) {
                                     $listing_price = isset($listing['price']) ? $listing['price'] : 0;
                                     $listing_quantity = isset($listing['quantity']) ? $listing['quantity'] : 0;
-                                    $listing_response->results->products[0]->offerings[0]->price = $listing_price;
-                                    $listing_response->results->products[0]->offerings[0]->quantity = $listing_quantity;
+                                    /**
+                                     * Unset additional data getting in response
+                                     * @date 13-04-2023
+                                     * @author Tanisha Gupta
+                                     */
+                                    unset($listing_response['products'][0]['product_id']);
+                                    unset($listing_response['products'][0]['is_deleted']);
+                                    unset($listing_response['products'][0]['offerings'][0]['offering_id']);
+                                    unset($listing_response['products'][0]['offerings'][0]['is_deleted']);
+                                    unset($listing_response['products'][0]['offerings'][0]['price']);
+                                    unset($listing_response['products'][0]['offerings'][0]['quantity']);
 
+                                    /*
+                                     * Updated this from latest module code regarding scale id and name.
+                                     * @modifier Himanshu Vishwakarma
+                                     * @date 03-10-2025
+                                     */
+                                    if (empty($listing_response['products'][0]['property_values'][0]['scale_id'])) {
+                                        unset($listing_response['products'][0]['property_values'][0]['scale_id']);
+                                        unset($listing_response['products'][0]['property_values'][0]['scale_name']);
+                                    }
+                                    $listing_response['products'][0]['offerings'][0]['price'] = $listing_price;
+                                    $listing_response['products'][0]['offerings'][0]['quantity'] = $listing_quantity;
+
+                                    /*
+                                     * Added readiness_state_id to inventory update for existing products
+                                     * @date 15-01-2025
+                                     * @modifier Himanshu Vishwakarma
+                                     */
+                                    if (!empty($readiness_state_id)) {
+                                        $listing_response['products'][0]['offerings'][0]['readiness_state_id'] = $readiness_state_id;
+                                    }
                                     $etsyQueryString = array(
-                                        'listing_id' => $listing['listing_id'],
-                                        'products' => Tools::jsonEncode($listing_response->results->products)
+                                        'products' => $listing_response['products']
                                     );
-                                    $etsyRequestMethod = 'PUT';
-                                    Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
-                                }
+                                    $etsyQueryString = json_encode($etsyQueryString);
 
+
+                                    $etsyRequestMethod = 'PUT';
+                                    $updateInventoryResult = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString, 'JSON');
+                                    if (isset($updateInventoryResult['error'])) {
+                                        $listingError = $updateInventoryResult['error'];
+                                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $listing['id_product'] . "' AND id_product_attribute = '0'");
+                                    }
+                                }
                                 if ($sold_out == true) {
-                                    DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_id = '" . (int) $listing_id . "', expiry_date = '" . date("Y-m-d H:i:s", $response->results[0]->ending_tsz) . "', listing_status = 'Inactive', sold_flag = '1', renew_flag = '0', date_last_renewed = NOW(), listing_error = '' WHERE id_product = " . (int) $listing['id_product']);
+                                    Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_id = '" . (int) $listing_id . "', expiry_date = '" . pSQL(date("Y-m-d H:i:s", $response['ending_timestamp'])) . "', listing_status = 'Inactive', sold_flag = '1', renew_flag = '0', date_last_renewed = NOW(), listing_error = '' WHERE id_product = " . (int) $listing['id_product']);
                                 } else {
                                     $listing_status = 'Listed';
-                                    if ($response == 'expired') {
+                                    if ($response['state'] == 'expired') {
                                         $listing_status = 'Expired';
-                                    } else if ($response == 'edit') {
+                                    } else if ($response['state'] == 'edit') {
                                         $listing_status = 'Inactive';
                                     }
                                     if (!empty($listing['renew_flag'])) {
                                         $listingsRenewed++;
-                                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_id = '" . (int) $listing_id . "', expiry_date = '" . date("Y-m-d H:i:s", $response->results[0]->ending_tsz) . "', listing_status = '" . $listing_status . "', renew_flag = '0', sold_flag = '0', date_last_renewed = NOW(), listing_error = '' WHERE id_product = " . (int) $listing['id_product']);
+                                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_id = '" . (int) $listing_id . "', expiry_date = '" . pSQL(date("Y-m-d H:i:s", $response['ending_timestamp'])) . "', listing_status = '" . $listing_status . "', renew_flag = '0', sold_flag = '0', date_last_renewed = NOW(), listing_error = '' WHERE id_product = " . (int) $listing['id_product']);
                                     } else {
                                         $listingsUpdated++;
-                                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = '" . $listing_status . "', expiry_date = '" . date("Y-m-d H:i:s", $response->results[0]->ending_tsz) . "', listing_error = '' WHERE id_product = '" . (int) $listing['id_product'] . "'");
+                                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = '" . $listing_status . "', expiry_date = '" . pSQL(date("Y-m-d H:i:s", $response['ending_timestamp'])) . "', listing_error = '' WHERE id_product = '" . (int) $listing['id_product'] . "'");
                                     }
                                 }
                             }
+                        } else {
+                            /* In case of new item, If inventory is zero then product will not be synced */
+                            if ($item_inventory == 0) {
+                                /* Changes done by Manish to mark the item diabled when the listing id not exist and the item inventory is zero so the cron wont pick up the same item in the next cron execution.
+                                * @modifier Manish
+                                * @dare 08-04-2026
+                                * MPAPR2026 cron_pick_same_item_issue
+                                */
+                                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET active = '0' WHERE id_product = '" . (int) $listing['id_product'] . "'");
+                                continue;
+                            }
+                            /* Create new product on etsy */
 
-                            /* State is set in case of inactive only. In Item is not being set to Inactive, Then sync product other data as well, In case of Inactive, No need to sync other Info */
-                            if (empty($etsyQueryString['state'])) {
-                                /* Update the Etsy Category Attributes */
-                                self::syncEtsyAttribute($listing_id);
+                            $etsyRequestURI = '/shops/' . $shop['shop_id'] . '/listings';
+                            $etsyRequestMethod = 'POST';
+                            $etsyQueryString = $listing;
+                            unset($etsyQueryString['id_product']);
+                            unset($etsyQueryString['id_profile']);
 
-                                self::updateListingVariation($listing['id_product'], $listing_id, $langauge_id, $listing['id_profile']);
-                                self::etsySyncTranslation($listing['id_product'], $listing_id, $listing['id_profile']);
-                                self::etsyImageListings($listing['id_product'], $listing_id, $langauge_id);
-                                self::etsySyncDownloadFile($listing['id_product'], $listing_id);
+                            /*
+                             * Get readiness_state_id for new listing creation
+                             * @date 15-01-2025
+                             * @modifier Himanshu Vishwakarma
+                             */
+                            $readiness_state_id = self::getShopReadinessStateId($shop['shop_id'], null, $listing['id_profile']);
+                            /*
+                             * Add readiness_state_id for physical listings if available
+                             * @modifier Himanshu Vishwakarma
+                             * 27-12-2024
+                             */
+                            if (!empty($readiness_state_id)) {
+                                $etsyQueryString['readiness_state_id'] = $readiness_state_id;
+                            }
+                            /**
+                             * Changed data array to the query parameter
+                             * @date 12-04-2023
+                             * @author Tanisha Gupta
+                             */
+
+                            $etsyQueryStringData = http_build_query($etsyQueryString);
+
+                            /**
+                             * Sync product listing on Etsy and also sync listing information of product. Once all informations are listed on etsy, then update listing status as Active
+                             * @date 13-04-2023
+                             * @author Tanisha Gupta
+                             */
+                            $response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryStringData);
+                        }
+
+
+
+                        if (!empty($response) && isset($response['listing_id'])) {
+                            $listing_id = $response['listing_id'];
+                            if (!empty($listing_id)) {
+
+                                /* State is set in case of inactive only. In Item is not being set to Inactive, Then sync product other data as well, In case of Inactive, No need to sync other Info */
+                                if (empty($etsyQueryString['state'])) {
+                                    /* Update the Etsy Category Attributes */
+                                    /*
+                                     * Send Shop id, $listing['id_product'] and $listing['id_profile'] parameters.
+                                     * @date 13-04-2023
+                                     * @author Tanisha Gupta
+                                     */
+                                    self::syncEtsyAttribute($listing['id_product'], $listing_id, $listing['id_profile'], $shop['shop_id']);
+
+                                    self::updateListingVariation($listing['id_product'], $listing_id, $langauge_id, $listing['id_profile'], $shop['shop_id']);
+                                    self::etsySyncTranslation($listing['id_product'], $listing_id, $listing['id_profile'], $shop['shop_id']);
+                                    self::etsyImageListings($listing['id_product'], $listing_id, $langauge_id, $shop['shop_id']);
+                                    self::etsySyncDownloadFile($listing['id_product'], $listing_id, $listing['id_profile'], $shop['shop_id']);
+                                    /**
+                                     * Changes added to sync the images of the variations on etsy
+                                     * @modifier Pragya Maurya
+                                     * @date 12-06-2024
+                                     * PMJune2024 etsy-variation-images
+                                     */
+                                    self::etsySyncVariationsImages($listing['id_product'], $listing_id, $langauge_id, $shop['shop_id']);
+                                    /* If listing id was not set in the Original Array, then active the product as etsy creates the listing as draft*/
+                                    if (empty($listing['listing_id'])) {
+
+                                        unset($etsyQueryString['price']);
+                                        $etsyRequestURI = '/shops/' . $shop['shop_id'] . '/listings/' . $listing_id;
+                                        $etsyQueryString['state'] = 'active';
+                                        $listingdata = http_build_query($etsyQueryString);
+                                        $etsyRequestMethod = "PATCH";
+
+                                        $resultdata = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $listingdata);
+
+                                        if (isset($resultdata['listing_id'])) {
+                                            if ($resultdata['state'] == "active") {
+                                                $listingsCreated++;
+                                                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_id = '" . (int) $listing_id . "', listing_status = 'Listed', expiry_date = '" . date("Y-m-d H:i:s", $response['ending_timestamp']) . "', date_listed = NOW(), listing_error = '' WHERE id_product = '" . (int) $listing['id_product'] . "' AND id_product_attribute = '0'");
+                                            }
+                                        } else {
+                                            $listingError = $resultdata['error'];
+                                            Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $listing['id_product'] . "' AND id_product_attribute = '0'");
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            if (isset($response['error'])) {
+                                $listingError = $response['error'];
+                                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $listing['id_product'] . "' AND id_product_attribute = '0'");
+                            } else if (isset($response[0]['message']) && isset($response[0]['path'])) {
+                                $listingError = $response[0]['message'] . " " . $response[0]['path'];
+                                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $listing['id_product'] . "' AND id_product_attribute = '0'");
                             }
                         }
-                    } else {
-                        $listingError = str_replace("_", " ", key((array) $response));
-                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $listing['id_product'] . "' AND id_product_attribute = '0'");
+                        sleep(1);
                     }
-                    sleep(1);
                 }
             }
         }
@@ -1017,42 +1411,320 @@ class EtsyModule extends Module
         return true;
     }
 
-    /** Function to sync selected etsy attribute on the Etsy */
-    public static function syncEtsyAttribute($listing_id)
+
+    /**
+     * Changes added to sync the images of the variations on etsy
+     * @modifier Pragya Maurya
+     * @date 12-06-2024
+     * PMJune2024 etsy-variation-images
+     */
+    public static function etsySyncVariationsImages($listing_id_product, $listing_id, $langauge_id, $shop_id)
     {
-        $etsyAttributes = DB::getInstance()->executeS("SELECT eam.* FROM `" . _DB_PREFIX_ . "etsy_products_list` pl INNER JOIN `" . _DB_PREFIX_ . "etsy_attribute_mapping` eam ON pl.id_etsy_profiles = eam.id_etsy_profiles WHERE listing_id = '" . pSQL($listing_id) . "' AND id_product_attribute = '0'");
+        $listing_id = $listing_id;
+        $etsyRequestURI = '/listings/' . $listing_id . '/inventory';
+        $etsyRequestMethod = 'GET';
+        $etsyQueryString = array(
+            'listing_id' => $listing_id
+        );
+
+        $listing_response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, array());
+        $variation_images = array();
+        foreach ($listing_response['products'] as $product) {
+            $i = 0;
+            $id_product_attribute = array();
+
+            foreach ($product['property_values'] as $prop_values) {
+                /**
+                 * Fetching the attribute id from the mapping table based on listing id, as ids 500-512 have been removed from the mapping table
+                 * @modifier Himanshu Vishwakarma
+                 * @date 16-10-2025
+                 */
+                $etsyattributesmaps = Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 WHERE custom_property_id = '" . (int) $prop_values['property_id'] . "' AND listing_id = " . (int) $listing_id);
+                if (empty($etsyattributesmaps)) {
+                    $etsyattributes = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'etsy_attributes WHERE etsy_property_id = ' . (int) $prop_values['property_id']);
+                    $etsyattributesmaps = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'etsy_attribute_mapping1 WHERE property_id = ' . (int) $etsyattributes[0]['attribute_id']);
+                }
+                $sql = "SELECT distinct(ppa.id_product_attribute), al.name FROM " . _DB_PREFIX_ . "product_attribute ppa LEFT JOIN " . _DB_PREFIX_ . "product_attribute_combination pac ON ppa.id_product_attribute = pac.id_product_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute_lang al ON pac.id_attribute = al.id_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute a ON a.id_attribute = al.id_attribute AND al.name = '" . pSQL($prop_values['values'][0]) . "' WHERE a.id_attribute_group = '" . (int) $etsyattributesmaps[0]['id_attribute_group'] . "' AND ppa.id_product = " . (int) $listing_id_product;
+                $product_attributes = Db::getInstance()->executeS($sql);
+
+                $id_product_attribute[$i] = $product_attributes;
+
+                $prop_value_id = $prop_values['value_ids'][0];
+                $property_id = $prop_values['property_id'];
+                $i++;
+            }
+
+            // Extract id_product_attribute values
+            //If product is having having two variations OR single variation.
+            $common_id_product_attributes = array();
+            if (!empty($id_product_attribute[1])) {
+                $id_product_attributes_1 = array_column($id_product_attribute[0], 'id_product_attribute');
+                $id_product_attributes_2 = array_column($id_product_attribute[1], 'id_product_attribute');
+
+                // Find the intersection
+                $common_id_product_attributes = array_intersect($id_product_attributes_1, $id_product_attributes_2);
+            } else {
+                /**
+                 * Start changes added for fixing the noticewe get for undefined index for 0
+                 * @modifier Pragya Maurya
+                 * @date 18-10-2024
+                 * PMOct2024 etsy-variation-images
+                 */
+                if (!empty($id_product_attribute) && isset($id_product_attribute[0])) {
+                    $common_id_product_attributes = array_column($id_product_attribute[0], 'id_product_attribute');
+                }
+            }
+
+            //Reset Array Index as common values can be on either 0 OR 1 etc index. 
+            $common_id_product_attributes = array_values($common_id_product_attributes);
+
+            //If multiple attributes is coming the pick pone
+            if (is_array($common_id_product_attributes) && !empty($common_id_product_attributes[0])) {
+                $common_id_product_attribute = $common_id_product_attributes[0];
+            } else {
+                $common_id_product_attribute = $common_id_product_attributes;
+            }
+
+            $arr['property_values'] = '';
+            $sql_image_id = "SELECT id_image FROM " . _DB_PREFIX_ . "product_attribute_image WHERE id_product_attribute = " . (int) $common_id_product_attribute;
+
+            $attribute_image_id = Db::getInstance()->executeS($sql_image_id);
+
+            if (!empty($attribute_image_id)) {
+
+                $sql = "SELECT etsy_image_id FROM " . _DB_PREFIX_ . "etsy_images ei LEFT JOIN " . _DB_PREFIX_ . "image i ON (ei.ps_image_id = i.id_image and ei.product_id = i.id_product) WHERE ei.product_id = '" . (int) $listing_id_product . "' and ei.ps_image_id = " . (int) $attribute_image_id[0]['id_image'];
+                $etsy_image_id = Db::getInstance()->executeS($sql);
+
+                //Index to create the variation images unqiue
+                $primary_index = $property_id . "_" . $prop_value_id . "_" . $etsy_image_id[0]['etsy_image_id'];
+                $variation_images[$primary_index] = array(
+                    'property_id' => (int) $property_id,
+                    'value_id' => $prop_value_id,
+                    'image_id' => $etsy_image_id[0]['etsy_image_id']
+                );
+            }
+        }
+
+        if (!empty($variation_images)) {
+            //Reset Index on the Variatin images
+            $variation_images = array_values($variation_images);
+            $etsyRequestURI = '/shops/' . $shop_id . '/listings/' . $listing_id . '/variation-images';
+            $etsyRequestMethod = 'POST';
+            $etsyQueryString = array(
+                'variation_images' => $variation_images
+            );
+            $etsyQueryString = http_build_query($etsyQueryString);
+            $image_list_response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString);
+        }
+    }
+
+
+    /** Function to sync selected etsy attribute on the Etsy 
+     * Added product_id and profile_id parameter to update the product listing details
+     * @date 15-04-2023
+     * @modifier Tanisha Gupta
+     */
+    public static function syncEtsyAttribute($product_id, $listing_id, $profile_id, $shopid)
+    {
+        /**
+         * Changed conditions in where clause as listing id will be saved once all information update on etsy
+         * Updated error based on the profile and product id
+         * @date 15-04-2023
+         * @modifier Tanisha Gupta
+         */
+        //$etsyAttributes = Db::getInstance()->executeS("SELECT eam.* FROM `" . _DB_PREFIX_ . "etsy_products_list` pl INNER JOIN `" . _DB_PREFIX_ . "etsy_attribute_mapping` eam ON pl.id_etsy_profiles = eam.id_etsy_profiles WHERE listing_id = '" . pSQL($listing_id) . "' AND id_product_attribute = '0'");
+        $etsyAttributes = Db::getInstance()->executeS("SELECT eam.* FROM `" . _DB_PREFIX_ . "etsy_products_list` pl INNER JOIN `" . _DB_PREFIX_ . "etsy_attribute_mapping` eam ON pl.id_etsy_profiles = eam.id_etsy_profiles WHERE pl.id_product = '" . (int) $product_id . "' AND pl.id_etsy_profiles = '" . (int) $profile_id . "' AND id_product_attribute = '0'");
         if (!empty($etsyAttributes)) {
             foreach ($etsyAttributes as $etsyAttribute) {
                 if ($etsyAttribute['id_attribute_group'] != "") {
-                    $etsyRequestURI = '/listings/' . $listing_id . '/attributes/' . $etsyAttribute['property_id'];
+                    /**
+                     *Set Url to send sync attributes
+                     *@date 13-04-2023
+                     *@author Tanisha Gupta
+                     */
+                    $etsyRequestURI = '/shops/' . $shopid . '/listings/' . $listing_id . '/properties/' . $etsyAttribute['property_id'];
                     $etsyRequestMethod = 'PUT';
-                    $etsyQueryString = array("value_ids" => $etsyAttribute['id_attribute_group']);
-                    Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
+                    $etsyQueryString = array("value_ids" => explode(",", $etsyAttribute['id_attribute_group']), "values" => explode(",", $etsyAttribute['id_attribute_value']));
+                    $etsyQueryString = http_build_query($etsyQueryString);
+                    self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString);
                 }
             }
         }
         return true;
     }
 
-    public static function updateListingVariation($product_id, $listing_id, $language_id, $profile_id)
+    /**
+     * Get readiness_state_id from existing shop listings or create new one
+     * @param string $shop_id
+     * @param string $listing_id (optional, for new listings)
+     * @param int $profile_id (required to fetch readiness_state and processing times)
+     * @return string|null
+     * @date 15-01-2025
+     * @modifier Himanshu Vishwakarma
+     */
+    public static function getShopReadinessStateId(
+        $shop_id,
+        $listing_id = null,
+        $profile_id = null
+    ) {
+        try {
+            /*
+             * Fetch profile data to determine readiness_state and processing times
+             * @date 15-01-2025
+             * @modifier Himanshu Vishwakarma
+             */
+            $readiness_state = 'ready_to_ship';
+            $min_processing_time = 0;
+            $max_processing_time = 0;
+
+            if (!empty($profile_id)) {
+                // Fetch profile details to get when_made field
+                $profile_details = EtsyProfiles::getProfileDetails($profile_id, 'when_made, id_etsy_shipping_templates');
+
+                if (!empty($profile_details) && isset($profile_details[0]['when_made'])) {
+                    // Set readiness_state based on when_made field
+                    if ($profile_details[0]['when_made'] === 'made_to_order') {
+                        $readiness_state = 'made_to_order';
+                    } else {
+                        $readiness_state = 'ready_to_ship';
+                    }
+
+                    // Fetch processing times from shipping template
+                    if (!empty($profile_details[0]['id_etsy_shipping_templates'])) {
+                        $shipping_template_details = EtsyShippingTemplates::getShippingTemplateDetails(
+                            $profile_details[0]['id_etsy_shipping_templates'],
+                            'shipping_min_process_days, shipping_max_process_days'
+                        );
+
+                        if (!empty($shipping_template_details) && isset($shipping_template_details[0])) {
+                            $min_processing_time = (int) $shipping_template_details[0]['shipping_min_process_days'];
+                            $max_processing_time = (int) $shipping_template_details[0]['shipping_max_process_days'];
+                        }
+                    }
+                }
+            }
+
+            // 1️ If listing ID exists, fetch directly from GET /application/listings/{listing_id}?includes=Inventory
+            if (!empty($listing_id)) {
+                $listingURI = '/listings/' . (int) $listing_id . '?includes=Inventory';
+                $listingResponse = self::etsyGetResponse($listingURI, 'GET', []);
+
+                if (
+                    !empty($listingResponse)
+                    && isset($listingResponse['readiness_state_id'])
+                    && (int) $listingResponse['readiness_state_id'] > 0
+                ) {
+                    return (int) $listingResponse['readiness_state_id'];
+                }
+            }
+
+            // 2️ No listing_id or readiness not found → GET /shops/{shop_id}/readiness-state-definitions
+            $definitionsURI = '/shops/' . (int) $shop_id . '/readiness-state-definitions?limit=100';
+            $definitionsResponse = self::etsyGetResponse($definitionsURI, 'GET', []);
+
+            if (!empty($definitionsResponse['results']) && is_array($definitionsResponse['results'])) {
+                foreach ($definitionsResponse['results'] as $item) {
+                    if (
+                        isset($item['readiness_state'], $item['readiness_state_id'])
+                        && $item['readiness_state'] === $readiness_state
+                    ) {
+                        return (int) $item['readiness_state_id'];
+                    }
+                }
+            }
+
+            // 3️ Still nothing → create via POST /shops/{shop_id}/readiness-state-definitions
+            $createURI = '/shops/' . (int) $shop_id . '/readiness-state-definitions';
+            $payload = [
+                'readiness_state' => $readiness_state,
+                'min_processing_time' => (int) $min_processing_time == 0 ? 1 : (int) $min_processing_time,
+                'max_processing_time' => (int) $max_processing_time == 0 ? 1 : (int) $max_processing_time,
+            ];
+
+            $createResponse = self::etsyGetResponse($createURI, 'POST', http_build_query($payload));
+            if (
+                !empty($createResponse)
+                && isset($createResponse['readiness_state_id'])
+                && (int) $createResponse['readiness_state_id'] > 0
+            ) {
+                return (int) $createResponse['readiness_state_id'];
+            }
+
+            return null; // fallback if all fail
+
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+
+    public static function updateListingVariation($product_id, $listing_id, $language_id, $profile_id, $shopid)
     {
         $method_name = 'EtsyModule:updateListingVariation';
         $listingArray = array();
         $product = new Product($product_id, false, $language_id);
+
+        $etsy_currency_id = Currency::getIdByIsoCode(Configuration::get('etsy_currency'), Context::getContext()->shop->id);
+
         if (!empty($product) && $product->hasAttributes()) {
             self::auditLogEntry('Job execution started to list the variation on Etsy', $method_name);
 
             $attributes = $product->getAttributeCombinations($language_id);
             if (!empty($attributes)) {
+
+                /*
+                 * Get readiness_state_id using the new centralized method
+                 * This handles both existing and new listings
+                 * Updated to pass profile_id to fetch readiness_state and processing times
+                 * @date 15-01-2025
+                 * @modifier Himanshu Vishwakarma
+                 */
+                $readiness_state_id = self::getShopReadinessStateId($shopid, $listing_id, $profile_id);
+
+                /**
+                 * Assigning 513 or 514 id based upon already existing property id in the mapping table
+                 * @modifier Himanshu Vishwakarma
+                 * @date 16-10-2025
+                 */
+                $alreadyAssignedProperty = Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 WHERE listing_id = " . (int) $listing_id);
+                $starting_property_id = 513;
+                //Checking already assigned propoerty to lisitng ID and avalible propeerty ID from 513 OR 514.   
+                if (!empty($alreadyAssignedProperty)) {
+                    foreach ($alreadyAssignedProperty as $alreadyAssigned) {
+                        if ($alreadyAssigned['custom_property_id'] == "513") {
+                            $starting_property_id = 514;
+                        } else if ($alreadyAssigned['custom_property_id'] == "514") {
+                            $starting_property_id = 513;
+                        }
+                    }
+                }
+
+                $id_attribute_group = array();
                 foreach ($attributes as $attribute) {
-                    $propertyDetail = DB::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 INNER JOIN " . _DB_PREFIX_ . "etsy_attributes ea ON ea.attribute_id = am1.property_id WHERE am1.id_attribute_group = '" . (int) $attribute['id_attribute_group'] . "'");
+                    if (!in_array($attribute['id_attribute_group'], $id_attribute_group)) {
+                        $id_attribute_group[$attribute['id_attribute_group']] = $attribute['id_attribute_group'];
+                    }
+                }
+
+
+                foreach ($attributes as $attribute) {
+                    $propertyDetail = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 INNER JOIN " . _DB_PREFIX_ . "etsy_attributes ea ON ea.attribute_id = am1.property_id WHERE am1.id_attribute_group = '" . (int) $attribute['id_attribute_group'] . "'");
                     if (!empty($propertyDetail)) {
-                        //Get Attribute Name
-                        $attribute_details = new Attribute($attribute['id_attribute'], $language_id);
+                        /**
+                         * Get Attribute Name
+                         * Added PS vrsion condition as Attibute class has been renamed to ProductAttribute in PS 8
+                         * @date 15-04-2023
+                         * @modifier Tanisha Gupta
+                         */
+                        if (_PS_VERSION_ >= '8.0.0') {
+                            $attribute_details = new ProductAttribute($attribute['id_attribute'], $language_id);
+                        } else {
+                            $attribute_details = new Attribute($attribute['id_attribute'], $language_id);
+                        }
                         $attributeAvailability = KbMarketplaceIntegration::getInventoryByProductAttributeId($attribute['id_product'], $attribute['id_product_attribute']);
                         $productPricewithAttribute = Product::getPriceStatic($product->id, true, $attribute['id_product_attribute'], 6, null, false, true);
 
-                        $profileDetails = DB::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_profiles WHERE id_etsy_profiles = '" . (int) $profile_id . "'");
+                        $profileDetails = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_profiles WHERE id_etsy_profiles = '" . (int) $profile_id . "'");
 
                         $listingArray[] = array(
                             'listing_id' => $listing_id,
@@ -1074,6 +1746,51 @@ class EtsyModule extends Module
                             'price_type' => $profileDetails['price_type'],
                             'price_reduction' => $profileDetails['price_reduction'],
                         );
+                    } else {
+                        //Only 2 propert id can be associated with each Listing. 513 and 514 only.
+
+                        if (count($id_attribute_group) <= 2) {
+                            $propertyDetailCheck = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 WHERE am1.id_attribute_group = '" . (int) $attribute['id_attribute_group'] . "' AND listing_id = " . (int) $listing_id);
+                            if (empty($propertyDetailCheck)) {
+                                Db::getInstance()->query("INSERT INTO " . _DB_PREFIX_ . "etsy_attribute_mapping1(custom_property_id, listing_id, property_title, id_attribute_group, date_added) VALUES('" . (int) $starting_property_id . "', '" . (int) $listing_id . "', '" . pSQL($attribute['group_name']) . "', '" . (int) $attribute['id_attribute_group'] . "', '" . date("Y-m-d H:i:s") . "')");
+                                $propertyDetailCheck = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 WHERE am1.id_attribute_group = '" . (int) $attribute['id_attribute_group'] . "' AND listing_id = " . (int) $listing_id);
+                                $starting_property_id = 514; // Next Property ID will be 514.
+                            } else {
+                                //If propery Id is already added in the database then check if its 513 OR 514. Next will be alternative of the same.
+                                $starting_property_id = $propertyDetailCheck['custom_property_id'] == 513 ? 514 : 513;
+                            }
+
+                            if (_PS_VERSION_ >= '8.0.0') {
+                                $attribute_details = new ProductAttribute($attribute['id_attribute'], $language_id);
+                            } else {
+                                $attribute_details = new Attribute($attribute['id_attribute'], $language_id);
+                            }
+                            $attributeAvailability = KbMarketplaceIntegration::getInventoryByProductAttributeId($attribute['id_product'], $attribute['id_product_attribute']);
+                            $productPricewithAttribute = Product::getPriceStatic($product->id, true, $attribute['id_product_attribute'], 6, null, false, true);
+
+                            $profileDetails = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_profiles WHERE id_etsy_profiles = '" . (int) $profile_id . "'");
+
+                            $listingArray[] = array(
+                                'listing_id' => $listing_id,
+                                'property_id' => $propertyDetailCheck['custom_property_id'],
+                                'value' => $attribute_details->name,
+                                'name' => $propertyDetailCheck['property_title'],
+                                'is_available' => (isset($attributeAvailability['success'][0]['quantity']) && $attributeAvailability['success'][0]['quantity'] > 0) ? 1 : 0,
+                                'price' => $productPricewithAttribute,
+                                'id_product' => $product->id,
+                                'id_product_attribute' => $attribute['id_product_attribute'],
+                                'etsy_currency' => $profileDetails['etsy_currency'],
+                                'property' => $profileDetails['property'],
+                                'enable_max_qty' => $profileDetails['enable_max_qty'],
+                                'enable_min_qty' => $profileDetails['enable_min_qty'],
+                                'min_qty' => $profileDetails['min_qty'],
+                                'max_qty' => $profileDetails['max_qty'],
+                                'custom_pricing' => $profileDetails['custom_pricing'],
+                                'custom_price' => $profileDetails['custom_price'],
+                                'price_type' => $profileDetails['price_type'],
+                                'price_reduction' => $profileDetails['price_reduction'],
+                            );
+                        }
                     }
                 }
 
@@ -1127,8 +1844,11 @@ class EtsyModule extends Module
                         $attribute_data[$attribute['listing_id']]['id_product_attribute'][] = $attribute['id_product_attribute'];
                     }
                 }
-
-
+                //changes by gopi forater quantity
+                $alter_quantity = 0;
+                $profileDetails_alter = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_profiles WHERE id_etsy_profiles = '" . (int) $profile_id . "'");
+                $alter_quantity = $profileDetails_alter['alter_quantity'];
+                //changes by gopi end
                 foreach ($attribute_data as $attrs) {
                     $product_id = $attrs['id_product'];
                     $product_attributes = $attrs['id_product_attribute'];
@@ -1139,6 +1859,7 @@ class EtsyModule extends Module
                     $customize_price_type = $attrs['price_type'];
                     $customize_price_reduction = $attrs['price_reduction'];
 
+
                     unset($attrs['id_product']);
                     unset($attrs['id_product_attribute']);
                     unset($attrs['etsy_currency']);
@@ -1148,8 +1869,8 @@ class EtsyModule extends Module
                     unset($attrs['price_reduction']);
 
                     /**
-                      $properties Array with details like Size, Color & Property code
-                      $variation_propery list of property code like 100, 200 etc associated with the product
+                     *$properties Array with details like Size, Color & Property code
+                     *$variation_propery list of property code like 100, 200 etc associated with the product
                      */
                     $properties = array();
                     $variation_propery = array();
@@ -1215,39 +1936,61 @@ class EtsyModule extends Module
                                 }
                             }
                             if ($product_attr_id == '') {
-                                $product_attr_id = self::getVariationIdByPropertyValue($combination, $product->id);
+                                $product_attr_id = self::getVariationIdByPropertyValue($combination, $product->id, $listing_id);
                             }
 
                             if ($product_attr_id != '') {
                                 $attributes = $product->getAttributeCombinationsById($product_attr_id, $language_id);
                                 $sku = $attributes[0]['reference'];
                                 $productInventory = KbMarketplaceIntegration::getProductInventory($product_id, $product_attr_id);
+                                $context = Context::getContext();
+
+                                // Force default (base) currency
+                                $default_currency_id = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+                                $context->currency = new Currency($default_currency_id);
                                 $price = Product::getPriceStatic($product_id, true, $product_attr_id, 6, null, false, true);
-                                $etsy_currency_id = Currency::getIdByIsoCode($etsy_currency, Context::getContext()->shop->id);
                                 $price = Tools::convertPrice($price, $etsy_currency_id);
                             } else {
-                                /* In case, combination doesn't exist in the DB. Set Quantity as 0 */
+                                /* In case, combination doesn't exist in the Db. Set Quantity as 0 */
                                 $productInventory = 0;
+                                $context = Context::getContext();
+
+                                // Force default (base) currency
+                                $default_currency_id = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+                                $context->currency = new Currency($default_currency_id);
                                 $price = Product::getPriceStatic($product_id, true, null, 6, null, false, true);
-                                $etsy_currency_id = Currency::getIdByIsoCode($etsy_currency, Context::getContext()->shop->id);
                                 $price = Tools::convertPrice($price, $etsy_currency_id);
                             }
-
                             if ($productInventory > 999) {
                                 $quantity = 999;
                             } else {
                                 $quantity = $productInventory;
-                                if ($quantity <= 0) {
-                                    $pro_obj = new Product($product_id);
-                                       $stock = $pro_obj->out_of_stock;
-                                    if ((int)$stock == 1) {
-                                        $quantity = 999;
-                                    } else if ((int)$stock == 2) {
-                                        $out_of_stock = Configuration::get('PS_ORDER_OUT_OF_STOCK');
-                                        if ($out_of_stock == 1) {
-                                            $quantity = 999;
-                                        }
+                                /**
+                                 * Made changes to fix the issue with out-of-stock products.
+                                 * TGoct2023 Out-of-stock-issue
+                                 * @date 12-10-2023
+                                 * @author Tanisha Gupta
+                                 */
+                                $availibilty = false;
+                                $pro_obj = new Product($product_id);
+                                $allow_oosp = $pro_obj->isAvailableWhenOutOfStock(StockAvailable::outOfStock($pro_obj->id));
+                                //If the Item is available_for_order then only check other conditions otherwise Out of stock.
+                                //If the Item is having quantity then set it as In stock
+                                if ($pro_obj->available_for_order) {
+                                    if ($quantity > 0) {
+                                        // The product is available when quantity is less than or equal to 0
+                                        $availibilty = true;
+                                    } else if ($allow_oosp == 1) {
+                                        // The product is available when "allow_oosp" is enabled
+                                        $availibilty = true;
                                     }
+                                }
+                                if (!$availibilty) {
+                                    // If the product is not available, then set quantity as 0. 
+                                    $quantity = 0;
+                                } else if ($quantity <= 0) {
+                                    // Set quantity to '999' when available but with a quantity of 0
+                                    $quantity = '999';
                                 }
                             }
 
@@ -1267,18 +2010,38 @@ class EtsyModule extends Module
                             if (!in_array($product_attr_id, $product_attributes)) {
                                 $quantity = 0;
                             }
+                            //changes by gopi start
+                            /* Alter quantity logic for product */
+                            if ($alter_quantity == "" || $alter_quantity == 0 || $quantity < $alter_quantity) {
+                                $quantity = $quantity;
+                            } else {
+                                $quantity = $alter_quantity;
+                            }
+                            //changes by gopi end
                             $products[$generated_key]['property_values'] = $tempArray;
-//                            $products[$generated_key]['sku'] = "SKU_" . $product_id . "_" . $product_attr_id;
                             if ($sku == '') {
                                 $products[$generated_key]['sku'] = "SKU_" . $product_id . "_" . $product_attr_id;
                             } else {
                                 $products[$generated_key]['sku'] = $sku;
                             }
-                            $products[$generated_key]['offerings'] = array(array(
-                                'price' => $price,
-                                'quantity' => $quantity,
-                                'is_enabled' => 1
-                            ));
+                            if (!empty($readiness_state_id)) {
+                                $products[$generated_key]['offerings'] = array(
+                                    array(
+                                        'price' => $price,
+                                        'quantity' => $quantity,
+                                        'is_enabled' => 1,
+                                        'readiness_state_id' => $readiness_state_id
+                                    )
+                                );
+                            } else {
+                                $products[$generated_key]['offerings'] = array(
+                                    array(
+                                        'price' => $price,
+                                        'quantity' => $quantity,
+                                        'is_enabled' => 1
+                                    )
+                                );
+                            }
                             $generated_key++;
                         }
                     } else {
@@ -1310,20 +2073,28 @@ class EtsyModule extends Module
                                 }
                             }
                             if ($product_attr_id == '') {
-                                $product_attr_id = self::getVariationIdByPropertyValue($combination, $product->id);
+                                $product_attr_id = self::getVariationIdByPropertyValue($combination, $product->id, $listing_id);
                             }
                             if ($product_attr_id != '') {
                                 $attributes = $product->getAttributeCombinationsById($product_attr_id, $language_id);
                                 $sku = $attributes[0]['reference'];
                                 $productInventory = KbMarketplaceIntegration::getProductInventory($product_id, $product_attr_id);
+                                $context = Context::getContext();
+
+                                // Force default (base) currency
+                                $default_currency_id = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+                                $context->currency = new Currency($default_currency_id);
                                 $price = Product::getPriceStatic($product_id, true, $product_attr_id, 6, null, false, true);
-                                $etsy_currency_id = Currency::getIdByIsoCode($etsy_currency, Context::getContext()->shop->id);
                                 $price = Tools::convertPrice($price, $etsy_currency_id);
                             } else {
-                                /* In case, combination doesn't exist in the DB. Set Quantity as 0 */
+                                /* In case, combination doesn't exist in the Db. Set Quantity as 0 */
                                 $productInventory = 0;
+                                $context = Context::getContext();
+
+                                // Force default (base) currency
+                                $default_currency_id = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+                                $context->currency = new Currency($default_currency_id);
                                 $price = Product::getPriceStatic($product_id, true, null, 6, null, false, true);
-                                $etsy_currency_id = Currency::getIdByIsoCode($etsy_currency, Context::getContext()->shop->id);
                                 $price = Tools::convertPrice($price, $etsy_currency_id);
                             }
 
@@ -1331,17 +2102,32 @@ class EtsyModule extends Module
                                 $quantity = 999;
                             } else {
                                 $quantity = $productInventory;
-                                if ($quantity <= 0) {
-                                    $pro_obj = new Product($product_id);
-                                    $stock = $pro_obj->out_of_stock;
-                                    if ((int)$stock == 1) {
-                                        $quantity = 999;
-                                    } else if ((int)$stock == 2) {
-                                        $out_of_stock = Configuration::get('PS_ORDER_OUT_OF_STOCK');
-                                        if ($out_of_stock == 1) {
-                                            $quantity = 999;
-                                        }
+                                /**
+                                 * Made changes to fix the issue with out-of-stock products.
+                                 * TGoct2023 Out-of-stock-issue
+                                 * @date 12-10-2023
+                                 * @author Tanisha Gupta
+                                 */
+                                $availibilty = false;
+                                $pro_obj = new Product($product_id);
+                                $allow_oosp = $pro_obj->isAvailableWhenOutOfStock(StockAvailable::outOfStock($pro_obj->id));
+                                //If the Item is available_for_order then only check other conditions otherwise Out of stock.
+                                //If the Item is having quantity then set it as In stock
+                                if ($pro_obj->available_for_order) {
+                                    if ($quantity > 0) {
+                                        // The product is available when quantity is less than or equal to 0
+                                        $availibilty = true;
+                                    } else if ($allow_oosp == 1) {
+                                        // The product is available when "allow_oosp" is enabled
+                                        $availibilty = true;
                                     }
+                                }
+                                if (!$availibilty) {
+                                    // If the product is not available, then set quantity as 0. 
+                                    $quantity = 0;
+                                } else if ($quantity <= 0) {
+                                    // Set quantity to '999' when available but with a quantity of 0
+                                    $quantity = '999';
                                 }
                             }
                             if (!in_array($product_attr_id, $product_attributes)) {
@@ -1353,8 +2139,6 @@ class EtsyModule extends Module
                             } else {
                                 $products[$generated_key]['sku'] = $sku;
                             }
-//                            $products[$generated_key]['sku'] = "SKU_" . $product_id . "_" . $product_attr_id;
-
                             $price_change = '';
                             if ($customize_price) {
                                 if ($customize_price_type == 'Percentage') {
@@ -1368,32 +2152,76 @@ class EtsyModule extends Module
                                     $price = $price - $price_change;
                                 }
                             }
-                            $products[$generated_key]['offerings'] = array(array(
-                                    'price' => $price,
-                                    'quantity' => $quantity,
-                                    'is_enabled' => 1
-                            ));
+                            //changes by gopi start
+                            /* Alter quantity logic for product */
+                            if ($alter_quantity == "" || $alter_quantity == 0 || $quantity < $alter_quantity) {
+                                $quantity = $quantity;
+                            } else {
+                                $quantity = $alter_quantity;
+                            }
+
+
+                            //changes by gopi end
+                            /*
+                             * Added readiness_state_id to offerings for products without variations
+                             * @modifier Himanshu Vishwakarma
+                             * @date 13-10-2025
+                             */
+                            if (!empty($readiness_state_id)) {
+                                $products[$generated_key]['offerings'] = array(
+                                    array(
+                                        'price' => $price,
+                                        'quantity' => $quantity,
+                                        'is_enabled' => 1,
+                                        'readiness_state_id' => $readiness_state_id
+                                    )
+                                );
+                            } else {
+                                $products[$generated_key]['offerings'] = array(
+                                    array(
+                                        'price' => $price,
+                                        'quantity' => $quantity,
+                                        'is_enabled' => 1
+                                    )
+                                );
+                            }
                             $k++;
                             $generated_key++;
                         }
                     }
+
+
+
+
                     $etsyQueryString = array(
-                        'products' => Tools::jsonEncode($products),
+                        /**
+                         * No need to encode json as later needs to encode complete array in json
+                         * @date 13-04-2023
+                         * @author Tanisha Gupta
+                         */
+                        'products' => $products,
                         'price_on_property' => implode(',', $variation_propery),
                         'quantity_on_property' => implode(',', $variation_propery),
                         'sku_on_property' => implode(',', $variation_propery),
                     );
 
+
                     $etsyRequestURI = '/listings/' . $listing_id . '/inventory';
                     $etsyRequestMethod = 'PUT';
+                    /**
+                     * decode data and changed function to send request
+                     * @date 13-04-2023
+                     * @modifier Tanisha Gupta
+                     */
+                    $etsyQueryStringData = json_encode($etsyQueryString);
+                    $etsyContentType = 'JSON';
+                    $response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryStringData, $etsyContentType);
 
-                    $response = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
-
-                    if (!empty($response) && isset($response->results)) {
+                    if (!empty($response) && isset($response['products'])) {
                         /* Nothing needs to be done if variation updated successfully */
-                    } else {
-                        $listingError = str_replace("_", " ", key((array) $response));
-                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $product_id . "'");
+                    } else if (!empty($response) && isset($response['error'])) {
+                        $listingError = $response['error'];
+                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $product_id . "'");
                     }
                     sleep(1); //Sleep job to avoid exceed limit rate
                 }
@@ -1402,6 +2230,8 @@ class EtsyModule extends Module
         }
         return true;
     }
+
+
 
     /** Generate all combinations of the array */
     private static function combinations($arrays, $i = 0)
@@ -1427,38 +2257,126 @@ class EtsyModule extends Module
     }
 
     //To upload images on etsy marketplace
-    public static function etsyImageListings($product_id, $listing_id, $language_id)
+    public static function etsyImageListings($product_id, $listing_id, $language_id, $shopid)
     {
         $method_name = 'EtsyModule::etsyImageListings()';
         self::auditLogEntry('Job execution started to list images on Etsy Marketplace.', $method_name);
 
+        /*
+         * Added check to prevent duplicate image processing
+         * Fixed duplicate image issue during product revision and sync
+         * @date 15-01-2025
+         * @modifier Himanshu Vishwakarma
+         */
+        static $processed_products = array();
+        $product_key = $product_id . '_' . $listing_id;
+
+        self::auditLogEntry('Checking duplicate processing for product key: ' . $product_key . ', Processed products: ' . json_encode(array_keys($processed_products)), $method_name);
+
+        if (isset($processed_products[$product_key])) {
+            self::auditLogEntry('Product images already processed, skipping duplicate processing for product ' . $product_id, $method_name);
+            return true;
+        }
+
+        $processed_products[$product_key] = true;
+        self::auditLogEntry('Marking product as processed: ' . $product_key, $method_name);
+        /**
+         * Made changes to delete product images first(which are not longer exists on PS)
+         * TG2023may Images-Issue
+         * @date 22-05-2023
+         * @author Ashish Kumar
+         * @commenter Tanisha Gupta 
+         */
+        self::deleteAlreadyDeletedImages($product_id, $listing_id, $language_id, $shopid);
+
         $imagesListed = 0;
-        $images = self::prepareArrayToUploadImageOnEtsy($product_id, $listing_id, $language_id);
-        
+        /**
+         * Modified below code to pass shop id as parameter
+         * TG2023may Images-Issue
+         * @date 22-05-2023
+         * @author Ashish Kumar
+         * @commenter Tanisha Gupta 
+         */
+
+        $etsyRequestURI = '/listings/' . $listing_id . '/images';
+        $response = self::etsyGetResponse($etsyRequestURI, 'GET', array());
+
+        if (!empty($response['results'])) {
+            $existing_etsy_images = Db::getInstance()->executeS("SELECT etsy_image_id FROM " . _DB_PREFIX_ . "etsy_images WHERE product_id = '" . (int) $product_id . "' AND etsy_image_id > 0");
+
+            foreach ($response['results'] as $result) {
+                $found = false;
+                foreach ($existing_etsy_images as $existing_image) {
+                    if ($existing_image['etsy_image_id'] == $result['listing_image_id']) {
+                        $found = true;
+                        break;
+                    }
+                }
+                //Delete the image from Etsy if not found in the existing images
+                if (!$found) {
+                    $etsyRequestURI = '/shops/' . $shopid . '/listings/' . $listing_id . '/images/' . $result['listing_image_id'];
+                    $response = self::etsyGetResponse($etsyRequestURI, 'DELETE', array());
+                }
+            }
+        }
+
+
+        self::auditLogEntry('Calling prepareArrayToUploadImageOnEtsy for product ' . $product_id, $method_name);
+        $images = self::prepareArrayToUploadImageOnEtsy($product_id, $listing_id, $language_id, $shopid);
+        self::auditLogEntry('prepareArrayToUploadImageOnEtsy returned ' . count($images) . ' images for product ' . $product_id, $method_name);
+
         if (!empty($images) && count($images) > 0) {
             if (isset($listing_id)) {
                 /* Delete those images listed from the OLD version of the module so avoid duplicate image on etsy. One in listting_image_id column & another one in etsy_image table */
                 $existing_images = Db::getInstance()->getValue("SELECT listing_image_id FROM " . _DB_PREFIX_ . "etsy_products_list WHERE listing_id = '" . (int) $listing_id . "'");
+
                 if (!empty($existing_images)) {
                     $existing_images_array = explode(",", $existing_images);
                     foreach ($existing_images_array as $existing_image) {
-                        $etsyRequestURI = '/listings/' . $listing_id . '/images/'.$existing_image;
-                        $etsyRequestMethod = 'DELETE';
-                        Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, 'DELETE', array()));
+                        /**
+                         * Set URL to send request for deleteListingImage API
+                         * @date 13-04-2023
+                         * @modifier Tanisha Gupta
+                         */
+                        //Correct parameter of image id - Fixed bug where $existing_image was treated as array instead of string
+                        // Fixed duplicate image issue during product revision and sync
+                        $etsyRequestURI = '/shops/' . $shopid . '/listings/' . $listing_id . '/images/' . trim($existing_image);
+                        /**
+                         * Removed json decode as data will be returned in the array
+                         * Send request to the etsyGetResponse method as made changes to use only method to get etsy data
+                         * @date 14-03-2023
+                         * modifier Tanisha Gupta
+                         */
+                        self::etsyGetResponse($etsyRequestURI, 'DELETE', array());
                     }
                     Db::getInstance()->getValue("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_image_id = NULL WHERE listing_id = '" . (int) $listing_id . "'");
                 }
                 /* END Delete those images listed from the OLD version of the module */
-                
-                
-                $etsyRequestURI = '/listings/' . $listing_id . '/images/';
+
+                /**
+                 * Set URL to send request for upload Images API
+                 * @date 13-04-2023
+                 * @modifier Tanisha Gupta
+                 */
+                $etsyRequestURI = '/shops/' . $shopid . '/listings/' . $listing_id . '/images';
                 $etsyRequestMethod = 'POST';
                 $i = 1;
                 foreach ($images as $image) {
                     $etsyQueryString = array();
-                    $etsyQueryString['listing_id'] = $listing_id;
-                    $etsyQueryString['image'] = $image["image"];
-                    $etsyQueryString['rank'] = $i;
+                    /*
+                     * Remove Listing id other etsy gives the error
+                     * @date 13-04-2023
+                     * @modifier Tanisha Gupta
+                     */
+                    $etsyQueryString['image'] = new CURLFILE($image["image"]);
+                    //changes by gopi ,image size chart position issuse fixes
+                    if (!empty($image['rank'])) {
+                        $rank = $image['rank'];
+                    } else {
+                        $rank = $i;
+                    }
+                    $etsyQueryString['rank'] = $rank;
+                    //change by gopi end
                     if (!empty($image['overwrite'])) {
                         $etsyQueryString['overwrite'] = 1;
                     }
@@ -1466,30 +2384,49 @@ class EtsyModule extends Module
                     if (!empty($image['listing_image_id'])) {
                         $etsyQueryString['listing_image_id'] = $image['listing_image_id'];
                     }
-                    $image_list_response = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString, true));
-                    
+                    /**
+                     * Removed json decode as data will be returned in the array
+                     * Send request to the etsyGetResponse method as made changes to use only method to get etsy data
+                     * @date 14-03-2023
+                     * modifier Tanisha Gupta
+                     */
+                    $image_list_response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString, 'formtype');
 
-                    if (!empty($image_list_response) && isset($image_list_response->results)) {
-                        $sql = "UPDATE " . _DB_PREFIX_ . "etsy_images SET etsy_image_id = '" . pSQL($image_list_response->results[0]->listing_image_id) . "' WHERE image_id = '" . (int) $image['product_etsy_image_id'] . "'";
+
+                    if (!empty($image_list_response) && isset($image_list_response['listing_image_id'])) {
+                        $sql = "UPDATE " . _DB_PREFIX_ . "etsy_images SET etsy_image_id = '" . pSQL($image_list_response['listing_image_id']) . "' WHERE image_id = '" . (int) $image['product_etsy_image_id'] . "'";
                         $imagesListed++;
-                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_images SET etsy_image_id = '" . pSQL($image_list_response->results[0]->listing_image_id) . "' WHERE image_id = '" . (int) $image['product_etsy_image_id'] . "'");
+                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_images SET etsy_image_id = '" . pSQL($image_list_response['listing_image_id']) . "' WHERE image_id = '" . (int) $image['product_etsy_image_id'] . "'");
                     } else {
-                        $listingError = str_replace("_", " ", key((array) $image_list_response));
-                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = '1', listing_error = '" . pSQL($listingError) . "' WHERE listing_id = '" . (int) $listing_id . "'");
+                        $listingError = $image_list_response['error'];
+                        /**
+                         * Made changes to update error based on product id instead of listing id. As for new product, listing id will update after updating all information on etsy
+                         * TG2023may Images-Issue
+                         * @date 22-05-2023
+                         * @modifier Tanisha Gupta
+                         */
+                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = '1', listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $product_id . "'");
                     }
                     sleep(1); //Sleep job to avoid exceed limit rate
                     $i++;
                 }
             }
         }
-        
-        self::deleteAlreadyDeletedImages($product_id, $listing_id, $language_id);
-        
         self::auditLogEntry('Job execution completed to list images on etsy marketplace.<br>Total Images Listed: ' . $imagesListed, $method_name);
         return true;
     }
-    
-    public static function deleteAlreadyDeletedImages($product_id, $listing_id, $language_id)
+
+
+    /**
+     * This function is responsible to delete images listed which has been deleted for Prestashop
+     * @date 22-05-2023
+     * @commenter Tanisha Gupta
+     * @param type $product_id
+     * @param type $listing_id
+     * @param type $language_id
+     * @param type $shopid
+     */
+    public static function deleteAlreadyDeletedImages($product_id, $listing_id, $language_id, $shopid)
     {
         /* Delete those images listed which has been delete from prestashop */
         $sql = "SELECT etsy_image_id,image_id,ps_image_id FROM " . _DB_PREFIX_ . "etsy_images ei LEFT JOIN " . _DB_PREFIX_ . "image i ON (ei.ps_image_id = i.id_image and ei.product_id = i.id_product) WHERE ei.product_id = '" . (int) $product_id . "' and i.id_image IS NULL";
@@ -1499,7 +2436,7 @@ class EtsyModule extends Module
                 $is_deletable = true;
                 if ($delete_image['ps_image_id'] == 999999) {
                     $id_profile = Db::getInstance()->getValue("SELECT id_etsy_profiles FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_product = '" . (int) $product_id . "'");
-                    if ((int)$id_profile != 0) {
+                    if ((int) $id_profile != 0) {
                         $is_size_chart_image_enable = (bool) Db::getInstance()->getValue("SELECT size_chart_image FROM " . _DB_PREFIX_ . "etsy_profiles WHERE id_etsy_profiles = '" . (int) $id_profile . "'");
                         if ($is_size_chart_image_enable) {
                             $is_deletable = false;
@@ -1507,18 +2444,26 @@ class EtsyModule extends Module
                     }
                 }
                 if ($is_deletable) {
-                    $etsyRequestURI = '/listings/' . $listing_id . '/images/'.$delete_image['etsy_image_id'];
+                    $etsyRequestURI = '/shops/' . $shopid . '/listings/' . $listing_id . '/images/' . $delete_image['etsy_image_id'];
                     $etsyRequestMethod = 'DELETE';
-                    Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, 'DELETE', array()));
+                    self::etsyGetResponse($etsyRequestURI, 'DELETE', array());
                     Db::getInstance()->execute("Delete FROM " . _DB_PREFIX_ . "etsy_images WHERE image_id = '" . (int) $delete_image['image_id'] . "'");
                 }
             }
         }
         /* End Delete those images listed which has been delete from prestashop */
     }
-
-    public static function prepareArrayToUploadImageOnEtsy($product_id, $listing_id, $language_id)
+    /**
+     * The purpose of this function is to prepare the image data for uploading to Etsy. 
+     * Added shop id parameter to check images is exist or not
+     * TG2023may Images-Issue
+     * @date 22-05-2023
+     * @author
+     * @modifier Tanisha Gupta 
+     */
+    public static function prepareArrayToUploadImageOnEtsy($product_id, $listing_id, $language_id, $shopid)
     {
+
         $size_chart_image_id = 999999;
         $listing_images = array();
         $protocol_link = (Configuration::get('PS_SSL_ENABLED') || Tools::usingSecureMode()) ? 'https://' : 'http://';
@@ -1528,6 +2473,25 @@ class EtsyModule extends Module
 
         /** Fetch already uploaded images from the table */
         $existing_images = Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_images WHERE product_id = '" . (int) $product_id . "'");
+
+        /*
+         * Filter out images that are already on Etsy to prevent duplicates
+         * Fixed duplicate image issue during product revision and sync
+         * @date 15-01-2025
+         * @modifier Himanshu Vishwakarma
+         */
+        $etsy_existing_images = array();
+        if (!empty($listing_id)) {
+            $etsyRequestURI = '/listings/' . $listing_id . '/images';
+            $response = self::etsyGetResponse($etsyRequestURI, 'GET', array());
+
+            if (!empty($response['results'])) {
+                foreach ($response['results'] as $result) {
+                    $etsy_existing_images[] = $result['listing_image_id'];
+                }
+                self::auditLogEntry('Found ' . count($etsy_existing_images) . ' existing images on Etsy for listing ' . $listing_id, 'EtsyModule::prepareArrayToUploadImageOnEtsy');
+            }
+        }
         if (!empty($listing_id)) {
             $images = array();
             $image_arrays = Image::getImages($language_id, $product_id);
@@ -1536,8 +2500,8 @@ class EtsyModule extends Module
              * changing by rishabh jain for adding size chart image
              */
             $id_profile = Db::getInstance()->getValue("SELECT id_etsy_profiles FROM " . _DB_PREFIX_ . "etsy_products_list WHERE id_product = '" . (int) $product_id . "'");
-            if ((int)$id_profile != 0) {
-                $exist_file = _PS_MODULE_DIR_. 'kbetsy/views/img/profile/'.$id_profile. '.*';
+            if ((int) $id_profile != 0) {
+                $exist_file = _PS_MODULE_DIR_ . 'kbetsy/views/img/profile/' . $id_profile . '.*';
                 $is_size_chart_image_enable = (bool) Db::getInstance()->getValue("SELECT size_chart_image FROM " . _DB_PREFIX_ . "etsy_profiles WHERE id_etsy_profiles = '" . (int) $id_profile . "'");
                 $match1 = glob($exist_file);
                 if ($is_size_chart_image_enable && count($match1) > 0) {
@@ -1546,26 +2510,28 @@ class EtsyModule extends Module
                     $ban = trim($ban);
                     $img_url = self::getModuleDirUrl() . 'kbetsy/views/img/profile/' . $ban;
                     if (file_exists($match1[0])) {
-                        $size_chart_file_path = _PS_MODULE_DIR_. 'kbetsy/views/img/profile/'.$ban;
+                        $size_chart_file_path = _PS_MODULE_DIR_ . 'kbetsy/views/img/profile/' . $ban;
                         if ($length_img_array >= 10) {
                             $image_arrays[9] = array(
                                 'id_image' => $size_chart_image_id,
                                 'id_product' => $product_id,
                                 'path' => $size_chart_file_path,
-                                'position' => 1,
-                                'cover' => 1,
+                                'position' => 10, //changes by gopi ,replace 1 with 10 as size chart can not be at position one
+                                'cover' => '',
                                 'id_lang' => 1,
-                                'legend' => ''
+                                'legend' => '',
+                                'rank' => 10, //changes by gopi ,aded rank in array so that we can use the same while sycing image on etsy
                             );
                         } else {
                             $image_arrays[$length_img_array] = array(
                                 'id_image' => $size_chart_image_id,
                                 'id_product' => $product_id,
                                 'path' => $size_chart_file_path,
-                                'position' => 1,
-                                'cover' => 1,
+                                'position' => $length_img_array + 1, //changes by gopi ,replace 1 with 10 as size chart can not be at position one
+                                'cover' => '',
                                 'id_lang' => 1,
-                                'legend' => ''
+                                'legend' => '',
+                                'rank' => $length_img_array + 1, //changes by gopi ,aded rank in array so that we can use the same while sycing image on etsy
                             );
                         }
                     }
@@ -1583,45 +2549,65 @@ class EtsyModule extends Module
                 $product_data = new Product($product_id, false, $language_id);
 
                 $images['listing_id'] = $listing_id;
-                if (is_array($product_data->link_rewrite)) {
-                    //$images['image'] = $link->getImageLink($product_data->link_rewrite[$language_id], $image_array['id_image'], ImageType::getFormatedName('large'));
-                } else {
-                    //$images['image'] = $link->getImageLink($product_data->link_rewrite, $image_array['id_image'], ImageType::getFormatedName('large'));
+                //changes by gopi for getting position which will be rank on etsy
+                if ($image_array['id_image'] == $size_chart_image_id) {
+                    $images['rank'] = $image_array['position'];
                 }
+                //changes by gopi end
                 if ($image_array['id_image'] == $size_chart_image_id) {
                     $image_dir_path = $image_array['path'];
                 } else {
+                    $imgtype = empty(Configuration::get('KBETSY_IMAGE_SIZE')) ? ImageType::getFormattedName('large') : Configuration::get('KBETSY_IMAGE_SIZE');
                     $image_object = new Image($image_array['id_image'], 1);
-                    $image_dir_path = _PS_PROD_IMG_DIR_ . $image_object->getExistingImgPath() . '-' .ImageType::getFormatedName('large') .'.'. $image_object->image_format;
+                    /*
+                     * Updated to use _PS_PRODUCT_IMG_DIR_ constant for PrestaShop 9.0 compatibility
+                     * Added fallback to _PS_PROD_IMG_DIR_ for backward compatibility
+                     * 27-12-2024
+                     */
+                    $image_dir_path = (defined('_PS_PRODUCT_IMG_DIR_') ? _PS_PRODUCT_IMG_DIR_ : _PS_PROD_IMG_DIR_) . $image_object->getExistingImgPath() . '-' . $imgtype . '.' . $image_object->image_format;
 
                     /* If large thumbnail is not exist then use home default image */
                     if (!file_exists($image_dir_path)) {
-                        $image_dir_path = _PS_PROD_IMG_DIR_ . $image_object->getExistingImgPath() . '-' .ImageType::getFormatedName('home').'.'. $image_object->image_format;
-                        if (is_array($product_data->link_rewrite)) {
-                            //$images['image'] = $link->getImageLink($product_data->link_rewrite[$language_id], $image_array['id_image'], ImageType::getFormatedName('home'));
-                        } else {
-                            //$images['image'] = $link->getImageLink($product_data->link_rewrite, $image_array['id_image'], ImageType::getFormatedName('home'));
-                        }
+                        $image_dir_path = (defined('_PS_PRODUCT_IMG_DIR_') ? _PS_PRODUCT_IMG_DIR_ : _PS_PROD_IMG_DIR_) . $image_object->getExistingImgPath() . '-' . ImageType::getFormattedName('home') . '.' . $image_object->image_format;
                     }
                 }
                 $images['image'] = $image_dir_path;
 
-
+                /**
+                 * Made changes to list images again which are not available on etsy but image id is saved in database
+                 * TGsep2023 Image-Upload-again
+                 * @date 27-09-2023
+                 * @author Tanisha Gupta
+                 */
+                $is_not = false;
                 $is_updated = false;
                 $is_existing = false;
-                
+
                 $esty_image_id = 0;
                 $product_etsy_image_id = 0; // Module Etsy Table Auto Increment ID
                 if (!empty($existing_images)) {
                     foreach ($existing_images as $existing_image) {
-                        /** If current image is already exist in the DB */
-                        if ($image_array['id_image'] == $existing_image['ps_image_id'] && $existing_image['ps_image_id']  == $size_chart_image_id) {
+                        /** If current image is already exist in the Db */
+                        if ($image_array['id_image'] == $existing_image['ps_image_id'] && $existing_image['ps_image_id'] == $size_chart_image_id) {
                             $is_existing = true;
                             $esty_image_id = $existing_image['etsy_image_id'];
-                            $is_updated = true;
                             $product_etsy_image_id = $existing_image['image_id'];
+                            /*
+                             * Check if size chart image needs to be updated
+                             * Fixed duplicate image issue during product revision and sync
+                             * @date 15-01-2025
+                             * @modifier Himanshu Vishwakarma
+                             */
+                            if (!empty($existing_image['etsy_image_id'])) {
+                                if ($existing_image['path_hash'] != md5_file($image_dir_path)) {
+                                    $is_updated = true;
+                                } else {
+                                    $is_updated = false;
+                                }
+                            } else {
+                                $is_updated = true; // New image needs to be uploaded
+                            }
                         } else if ($image_array['id_image'] == $existing_image['ps_image_id']) {
-//                            $is_updated = true;
                             $is_existing = true;
                             $esty_image_id = $existing_image['etsy_image_id'];
                             $product_etsy_image_id = $existing_image['image_id'];
@@ -1629,36 +2615,86 @@ class EtsyModule extends Module
                             if (!empty($existing_image['etsy_image_id'])) {
                                 if ($existing_image['path_hash'] != md5_file($image_dir_path)) {
                                     $is_updated = true;
+                                } else {
+                                    /**Checking if image exist on the Etsy. If not, then add the image into the system again
+                                     * TG2023may Images-Issue
+                                     * @date 22-05-2023
+                                     * @author Ashish Kumar
+                                     * @commenter Tanisha Gupta
+                                     */
+
+                                    $etsyRequestURI = '/shops/' . $shopid . '/listings/' . $listing_id . '/images/' . $existing_image['etsy_image_id'];
+                                    $response = self::etsyGetResponse($etsyRequestURI, 'GET', array());
+                                    if (!empty($response['error'])) {
+                                        $is_updated = true;
+                                        /**
+                                         * Made changes to list images again which are not available on etsy but image id is saved in database
+                                         * TGsep2023 Image-Upload-again
+                                         * @date 27-09-2023
+                                         * @author Tanisha Gupta
+                                         */
+                                        $is_not = true;
+                                    } else {
+                                        /*
+                                         * Image exists on Etsy and content hasn't changed, no need to upload
+                                         * Fixed duplicate image issue during product revision and sync
+                                         * @date 15-01-2025
+                                         * @modifier Himanshu Vishwakarma
+                                         */
+                                        $is_updated = false;
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                /** If image is already exist & no changes in the conten then no need to upload that image */
-                if ($is_updated == false && $is_existing == true && !empty($esty_image_id)) {
+                /** If image is already exist & no changes in the content then no need to upload that image */
+                if ($is_existing == true && !empty($esty_image_id) && $is_updated == false) {
+                    /*
+                     * Skip image upload if image already exists on Etsy and hasn't changed
+                     * Fixed duplicate image issue during product revision and sync
+                     * @date 15-01-2025
+                     * @modifier Himanshu Vishwakarma
+                     */
                     continue;
                 }
 
                 if ($is_existing == true) {
                     Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_images SET "
-                            . "path_hash = '" . pSQL(md5_file($image_dir_path)) . "',"
-                            . "path = '" . pSQL($image_dir_path) . "'"
-                            . "WHERE `ps_image_id` = '" . (int) $image_array['id_image'] . "' AND "
-                            . "product_id = " . (int) $product_id); /* 'ps_image_id' is column name, not DB prefix */
-                    if ($is_updated == true) {
+                        . "path_hash = '" . pSQL(md5_file($image_dir_path)) . "',"
+                        . "path = '" . pSQL($image_dir_path) . "'"
+                        . "WHERE `ps_image_id` = '" . (int) $image_array['id_image'] . "' AND "
+                        . "product_id = " . (int) $product_id); /* 'ps_image_id' is column name, not Db prefix */
+                    /**
+                     * Made changes to list images again which are not available on etsy but image id is saved in database
+                     * TGsep2023 Image-Upload-again
+                     * @date 27-09-2023
+                     * @author Tanisha Gupta
+                     */
+                    if ($is_updated == true && $is_not == false) {
                         $images['listing_image_id'] = $esty_image_id;
                         $images['overwrite'] = 1;
                     }
                 } else {
                     Db::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_images SET "
-                            . "ps_image_id = '" . (int) $image_array['id_image'] . "',"
-                            . "product_id = " . (int) $product_id . ","
-                            . "path_hash = '" . pSQL(md5_file($image_dir_path)) . "',"
-                            . "path = '" . pSQL($image_dir_path) . "'");
+                        . "ps_image_id = '" . (int) $image_array['id_image'] . "',"
+                        . "product_id = " . (int) $product_id . ","
+                        . "path_hash = '" . pSQL(md5_file($image_dir_path)) . "',"
+                        . "path = '" . pSQL($image_dir_path) . "'");
                     $product_etsy_image_id = Db::getInstance()->Insert_ID();
                 }
                 $images['product_etsy_image_id'] = $product_etsy_image_id;
+
+                /*
+                 * Check if image already exists on Etsy to prevent duplicates
+                 * Fixed duplicate image issue during product revision and sync
+                 * @date 15-01-2025
+                 * @modifier Himanshu Vishwakarma
+                 */
+                if (!empty($esty_image_id) && in_array($esty_image_id, $etsy_existing_images)) {
+                    continue;
+                }
                 $listing_images[] = $images;
                 $image_count++;
             }
@@ -1676,7 +2712,7 @@ class EtsyModule extends Module
         }
         return $module_dir;
     }
-    
+
     private static function checkSecureUrl()
     {
         $custom_ssl_var = 0;
@@ -1695,24 +2731,47 @@ class EtsyModule extends Module
             return false;
         }
     }
-    
+
     //To update the translation on etsy
-    public static function etsySyncTranslation($product_id, $listing_id, $profile_id)
+    /*
+     * Added shop id parameter
+     * @date 13-04-2023
+     * @modifier Tanisha Gupta
+     */
+    public static function etsySyncTranslation($product_id, $listing_id, $profile_id, $shopid)
     {
         $method_name = 'EtsyModule::etsySyncTranslation()';
         self::auditLogEntry('Job execution started to sync translation on etsy', $method_name);
-
         $translations = self::prepareArrayToUpdateTranslationOnEtsy($product_id, $listing_id, $profile_id);
         if (!empty($translations)) {
             foreach ($translations as $translation) {
-                $etsyRequestURI = '/listings/' . $listing_id . '/translations/' . $translation['language'];
-                $etsyRequestMethod = 'PUT';
-
-                $translation_response = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $translation));
-                if (!empty($translation_response) && isset($translation_response->params)) {
+                /**
+                 * Fetch Translations if exists or not
+                 * @date 13-04-2023
+                 * @author Tanisha Gupta
+                 */
+                $etsyRequestURI = '/shops/' . $shopid . '/listings/' . $listing_id . '/translations/' . $translation['language'];
+                $etsyRequestMethod = 'GET';
+                $response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod);
+                unset($translation['listing_id']);
+                $translation_data = http_build_query($translation);
+                /* if title is blank then create transation otherwise update translation */
+                if (isset($response['title']) == "") {
+                    $etsyRequestMethod = 'POST';
                 } else {
-                    $listingError = str_replace("_", " ", key((array) $translation_response));
-                    DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE listing_id = '" . (int) $listing_id . "'");
+                    $etsyRequestMethod = "PUT";
+                }
+                $translation_response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $translation_data);
+                if (!empty($translation_response) && isset($translation_response['title'])) {
+                } else {
+                    /**
+                     * Changed conditions in where clause as listing id will be saved once all information update on etsy
+                     * Updated error based on the profile and product id
+                     * @date 15-04-2023
+                     * @modifier Tanisha Gupta
+                     */
+                    $listingError = $translation_response['error'];
+                    Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $product_id . "' AND id_etsy_profiles = '" . (int) $profile_id . "'");
                 }
                 sleep(1); //Sleep job to avoid exceed limit rate
             }
@@ -1727,7 +2786,6 @@ class EtsyModule extends Module
         $listingArray = array();
         $languages_to_sync = Configuration::get('etsy_sync_lang');
         $etsy_desc_type = Configuration::get('etsy_desc_type');
-
         if (!empty($languages_to_sync)) {
             $sync_languages = explode(',', $languages_to_sync);
             $sync_language_array = array();
@@ -1739,12 +2797,11 @@ class EtsyModule extends Module
                     }
                 }
             }
-
             if (!empty($sync_language_array)) {
                 $i = 0;
                 foreach ($sync_language_array as $language_id => $language_code) {
-                    $profile_details = DB::getInstance()->getRow("SELECT ef.* FROM " . _DB_PREFIX_ . "etsy_profiles ef "
-                            . "WHERE id_etsy_profiles = '" . (int) $profile_id . "'", true, false);
+                    $profile_details = Db::getInstance()->getRow("SELECT ef.* FROM " . _DB_PREFIX_ . "etsy_profiles ef "
+                        . "WHERE id_etsy_profiles = '" . (int) $profile_id . "'", true, false);
 
                     $product_details = KbMarketplaceIntegration::getProductByProductId($product_id, $language_id);
 
@@ -1753,8 +2810,12 @@ class EtsyModule extends Module
                         $quantity = 999;
                     }
 
-                    $price = Product::getPriceStatic($product_id, true, null, 6, null, false, true);
+                    $context = Context::getContext();
 
+                    // Force default (base) currency    
+                    $default_currency_id = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+                    $context->currency = new Currency($default_currency_id);
+                    $price = Product::getPriceStatic($product_id, true, null, 6, null, false, true);
                     $customize_price = $profile_details['custom_pricing'];
                     $customize_price_value = $profile_details['custom_price'];
                     $customize_price_type = $profile_details['price_type'];
@@ -1776,9 +2837,10 @@ class EtsyModule extends Module
                     if ($price < 0) {
                         $price = 0;
                     }
-
                     $etsy_currency_id = Currency::getIdByIsoCode(Configuration::get('etsy_currency'), Context::getContext()->shop->id);
                     $strip_tags = array('</p>', '<br />', '<br>', '</div>', '</li>');
+
+
                     if ($etsy_desc_type == 'short') {
                         $description = str_replace($strip_tags, "\n", $product_details->description_short);
                     } else if ($etsy_desc_type == 'long') {
@@ -1790,8 +2852,9 @@ class EtsyModule extends Module
                             $description = str_replace($strip_tags, "\n", $product_details->description_short . "\n" . $product_details->description);
                         }
                     }
-                    $description = trim(strip_tags($description));
 
+
+                    $description = trim(strip_tags($description));
                     $short_description = strip_tags(str_replace($strip_tags, "\n", $product_details->description_short));
                     $customize_title = $profile_details['customize_product_title'];
                     if (!Tools::isEmpty($customize_title)) {
@@ -1809,7 +2872,13 @@ class EtsyModule extends Module
                     $tagArray = array();
                     $tagTempArray = array();
                     $productTags = Tag::getProductTags($product_id);
-                    if (count($productTags) && isset($productTags[$language_id])) {
+                    /**
+                     * Changes added to fix the issue as in case if there are no tags for the proucts then it returns bool values
+                     * @modifier Pragya Maurya
+                     * @date 10-06-2024                     * 
+                     * PMJune2024 Tags-issue-fixes
+                     */
+                    if (is_array($productTags) && count($productTags) && isset($productTags[$language_id])) {
                         $tagArray = $productTags[$language_id];
                         if (count($tagArray) > 13) {
                             $tagArray = array_slice($tagArray, 0, 13);
@@ -1821,8 +2890,9 @@ class EtsyModule extends Module
                             $tagTempArray[Tools::strtolower(Tools::substr($tag, 0, 19))] = Tools::substr($tag, 0, 19);
                         }
                     }
-                    $tagTempArray = array_unique($tagTempArray);
 
+
+                    $tagTempArray = array_unique($tagTempArray);
                     $listingArray[$i]['listing_id'] = $listing_id;
                     $listingArray[$i]['language'] = $language_code;
                     $listingArray[$i]['description'] = $description;
@@ -1838,14 +2908,12 @@ class EtsyModule extends Module
     }
 
     //To upload download file on etsy
-    public static function etsySyncDownloadFile($product_id, $listing_id)
+    public static function etsySyncDownloadFile($product_id, $listing_id, $profile_id, $shopid)
     {
         $method_name = 'EtsyModule::etsySyncDownloadFile()';
-        
-        $download_details = DB::getInstance()->getRow("SELECT pl.* , id_product_download FROM " . _DB_PREFIX_ . "etsy_products_list pl "
-                . "INNER JOIN " . _DB_PREFIX_ . "product_download pd on pl.id_product = pd.id_product "
-                . "WHERE pd.active = '1' AND pl.active = 1 AND pl.id_product = " . (int) $product_id);
-
+        $download_details = Db::getInstance()->getRow("SELECT pl.* , id_product_download FROM " . _DB_PREFIX_ . "etsy_products_list pl "
+            . "INNER JOIN " . _DB_PREFIX_ . "product_download pd on pl.id_product = pd.id_product "
+            . "WHERE pd.active = '1' AND pl.active = 1 AND pl.id_product = " . (int) $product_id);
         if (!empty($download_details)) {
             $download_directory = _PS_DOWNLOAD_DIR_;
             $download_file = $download_directory . "/" . $download_details['filename'];
@@ -1856,33 +2924,42 @@ class EtsyModule extends Module
                     return true;
                 }
             }
-
             self::auditLogEntry('Job execution started to list/update product file on etsy.', $method_name);
             $data = array();
-            $data['listing_id'] = $listing_id;
-            $data['file'] = $download_file;
+            $data['file'] = new CURLFILE($download_file);
             $data['name'] = $download_details['display_filename'];
             $data['rank'] = 1;
             if (!empty($download_details['listing_file_id'])) {
                 $data['listing_file_id'] = $download_details['listing_file_id'];
             }
-
-            $etsyRequestURI = '/listings/' . $listing_id . '/files/';
+            $etsyRequestURI = '/shops/' . $shopid . '/listings/' . $listing_id . '/files';
             $etsyRequestMethod = 'POST';
-
-            $file_list_response = json_decode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $data, false, true));
-
-            if (!empty($file_list_response) && isset($file_list_response->results)) {
-                if (!empty($file_list_response->results[0]->listing_file_id)) {
-                    $listing_file_id = $file_list_response->results[0]->listing_file_id;
-                    DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET "
-                            . "listing_file_id = '" . pSQL($listing_file_id) . "', "
-                            . "listing_file_hash = '" . pSQL(md5_file($download_file)) . "' "
-                            . "WHERE listing_id = '" . (int) $listing_id . "'");
+            /**
+             * Removed json decode as data will be returned in the array
+             * Send request to the etsyGetResponse method as made changes to use only method to get etsy data
+             * @date 14-03-2023
+             * modifier Tanisha Gupta
+             */
+            $file_list_response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $data, 'formtype');
+            if (!empty($file_list_response) && isset($file_list_response['listing_file_id'])) {
+                if (!empty($file_list_response['listing_file_id'])) {
+                    /**
+                     * Changed conditions in where clause as listing id will be saved once all information update on etsy
+                     * Updated error based on the profile and product id
+                     * @date 15-04-2023
+                     * @modifier Tanisha Gupta
+                     */
+                    $listing_file_id = $file_list_response['listing_file_id'];
+                    Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET "
+                        . "listing_file_id = '" . pSQL($listing_file_id) . "', "
+                        . "listing_file_hash = '" . pSQL(md5_file($download_file)) . "' "
+                        . "WHERE id_product = '" . (int) $product_id . "' AND id_etsy_profiles = '" . (int) $profile_id . "'");
                 }
             } else {
-                $listingError = str_replace("_", " ", key((array) $file_list_response));
-                DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE listing_id = '" . (int) $listing_id . "'");
+                //$listingError = str_replace("_", " ", key((array) $file_list_response));
+                $listingError = $file_list_response['error'];
+                //Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE listing_id = '" . (int) $listing_id . "'");
+                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE id_product = '" . (int) $product_id . "' AND id_etsy_profiles = '" . (int) $profile_id . "'");
                 self::auditLogEntry('File Upload error' . $listingError, $method_name);
             }
             sleep(1); //Sleep job to avoid exceed limit rate
@@ -1892,17 +2969,26 @@ class EtsyModule extends Module
     }
 
     //Get products from etsy products table which needs to be deleted from etsy
-    public static function getProductsToDeleteOnEtsy($kbproductid = false)
+    /**
+     * Modified the function params as we are deleting the product while syncing. So used profileid in case if the request is from the profile level sync
+     * @modifier Pragya Maurya
+     * @date 13-06-2024
+     */
+    public static function getProductsToDeleteOnEtsy($kbproductid = false, $kbprofileid = false)
     {
         $condition = '';
         if ($kbproductid) {
             $condition .= ' AND id_product = ' . (int) $kbproductid;
         }
-        return DB::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_products_list "
-                        . "WHERE listing_id IS NOT NULL AND "
-                        . "listing_id != '' AND listing_id != 0 "
-                        . "AND renew_flag = '0' "
-                        . "AND delete_flag = '1'" . $condition, true, false);
+        if ($kbprofileid) {
+            $condition .= ' AND id_etsy_profiles = ' . (int) $kbprofileid;
+        }
+        return Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_products_list "
+            . "WHERE listing_id IS NOT NULL AND "
+            . "listing_id != '' AND listing_id != 0 "
+            . "AND renew_flag = '0' "
+            . "AND active = '1' " //change by gopi to perform any action on only enabled product
+            . "AND delete_flag = '1'" . $condition, true, false);
     }
 
     // To Delete the item from etsy. Unused Method. Instead of delete, Now we are making Product Inactive in the Etsy */
@@ -1914,9 +3000,7 @@ class EtsyModule extends Module
         $etsyRequestMethod = 'DELETE';
         $delete_response = json_decode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, array(), false, false));
         if (!empty($delete_response) && isset($delete_response->results)) {
-            //DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Pending', renew_flag = '0', delete_flag = '0', status = '0', is_error = '0', delete_track = '0', sold_flag = '0' WHERE listing_id = '" . pSQL($listing_id) . "' AND listing_status != 'Sold Out'");
-            //DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Sold Out', renew_flag = '0', delete_flag = '0', status = '0', is_error = '0', delete_track = '0', sold_flag = '1' WHERE listing_id = '" . pSQL($listing_id) . "' AND listing_status = 'Sold Out'");
-            DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_id = NULL, listing_status = 'Pending', renew_flag = '0', delete_flag = '0', is_error = '0', delete_track = '0', sold_flag = '0', active = '0' WHERE listing_id = '" . pSQL($listing_id) . "'");
+            Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_id = NULL, listing_status = 'Pending', renew_flag = '0', delete_flag = '0', is_error = '0', delete_track = '0', sold_flag = '0', active = '0' WHERE listing_id = '" . pSQL($listing_id) . "'");
         }
         self::auditLogEntry('Job execution completed to delete the items from the etsy.', $method_name);
     }
@@ -1926,26 +3010,30 @@ class EtsyModule extends Module
         $listing_id = $profile_product['listing_id'];
         $method_name = 'EtsyModule::deleteItemsFromEtsy()';
         self::auditLogEntry('Job execution started to delete the item: ' . $listing_id . ' from the etsy.', $method_name);
-        $etsyRequestURI = '/listings/' . $listing_id;
-        $etsyRequestMethod = 'PUT';
-        $etsyQueryString = array();
-        $etsyQueryString['state'] = 'inactive';
-        $inactive_response = json_decode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString, false, false));
-        if (!empty($inactive_response) && isset($inactive_response->results)) {
-            DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Inactive', renew_flag = '0', delete_flag = '0', is_error = '0', delete_track = '0', sold_flag = '0' WHERE listing_id = '" . pSQL($listing_id) . "'");
-
-            // If $id_etsy_profiles is zero that means product is unmapped with the profile so need to delete from the table
-            /* Below Logic Removed & updated only the Listing Status to Inactive only. No Need to delete the item from the etsy_products_list table who is having 0 profile_id in the table (As profile_id is 0 so item will not be used anywhere). Thus no need of the etsy_products_history table.
-              if(!empty($profile_product['id_etsy_profiles'])) {
-              DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Inactive', renew_flag = '0', delete_flag = '0', is_error = '0', delete_track = '0', sold_flag = '0' WHERE listing_id = '" . pSQL($listing_id) . "'");
-              } else {
-              $history_exist = DB::getInstance()->getValue("SELECT count(*) FROM " . _DB_PREFIX_ . "etsy_products_history WHERE etsy_list_id = ". (int) $listing_id);
-              if($history_exist <= 0) {
-              DB::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_products_history(product_id,etsy_list_id, expiry_date) VALUES (".(int) $profile_product['id_product']. ", '".pSQL($listing_id)."', '".pSQL($profile_product['expiry_date'])."'");
-              }
-              DB::getInstance()->execute("DELETE FROM " . _DB_PREFIX_ . "etsy_products_list WHERE listing_id = '" . pSQL($listing_id) . "'");
-              }
+        $shop = self::etsyGetShopDetails();
+        if (isset($shop['shop_id'])) {
+            $etsyRequestURI = '/shops/' . $shop['shop_id'] . '/listings/' . $listing_id;
+            /**
+             * Changed made to inactive product on etsy instead of delete.
+             * TGmay2023 Inactive-Product
+             * @date 24-05-2023
+             * @author Tanisha Gupta
              */
+            $etsyRequestMethod = 'PATCH';
+            $etsyQueryString = array();
+            $etsyQueryString['state'] = 'inactive';
+            /**
+             * Removed json decode as data will be returned in the array
+             * Send request to the etsyGetResponse method as made changes to use only method to get etsy data
+             * @date 14-03-2023
+             * @author Tanisha Gupta
+             */
+            $inactive_response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, http_build_query($etsyQueryString));
+            if (!empty($inactive_response) && isset($inactive_response['error'])) {
+                self::auditLogEntry("Error in deleting the product listing from etsy: " . $inactive_response['error'], $method_name);
+            } else {
+                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Inactive', renew_flag = '0', delete_flag = '0', is_error = '0', delete_track = '0', sold_flag = '0' WHERE listing_id = '" . pSQL($listing_id) . "'");
+            }
         }
         self::auditLogEntry('Job execution completed to delete the items from the etsy.', $method_name);
     }
@@ -1954,31 +3042,45 @@ class EtsyModule extends Module
     //Logic of product status sync is changed. Initially to sync the status of the product, Individual request of each product was being sent. Now changed the logic the get all the listing from the Etsy & sync status accordingly.
     public static function getProductsListedOnEtsy()
     {
-        return DB::getInstance()->getValue("SELECT count(*) FROM " . _DB_PREFIX_ . "etsy_products_list WHERE listing_id IS NOT NULL AND listing_id != '' AND listing_id != 0 AND renew_flag = '0' AND delete_flag = '0' AND active = '1'");
-        //return DB::getInstance()->executeS("SELECT listing_id FROM " . _DB_PREFIX_ . "etsy_products_list WHERE listing_id IS NOT NULL AND listing_id != '' AND listing_id != 0 AND renew_flag = '0' AND delete_flag = '0' AND active = 1", true, false);
+        return Db::getInstance()->getValue("SELECT count(*) FROM " . _DB_PREFIX_ . "etsy_products_list WHERE listing_id IS NOT NULL AND listing_id != '' AND listing_id != 0 AND renew_flag = '0' AND delete_flag = '0' AND active = '1'");
     }
 
     public static function syncItemListingStatus()
     {
         /* Get Shop details */
-        $shop = Tools::jsonDecode(self::etsyGetShopDetails());
-
-        self::getItemsFromEtsy($shop->results[0]->shop_id, 'active', 1);
-        self::getItemsFromEtsy($shop->results[0]->shop_id, 'expired', 1);
-        self::getItemsFromEtsy($shop->results[0]->shop_id, 'inactive', 1);
-        //self::getItemsFromEtsy($shop->results[0]->shop_id, 'sold_out', 1); //Not possible to find out the sold out listing
+        /**
+         * Remove json_decode as response is already decoded
+         * @date 12-04-2023
+         * @author Tanisha Gupta
+         */
+        $shop = self::etsyGetShopDetails();
+        if (isset($shop['shop_id'])) {
+            /**
+             * While fetching listing data, there is no type parameter to send, So call getItemsFromEtsy
+             */
+            self::getItemsFromEtsy($shop['shop_id'], 'active', 1);
+            self::getItemsFromEtsy($shop['shop_id'], 'expired', 1);
+            self::getItemsFromEtsy($shop['shop_id'], 'inactive', 1);
+        }
     }
 
     // Type like active, inactive, expired
     public static function getItemsFromEtsy($shop_id, $type, $page)
     {
-        $etsyRequestURI = '/shops/' . $shop_id . '/listings/' . $type . '/';
+        $etsyRequestURI = '/shops/' . $shop_id . '/listings?state=' . $type;
         $etsyRequestMethod = 'GET';
         $etsyQueryString = array("limit" => 100, "page" => $page, "shop_id" => $shop_id);
-        $response = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
-        if (!empty($response->results)) {
-            foreach ($response->results as $item) {
-                $listing_status = $item->state;
+        $etsyQueryString = http_build_query($etsyQueryString);
+        /**
+         * Removed json decode as data will be returned in the array
+         * Send request to the etsyGetResponse method as made changes to use only method to get etsy data
+         * @date 14-03-2023
+         * @author Tanisha Gupta
+         */
+        $response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString);
+        if (!empty($response) && isset($response['results']) && !empty($response['results'])) {
+            foreach ($response['results'] as $item) {
+                $listing_status = $item['state'];
                 $db_listing_status = '';
                 if ($listing_status == 'inactive' || $listing_status == 'sold_out' || $listing_status == 'edit') {
                     $db_listing_status = 'Inactive';
@@ -1991,24 +3093,29 @@ class EtsyModule extends Module
                 }
                 if (!empty($db_listing_status)) {
                     if ($db_listing_status == "Inactive" || $db_listing_status == "Expired") {
-                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = '" . pSQL($db_listing_status) . "', expiry_date = '" . date("Y-m-d H:i:s", $response->results[0]->ending_tsz) . "', delete_flag = '0', is_error = '0', renew_flag = '0', listing_error = '' WHERE listing_id = '" . (int) $item->listing_id . "' AND listing_status in ('Pending', 'Inactive', 'Expired', 'Listed', 'Updated')");
+                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = '" . pSQL($db_listing_status) . "', expiry_date = '" . pSQL(date("Y-m-d H:i:s", $item['ending_timestamp'])) . "', delete_flag = '0', is_error = '0', renew_flag = '0', listing_error = '' WHERE listing_id = '" . (int) $item['listing_id'] . "' AND listing_status in ('Pending', 'Inactive', 'Expired', 'Listed', 'Updated')");
                     } else if ($db_listing_status == "Sold Out") {
                         // Considering Sold Out Items as Inactive Status
-                        //DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = '" . pSQL($db_listing_status) . "', expiry_date = '".date("Y-m-d H:i:s", $response->results[0]->ending_tsz)."', sold_flag = '1', delete_flag = '0', is_error = '0', renew_flag = '0', listing_error = '' WHERE listing_id = '" . (int) $item->listing_id . "' AND listing_status in ('Pending', 'Inactive', 'Expired', 'Listed', 'Updated')");
-                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Inactive', expiry_date = '" . date("Y-m-d H:i:s", $response->results[0]->ending_tsz) . "', sold_flag = '1', delete_flag = '0', is_error = '0', renew_flag = '0', listing_error = '' WHERE listing_id = '" . (int) $item->listing_id . "' AND listing_status in ('Pending', 'Inactive', 'Expired', 'Listed', 'Updated')");
+                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = 'Inactive', expiry_date = '" . pSQL(date("Y-m-d H:i:s", $item['ending_timestamp'])) . "', sold_flag = '1', delete_flag = '0', is_error = '0', renew_flag = '0', listing_error = '' WHERE listing_id = '" . (int) $item['listing_id'] . "' AND listing_status in ('Pending', 'Inactive', 'Expired', 'Listed', 'Updated')");
                     } else if ($db_listing_status = 'Listed') {
                         /* If Item is Marked as Pending, Inactive, Expired, Listed then only mark the item as Listed.
                          * Don't Mark item as listed if item is in following state: Updated, Relisting, Deletion Pending, Sold Out
                          * In case of Sold Out, Item should remain in Sold Out stauts so that it can be relist in case of restock
                          */
-                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = '" . pSQL($db_listing_status) . "', expiry_date = '" . date("Y-m-d H:i:s", $response->results[0]->ending_tsz) . "' WHERE listing_id = '" . (int) $item->listing_id . "' AND listing_status in ('Pending', 'Inactive', 'Expired', 'Listed')");
+                        /**
+                         * if item is in Relisting, then also mark the item as Listed
+                         * TG2023may Mark-Status-ListedForRelisting-Case
+                         * @date 23-05-2023
+                         * @modifier Tanisha Gupta
+                         */
+                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = '" . pSQL($db_listing_status) . "',delete_flag = '0', is_error = '0', renew_flag = '0', listing_error = '', expiry_date = '" . pSQL(date("Y-m-d H:i:s", $item['ending_timestamp'])) . "' WHERE listing_id = '" . (int) $item['listing_id'] . "' AND listing_status in ('Pending', 'Inactive', 'Expired', 'Listed','Relisting')");
                     }
                 }
             }
 
             /* If page is equal to 1 then only run the loop. Because at page number 1, we are running loop for all the pages */
-            if ($response->count > 100 && $page == 1) {
-                $total_pages = ceil($response->count / 100);
+            if ($response['count'] > 100 && $page == 1) {
+                $total_pages = ceil($response['count'] / 100);
                 for ($i = 2; $i <= $total_pages; $i++) {
                     self::getItemsFromEtsy($shop_id, $type, $i);
                 }
@@ -2030,7 +3137,7 @@ class EtsyModule extends Module
                 $etsyRequestMethod = 'GET';
                 $etsyQueryString = $listing;
 
-                $getListingResponse = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
+                $getListingResponse = json_decode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
 
                 if (!empty($getListingResponse) && isset($getListingResponse->results)) {
                     $listingStatus = $getListingResponse->results[0]->state;
@@ -2047,14 +3154,14 @@ class EtsyModule extends Module
                     } else {
                         $listingStatus = 'Pending';
                     }
-                    
+
                     if (!empty($listingStatus)) {
                         $statusUpdated++;
-                        DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = '" . pSQL($listingStatus) . "' WHERE listing_id = '" . (int) $listing['listing_id'] . "'");
+                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET listing_status = '" . pSQL($listingStatus) . "' WHERE listing_id = '" . (int) $listing['listing_id'] . "'");
                     }
                 } else {
                     $listingError = str_replace("_", " ", key((array) $getListingResponse));
-                    DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE listing_id = '" . (int) $listing['listing_id'] . "'");
+                    Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_products_list SET is_error = 1, listing_error = '" . pSQL($listingError) . "' WHERE listing_id = '" . (int) $listing['listing_id'] . "'");
                 }
                 sleep(1); //Sleep job to avoid exceed limit rate
             }
@@ -2070,36 +3177,49 @@ class EtsyModule extends Module
         self::auditLogEntry('Job execution started to get orders from etsy.', $method_name);
 
         $receiptsFetched = 0;
-
-        //Get Shop ID
-        $shop = Tools::jsonDecode(self::etsyGetShopDetails());
-        if (!empty($shop) && isset($shop->results)) {
+        /**
+         * Get Shop ID
+         * Changes done according to the get response using the v3 api
+         * @date @12-04-2023
+         * @author Tanisha Gupta
+         */
+        $shop = self::etsyGetShopDetails();
+        if (isset($shop['shop_id'])) {
             //Get date to fetch orders from etsy order table
-            $lastDate = DB::getInstance()->getValue("SELECT MAX(date_added) as last_date FROM " . _DB_PREFIX_ . "etsy_orders_list");
+            $lastDate = Db::getInstance()->getValue("SELECT MAX(date_added) as last_date FROM " . _DB_PREFIX_ . "etsy_orders_list");
 
             if (empty($lastDate)) {
                 $lastDate = date("Y-m-d H:i:s", strtotime("-2 days"));
             }
 
             //Prepare parameters to send request
-            $etsyRequestURI = '/shops/' . $shop->results[0]->shop_id . '/receipts/';
+            /*
+             * Changes Shop id and send min_created as query parameter with the url 
+             * @date 12-04-2023
+             * @author Tanisha Gupta
+             */
+            $etsyRequestURI = '/shops/' . $shop['shop_id'] . '/receipts?min_created=' . strtotime($lastDate);
             $etsyRequestMethod = 'GET';
-            $etsyQueryString = array(
-                'min_created' => strtotime($lastDate)
-            );
-            $shopReceipts = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
-            if (!empty($shopReceipts) && isset($shopReceipts->results)) {
-                $shopReceiptsList = self::prepareReceiptFieldsList($shopReceipts->results);
+            $etsyQueryString = array();
+            /**
+             * Removed json decode as data will be returned in the array
+             * Send request to the etsyGetResponse method as made changes to use only method to get etsy data
+             * @date 14-03-2023
+             * @author Tanisha Gupta
+             */
+            $shopReceipts = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString);
 
+            if (!empty($shopReceipts) && isset($shopReceipts['results'])) {
+                $shopReceiptsList = self::prepareReceiptFieldsList($shopReceipts['results']);
                 if (!empty($shopReceiptsList)) {
                     foreach ($shopReceiptsList as $shopReceiptList) {
                         $orderResponse = KbMarketplaceIntegration::writeOrderIntoDb('kbetsy', $shopReceiptList);
                         if (isset($orderResponse['error']) && $orderResponse['error'] == '') {
                             if (!empty($orderResponse['success']['order_id'])) {
                                 $receiptsFetched++;
-                                DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_orders_list "
-                                        . "SET id_order = '" . (int) $orderResponse['success']['order_id'] . "' "
-                                        . "WHERE id_etsy_order = '" . (int) $shopReceiptList['order']['id_etsy_order'] . "'");
+                                Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_orders_list "
+                                    . "SET id_order = '" . (int) $orderResponse['success']['order_id'] . "' "
+                                    . "WHERE id_etsy_order = '" . pSQL($shopReceiptList['order']['id_etsy_order']) . "'");
                             }
                         }
                         sleep(1); //Sleep job to avoid exceed limit rate
@@ -2117,88 +3237,149 @@ class EtsyModule extends Module
         $orderDetails = array();
         if (!empty($receiptDetails) && count($receiptDetails) > 0) {
             foreach ($receiptDetails as $receiptDetail) {
-                //Get Transactions Details
-                $etsyRequestURI = '/receipts/' . $receiptDetail->receipt_id . '/transactions/';
-                $etsyRequestMethod = 'GET';
-                $etsyQueryString = array();
-
-                $receiptTransactions = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
-                if (!empty($receiptTransactions) && isset($receiptTransactions->results)) {
+                if (!empty($receiptDetail['transactions']) && isset($receiptDetail['transactions'])) {
                     //Add Etsy Order entry in specific etsy order list table
-                    $dataExistenceResult = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_orders_list WHERE id_etsy_order = '" . (int) $receiptDetail->receipt_id . "'");
+                    $dataExistenceResult = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_orders_list WHERE id_etsy_order = '" . pSQL($receiptDetail['receipt_id']) . "'");
+
                     if ($dataExistenceResult == 0) {
-                        DB::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_orders_list VALUES (NULL, 0, '" . (int) $receiptDetail->receipt_id . "', '0','0', '" . pSQL(date("Y-m-d H:i:s", $receiptDetail->creation_tsz)) . "', NOW())");
+                        Db::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_orders_list VALUES (NULL, 0, '" . pSQL($receiptDetail['receipt_id']) . "', '0','0', '" . pSQL(date("Y-m-d H:i:s", $receiptDetail['create_timestamp'])) . "', NOW())");
                         //Set Firstname and Lastname parameters
-                        if (!empty($receiptDetail->name)) {
-                            $customerName = explode(' ', $receiptDetail->name, 2);
+                        if (!empty($receiptDetail['name'])) {
+                            $customerName = explode(' ', $receiptDetail['name'], 2);
                         }
+
+
+                        //Checking if Etsy is returning the buyer's email.
+                        /**
+                         * Added to Check if Etsy is returning the buyer's email as Etsy stopped sharing the emailId in the order response.
+                         * PM2024Feb etsy-response-emailId-order
+                         * @modifier Pragya Maurya
+                         * @date 12-02-2024
+                         */
+                        if (empty($receiptDetail['buyer_email'])) {
+                            //If buyer's email is empty then create the fake email ID using the buyer ID.
+                            $receiptDetail['buyer_email'] = $receiptDetail['buyer_user_id'] . "@example.com";
+                        }
+
                         self::createCustomerByReceipts($receiptDetail, $customerName);
 
-                        $receiptTransactionsList = $receiptTransactions->results;
+                        $receiptTransactionsList = $receiptDetail['transactions'];
+
+                        /**
+                         * Get Country ID from Store Database
+                         * @date 08-01-2026
+                         * @author Manish
+                         * MPJan2026 address_issue
+                         */
+
+                        $storeCountryId = (int) Configuration::get('PS_COUNTRY_DEFAULT');
+                        $storeStateId = 0;
+
+                        $storeStateId = (int) Db::getInstance()->getValue(
+                            'SELECT id_state FROM ' . _DB_PREFIX_ . 'state 
+                            WHERE id_country = ' . (int) $storeCountryId . ' 
+                            AND active = 1 
+                            ORDER BY id_state ASC'
+                        );
 
                         //Get Country ID from Store Database
-                        $orderCountry = self::getStoreCountryID($receiptDetail->country_id);
+                        /**
+                         * Etsy return country iso code so fetch store country id directly from ps based on the iso code
+                         * @modifier Manish
+                         * @date 08-01-2026
+                         * MPJAN2026 address_issue
+                         * 
+                         * 
+                         */
 
-                        //Get State ID from Store Database
-//                        $orderState = Configuration::get('etsy_order_default_status');
-                        $orderState = self::getStoreStateID($receiptDetail->state, $orderCountry);
+                        if (!empty($receiptDetail['country_iso'])) {
+                            $orderCountry = Country::getByIso($receiptDetail['country_iso']);
+                        } else {
+                            $orderCountry = $storeCountryId;
+                        }
+                        /**
+                         * Etsy return country iso code so fetch store country id directly from ps based on the iso code
+                         * @date 12-04-2023
+                         * @author Tanisha Gupta
+                         */
+                        /**
+                         * Etsy return state iso code so fetch store state id directly from ps based on the iso code
+                         * TG2023may Order-State
+                         * @date 12-04-2023
+                         * @author Tanisha Gupta
+                         */
+                        $orderState = 0;
+
+                        if (!empty($receiptDetail['state']) && $orderCountry) {
+                            $orderState = State::getIdByName($receiptDetail['state']);
+                            if (empty($orderState)) {
+                                $orderState = State::getIdByIso($receiptDetail['state'], (int) $orderCountry);
+                            }
+                        }
+                        /**
+                         * Added to Check if state is set otherwise fallback to store state
+                         * @modifier Manish
+                         * @date 08-01-2026
+                         * MPJAN2026 address_issue
+                         */
+
+                        if (!$orderState && $storeStateId) {
+                            $orderState = $storeStateId;
+                        }
 
                         //Prepare Products Array for all ordered items
                         $productsArray = array();
-                        
-
                         foreach ($receiptTransactionsList as $receiptTransactionList) {
                             //Get Product ID from Etsy Product List Table
-                            $productID = DB::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_products_list WHERE listing_id = '" . (int) $receiptTransactionList->listing_id . "'");
-
+                            $productID = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_products_list WHERE listing_id = '" . (int) $receiptTransactionList['listing_id'] . "'");
                             if (!empty($productID)) {
                                 $productDetails = new ProductCore($productID['id_product']);
-
                                 $productInventory = KbMarketplaceIntegration::getProductInventory($productID['id_product']);
-
                                 //Get Product Attribute ID
                                 $attributesString = '';
                                 $finalAttributeProductID = array();
-                                $variations = $receiptTransactionList->variations;
-                                
+                                $variations = $receiptTransactionList['variations'];
                                 if (!empty($variations)) {
                                     $attributeProductID = array();
                                     $counter = 0;
-                                    
                                     $finalAttributeProductID = array();
-                                    
                                     // If Order Item sku is in SKU_PRODUCTID_VARIATIONID. Pick the prestashop variation id from the etst SKU.
-                                    if (!empty($receiptTransactionList->product_data->sku)) {
-                                        if (Tools::substr($receiptTransactionList->product_data->sku, 0, 4) == "SKU_") {
-                                            $sku_parts = explode("_", $receiptTransactionList->product_data->sku);
+                                    if (!empty($receiptTransactionList['sku'])) {
+                                        if (Tools::substr($receiptTransactionList['sku'], 0, 4) == "SKU_") {
+                                            $sku_parts = explode("_", $receiptTransactionList['sku']);
                                             if (count($sku_parts) == 3) {
                                                 $finalAttributeProductID[0] = $sku_parts['2'];
                                             }
                                         }
                                     }
-                                    
-                                    // Find the Variation ID from the Property name like Size Small etc
-//                                    if (empty($finalAttributeProductID)) {
-                                    if (empty($finalAttributeProductID) || (isset($finalAttributeProductID[0]) &&  $finalAttributeProductID[0] == '')) {
-                                        foreach ($variations as $variation) {
-                                            $property_id = $variation->property_id;
 
+                                    // Find the Variation ID from the Property name like Size Small etc
+                                    if (empty($finalAttributeProductID) || (isset($finalAttributeProductID[0]) && $finalAttributeProductID[0] == '')) {
+                                        foreach ($variations as $variation) {
+                                            $property_id = $variation['property_id'];
                                             $selectSQL = "SELECT id_attribute_group FROM " . _DB_PREFIX_ . "etsy_attributes ea INNER JOIN " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 ON am1.property_id = ea.attribute_id WHERE etsy_property_id = '" . (int) $property_id . "'";
-                                            $attributeGroupDetail = DB::getInstance()->executeS($selectSQL, true, false);
+                                            $attributeGroupDetail = Db::getInstance()->executeS($selectSQL, true, false);
+
+                                            //Changes for the Order Mapping for the Custom Variation.
+                                            if (empty($attributeGroupDetail)) {
+                                                $selectSQL = "SELECT id_attribute_group FROM " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 WHERE custom_property_id = '" . (int) $property_id . "' AND listing_id = " . (int) $receiptTransactionList['listing_id'];
+                                                $attributeGroupDetail = Db::getInstance()->executeS($selectSQL, true, false);
+                                            }
+
                                             if ($attributeGroupDetail != '') {
                                                 $attributeGroup = $attributeGroupDetail[0]['id_attribute_group'];
-                                                $attributeValue = html_entity_decode($variation->formatted_value);
+                                                $attributeValue = html_entity_decode($variation['formatted_value']);
                                                 foreach ($attributeGroupDetail as $key => $singleAttributeGroup) {
                                                     $attributeGroup = $singleAttributeGroup['id_attribute_group'];
                                                     $selectSQL = "SELECT distinct(ppa.id_product_attribute) FROM " . _DB_PREFIX_ . "product_attribute ppa LEFT JOIN " . _DB_PREFIX_ . "product_attribute_combination pac ON ppa.id_product_attribute = pac.id_product_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute_lang al ON pac.id_attribute = al.id_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute a ON a.id_attribute = al.id_attribute WHERE a.id_attribute_group = '" . (int) $attributeGroup . "' AND al.name = '" . pSQL($attributeValue) . "' AND ppa.id_product = '" . (int) $productID['id_product'] . "'";
-                                                    $attributeProductDetails = DB::getInstance()->executeS($selectSQL, true, false);
+                                                    $attributeProductDetails = Db::getInstance()->executeS($selectSQL, true, false);
                                                     if (!empty($attributeProductDetails)) {
                                                         break;
                                                     }
                                                 }
 
                                                 $selectSQL = "SELECT distinct(ppa.id_product_attribute) FROM " . _DB_PREFIX_ . "product_attribute ppa LEFT JOIN " . _DB_PREFIX_ . "product_attribute_combination pac ON ppa.id_product_attribute = pac.id_product_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute_lang al ON pac.id_attribute = al.id_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute a ON a.id_attribute = al.id_attribute WHERE a.id_attribute_group = '" . (int) $attributeGroup . "' AND al.name = '" . pSQL($attributeValue) . "' AND ppa.id_product = '" . (int) $productID['id_product'] . "'";
-                                                $attributeProductDetails = DB::getInstance()->executeS($selectSQL, true, false);
+                                                $attributeProductDetails = Db::getInstance()->executeS($selectSQL, true, false);
 
                                                 if (!empty($attributeProductDetails)) {
                                                     foreach ($attributeProductDetails as $attributeProductDetail) {
@@ -2216,7 +3397,7 @@ class EtsyModule extends Module
                                             $counter++;
                                         }
                                     }
-                                    
+
                                     //Get Product Attributes details to concatenate with name
                                     if (isset($finalAttributeProductID[0])) {
                                         $attributesList = $productDetails->getAttributeCombinationsById($finalAttributeProductID[0], Context::getContext()->language->id);
@@ -2239,10 +3420,17 @@ class EtsyModule extends Module
                                     $upc = $combination->upc;
                                     $ean13 = $combination->ean13;
                                 }
-
+                                $price = 0.0;
+                                /**
+                                 * Correct parameter to fetch price 
+                                 * TGmay2023 Price-Parameter
+                                 * @date 22-05-2023
+                                 * @modifier Tanisha Gupta
+                                 */
+                                $price = (float) $receiptTransactionList['price']['amount'] / $receiptTransactionList['price']['divisor'];
                                 $productsArray[] = array(
                                     'id_product' => $productID['id_product'],
-                                    'name' => $receiptTransactionList->title,
+                                    'name' => $receiptTransactionList['title'],
                                     'attributes' => !empty($attributesString) ? $attributesString : '',
                                     'weight' => $productDetails->weight,
                                     'ean13' => $ean13,
@@ -2252,22 +3440,30 @@ class EtsyModule extends Module
                                     'supplier_reference' => $productDetails->supplier_reference,
                                     'weight_attribute' => 0,
                                     'id_product_attribute' => !empty($finalAttributeProductID[0]) ? $finalAttributeProductID[0] : '',
-                                    'cart_quantity' => $receiptTransactionList->quantity,
+                                    'cart_quantity' => $receiptTransactionList['quantity'],
                                     'stock_quantity' => $productInventory,
                                     'id_customization' => $productDetails->customizable,
                                     'additional_shipping_cost' => 0,
                                     'id_shop' => Context::getContext()->shop->id,
-                                    'price_wt' => $receiptTransactionList->price,
-                                    'price' => $receiptTransactionList->price,
-                                    'total_wt' => $receiptTransactionList->price * $receiptTransactionList->quantity,
-                                    'total' => $receiptTransactionList->price * $receiptTransactionList->quantity,
+                                    'price_wt' => $price,
+                                    'price' => $price,
+                                    'total_wt' => $price * $receiptTransactionList['quantity'],
+                                    'total' => $price * $receiptTransactionList['quantity'],
                                     'wholesale_price' => $productDetails->wholesale_price,
                                     'id_supplier' => $productDetails->id_supplier
                                 );
                             } else {
+                                $price = 0.0;
+                                /**
+                                 * Correct parameter to fetch price 
+                                 * TGmay2023 Price-Parameter
+                                 * @date 22-05-2023
+                                 * @modifier Tanisha Gupta
+                                 */
+                                $price = (float) $receiptTransactionList['price']['amount'] / $receiptTransactionList['price']['divisor'];
                                 $productsArray[] = array(
                                     'id_product' => '0',
-                                    'name' => $receiptTransactionList->title,
+                                    'name' => $receiptTransactionList['title'],
                                     'attributes' => '',
                                     'weight' => 0,
                                     'ean13' => '',
@@ -2277,70 +3473,130 @@ class EtsyModule extends Module
                                     'supplier_reference' => '',
                                     'weight_attribute' => 0,
                                     'id_product_attribute' => '',
-                                    'cart_quantity' => $receiptTransactionList->quantity,
-                                    'stock_quantity' => $receiptTransactionList->quantity,
+                                    'cart_quantity' => $receiptTransactionList['quantity'],
+                                    'stock_quantity' => $receiptTransactionList['quantity'],
                                     'id_customization' => 0,
                                     'additional_shipping_cost' => 0,
                                     'id_shop' => Context::getContext()->shop->id,
-                                    'price_wt' => $receiptTransactionList->price,
-                                    'price' => $receiptTransactionList->price,
-                                    'total_wt' => $receiptTransactionList->price * $receiptTransactionList->quantity,
-                                    'total' => $receiptTransactionList->price * $receiptTransactionList->quantity,
-                                    'wholesale_price' => $receiptTransactionList->price,
+                                    'price_wt' => $price,
+                                    'price' => $price,
+                                    'total_wt' => $price * $receiptTransactionList['quantity'],
+                                    'total' => $price * $receiptTransactionList['quantity'],
+                                    'wholesale_price' => $price,
                                     'id_supplier' => 0
                                 );
                             }
                         }
 
-                        $firstname = $receiptDetail->name;
+                        $firstname = $receiptDetail['name'];
                         if (!empty($customerName[0])) {
                             $firstname = $customerName[0];
                         }
+
+                        //Added By Ashish on 6th May
+                        $total_tax_cost = 0;
+                        /**
+                         * Set price according to the Api response
+                         * @date 12-04-2023
+                         * @author Tanisha Gupta
+                         */
+                        $total_tax_cost = (float) $receiptDetail['total_tax_cost']['amount'] / $receiptDetail['total_tax_cost']['divisor'];
+                        /**
+                         * Made changes to fetch shipping profile title based on the shipping profile id getting in order api response
+                         * TGmay2023 Shipping-Order
+                         * @date 18-05-2023
+                         * @modifier Tanisha Gupta
+                         */
+                        $carrier_name = '';
+
+                        if (!empty($receiptTransactionList['shipping_method'])) {
+                            $carrier_name = $receiptTransactionList['shipping_method'];
+                        } else if (!empty($receiptTransactionList['shipping_profile_id'])) {
+                            $carrier_name = SyncTemplate::getShippingProfileTitleByProfileId($receiptTransactionList['shipping_profile_id']);
+                            if (empty($carrier_name)) {
+                                $carrier_name = 'EtsyCarrier';
+                            }
+                        } else {
+                            $carrier_name = 'EtsyCarrier';
+                        }
+                        /**
+                         * Made changes to fallback address to dummy if not exist in etsy api
+                         * @date 08-01-2026
+                         * @modifier Manish
+                         * MPJAN2026 address_issue
+                         */
+                        $dummyAddress1 = 'Dummy Address Line 1';
+                        $dummyAddress2 = 'Dummy Address Line 2';
+                        $dummyCity = 'Dummy City';
+                        $dummyPostcode = '000000';
+
+                        $address1 = !empty($receiptDetail['first_line']) ? self::kbConvertToUTF8($receiptDetail['first_line']) : $dummyAddress1;
+
+                        $address2 = !empty($receiptDetail['second_line']) ? self::kbConvertToUTF8($receiptDetail['second_line']) : $dummyAddress2;
+
+                        $city = !empty($receiptDetail['city']) ? self::kbConvertToUTF8($receiptDetail['city']) : $dummyCity;
+
+                        $postcode = !empty($receiptDetail['zip']) ? $receiptDetail['zip'] : $dummyPostcode;
+
                         $orderDetails[] = array(
                             'customer' => array(
-                                'email' => $receiptDetail->buyer_email,
-                                'firstname' => $firstname,
-                                'lastname' => !empty($customerName[1]) ? $customerName[1] : $firstname,
-                                'address1' => $receiptDetail->first_line,
-                                'address2' => $receiptDetail->second_line,
-                                'postcode' => $receiptDetail->zip,
-                                'city' => $receiptDetail->city,
+                                'email' => $receiptDetail['buyer_email'],
+                                /**
+                                 * If input string contains any HTML entities,then, converts them to their corresponding UTF-8 characters
+                                 * TGmay2023 Fixed-UTF8-Issue-Address
+                                 * @date 04-05-2023
+                                 * @modifier Tanisha Gupta
+                                 */
+                                'firstname' => self::kbConvertToUTF8($firstname),
+                                'lastname' => !empty($customerName[1]) ? self::kbConvertToUTF8($customerName[1]) : self::kbConvertToUTF8($firstname),
+                                //changes done by Manish to assign address field to fallback to dummy
+                                'address1' => $address1,
+                                'address2' => $address2,
+                                'postcode' => $postcode,
+                                'city' => $city,
+                                // changes end by Manish
                                 'phone_mobile' => '', //Etsy does not provide phone/mobile number
                                 'id_state' => $orderState,
                                 'id_country' => $orderCountry
                             ),
                             'order' => array(
                                 'id_language' => Context::getContext()->language->id,
-                                'currency_iso_code' => $receiptDetail->currency_code,
-                                'name_carrier' => $receiptDetail->shipping_details->shipping_method,
-                                'payment_method' => $receiptDetail->payment_method,
+                                'currency_iso_code' => $receiptDetail['grandtotal']['currency_code'],
+                                /**
+                                 * Made changes to fetch shipping profile title based on the shipping profile id getting in order api response
+                                 * TGmay2023 Shipping-Order
+                                 * @date 18-05-2023
+                                 * @modifier Tanisha Gupta
+                                 */
+                                'name_carrier' => $carrier_name,
+                                'payment_method' => $receiptDetail['payment_method'],
                                 'id_warehouse' => 0, //As of now this module does not support advance stock management system
                                 'cart_recyclable' => 0,
                                 'cart_gift' => 0,
                                 'id_shop' => Context::getContext()->shop->id,
                                 'id_shop_group' => Context::getContext()->shop->id_shop_group,
-                                'current_state' => !empty($receiptDetail->was_paid) ? Configuration::get('etsy_order_default_status') : Configuration::get('etsy_order_unpaid_status'),
-//                                'current_state' => !empty($receiptDetail->was_paid) ? Configuration::get('etsy_order_paid_status') : Configuration::get('etsy_order_default_status'),
+                                'current_state' => !empty($receiptDetail['is_paid']) ? Configuration::get('etsy_order_default_status') : Configuration::get('etsy_order_unpaid_status'),
+                                //                                'current_state' => !empty($receiptDetail->was_paid) ? Configuration::get('etsy_order_paid_status') : Configuration::get('etsy_order_default_status'),
                                 'order_reference' => Order::generateReference(),
-                                'total_paid_real' => $receiptDetail->subtotal,
-                                'total_products' => $receiptDetail->subtotal,
-                                'total_products_wt' => $receiptDetail->subtotal,
+                                'total_paid_real' => (float) $receiptDetail['subtotal']['amount'] / $receiptDetail['subtotal']['divisor'],
+                                'total_products' => (float) $receiptDetail['subtotal']['amount'] / $receiptDetail['subtotal']['divisor'],
+                                'total_products_wt' => (((float) $receiptDetail['subtotal']['amount'] / $receiptDetail['subtotal']['divisor']) + $total_tax_cost), //Ashish on 6th May
                                 'total_discounts_tax_excl' => 0,
                                 'total_discounts_tax_incl' => 0,
-                                'total_shipping_tax_excl' => $receiptDetail->total_shipping_cost,
-                                'total_shipping_tax_incl' => $receiptDetail->total_shipping_cost,
+                                'total_shipping_tax_excl' => (float) $receiptDetail['total_shipping_cost']['amount'] / $receiptDetail['total_shipping_cost']['divisor'],
+                                'total_shipping_tax_incl' => (float) $receiptDetail['total_shipping_cost']['amount'] / $receiptDetail['total_shipping_cost']['divisor'],
                                 'total_wrapping_tax_excl' => 0,
                                 'total_wrapping_tax_incl' => 0,
-                                'total_paid_tax_excl' => $receiptDetail->grandtotal,
+                                'total_paid_tax_excl' => (((float) $receiptDetail['grandtotal']['amount'] / $receiptDetail['grandtotal']['divisor']) - $total_tax_cost), //Ashish on 6th May
                                 // changes by rishabh jain for order message custom change
-                                'order_msg' => $receiptDetail->message_from_buyer,
+                                'order_msg' => $receiptDetail['message_from_buyer'],
                                 // changes over
-                                'total_paid_tax_incl' => $receiptDetail->grandtotal,
+                                'total_paid_tax_incl' => (float) $receiptDetail['grandtotal']['amount'] / $receiptDetail['grandtotal']['divisor'],
                                 'invoice_date' => '0000-00-00 00:00:00',
                                 'delivery_date' => '0000-00-00 00:00:00',
-                                'id_etsy_order' => $receiptDetail->receipt_id,
-                                'is_paid' => $receiptDetail->was_paid,
-                                'is_shipped' => $receiptDetail->was_shipped
+                                'id_etsy_order' => $receiptDetail['receipt_id'],
+                                'is_paid' => $receiptDetail['is_paid'],
+                                'is_shipped' => $receiptDetail['is_shipped']
                             ),
                             'products' => $productsArray
                         );
@@ -2354,26 +3610,26 @@ class EtsyModule extends Module
     //To create customer in prestashop if customer is not exist who placed orders on the Etsy
     public static function createCustomerByReceipts($receiptDetail, $customerName)
     {
-        if (!empty($receiptDetail->name)) {
-            $customerName = explode(' ', $receiptDetail->name, 2);
+        if (!empty($receiptDetail['name'])) {
+            $customerName = explode(' ', $receiptDetail['name'], 2);
         }
-        $firstname = $receiptDetail->name;
+        $firstname = $receiptDetail['name'];
         if (!empty($customerName[0])) {
             $firstname = $customerName[0];
         }
         /* Remove Special Char & numbers from the name as PS doesn't allow the same in name. Added by Ashish on 6-Feb-2020*/
         $firstname = preg_replace('/[^\da-z ]/i', '', $firstname);
         $firstname = preg_replace('/[0-9]+/', '', $firstname);
-        
+
         if (!empty($customerName[1])) {
             $customerName[1] = preg_replace('/[^\da-z ]/i', '', $customerName[1]);
             $customerName[1] = preg_replace('/[0-9]+/', '', $customerName[1]);
         }
 
-        $check_customer_exist = Customer::customerExists($receiptDetail->buyer_email, false, false);
+        $check_customer_exist = Customer::customerExists($receiptDetail['buyer_email'], false, false);
         if (!$check_customer_exist) {
             $create_customer = new Customer();
-            $create_customer->email = $receiptDetail->buyer_email;
+            $create_customer->email = $receiptDetail['buyer_email'];
             $create_customer->firstname = $firstname;
             $create_customer->lastname = !empty($customerName[1]) ? $customerName[1] : $firstname;
             $create_customer->is_guest = 1;
@@ -2390,35 +3646,62 @@ class EtsyModule extends Module
     {
         $storeStateID = 0;
         if (!empty($etsyCountryID)) {
-            $sql = "SELECT id_state FROM " . _DB_PREFIX_ . "state WHERE country_id = '" . (int) $etsyCountryID . "' and iso_code = '".psql($state_iso_code)."'";
-            $stateDetail = DB::getInstance()->getValue("SELECT id_state FROM " . _DB_PREFIX_ . "state WHERE id_country = '" . (int) $etsyCountryID . "' and iso_code = '".psql($state_iso_code)."'");
+            $sql = "SELECT id_state FROM " . _DB_PREFIX_ . "state WHERE country_id = '" . (int) $etsyCountryID . "' and iso_code = '" . psql($state_iso_code) . "'";
+            $stateDetail = Db::getInstance()->getValue("SELECT id_state FROM " . _DB_PREFIX_ . "state WHERE id_country = '" . (int) $etsyCountryID . "' and iso_code = '" . psql($state_iso_code) . "'");
             if ($stateDetail) {
                 return $stateDetail;
             }
         }
         return $storeStateID;
     }
-    public static function getVariationIdByPropertyValue($variations, $productID)
+    public static function getVariationIdByPropertyValue($variations, $productID, $listing_id = "")
     {
         $counter = 0;
         $attributeProductID = array();
         foreach ($variations as $variation) {
-            $property_id = $variation['property_id'];
-            $selectSQL = "SELECT id_attribute_group FROM " . _DB_PREFIX_ . "etsy_attributes ea INNER JOIN " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 ON am1.property_id = ea.attribute_id WHERE etsy_property_id = '" . (int) $property_id . "'";
-            $attributeGroupDetail = DB::getInstance()->executeS($selectSQL, true, false);
+            /**
+             * Start changes added for the warning message of the undefined offser exception
+             * @modifier Pragya Mauurya
+             * @date 18-10-2024
+             * PMOct2024 warning-message-fixes
+             */
+            if (is_array($variation) && isset($variation['property_id'])) {
+                $property_id = $variation['property_id'];
+                $selectSQL = "SELECT id_attribute_group FROM " . _DB_PREFIX_ . "etsy_attributes ea INNER JOIN " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 ON am1.property_id = ea.attribute_id WHERE etsy_property_id = '" . (int) $property_id . "'";
+                $attributeGroupDetail = Db::getInstance()->executeS($selectSQL, true, false);
+                if (empty($attributeGroupDetail)) {
+                    if (empty($attributeGroupDetail) && !empty($listing_id)) {
+                        $selectSQL = "SELECT id_attribute_group FROM " . _DB_PREFIX_ . "etsy_attribute_mapping1 am1 WHERE custom_property_id = '" . (int) $property_id . "' AND listing_id = " . (int) $listing_id;
+                        $attributeGroupDetail = Db::getInstance()->executeS($selectSQL, true, false);
+                    }
+                }
+
+            } else {
+                $attributeGroupDetail = '';
+            }
             if ($attributeGroupDetail != '') {
-                $attributeGroup = $attributeGroupDetail[0]['id_attribute_group'];
+                /**
+                 * Start changes added for the notice message of the undefined offset exception
+                 * @modifier Pragya Maurya 
+                 * @date 16-101-2024
+                 * PMOct2024 warning-message-fixes
+                 */
+                if (isset($attributeGroupDetail[0]['id_attribute_group'])) {
+                    $attributeGroup = $attributeGroupDetail[0]['id_attribute_group'];
+                } else {
+                    $attributeGroup = null;
+                }
                 $attributeValue = html_entity_decode($variation['values'][0]);
                 foreach ($attributeGroupDetail as $key => $singleAttributeGroup) {
                     $attributeGroup = $singleAttributeGroup['id_attribute_group'];
                     $selectSQL = "SELECT distinct(ppa.id_product_attribute) FROM " . _DB_PREFIX_ . "product_attribute ppa LEFT JOIN " . _DB_PREFIX_ . "product_attribute_combination pac ON ppa.id_product_attribute = pac.id_product_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute_lang al ON pac.id_attribute = al.id_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute a ON a.id_attribute = al.id_attribute WHERE a.id_attribute_group = '" . (int) $attributeGroup . "' AND al.name = '" . pSQL($attributeValue) . "' AND ppa.id_product = '" . (int) $productID . "'";
-                    $attributeProductDetails = DB::getInstance()->executeS($selectSQL, true, false);
+                    $attributeProductDetails = Db::getInstance()->executeS($selectSQL, true, false);
                     if (!empty($attributeProductDetails)) {
                         break;
                     }
                 }
                 $selectSQL = "SELECT distinct(ppa.id_product_attribute) FROM " . _DB_PREFIX_ . "product_attribute ppa LEFT JOIN " . _DB_PREFIX_ . "product_attribute_combination pac ON ppa.id_product_attribute = pac.id_product_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute_lang al ON pac.id_attribute = al.id_attribute LEFT JOIN " . _DB_PREFIX_ . "attribute a ON a.id_attribute = al.id_attribute WHERE a.id_attribute_group = '" . (int) $attributeGroup . "' AND al.name = '" . pSQL($attributeValue) . "' AND ppa.id_product = '" . (int) $productID . "'";
-                $attributeProductDetails = DB::getInstance()->executeS($selectSQL, true, false);
+                $attributeProductDetails = Db::getInstance()->executeS($selectSQL, true, false);
                 if (!empty($attributeProductDetails)) {
                     foreach ($attributeProductDetails as $attributeProductDetail) {
                         $attributeProductID[$counter][] = $attributeProductDetail['id_product_attribute'];
@@ -2447,19 +3730,29 @@ class EtsyModule extends Module
         $method_name = 'EtsyModule::etsyUpdateShopReceipts()';
         self::auditLogEntry('Job execution started to update orders status on etsy.', $method_name);
 
-//        $paidStatus = Configuration::get('etsy_order_paid_status');
-        $shippedStatus = Configuration::get('etsy_order_shipped_status');
 
-        if (!empty($shippedStatus)) {            //Get orders to update status on etsy marketplace
-            $receipts = DB::getInstance()->executeS("SELECT eol.id_order, eol.id_etsy_order, o.current_state "
-                    . "FROM " . _DB_PREFIX_ . "etsy_orders_list eol, " . _DB_PREFIX_ . "orders o "
-                    . "WHERE o.id_order = eol.id_order "
-                    . "AND eol.is_status_updated = '1' "
-                    . "AND (o.current_state = '" . (int) $shippedStatus . "')", true, false);
+        $shippedStatus = Configuration::get('etsy_order_shipped_status');
+        /**
+         * Fetch Shop id
+         * @date 12-04-2023
+         * @author Tanisha Gupta
+         */
+        $shop = self::etsyGetShopDetails();
+        if (!empty($shippedStatus) && isset($shop['shop_id'])) {            //Get orders to update status on etsy marketplace
+            $receipts = Db::getInstance()->executeS("SELECT eol.id_order, eol.id_etsy_order, o.current_state "
+                . "FROM " . _DB_PREFIX_ . "etsy_orders_list eol, " . _DB_PREFIX_ . "orders o "
+                . "WHERE o.id_order = eol.id_order "
+                . "AND eol.is_status_updated = '1' "
+                . "AND (o.current_state = '" . (int) $shippedStatus . "')", true, false);
 
             if (!empty($receipts)) {
                 foreach ($receipts as $receipt) {
-                    $etsyRequestURI = '/receipts/' . $receipt['id_etsy_order'] . '/';
+                    /**
+                     * Set shop parameter in the url
+                     * @date 12-04-2023
+                     * @author Tanisha Gupta
+                     */
+                    $etsyRequestURI = '/shops/' . $shop['shop_id'] . '/receipts/' . $receipt['id_etsy_order'];
                     $etsyRequestMethod = 'PUT';
 
                     if ($receipt['current_state'] == $shippedStatus) {
@@ -2468,18 +3761,17 @@ class EtsyModule extends Module
                             'was_shipped' => 1
                         );
                     }
-
+                    $etsyQueryString = http_build_query($etsyQueryString);
                     if (!empty($etsyQueryString)) {
-                        $response = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
-
-                        if (!empty($response) && isset($response->results)) {
+                        $response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString);
+                        if (!empty($response) && isset($response['receipt_id'])) {
                             $reciptsUpdated++;
 
-                            DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_orders_list "
-                                    . "SET is_status_updated = '0' "
-                                    . "WHERE id_etsy_order = '" . (int) $receipt['id_etsy_order'] . "'");
+                            Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_orders_list "
+                                . "SET is_status_updated = '0' "
+                                . "WHERE id_etsy_order = '" . (int) $receipt['id_etsy_order'] . "'");
                         } else {
-                            $listingError = str_replace("_", " ", key((array) $response));
+                            $listingError = $response['error'];
                             self::auditLogEntry($listingError, $method_name);
                         }
                     }
@@ -2488,7 +3780,7 @@ class EtsyModule extends Module
             }
         }
         self::auditLogEntry('Job execution completed to update orders status on etsy marketplace.<br>Total Orders Status Updated: ' . $reciptsUpdated, $method_name);
-        
+
         if (Configuration::get('upload_tracking_number')) {
             self::etsyUpdateTracking();
         }
@@ -2499,39 +3791,46 @@ class EtsyModule extends Module
     {
         $method_name = 'EtsyModule::etsyUpdateTracking()';
         self::auditLogEntry('Job execution started to add orders tracking on etsy.', $method_name);
-        
-        $shop = Tools::jsonDecode(self::etsyGetShopDetails());
+        /**
+         * Getting response is already decoded, so removed decode function
+         * @date 15-04-2023
+         * @author Tanisha Gupta
+         */
+        $shop = self::etsyGetShopDetails();
         $reciptsUpdated = 0;
-
-
         $shippedName = Configuration::get('etsy_selected_shipment_name');
-        
         if (!empty($shippedName)) {
-            $receipts = DB::getInstance()->executeS("SELECT eol.id_order, eol.id_etsy_order,o.shipping_number "
-                    . "FROM " . _DB_PREFIX_ . "etsy_orders_list eol, " . _DB_PREFIX_ . "orders o "
-                    . "WHERE o.id_order = eol.id_order "
-                    . "AND eol.is_tracking_updated = '0' "
-                    . "AND o.shipping_number != '' ", true, false);
+            /**
+             * PS8 Fixes: Fetching the tracking number from the 'order_carrier' table instead of the 'order' table 
+             * since the 'shipping number' column has been removed in PrestaShop 8 version.
+             * TGoct2023 Tracking-number-fetching
+             * @date 12-09-2023
+             * @author Tanisha Gupta 
+             */
+            $receipts = Db::getInstance()->executeS("SELECT eol.id_order, eol.id_etsy_order,o.tracking_number "
+                . "FROM " . _DB_PREFIX_ . "etsy_orders_list eol, " . _DB_PREFIX_ . "order_carrier o "
+                . "WHERE o.id_order = eol.id_order "
+                . "AND eol.is_tracking_updated = '0' "
+                . "AND o.tracking_number != '' ", true, false);
             if (!empty($receipts)) {
                 foreach ($receipts as $receipt) {
                     $etsyRequestMethod = 'POST';
-                    $etsyRequestURI = '/shops/' . $shop->results[0]->shop_id . '/receipts/' . $receipt['id_etsy_order'] . '/tracking/';
-                    
+                    $etsyRequestURI = '/shops/' . $shop['shop_id'] . '/receipts/' . $receipt['id_etsy_order'] . '/tracking';
                     $etsyQueryString = array(
                         'carrier_name' => $shippedName,
-                        'tracking_code' => $receipt['shipping_number'],
+                        'tracking_code' => $receipt['tracking_number'],
                         'send_bcc' => 0,
                     );
-
+                    $etsyQueryString = http_build_query($etsyQueryString);
                     if (!empty($etsyQueryString)) {
-                        $response = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
-                        if (!empty($response) && isset($response->results)) {
+                        $response = self::etsyGetResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString);
+                        if (!empty($response) && isset($response['receipt_id'])) {
                             $reciptsUpdated++;
-                            DB::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_orders_list "
-                                    . "SET is_tracking_updated = '1' "
-                                    . "WHERE id_etsy_order = '" . (int) $receipt['id_etsy_order'] . "'");
+                            Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_orders_list "
+                                . "SET is_tracking_updated = '1' "
+                                . "WHERE id_etsy_order = '" . (int) $receipt['id_etsy_order'] . "'");
                         } else {
-                            $listingError = str_replace("_", " ", key((array) $response));
+                            $listingError = $response['error'];
                             self::auditLogEntry($listingError, $method_name);
                         }
                     }
@@ -2539,7 +3838,6 @@ class EtsyModule extends Module
                 }
             }
         }
-        
         self::auditLogEntry('Job execution completed to update Tracking status on etsy marketplace.<br>Total Orders Tracking Added: ' . $reciptsUpdated, $method_name);
         return true;
     }
@@ -2549,7 +3847,7 @@ class EtsyModule extends Module
     {
         $storeCountryID = 0;
         if (!empty($etsyCountryID)) {
-            $countryDetail = DB::getInstance()->getRow("SELECT country_name, iso_code FROM " . _DB_PREFIX_ . "etsy_countries WHERE country_id = '" . (int) $etsyCountryID . "'");
+            $countryDetail = Db::getInstance()->getRow("SELECT country_name, iso_code FROM " . _DB_PREFIX_ . "etsy_countries WHERE country_id = '" . (int) $etsyCountryID . "'");
             if (!empty($countryDetail)) {
                 if (!empty($countryDetail['iso_code'])) {
                     $storeCountryID = Country::getByIso($countryDetail['iso_code']);
@@ -2561,33 +3859,50 @@ class EtsyModule extends Module
         return $storeCountryID;
     }
 
-    //Get countries from DB
+    //Get countries from Db
     public static function etsyGetAllCountriesFromDB()
     {
         return Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_countries", true, false);
     }
 
-    //To get country name from DB
+    //To get country name from Db
     public static function etsyGetCountryNameByCountryId($country_id)
     {
         return Db::getInstance()->getValue("SELECT country_name FROM " . _DB_PREFIX_ . "etsy_countries WHERE country_id = " . (int) $country_id, true, false);
     }
-
-    //To get region name from DB
+    /**
+     * To get Country name and country id based on country iso from Db
+     * @date 10-04-2023
+     * @author Tanisha Gupta
+     */
+    public static function etsyGetCountryByIsoCode($code)
+    {
+        return Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_countries WHERE iso_code = '" . pSQL($code) . "'", true, false);
+    }
+    /**
+     * To get Region name and Region id based on Region iso from Db
+     * @date 10-04-2023
+     * @author Tanisha Gupta
+     */
+    public static function etsyGetRegionByIsoCode($code)
+    {
+        return Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_regions WHERE region_iso = '" . pSQL($code) . "'", true, false);
+    }
+    //To get region name from Db
     public static function etsyGetRegionNameByRegionId($region_id)
     {
         return Db::getInstance()->getValue("SELECT region_name FROM " . _DB_PREFIX_ . "etsy_regions WHERE region_id = " . (int) $region_id, true, false);
     }
 
-    //To get etsy regions from DB
+    //To get etsy regions from Db
     public static function etsyGetAllRegionsFromDB()
     {
         return Db::getInstance()->executeS("SELECT * FROM " . _DB_PREFIX_ . "etsy_regions");
     }
 
-    public function downloadItem(&$data)
+    public static function downloadItem(&$data)
     {
-        $shop = Tools::jsonDecode(self::etsyGetShopDetails());
+        $shop = json_decode(self::etsyGetShopDetails());
         self::getItemsFromEtsyToDownload($shop->results[0]->shop_id, 'active', 1, $data);
     }
 
@@ -2599,12 +3914,12 @@ class EtsyModule extends Module
         $etsyRequestURI = '/shops/' . $shop_id . '/listings/' . $type . '/';
         $etsyRequestMethod = 'GET';
         $etsyQueryString = array("limit" => 1, "page" => $page, "shop_id" => $shop_id, "language" => "en", "includes" => "Translations");
-        $response = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
+        $response = json_decode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
         $languages = Language::getLanguages(false);
         if (!empty($response->results)) {
             foreach ($response->results as $item) {
                 $sql = 'SELECT COUNT(*) as count FROM ' . _DB_PREFIX_ . 'product_mapping_from_etsy WHERE listing_id = ' . (int) $item->listing_id;
-                $avl = DB::getInstance()->getRow($sql);
+                $avl = Db::getInstance()->getRow($sql);
                 if ($avl['count'] == 0) {
                     $data = array();
                     $data['listing_id'] = $item->listing_id;
@@ -2631,7 +3946,7 @@ class EtsyModule extends Module
                     $data['materials'] = implode(",", $item->materials);
 
                     $etsyRequestURI = '/listings/' . $item->listing_id . '/images';
-                    $images = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
+                    $images = json_decode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
                     $i = 1;
                     foreach ($images->results as $image) {
                         if ($i > 10) {
@@ -2641,12 +3956,13 @@ class EtsyModule extends Module
                         $i++;
                     }
                     $etsyRequestURI = '/listings/' . $item->listing_id . '/inventory';
-                    $inventory = Tools::jsonDecode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
+                    $inventory = json_decode(self::etsyGetOAuthResponse($etsyRequestURI, $etsyRequestMethod, $etsyQueryString));
                     $variation_data = array();
                     if ($item->has_variations) {
                         if (!empty($inventory->results->products)) {
                             foreach ($inventory->results->products as $variation) {
-                                $variation_data[] = array("name" => $variation->property_values[0]->property_name,
+                                $variation_data[] = array(
+                                    "name" => $variation->property_values[0]->property_name,
                                     "values" => $variation->property_values[0]->values[0],
                                     'price' => $variation->offerings[0]->price->currency_formatted_raw,
                                     'currency' => $variation->offerings[0]->price->currency_code,
@@ -2667,7 +3983,7 @@ class EtsyModule extends Module
                         $attr_grp_id = array();
                         foreach ($variationData as $key => $value) {
                             $sql = 'SELECT COUNT(*) as count FROM ' . _DB_PREFIX_ . 'attribute_group_lang WHERE name = "' . $key . '" AND id_lang = ' . (int) $lang_id;
-                            $val = DB::getInstance()->getRow($sql);
+                            $val = Db::getInstance()->getRow($sql);
                             if ($val['count'] == 0) {
                                 $attrGrp = new AttributeGroup();
                                 foreach ($languages as $language) {
@@ -2684,7 +4000,7 @@ class EtsyModule extends Module
                                 $attr_grp_id[$key] = $attrGrp->id;
                             } else {
                                 $sql = 'SELECT id_attribute_group FROM ' . _DB_PREFIX_ . 'attribute_group_lang WHERE name = "' . $key . '" AND id_lang = ' . (int) $lang_id;
-                                $val = DB::getInstance()->getRow($sql);
+                                $val = Db::getInstance()->getRow($sql);
                                 $attr_grp_id[$key] = $val['id_attribute_group'];
                             }
                         }
@@ -2694,9 +4010,19 @@ class EtsyModule extends Module
                         foreach ($variationData as $key => $value) {
                             foreach ($value as $attribute) {
                                 $sql = 'SELECT COUNT(*) as count FROM ' . _DB_PREFIX_ . 'attribute_lang WHERE name = "' . $attribute . '" AND id_lang = ' . (int) $lang_id;
-                                $val = DB::getInstance()->getRow($sql);
+                                $val = Db::getInstance()->getRow($sql);
                                 if ($val['count'] == 0) {
-                                    $attr = new Attribute();
+                                    /**
+                                     * Added PS vrsion condition as Attibute class has been renamed to ProductAttribute in PS 8
+                                     * @date 15-04-2023
+                                     * @modifier Tanisha Gupta
+                                     */
+                                    if (_PS_VERSION_ >= '8.0.0') {
+                                        $attr = new ProductAttribute();
+                                    } else {
+                                        $attr = new Attribute();
+                                    }
+
                                     $attr->id_attribute_group = $attr_grp_id[$key];
                                     foreach ($languages as $language) {
                                         $attr->name[(int) $language['id_lang']] = $attribute;
@@ -2706,7 +4032,7 @@ class EtsyModule extends Module
                                     }
                                 } else {
                                     $sql = 'SELECT id_attribute FROM ' . _DB_PREFIX_ . 'attribute_lang WHERE name = "' . $attribute . '" AND id_lang = ' . (int) $lang_id;
-                                    $val = DB::getInstance()->getRow($sql);
+                                    $val = Db::getInstance()->getRow($sql);
                                     $array_id_attr[] = $val['id_attribute'];
                                 }
                             }
@@ -2728,15 +4054,15 @@ class EtsyModule extends Module
             }
 
             /* If page is equal to 1 then only run the loop. Because at page number 1, we are running loop for all the pages */
-//            if ($response->count > 100 && $page == 1) {
-//                $total_pages = ceil($response->count / 100);
-//                for ($i = 2; $i <= $total_pages; $i++) {
-//                    //self::getItemsFromEtsy($shop_id, $type, $i);
-//                }
-//            }
+            //            if ($response->count > 100 && $page == 1) {
+            //                $total_pages = ceil($response->count / 100);
+            //                for ($i = 2; $i <= $total_pages; $i++) {
+            //                    //self::getItemsFromEtsy($shop_id, $type, $i);
+            //                }
+            //            }
         }
         die;
-        return true;
+        // return true;
     }
 
     // Added By Anshul for saving the new product
@@ -2824,15 +4150,17 @@ class EtsyModule extends Module
                 $fp = _PS_MODULE_DIR_ . 'kbetsy/images/image_' . $time . '.jpg';
                 file_put_contents($fp, $data);
                 $error = 0;
-                if (!ImageManager::resize(
-                    $fp,
-                    $new_path . '.' . $image->image_format,
-                    null,
-                    null,
-                    'jpg',
-                    false,
-                    $error
-                )) {
+                if (
+                    !ImageManager::resize(
+                        $fp,
+                        $new_path . '.' . $image->image_format,
+                        null,
+                        null,
+                        'jpg',
+                        false,
+                        $error
+                    )
+                ) {
                     switch ($error) {
                         case ImageManager::ERROR_FILE_NOT_EXIST:
                             $file['error'] = 'An error occurred while copying image, file does not exist anymore.';
@@ -2851,13 +4179,14 @@ class EtsyModule extends Module
                 } else {
                     $imagesTypes = ImageType::getImagesTypes('products');
                     foreach ($imagesTypes as $imageType) {
-                        if (!ImageManager::resize(
-                            $fp,
-                            $new_path . '-' . Tools::stripslashes($imageType['name']) . '.' . $image->image_format,
-                            $imageType['width'],
-                            $imageType['height'],
-                            $image->image_format
-                        )
+                        if (
+                            !ImageManager::resize(
+                                $fp,
+                                $new_path . '-' . Tools::stripslashes($imageType['name']) . '.' . $image->image_format,
+                                $imageType['width'],
+                                $imageType['height'],
+                                $image->image_format
+                            )
                         ) {
                             $file['error'] = sprintf(
                                 'An error occurred while copying image: %s',
@@ -2925,7 +4254,7 @@ class EtsyModule extends Module
             unset($data_id_attr);
         }
     }
-    
+
     // Function to filter products title. Title cannot contain the characters %, &, or : more than once
     private static function replaceInstance($string)
     {
@@ -2933,17 +4262,164 @@ class EtsyModule extends Module
         if ($pos !== false) {
             $string = Tools::substr($string, 0, $pos + 1) . str_replace('%', ' ', Tools::substr($string, $pos + 1));
         }
-        
+
         $pos = strpos($string, '&');
         if ($pos !== false) {
             $string = Tools::substr($string, 0, $pos + 1) . str_replace('&', ' ', Tools::substr($string, $pos + 1));
         }
-        
+
         $pos = strpos($string, ':');
         if ($pos !== false) {
             $string = Tools::substr($string, 0, $pos + 1) . str_replace(':', ' ', Tools::substr($string, $pos + 1));
         }
-        
+
         return $string;
+    }
+
+    /*
+     * Function is used to Requesting a Refresh OAuth Token
+     * Added static keyword to avoid error Non-static method 
+     * TGmay2023 Added-Static-Keyword-function
+     * @date 09-04-2023
+     * @author Tanisha Gupta
+     */
+    private static function getAccessToken()
+    {
+        $config = Configuration::get('etsy_api_key');
+        $token_data = Configuration::get('kb_etsy_token');
+        $token = '';
+        if (!empty($token_data)) {
+            $url = 'https://api.etsy.com/v3/public/oauth/token';
+            $headers = [
+                'Content-Type: application/x-www-form-urlencoded'
+            ];
+            $token_data_array = json_decode($token_data, true);
+            if (!empty($token_data_array['refresh_token'])) {
+                $body = http_build_query([
+                    'client_id' => $config,
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => $token_data_array['refresh_token']
+
+                ]);
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_POSTFIELDS => $body,
+                    CURLOPT_HTTPHEADER => $headers
+                ));
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+                curl_close($curl);
+                $response_array = json_decode($response, true);
+                /**
+                 * Disconnect the module when token is revoked.
+                 * TGsep2023 Disconnect-module-token-revoked
+                 * @date 27-09-2023 
+                 * @author Tanisha Gupta
+                 */
+                if (!empty($err) || isset($response_array['error'])) {
+                    if (isset($response_array['error'])) {
+                        self::auditLogEntry($response_array['error_description'], 'getAccessToken');
+                    } else {
+                        self::auditLogEntry($err, 'getAccessToken');
+                    }
+                    Configuration::updateGlobalValue('kb_etsy_token', '');
+                    die('Please check log');
+                } else {
+                    $token = $response_array['access_token'];
+                    Configuration::updateGlobalValue('kb_etsy_token', $response_array);
+                }
+            }
+        }
+        return $token;
+    }
+
+    /**
+     * Fetch etsy country information based on the country id
+     * Added static keyword to avoid error Non-static method
+     * TGmay2023 Added-Static-Keyword-function
+     * @date 13-04-2023
+     * @author Tanisha Gupta
+     * @param type $country_id
+     * @return string
+     */
+    public static function geyEtsyCountry($etsyCountryID)
+    {
+        $countryDetail = Db::getInstance()->getRow("SELECT country_name, iso_code FROM " . _DB_PREFIX_ . "etsy_countries WHERE country_id = '" . (int) $etsyCountryID . "'");
+        if (!empty($countryDetail)) {
+            return $countryDetail;
+        } else {
+            return "";
+        }
+    }
+
+    //To get region name from Db
+    public static function etsyGetRegionById($region_id)
+    {
+        return Db::getInstance()->getRow("SELECT region_name,region_iso FROM " . _DB_PREFIX_ . "etsy_regions WHERE region_id = '" . (int) $region_id . "'");
+    }
+
+    /**
+     * Function used to fetch shipping carriers from etsy based on country iso code and saved to the Db
+     * Added static keyword to avoid error Non-static method
+     * TGmay2023 Added-Static-Keyword-function
+     * @date 13-04-2023
+     * @author Tanisha Gupta
+     */
+    public static function getShippingCarriers($countryid)
+    {
+        $shippingcarriers = array();
+        $country_data = self::geyEtsyCountry($countryid);
+        $etsyRequestURI = '/shipping-carriers?origin_country_iso=' . $country_data['iso_code'];
+        $shippingcarriers = self::etsyGetResponse($etsyRequestURI);
+        if (isset($shippingcarriers['count']) && $shippingcarriers['count'] > 0 && isset($shippingcarriers['results'])) {
+            foreach ($shippingcarriers['results'] as $shippingcarriers1) {
+                if (count($shippingcarriers1['domestic_classes']) > 0) {
+                    $shippingcarriers1['domestic_classes'] = json_encode($shippingcarriers1['domestic_classes']);
+                } else {
+                    $shippingcarriers1['domestic_classes'] = '';
+                }
+                if (count($shippingcarriers1['international_classes']) > 0) {
+                    $shippingcarriers1['international_classes'] = json_encode($shippingcarriers1['international_classes']);
+                } else {
+                    $shippingcarriers1['international_classes'] = '';
+                }
+                $insertData = "INSERT INTO " . _DB_PREFIX_ . "kb_etsy_shipping_carriers SET etsy_shipping_carrier_id = " . (int) $shippingcarriers1['shipping_carrier_id'] . ", etsy_shipping_carrier_name = '" . pSQL($shippingcarriers1['name']) . "', domestic_shipping = '" . pSQL($shippingcarriers1['domestic_classes']) . "', international_shipping ='" . pSQL($shippingcarriers1['international_classes']) . "', country_id =" . (int) $countryid;
+                Db::getInstance()->execute($insertData);
+            }
+        } elseif (isset($shippingcarriers['count']) && $shippingcarriers['count'] == 0) {
+            $insertData = "INSERT INTO " . _DB_PREFIX_ . "kb_etsy_shipping_carriers SET etsy_shipping_carrier_id = 0, etsy_shipping_carrier_name = 'NULL', domestic_shipping = 'NULL', international_shipping ='NULL', country_id =" . (int) $countryid;
+            Db::getInstance()->execute($insertData);
+        }
+        return $shippingcarriers;
+    }
+
+    /**
+     * Create method to convert a string to UTF-8 using mb_convert_encoding only if it contains encoded strings
+     * TGmay2023 Fixed-UTF8-Issue-Address
+     * @author Tanisha Gupta
+     * @param string  $input_string
+     * @return string
+     */
+    public static function kbConvertToUTF8($input_string)
+    {
+        // Check if the string contains any HTML entities
+        if (strpos($input_string, '&') !== false) {
+            // Convert HTML entities to UTF-8
+            $output_string = mb_convert_encoding(html_entity_decode($input_string), 'UTF-8');
+        } else {
+            // The input string does not contain any HTML entities, so we can assume that it is already in UTF-8
+            $output_string = $input_string;
+        }
+
+        // Return the converted string
+        return $output_string;
+    }
+
+    public static function test()
+    {
+        self::etsyImageListings(2, 1675736570, 1, 14389944);
     }
 }

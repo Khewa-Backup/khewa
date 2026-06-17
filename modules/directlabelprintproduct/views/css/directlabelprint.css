@@ -1,10 +1,9 @@
 #printLabel {
     background: url("../img/icon-print.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    background-size: 25px 25px;
     float: right;
-    height: 35px;
-    margin-right: -4px;
-    margin-top: -11px;
-    width: 35px;
+    height: 25px;
+    width: 25px;
     cursor: pointer;
 }
 #printLabelSmall {
@@ -15,3 +14,36 @@
      float: left;
      cursor: pointer;
  }
+
+#variantPopup{
+    background-color: #202226;
+    border: white solid 5px;
+    width: 350px;
+    height:120px;
+    position: absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    border-radius: 10px;
+    padding:5px;
+}
+
+#variantPopupHeader{
+    width:100%;
+    font-size:15px;
+    display:block;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color:white;
+}
+
+#variantPopup button{
+    width:80px;
+    height:40px;
+    display: inline !important;
+    padding-left:5px;
+    padding-right:5px;
+    margin:1px;
+    text-align: center;
+}

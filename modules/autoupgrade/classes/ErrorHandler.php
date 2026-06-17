@@ -6,7 +6,7 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * This source file is subject to the Academic Free License version 3.0
  * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
@@ -14,21 +14,16 @@
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
  * @author    PrestaShop SA and Contributors <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
 namespace PrestaShop\Module\AutoUpgrade;
 
-use PrestaShop\Module\AutoUpgrade\Log\LegacyLogger;
 use PrestaShop\Module\AutoUpgrade\Log\Logger;
+use PrestaShop\Module\AutoUpgrade\Log\WebLogger;
+use Throwable;
 
 /**
  * In order to improve the debug of the module in case of case, we need to display the missed errors
@@ -54,36 +49,28 @@ class ErrorHandler
      * Enable error handlers for critical steps.
      * Display hidden errors by PHP config to improve debug process.
      */
-    public function enable()
+    public function enable(): void
     {
         error_reporting(E_ALL);
-        set_error_handler(array($this, 'errorHandler'));
-        set_exception_handler(array($this, 'exceptionHandler'));
-        register_shutdown_function(array($this, 'fatalHandler'));
+        set_error_handler([$this, 'errorHandler']);
+        set_exception_handler([$this, 'exceptionHandler']);
+        register_shutdown_function([$this, 'fatalHandler']);
     }
 
     /**
      * Function retrieving uncaught exceptions.
-     *
-     * @param \Throwable $e
      */
-    public function exceptionHandler($e)
+    public function exceptionHandler(Throwable $e): void
     {
         $message = get_class($e) . ': ' . $e->getMessage();
         $this->report($e->getFile(), $e->getLine(), Logger::CRITICAL, $message, $e->getTraceAsString(), true);
+        $this->terminate(64);
     }
 
     /**
      * Function called by PHP errors, forwarding content to the ajax response.
-     *
-     * @param int $errno
-     * @param string $errstr
-     * @param string $errfile
-     * @param int $errline
-     *
-     * @return bool
      */
-    public function errorHandler($errno, $errstr, $errfile, $errline)
+    public function errorHandler(int $errno, string $errstr, string $errfile, int $errline): bool
     {
         if (!(error_reporting() & $errno)) {
             // This error code is not included in error_reporting, so let it fall
@@ -116,55 +103,49 @@ class ErrorHandler
      * Fatal error from PHP are not taken by the error_handler. We must check if an error occured
      * during the script shutdown.
      */
-    public function fatalHandler()
+    public function fatalHandler(): void
     {
         $lastError = error_get_last();
-        $trace = isset($lastError['backtrace']) ? var_export($lastError['backtrace'], true) : null;
-        if ($lastError && in_array($lastError['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR), true)) {
+        if ($lastError && in_array($lastError['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR], true)) {
+            // clean all php errors to got clean error handled by ourself
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+            // @phpstan-ignore isset.offset (Need to check if xdebug still defines this key)
+            $trace = isset($lastError['backtrace']) ? var_export($lastError['backtrace'], true) : null;
             $this->report($lastError['file'], $lastError['line'], Logger::CRITICAL, $lastError['message'], $trace, true);
         }
     }
 
     /**
      * Create a json encoded.
-     *
-     * @param string $log
-     *
-     * @return string
      */
-    public function generateJsonLog($log)
+    public function generateJsonLog(string $log, string $type): string
     {
-        return json_encode(array(
-            'nextQuickInfo' => $this->logger->getInfos(),
-            'nextErrors' => array_merge($this->logger->getErrors(), array($log)),
+        return json_encode([
+            'nextQuickInfo' => array_merge($this->logger->getLogs(), [$type . ' - ' . $this->logger->cleanFromSensitiveData($log)]),
             'error' => true,
             'next' => 'error',
-        ));
+        ]);
     }
 
     /**
      * Forwards message to the main class of the upgrade.
-     *
-     * @param string $file
-     * @param int $line
-     * @param int $type Level of criticity
-     * @param string $message
-     * @param bool $display
      */
-    protected function report($file, $line, $type, $message, $trace = null, $display = false)
+    protected function report(string $file, int $line, int $type, string $message, ?string $trace = null, bool $display = false): void
     {
         if ($type >= Logger::CRITICAL) {
             http_response_code(500);
         }
-        $log = "[INTERNAL] $file line $line - $message";
+        $log = "$file line $line - $message";
         if (!empty($trace)) {
             $log .= PHP_EOL . $trace;
         }
-        $jsonResponse = $this->generateJsonLog($log);
+        $jsonResponse = $this->generateJsonLog($log, Logger::$levels[$type]);
 
         try {
             $this->logger->log($type, $log);
-            if ($display && $this->logger instanceof LegacyLogger) {
+            if ($display && $this->logger instanceof WebLogger) {
                 echo $jsonResponse;
             }
         } catch (\Exception $e) {
@@ -174,5 +155,13 @@ class ErrorHandler
             fwrite($fd, $log);
             fclose($fd);
         }
+    }
+
+    /**
+     * @return never
+     */
+    public function terminate(int $code)
+    {
+        exit($code);
     }
 }

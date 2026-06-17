@@ -18,12 +18,17 @@
  */
 
 namespace PrestaChamps\MailchimpPro\Hooks\Action\Customer;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 use Context;
 use Customer;
-use DrewM\MailChimp\MailChimp;
+use PrestaChamps\MailChimpAPI;
 use PrestaChamps\MailchimpPro\Commands\CartSyncCommand;
 use PrestaChamps\MailchimpPro\Commands\CustomerSyncCommand;
+use PrestaChamps\Queue\Jobs\CustomerSyncJob;
+use PrestaChamps\Queue\Jobs\CartSyncJob;
+use PrestaChamps\Queue\Queue;
 
 /**
  * Invoked when a new customer creates an account successfully
@@ -40,10 +45,10 @@ class AccountAdd
      * AccountAdd constructor
      *
      * @param Customer $customer
-     * @param MailChimp $mailchimp
+     * @param MailChimpAPI $mailchimp
      * @param Context $context
      */
-    protected function __construct(Customer $customer, MailChimp $mailchimp, Context $context)
+    protected function __construct(Customer $customer, MailChimpAPI $mailchimp, Context $context)
     {
         $this->context = $context;
         $this->customer = $customer;
@@ -52,9 +57,9 @@ class AccountAdd
         $this->handleGuestCheckoutAbandonedMail();
     }
 
-    public static function run(Context $context, MailChimp $mailchimp, Customer $customer)
+    public static function run(Context $context, MailChimpAPI $mailchimp, Customer $customer)
     {
-        new static($customer, $mailchimp, $context);
+        new AccountAdd($customer, $mailchimp, $context);
     }
 
     protected function handleGuestCheckoutAbandonedMail()
@@ -65,20 +70,52 @@ class AccountAdd
 
     protected function syncCustomer()
     {
-        $command = new CustomerSyncCommand($this->context, $this->mailchimp, array($this->customer->id));
-        $command->triggerDoubleOptIn(true);
-        $command->setMethod(CustomerSyncCommand::SYNC_METHOD_POST);
-        $command->setSyncMode(CustomerSyncCommand::SYNC_MODE_REGULAR);
-        $command->execute();
+        if (\Configuration::get(\MailchimpProConfig::SYNC_CUSTOMERS)) {
+            if (!\Configuration::get(\MailchimpProConfig::CRONJOB_BASED_SYNC)) {
+                $command = new CustomerSyncCommand($this->context, $this->mailchimp, [$this->customer->id]);
+                $command->triggerDoubleOptIn(true);
+                $command->setSyncMode($command::SYNC_MODE_REGULAR);
+                $command->setMethod($command::SYNC_METHOD_POST);
+                return $command->execute();
+            } else {
+                $job = new CustomerSyncJob();
+                $job->customerId = $this->customer->id;
+                $job->triggerDoubleOptIn(true);
+                $job->setSyncMode(CustomerSyncCommand::SYNC_MODE_REGULAR);
+                $job->setMethod(CustomerSyncCommand::SYNC_METHOD_POST);
+                $queue = new Queue();
+                $queue->push($job, 'hook-account-add', $this->context->shop->id);
+                return true;
+            }
+        }
     }
 
     protected function syncCart()
     {
-        if ($this->context->cart) {
-            $command = new CartSyncCommand($this->context, $this->mailchimp, array($this->context->cart->id));
-            $command->setMethod(CartSyncCommand::SYNC_METHOD_POST);
-            $command->setSyncMode(CartSyncCommand::SYNC_MODE_REGULAR);
-            $command->execute();
+        if (\Configuration::get(\MailchimpProConfig::SYNC_CARTS)) {
+            $cartId = isset($this->context->cart->id) ? $this->context->cart->id : false;
+            if ($cartId && $this->context->cart->nbProducts() && $this->customer->id) {
+                if (!\Configuration::get(\MailchimpProConfig::CRONJOB_BASED_SYNC)) {
+                    $command = new CartSyncCommand($this->context, $this->mailchimp, [$cartId]);
+                    $command->setSyncMode($command::SYNC_MODE_REGULAR);
+                    //if ($command->getCartExists($cartId)) {
+                        $command->setMethod($command::SYNC_METHOD_DELETE);
+                        $command->execute();
+                    //}
+                    $command->setMethod($command::SYNC_METHOD_POST);
+                    return $command->execute();
+                } else {
+                    $job = new CartSyncJob();
+                    $job->cartId = $cartId;
+                    $job->setSyncMode(CartSyncCommand::SYNC_MODE_REGULAR);
+                    if (isset($_COOKIE['mc_cid']) && !empty($_COOKIE['mc_cid']) && !is_a($this->context->controller, 'AdminController') && !is_subclass_of($this->context->controller, 'AdminController')) {
+                        $job->setCampaignId($_COOKIE['mc_cid']);
+                    }
+                    $queue = new Queue();
+                    $queue->push($job, 'hook-account-add', $this->context->shop->id);
+                    return true;
+                }
+            }
         }
     }
 }

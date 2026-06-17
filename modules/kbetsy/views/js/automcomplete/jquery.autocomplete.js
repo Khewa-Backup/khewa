@@ -756,4 +756,3 @@ $.Autocompleter.Selection = function(field, start, end) {
 };
 
 })(jQuery);
-

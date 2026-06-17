@@ -1,10 +1,11 @@
 {**
- * 2007-2020 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
@@ -12,9 +13,8 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
+ * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
  *}
 
 <div id="modulecontent" class="clearfix">
@@ -25,9 +25,7 @@
                 <a href="#" class="list-group-item" v-bind:class="{ 'active': isActive('dataConfig') }" v-on:click="makeActive('dataConfig')"><i class="fa fa-user-secret"></i> {l s='Personal data management' mod='psgdpr'}</a>
                 <a href="#" class="list-group-item" v-bind:class="{ 'active': isActive('dataConsent') }" v-on:click="makeActive('dataConsent')"><i class="fa fa-check-square"></i> {l s='Consent checkbox customization' mod='psgdpr'}</a>
                 <a href="#" class="list-group-item" v-bind:class="{ 'active': isActive('customerActivity') }" v-on:click="makeActive('customerActivity')"><i class="fa fa-user-circle"></i> {l s='Customer activity tracking' mod='psgdpr'}</a>
-                {if ($apifaq != '')}
-                    <a href="#" class="list-group-item" v-bind:class="{ 'active': isActive('faq') }" v-on:click="makeActive('faq')"><i class="fa fa-question-circle"></i> {l s='Help' mod='psgdpr'}</a>
-                {/if}
+                <a href="#" class="list-group-item" v-bind:class="{ 'active': isActive('faq') }" v-on:click="makeActive('faq')"><i class="fa fa-question-circle"></i> {l s='Help' mod='psgdpr'}</a>
             </div>
             <div class="list-group" v-on:click.prevent>
                 <a class="list-group-item" style="text-align:center"><i class="icon-info"></i> {l s='Version' mod='psgdpr'} {$module_version|escape:'htmlall':'UTF-8'} | <i class="icon-info"></i> PrestaShop {$ps_version|escape:'htmlall':'UTF-8'}</a>
@@ -53,9 +51,7 @@
     </div>
 
     <div id="faq" class="psgdpr_menu addons-hide">
-        {if ($apifaq != '')}
-            {include file="./tabs/help.tpl"}
-        {/if}
+        {include file="./tabs/help.tpl"}
     </div>
 
 </div>
@@ -70,7 +66,7 @@
     var psgdpr_adminController = "{$psgdpr_adminController|escape:'htmlall':'UTF-8'}";
     var adminControllerInvoices = "{$adminControllerInvoices|escape:'htmlall':'UTF-8'}";
     var ps_version = "{$isPs17|escape:'htmlall':'UTF-8'}";
-    var customer_link = "{$customer_link|escape:'htmlall':'UTF-8'}";
+    var customer_link = "{url entity='sf' route='admin_customers_view' sf-params=['customerId' => '0']}";
 
     var messageSuccessCopy = "{l s='Url has been copied to the clipboard!' mod='psgdpr' js=1}";
     var messageSuccessInvoices = "{l s='Invoices have been successfully downloaded.' mod='psgdpr' js=1}";

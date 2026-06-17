@@ -40,7 +40,7 @@ function tinySetup(config) {
 
   var default_config = {
     selector: ".rte",
-    plugins: "align colorpicker link image filemanager table placeholder advlist code table",
+    plugins: "align colorpicker link image filemanager table placeholder lists advlist code table",
     browser_spellcheck: true,
     toolbar1: "code,colorpicker,bold,italic,underline",
     toolbar2: "strikethrough,blockquote,link,align,bullist",

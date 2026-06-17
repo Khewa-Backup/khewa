@@ -4,12 +4,12 @@ class FrontController extends FrontControllerCore
 {
     /*
     * module: elegantalseoessentials
-    * date: 2021-04-06 05:23:02
-    * version: 3.4.3
+    * date: 2024-11-21 15:16:28
+    * version: 3.5.5
     */
     public function init()
     {
-        if (Module::isInstalled('elegantalseoessentials')) {
+        if (Module::getModuleIdByName('elegantalseoessentials')) {
             $id_shop = $this->context->shop->id;
             $current_url = $_SERVER['REQUEST_URI'];
             $sql = "SELECT * FROM `" . _DB_PREFIX_ . "elegantalseoessentials_redirects` r 
@@ -46,16 +46,50 @@ class FrontController extends FrontControllerCore
     }
     /*
     * module: ets_superspeed
-    * date: 2022-02-12 17:04:56
-    * version: 1.3.9
+    * date: 2026-01-17 12:14:12
+    * version: 2.1.2
     */
     public function initContent()
     {
-        if(Tools::isSubmit('ets_superseed_load_content'))
+        if(Tools::isSubmit('ets_superseed_load_content') && Module::isEnabled('ets_superspeed'))
         {
             parent::initContent();
+            if (
+                method_exists($this,'doProductSearch') &&
+                !empty($this->category) &&
+                Validate::isLoadedObject($this->category)
+                && $this->category->active
+                && $this->category->checkAccess($this->context->customer->id)
+                && $this->category->existsInShop($this->context->shop->id)
+            ) {
+                $this->ajax = false;
+                $this->doProductSearch(
+                    'catalog/listing/category',
+                    [
+                        'entity' => 'category',
+                        'id' => $this->category->id,
+                    ]
+                );
+            }
             Hook::exec('actionPageCacheAjax');
         }
         parent::initContent();
+    }
+    /*
+    * module: ets_superspeed
+    * date: 2026-01-17 12:14:12
+    * version: 2.1.2
+    */
+    protected function smartyOutputContent($content)
+    {
+        if (version_compare(_PS_VERSION_, '1.7.0', '<')) {
+            ob_start();
+            parent::smartyOutputContent($content);
+            $html = ob_get_contents();
+            ob_clean();
+            Hook::exec('actionOutputHTMLBefore',  array('html' => &$html));
+            echo $html;
+        } else
+            return parent::smartyOutputContent($content);
     }
 }

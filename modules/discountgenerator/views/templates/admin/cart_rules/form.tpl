@@ -1,11 +1,27 @@
-{**
- * DiscountGenerator Prestashop Module
- *
- * @author iRessources <support-prestashop@iressources.com>
- * @link http://www.iressources.com/
- * @copyright Copyright &copy; 2015-2019 iRessources
- * @version 1.4.1
- *}
+{*
+* 2007-2025 PrestaShop SA and Contributors
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/afl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+*  @author    PrestaShop SA <contact@prestashop.com>
+*  @copyright 2007-2025 PrestaShop SA and Contributors
+*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  International Registered Trademark & Property of PrestaShop SA
+*}
 <div class="panel">
 	<h3><i class="icon-tag"></i> {l s='Cart rule' mod='discountgenerator'}</h3>
 	<div class="productTabs">
@@ -41,8 +57,8 @@
 	<script type="text/javascript">
 		var product_rule_groups_counter = {if isset($product_rule_groups_counter)}{$product_rule_groups_counter|intval}{else}0{/if};
 		var product_rule_counters = new Array();
-		var currentToken = '{$currentToken|escape:'quotes'}';
-		var currentFormTab = '{if isset($smarty.post.currentFormTab)}{$smarty.post.currentFormTab|escape:'html'}{else}informations{/if}';
+		var currentToken = '{$currentToken|escape:'quotes':'UTF-8'}';
+		var currentFormTab = '{if isset($smarty.post.currentFormTab)}{$smarty.post.currentFormTab|escape:'html':'UTF-8'}{else}informations{/if}';
 		var currentText = '{l s='Now' js=1 mod='discountgenerator'}';
 		var closeText = '{l s='Done' js=1 mod='discountgenerator'}';
 		var timeOnlyTitle = '{l s='Choose Time' js=1 mod='discountgenerator'}';
@@ -54,11 +70,18 @@
 		{foreach from=$languages item=language key=k}
 			languages[{$k}] = {
 				id_lang: {$language.id_lang},
-				iso_code: '{$language.iso_code|escape:'quotes'}',
-				name: '{$language.name|escape:'quotes'}'
+				iso_code: '{$language.iso_code|escape:'quotes':'UTF-8'}',
+				name: '{$language.name|escape:'quotes':'UTF-8'}'
 			};
 		{/foreach}
-		displayFlags(languages, {$id_lang_default});
+        displayFlags(languages, {$id_lang_default});
+    
+        {if isset($refresh_cart) }
+            if (typeof window.parent.order_create !== "undefined") {
+                window.parent.order_create.refreshCart();
+            }
+            window.parent.$.fancybox.close();
+        {/if}  
 	</script>
 	<script type="text/javascript" src="themes/default/template/controllers/cart_rules/form.js"></script>
 	{include file="footer_toolbar.tpl"}

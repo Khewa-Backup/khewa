@@ -1,14 +1,28 @@
 <?php
 /**
- * DiscountGenerator Prestashop Module
+ * 2007-2025 PrestaShop SA and Contributors
  *
- * @author    iRessources <support-prestashop@iressources.com>
- * @copyright Copyright &copy; 2015-2019 iRessources
- * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- * @link http://www.iressources.com/
- * @version 1.4.1
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    PrestaShop SA <contact@prestashop.com>
+ *  @copyright 2007-2025 PrestaShop SA and Contributors
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of PrestaShop SA
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -21,7 +35,7 @@ class DiscountGenerator extends Module
     {
         $this->name = 'discountgenerator';
         $this->tab = 'pricing_promotion';
-        $this->version = '1.4.1';
+        $this->version = '1.6.0';
         $this->author = 'iRessources';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -34,7 +48,7 @@ class DiscountGenerator extends Module
 
         $this->confirmUninstall = $this->l('Are you sure to uninstall the module?');
 
-        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = ['min' => '1.5', 'max' => _PS_VERSION_];
     }
 
     /**
@@ -56,7 +70,6 @@ class DiscountGenerator extends Module
     {
         return $this->uninstallDB() && parent::uninstall();
     }
-
 
     /**
      * Install DB
@@ -102,7 +115,7 @@ class DiscountGenerator extends Module
      */
     public function getContent()
     {
-        $this->_html = "";
+        $content = '';
 
         // Download 'All'
         if (Tools::getIsset('generatetable') && Tools::getIsset('id_group')) {
@@ -114,17 +127,16 @@ class DiscountGenerator extends Module
             header('Content-type: text/csv');
             header('Content-Type: application/force-download; charset=UTF-8');
             header('Cache-Control: no-store, no-cache');
-            header('Content-disposition: attachment; filename="DG-vouchers-all-' . date("Y-m-d__H:i:s") . '.csv"');
+            header('Content-disposition: attachment; filename="DG-vouchers-all-' . date('Y-m-d_H:i:s') . '.csv"');
 
-            $discounts = Db::getInstance()->ExecuteS("SELECT d.*, cust.* FROM `" . _DB_PREFIX_ . "cart_rule` AS d
-                INNER JOIN `" . _DB_PREFIX_ . "discountgenerator_list` AS dg ON (dg.id_cart_rule = d.id_cart_rule) 
-                LEFT JOIN `" . _DB_PREFIX_ . "cart_cart_rule` AS ccr ON (ccr.id_cart_rule = d.id_cart_rule) 
-                LEFT JOIN `" . _DB_PREFIX_ . "cart` AS c ON (c.id_cart = ccr.id_cart)
-                LEFT JOIN `" . _DB_PREFIX_ . "customer` AS cust ON (cust.id_customer = c.id_customer)
-                WHERE dg.id_group = " . Tools::getValue("id_group", 0));
+            $discounts = Db::getInstance()->ExecuteS('SELECT d.*, cust.* FROM `' . _DB_PREFIX_ . 'cart_rule` AS d
+                INNER JOIN `' . _DB_PREFIX_ . 'discountgenerator_list` AS dg ON (dg.id_cart_rule = d.id_cart_rule) 
+                LEFT JOIN `' . _DB_PREFIX_ . 'cart_cart_rule` AS ccr ON (ccr.id_cart_rule = d.id_cart_rule) 
+                LEFT JOIN `' . _DB_PREFIX_ . 'cart` AS c ON (c.id_cart = ccr.id_cart)
+                LEFT JOIN `' . _DB_PREFIX_ . 'customer` AS cust ON (cust.id_customer = c.id_customer)
+                WHERE dg.id_group = ' . Tools::getValue('id_group', 0));
             $this->csvExport($discounts);
-
-            exit();
+            exit;
         }
 
         // Download 'Used'
@@ -137,17 +149,16 @@ class DiscountGenerator extends Module
             header('Content-type: text/csv');
             header('Content-Type: application/force-download; charset=UTF-8');
             header('Cache-Control: no-store, no-cache');
-            header('Content-disposition: attachment; filename="DG-vouchers-used-' . date("Y-m-d__H:i:s") . '.csv"');
+            header('Content-disposition: attachment; filename="DG-vouchers-used-' . date('Y-m-d_H:i:s') . '.csv"');
 
-            $discounts = Db::getInstance()->ExecuteS("SELECT d.*, cust.* FROM `" . _DB_PREFIX_ . "cart_rule` AS d
-                INNER JOIN `" . _DB_PREFIX_ . "discountgenerator_list` AS dg ON (dg.id_cart_rule = d.id_cart_rule) 
-                INNER JOIN `" . _DB_PREFIX_ . "cart_cart_rule` AS ccr ON (ccr.id_cart_rule = d.id_cart_rule)   
-                LEFT JOIN `" . _DB_PREFIX_ . "cart` AS c ON (c.id_cart = ccr.id_cart)
-                LEFT JOIN `" . _DB_PREFIX_ . "customer` AS cust ON (cust.id_customer = c.id_customer)
-                WHERE dg.id_group = " . Tools::getValue("id_group", 0));
+            $discounts = Db::getInstance()->ExecuteS('SELECT d.*, cust.* FROM `' . _DB_PREFIX_ . 'cart_rule` AS d
+                INNER JOIN `' . _DB_PREFIX_ . 'discountgenerator_list` AS dg ON (dg.id_cart_rule = d.id_cart_rule) 
+                INNER JOIN `' . _DB_PREFIX_ . 'cart_cart_rule` AS ccr ON (ccr.id_cart_rule = d.id_cart_rule)   
+                LEFT JOIN `' . _DB_PREFIX_ . 'cart` AS c ON (c.id_cart = ccr.id_cart)
+                LEFT JOIN `' . _DB_PREFIX_ . 'customer` AS cust ON (cust.id_customer = c.id_customer)
+                WHERE dg.id_group = ' . Tools::getValue('id_group', 0));
             $this->csvExport($discounts);
-
-            exit();
+            exit;
         }
 
         // Download 'Unused'
@@ -160,44 +171,44 @@ class DiscountGenerator extends Module
             header('Content-type: text/csv');
             header('Content-Type: application/force-download; charset=UTF-8');
             header('Cache-Control: no-store, no-cache');
-            header('Content-disposition: attachment; filename="DG-vouchers-new-' . date("Y-m-d__H:i:s") . '.csv"');
+            header('Content-disposition: attachment; filename="DG-vouchers-new-' . date('Y-m-d_H:i:s') . '.csv"');
 
-            $discount_list = Db::getInstance()->ExecuteS("SELECT d.* FROM `" . _DB_PREFIX_ . "cart_rule` AS d
-                INNER JOIN `" . _DB_PREFIX_ . "discountgenerator_list` AS dg ON (dg.id_cart_rule = d.id_cart_rule) 
-                LEFT JOIN `" . _DB_PREFIX_ . "cart_cart_rule` AS cr ON (cr.id_cart_rule = d.id_cart_rule)     
-                WHERE cr.id_cart IS NULL AND dg.id_group = " . Tools::getValue("id_group", 0));
+            $discount_list = Db::getInstance()->ExecuteS('SELECT d.* FROM `' . _DB_PREFIX_ . 'cart_rule` AS d
+                INNER JOIN `' . _DB_PREFIX_ . 'discountgenerator_list` AS dg ON (dg.id_cart_rule = d.id_cart_rule) 
+                LEFT JOIN `' . _DB_PREFIX_ . 'cart_cart_rule` AS cr ON (cr.id_cart_rule = d.id_cart_rule)     
+                WHERE cr.id_cart IS NULL AND dg.id_group = ' . Tools::getValue('id_group', 0));
             $this->csvExport($discount_list);
-
-            exit();
+            exit;
         }
 
         // Delete history
         if (Tools::getIsset('deletefile') && Tools::getIsset('id_group')) {
-            Db::getInstance()->Execute("DELETE FROM `" . _DB_PREFIX_ . "discountgenerator_group` WHERE `id_group` = " . Tools::getValue("id_group", 0) . "");
-            Db::getInstance()->Execute("DELETE FROM `" . _DB_PREFIX_ . "discountgenerator_group_lang` WHERE `id_group` = " . Tools::getValue("id_group", 0) . "");
-            Db::getInstance()->Execute("DELETE FROM `" . _DB_PREFIX_ . "discountgenerator_list` WHERE `id_group` = " . Tools::getValue("id_group", 0) . "");
+            Db::getInstance()->Execute('DELETE FROM `' . _DB_PREFIX_ . 'discountgenerator_group` WHERE `id_group` = ' . Tools::getValue('id_group', 0) . '');
+            Db::getInstance()->Execute('DELETE FROM `' . _DB_PREFIX_ . 'discountgenerator_group_lang` WHERE `id_group` = ' . Tools::getValue('id_group', 0) . '');
+            Db::getInstance()->Execute('DELETE FROM `' . _DB_PREFIX_ . 'discountgenerator_list` WHERE `id_group` = ' . Tools::getValue('id_group', 0) . '');
         }
 
-        $this->_html .= '<h2>' . $this->displayName . '</h2>';
+        $content .= $this->displayName;
 
-        $history = Db::getInstance()->ExecuteS("SELECT * FROM `" . _DB_PREFIX_ . "discountgenerator_group` AS `dg`
-            INNER JOIN `" . _DB_PREFIX_ . "discountgenerator_group_lang` AS `dgl` ON (dg.id_group = dgl.id_group AND dgl.id_lang = " . (int)($this->context->cookie->id_lang) . ")");
+        $history = Db::getInstance()->ExecuteS('SELECT * FROM `' . _DB_PREFIX_ . 'discountgenerator_group` AS `dg`
+            INNER JOIN `' . _DB_PREFIX_ . 'discountgenerator_group_lang` AS `dgl` ON (dg.id_group = dgl.id_group AND dgl.id_lang = ' . (int) $this->context->cookie->id_lang . ')');
 
-        $this->context->smarty->assign(array(
+        $this->context->smarty->assign([
             'ps_version' => Tools::substr(_PS_VERSION_, 0, 3),
             'history' => $history,
             'link' => $this->context->link->getAdminLink('AdminModules') . '&configure=discountgenerator&tab_module=pricing_promotion&module_name=discountgenerator',
-            'generate' => $this->context->link->getAdminLink('AdminCartRules', true) . '&addcart_rule&show_group_discount=1'
-        ));
+            'generate' => $this->context->link->getAdminLink('AdminCartRules', true) . '&addcart_rule&show_group_discount=1',
+        ]);
 
-        $this->_html .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
-        return $this->_html;
+        $content .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
+        return $content;
     }
 
     /**
      * Exports discounts lists
      *
      * @param $discounts
+     *
      * @return bool
      */
     private function csvExport($discounts)
@@ -208,21 +219,18 @@ class DiscountGenerator extends Module
         }
 
         // Export fields
-        $reductionFields = array('reduction_percent', 'reduction_amount');
-        $fields = array(
+        $reductionFields = ['reduction_percent', 'reduction_amount'];
+        $fields = [
             $this->l('code') => 'code',
             $this->l('from') => 'date_from',
             $this->l('to') => 'date_to',
             $this->l('value') => $reductionFields,
             $this->l('firstname') => 'firstname',
             $this->l('lastname') => 'lastname',
-            $this->l('email') => 'email'
-        );
+            $this->l('email') => 'email',
+        ];
         $enclosure = '"';
-        $separator = ";";
-
-        // Use export_precontent like in classes/controller/AdminController.php -> processExport
-        echo "\xEF\xBB\xBF";
+        $separator = ';';
 
         // Then use fputcsv instead of presta logic that do not cover quotes and other stuff
         $fh = @fopen('php://output', 'w');
@@ -230,18 +238,18 @@ class DiscountGenerator extends Module
 
         // Add columns
         foreach ($discounts as $discount) {
-            $columns = array();
+            $columns = [];
             foreach ($fields as $k => $field) {
                 $val = !is_array($field) && isset($discount[$field]) ? $discount[$field] : null;
                 if ($field == $reductionFields) {
                     foreach ($field as $fieldName) {
-                        $value = (float)$discount[$fieldName];
+                        $value = (float) $discount[$fieldName];
                         if (!empty($value)) {
                             $val = $discount[$fieldName];
                             if ($fieldName == 'reduction_percent') {
                                 $val .= '%';
                             } else {
-                                $currency = Currency::getCurrencyInstance((int)$discount['reduction_currency']);
+                                $currency = Currency::getCurrencyInstance((int) $discount['reduction_currency']);
                                 $val .= ' ' . $currency->iso_code;
                             }
                         }
@@ -251,27 +259,6 @@ class DiscountGenerator extends Module
             }
             fputcsv($fh, $columns, $separator, $enclosure);
         }
-    }
-
-    /**
-     * Initialize override translation variables
-     * Since prestashop can't load from override/controllers/admin
-     * Load variables and use module instance inside override/controllers/admin
-     *
-     * @return array
-     */
-    private function initOverrideTranslations()
-    {
-        $translations = array(
-            $this->l('Your combination of numbers and letters : %s is only sufficient to create %s vouchers. To create %s vouchers you have to increase your combination power. Please add an X or a Y to the Code mask field.'),
-            $this->l('Can\'t generate this count of vouchers using current mask. You can generate %s vouchers with current mask (possible mask combinations - %s, already exists mask vouchers - %s).'),
-            $this->l('Invalid coupons quantity count'),
-            $this->l('Prefix'),
-            $this->l('Invalid coupons prefix'),
-            $this->l('Code mask'),
-            $this->l('Invalid coupons mask')
-        );
-
-        return $translations;
+        return true;
     }
 }

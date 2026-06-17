@@ -16,6 +16,9 @@
  *	@license PHP v3.0
  *	@version 1.1
  */
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 class PHPExcel_Shared_JAMA_QRDecomposition {
 
 	const MatrixRankException	= "Can only perform operation on full-rank matrix.";

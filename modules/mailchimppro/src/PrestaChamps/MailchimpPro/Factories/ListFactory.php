@@ -13,13 +13,15 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  */
 
 namespace PrestaChamps\MailchimpPro\Factories;
-
-use DrewM\MailChimp\MailChimp;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+use PrestaChamps\MailChimpAPI;
 
 /**
  * Class ListFactory
@@ -36,7 +38,7 @@ class ListFactory
      * @return array|false
      * @throws \Exception
      */
-    public static function make($listName, MailChimp $mailChimp, \Context $context)
+    public static function make($listName, MailChimpAPI $mailChimp, \Context $context)
     {
         $store_name = $context->shop->name;
         $shop_email = (string)\Configuration::get('PS_SHOP_EMAIL');
@@ -46,23 +48,23 @@ class ListFactory
         $store_state = \State::getNameById($store_address->id_state);
         $store_country_iso = \Country::getIsoById($store_address->id_country);
 
-        $data = array(
+        $data = [
             'name' => $listName,
-            'contact' => array(
+            'contact' => [
                 'company' => $store_address->company,
                 'country' => $store_country_iso,
-            ),
-            'campaign_defaults' => array(
+            ],
+            'campaign_defaults' => [
                 'from_name' => $store_name,
                 'from_email' => $shop_email,
                 'subject' => $store_name,
                 'language' => 'en',
-            ),
+            ],
             'permission_reminder' =>
                 'You are receiving this email because you signed up for an account at the following store: ' .
                 $store_name,
             'email_type_option' => true,
-        );
+        ];
 
         if ($store_address->address1 && !empty($store_address->address1)) {
             $data['contact']['address1'] = $store_address->address1;
@@ -88,7 +90,7 @@ class ListFactory
             $data['contact']['zip'] = $listName;
         }
 
-        if ($store_state && !empty($store_state)) {
+        if ($store_state) {
             $data['contact']['state'] = $store_state;
         } else {
             $data['contact']['state'] = 'state';

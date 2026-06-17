@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 <div class="alert alert-info alert-mc" id="loading-states-in-progress">

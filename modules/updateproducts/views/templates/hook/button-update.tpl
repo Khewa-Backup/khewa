@@ -1,0 +1,1 @@
+<button type="button" class="btn btn-default update">{l s='Update'  mod='updateproducts'}</button>

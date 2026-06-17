@@ -1,20 +1,18 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
-
-namespace Lcobucci\JWT\Parsing;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Parsing;
 
 use JsonException;
-use Lcobucci\JWT\Encoding\CannotDecodeContent;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Encoding\CannotDecodeContent;
 use RuntimeException;
-
 use function json_decode;
 use function json_last_error;
 use function json_last_error_msg;
-
 /**
  * Class that decodes data according with the specs of RFC-4648
  *
@@ -36,23 +34,19 @@ class Decoder
      */
     public function jsonDecode($json)
     {
-        if (PHP_VERSION_ID < 70300) {
+        if (\PHP_VERSION_ID < 70300) {
             $data = json_decode($json);
-
-            if (json_last_error() != JSON_ERROR_NONE) {
+            if (json_last_error() != \JSON_ERROR_NONE) {
                 throw CannotDecodeContent::jsonIssues(new JsonException(json_last_error_msg()));
             }
-
             return $data;
         }
-
         try {
-            return json_decode($json, false, 512, JSON_THROW_ON_ERROR);
+            return json_decode($json, \false, 512, \JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw CannotDecodeContent::jsonIssues($exception);
         }
     }
-
     /**
      * Decodes from base64url
      *
@@ -61,10 +55,9 @@ class Decoder
      */
     public function base64UrlDecode($data)
     {
-        if ($remainder = strlen($data) % 4) {
-            $data .= str_repeat('=', 4 - $remainder);
+        if ($remainder = \strlen($data) % 4) {
+            $data .= \str_repeat('=', 4 - $remainder);
         }
-
-        return base64_decode(strtr($data, '-_', '+/'));
+        return \base64_decode(\strtr($data, '-_', '+/'));
     }
 }

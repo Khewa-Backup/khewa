@@ -19,7 +19,9 @@
 //
 // $Id: PPS.php,v 1.7 2007/02/13 21:00:42 schmidt Exp $
 
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 /**
 * Class for creating PPS's for OLE containers
 *

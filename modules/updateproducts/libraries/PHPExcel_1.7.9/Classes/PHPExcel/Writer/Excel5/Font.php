@@ -25,7 +25,9 @@
  * @version    1.7.9, 2013-06-02
  */
 
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 /**
  * PHPExcel_Writer_Excel5_Font
  *

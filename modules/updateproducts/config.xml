@@ -2,7 +2,7 @@
 <module>
     <name>updateproducts</name>
     <displayName><![CDATA[Product Catalog Export/Update]]></displayName>
-    <version><![CDATA[3.7.1]]></version>
+    <version><![CDATA[3.9.3]]></version>
     <description><![CDATA[Product Catalog Export/Update module is a convenient module especially designed to perform export and update operations with the PrestaShop products.]]></description>
     <author><![CDATA[MyPrestaModules]]></author>
     <tab><![CDATA[quick_bulk_update]]></tab>

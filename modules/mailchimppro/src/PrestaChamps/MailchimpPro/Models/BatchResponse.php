@@ -18,7 +18,9 @@
  */
 
 namespace PrestaChamps\MailchimpPro\Models;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class BatchResponse
  *
@@ -26,10 +28,10 @@ namespace PrestaChamps\MailchimpPro\Models;
  */
 class BatchResponse
 {
-    public $status_code;
-    public $operation_id;
+    public    $status_code;
+    public    $operation_id;
     protected $response_raw;
-    public $response;
+    public    $response;
 
     public function __construct($status_code, $operation_id, $response_raw)
     {
@@ -48,7 +50,7 @@ class BatchResponse
      */
     public static function fromArray($array)
     {
-        return new static(
+        return new BatchResponse(
             $array['status_code'],
             $array['operation_id'],
             $array['response']

@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('_PS_VERSION_')) {
+  exit;
+}
+
+
 class SliderProduct
 {
   public static function getIdsOfProductsForSlider($product_type, $manually_selected_products, $manually_selected_categories, $id_category, $limit)
@@ -40,7 +45,7 @@ class SliderProduct
 
     $sql = '
 			SELECT p.*, pl.`description`, pl.`description_short`, pl.`available_now`,
-					pl.`available_later`, pl.`link_rewrite`, pl.`meta_description`, pl.`meta_keywords`, pl.`meta_title`, pl.`name`, IFNULL(pa.id_product_attribute, 0) AS id_product_attribute,pa.minimal_quantity AS product_attribute_minimal_quantity
+					pl.`available_later`, pl.`link_rewrite`, pl.`meta_description`,  pl.`meta_title`, pl.`name`, IFNULL(pa.id_product_attribute, 0) AS id_product_attribute,pa.minimal_quantity AS product_attribute_minimal_quantity
 					, i.id_image
       FROM ' . _DB_PREFIX_ . 'product_lang as pl
       INNER JOIN ' . _DB_PREFIX_ . 'product as p

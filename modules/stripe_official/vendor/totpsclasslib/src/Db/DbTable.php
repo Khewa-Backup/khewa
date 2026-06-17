@@ -25,6 +25,7 @@
 
 namespace Stripe_officialClasslib\Db;
 
+use Stripe_officialClasslib\Extensions\ProcessLogger\ProcessLoggerHandler;
 use \Tools;
 
 class DbTable
@@ -104,7 +105,9 @@ class DbTable
         $alter = $this->alterFields();
 
         if (!empty($alter)) {
-            return $this->db->execute($alter);
+            foreach ($alter as $sql) {
+                $this->db->execute($sql);
+            }
         }
         $this->alterKeys();
 
@@ -113,7 +116,7 @@ class DbTable
 
     /**
      * Alter table fields
-     * @return string
+     * @return array
      */
     private function alterFields()
     {
@@ -147,7 +150,7 @@ class DbTable
             }
         }
 
-        return implode("\r\n", $alters);
+        return $alters;
     }
 
     /**
@@ -368,7 +371,7 @@ class DbTable
                 break;
             case static::FOREIGN:
                 list($table, $columns) = explode('.', $name);
-                $this->keys[] = "FOREIGN KEY (`$columns`) REFERENCES $table (`$columns`) 
+                $this->keys[] = "FOREIGN KEY (`$columns`) REFERENCES $table (`$columns`)
                 ON UPDATE CASCADE ON DELETE CASCADE";
                 break;
             case static::UNIQUE:

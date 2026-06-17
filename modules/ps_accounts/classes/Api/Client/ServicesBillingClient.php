@@ -22,7 +22,6 @@ namespace PrestaShop\Module\PsAccounts\Api\Client;
 
 use GuzzleHttp\Client;
 use PrestaShop\Module\PsAccounts\Adapter\Link;
-use PrestaShop\Module\PsAccounts\Configuration\ConfigOptionsResolver;
 use PrestaShop\Module\PsAccounts\Exception\OptionResolutionException;
 use PrestaShop\Module\PsAccounts\Provider\ShopProvider;
 use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
@@ -35,7 +34,7 @@ class ServicesBillingClient extends GenericClient
     /**
      * ServicesBillingClient constructor.
      *
-     * @param array $config
+     * @param string $apiUrl
      * @param PsAccountsService $psAccountsService
      * @param ShopProvider $shopProvider
      * @param Link $link
@@ -46,15 +45,13 @@ class ServicesBillingClient extends GenericClient
      * @throws \Exception
      */
     public function __construct(
-        array $config,
+        $apiUrl,
         PsAccountsService $psAccountsService,
         ShopProvider $shopProvider,
         Link $link,
         Client $client = null
     ) {
         parent::__construct();
-
-        $config = $this->resolveConfig($config);
 
         $shopId = $shopProvider->getCurrentShop()['id'];
 
@@ -65,7 +62,7 @@ class ServicesBillingClient extends GenericClient
         // Client can be provided for tests
         if (null === $client) {
             $client = new Client([
-                'base_url' => $config['api_url'],
+                'base_url' => $apiUrl,
                 'defaults' => [
                     'timeout' => $this->timeout,
                     'exceptions' => $this->catchExceptions,
@@ -73,7 +70,7 @@ class ServicesBillingClient extends GenericClient
                         // Commented, else does not work anymore with API.
                         //'Content-Type' => 'application/vnd.accounts.v1+json', // api version to use
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . $token,
+                        'Authorization' => 'Bearer ' . (string) $token,
                         'Shop-Id' => $shopId,
                         'Module-Version' => \Ps_accounts::VERSION, // version of the module
                         'Prestashop-Version' => _PS_VERSION_, // prestashop version
@@ -88,7 +85,7 @@ class ServicesBillingClient extends GenericClient
     /**
      * @param mixed $shopUuidV4
      *
-     * @return array | false
+     * @return array|false
      */
     public function getBillingCustomer($shopUuidV4)
     {
@@ -101,7 +98,7 @@ class ServicesBillingClient extends GenericClient
      * @param mixed $shopUuidV4
      * @param array $bodyHttp
      *
-     * @return array | false
+     * @return array|false
      */
     public function createBillingCustomer($shopUuidV4, $bodyHttp)
     {
@@ -116,7 +113,7 @@ class ServicesBillingClient extends GenericClient
      * @param mixed $shopUuidV4
      * @param string $module
      *
-     * @return array | false
+     * @return array|false
      */
     public function getBillingSubscriptions($shopUuidV4, $module)
     {
@@ -130,7 +127,7 @@ class ServicesBillingClient extends GenericClient
      * @param string $module
      * @param array $bodyHttp
      *
-     * @return array | false
+     * @return array|false
      */
     public function createBillingSubscriptions($shopUuidV4, $module, $bodyHttp)
     {
@@ -139,20 +136,5 @@ class ServicesBillingClient extends GenericClient
         return $this->post([
             'body' => $bodyHttp,
         ]);
-    }
-
-    /**
-     * @param array $config
-     * @param array $defaults
-     *
-     * @return array
-     *
-     * @throws OptionResolutionException
-     */
-    public function resolveConfig(array $config, array $defaults = [])
-    {
-        return (new ConfigOptionsResolver([
-            'api_url',
-        ]))->resolve($config, $defaults);
     }
 }

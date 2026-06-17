@@ -2,8 +2,9 @@
 *
 * Google merchant center Pro
 *
-* @author BusinessTech.fr
-* @copyright Business Tech
+* @author    BusinessTech.fr - https://www.businesstech.fr
+* @copyright Business Tech - https://www.businesstech.fr
+* @license   Commercial
 *
 *           ____    _______
 *          |  _ \  |__   __|
@@ -81,7 +82,7 @@
 				<span class="label-tooltip" title="{l s='Give a name to this exclusion rule' mod='gmerchantcenterpro'}"><b>{l s='Exclusion rule name' mod='gmerchantcenterpro'}</b></span>
 			</label>
 			<div class="col-xs-5">
-				<input type="text" name="bt-exclusion-name" id="bt-exclusion-name" value="{$aDataRule.name|escape:'htmlall'}"/>
+				<input type="text" name="bt-exclusion-name" id="bt-exclusion-name" value="{$aDataRule.name|escape:'htmlall':'UTF-8'}"/>
 			</div>
 			<span class="label-tooltip" data-toggle="tooltip" data-placement="right" data-original-title="{l s='Give a name to this exclusion rule' mod='gmerchantcenterpro'}">&nbsp;&nbsp;<span class="icon-question-sign"></span></span>
 		</div>
@@ -95,9 +96,9 @@
 					<option value="0"> -- </option>
 						{foreach key=key item=sExclusionType from=$aExclusionType}
                             {if isset($sExclusionType.$sCurrentIso)}
-								<option value="{$key|escape:'htmlall':'UTF-8'}">{$sExclusionType.$sCurrentLang|escape:'htmlall':'UTF-8'}</option>
+							<option value="{$key|escape:'htmlall':'UTF-8'}" {if $aDataRule.type == $key} selected {/if}>{$sExclusionType.$sCurrentLang|escape:'htmlall':'UTF-8'}</option>
 							{else}
-								<option value="{$key|escape:'htmlall':'UTF-8'}">{$sExclusionType.en|escape:'htmlall':'UTF-8'}</option>
+								<option value="{$key|escape:'htmlall':'UTF-8'}" {if $aDataRule.type == $key} selected {/if}>{$sExclusionType.en|escape:'htmlall':'UTF-8'}</option>
 							{/if}
 						{/foreach}
 				</select>

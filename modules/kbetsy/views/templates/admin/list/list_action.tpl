@@ -15,6 +15,19 @@
 *
 * Admin List Action tpl file
 *}
+
+{*
+* Modified to use the target blank in case of the sync on profile level
+* @modifier Pragya Maurya
+* @date 13-06-2024
+* PMJune2024 custom-profile-level-sync
+*}
+{if isset($should_blank) && $should_blank == 1}
+<a href="{$href|escape:'html':'UTF-8'}" target="_blank" title="{$action|escape:'htmlall':'UTF-8'}" class="edit" {if isset($onclick) && $onclick != ""} onclick="{$onclick|escape:'htmlall':'UTF-8'}" {/if}>
+    <i class="icon-{$icon|escape:'htmlall':'UTF-8'}"></i> {$action|escape:'htmlall':'UTF-8'}
+</a>
+{else}
 <a href="{$href|escape:'html':'UTF-8'}" title="{$action|escape:'htmlall':'UTF-8'}" class="edit">
 	<i class="icon-{$icon|escape:'htmlall':'UTF-8'}"></i> {$action|escape:'htmlall':'UTF-8'}
 </a>
+{/if}

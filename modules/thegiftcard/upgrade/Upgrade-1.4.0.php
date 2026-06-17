@@ -1,26 +1,26 @@
 <?php
-/**
-* 2017 - Keyrnel SARL
-*
-* NOTICE OF LICENSE
-*
-* The source code of this module is under a commercial license.
-* Each license is unique and can be installed and used on only one shop.
-* Any reproduction or representation total or partial of the module, one or more of its components,
-* by any means whatsoever, without express permission from us is prohibited.
-* If you have not received this module from us, thank you for contacting us.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to newer
-* versions in the future.
-*
-* @author    Keyrnel
-* @copyright 2017 - Keyrnel SARL
-* @license   commercial
-* International Registered Trademark & Property of Keyrnel SARL
-*/
 
+/**
+ * 2023 - Keyrnel
+ *
+ * NOTICE OF LICENSE
+ *
+ * The source code of this module is under a commercial license.
+ * Each license is unique and can be installed and used on only one shop.
+ * Any reproduction or representation total or partial of the module, one or more of its components,
+ * by any means whatsoever, without express permission from us is prohibited.
+ * If you have not received this module from us, thank you for contacting us.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @author    Keyrnel
+ * @copyright 2023 - Keyrnel
+ * @license   commercial
+ * International Registered Trademark & Property of Keyrnel
+ */
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -42,10 +42,10 @@ function upgrade_module_1_4_0($object)
     }
 
     // Delete deprecated customization field
-    $id_customization_field = (int)Configuration::get('GIFTCARD_CUST_METHOD');
-    if (!Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'customization_field` WHERE `id_customization_field` = '.(int)$id_customization_field)
-        && !Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'customization_field_lang` WHERE `id_customization_field` = '.(int)$id_customization_field)
-        && !Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'customized_data` WHERE `index` = '.(int)$id_customization_field)) {
+    $id_customization_field = (int) Configuration::get('GIFTCARD_CUST_METHOD');
+    if (!Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'customization_field` WHERE `id_customization_field` = ' . (int) $id_customization_field)
+        && !Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'customization_field_lang` WHERE `id_customization_field` = ' . (int) $id_customization_field)
+        && !Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'customized_data` WHERE `index` = ' . (int) $id_customization_field)) {
         return false;
     }
 
@@ -56,20 +56,21 @@ function upgrade_module_1_4_0($object)
     // Delete deprecated mysql columns & update existing gift cards
     $giftcards = GiftCardModel::getGiftcards();
 
-    if (!Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'giftcard` ADD `id_order_detail` int(10) unsigned NOT NULL DEFAULT 0 AFTER `id_giftcard` ,
-	 ADD `id_customization` int(10) unsigned NOT NULL DEFAULT 0 AFTER `id_image` ,
-	 DROP `id_order`')) {
+    if (!Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'giftcard` ADD `id_order_detail` int(10) unsigned NOT NULL DEFAULT 0 AFTER `id_giftcard` ,
+        ADD `id_customization` int(10) unsigned NOT NULL DEFAULT 0 AFTER `id_image` ,
+        DROP `id_order`')
+    ) {
         return false;
     }
 
-    $customization_ids = array();
+    $customization_ids = [];
     foreach ($giftcards as $giftcard) {
-        $order = new Order((int)$giftcard['id_order']);
+        $order = new Order((int) $giftcard['id_order']);
         if (!Validate::isLoadedObject($order)) {
             continue;
         }
 
-        $cart_rule = new CartRule((int)$giftcard['id_cart_rule']);
+        $cart_rule = new CartRule((int) $giftcard['id_cart_rule']);
         if (!Validate::isLoadedObject($cart_rule)) {
             continue;
         }
@@ -84,16 +85,16 @@ function upgrade_module_1_4_0($object)
             }
 
             $id_order_detail = $product['id_order_detail'];
-            $id_customization = GiftCardModel::getCustomization((int)$order->id_cart, (int)$product['product_attribute_id'], (int)$product['product_quantity'], $customization_ids);
+            $id_customization = GiftCardModel::getCustomization((int) $order->id_cart, (int) $product['product_attribute_id'], (int) $product['product_quantity'], $customization_ids);
             if (!in_array($id_customization, $customization_ids)) {
                 $customization_ids[] = $id_customization;
             }
             break;
         }
 
-        Db::getInstance()->execute('UPDATE `'._DB_PREFIX_.'giftcard`
-			SET `id_order_detail` = '.(int)$id_order_detail.', `id_customization` = '.(int)$id_customization.'
-			WHERE `id_giftcard` = '.(int)$giftcard['id_giftcard']);
+        Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'giftcard`
+  			SET `id_order_detail` = ' . (int) $id_order_detail . ', `id_customization` = ' . (int) $id_customization . '
+  			WHERE `id_giftcard` = ' . (int) $giftcard['id_giftcard']);
     }
 
     return true;

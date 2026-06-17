@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2021 PrestaShop
+ * 2007-2023 PrestaShop
  *
  * NOTICE OF LICENSE
  *
@@ -19,30 +19,33 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  *  @author    Buy-Addons <contact@buy-addons.com>
- *  @copyright 2007-2021 PrestaShop SA
+ *  @copyright 2007-2023 PrestaShop SA
  *  @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
+ *
  * @since 1.6
  */
-
 class AdminReportSaleController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
     }
+
     public function display()
     {
         parent::display();
     }
+
     public function initContent()
     {
         parent::initContent();
         $tokenad = Tools::getAdminTokenLite('AdminModules');
-        $adminProducts='index.php?controller=AdminModules';
+        $adminProducts = 'index.php?controller=AdminModules';
         $action = Tools::getValue('action');
         if (empty($action)) {
-            Tools::redirectAdmin($adminProducts.'&token='.$tokenad.'&configure=reportsale');
+            Tools::redirectAdmin($adminProducts . '&token=' . $tokenad . '&configure=reportsale');
+
             return true;
         }
         $action = Tools::strtolower($action);
@@ -53,42 +56,44 @@ class AdminReportSaleController extends AdminController
                 return $this->viewOrder();
         }
     }
+
     public function viewCustomer()
     {
         $db = Db::getInstance();
         $id_report = (int) Tools::getValue('id_report');
         if (empty($id_report)) {
-            die;
+            exit;
         }
-        $sql ='SELECT customers_data FROM '._DB_PREFIX_.'ba_report_products';
-        $sql .=' WHERE id_report = '.$id_report;
+        $sql = 'SELECT customers_data FROM ' . _DB_PREFIX_ . 'ba_report_products';
+        $sql .= ' WHERE id_report = ' . $id_report;
         $customers_data = $db->getValue($sql, false);
-        $arr = Tools::jsonDecode($customers_data, true);
+        $arr = json_decode($customers_data, true);
         $c_controller = 'index.php?controller=AdminCustomers&viewcustomer';
-        $c_controller .='&token='.Tools::getAdminTokenLite('AdminCustomers');
+        $c_controller .= '&token=' . Tools::getAdminTokenLite('AdminCustomers');
         $this->context->smarty->assign('c_controller', $c_controller);
         $this->context->smarty->assign('customer', $arr);
-        $tpl = _PS_MODULE_DIR_."reportsale/views/templates/admin/customer_data_modal.tpl";
+        $tpl = _PS_MODULE_DIR_ . 'reportsale/views/templates/admin/customer_data_modal.tpl';
         echo $this->context->smarty->fetch($tpl);
-        die;
+        exit;
     }
+
     public function viewOrder()
     {
         $db = Db::getInstance();
         $id_report = (int) Tools::getValue('id_report');
         if (empty($id_report)) {
-            die;
+            exit;
         }
-        $sql ='SELECT orders_data FROM '._DB_PREFIX_.'ba_report_products';
-        $sql .=' WHERE id_report = '.$id_report;
+        $sql = 'SELECT orders_data FROM ' . _DB_PREFIX_ . 'ba_report_products';
+        $sql .= ' WHERE id_report = ' . $id_report;
         $orders_data = $db->getValue($sql, false);
-        $arr = Tools::jsonDecode($orders_data, true);
+        $arr = json_decode($orders_data, true);
         $c_controller = 'index.php?controller=AdminOrders&vieworder';
-        $c_controller .='&token='.Tools::getAdminTokenLite('AdminOrders');
+        $c_controller .= '&token=' . Tools::getAdminTokenLite('AdminOrders');
         $this->context->smarty->assign('c_controller', $c_controller);
         $this->context->smarty->assign('orders', $arr);
-        $tpl = _PS_MODULE_DIR_."reportsale/views/templates/admin/order_data_modal.tpl";
+        $tpl = _PS_MODULE_DIR_ . 'reportsale/views/templates/admin/order_data_modal.tpl';
         echo $this->context->smarty->fetch($tpl);
-        die;
+        exit;
     }
 }

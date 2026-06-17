@@ -18,7 +18,9 @@
  */
 
 namespace PrestaChamps\PrestaShop\Helpers;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class LinkHelper
  *
@@ -35,7 +37,7 @@ class LinkHelper
      * @return string
      * @throws \PrestaShopException
      */
-    public static function getAdminLink($controller, $withToken = true, $sfRouteParams = array(), $params = array())
+    public static function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])
     {
         if ((bool)version_compare(_PS_VERSION_, '1.7', '>=')) {
             return \Context::getContext()->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);

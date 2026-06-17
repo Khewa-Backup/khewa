@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 {foreach $responses as $key => $response}
@@ -25,7 +25,7 @@
         <div id="collapse-{$key|escape:'htmlall':'UTF-8'}" class="panel-collapse collapse">
             <div class="panel-body">
                 {* HTML, no need for escape*}
-            <pre>{var_export($response->response)}</pre>
+            <pre>{var_export($response->response)|escape:'htmlall':'UTF-8'}</pre>
             </div>
         </div>
     </div>

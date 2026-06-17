@@ -1,10 +1,7 @@
 <?php
 class Product extends ProductCore
 {
-    /*
-    * custom sorting for combinations
-    * date: 2020-06-21
-    */
+    
     
     public function getAttributesResume($id_lang, $attribute_value_separator = ' - ', $attribute_separator = ', ')
     {
@@ -20,6 +17,7 @@ class Product extends ProductCore
             GROUP BY pa.id_product_attribute
             ORDER BY a.position ASC, pac.id_attribute ASC, pa.id_product_attribute ASC
         '), 'id_product_attribute');
+
         $resume_ids = array_column($resume, 'id_product_attribute');
         if ($resume_ids != $sorted_ids && count($resume_ids) == count($sorted_ids)
             && !array_diff($resume_ids, $sorted_ids)) {
@@ -37,7 +35,18 @@ class Product extends ProductCore
             $resume = $sorted_resume;
         }
         return $resume;
-        // echo('<pre>');print_r([$sorted_ids, $resume_ids]);echo('</pre>');
-        // exit();
+    }
+    /*
+    * module: amazzingfilter
+    * date: 2023-01-14 11:22:26
+    * version: 3.2.2
+    */
+    public static function getProductsProperties($id_lang, $query_result)
+    {
+        if (!empty(Context::getContext()->properties_not_required)) {
+            return $query_result;
+        } else {
+            return parent::getProductsProperties($id_lang, $query_result);
+        }
     }
 }

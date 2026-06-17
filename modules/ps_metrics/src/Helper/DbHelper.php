@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -21,27 +22,9 @@
 namespace PrestaShop\Module\Ps_metrics\Helper;
 
 use Db;
-use PrestaShop\Module\Ps_metrics\Cache\DataCache;
 
 class DbHelper
 {
-    /**
-     * @var DataCache
-     */
-    private $dataCache;
-
-    /**
-     * __construct
-     *
-     * @param DataCache $dataCache
-     *
-     * @return void
-     */
-    public function __construct(DataCache $dataCache)
-    {
-        $this->dataCache = $dataCache;
-    }
-
     /**
      * Retrieve cache data if exist or request a "dbRequestType"
      *
@@ -50,17 +33,9 @@ class DbHelper
      *
      * @return mixed
      */
-    private function request($dbRequestType, $sql)
+    private function request(string $dbRequestType, string $sql)
     {
-        $sqlCache = $this->dataCache->get($sql);
-
-        if (false !== $sqlCache) {
-            return $sqlCache;
-        }
-
-        return $this->dataCache->set(
-            Db::getInstance()->{$dbRequestType}($sql)
-        );
+        return Db::getInstance()->{$dbRequestType}($sql);
     }
 
     /**
@@ -70,9 +45,9 @@ class DbHelper
      *
      * @return array
      */
-    public function executeS($sql)
+    public function executeS(string $sql): array
     {
-        return $this->request('executeS', $sql);
+        return (array) $this->request('executeS', $sql);
     }
 
     /**
@@ -82,7 +57,7 @@ class DbHelper
      *
      * @return mixed
      */
-    public function getValue($sql)
+    public function getValue(string $sql)
     {
         return $this->request('getValue', $sql);
     }
@@ -94,24 +69,8 @@ class DbHelper
      *
      * @return array
      */
-    public function getRow($sql)
+    public function getRow(string $sql): array
     {
-        return $this->request('getRow', $sql);
-    }
-
-    /**
-     * Get mysql configuration for variable max_user_connections
-     * helpfull to prevent error like User o689528 already has more than max_user_connections active connections
-     *
-     * @return int
-     */
-    public function getMaxUserConnections()
-    {
-        $connexions = $this->executeS("show global variables like '%max_user_connections%'");
-        if (empty($connexions) || empty($connexions[0]) || !isset($connexions[0]['Value'])) {
-            return 0;
-        }
-
-        return ($connexions[0]['Value'] === '0') ? 9999 : (int) $connexions[0]['Value'];
+        return (array) $this->request('getRow', $sql);
     }
 }

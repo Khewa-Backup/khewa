@@ -307,4 +307,3 @@
 		return $(this).data('container');
 	};
 })(jQuery);
-

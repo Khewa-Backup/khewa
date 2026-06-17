@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -69,32 +69,35 @@ class BT_AdminDelete implements BT_IAdmin
             }
 
             if ($bContinu == false) {
-                throw new Exception(GMerchantCenterPro::$oModule->l(
-                    'Your Custom label ID(s) are not valid',
-                    'admin-update_class'
-                ) . '.', 700);
+                throw new Exception(GMerchantCenterPro::$oModule->l('Your Custom label ID(s) are not valid', 'admin-update_class') . '.', 700);
             } else {
                 // include
                 require_once(_GMCP_PATH_LIB_DAO . 'module-dao_class.php');
                 require_once(_GMCP_PATH_LIB_DAO . 'custom-label-dao_class.php');
 
+               
                 if ($sDeleteType == 'one') {
-                    BT_GmcProCustomLabelDao::deleteGmcTag($iTagId, $GLOBALS['GMCP_LABEL_LIST']);
-                    BT_GmcProCustomLabelDao::deleteGmcpProductTag($iTagId);
-                    BT_GmcProCustomLabelDao::deleteFeatureSave($iTagId);
-                    BT_GmcProCustomLabelDao::deleteDynamicCat($iTagId);
-                    BT_GmcProCustomLabelDao::deleteDynamicNew($iTagId);
-                    BT_GmcProCustomLabelDao::deleteDynamicBestSales($iTagId);
-                    BT_GmcProCustomLabelDao::deleteDynamicPriceRange($iTagId);
+                    if (!empty($iTagId)) {
+                        BT_GmcProCustomLabelDao::deleteGmcpProductTag($iTagId);
+                        BT_GmcProCustomLabelDao::deleteFeatureSave($iTagId);
+                        BT_GmcProCustomLabelDao::deleteDynamicCat($iTagId);
+                        BT_GmcProCustomLabelDao::deleteDynamicNew($iTagId);
+                        BT_GmcProCustomLabelDao::deleteDynamicBestSales($iTagId);
+                        BT_GmcProCustomLabelDao::deleteDynamicPriceRange($iTagId);
+                        BT_GmcProCustomLabelDao::deleteGmcTag($iTagId, $GLOBALS['GMCP_LABEL_LIST']);
+
+                    }
                 } elseif ($sDeleteType == 'bulk') {
                     foreach ($aIdsDelete as $aCurrentClId) {
-                        BT_GmcProCustomLabelDao::deleteGmcTag($aCurrentClId, $GLOBALS['GMCP_LABEL_LIST']);
-                        BT_GmcProCustomLabelDao::deleteGmcpProductTag($aCurrentClId);
-                        BT_GmcProCustomLabelDao::deleteFeatureSave($aCurrentClId);
-                        BT_GmcProCustomLabelDao::deleteDynamicCat($aCurrentClId);
-                        BT_GmcProCustomLabelDao::deleteDynamicNew($aCurrentClId);
-                        BT_GmcProCustomLabelDao::deleteDynamicBestSales($aCurrentClId);
-                        BT_GmcProCustomLabelDao::deleteDynamicPriceRange($aCurrentClId);
+                        if (!empty($aCurrentClId)) {
+                            BT_GmcProCustomLabelDao::deleteGmcpProductTag($aCurrentClId);
+                            BT_GmcProCustomLabelDao::deleteFeatureSave($aCurrentClId);
+                            BT_GmcProCustomLabelDao::deleteDynamicCat($aCurrentClId);
+                            BT_GmcProCustomLabelDao::deleteDynamicNew($aCurrentClId);
+                            BT_GmcProCustomLabelDao::deleteDynamicBestSales($aCurrentClId);
+                            BT_GmcProCustomLabelDao::deleteDynamicPriceRange($aCurrentClId);
+                            BT_GmcProCustomLabelDao::deleteGmcTag($aCurrentClId, $GLOBALS['GMCP_LABEL_LIST']);
+                        }
                     }
                 }
             }
@@ -138,17 +141,17 @@ class BT_AdminDelete implements BT_IAdmin
             $sType = Tools::getValue('sDeleteType');
 
             if (empty($iRuleId) || empty($sType)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('Your rules id isn\'t valid or delete type is no valide', 'admin-update_class') . '.', 100);
+                throw new Exception(GMerchantCenterPro::$oModule->l('Your rule ID isn\'t valid or the type of deletion is no valide', 'admin-update_class') . '.', 100);
             } else {
                 // include
                 require_once(_GMCP_PATH_LIB_EXCLUSION . 'exclusion-dao_class.php');
 
                 if (!BT_GmcProExclusionDao::deleteExclusionRules($iRuleId, $sType)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('Error during the rule delete', 'admin-update_class') . '.', 101);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('Error while deleting the rule', 'admin-update_class') . '.', 101);
                 }
 
                 if (!BT_GmcProExclusionDao::deleteProductExcluded($iRuleId)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('Error during the product excluded delete', 'admin-update_class') . '.', 102);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('Error while deleting excluded products', 'admin-update_class') . '.', 102);
                 }
             }
         } catch (Exception $e) {

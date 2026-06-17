@@ -1,18 +1,15 @@
 <?php
 /**
- * 2020 Anvanto
- *
- * NOTICE OF LICENSE
- *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
- * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- *
- *  @author Anvanto <anvantoco@gmail.com>
- *  @copyright  2020 Anvanto
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of Anvanto
- */
+* 2022 Anvanto
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+*
+*  @author    Anvanto <anvantoco@gmail.com>
+*  @copyright 2022 Anvanto
+*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*/
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,7 +29,7 @@ class an_wishlist extends Module implements WidgetInterface
     {
         $this->name = 'an_wishlist';
         $this->tab = 'others';
-        $this->version = '2.2.5';
+        $this->version = '2.2.8';
         $this->author = 'Anvanto';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
@@ -71,7 +68,7 @@ class an_wishlist extends Module implements WidgetInterface
 
         if (
             !parent::install() ||
-            !$this->registerHook('header') ||
+            !$this->registerHook('displayHeader') ||
             !$this->registerHook('displayNav2') ||
             !$this->registerHook('displayProductAdditionalInfo') ||
             !$this->registerHook('displayProductListReviews') ||
@@ -101,7 +98,7 @@ class an_wishlist extends Module implements WidgetInterface
 			Db::getInstance()->Execute($_sql);
 		}	
 
-		parent::uninstall();
+		return parent::uninstall();
     }
 	
 
@@ -160,10 +157,12 @@ class an_wishlist extends Module implements WidgetInterface
         return $config;
     }
 
-    /**
-     *
-     */
     public function hookHeader()
+    {
+        $this->hookDisplayHeader();
+    }
+
+    public function hookDisplayHeader()
     {		
 		$this->context->controller->addJquery();
         $this->context->controller->registerStylesheet(
@@ -265,7 +264,7 @@ class an_wishlist extends Module implements WidgetInterface
         } elseif ($hookName == 'displayProductListReviews' | preg_match('/^displayProductListWishlist\w*$/', $hookName)) {
             $tplFile = 'product-miniature.tpl';
         }
-        
+
 		return $this->fetch('module:an_wishlist/views/templates/front/' . $tplFile);
     }
     /**
@@ -297,7 +296,7 @@ class an_wishlist extends Module implements WidgetInterface
 		}
         		
         if (preg_match('/^displayProductAdditionalInfo\w*$/', $hookName) | $hookName == 'displayProductListReviews' | preg_match('/^displayProductListWishlist\w*$/', $hookName)) {
-            if (array_key_exists('product', $params) && array_key_exists('id_product', $params['product'])) {
+            if (isset($params['product']) && isset($params['product']['id_product'])) {
                 $return['id_product'] = $params['product']['id_product'];
                 $return['id_product_attribute'] = $params['product']['id_product_attribute'];
             }
@@ -328,7 +327,7 @@ class an_wishlist extends Module implements WidgetInterface
 			
             $sql = "DELETE FROM "._DB_PREFIX_."an_wishlist WHERE id_customer = '".(int)$customer['id']."'";
             if (Db::getInstance()->execute($sql)) {
-                return Tools::jsonEncode(true);
+                return json_encode(true);
             }
         }
     }
@@ -346,7 +345,7 @@ class an_wishlist extends Module implements WidgetInterface
 				$exportProducts[] = array('id' => $product['id_product'], 'name' => $product['name'], 'reference' => $product['reference']);
 			}
 
-			return Tools::jsonEncode($exportProducts);	
+			return json_encode($exportProducts);	
         }
     }
 	
@@ -680,7 +679,7 @@ class an_wishlist extends Module implements WidgetInterface
 		$theme = [];
 		$themeFileJson = _PS_THEME_DIR_.'/config/theme.json';
 		if (Tools::file_exists_no_cache($themeFileJson)) {
-			$theme = (array)Tools::jsonDecode(Tools::file_get_contents($themeFileJson), 1);			
+			$theme = (array)json_decode(Tools::file_get_contents($themeFileJson), 1);			
 		}
 
 		if (!isset($theme['url_contact_us']) || $theme['url_contact_us'] == ''){

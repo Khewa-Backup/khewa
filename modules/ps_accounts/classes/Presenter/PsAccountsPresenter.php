@@ -20,14 +20,13 @@
 
 namespace PrestaShop\Module\PsAccounts\Presenter;
 
-use Module;
-use PrestaShop\Module\PsAccounts\Handler\Error\Sentry;
+use PrestaShop\Module\PsAccounts\Exception\SshKeysNotFoundException;
 use PrestaShop\Module\PsAccounts\Installer\Installer;
+use PrestaShop\Module\PsAccounts\Log\Logger;
 use PrestaShop\Module\PsAccounts\Provider\ShopProvider;
 use PrestaShop\Module\PsAccounts\Repository\ConfigurationRepository;
 use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\Module\PsAccounts\Service\ShopLinkAccountService;
-use PrestaShop\Module\PsAccounts\Service\SsoService;
 
 /**
  * Construct the psaccounts module.
@@ -45,11 +44,6 @@ class PsAccountsPresenter implements PresenterInterface
     protected $shopLinkAccountService;
 
     /**
-     * @var SsoService
-     */
-    protected $ssoService;
-
-    /**
      * @var ConfigurationRepository
      */
     protected $configuration;
@@ -65,54 +59,69 @@ class PsAccountsPresenter implements PresenterInterface
     private $psAccountsService;
 
     /**
+     * @var \Ps_accounts
+     */
+    private $module;
+
+    /**
      * PsAccountsPresenter constructor.
      *
      * @param PsAccountsService $psAccountsService
      * @param ShopProvider $shopProvider
      * @param ShopLinkAccountService $shopLinkAccountService
-     * @param SsoService $ssoService
      * @param Installer $installer
      * @param ConfigurationRepository $configuration
+     * @param \Ps_accounts $module
      */
     public function __construct(
         PsAccountsService $psAccountsService,
         ShopProvider $shopProvider,
         ShopLinkAccountService $shopLinkAccountService,
-        SsoService $ssoService,
         Installer $installer,
-        ConfigurationRepository $configuration
+        ConfigurationRepository $configuration,
+        \Ps_accounts $module
     ) {
         $this->psAccountsService = $psAccountsService;
         $this->shopProvider = $shopProvider;
         $this->shopLinkAccountService = $shopLinkAccountService;
-        $this->ssoService = $ssoService;
         $this->installer = $installer;
         $this->configuration = $configuration;
+        $this->module = $module;
     }
 
     /**
-     * Present the PsAccounts module data for JS
-     *
      * @param string $psxName
      *
      * @return array
      *
-     * @throws \Throwable
+     * @throws SshKeysNotFoundException
      */
     public function present($psxName = 'ps_accounts')
     {
-        // FIXME : Do this elsewhere
-        $this->shopLinkAccountService->manageOnboarding($psxName);
-
         $shopContext = $this->shopProvider->getShopContext();
 
-        $isEnabled = $this->installer->isEnabled('ps_accounts');
+        $moduleName = (string) $this->module->name;
+
+        $unlinkedShops = $this->shopProvider->getUnlinkedShops(
+            $psxName,
+            $shopContext->getContext()->employee->id
+        );
+        $shopBase64 = base64_encode(
+            (string) json_encode(array_values($unlinkedShops))
+        );
+        $onboardingLink = $this->module->getParameter('ps_accounts.accounts_ui_url')
+            . '?shops=' . $shopBase64;
 
         try {
             return array_merge(
                 [
+                    'currentContext' => [
+                        'type' => $shopContext->getShopContext(),
+                        'id' => $shopContext->getShopContextId(),
+                    ],
                     'psxName' => $psxName,
                     'psIs17' => $shopContext->isShop17(),
+                    'psAccountsVersion' => $this->module->version,
 
                     /////////////////////////////
                     // InstallerPresenter
@@ -120,8 +129,8 @@ class PsAccountsPresenter implements PresenterInterface
                     'psAccountsIsInstalled' => true,
                     'psAccountsInstallLink' => null,
 
-                    'psAccountsIsEnabled' => true,
-                    'psAccountsEnableLink' => null,
+                    'psAccountsIsEnabled' => $this->installer->isEnabled($moduleName),
+                    'psAccountsEnableLink' => $this->installer->getEnableUrl($moduleName, $psxName),
 
                     'psAccountsIsUptodate' => true,
                     'psAccountsUpdateLink' => null,
@@ -129,31 +138,39 @@ class PsAccountsPresenter implements PresenterInterface
                     ////////////////////////////
                     // PsAccountsPresenter
 
-                    'onboardingLink' => $this->shopLinkAccountService->getLinkAccountUrl($psxName),
-
                     // FIXME :  Mix "SSO user" with "Backend user"
                     'user' => [
-                        'email' => $this->configuration->getFirebaseEmail() ?: null,
-                        'emailIsValidated' => $this->configuration->firebaseEmailIsVerified(),
+                        'uuid' => $this->psAccountsService->getUserUuid() ?: null,
+                        'email' => $this->psAccountsService->getEmail() ?: null,
+                        'emailIsValidated' => $this->psAccountsService->isEmailValidated(),
                         'isSuperAdmin' => $shopContext->getContext()->employee->isSuperAdmin(),
                     ],
-
+                    'backendUser' => [
+                        'email' => $shopContext->getContext()->employee->email,
+                        'employeeId' => $shopContext->getContext()->employee->id,
+                        'isSuperAdmin' => $shopContext->getContext()->employee->isSuperAdmin(),
+                    ],
                     'currentShop' => $this->shopProvider->getCurrentShop($psxName),
                     'isShopContext' => $shopContext->isShopContext(),
-                    'shops' => $this->shopProvider->getShopsTree($psxName),
-
                     'superAdminEmail' => $this->psAccountsService->getSuperAdminEmail(),
 
-                    // FIXME : move into Vue components .env
-                    'ssoResendVerificationEmail' => $this->ssoService->getSsoResendVerificationEmailUrl(),
-                    'manageAccountLink' => $this->ssoService->getSsoAccountUrl(),
+                    // TODO: link to a page to display an "Update Your PSX" notice
+                    'onboardingLink' => $onboardingLink,
 
+                    'ssoResendVerificationEmail' => $this->module->getParameter('ps_accounts.sso_resend_verification_email_url'),
+                    'manageAccountLink' => $this->module->getSsoAccountUrl(),
+
+                    'isOnboardedV4' => $this->psAccountsService->isAccountLinkedV4(),
+
+                    'shops' => $this->shopProvider->getShopsTree($psxName),
                     'adminAjaxLink' => $this->psAccountsService->getAdminAjaxUrl(),
+
+                    'accountsUiUrl' => $this->module->getParameter('ps_accounts.accounts_ui_url'),
                 ],
                 (new DependenciesPresenter())->present($psxName)
             );
         } catch (\Exception $e) {
-            Sentry::captureAndRethrow($e);
+            Logger::getInstance()->debug($e);
         }
 
         return [];

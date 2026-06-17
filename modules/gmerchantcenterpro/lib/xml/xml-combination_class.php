@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -45,12 +45,25 @@ class BT_XmlCombination extends BT_BaseProductXml
     public function buildDetailProductXml()
     {
         // set the product ID
-        $this->data->step->id = $this->data->p->id . 'v' . $this->data->c['id_product_attribute'];
+        $this->data->step->id = $this->data->p->id . GMerchantCenterPro::$conf['GMCP_COMBO_SEPARATOR'] . $this->data->c['id_product_attribute'];
         $this->data->step->id_no_combo = $this->data->p->id;
+        $id_lang = !empty((int)Tools::getValue('gmcp_lang_id')) ? (int)Tools::getValue('gmcp_lang_id') : (int)Tools::getValue('iLangId');
+        $id_shop = !empty((int)Tools::getValue('id_shop')) ? (int)Tools::getValue('id_shop') : (int)Tools::getValue('iShopId');
 
-        // format the product URL  with attribute combination
-        if (!empty($this->data->step->url)) {
-            $this->data->step->url = BT_GmcProModuleDao::getProductComboLink($this->data->step->url, $this->data->c['id_product_attribute'], $this->aParams['iLangId'], $this->aParams['iShopId'], $this->data->p->id, (int) $this->data->currencyId);
+        $product_category = new Category((int)$this->data->p->getDefaultCategory(), (int)$id_lang);
+        $this->data->step->url = Context::getContext()->link->getProductLink($this->data->p, null, Tools::strtolower($product_category->link_rewrite), null, (int)$id_lang, $id_shop, (int) $this->data->c['id_product_attribute'], false, false, false, array(), false);
+
+        if (!empty(GMerchantCenterPro::$conf['GMCP_ADD_CURRENCY'])) {
+            $this->data->step->url .= (strpos($this->data->step->url, '?') !== false) ? '&SubmitCurrency=1&id_currency=' . (int)$this->data->currencyId : '?SubmitCurrency=1&id_currency=' . (int)$this->data->currencyId;
+        }
+        if (!empty(GMerchantCenterPro::$conf['GMCP_UTM_CAMPAIGN'])) {
+            $this->data->step->url .= (strpos($this->data->step->url, '?') !== false) ? '&utm_campaign=' . GMerchantCenterPro::$conf['GMCP_UTM_CAMPAIGN'] : '?utm_campaign=' . GMerchantCenterPro::$conf['GMCP_UTM_CAMPAIGN'];
+        }
+        if (!empty(GMerchantCenterPro::$conf['GMCP_UTM_SOURCE'])) {
+            $this->data->step->url .= (strpos($this->data->step->url, '?') !== false) ? '&utm_source=' . GMerchantCenterPro::$conf['GMCP_UTM_SOURCE'] : '?utm_source=' . GMerchantCenterPro::$conf['GMCP_UTM_SOURCE'];
+        }
+        if (!empty(GMerchantCenterPro::$conf['GMCP_UTM_CAMPAIGN'])) {
+            $this->data->step->url .= (strpos($this->data->step->url, '?') !== false) ? '&utm_medium=' . GMerchantCenterPro::$conf['GMCP_UTM_MEDIUM'] : '?utm_medium=' . GMerchantCenterPro::$conf['GMCP_UTM_MEDIUM'];
         }
 
         // get weight
@@ -88,6 +101,21 @@ class BT_XmlCombination extends BT_BaseProductXml
         $this->data->step->price_raw_no_discount = Product::getPriceStatic((int) $this->data->p->id, $bUseTax, (int) $this->data->c['id_product_attribute'], 6, null, false, false);
         $this->data->step->price = number_format(BT_GmcProModuleTools::round($this->data->step->price_raw), 2, '.', '') . ' ' . $this->data->currency->iso_code;
         $this->data->step->price_no_discount = number_format(BT_GmcProModuleTools::round($this->data->step->price_raw_no_discount), 2, '.', '') . ' ' . $this->data->currency->iso_code;
+
+        if (GMerchantCenterPro::$bAdvancedPack && AdvancedPack::isValidPack($this->data->p->id)) {
+            $oPack = new AdvancedPack($this->data->p->id);
+            $this->data->step->price_raw_no_discount = number_format(AdvancedPack::getPackPrice($oPack->id, $bUseTax, false), 2, '.', '') . ' ' . $this->data->currency->iso_code;
+            $this->data->step->price_raw = number_format(AdvancedPack::getPackPrice($oPack->id), 2, '.', '') . ' ' . $this->data->currency->iso_code;
+            $this->data->step->price_no_discount = number_format(AdvancedPack::getPackPrice($oPack->id, $bUseTax, false), 2, '.', '') . ' ' . $this->data->currency->iso_code;
+            $this->data->step->price = number_format(AdvancedPack::getPackPrice($oPack->id), 2, '.', '') . ' ' . $this->data->currency->iso_code;
+        }
+
+        // Available date
+        $this->data->step->availabilty_date = "";
+
+        if ($this->data->c['available_date'] != "0000-00-00") {
+            $this->data->step->availabilty_date = $this->data->c['available_date'];
+        }
 
         // Cost price
         if (!empty((int) $this->data->c['wholesale_price'])) {
@@ -127,7 +155,11 @@ class BT_XmlCombination extends BT_BaseProductXml
         $this->data->step->quantity = (int) $this->data->c['combo_quantity'];
 
         //Manage GTIN code
-        $this->data->step->gtin = BT_GmcProModuleTools::getGtin(GMerchantCenterPro::$conf['GMCP_GTIN_PREF'], $this->data->c);
+        if (!empty(BT_GmcProModuleTools::getGtin(GMerchantCenterPro::$conf['GMCP_GTIN_PREF'], $this->data->c))) {
+            $this->data->step->gtin = BT_GmcProModuleTools::getGtin(GMerchantCenterPro::$conf['GMCP_GTIN_PREF'], $this->data->c);
+        } else {
+            $this->data->step->gtin = BT_GmcProModuleTools::getGtin(GMerchantCenterPro::$conf['GMCP_GTIN_PREF'], (array)$this->data->p);
+        }
 
         // Exclude without EAN
         if (
@@ -139,15 +171,7 @@ class BT_XmlCombination extends BT_BaseProductXml
         }
 
         // supplier reference
-        $this->data->step->mpn = $this->getSupplierReference(
-            $this->data->p->id,
-            $this->data->p->id_supplier,
-            $this->data->p->supplier_reference,
-            $this->data->p->reference,
-            (int) $this->data->c['id_product_attribute'],
-            $this->data->c['supplier_reference'],
-            $this->data->c['reference']
-        );
+        $this->data->step->mpn = $this->getSupplierReference($this->data->p->id, $this->data->p->id_supplier, $this->data->p->supplier_reference, $this->data->p->reference, (int) $this->data->c['id_product_attribute'], $this->data->c['supplier_reference'], $this->data->c['reference']);
 
         // exclude if mpn is empty
         if (
@@ -195,6 +219,41 @@ class BT_XmlCombination extends BT_BaseProductXml
 
         $this->data->step->visibility = $this->data->p->visibility;
 
+        if ($this->data->c['minimal_quantity'] > 1) {
+            $this->data->multipack = $this->data->c['minimal_quantity'];
+        } else {
+            $this->data->multipack = 0;
+        }
+
+        // Use case for dimension of shipping
+        if (!empty(GMerchantCenterPro::$conf['GMCP_DIMENSION'])) {
+            $aDataDimension = BT_GmcProModuleTools::getDimension($this->data->p->width, $this->data->p->height, $this->data->p->depth);
+            if (!empty($aDataDimension)) {
+                $this->data->step->shipping_width =  $aDataDimension['shipping_width'];
+                $this->data->step->shipping_height = $aDataDimension['shipping_height'];
+                $this->data->step->shipping_length  = $aDataDimension['shipping_length'];
+            }
+        }
+
+        // Use case for dimension of shipping
+        if (!empty(GMerchantCenterPro::$conf['GMCP_PRODUCT_DIMENSION'])) {
+            $aDataDimension = BT_GmcProModuleTools::getDimension($this->data->p->width, $this->data->p->height, $this->data->p->depth, $this->data->p->weight);
+            if (!empty($aDataDimension)) {
+                $this->data->step->product_width =  $aDataDimension['product_width'];
+                $this->data->step->product_height = $aDataDimension['product_height'];
+                $this->data->step->product_length  = $aDataDimension['product_length'];
+                $this->data->step->product_weight  = $aDataDimension['product_weight'];
+            }
+        }
+
+        $this->data->step->free_shipping = false;
+        // Use case to set the free shipping 
+        if (!empty(GMerchantCenterPro::$conf['GMCP_FREE_SHIPPING_PRICE'])) {
+            if ((float)Product::getPriceStatic((int)$this->data->p->id, false, null, 6, (int)$this->data->c['id_product_attribute']) >= (float)GMerchantCenterPro::$conf['GMCP_FREE_SHIPPING_PRICE']) {
+                $this->data->step->free_shipping = true;
+            }
+        }
+
         return true;
     }
 
@@ -213,11 +272,7 @@ class BT_XmlCombination extends BT_BaseProductXml
     public function formatProductName($iAdvancedProdName, $iAdvancedProdTitle, $sProdName, $sCatName, $sManufacturerName, $iLength, $iProdAttrId = null, $iLangId = null, $sPrefix = null, $sSuffix = null)
     {
         // get the combination attributes to format the product name
-        $aCombinationAttr = BT_GmcProModuleDao::getProductComboAttributes(
-            $iProdAttrId,
-            $this->aParams['iLangId'],
-            $this->aParams['iShopId']
-        );
+        $aCombinationAttr = BT_GmcProModuleDao::getProductComboAttributes($iProdAttrId, $this->aParams['iLangId'], $this->aParams['iShopId']);
 
         if (!empty($aCombinationAttr)) {
             $sExtraName = '';
@@ -233,7 +288,6 @@ class BT_XmlCombination extends BT_BaseProductXml
 
         return $sProdName;
     }
-
 
     /**
      * get images of one product or one combination
@@ -251,22 +305,19 @@ class BT_XmlCombination extends BT_BaseProductXml
         // get images of combination
         $aAttributeImages = $oProduct->getCombinationImages(GMerchantCenterPro::$iCurrentLang);
 
-        if (
-            !empty($aAttributeImages)
-            && is_array($aAttributeImages)
-            && isset($aAttributeImages[$iProdAttributeId])
-        ) {
+        if (!empty($aAttributeImages[$iProdAttributeId]) && is_array($aAttributeImages[$iProdAttributeId])) {
             $aImage = array('id_image' => $aAttributeImages[$iProdAttributeId][0]['id_image']);
-            unset($aAttributeImages[$iProdAttributeId][0]);
         } else {
             $aImage = Product::getCover($oProduct->id);
         }
 
         // Additional images
-        if (!empty($aAttributeImages) && is_array($aAttributeImages) && isset($aAttributeImages[$iProdAttributeId])) {
-            foreach ($aAttributeImages[$iProdAttributeId] as $aImg) {
+        unset($aAttributeImages['id_image']);
+
+        if (!empty($aAttributeImages[$iProdAttributeId]) && is_array($aAttributeImages)) {
+            foreach ($aAttributeImages[$iProdAttributeId] as $sImg) {
                 if ($iCounter <= _GMCP_IMG_LIMIT) {
-                    $aResultImages[] = array('id_image' => $aImg['id_image']);
+                    $aResultImages[] = array('id_image' => $sImg['id_image']);
                     $iCounter++;
                 }
             }
@@ -292,14 +343,18 @@ class BT_XmlCombination extends BT_BaseProductXml
         // set  vars
         $sReturnRef = '';
 
-        // detect the MPN type
-        $sReturnRef = BT_GmcProModuleDao::getProductSupplierReference($iProdId, $iSupplierId, $iProdAttributeId);
+        if (empty(GMerchantCenterPro::$bCompare1770)) {
+            // detect the MPN type
+            $sReturnRef = BT_GmcProModuleDao::getProductSupplierReference($iProdId, $iSupplierId, $iProdAttributeId);
+        } else {
+            $oCombination = new Combination($iProdAttributeId);
 
-        if (
-            empty($sReturnRef)
-            && !empty($sCombiRef)
-        ) {
-            $sReturnRef = $sCombiRef;
+            if (!empty($oCombination->mpn)) {
+                $sReturnRef = $oCombination->mpn;
+            } else {
+                $oProduct = new Product($iProdId);
+                $sReturnRef = $oProduct->mpn;
+            }
         }
 
         return $sReturnRef;

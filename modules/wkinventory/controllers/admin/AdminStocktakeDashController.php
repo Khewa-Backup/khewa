@@ -28,11 +28,13 @@ class AdminStocktakedashController extends ModuleAdminController
     */
     public function renderView()
     {
-        $url = Context::getContext()->link->getAdminLink('AdminModules').'&configure='.$this->module->name
-        .'&tab_module='.$this->module->tab.'&module_name='.$this->module->name;
+        $url = Context::getContext()->link->getAdminLink('AdminModules')
+		.'&configure='.$this->module->name
+        .'&tab_module='.$this->module->tab
+		.'&module_name='.$this->module->name;
 
         array_shift($this->module->my_tabs); // remove the first element of array
-        if ($this->module->is_greater_17) {
+        if ($this->module->isPS17) {
             array_shift($this->module->my_tabs);
         }
 
@@ -40,9 +42,9 @@ class AdminStocktakedashController extends ModuleAdminController
             'url_config' => $url,
             'module_folder' => _MODULE_DIR_.$this->module->name,
             'module_tabs' => $this->module->my_tabs,
-            'is_before_16' => $this->module->is_before_16
+            'isPS15' => $this->module->isPS15
         );
-        if ($this->module->is_before_16) {
+        if ($this->module->isPS15) {
             $this->tpl_view_vars['title_page'] = $this->toolbar_title;
         }
         $this->base_tpl_view = 'dashboard.tpl';
@@ -66,7 +68,7 @@ class AdminStocktakedashController extends ModuleAdminController
     {
         if (method_exists('Context', 'getTranslator')) {
             $this->translator = Context::getContext()->getTranslator();
-            $translated = $this->translator->trans($string);
+            $translated = $this->translator->trans($string, [], 'Modules.Wkinventory.Adminstocktakedashcontroller');
             if ($translated !== $string) {
                 return $translated;
             }

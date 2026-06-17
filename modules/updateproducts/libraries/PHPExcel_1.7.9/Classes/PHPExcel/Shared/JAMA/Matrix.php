@@ -24,6 +24,9 @@ if (!defined('PHPEXCEL_ROOT')) {
  *	@license PHP v3.0
  *	@see http://math.nist.gov/javanumerics/jama/
  */
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 class PHPExcel_Shared_JAMA_Matrix {
 
 

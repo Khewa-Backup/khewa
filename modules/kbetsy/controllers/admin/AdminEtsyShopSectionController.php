@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyShopSection.php');
 
@@ -33,18 +36,18 @@ class AdminEtsyShopSectionController extends ModuleAdminController
         
         $this->fields_list = array(
             'id_etsy_shop_section' => array(
-                'title' => $this->l('ID'),
+                'title' => $this->module->l('ID','AdminEtsyShopSectionController'),
                 'align' => 'center',
                 'class' => 'fixed-width-xs'
             ),
             'shop_section_title' => array(
-                'title' => $this->l('Shop Section Title'),
+                'title' => $this->module->l('Shop Section Title','AdminEtsyShopSectionController'),
             ),
             'shop_section_id' => array(
-                'title' => $this->l('Section ID'),
+                'title' => $this->module->l('Section ID','AdminEtsyShopSectionController'),
             ),
             'shop_section_date_update' => array(
-                'title' => $this->l('Last Updated Date'),
+                'title' => $this->module->l('Last Updated Date','AdminEtsyShopSectionController'),
             )
         );
 
@@ -93,7 +96,7 @@ class AdminEtsyShopSectionController extends ModuleAdminController
     {
         $this->fields_form = array(
             'legend' => array(
-                'title' => !Tools::isEmpty(trim(Tools::getValue('id_etsy_shop_section'))) ? $this->l('Update Shop Section') : $this->l('Add New Shop Section'),
+                'title' => !Tools::isEmpty(trim(Tools::getValue('id_etsy_shop_section'))) ? $this->module->l('Update Shop Section','AdminEtsyShopSectionController') : $this->module->l('Add New Shop Section','AdminEtsyShopSectionController'),
                 'icon' => 'icon-cogs'
             ),
             'input' => array(
@@ -103,8 +106,8 @@ class AdminEtsyShopSectionController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Shop Section Title'),
-                    'desc' => $this->l('Provide Shop Section Title. Maximum 24 Characters Long.'),
+                    'label' => $this->module->l('Shop Section Title','AdminEtsyShopSectionController'),
+                    'desc' => $this->module->l('Provide Shop Section Title. Maximum 24 Characters Long.','AdminEtsyShopSectionController'),
                     'name' => 'shop_section_title',
                     'maxlength' => 24,
                     'required' => true
@@ -115,7 +118,7 @@ class AdminEtsyShopSectionController extends ModuleAdminController
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submit' . $this->name,
                     'js' => "validation('etsy_shop_section_form')",
-                    'title' => $this->l('Save'),
+                    'title' => $this->module->l('Save','AdminEtsyShopSectionController'),
                     'icon' => 'process-icon-save'
                 )
             )
@@ -132,7 +135,29 @@ class AdminEtsyShopSectionController extends ModuleAdminController
                 );
             }
         }
-        return parent::renderForm();
+
+        /**
+         * Etsy having limitation of the maximum 20 sections. Added the check on the "Add New Section" to display error if total section is having 20 sections. Condition only for Add, not for Edit.
+	 * Etsy002-Mar-2024 etsy-shop-section-limitation
+         * @date 07-03-2024
+         * @author Ashish Kumar
+         */
+        if (Tools::isEmpty(trim(Tools::getValue('id_etsy_shop_section')))) {
+            $total_sections = Db::getInstance()->getValue("SELECT count(*) FROM " . _DB_PREFIX_ . "etsy_shop_section");
+            if($total_sections >= 20) {
+                $this->context->smarty->assign("message", $this->module->l('You have already created the maximum number of shop sections.', 'AdminEtsyShopSectionController'));
+                $this->context->smarty->assign("type", "alert-danger");
+                $this->context->smarty->assign("KbMessageLink", '');
+
+                return $this->context->smarty->fetch(
+                    _PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/msgs.tpl'
+                );
+            } else {
+                return parent::renderForm();
+            }
+        } else {
+            return parent::renderForm();
+        }
     }
 
     public function postProcess()
@@ -145,33 +170,38 @@ class AdminEtsyShopSectionController extends ModuleAdminController
             $shopSectionTitle = pSQL(Tools::getValue('shop_section_title'));
 
             if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_shop_section')))) {
-                $dataExistenceResult = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_shop_section WHERE shop_section_title = '" . pSQL($shopSectionTitle) . "' AND delete_flag = '0' AND id_etsy_shop_section != '" . (int) Tools::getValue('id_etsy_shop_section') . "'");
+                /**
+                 * Added str replace function so "/" will not be saved with the apostrophe or single quote
+                 * @date 18-04-2023
+                 * @modifier Tanisha Gupta
+                 */
+                $dataExistenceResult = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_shop_section WHERE shop_section_title = '" . pSQL(str_replace('\\', '', $shopSectionTitle)) . "' AND delete_flag = '0' AND id_etsy_shop_section != '" . (int) Tools::getValue('id_etsy_shop_section') . "'");
                 if (empty($dataExistenceResult)) {
                     $shopSectionDetails = EtsyShopSection::getShopSectionDetails(Tools::getValue('id_etsy_shop_section'));
                     
-                    Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_shop_section SET shop_section_title = '" . pSQL($shopSectionTitle) . "', renew_flag = '1' WHERE id_etsy_shop_section = '" . (int) Tools::getValue('id_etsy_shop_section') . "'");
+                    Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . "etsy_shop_section SET shop_section_title = '" . pSQL(str_replace('\\', '', $shopSectionTitle)) . "', renew_flag = '1' WHERE id_etsy_shop_section = '" . (int) Tools::getValue('id_etsy_shop_section') . "'");
 
                     $log_entry = 'Shop section updated. Updated value: <br>Shop Section Title: ' . $shopSectionTitle;
                     EtsyModule::auditLogEntry($log_entry, $method_name);
 
                     /** Update value on Etsy */
-                    SyncShopSection::updateShopSection(array("shop_section_title" => $shopSectionTitle, "id_etsy_shop_section" => Tools::getValue('id_etsy_shop_section'), "shop_section_id" => $shopSectionDetails['shop_section_id']));
+                    SyncShopSection::updateShopSection(array("shop_section_title" => str_replace('\\', '', $shopSectionTitle), "id_etsy_shop_section" => Tools::getValue('id_etsy_shop_section'), "shop_section_id" => $shopSectionDetails['shop_section_id']));
 
                     Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyShopSection') . '&etsyConf=61');
                 } else {
                     Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyShopSection') . '&etsyError=64');
                 }
             } else {
-                $dataExistenceResult = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_shop_section WHERE shop_section_title = '" . pSQL($shopSectionTitle) . "' AND delete_flag = '0'");
+                $dataExistenceResult = Db::getInstance()->getRow("SELECT * FROM " . _DB_PREFIX_ . "etsy_shop_section WHERE shop_section_title = '" . pSQL(str_replace('\\', '', $shopSectionTitle)) . "' AND delete_flag = '0'");
                 if (empty($dataExistenceResult)) {
-                    Db::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_shop_section (shop_section_title, shop_section_date_added, shop_section_date_update) VALUES ('" . pSQL($shopSectionTitle) . "', NOW(), NOW())");
+                    Db::getInstance()->execute("INSERT INTO " . _DB_PREFIX_ . "etsy_shop_section (shop_section_title, shop_section_date_added, shop_section_date_update) VALUES ('" . pSQL(str_replace('\\', '', $shopSectionTitle)) . "', NOW(), NOW())");
                     $shop_section_id = Db::getInstance()->Insert_ID();
 
                     $log_entry = 'Shop section added. Added value: <br>Shop Section Title: ' . $shopSectionTitle;
                     EtsyModule::auditLogEntry($log_entry, $method_name);
                     
                     /** Sync value on Etsy */
-                    SyncShopSection::createShopSection(array("shop_section_title" => $shopSectionTitle, "id_etsy_shop_section" => $shop_section_id));
+                    SyncShopSection::createShopSection(array("shop_section_title" => str_replace('\\', '', $shopSectionTitle), "id_etsy_shop_section" => $shop_section_id));
 
                     Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyShopSection') . '&etsyConf=60');
                 } else {
@@ -195,7 +225,7 @@ class AdminEtsyShopSectionController extends ModuleAdminController
             $profileMapping = Db::getInstance()->getValue("SELECT count(*) as count FROM " . _DB_PREFIX_ . "etsy_profiles WHERE id_etsy_shop_section = '" . (int) Tools::getValue('id_etsy_shop_section') . "'", true, false);
 
             if ($profileMapping == 0) {
-                /* If Etsy Shop Section ID exists then delete the same from the Etsy first else directly delete from the DB */
+                /* If Etsy Shop Section ID exists then delete the same from the Etsy first else directly delete from the Db */
                 if (is_null($shopSectionDetails['shop_section_id'])) {
                     $result = Db::getInstance()->execute("DELETE FROM " . _DB_PREFIX_ . "etsy_shop_section WHERE id_etsy_shop_section = '" . (int) Tools::getValue('id_etsy_shop_section') . "'");
                     if ($result) {
@@ -264,7 +294,7 @@ class AdminEtsyShopSectionController extends ModuleAdminController
         if (!Tools::getValue('id_etsy_shop_section') && !Tools::isSubmit('addetsy_shop_section')) {
             $this->page_header_toolbar_btn['new_template'] = array(
                 'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
-                'desc' => $this->l('Add new'),
+                'desc' => $this->module->l('Add new','AdminEtsyShopSectionController'),
                 'icon' => 'process-icon-new'
             );
             $secure_key = Configuration::get('KBETSY_SECURE_KEY');
@@ -273,14 +303,14 @@ class AdminEtsyShopSectionController extends ModuleAdminController
                     'action' => 'syncShopSections',
                     'secure_key' => $secure_key)),
                 'target' => '_blank',
-                'desc' => $this->l('Sync Shop Sections'),
+                'desc' => $this->module->l('Sync Shop Sections','AdminEtsyShopSectionController'),
                 'icon' => 'process-icon-update'
             );
         }
         if (Tools::getValue('id_etsy_shop_section') || Tools::isSubmit('id_etsy_shop_section') || Tools::isSubmit('addetsy_shop_section')) {
             $this->page_header_toolbar_btn['kb_cancel_action'] = array(
                 'href' => self::$currentIndex . '&token=' . $this->token,
-                'desc' => $this->l('Cancel'),
+                'desc' => $this->module->l('Cancel','AdminEtsyShopSectionController'),
                 'icon' => 'process-icon-cancel'
             );
         }

@@ -6,7 +6,9 @@
  *	@author Michael Bommarito
  *	@version 01292005
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 //Language constant
 define('JAMALANG', 'EN');
 

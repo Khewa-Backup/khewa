@@ -18,9 +18,9 @@
 <div class="bootstrap">
     <div class="alert {$type|escape:'htmlall':'UTF-8'}" style="display:block;">
         {if $KbMessageLink != ''}
-            <a href="{$KbMessageLink}">{$message|strip_tags:false}</a>  {*variable contains URL, can't escape*}
+            <a href="{$KbMessageLink}">{$message}</a>  {*variable contains URL, can't escape*}
         {else}
-            {$message|strip_tags:false} {*Variable contains HTML, can't escape*}
+            {$message} {*Variable contains HTML, can't escape*}
         {/if}
     </div>
 </div>

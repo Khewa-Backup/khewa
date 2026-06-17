@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Blog for PrestaShop module by PrestaHome Team.
  *
@@ -6,6 +7,7 @@
  * @copyright Copyright (c) 2011-2021 PrestaHome Team - www.PrestaHome.com
  * @license   You only can use module, nothing more!
  */
+
 require_once _PS_MODULE_DIR_ . 'ph_simpleblog/ph_simpleblog.php';
 
 class Ph_SimpleBlogAjaxModuleFrontController extends ModuleFrontController
@@ -19,9 +21,11 @@ class Ph_SimpleBlogAjaxModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
-        if (Module::isEnabled('ph_simpleblog')
+        if (
+            Module::isEnabled('ph_simpleblog')
             && (Tools::getValue('action') == 'addRating' || Tools::getValue('action') == 'removeRating')
-            && Tools::getValue('secure_key') == $this->module->secure_key) {
+            && Tools::getValue('secure_key') == $this->module->secure_key
+        ) {
             parent::postProcess();
         } else {
             die('Access denied');
@@ -33,6 +37,7 @@ class Ph_SimpleBlogAjaxModuleFrontController extends ModuleFrontController
         $id_simpleblog_post = Tools::getValue('id_simpleblog_post');
         $reply = SimpleBlogPost::changeRating('up', (int) $id_simpleblog_post);
         $message = $reply[0]['likes'];
+
         $this->ajaxDie(
             json_encode(
                 [
@@ -49,6 +54,7 @@ class Ph_SimpleBlogAjaxModuleFrontController extends ModuleFrontController
         $id_simpleblog_post = Tools::getValue('id_simpleblog_post');
         $reply = SimpleBlogPost::changeRating('down', (int) $id_simpleblog_post);
         $message = $reply[0]['likes'];
+
         $this->ajaxDie(
             json_encode(
                 [

@@ -1,11 +1,10 @@
 <?php
-
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -28,9 +27,6 @@ define('_GMCP_SUPPORT_URL', 'https://addons.prestashop.com/');
 
 /* defines admin library path */
 define('_GMCP_PATH_LIB_ADMIN', _GMCP_PATH_LIB . 'admin/');
-
-/* defines shopping action library path */
-define('_GMCP_PATH_LIB_GSA', _GMCP_PATH_LIB . 'shopping-action/');
 
 /* defines xml library path */
 define('_GMCP_PATH_LIB_XML', _GMCP_PATH_LIB . 'xml/');
@@ -59,8 +55,8 @@ define('_GMCP_TPL_STEP_POPUP', 'step-popup.tpl');
 /* defines welcome list settings tpl */
 define('_GMCP_TPL_WELCOME', 'welcome-include.tpl');
 
-/* defines template shopping action settings tpl */
-define('_GMCP_TPL_GSA', 'shopping-action.tpl');
+/* defines template shopping action onboarding tpl */
+define('_GMCP_TPL_ONBOARDING', 'onboarding.tpl');
 
 /* defines body tpl */
 define('_GMCP_TPL_BODY', 'body.tpl');
@@ -79,6 +75,9 @@ define('_GMCP_TPL_GOOGLE_SETTINGS', 'google-settings.tpl');
 
 /* defines google settings tpl */
 define('_GMCP_TPL_ADVANCED_SETTINGS', 'advanced-settings.tpl');
+
+/* defines iventory tpl */
+define('_GMCP_TPL_INVENTORY_FEED', 'local-inventory-settings.tpl');
 
 /* defines google category list tpl */
 define('_GMCP_TPL_GOOGLE_CATEGORY_LIST', 'google-category-list.tpl');
@@ -100,6 +99,9 @@ define('_GMCP_TPL_GOOGLE_CUSTOM_LABEL_PRODUCTS', 'google-custom-label-products.t
 
 /* defines feed list settings tpl */
 define('_GMCP_TPL_FEED_LIST', 'feed-list.tpl');
+
+/* defines feed list for lia settings tpl */
+define('_GMCP_TPL_FEED_LIA_LIST', 'feed-lia-list.tpl');
 
 /* defines reporting settings tpl */
 define('_GMCP_TPL_REPORTING', 'reporting-settings.tpl');
@@ -124,6 +126,9 @@ define('_GMCP_TPL_REPORTING_BOX', 'reporting-box.tpl');
 
 /* defines update sql file */
 define('_GMCP_ADVANCED_1700_SQL_FILE', 'update-1700.sql');
+
+/* defines update sql file */
+define('_GMCP_ADVANCED_1712_SQL_FILE', 'update-1712.sql');
 
 /* defines update sql file */
 define('_GMCP_UPDATE_SQL_FILE', 'update.sql');
@@ -155,12 +160,6 @@ define('_GMCP_CL_DYN_CAT_SHOP_SQL_FILE', 'update-cl-dynamic_tag.sql');
 /** define the update sql for custom label dynamic tag */
 define('_GMCP_DISCOUNT_ASSOC_CHANNEL', 'update-discount_assoc_channel.sql');
 
-/* defines update sql file */
-define('_GMCP_GSA_SQL_FILE', 'update-gsa.sql');
-
-/* defines constant for external BT API URL */
-define('_GMCP_BT_API_MAIN_URL', 'https://api.businesstech.fr:441/prestashop-modules/');
-
 /* defines constant for external BT FAQ URL */
 define('_GMCP_BT_FAQ_MAIN_URL', 'http://faq.businesstech.fr/');
 
@@ -178,7 +177,7 @@ define('_GMCP_REPORTING_DIR', _PS_MODULE_DIR_ . _GMCP_MODULE_SET_NAME . '/report
 $GLOBALS['GMCP_SQL_UPDATE'] = array(
     'table' => array(
         '1700' => _GMCP_ADVANCED_1700_SQL_FILE,
-        'gsa_sync_data' => _GMCP_GSA_SQL_FILE,
+        '1712' => _GMCP_ADVANCED_1712_SQL_FILE,
     ),
     'field' => array(
         'id_shop' => array('table' => 'features_by_cat', 'file' => _GMCP_FEATURE_SHOP_SQL_FILE),
@@ -191,7 +190,6 @@ $GLOBALS['GMCP_SQL_UPDATE'] = array(
 $GLOBALS['GMCP_REQUEST_PARAMS'] = array(
     'basic' => array('action' => 'update', 'type' => 'basic'),
     'feed' => array('action' => 'update', 'type' => 'feed'),
-    'gsa' => array('action' => 'update', 'type' => 'gsa'),
     'feedDisplay' => array('action' => 'display', 'type' => 'feed'),
     'google' => array('action' => 'update', 'type' => 'google'),
     'feedList' => array('action' => 'display', 'type' => 'feedList'),
@@ -226,6 +224,7 @@ $GLOBALS['GMCP_REQUEST_PARAMS'] = array(
     'stepPopup' => array('action' => 'display', 'type' => 'stepPopup'),
     'stepPopupUpd' => array('action' => 'update', 'type' => 'stepPopup'),
     'shopLink' => array('action' => 'update', 'type' => 'shopLink'),
+    'local_inventory' => array('action' => 'update', 'type' => 'inventory'),
 );
 
 /* defines variable for available list of tags to use */
@@ -244,6 +243,7 @@ $GLOBALS['GMCP_TAG_LIST'] = array(
     'unit_pricing_measure',
     'base_unit_pricing_measure',
     'excluded_destination',
+    'excluded_country'
 );
 
 /* defines variable for available list of label to use */
@@ -251,10 +251,10 @@ $GLOBALS['GMCP_LABEL_LIST'] = array(
     'cats' => 'category',
     'brands' => 'brand',
     'suppliers' => 'supplier',
-    'dynamic_best_sales' => 'dynamic_best_sales',
+    'dynamic_best_sale' => 'dynamic_best_sale',
     'dynamic_features' => 'dynamic_features',
     'dynamic_new_product' => 'dynamic_new_product',
-    'dynamic_price_range' => 'dynamic_price_range',
+    'price_range' => 'price_range',
 );
 
 /* defines variable for available list of label to use */
@@ -282,33 +282,41 @@ $GLOBALS['GMCP_CUSTOM_LABEL_TYPE'] = array(
         'custom_label' => 'Basic',
         'dynamic_categorie' => 'Categories (Dynamic mode)',
         'dynamic_features_list' => 'Features (Dynamic mode)',
-        'dynamic_new_product' => 'New product',
-        'dynamic_best_sale' => 'Best sales',
-        'dynamic_price_range' => 'Price range',
+        'dynamic_new_product' => 'New product (Dynamic mode)',
+        'dynamic_best_sale' => 'Best sales (Dynamic mode)',
+        'dynamic_price_range' => 'Price range (Dynamic mode)',
+        'dynamic_last_order' => 'Last product ordered (Dynamic mode)',
+        'dynamic_promotion' => 'Product promotion (Dynamic mode)'
     ),
     'fr' => array(
         'custom_label' => 'Basique',
         'dynamic_categorie' => 'Catégories (mode dynamique)',
         'dynamic_features_list' => 'Caractéristiques (mode dynamique)',
-        'dynamic_new_product' => 'Nouveaux produits',
-        'dynamic_best_sale' => 'Meilleures ventes',
-        'dynamic_price_range' => 'Tranche de prix',
+        'dynamic_new_product' => 'Nouveaux produits (mode dynamique)',
+        'dynamic_best_sale' => 'Meilleures ventes (mode dynamique)',
+        'dynamic_price_range' => 'Tranche de prix (mode dynamique)',
+        'dynamic_last_order' => 'Derniers produits commandés (mode dynamique)',
+        'dynamic_promotion' => 'Produits en promotion (mode dynamique)'
     ),
     'it' => array(
         'custom_label' => 'Di base',
         'dynamic_categorie' => 'Categorie (dinamica di modo)',
         'dynamic_features_list' => 'Caratteristiche (modalità dinamica)',
-        'dynamic_new_product' => 'Nuovo prodotto',
-        'dynamic_best_sale' => 'Le migliori vendite',
-        'dynamic_price_range' => 'Fascia di prezzo',
+        'dynamic_new_product' => 'Nuovo prodotto (modalità dinamica)',
+        'dynamic_best_sale' => 'Le migliori vendite (modalità dinamica)',
+        'dynamic_price_range' => 'Fascia di prezzo (modalità dinamica)',
+        'dynamic_last_order' => 'Ultimo prodotto ordinato (modalità dinamica)',
+        'dynamic_promotion' => 'Promozione del prodotto (modalità dinamica)'
     ),
     'es' => array(
         'custom_label' => 'Básica',
         'dynamic_categorie' => 'Categorías (modo dinámico)',
         'dynamic_features_list' => 'Atributos (modo dinámico)',
-        'dynamic_new_product' => 'Nuevo producto',
-        'dynamic_best_sale' => 'Las mejores ventas',
-        'dynamic_price_range' => 'Rango de precios',
+        'dynamic_new_product' => 'Nuevo producto (modo dinámico)',
+        'dynamic_best_sale' => 'Las mejores ventas (modo dinámico)',
+        'dynamic_price_range' => 'Rango de precios (modo dinámico)',
+        'dynamic_last_order' => 'Último producto pedido (modo dinámico)',
+        'dynamic_promotion' => 'La promoción del producto (modo dinámico)',
     ),
 );
 
@@ -534,10 +542,10 @@ $GLOBALS['GMCP_EXCLUSION_TYPE_WORD'] = array(
 /* defines variable to get the real value for excluded destination tag */
 $GLOBALS['GMCP_EXCLUDED_DEST_VALUE'] = array(
     'shopping' => 'Shopping Ads',
-    'actions' => 'Shopping Actions',
     'display' => 'Display Ads',
-    'local' => 'Local Shopping',
-    'surface' => 'Surfaces across Google',
+    'local' => 'Local inventory ads',
+    'free-listing' => 'Free listings',
+    'free-local-listing' => 'Free local listings',
 );
 
 /* defines lang we have to remove on offer id for GSA */
@@ -547,16 +555,11 @@ $GLOBALS['GMCP_LANG_TO_REMOVED_OFFERID'] = array(
     'HE', 'VN', 'UK', 'SV', 'TH', 'KO', 'FI', 'HU', 'AG', 'UR', 'VE', 'SK', 'RO', 'EI', 'LT'
 );
 
-/* defines GSA carrier available data */
-$GLOBALS['GMCP_GSA_CARRIERS_DATA'] = array(
-    'ups', 'usps', 'fedex', 'dhl', 'ontrac', 'dhl express', 'deliv', 'dynamex', 'lasership', 'mpx', 'uds', 'efw',
-    'jd logistics', 'yunexpress', 'china post', 'china ems', 'singapore post', 'pos malaysia', 'postnl', 'ptt', 'eub', 'chukou1', 'la poste', 'colissimo',
-    'chronopost', 'gls', 'dpd', 'bpost', 'colis prive', 'boxtal', 'geodis', 'tnt', 'db schenker'
-);
-
 /* defines promotion feed channel */
 $GLOBALS['GMCP_DISCOUNT_CHANNEL'] = array(
-    'SHOPPING_ADS',
-    'SHOPPING_ACTIONS',
-    'SHOPPING_ADS,SHOPPING_ACTIONS'
+    'Shopping ads',
+    'Free listings',
 );
+
+/* defines google_funded_promotion_eligibility values */
+$GLOBALS['GMCP_FUNDED_PROMO'] = array('none','all');

@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version    1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  * PHPExcel_CachedObjectStorage_MemoryGZip
@@ -46,7 +48,7 @@ class PHPExcel_CachedObjectStorage_MemoryGZip extends PHPExcel_CachedObjectStora
 		if ($this->_currentCellIsDirty) {
 			$this->_currentObject->detach();
 
-			$this->_cellCache[$this->_currentObjectID] = gzdeflate(serialize($this->_currentObject));
+			$this->_cellCache[$this->_currentObjectID] = gzdeflate(json_encode($this->_currentObject));
 			$this->_currentCellIsDirty = false;
 		}
 		$this->_currentObjectID = $this->_currentObject = null;
@@ -95,7 +97,7 @@ class PHPExcel_CachedObjectStorage_MemoryGZip extends PHPExcel_CachedObjectStora
 
 		//	Set current entry to the requested entry
 		$this->_currentObjectID = $pCoord;
-		$this->_currentObject = unserialize(gzinflate($this->_cellCache[$pCoord]));
+		$this->_currentObject = json_decode(gzinflate($this->_cellCache[$pCoord]));
         //    Re-attach this as the cell's parent
         $this->_currentObject->attach($this);
 

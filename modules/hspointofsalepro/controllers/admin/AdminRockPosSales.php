@@ -35,9 +35,11 @@ class AdminRockPosSalesController extends AdminRockPosCommon
     public function __construct()
     {
         parent::__construct();
+
         $pos_employee = new PosEmployee($this->context->employee->id);// To make sure we're playing with PosEmployee, instead of Employee object
         $this->context->shop = new Shop($this->context->shop->id); // To make sure "virtual_uri" is set in default shop
         $this->module->setToken($pos_employee->getToken());
+
         Tools::redirect($this->context->link->getModuleLink(
             $this->module->name,
             'sales',

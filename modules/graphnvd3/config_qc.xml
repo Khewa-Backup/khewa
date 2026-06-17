@@ -2,8 +2,8 @@
 <module>
     <name>graphnvd3</name>
     <displayName><![CDATA[Graphiques NVD3]]></displayName>
-    <version><![CDATA[2.0.1]]></version>
-    <description><![CDATA[]]></description>
+    <version><![CDATA[2.0.2]]></version>
+    <description><![CDATA[Utilisez les graphiques NVD3 pour obtenir des statistiques tr&egrave;s utiles.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[administration]]></tab>
     <is_configurable>0</is_configurable>

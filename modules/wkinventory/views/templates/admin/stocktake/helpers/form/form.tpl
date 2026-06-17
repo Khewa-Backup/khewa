@@ -52,10 +52,10 @@
     var combination_label = '{l s='Combination' js=1 mod='wkinventory'}';
     var warehouse_label = '{l s='Warehouse' js=1 mod='wkinventory'}';
     var no_product_found = '{l s='No products found' js=1 mod='wkinventory'}';
+    var defaultQty = {if $defaultQty != ''}{$defaultQty|intval}{else}''{/if};
     (function(){
         'use strict';
         	var ajaxUrl = "{$adminstocktakeLink|escape:'html':'UTF-8'}&token={getAdminToken tab='AdminStocktake'}&id_inventory={$id_inventory|escape:'html':'UTF-8'}",
-            defaultQty = {$defaultQty|intval},
             addToExistantQty = {$addToExistantQty|intval},
             isSupervisor = {$isSupervisor|intval},
             updateInterval = 300000, // (in secondes - each 5 minutes).

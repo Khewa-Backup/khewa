@@ -18,6 +18,9 @@
  */
 
 namespace PrestaChamps\PrestaShop\Tab;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class TabRepository
 {

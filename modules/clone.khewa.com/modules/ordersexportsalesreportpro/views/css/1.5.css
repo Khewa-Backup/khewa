@@ -1,0 +1,16 @@
+.radio>label, span.switch>label {
+    width: initial;
+    margin-bottom: 0;
+    float: none;
+    padding-right: 25px;
+}
+
+span.switch>input {
+    margin-top: 0;
+}
+
+@media only screen and (max-width: 1199px) {
+    p.help-block, #data_export_orders_sort_asc, .p1_5 {
+        margin-left: 235px;
+    }
+}

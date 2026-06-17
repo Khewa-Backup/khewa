@@ -104,7 +104,7 @@ class ph_simpleblog extends Module
     {
         $this->name = 'ph_simpleblog';
         $this->tab = 'front_office_features';
-        $this->version = '1.7.10';
+        $this->version = '1.8.0';
         $this->author = 'PrestaHome';
         $this->need_instance = 0;
         $this->is_configurable = 1;
@@ -144,6 +144,11 @@ class ph_simpleblog extends Module
         }
     }
 
+    public function isUsingNewTranslationSystem()
+    {
+        return false;
+    }
+
     public function install()
     {
         if (Shop::isFeatureActive()) {
@@ -152,19 +157,18 @@ class ph_simpleblog extends Module
 
         // Hooks & Install
         return parent::install()
-            && $this->prepareModuleSettings()
             && $this->registerHook('gSitemapAppendUrls')
             && $this->registerHook('moduleRoutes')
             && $this->registerHook('displaySimpleBlogPosts')
             && $this->registerHook('displaySimpleBlogCategories')
             && $this->registerHook('displayHeader')
-            && $this->registerHook('displayTop')
             && $this->registerHook('displayBackOfficeHeader')
             && $this->registerHook('displayPrestaHomeBlogAfterPostContent')
             && $this->registerHook('displayLeftColumn')
             && $this->registerHook('registerGDPRConsent')
             && $this->registerHook('actionDeleteGDPRCustomer')
             && $this->registerHook('actionExportGDPRData')
+            && $this->prepareModuleSettings()
         ;
     }
 
@@ -458,7 +462,6 @@ class ph_simpleblog extends Module
             'PH_BLOG_COMMENTS_RECAPTCHA_SECRET_KEY' => '',
             'PH_BLOG_COMMENTS_RECAPTCHA_THEME' => 'light',
             'PH_BLOG_RELATED_PRODUCTS_USE_DEFAULT_LIST' => false,
-            'PH_BLOG_ADVERTISING' => true,
             'PH_BLOG_COMMENTS_SYSTEM' => 'native',
             'PH_BLOG_DISQUS_SHORTNAME' => 'blogforprestashop',
             'PH_BLOG_CANONICAL' => '',
@@ -574,6 +577,38 @@ class ph_simpleblog extends Module
             $this->context->controller->addJqueryPlugin(array('fancybox'));
             $this->context->controller->requireAssets(array('font-awesome-css'));
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hookDisplaySimpleBlogPosts()
+    {
+        // No implementation needed inside the main module
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hookRegisterGDPRConsent()
+    {
+        // No implementation needed inside the main module
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hookActionDeleteGDPRCustomer()
+    {
+        // No implementation needed inside the main module
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hookActionExportGDPRData()
+    {
+        // No implementation needed inside the main module
     }
 
     public function hookDisplayHeader($params)

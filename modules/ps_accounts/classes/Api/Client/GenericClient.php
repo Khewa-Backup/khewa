@@ -21,13 +21,12 @@
 namespace PrestaShop\Module\PsAccounts\Api\Client;
 
 use GuzzleHttp\Client;
-use PrestaShop\Module\PsAccounts\Configuration\Configurable;
 use PrestaShop\Module\PsAccounts\Handler\Response\ApiResponseHandler;
 
 /**
  * Construct the client used to make call to maasland.
  */
-abstract class GenericClient implements Configurable
+abstract class GenericClient
 {
     /**
      * If set to false, you will not be able to catch the error
@@ -36,6 +35,7 @@ abstract class GenericClient implements Configurable
      * @var bool
      */
     protected $catchExceptions = false;
+
     /**
      * Guzzle Client.
      *
@@ -76,7 +76,7 @@ abstract class GenericClient implements Configurable
      *
      * @return Client
      */
-    protected function getClient()
+    public function getClient()
     {
         return $this->client;
     }
@@ -132,6 +132,7 @@ abstract class GenericClient implements Configurable
     {
         $response = $this->getClient()->post($this->getRoute(), $options);
         $responseHandler = new ApiResponseHandler();
+        /** @phpstan-ignore-next-line  */
         $response = $responseHandler->handleResponse($response);
         // If response is not successful only
         if (\Configuration::get('PS_ACCOUNTS_DEBUG_LOGS_ENABLED') && !$response['status']) {
@@ -159,6 +160,7 @@ abstract class GenericClient implements Configurable
     {
         $response = $this->getClient()->patch($this->getRoute(), $options);
         $responseHandler = new ApiResponseHandler();
+        /** @phpstan-ignore-next-line  */
         $response = $responseHandler->handleResponse($response);
         // If response is not successful only
         if (\Configuration::get('PS_ACCOUNTS_DEBUG_LOGS_ENABLED') && !$response['status']) {
@@ -186,6 +188,7 @@ abstract class GenericClient implements Configurable
     {
         $response = $this->getClient()->get($this->getRoute(), $options);
         $responseHandler = new ApiResponseHandler();
+        /** @phpstan-ignore-next-line  */
         $response = $responseHandler->handleResponse($response);
         // If response is not successful only
         if (\Configuration::get('PS_ACCOUNTS_DEBUG_LOGS_ENABLED') && !$response['status']) {
@@ -213,6 +216,7 @@ abstract class GenericClient implements Configurable
     {
         $response = $this->getClient()->delete($this->getRoute(), $options);
         $responseHandler = new ApiResponseHandler();
+        /** @phpstan-ignore-next-line  */
         $response = $responseHandler->handleResponse($response);
         // If response is not successful only
         if (\Configuration::get('PS_ACCOUNTS_DEBUG_LOGS_ENABLED') && !$response['status']) {
@@ -236,6 +240,15 @@ abstract class GenericClient implements Configurable
      */
     protected function setClient(Client $client)
     {
+        /** @var \Ps_accounts $module */
+        $module = \Module::getInstanceByName('ps_accounts');
+
+        /* @phpstan-ignore-next-line  */
+        $client->setDefaultOption(
+            'verify',
+            (bool) $module->getParameter('ps_accounts.check_api_ssl_cert')
+        );
+
         $this->client = $client;
     }
 

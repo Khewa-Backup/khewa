@@ -3064,7 +3064,11 @@ class IqitThemeEditorForm
                                 ),
                                 array(
                                     'id_option' => 'above-s',
-                                    'name' => $this->module->l('Title, description(+ elementor), image above left column', 'IqitThemeEditorForm'),
+                                    'name' => $this->module->l('Description(+ elementor) with image - above left column', 'IqitThemeEditorForm'),
+                                ),
+                                array(
+                                    'id_option' => 'below-s',
+                                    'name' => $this->module->l('Description(+ elementor) with image - below left column', 'IqitThemeEditorForm'),
                                 ),
                                 array(
                                     'id_option' => '0',

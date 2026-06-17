@@ -252,4 +252,3 @@ prestashop.on('updateProductList', function () {
 $(function () {
   prestashop.pwFavorites.init();
 });
-

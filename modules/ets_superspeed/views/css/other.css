@@ -860,9 +860,6 @@ ul > li.li_othermodules .tab-title {
     .ets-mod-cats_mobile{
         display: block;
     }
-    ul > li.li_othermodules{
-        /*position: static!important;*/
-    }
     ul > li.li_othermodules .tab-title{
         white-space: nowrap;
     }

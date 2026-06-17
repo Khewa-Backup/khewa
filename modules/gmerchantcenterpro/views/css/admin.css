@@ -258,13 +258,10 @@
 }
 
 .table-line-detail {
-	background-color: #EBEDF4 !important;
-	color: #585A69;
+	background-color: #fff !important;
 	margin: 0 0 10px 0;
 	padding: 1em !important;
 	float: left;
-	border-top: 1px solid #CCCED7;
-	border-bottom: 1px solid #CCCED7;
 }
 
 .bt-effect {
@@ -687,18 +684,10 @@
 	font-size: 12px;
 }
 
-#gmcp .new-text-gsa {
-	font-size: 18px;
-	font-weight: bold;
-}
 
 #gmcp .star {
 	font-size: 35x !important;
 	transform: rotate(-20deg);
-}
-
-#gmcp .gsa-icon-market{
-	font-size: 50px;
 }
 
 #gmcp .advantages-label {
@@ -713,4 +702,100 @@
 
 #gmcp .market-text {
 	font-size: 13px;
+}
+
+@media only screen and (max-width: 600px) {
+	#onboarding .row:first-child {
+		padding-left: 0px !important;
+	}
+	#onboarding.account {
+		background-image: none;
+	}
+	#onboarding-desc {
+		width: 100%;
+	}
+}
+  
+#api-settings-form {
+    display: flex;
+    flex-direction: column;
+}
+#api-settings-form-container a {
+    align-self: center;
+    background: #00aff0;
+    color: white;
+}
+#onboarding #createNewAccountContainer #createNewAccount {
+	background: #00aff0;
+	color: white;
+	padding : 10px !important;
+	width: 75%;
+}
+#onboarding #createNewAccountContainer {
+    margin-top: 20px;
+}
+
+#onboarding #LoginContainer #login {
+	background: #72c279;
+	color: white;
+	padding : 10px !important;
+	width: 75%;
+}
+#onboarding #LoginContainer {
+    margin-top: 20px;
+}
+
+#onboarding #discoverContainer #discoverButton {
+	background: #72c279;
+	color: white;
+	padding : 10px !important;
+	width: 75%;
+}
+#onboarding #discoverContainer {
+    margin-top: 20px;
+}
+
+#onboarding .btn, #api-settings-form-container .btn {
+    text-transform: uppercase;
+}
+#onboarding #start-trial, #api-settings-form-container #retrieve-key  {
+    background: #FD7272;
+    color: white;
+}
+
+#onboarding #serviceDesc {
+	margin-bottom:30px;
+}
+
+/** Progress bar css **/
+#gmcp .progress-bar-striped.active {
+	-webkit-animation: progress-bar-stripes 2s linear infinite !important;
+	-o-animation: progress-bar-stripes 2s linear infinite !important;
+	animation: progress-bar-stripes 2s linear infinite !important;
+}
+
+.progress {
+	height: 30px;
+	margin-bottom: 10px !important;
+	overflow: hidden;
+	background-color: #f5f5f5 !important;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
+}
+
+.progress-bar-striped {
+    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-size: 1rem 1rem;
+}
+
+#gmcp span.label-tooltip>b {
+    background-color: #EDF7FB;
+    border: none;
+    border-bottom: 1px solid #D8EDF7;
+    border-radius: 3px;
+    color: #3586AE;
+    font-size: 13px;
+    padding: 0 5px;
+    text-decoration: none;
 }

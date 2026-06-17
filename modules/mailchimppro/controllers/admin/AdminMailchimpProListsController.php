@@ -13,10 +13,12 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class AdminMailchimpProListsController
  *
@@ -34,13 +36,15 @@ class AdminMailchimpProListsController extends \PrestaChamps\MailchimpPro\Contro
     {
         $list_name = \Tools::getValue('list_name');
         if ($list_name) {
-            $this->action = null;
+            $this->action = '';
             if ($this->createMailchimpList($list_name)) {
-                $this->confirmations[] = $this->l('List created successfully');
+                $this->confirmations[] = $this->trans('List created successfully', [], 'Modules.Mailchimppro.Adminmailchimpprolists');
             } else {
-                $this->errors[] = $this->l("Oups! Failed to create list: {$this->mailchimp->getLastError()}");
+                $this->errors[] = $this->trans("Oups! Failed to create list: {$this->mailchimp->getLastError()}", [], 'Modules.Mailchimppro.Adminmailchimpprolists');
             }
+
         }
+
     }
 
     /**

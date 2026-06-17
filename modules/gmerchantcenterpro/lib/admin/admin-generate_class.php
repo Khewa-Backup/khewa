@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -110,9 +110,10 @@ class BT_AdminGenerate implements BT_IAdmin
             ) {
                 throw new Exception(GMerchantCenterPro::$oModule->l('Invalid security token', 'admin-generate_class') . '.', 810);
             }
+
             // get data feed params
-            $_POST['iShopId'] = Tools::getValue('id_shop');
-            $_POST['iLangId'] = Tools::getValue('id_lang');
+            $_POST['iShopId'] = !empty(Tools::getValue('id_shop')) ? (int)Tools::getValue('id_shop') : GMerchantCenterPro::$iShopId;
+            $_POST['iLangId'] = !empty(Tools::getValue('gmcp_lang_id'))  ? Tools::getValue('gmcp_lang_id') : Tools::getValue('id_lang');
             $_POST['sLangIso'] = BT_GmcProModuleTools::getLangIso($_POST['iLangId']);
             $_POST['sCountryIso'] = Tools::getValue('country');
             $_POST['sCurrencyIso'] = Tools::getValue('currency_iso');
@@ -123,13 +124,14 @@ class BT_AdminGenerate implements BT_IAdmin
             $_POST['bOutput'] = 1;
             $_POST['sFeedType'] = Tools::getValue('feed_type');
             $_POST['bExcludedProduct'] = BT_GmcProExclusionDao::isExcludedProduct();
-
+           
             // set the filename
             $sFileSuffix = BT_GmcProModuleTools::buildFileSuffix($_POST['sLangIso'], $_POST['sCountryIso'], $_POST['sCurrencyIso'], 0, $_POST['sType']);
             $_POST['sFilename'] = GMerchantCenterPro::$sFilePrefix . '.' . $sFileSuffix . '.xml';
-
+           
             // execute the generate XML function
             $this->generateXml($_POST['sType']);
+  
         } catch (Exception $e) {
             $aAssign['sErrorInclude'] = BT_GmcProModuleTools::getTemplatePath(_GMCP_PATH_TPL_NAME . _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_ERROR);
             $aAssign['aErrors'][] = array('msg' => $e->getMessage(), 'code' => $e->getCode());
@@ -159,7 +161,7 @@ class BT_AdminGenerate implements BT_IAdmin
             $sType = Tools::getValue('feed_type') != false ? Tools::getValue('feed_type') : Tools::getValue('sFeedType');
             // use case - individual data feed cron
             $sCountry = Tools::getValue('country');
-            $iLang = Tools::getValue('id_lang');
+            $iLang = Tools::getValue('gmcp_lang_id');
             $sCurrency = Tools::getValue('currency_iso');
             $sUrlSuffix = $sType;
 
@@ -173,7 +175,7 @@ class BT_AdminGenerate implements BT_IAdmin
 
             // check if this is the first time execution of the CRON
             $_POST['aLangIds'] = Tools::getValue('aLangIds');
-            $_POST['iShopId'] = Tools::getValue('id_shop');
+            $_POST['iShopId'] = !empty(Tools::getValue('id_shop')) ? (int)Tools::getValue('id_shop') : GMerchantCenterPro::$iShopId;
             $_POST['sFeedType'] = $sType;
 
             // first execution
@@ -267,7 +269,7 @@ class BT_AdminGenerate implements BT_IAdmin
 
             if (empty($aContent['assign']['aErrors'])) {
                 // handle the cron URL
-                $sCronUrl = GMerchantCenterPro::$conf['GMCP_LINK'] . _GMCP_MODULE_URL . 'cron.php?id_shop=' . $_POST['iShopId'];
+                $sCronUrl = Context::getContext()->link->getModuleLink(_GMCP_MODULE_SET_NAME, _GMCP_CTRL_CRON, array('id_shop' =>  GMerchantCenterPro::$iShopId));
 
                 // check if the feed protection is activated
                 if (!empty($sToken)) {

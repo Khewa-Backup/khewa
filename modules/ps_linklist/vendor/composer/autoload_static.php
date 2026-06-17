@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit40841f4565e419305823694cd0036ef7
+class ComposerStaticInit1f07c7353ca9b2c1b406001b2682b2c7
 {
     public static $prefixLengthsPsr4 = array (
         'P' => 
@@ -21,6 +21,7 @@ class ComposerStaticInit40841f4565e419305823694cd0036ef7
     );
 
     public static $classMap = array (
+        'PrestaShop\\Module\\LinkList\\Adapter\\ObjectModelHandler' => __DIR__ . '/../..' . '/src/Adapter/ObjectModelHandler.php',
         'PrestaShop\\Module\\LinkList\\Cache\\LegacyLinkBlockCache' => __DIR__ . '/../..' . '/src/Cache/LegacyLinkBlockCache.php',
         'PrestaShop\\Module\\LinkList\\Cache\\LinkBlockCacheInterface' => __DIR__ . '/../..' . '/src/Cache/LinkBlockCacheInterface.php',
         'PrestaShop\\Module\\LinkList\\Controller\\Admin\\Improve\\Design\\LinkBlockController' => __DIR__ . '/../..' . '/src/Controller/Admin/Improve/Design/LinkBlockController.php',
@@ -50,9 +51,9 @@ class ComposerStaticInit40841f4565e419305823694cd0036ef7
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit40841f4565e419305823694cd0036ef7::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit40841f4565e419305823694cd0036ef7::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit40841f4565e419305823694cd0036ef7::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1f07c7353ca9b2c1b406001b2682b2c7::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1f07c7353ca9b2c1b406001b2682b2c7::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit1f07c7353ca9b2c1b406001b2682b2c7::$classMap;
 
         }, null, ClassLoader::class);
     }

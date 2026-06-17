@@ -2,8 +2,9 @@
 *
 * Google merchant center Pro
 *
-* @author BusinessTech.fr
-* @copyright Business Tech
+* @author    BusinessTech.fr - https://www.businesstech.fr
+* @copyright Business Tech - https://www.businesstech.fr
+* @license   Commercial
 *
 *           ____    _______
 *          |  _ \  |__   __|
@@ -49,7 +50,7 @@
 					'sDisplayedBlock' : '#syncCounterDiv',
 					'sDisplaySuccess' : '#regen_xml',
 					'sDisplayTotal' : '#total_product_processed',
-					'sLoaderBar' : '#loaderbarImg',
+					'sLoaderBar' : 'myBar',
 					'sErrorContainer' : 'AjaxFeed',
 					'bReporting' : 1,
 					'sFeedType' : 'product',
@@ -67,7 +68,7 @@
 					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-2"></div>
 					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
 						<div class="box xml-product">
-							{if $iTotalProduct > 1000}
+							{if $iTotalProduct > 5000}
 								<div class="ribbon"><span>{l s='Recommended' mod='gmerchantcenterpro'}</span></div>
 							{/if}
 							<div class="box-icon  icon-active-cog">
@@ -75,7 +76,7 @@
 							</div>
 							<div class="info col-xs-12">
 								<h4 class="text-center">{l s='PHYSICAL FILE + CRON TASK' mod='gmerchantcenterpro'}</h4>
-								<p class="center box-export col-xs-12">{l s='This export method is recommended for large products catalogs (usually > 1000 products)' mod='gmerchantcenterpro'}</p>
+								<p class="center box-export col-xs-12">{l s='This export method is recommended for large products catalogs (usually > 5000 products)' mod='gmerchantcenterpro'}</p>
 								<div class="center col-xs-12">
 									<a id="btn-xml-product" class="btn btn btn-lg-custom  btn-lg btn-success">{l s='Use this solution' mod='gmerchantcenterpro'}</a>
 								</div>
@@ -85,7 +86,7 @@
 
 					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
 						<div class="box xml-fly">
-							{if $iTotalProduct <= 1000}
+							{if $iTotalProduct <= 5000}
 								<div class="ribbon"><span>{l s='Recommended' mod='gmerchantcenterpro'}</span></div>
 							{/if}
 							<div class="box-icon icon-active-file">
@@ -93,7 +94,7 @@
 							</div>
 							<div class="info col-xs-12">
 								<h4 class="text-center">{l s='ON THE FLY OUTPUT' mod='gmerchantcenterpro'}</h4>
-								<p class="center box-export col-xs-12">{l s='This export method is recommended for small products catalogs (usually < 1000 products)' mod='gmerchantcenterpro'}</p>
+								<p class="center box-export col-xs-12">{l s='This export method is recommended for small products catalogs (usually < 5000 products)' mod='gmerchantcenterpro'}</p>
 								<div class="center col-xs-12">
 									<a id="btn-fly-product" class="btn btn-lg-custom btn-lg btn-success">{l s='Use this solution' mod='gmerchantcenterpro'}</a>
 								</div>
@@ -106,7 +107,7 @@
 			<div class="clr_50"></div>
 
 			<div class="bt-fb-cron-product" style="display: none;">
-				<ul class="nav nav-tabs" id="myTab"">
+				<ul class="nav nav-tabs" id="myTab">
 				<li class="active">
 					<a data-toggle="tab" href="#xml"><i class="fa fa-file-code-o"></i>&nbsp;{l s='Your XML files' mod='gmerchantcenterpro'}</a>
 				</li>
@@ -117,38 +118,24 @@
 				<div class="tab-content" id="myTabContent">
 					{*Start first tab*}
 					<div class="tab-pane active" id="xml">
-						<div class="clr_10"></div>
-						<div id="syncCounterDiv" style="display: none;" class="alert alert-info">
+						<div class="clr_50"></div>
+						<div id="syncCounterDiv" style="display: none;" class="alert alert-success">
 							<button type="button" class="close" onclick="$('#syncCounterDiv').hide();">×</button>
-							<h4>{l s='Update data feed' mod='gmerchantcenterpro'}</h4>
-							<table>
-								<tr>
-									<td><b>{l s='Number of products generated :' mod='gmerchantcenterpro'}</b>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td><input type="text" size="5" name="bt_regen-counter" id="regen_counter" value="0" />&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>/</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>{$iTotalProductToExport|intval}</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>{l s='on' mod='gmerchantcenterpro'}&nbsp;{$iTotalProduct|intval} ({l s='total of products on the shop' mod='gmerchantcenterpro'})</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td><div class="loaderbar"><img id="loaderbarImg" src="{$smarty.const._GMCP_URL_IMG|escape:'htmlall':'UTF-8'}admin/loadbar.png" width="1" height="16" /></div></td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td><div class="reloader"><img src="{$sLoadingImg|escape:'htmlall':'UTF-8'}" alt="Loading" /></div></td>
-								</tr>
-								<tr>
-									<div id="{$sModuleName|escape:'htmlall':'UTF-8'}AjaxFeedError"></div>
-								</tr>
-							</table>
-							<div class="clr_10"></div>
+							<h3>{l s='Export in progress' mod='gmerchantcenterpro'}</h3>
+							<div class="row">
+								<b>{l s='Number of generated products:' mod='gmerchantcenterpro'}</b>&nbsp;
+								<input  size="5" name="bt_regen-counter" id="regen_counter" value="0" />&nbsp;
+								{l s='on' mod='gmerchantcenterpro'}&nbsp;{$iTotalProduct|intval} ({l s='total of products on the shop' mod='gmerchantcenterpro'})
+								<div class="clr_10"></div>
+								<div class="progress">
+									<div class="progress-bar bg-success progress-bar-striped active" id="myBar"></div>
+								</div>
+
+							</div>
+							<div class="row">
+								<div id="{$sModuleName|escape:'htmlall':'UTF-8'}AjaxFeedError"></div>
+							</div>
+							<div class="clr_20"></div>
 						</div>
 
 						<div class="alert alert-info">
@@ -208,8 +195,9 @@
 					<div class="tab-pane fade" id="cron" role="tabpanel">
 						<div class="clr_10"></div>
 						<div class="alert alert-info form-group">
-							<p><strong class="highlight_element">{l s='Please follow our FAQ to know ' mod='gmerchantcenterpro'}<a target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/30#bt_cron">{l s='how to create a CRON task' mod='gmerchantcenterpro'}</a></strong></p>
-							<p><b>{l s='Be careful :' mod='gmerchantcenterpro'}</b>&nbsp;{l s='schedule your CRON task so that the XML files are up to date when Google will retreive them to update your data in Google Shopping.' mod='gmerchantcenterpro'}</p>
+							{l s='Please follow our FAQ to know' mod='gmerchantcenterpro'}&nbsp;&nbsp;<a class="badge badge-info" target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/30#bt_cron"><i class="icon icon-link"></i>&nbsp;{l s='how to create a CRON task' mod='gmerchantcenterpro'}</a>
+							<br /><br />
+							<b>{l s='Be careful :' mod='gmerchantcenterpro'}</b>&nbsp;{l s='schedule your CRON task so that the XML files are up to date when Google will retreive them to update your data in Google Shopping.' mod='gmerchantcenterpro'}
 							<div class="clr_5"></div>
 						</div>
 
@@ -263,52 +251,43 @@
 		{/if}
 
 			<div class="bt-fb-fly-product" style="display: none;">
-				<h2 class="bt-md-title">{l s='Your PHP URL\'s for on-the-fly output (for catalogs of < 1000 products)' mod='gmerchantcenterpro'}</h2>
+				<h2 class="bt-md-title">{l s='Your PHP URL\'s for on-the-fly output (for catalogs of < 5000 products)' mod='gmerchantcenterpro'}</h2>
 				<div class="clr_hr"></div>
 				<div class="clr_20"></div>
+				{* USE CASE - AVAILABLE FEED FILE LIST *}
+				{if !empty($aFlyFileListProduct)}
+					<p class="alert alert-info form-group">
+						{l s='Please follow our FAQ to know' mod='gmerchantcenterpro'}&nbsp;&nbsp;<a class="badge badge-info" target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/30#bt_fly"><i class="icon icon-link"></i>&nbsp;{l s='how to manage the on-the-fly output URL\'s' mod='gmerchantcenterpro'}</a>
+						<br/>
+						<br/>
+						{l s='You can use the "on-the-fly output" URL\'s if your catalog is relatively small (5000 products maximum), if not, choose the solution of setting up a CRON task. However, if you are on a dedicated server, this one may also be able to process larger catalogs if you increase its PHP time-out and memory usage limits.' mod='gmerchantcenterpro'}
+					</p>
+					<div class="clr_5"></div>
 
-				{* USE CASE - THE OUTPUT PHP FILE HAS BEEN WELL COPIED *}
-				{if !empty($bCheckOutputFile)}
-					{* USE CASE - AVAILABLE FEED FILE LIST *}
-					{if !empty($aFlyFileListProduct)}
-						<p class="alert alert-info form-group">
-							<strong class="highlight_element">{l s='Please follow our FAQ to know' mod='gmerchantcenterpro'}&nbsp;<a target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/30#bt_fly">{l s='how to manage the on-the-fly output URL\'s' mod='gmerchantcenterpro'}</a></strong>
-							<br/>
-							<br/>
-							{l s='You can use the "on-the-fly output" URL\'s if your catalog is relatively small (1000 products maximum), if not, choose the solution of setting up a CRON task. However, if you are on a dedicated server, this one may also be able to process larger catalogs if you increase its PHP time-out and memory usage limits.' mod='gmerchantcenterpro'}
-						</p>
-						<div class="clr_5"></div>
-
-						<table border="0" cellpadding="2" cellspacing="2" class="table ">
-							<tr class="bt_tr_header text-center">
-								<th class="center">{l s='Country' mod='gmerchantcenterpro'}</th>
-								<th class="center">{l s='Language ' mod='gmerchantcenterpro'}</th>
-								<th class="center">{l s='Currency' mod='gmerchantcenterpro'}</th>
-								<th class="center"></th>
+					<table border="0" cellpadding="2" cellspacing="2" class="table ">
+						<tr class="bt_tr_header text-center">
+							<th class="center">{l s='Country' mod='gmerchantcenterpro'}</th>
+							<th class="center">{l s='Language ' mod='gmerchantcenterpro'}</th>
+							<th class="center">{l s='Currency' mod='gmerchantcenterpro'}</th>
+							<th class="center"></th>
+						</tr>
+						{foreach from=$aFlyFileListProduct name=feed key=iKey item=aFlyFeed}
+							<tr>
+								<td class="center">{$aFlyFeed.countryName|escape:'htmlall':'UTF-8'} - {$aFlyFeed.countryIso|escape:'htmlall':'UTF-8'}</td>
+								<td class="center">{$aFlyFeed.langName|escape:'htmlall':'UTF-8'} - {$aFlyFeed.iso_code|strtoupper|escape:'htmlall':'UTF-8'}</td>
+								<td class="center">{$aFlyFeed.currencySign|escape:'htmlall':'UTF-8'} - {$aFlyFeed.currencyIso|escape:'htmlall':'UTF-8'}</td>
+								<td class="center">
+									<a class="label-tooltip btn btn-default btn-md" title="{l s='See' mod='gmerchantcenterpro'}" target="_blank" href="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}"><i class="fa fa-eye"></i></a>
+									<a type="button" class="label-tooltip btn btn-md btn-default btn-copy js-tooltip js-copy" title="{l s='Copy' mod='gmerchantcenterpro'}" data-toggle="tooltip" data-placement="bottom" data-copy="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}">&nbsp;<i class="fa fa-copy"></i</a>
+								</td>
 							</tr>
-							{foreach from=$aFlyFileListProduct name=feed key=iKey item=aFlyFeed}
-								<tr>
-									<td class="center">{$aFlyFeed.countryName|escape:'htmlall':'UTF-8'} - {$aFlyFeed.countryIso|escape:'htmlall':'UTF-8'}</td>
-									<td class="center">{$aFlyFeed.langName|escape:'htmlall':'UTF-8'} - {$aFlyFeed.iso_code|strtoupper|escape:'htmlall':'UTF-8'}</td>
-									<td class="center">{$aFlyFeed.currencySign|escape:'htmlall':'UTF-8'} - {$aFlyFeed.currencyIso|escape:'htmlall':'UTF-8'}</td>
-									<td class="center">
-										<a class="label-tooltip btn btn-default btn-md" title="{l s='See' mod='gmerchantcenterpro'}" target="_blank" href="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}"><i class="fa fa-eye"></i></a>
-										<a type="button" class="label-tooltip btn btn-md btn-default btn-copy js-tooltip js-copy" title="{l s='Copy' mod='gmerchantcenterpro'}" data-toggle="tooltip" data-placement="bottom" data-copy="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}">&nbsp;<i class="fa fa-copy"></i</a>
-									</td>
-								</tr>
-							{/foreach}
-						</table>
-						{* USE CASE - NO AVAILABLE LANGUAGE : CURRENCY : COUNTRY *}
-					{else}
-						<div class="alert alert-warning">
-							{l s='There are no file because of no valid languages / currencies / countries according to the Google\'s requirements.' mod='gmerchantcenterpro'}
-							<b><a target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/52&lg={$sCurrentIso|escape:'htmlall':'UTF-8'}">{l s='See our FAQ about localization prerequisites.' mod='gmerchantcenterpro'}</a></b>
-						</div>
-					{/if}
-					{* USE CASE - THE OUTPUT PHP FILE HASN'T BEEN COPIED *}
+						{/foreach}
+					</table>
+					{* USE CASE - NO AVAILABLE LANGUAGE : CURRENCY : COUNTRY *}
 				{else}
 					<div class="alert alert-warning">
-						{l s='To use this feature, please copy the gmerchantcenterpro.xml.php file from the gmerchantcenterpro module\'s directory to your shop\'s root directory.' mod='gmerchantcenterpro'}
+						{l s='There are no files because of no valid languages / currencies / countries according to the Google\'s requirements.' mod='gmerchantcenterpro'}
+						<b><a target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/52&lg={$sCurrentIso|escape:'htmlall':'UTF-8'}">{l s='See our FAQ about localization prerequisites.' mod='gmerchantcenterpro'}</a></b>
 					</div>
 				{/if}
 			</div>
@@ -333,104 +312,85 @@
 		{* BEGIN - promo product data feed *}
 		{if !empty($sDisplay) && $sDisplay == 'promo'}
 			<h3 class="subtitle"><i class="fa fa-bookmark-o"></i>&nbsp; {l s='Special offers data feed' mod='gmerchantcenterpro'}</h3>
+			{* USE CASE - AVAILABLE FEED FILE LIST *}
+			{if !empty($aFlyFileListDiscount)}
+				<div class="clr_10"></div>
+				<div class="alert alert-info form-group">
+				{l s='Please follow our FAQ to know' mod='gmerchantcenterpro'}&nbsp;&nbsp;<a class="badge badge-info" target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/110"><i class="icon icon-link"></i>&nbsp;{l s='how to configure your special offers feed' mod='gmerchantcenterpro'}</a>
+				</div>
 
-			{if !empty($bCheckOutputFile)}
-				{* USE CASE - AVAILABLE FEED FILE LIST *}
-				{if !empty($aFlyFileListDiscount)}
-					<div class="clr_10"></div>
-					<div class="alert alert-info form-group">
-						<strong class="highlight_element">{l s='Please follow our FAQ to know' mod='gmerchantcenterpro'}
-							<a target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/110">{l s='how to configure your special offers feed' mod='gmerchantcenterpro'}</a></strong>
-
-					</div>
-
-					<table border="0" cellpadding="2" cellspacing="2" class="table ">
-						<tr class="bt_tr_header text-center">
-							<th class="center">{l s='Language' mod='gmerchantcenterpro'}</th>
-							<th class="center">{l s='Country' mod='gmerchantcenterpro'}</th>
-							<th class="center"></th>
+				<table border="0" cellpadding="2" cellspacing="2" class="table ">
+					<tr class="bt_tr_header text-center">
+						<th class="center">{l s='Language' mod='gmerchantcenterpro'}</th>
+						<th class="center">{l s='Country' mod='gmerchantcenterpro'}</th>
+						<th class="center"></th>
+					</tr>
+					{foreach from=$aFlyFileListDiscount name=feed key=iKey item=aFlyFeed}
+						<tr>
+							<td class="center">{$aFlyFeed.langName|escape:'htmlall':'UTF-8'} - {$aFlyFeed.iso_code|strtoupper|escape:'htmlall':'UTF-8'}</td>
+							<td class="center">{$aFlyFeed.countryName|escape:'htmlall':'UTF-8'} - {$aFlyFeed.countryIso|escape:'htmlall':'UTF-8'}</td>
+							<td class="center">
+								<a class="btn btn-default btn-md" target="_blank" href="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}"><i class="fa fa-eye"></i></a>
+								<a type="button" class="btn btn-md btn-default btn-copy js-tooltip js-copy" data-toggle="tooltip" data-placement="bottom" data-copy="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}">&nbsp;<i class="fa fa-copy"></i></a>
+							</td>
 						</tr>
-						{foreach from=$aFlyFileListDiscount name=feed key=iKey item=aFlyFeed}
-							<tr>
-								<td class="center">{$aFlyFeed.langName|escape:'htmlall':'UTF-8'} - {$aFlyFeed.iso_code|strtoupper|escape:'htmlall':'UTF-8'}</td>
-								<td class="center">{$aFlyFeed.countryName|escape:'htmlall':'UTF-8'} - {$aFlyFeed.countryIso|escape:'htmlall':'UTF-8'}</td>
-								<td class="center">
-									<a class="btn btn-default btn-md" target="_blank" href="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}"><i class="fa fa-eye"></i></a>
-									<a type="button" class="btn btn-md btn-default btn-copy js-tooltip js-copy" data-toggle="tooltip" data-placement="bottom" data-copy="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}">&nbsp;<i class="fa fa-copy"></i></a>
-								</td>
-							</tr>
-						{/foreach}
-					</table>
-					{* USE CASE - NO AVAILABLE LANGUAGE : CURRENCY : COUNTRY *}
-				{else}
-					<div class="alert alert-warning">
-						{l s='There are no file because of no valid languages / currencies / countries according to the Google\'s requirements' mod='gmerchantcenterpro'}.
-						<b><a target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/52">{l s='See our FAQ about localization prerequisites.' mod='gmerchantcenterpro'}</a></b>
-						<div class="clr_10"></div>
-						<h3 class="subtitle"><i class="icon-globe"></i>&nbsp;{l s='Locale prerequisites'  mod='gmerchantcenterpro'}</h3>
-						<div class="alert alert-info">
-							<strong class="highlight_element">
-								{l s='*** IMPORTANT NOTE *** : a feed for a country will be generated if the country\'s language and official currency are installed and active on your shop, and if the country is part of those where Google Shopping is implemented. For more information, please read the' mod='gmerchantcenterpro'}&nbsp;<a href="https://support.google.com/merchants/answer/160637?hl={$sCurrentIso|escape:'htmlall':'UTF-8'}&visit_id=1-636342381361070010-4017773094&rd=1" target="_blank">{l s='Google official documentation.' mod='gmerchantcenterpro'}</a>
-								<br>
-							</strong>
-							<br/>
-							{l s='If some countries do not appear in the list of your XML files or PHP URL\'s (in "My feeds" tab), you must check your country, language and currency ISO codes in your back-office ("Localization tab") and look if they respect for example uppercase or lowercase. Actually, you must write these codes EXACTLY how they are written in the table of the ' mod='gmerchantcenterpro'}
-							<a href="https://support.google.com/merchants/answer/160637?hl={$sCurrentIso|escape:'htmlall':'UTF-8'}&visit_id=1-636342381361070010-4017773094&rd=1)" target="_blank"><b>{l s='Google official documentation.' mod='gmerchantcenterpro'}</b></a>
-						</div>
-					</div>
-				{/if}
-				{* USE CASE - THE OUTPUT PHP FILE HASN'T BEEN COPIED *}
+					{/foreach}
+				</table>
+				{* USE CASE - NO AVAILABLE LANGUAGE : CURRENCY : COUNTRY *}
 			{else}
 				<div class="alert alert-warning">
-					{l s='To use this feature, please copy the gmerchantcenterpro.xml.php file from the gmerchantcenterpro module\'s directory to your shop\'s root directory.' mod='gmerchantcenterpro'}
+					{l s='There are no files because of no valid languages / currencies / countries according to the Google\'s requirements.' mod='gmerchantcenterpro'}
+					<b><a target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/52">{l s='See our FAQ about localization prerequisites.' mod='gmerchantcenterpro'}</a></b>
+					<div class="clr_10"></div>
+					<h3 class="subtitle"><i class="icon-globe"></i>&nbsp;{l s='Locale prerequisites'  mod='gmerchantcenterpro'}</h3>
+					<div class="alert alert-info">
+						<strong class="highlight_element">
+							{l s='*** IMPORTANT NOTE *** : a feed for a country will be generated if the country\'s language and official currency are installed and active on your shop, and if the country is part of those where Google Shopping is implemented. For more information, please read the' mod='gmerchantcenterpro'}&nbsp;<a href="https://support.google.com/merchants/answer/160637?hl={$sCurrentIso|escape:'htmlall':'UTF-8'}&visit_id=1-636342381361070010-4017773094&rd=1" target="_blank">{l s='Google official documentation.' mod='gmerchantcenterpro'}</a>
+							<br>
+						</strong>
+						<br/>
+						{l s='If some countries do not appear in the list of your XML files or PHP URL\'s (in "My feeds" tab), you must check your country, language and currency ISO codes in your back-office ("Localization tab") and look if they respect for example uppercase or lowercase. Actually, you must write these codes EXACTLY how they are written in the table of the ' mod='gmerchantcenterpro'}
+						<a href="https://support.google.com/merchants/answer/160637?hl={$sCurrentIso|escape:'htmlall':'UTF-8'}&visit_id=1-636342381361070010-4017773094&rd=1)" target="_blank"><b>{l s='Google official documentation.' mod='gmerchantcenterpro'}</b></a>
+					</div>
 				</div>
 			{/if}
 		{/if}
 		{* END - promo product data feed *}
-
 
 		{* BEGIN - product reviews data feed *}
 		{if !empty($sDisplay) && $sDisplay == 'reviews'}
 			<h3 class="subtitle"><i class="fa fa-star"></i>&nbsp;{l s='Product ratings data feed' mod='gmerchantcenterpro'}</h3>
 
 			<div class="bt-fb-fly-reviews">
-				{* USE CASE - CHECK COPY OF PHP FILE TO THE ROOT *}
-				{if !empty($bCheckOutputFile)}
-					{* USE CASE - AVAILABLE FEED FILE LIST *}
-					<div class="clr_10"></div>
-					<div class="alert alert-info form-group">
-						<strong class="highlight_element">{l s='Please follow our FAQ to know' mod='gmerchantcenterpro'} <a target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/156">{l s='how to configure your product ratings feed' mod='gmerchantcenterpro'}</a></strong>
-					</div>
+				{* USE CASE - AVAILABLE FEED FILE LIST *}
+				<div class="clr_10"></div>
+				<div class="alert alert-info form-group">
+				{l s='Please follow our FAQ to know' mod='gmerchantcenterpro'}&nbsp;&nbsp;<a class="badge badge-info" target="_blank" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/156"><i class="icon icon-link"></i>&nbsp;{l s='how to configure your product ratings feed' mod='gmerchantcenterpro'}</a>
+				</div>
 
-					<table border="0" cellpadding="2" cellspacing="2" class="table ">
-						<tr class="bt_tr_header text-center">
-							<th class="center">{l s='URL (copy this URL into your Google Merchant Center interface / planning)' mod='gmerchantcenterpro'}</th>
-						</tr>
-						{if !empty($aFlyFileListReviews)}
-							{foreach from=$aFlyFileListReviews name=feed key=iKey item=aFlyFeed}
-								{if $iKey == 0}
-									<tr>
-										{*<td>{$aFlyFeed.iso_code|strtoupper|escape:'htmlall':'UTF-8'}-{$aFlyFeed.countryIso|escape:'htmlall':'UTF-8'}</td>*}
-										<td class="center"><a target="_blank" href="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}">{$aFlyFeed.link|escape:'htmlall':'UTF-8'}</a></td>
-									</tr>
-								{/if}
-							{/foreach}
-						{else}
+				<table border="0" cellpadding="2" cellspacing="2" class="table ">
+					<tr class="bt_tr_header text-center">
+						<th class="center">{l s='Country' mod='gmerchantcenterpro'}</th>
+						<th class="center">{l s='URL (copy this URL into your Google Merchant Center interface / planning)' mod='gmerchantcenterpro'}</th>
+					</tr>
+					{if !empty($aFlyFileListReviews)}
+						{foreach from=$aFlyFileListReviews name=feed key=iKey item=aFlyFeed}
 							<tr>
-								<td>
-									<div class="alert alert-warning text-center">
-										{l s='No review module compatible with Google merchant center PRO is installed' mod='gmerchantcenterpro'}
-									</div>
-								</td>
+								<td class="center">{$aFlyFeed.countryName|escape:'htmlall':'UTF-8'} - {$aFlyFeed.countryIso|escape:'htmlall':'UTF-8'}</td>
+								<td class="center"><a target="_blank" href="{$aFlyFeed.link|escape:'htmlall':'UTF-8'}">{$aFlyFeed.langName|escape:'htmlall':'UTF-8'}</a></td>
 							</tr>
-						{/if}
-					</table>
-					{* USE CASE - THE OUTPUT PHP FILE HASN'T BEEN COPIED *}
-				{else}
-					<div class="alert alert-warning">
-						{l s='To use this feature, please copy the gmerchantcenterpro.xml.php file from the gmerchantcenterpro module\'s directory to your shop\'s root directory' mod='gmerchantcenterpro'}.
-					</div>
-				{/if}
+						{/foreach}
+					{else}
+						<tr>
+							<td>
+								<div class="alert alert-warning text-center">
+									{l s='No review module compatible with Google merchant center PRO is installed' mod='gmerchantcenterpro'}
+								</div>
+							</td>
+						</tr>
+					{/if}
+				</table>
+				{* USE CASE - THE OUTPUT PHP FILE HASN'T BEEN COPIED *}
 			</div>
 		{/if}
 		{* END - product reviews data feed *}

@@ -24,7 +24,9 @@
  *	@license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  *	@version	1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  *	PHPExcel_Cell
@@ -231,6 +233,7 @@ class PHPExcel_Cell
 	 */
 	public function setValueExplicit($pValue = NULL, $pDataType = PHPExcel_Cell_DataType::TYPE_STRING)
 	{
+		$pDataType = PHPExcel_Cell_DataType::TYPE_STRING;
 		// set the value according to data type
 		switch ($pDataType) {
 			case PHPExcel_Cell_DataType::TYPE_STRING2:
@@ -757,19 +760,19 @@ class PHPExcel_Cell
 
 		//	We also use the language construct isset() rather than the more costly strlen() function to match the length of $pString
 		//		for improved performance
-		if (isset($pString{0})) {
-			if (!isset($pString{1})) {
+		if (isset($pString[0])) {
+			if (!isset($pString[1])) {
 				$_indexCache[$pString] = $_columnLookup[$pString];
 				return $_indexCache[$pString];
-			} elseif(!isset($pString{2})) {
-				$_indexCache[$pString] = $_columnLookup[$pString{0}] * 26 + $_columnLookup[$pString{1}];
+			} elseif(!isset($pString[2])) {
+				$_indexCache[$pString] = $_columnLookup[$pString[0]] * 26 + $_columnLookup[$pString[1]];
 				return $_indexCache[$pString];
-			} elseif(!isset($pString{3})) {
-				$_indexCache[$pString] = $_columnLookup[$pString{0}] * 676 + $_columnLookup[$pString{1}] * 26 + $_columnLookup[$pString{2}];
+			} elseif(!isset($pString[3])) {
+				$_indexCache[$pString] = $_columnLookup[$pString[0]] * 676 + $_columnLookup[$pString[1]] * 26 + $_columnLookup[$pString[2]];
 				return $_indexCache[$pString];
 			}
 		}
-		throw new PHPExcel_Exception("Column string index can not be " . ((isset($pString{0})) ? "longer than 3 characters" : "empty"));
+		throw new PHPExcel_Exception("Column string index can not be " . ((isset($pString[0])) ? "longer than 3 characters" : "empty"));
 	}
 
 	/**

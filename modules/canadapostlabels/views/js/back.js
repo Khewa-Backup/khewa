@@ -79,4 +79,3 @@ function appendUrlVars(url, vars) {
     }
     return url;
 }
-

@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version    1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  * PHPExcel_CachedObjectStorage_SQLite
@@ -60,7 +62,7 @@ class PHPExcel_CachedObjectStorage_SQLite extends PHPExcel_CachedObjectStorage_C
 		if ($this->_currentCellIsDirty) {
 			$this->_currentObject->detach();
 
-			if (!$this->_DBHandle->queryExec("INSERT OR REPLACE INTO kvp_".$this->_TableName." VALUES('".$this->_currentObjectID."','".sqlite_escape_string(serialize($this->_currentObject))."')"))
+			if (!$this->_DBHandle->queryExec("INSERT OR REPLACE INTO kvp_".$this->_TableName." VALUES('".$this->_currentObjectID."','".sqlite_escape_string(json_encode($this->_currentObject))."')"))
 				throw new PHPExcel_Exception(sqlite_error_string($this->_DBHandle->lastError()));
 			$this->_currentCellIsDirty = false;
 		}
@@ -115,7 +117,7 @@ class PHPExcel_CachedObjectStorage_SQLite extends PHPExcel_CachedObjectStorage_C
 		$this->_currentObjectID = $pCoord;
 
 		$cellResult = $cellResultSet->fetchSingle();
-		$this->_currentObject = unserialize($cellResult);
+		$this->_currentObject = json_decode($cellResult);
         //    Re-attach this as the cell's parent
         $this->_currentObject->attach($this);
 

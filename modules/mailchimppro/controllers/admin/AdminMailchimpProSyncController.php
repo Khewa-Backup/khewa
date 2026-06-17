@@ -16,6 +16,10 @@
  * @copyright Mailchimp
  * @license   commercial
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+use PrestaChamps\PrestaShop\Traits\ShopIdTrait;
 
 /**
  * Class AdminMailchimpProSyncController
@@ -24,6 +28,8 @@
  */
 class AdminMailchimpProSyncController extends ModuleAdminController
 {
+    use ShopIdTrait;
+
     public $bootstrap = true;
 
     /**
@@ -35,7 +41,7 @@ class AdminMailchimpProSyncController extends ModuleAdminController
         $this->addCSS($this->module->getLocalPath() . 'views/css/main.css');
         if (\Shop::getContext() !== \Shop::CONTEXT_SHOP) {
             $this->content = '';
-            $this->warnings[] = $this->module->l('Please select a shop');
+            $this->warnings[] = $this->trans('Please select a shop', [], 'Modules.Mailchimppro.Adminmailchimpprosync');
         } else {
             $this->content .= $this->context->smarty->fetch(
                 $this->module->getLocalPath() . 'views/templates/admin/config/navbar.tpl'
@@ -43,14 +49,14 @@ class AdminMailchimpProSyncController extends ModuleAdminController
             $this->content .= $this->context->smarty->fetch(
                 $this->module->getLocalPath() . 'views/templates/admin/sync/index.tpl'
             );
-            Media::addJsDef(array(
+            Media::addJsDef([
                 'productIds' => array_column(
                     Product::getSimpleProducts(\Context::getContext()->language->id),
                     'id_product'
                 ),
                 'syncUrl' => $this->context->link->getAdminLink($this->controller_name),
                 'itemsPerRequest' => 50,
-            ));
+            ]);
 
             $this->addCSS($this->module->getLocalPath() . 'views/css/sync.css');
             $this->addCSS($this->module->getLocalPath() . 'views/css/spinner.css');
@@ -87,17 +93,17 @@ class AdminMailchimpProSyncController extends ModuleAdminController
             if ($method === 'delete') {
                 $service->setMethod($service::SYNC_METHOD_DELETE);
             }
-            $this->ajaxDie(array(
+            $this->ajaxDie([
                 'hasError' => false,
                 'error' => null,
                 'result' => $service->execute(),
-            ));
+            ]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $this->module->getApiClient()->getLastResponse(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -115,7 +121,7 @@ class AdminMailchimpProSyncController extends ModuleAdminController
             $service = new \PrestaChamps\MailchimpPro\Commands\StoreSyncCommand(
                 $this->context,
                 $this->module->getApiClient(),
-                array($this->context->shop->id)
+                [$this->context->shop->id]
             );
             if ($method === 'post') {
                 $service->setMethod($service::SYNC_METHOD_POST);
@@ -126,17 +132,17 @@ class AdminMailchimpProSyncController extends ModuleAdminController
             if ($method === 'delete') {
                 $service->setMethod($service::SYNC_METHOD_DELETE);
             }
-            $this->ajaxDie(array(
+            $this->ajaxDie([
                 'hasError' => false,
                 'error' => null,
                 'result' => $service->execute(),
-            ));
+            ]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $this->module->getApiClient()->getLastResponse(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -170,17 +176,17 @@ class AdminMailchimpProSyncController extends ModuleAdminController
             if ($method === 'delete') {
                 $service->setMethod($service::SYNC_METHOD_DELETE);
             }
-            $this->ajaxDie(array(
+            $this->ajaxDie([
                 'hasError' => false,
                 'error' => null,
                 'result' => $service->execute(),
-            ));
+            ]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $this->module->getApiClient()->getLastResponse(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -190,25 +196,25 @@ class AdminMailchimpProSyncController extends ModuleAdminController
 
     public function processBatchSync()
     {
-        $responses = array();
+        $responses = [];
         try {
             $batches = $this->module->getApiClient()->get(
                 '/batches',
-                array(
+                [
                     'count' => 200,
-                )
+                ]
             );
 
             foreach ($batches['batches'] as $batch) {
                 $responses[] = $this->module->getApiClient()->delete("/batches/{$batch['id']}");
             }
-            $this->ajaxDie(array('success' => true, 'responses' => $responses));
+            $this->ajaxDie(['success' => true, 'responses' => $responses]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $this->module->getApiClient()->getLastResponse(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -237,17 +243,17 @@ class AdminMailchimpProSyncController extends ModuleAdminController
             if ($method === 'delete') {
                 $service->setMethod($service::SYNC_METHOD_DELETE);
             }
-            $this->ajaxDie(array(
+            $this->ajaxDie([
                 'hasError' => false,
                 'error' => null,
                 'result' => $service->execute(),
-            ));
+            ]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $this->module->getApiClient()->getLastResponse(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -285,17 +291,17 @@ class AdminMailchimpProSyncController extends ModuleAdminController
             if ($method === 'delete') {
                 $service->setMethod($service::SYNC_METHOD_DELETE);
             }
-            $this->ajaxDie(array(
+            $this->ajaxDie([
                 'hasError' => false,
                 'error' => null,
                 'result' => $service->execute(),
-            ));
+            ]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $this->module->getApiClient()->getLastResponse(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -307,7 +313,7 @@ class AdminMailchimpProSyncController extends ModuleAdminController
      * @param null $value
      * @param null $controller
      * @param null $method
-     * @param int  $statusCode
+     * @param int $statusCode
      */
     public function ajaxDie($value = null, $controller = null, $method = null, $statusCode = 200)
     {
@@ -317,7 +323,12 @@ class AdminMailchimpProSyncController extends ModuleAdminController
         }
 
         http_response_code($statusCode);
-        parent::ajaxDie($value, $controller, $method);
+        if ((bool)version_compare(_PS_VERSION_, '1.7.5.0', '>=')) {
+            parent::ajaxRender($value, $controller, $method); // from PS 1.7.5.0
+            die();
+        }else{
+            parent::ajaxDie($value, $controller, $method);
+        }
     }
 
     public function processBatchInfo()
@@ -329,13 +340,13 @@ class AdminMailchimpProSyncController extends ModuleAdminController
             }
             $mc = $this->module->getApiClient();
 
-            $this->ajaxDie(array('hasErrors' => false, 'batch' => $mc->new_batch($batchId)->check_status($batchId)));
+            $this->ajaxDie(['hasErrors' => false, 'batch' => $mc->new_batch($batchId)->check_status($batchId)]);
         } catch (Exception $exception) {
             $this->ajaxDie(
-                array(
+                [
                     'hasError' => true,
                     'error' => $exception->getMessage(),
-                ),
+                ],
                 null,
                 null,
                 400
@@ -358,7 +369,7 @@ class AdminMailchimpProSyncController extends ModuleAdminController
         $result = array_column(Db::getInstance()->executeS($query), 'id_cart_rule');
         $result = array_unique(array_merge($ids, $result));
         sort($result, SORT_NUMERIC);
-        $objects = array();
+        $objects = [];
         foreach ($result as $itemId) {
             $object = new \CartRule($itemId, $this->context->language->id);
             if (Validate::isLoadedObject($object)) {

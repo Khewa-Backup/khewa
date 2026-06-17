@@ -1,22 +1,20 @@
 {*
-* 2007-2020 ETS-Soft
-*
-* NOTICE OF LICENSE
-*
-* This file is not open source! Each license that you purchased is only available for 1 wesite only.
-* If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
-* You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
-* 
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs, please contact us for extra customization service at an affordable price
-*
-*  @author ETS-Soft <etssoft.jsc@gmail.com>
-*  @copyright  2007-2021 ETS-Soft
-*  @license    Valid for 1 website (or project) for each purchase of license
-*  International Registered Trademark & Property of ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
+ * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future.
+ *
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
 *}
 <script type="text/javascript">
     var url_home = "{$url_home nofilter}";
@@ -43,7 +41,7 @@
     var link_logo = '{$link_logo nofilter}';
 </script>
 <!-- HTML -->
-<form id="module_form" action="{$link_optimize_image nofilter}">
+<form id="configuration_form" action="{$link_optimize_image nofilter}">
     <div class="page-dashboard form-wrapper">
         <div class="col-sm-8 statics_timeline">
             <div class="bg_white">
@@ -190,7 +188,6 @@
                             {/if}
                         </div>
                     </li>
-                     {*
                     <li class="minify_css">
                         <div class="block-left {if $PS_CSS_THEME_CACHE} yes{/if}">{l s='Minify CSS' mod='ets_superspeed'}</div>
                         <div class="block-right">
@@ -212,33 +209,10 @@
                             {/if}
                         </div>
                     </li>
-                    *}
                     <li class="production_mode">
                         <div class="block-left {if !$PS_MODE_DEV} yes{/if}">{l s='Production mode' mod='ets_superspeed'}</div>
                         <div class="block-right">
                             {if !$PS_MODE_DEV}
-                                <span class="check-yes">{l s='On' mod='ets_superspeed'}</span>
-                            {else}
-                                <span class="check-no">{l s='Off' mod='ets_superspeed'}</span>
-                            {/if}
-                        </div>
-                    </li>
-                    {*
-                    <li class="lazy_load">
-                        <div class="block-left {if $lazy_load} yes{/if}">{l s='Lazy load' mod='ets_superspeed'}</div>
-                        <div class="block-right">
-                            {if $lazy_load}
-                                <span class="check-yes">{l s='On' mod='ets_superspeed'}</span>
-                            {else}
-                                <span class="check-no">{l s='Off' mod='ets_superspeed'}</span>
-                            {/if}
-                        </div>
-                    </li>
-                    *}
-                    <li class="optimize_newly_images">
-                        <div class="block-left-image block-left{if $ETS_SPEED_OPTIMIZE_NEW_IMAGE} yes{/if}">{l s='Optimize newly uploaded images' mod='ets_superspeed'}</div>
-                        <div class="block-right block-right-image">
-                            {if $ETS_SPEED_OPTIMIZE_NEW_IMAGE}
                                 <span class="check-yes">{l s='On' mod='ets_superspeed'}</span>
                             {else}
                                 <span class="check-no">{l s='Off' mod='ets_superspeed'}</span>
@@ -380,13 +354,9 @@
                                 <li class="server_cache auto{if !$PS_SMARTY_CACHE} disabled{/if}"><i class="icon-clock"></i>{l s='Server Cache' mod='ets_superspeed'}</li>
                                 <li class="minify_html auto{if !$PS_HTML_THEME_COMPRESSION} disabled{/if}"><i class="icon-clock"></i>{l s='Minify HTML' mod='ets_superspeed'}</li>
                                 <li class="minify_javascript auto{if !$PS_JS_THEME_CACHE} disabled{/if}"><i class="icon-clock"></i>{l s='Minify Javascript' mod='ets_superspeed'}</li>
-                                {*
                                 <li class="minify_css auto{if !$PS_CSS_THEME_CACHE} disabled{/if}"><i class="icon-clock"></i>{l s='Minify CSS' mod='ets_superspeed'}</li>
-                                *}
                                 <li class="browser_cache auto{if !$PS_HTACCESS_CACHE_CONTROL} disabled{/if}"><i class="icon-clock"></i>{l s='Browser cache and Gzip' mod='ets_superspeed'}</li>
                                 <li class="production_mode auto{if $PS_MODE_DEV} disabled{/if}"><i class="icon-clock"></i>{l s='Production mode' mod='ets_superspeed'}</li>
-                                {*<li class="lazy_load auto{if !$lazy_load} disabled{/if}"><i class="icon-clock"></i>{l s='Lazy load' mod='ets_superspeed'}</li>*}
-                                <li class="optimize_newly_images auto optimize{if !$ETS_SPEED_OPTIMIZE_NEW_IMAGE} disabled{/if}"><i class="icon-clock"></i>{l s='Optimize newly uploaded images' mod='ets_superspeed'}</li>
                                 {if $total_unoptimized_images}
                                     <li class="optimize_existing_images optimize-image disabled">
                                         <div class="flex">
@@ -474,18 +444,16 @@
                                 </span>
                            </label>
                         </li>
-                        {*
-                            <li>
-                               <label for="minify_css">
-                                    {l s='Minify CSS' mod='ets_superspeed'}
-                                    <input type="checkbox" value="1" name="minify_css" {if $PS_CSS_THEME_CACHE} checked="checked"{/if} id="minify_css" />
-                                    <span class="sp_configuration_switch">
-                                        <span class="sp_configuration_label on">{l s='On' mod='ets_superspeed'}</span>
-                                        <span class="sp_configuration_label off">{l s='Off' mod='ets_superspeed'}</span>
-                                    </span>
-                               </label>
-                            </li>
-                        *}
+                        <li>
+                           <label for="minify_css">
+                                {l s='Minify CSS' mod='ets_superspeed'}
+                                <input type="checkbox" value="1" name="minify_css" {if $PS_CSS_THEME_CACHE} checked="checked"{/if} id="minify_css" />
+                                <span class="sp_configuration_switch">
+                                    <span class="sp_configuration_label on">{l s='On' mod='ets_superspeed'}</span>
+                                    <span class="sp_configuration_label off">{l s='Off' mod='ets_superspeed'}</span>
+                                </span>
+                           </label>
+                        </li>
                         <li>
                            <label for="browser_cache">
                                 {l s='Browser cache and Gzip' mod='ets_superspeed'}
@@ -500,28 +468,6 @@
                            <label for="production_mode">
                                 {l s='Production mode' mod='ets_superspeed'}
                                 <input type="checkbox" value="1" name="production_mode" {if !$PS_MODE_DEV} checked="checked"{/if} id="production_mode" />
-                                <span class="sp_configuration_switch">
-                                    <span class="sp_configuration_label on">{l s='On' mod='ets_superspeed'}</span>
-                                    <span class="sp_configuration_label off">{l s='Off' mod='ets_superspeed'}</span>
-                                </span>
-                           </label>
-                        </li>
-                        {*
-                        <li>
-                           <label for="lazy_load">
-                                {l s='Lazy load' mod='ets_superspeed'}
-                                <input type="checkbox" value="1" name="lazy_load" {if $lazy_load} checked="checked"{/if} id="lazy_load" />
-                                <span class="sp_configuration_switch">
-                                    <span class="sp_configuration_label on">{l s='On' mod='ets_superspeed'}</span>
-                                    <span class="sp_configuration_label off">{l s='Off' mod='ets_superspeed'}</span>
-                                </span>
-                           </label>
-                        </li>
-                        *}
-                        <li>
-                           <label for="optimize_newly_images">
-                                {l s='Optimize newly uploaded images' mod='ets_superspeed'}
-                                <input class="optimize_newly_images" type="checkbox" value="1" name="optimize_newly_images" id="optimize_newly_images" {if $ETS_SPEED_OPTIMIZE_NEW_IMAGE} checked="checked"{/if} />
                                 <span class="sp_configuration_switch">
                                     <span class="sp_configuration_label on">{l s='On' mod='ets_superspeed'}</span>
                                     <span class="sp_configuration_label off">{l s='Off' mod='ets_superspeed'}</span>
@@ -544,8 +490,11 @@
                         {/if}
                     </ul>
                     <div class="button-group">
-                        <button class="btn btn-default pull-left confirm-popup-no">{l s='Cancel' mod='ets_superspeed'}</button>
-                        <button class="btn btn-default pull-right confirm-popup-configuration-cache-yes">{l s='Run auto configuration' mod='ets_superspeed'}</button>
+                        <button class="btn btn-default pull-left confirm-popup-no">
+                            <svg width="14" height="14" style="vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg> {l s='Cancel' mod='ets_superspeed'}</button>
+                        <button class="btn btn-default pull-right confirm-popup-configuration-cache-yes">
+                            <svg width="14" height="14" style="vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M403.8 34.4c12-5 25.7-2.2 34.9 6.9l64 64c6 6 9.4 14.1 9.4 22.6s-3.4 16.6-9.4 22.6l-64 64c-9.2 9.2-22.9 11.9-34.9 6.9s-19.8-16.6-19.8-29.6V160H352c-10.1 0-19.6 4.7-25.6 12.8L284 229.3 244 176l31.2-41.6C293.3 110.2 321.8 96 352 96h32V64c0-12.9 7.8-24.6 19.8-29.6zM164 282.7L204 336l-31.2 41.6C154.7 401.8 126.2 416 96 416H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H96c10.1 0 19.6-4.7 25.6-12.8L164 282.7zm274.6 188c-9.2 9.2-22.9 11.9-34.9 6.9s-19.8-16.6-19.8-29.6V416H352c-30.2 0-58.7-14.2-76.8-38.4L121.6 172.8c-6-8.1-15.5-12.8-25.6-12.8H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H96c30.2 0 58.7 14.2 76.8 38.4L326.4 339.2c6 8.1 15.5 12.8 25.6 12.8h32V320c0-12.9 7.8-24.6 19.8-29.6s25.7-2.2 34.9 6.9l64 64c6 6 9.4 14.1 9.4 22.6s-3.4 16.6-9.4 22.6l-64 64z"/></svg> {l s='Run auto configuration' mod='ets_superspeed'}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -560,7 +509,8 @@
                     {l s='All unoptimized images will be replaced by optimized images. You can restore your old images in "Image optimization" tab by adjusting "Image quality" to 100%. Do you want to continue?' mod='ets_superspeed'}
                     <div class="button-group">
                         <a class="btn btn-default pull-left confirm-custom-optimization" href="{$link->getAdminLink('AdminSuperSpeedImage')|escape:'html':'UTF-8'}">{l s='Custom optimization' mod='ets_superspeed'}</a>
-                        <button class="btn btn-default pull-right confirm-popup-optimize_all_images-yes">{l s='Optimize all images now' mod='ets_superspeed'}</button>
+                        <button class="btn btn-default pull-right confirm-popup-optimize_all_images-yes">
+                            <svg width="14" height="14" style="vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M403.8 34.4c12-5 25.7-2.2 34.9 6.9l64 64c6 6 9.4 14.1 9.4 22.6s-3.4 16.6-9.4 22.6l-64 64c-9.2 9.2-22.9 11.9-34.9 6.9s-19.8-16.6-19.8-29.6V160H352c-10.1 0-19.6 4.7-25.6 12.8L284 229.3 244 176l31.2-41.6C293.3 110.2 321.8 96 352 96h32V64c0-12.9 7.8-24.6 19.8-29.6zM164 282.7L204 336l-31.2 41.6C154.7 401.8 126.2 416 96 416H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H96c10.1 0 19.6-4.7 25.6-12.8L164 282.7zm274.6 188c-9.2 9.2-22.9 11.9-34.9 6.9s-19.8-16.6-19.8-29.6V416H352c-30.2 0-58.7-14.2-76.8-38.4L121.6 172.8c-6-8.1-15.5-12.8-25.6-12.8H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H96c30.2 0 58.7 14.2 76.8 38.4L326.4 339.2c6 8.1 15.5 12.8 25.6 12.8h32V320c0-12.9 7.8-24.6 19.8-29.6s25.7-2.2 34.9 6.9l64 64c6 6 9.4 14.1 9.4 22.6s-3.4 16.6-9.4 22.6l-64 64z"/></svg> {l s='Optimize all images now' mod='ets_superspeed'}</button>
                     </div>
                 </div>
             </div>

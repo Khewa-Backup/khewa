@@ -1,13 +1,143 @@
-#giftcard_form .default_amounts {
+/**
+* 2023 - Keyrnel
+*
+* NOTICE OF LICENSE
+*
+* The source code of this module is under a commercial license.
+* Each license is unique and can be installed and used on only one shop.
+* Any reproduction or representation total or partial of the module, one or more of its components,
+* by any means whatsoever, without express permission from us is prohibited.
+* If you have not received this module from us, thank you for contacting us.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade this module to newer
+* versions in the future.
+*
+* @author    Keyrnel
+* @copyright 2023 - Keyrnel
+* @license   commercial
+* International Registered Trademark & Property of Keyrnel
+*/
+#modulecontent .badge-consumption {
+  display: block;
+  padding: 2px 0;
+}
+
+#modulecontent .default_amounts {
     padding: 15px;
 }
 
-#giftcard_form .default_amounts .currency-field {
+#modulecontent .default_amounts .currency-field {
     display: flex;
     align-items: center;
     padding: 5px;
 }
 
-#giftcard_form .default_amounts .currency-field img {
+#modulecontent .default_amounts .currency-field img {
     margin-right: 20px;
+}
+
+#modulecontent .alert.cron-task {
+    margin-bottom: 0;
+    margin-top: 10px;
+}
+
+#modulecontent .drawer-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040; /* Un peu plus que le Drawer */
+}
+
+/* Drawer principal */
+body.drawer-open {
+    overflow: hidden;
+    position: fixed; /* Évite le décalage quand la barre de scroll disparaît */
+    width: 100%; /* Corrige le "saut" horizontal */
+}
+
+#modulecontent .drawer {
+    position: fixed;
+    top: 0;
+    right: -400px; /* Caché par défaut */
+    width: 400px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 6px rgba(0, 0, 0, 0.3);
+    z-index: 1050;
+    transition: right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header du Drawer */
+#modulecontent .drawer-header {
+    padding: 15px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Contenu du Drawer */
+#modulecontent .drawer-body {
+    padding: 15px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* Drawer ouvert */
+#modulecontent .drawer.open {
+    right: 0;
+}
+
+/* Overlay visible */
+#modulecontent .drawer-overlay.open {
+    display: block;
+}
+
+#modulecontent .full-width {
+    width: 100%;
+}
+
+#modulecontent .mt-3 {
+    margin-top: 24px;
+}
+
+#modulecontent .mb-3 {
+    margin-bottom: 24px;
+}
+
+#modulecontent .mt-0 {
+    margin-top: 0;
+}
+
+#modulecontent #drawer .header {
+    font-size: 18px;
+    text-transform: uppercase;
+    padding: 8px;
+    background-color: #F6F6F6;
+}
+
+#modulecontent #drawer .attributes .attribute_radio {
+    display: none !important;
+}
+
+#modulecontent #drawer .img_attribute {
+    margin-bottom: 8px;
+}
+
+#modulecontent #drawer .product-image-container.selected img {
+    outline: 5px solid #08c;
+    -moz-box-shadow: 0px 0px 5px 0px #c0c0c0;
+    -webkit-box-shadow: 0px 0px 5px 0px #c0c0c0;
+    -o-box-shadow: 0px 0px 5px 0px #c0c0c0;
+    box-shadow: 0px 0px 5px 0px #c0c0c0;
+    filter: progid:DXImageTransform.Microsoft.Shadow(color=#c0c0c0, Direction=NaN, Strength=5);
 }

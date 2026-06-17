@@ -31,7 +31,6 @@ import infiniteScroll from './components/infinite-scroll';
 $(document).ready(() => {
   const $body = $('body');
   const $productDiv = $('#products');
-  const history = window.location.href;
 
   prestashop.iqitLazyLoad = new LazyLoad({
     elements_selector: '.js-lazy-product-image',
@@ -99,6 +98,7 @@ $(document).ready(() => {
         fadeEffect: {
           crossFade: true,
         },
+        initialSlide: $('#product-images-large').find('.js-thumb-selected').first().index(),
         preloadImages: false,
         lazy: {
           loadPrevNext: true,
@@ -241,12 +241,7 @@ $(document).ready(() => {
     }
   });
 
-  if ($(prestashop.themeSelectors.listing.list).length) {
-    window.addEventListener('popstate', (e) => {
-      const {state} = e;
-      window.location.href = state && state.current_url ? state.current_url : history;
-    });
-  }
+
   $body.on(
     'change',
     `${prestashop.themeSelectors.listing.searchFilters} select`,
@@ -292,6 +287,19 @@ $(document).ready(() => {
     createListingSpin();
     $productDiv.removeClass('-facets-loading');
   });
+});
+
+
+window.addEventListener('load', function() {
+  const history = window.location.href;
+  if ($(prestashop.themeSelectors.listing.list).length) {
+    window.setTimeout(function() {
+    window.addEventListener('popstate', (e) => {
+      const {state} = e;
+      window.location.href = state && state.current_url ? state.current_url : history;
+    });
+  }, 1000);
+  }
 });
 
 function createListingSpin() {

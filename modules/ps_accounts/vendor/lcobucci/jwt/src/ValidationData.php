@@ -1,11 +1,11 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
-
-namespace Lcobucci\JWT;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT;
 
 /**
  * Class that wraps validation values
@@ -24,13 +24,11 @@ class ValidationData
      * @var array
      */
     private $items;
-
     /**
      * The leeway (in seconds) to use when validating time claims
      * @var int
      */
     private $leeway;
-
     /**
      * Initializes the object
      *
@@ -39,19 +37,11 @@ class ValidationData
      */
     public function __construct($currentTime = null, $leeway = 0)
     {
-        $currentTime  = $currentTime ?: time();
+        $currentTime = $currentTime ?: \time();
         $this->leeway = (int) $leeway;
-
-        $this->items = [
-            'jti' => null,
-            'iss' => null,
-            'aud' => null,
-            'sub' => null
-        ];
-
+        $this->items = ['jti' => null, 'iss' => null, 'aud' => null, 'sub' => null];
         $this->setCurrentTime($currentTime);
     }
-
     /**
      * Configures the id
      *
@@ -61,7 +51,6 @@ class ValidationData
     {
         $this->items['jti'] = (string) $id;
     }
-
     /**
      * Configures the issuer
      *
@@ -71,7 +60,6 @@ class ValidationData
     {
         $this->items['iss'] = (string) $issuer;
     }
-
     /**
      * Configures the audience
      *
@@ -81,7 +69,6 @@ class ValidationData
     {
         $this->items['aud'] = (string) $audience;
     }
-
     /**
      * Configures the subject
      *
@@ -91,7 +78,6 @@ class ValidationData
     {
         $this->items['sub'] = (string) $subject;
     }
-
     /**
      * Configures the time that "iat", "nbf" and "exp" should be based on
      *
@@ -99,13 +85,11 @@ class ValidationData
      */
     public function setCurrentTime($currentTime)
     {
-        $currentTime  = (int) $currentTime;
-
+        $currentTime = (int) $currentTime;
         $this->items['iat'] = $currentTime + $this->leeway;
         $this->items['nbf'] = $currentTime + $this->leeway;
         $this->items['exp'] = $currentTime - $this->leeway;
     }
-
     /**
      * Returns the requested item
      *
@@ -117,7 +101,6 @@ class ValidationData
     {
         return isset($this->items[$name]) ? $this->items[$name] : null;
     }
-
     /**
      * Returns if the item is present
      *

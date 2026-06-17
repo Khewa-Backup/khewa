@@ -15,6 +15,6 @@
 
 <a class="col-lg-4 col-md-6 col-sm-6 col-xs-12" id="identity-link" href="{$front_controller}">
     <span class="link-item">
-        <i class="fa fa-user-secret fa-fw"></i> {l s='My personal data' mod='psgdpr'}
+        <i class="fa fa-user-secret fa-fw"></i> {l s='My personal data' d='Modules.Psgdpr.Shop'}
     </span>
 </a>

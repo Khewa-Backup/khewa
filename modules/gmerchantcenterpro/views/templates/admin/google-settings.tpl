@@ -2,8 +2,9 @@
 *
 * Google merchant center Pro
 *
-* @author BusinessTech.fr
-* @copyright Business Tech
+* @author    BusinessTech.fr - https://www.businesstech.fr
+* @copyright Business Tech - https://www.businesstech.fr
+* @license   Commercial
 *
 *           ____    _______
 *          |  _ \  |__   __|
@@ -99,6 +100,28 @@
 				</label>
 				<div class="col-xs-3">
 					<input type="text" size="30" name="bt_utm-medium" value="{$sUtmMedium|escape:'htmlall':'UTF-8'}" />
+				</div>
+			</div>
+
+			<p class="alert alert-info">{l s='You can also add a "utm_content" parameter in your product links in order to know if the traffic comes from free or paid campaigns. For more info please visit our' mod='gmerchantcenterpro'}
+				&nbsp;&nbsp;<a class="badge badge-info pulse pulse2" href="{$smarty.const._GMCP_BT_FAQ_MAIN_URL|escape:'htmlall':'UTF-8'}{$sFaqLang|escape:'htmlall':'UTF-8'}/faq/389" target="_blank"><i class="icon icon-link"></i>&nbsp;{l s='FAQ about the utm_content tag' mod='gmerchantcenterpro'}</a>
+			</p>
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-md-3 col-lg-3">
+				<span class="label-tooltip" title="{l s='Select "YES" to add a utm_content parameter in product links' mod='gmerchantcenterpro'}"><b>{l s='Add a utm_content parameter?' mod='gmerchantcenterpro'}</b></span></label>
+				<div class="col-xs-12 col-md-5 col-lg-6">
+						<span class="switch prestashop-switch fixed-width-lg">
+							<input type="radio" name="bt_utm_content" id="bt_utm_content_on" value="1" {if !empty($bUtmContent)}checked="checked"{/if} />
+							<label for="bt_utm_content_on" class="radioCheck">
+								{l s='YES' mod='gmerchantcenterpro'}
+							</label>
+							<input type="radio" name="bt_utm_content" id="bt_utm_content_off" value="0" {if empty($bUtmContent)}checked="checked"{/if} />
+							<label for="bt_utm_content_off" class="radioCheck">
+								{l s='NO' mod='gmerchantcenterpro'}
+							</label>
+							<a class="slide-button btn"></a>
+						</span>
+					<span class="label-tooltip" data-toggle="tooltip" data-placement="right" data-original-title="{l s='Select "YES" to add a utm_content parameter in product links' mod='gmerchantcenterpro'}">&nbsp;&nbsp;<span class="icon-question-sign"></span></span>
 				</div>
 			</div>
 		{/if}
@@ -202,7 +225,7 @@
 										<i class="icon icon-off"></i>
 									</button>
 								{else}
-									<button class="btn btn-success btn-mini"  id="gmcp_process_activation" onclick="check = confirm('{l s='Are you sure you want to activate this custom labels set' mod='gmerchantcenterpro'} ?');if(!check)return false;$('#loadingGoogleDiv').show();oGmcPro.hide('bt_google-settings');oGmcPro.ajax('{$sURI|escape:'htmlall':'UTF-8'}', '{$sCtrlParamName|escape:'htmlall':'UTF-8'}={$sController|escape:'htmlall':'UTF-8'}&sAction={$aQueryParams.customActivate.action|escape:'htmlall':'UTF-8'}&sType={$aQueryParams.customActivate.type|escape:'htmlall':'UTF-8'}&iTagId={$aTag.id_tag|intval}&sDeleteType=one&bActive=1&sDisplay=button3', 'bt_google-settings', 'bt_google-settings', null, null, 'loadingGoogleDiv');">
+									<button class="btn btn-success btn-mini" id="gmcp_process_activation" onclick="check = confirm('{l s='Are you sure you want to activate this custom labels set' mod='gmerchantcenterpro'} ?');if(!check)return false;$('#loadingGoogleDiv').show();oGmcPro.hide('bt_google-settings');oGmcPro.ajax('{$sURI|escape:'htmlall':'UTF-8'}', '{$sCtrlParamName|escape:'htmlall':'UTF-8'}={$sController|escape:'htmlall':'UTF-8'}&sAction={$aQueryParams.customActivate.action|escape:'htmlall':'UTF-8'}&sType={$aQueryParams.customActivate.type|escape:'htmlall':'UTF-8'}&iTagId={$aTag.id_tag|intval}&sDeleteType=one&bActive=1&sDisplay=button3', 'bt_google-settings', 'bt_google-settings', null, null, 'loadingGoogleDiv');">
 										<i class="icon icon-check"></i>
 									</button>
 								{/if}
@@ -210,12 +233,12 @@
 							<td>
 								<a id="handleGoogleAdwordsEdit" class="fancybox.ajax btn btn-default btn-mini" href="{$sURI|escape:'htmlall':'UTF-8'}&{$sCtrlParamName|escape:'htmlall':'UTF-8'}={$sController|escape:'htmlall':'UTF-8'}&sAction={$aQueryParams.custom.action|escape:'htmlall':'UTF-8'}&sType={$aQueryParams.custom.type|escape:'htmlall':'UTF-8'}&iTagId={$aTag.id_tag|intval}&sDisplay=button3"><i class="icon icon-edit"></i></a>
 							<td>
-								<button class="btn btn-danger btn-mini"  id="gmcp_process_activation" onclick="check = confirm('{l s='Are you sure you want to delete this custom labels set' mod='gmerchantcenterpro'} ?');if(!check)return false;$('#loadingGoogleDiv').show();oGmcPro.hide('bt_google-settings');oGmcPro.ajax('{$sURI|escape:'htmlall':'UTF-8'}', '{$sCtrlParamName|escape:'htmlall':'UTF-8'}={$sController|escape:'htmlall':'UTF-8'}&sAction={$aQueryParams.customDelete.action|escape:'htmlall':'UTF-8'}&sType={$aQueryParams.customDelete.type|escape:'htmlall':'UTF-8'}&iTagId={$aTag.id_tag|intval}&sDeleteType=one&sDisplay=button3', 'bt_google-settings', 'bt_google-settings', null, null, 'loadingGoogleDiv');">
+								<button class="btn btn-danger btn-mini" id="gmcp_process_activation" onclick="check = confirm('{l s='Are you sure you want to delete this custom labels set' mod='gmerchantcenterpro'} ?');if(!check)return false;$('#loadingGoogleDiv').show();oGmcPro.hide('bt_google-settings');oGmcPro.ajax('{$sURI|escape:'htmlall':'UTF-8'}', '{$sCtrlParamName|escape:'htmlall':'UTF-8'}={$sController|escape:'htmlall':'UTF-8'}&sAction={$aQueryParams.customDelete.action|escape:'htmlall':'UTF-8'}&sType={$aQueryParams.customDelete.type|escape:'htmlall':'UTF-8'}&iTagId={$aTag.id_tag|intval}&sDeleteType=one&sDisplay=button3', 'bt_google-settings', 'bt_google-settings', null, null, 'loadingGoogleDiv');">
 									<i class="icon icon-trash"></i>
 								</button>
 							</td>
 							<td>
-								<a id="cutomLabelProducDetails" class="fancybox.ajax btn btn-mini btn-default" href="{$sURI|escape:'htmlall':'UTF-8'}&{$sCtrlParamName|escape:'htmlall':'UTF-8'}={$sController|escape:'htmlall':'UTF-8'}&sAction={$aQueryParams.customProduct.action|escape:'htmlall':'UTF-8'}&sType={$aQueryParams.customProduct.type|escape:'htmlall':'UTF-8'}&iTagId={$aTag.id_tag|intval}&sDisplay=button3""><i class="icon icon-zoom-in"></i></a>
+								<a id="cutomLabelProducDetails" class="fancybox.ajax btn btn-mini btn-default" href="{$sURI|escape:'htmlall':'UTF-8'}&{$sCtrlParamName|escape:'htmlall':'UTF-8'}={$sController|escape:'htmlall':'UTF-8'}&sAction={$aQueryParams.customProduct.action|escape:'htmlall':'UTF-8'}&sType={$aQueryParams.customProduct.type|escape:'htmlall':'UTF-8'}&iTagId={$aTag.id_tag|intval}&sDisplay=button3"><i class="icon icon-zoom-in"></i></a>
 							</td>
 							<td></td>
 						</tr>

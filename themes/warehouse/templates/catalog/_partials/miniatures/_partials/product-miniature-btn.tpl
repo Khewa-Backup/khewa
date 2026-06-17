@@ -30,16 +30,20 @@
     {/if}
 
     {if $product.add_to_cart_url && ($max_quantity > 0 || $product.allow_oosp) && !$configuration.is_catalog}
-        <form action="{$product.add_to_cart_url}" method="post">
+        <form action="{$urls.pages.cart}" method="post">
 
             <input type="hidden" name="id_product" value="{$product.id}">
+
+           
+                <input type="hidden" name="token" value="{$static_token}">
+                <input type="hidden" name="id_product_attribute" value="{$product.id_product_attribute}">
             <div class="input-group-add-cart">
                 <input
                         type="number"
                         name="qty"
-                        value="{if isset($product.product_attribute_minimal_quantity) && $product.product_attribute_minimal_quantity neq ''}{$product.product_attribute_minimal_quantity}{else}{$product.minimal_quantity}{/if}"
+                        value="{if isset($product.product_attribute_minimal_quantity) && $product.product_attribute_minimal_quantity neq ''}{if $product.product_attribute_minimal_quantity}{$product.product_attribute_minimal_quantity}{else}1{/if}{else}{if $product.minimal_quantity}{$product.minimal_quantity}{else}1{/if}{/if}"
                         class="form-control input-qty"
-                        min="{if isset($product.product_attribute_minimal_quantity) && $product.product_attribute_minimal_quantity neq ''}{$product.product_attribute_minimal_quantity}{else}{$product.minimal_quantity}{/if}"
+                        min="{if isset($product.product_attribute_minimal_quantity) && $product.product_attribute_minimal_quantity neq ''}{if $product.product_attribute_minimal_quantity}{$product.product_attribute_minimal_quantity}{else}1{/if}{else}{if $product.minimal_quantity}{$product.minimal_quantity}{else}1{/if}{/if}"
                         {if !$product.allow_oosp}max="{$max_quantity}"{/if}
                 >
 

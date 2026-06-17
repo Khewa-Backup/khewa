@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit78117c05f7fd1eb7daff86dc01dd93c4
+class ComposerStaticInit78eab44ad8f7e3fa7277cf166bb43fb7
 {
     public static $classMap = array (
         'AdminConfigureFaviconBoController' => __DIR__ . '/../..' . '/controllers/admin/AdminConfigureFaviconBoController.php',
@@ -14,7 +14,7 @@ class ComposerStaticInit78117c05f7fd1eb7daff86dc01dd93c4
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit78117c05f7fd1eb7daff86dc01dd93c4::$classMap;
+            $loader->classMap = ComposerStaticInit78eab44ad8f7e3fa7277cf166bb43fb7::$classMap;
 
         }, null, ClassLoader::class);
     }

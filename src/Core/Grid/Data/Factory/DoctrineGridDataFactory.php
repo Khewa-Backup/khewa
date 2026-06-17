@@ -87,11 +87,20 @@ final class DoctrineGridDataFactory implements GridDataFactoryInterface
         $searchQueryBuilder = $this->gridQueryBuilder->getSearchQueryBuilder($searchCriteria);
         $countQueryBuilder = $this->gridQueryBuilder->getCountQueryBuilder($searchCriteria);
 
+
+//        if(strtolower($this->gridId) != 'order') { //test
         $this->hookDispatcher->dispatchWithParameters('action' . Container::camelize($this->gridId) . 'GridQueryBuilderModifier', [
             'search_query_builder' => $searchQueryBuilder,
             'count_query_builder' => $countQueryBuilder,
             'search_criteria' => $searchCriteria,
         ]);
+//            var_dump(__LINE__);
+//            die();
+//        }
+
+
+//        var_dump(get_class($searchQueryBuilder->execute()));
+//        var_dump(get_class_methods($searchQueryBuilder->execute()));
 
         $records = $searchQueryBuilder->execute()->fetchAll();
         $recordsTotal = (int) $countQueryBuilder->execute()->fetch(PDO::FETCH_COLUMN);

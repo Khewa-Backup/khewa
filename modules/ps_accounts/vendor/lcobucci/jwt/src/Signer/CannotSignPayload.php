@@ -1,10 +1,9 @@
 <?php
 
-namespace Lcobucci\JWT\Signer;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer;
 
 use InvalidArgumentException;
-use Lcobucci\JWT\Exception;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 final class CannotSignPayload extends InvalidArgumentException implements Exception
 {
     /**

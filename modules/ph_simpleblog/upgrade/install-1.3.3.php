@@ -10,7 +10,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_3_3($object)
+function upgrade_module_1_3_3()
 {
     Configuration::updateValue('PH_BLOG_ADVERTISING', true);
 

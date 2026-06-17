@@ -1,28 +1,44 @@
 <?php
+
 /**
- * 2007-2019 PrestaShop
+ * Copyright (c) since 2010 Stripe, Inc. (https://stripe.com)
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
+ * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    202-ecommerce <tech@202-ecommerce.com>
- * @copyright Copyright (c) Stripe
- * @license   Commercial license
+ * @author    Stripe <https://support.stripe.com/contact/email>
+ * @copyright Since 2010 Stripe, Inc.
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 class StripePayment extends ObjectModel
 {
     /** @var string */
@@ -49,96 +65,96 @@ class StripePayment extends ObjectModel
     public $state;
     /** @var string */
     public $voucher_url;
-    /** @var date */
+    /** @var DateTime */
     public $voucher_expire;
-    /** @var date */
+    /** @var DateTime */
     public $voucher_validate;
-    /** @var date */
+    /** @var DateTime */
     public $date_add;
 
     /**
      * @see ObjectModel::$definition
      */
-    public static $definition = array(
-        'table'        => 'stripe_payment',
-        'primary'      => 'id_payment',
-        'fields'       => array(
-            'id_stripe'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+    public static $definition = [
+        'table' => 'stripe_payment',
+        'primary' => 'id_payment',
+        'fields' => [
+            'id_stripe' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 255,
-            ),
-            'id_payment_intent'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+                'size' => 255,
+            ],
+            'id_payment_intent' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 255,
-            ),
-            'name'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+                'size' => 255,
+            ],
+            'name' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 255,
-            ),
-            'id_cart' => array(
-                'type'     => ObjectModel::TYPE_INT,
+                'size' => 255,
+            ],
+            'id_cart' => [
+                'type' => ObjectModel::TYPE_INT,
                 'validate' => 'isInt',
                 'size' => 10,
-            ),
-            'last4'  => array(
-                'type'     => ObjectModel::TYPE_INT,
+            ],
+            'last4' => [
+                'type' => ObjectModel::TYPE_INT,
                 'validate' => 'isInt',
-                'size'     => 4,
-            ),
-            'type'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+                'size' => 10,
+            ],
+            'type' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 20,
-            ),
-            'amount' => array(
-                'type'     => ObjectModel::TYPE_FLOAT,
+                'size' => 20,
+            ],
+            'amount' => [
+                'type' => ObjectModel::TYPE_FLOAT,
                 'validate' => 'isFloat',
                 'size' => 10,
-                'scale' => 2
-            ),
-            'refund' => array(
-                'type'     => ObjectModel::TYPE_FLOAT,
+                'scale' => 2,
+            ],
+            'refund' => [
+                'type' => ObjectModel::TYPE_FLOAT,
                 'validate' => 'isFloat',
                 'size' => 10,
-                'scale' => 2
-            ),
-            'currency'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+                'scale' => 2,
+            ],
+            'currency' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 3,
-            ),
-            'result'  => array(
-                'type'     => ObjectModel::TYPE_INT,
+                'size' => 3,
+            ],
+            'result' => [
+                'type' => ObjectModel::TYPE_INT,
                 'validate' => 'isInt',
-                'size'     => 1,
-            ),
-            'state'  => array(
-                'type'     => ObjectModel::TYPE_INT,
+                'size' => 1,
+            ],
+            'state' => [
+                'type' => ObjectModel::TYPE_INT,
                 'validate' => 'isInt',
-                'size'     => 1,
-            ),
-            'voucher_url'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+                'size' => 1,
+            ],
+            'voucher_url' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 255,
-            ),
-            'voucher_expire'  => array(
-                'type'     => ObjectModel::TYPE_DATE,
+                'size' => 255,
+            ],
+            'voucher_expire' => [
+                'type' => ObjectModel::TYPE_DATE,
                 'validate' => 'isDate',
-            ),
-            'voucher_validate'  => array(
-                'type'     => ObjectModel::TYPE_DATE,
+            ],
+            'voucher_validate' => [
+                'type' => ObjectModel::TYPE_DATE,
                 'validate' => 'isDate',
-            ),
-            'date_add'  => array(
-                'type'     => ObjectModel::TYPE_DATE,
+            ],
+            'date_add' => [
+                'type' => ObjectModel::TYPE_DATE,
                 'validate' => 'isDate',
-            ),
-        ),
-    );
+            ],
+        ],
+    ];
 
     public function setIdStripe($id_stripe)
     {
@@ -202,6 +218,7 @@ class StripePayment extends ObjectModel
 
     public function setAmount($amount)
     {
+        $amount = in_array(Tools::strtolower($this->currency), ['ugx', 'isk']) ? $amount * 100 : (Stripe_official::isZeroDecimalCurrency(Tools::strtoupper($this->currency)) && in_array(Tools::strtolower($this->currency), ['ugx']) ? $amount : $amount / 100);
         $this->amount = $amount;
     }
 
@@ -295,44 +312,10 @@ class StripePayment extends ObjectModel
         $query = new DbQuery();
         $query->select('*');
         $query->from(static::$definition['table']);
-        $query->where('id_cart = ' . (int)$id_cart);
+        $query->where('id_cart = ' . (int) $id_cart);
 
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query->build());
-        if ($result == false) {
-            return $this;
-        }
-
-        $this->hydrate($result);
-
-        return $this;
-    }
-
-    public function getStripePaymentByPaymentIntent($id_payment_intent)
-    {
-        $query = new DbQuery();
-        $query->select('*');
-        $query->from(static::$definition['table']);
-        $query->where('id_payment_intent = "' . pSQL($id_payment_intent) . '"');
-
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query->build());
-        if ($result == false) {
-            return $this;
-        }
-
-        $this->hydrate($result);
-
-        return $this;
-    }
-
-    public function getStripePaymentByIdStripe($id_stripe)
-    {
-        $query = new DbQuery();
-        $query->select('*');
-        $query->from(static::$definition['table']);
-        $query->where('id_stripe = "' . pSQL($id_stripe) . '"');
-
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query->build());
-        if ($result == false) {
+        if (false == $result) {
             return $this;
         }
 
@@ -344,8 +327,8 @@ class StripePayment extends ObjectModel
     public function getDashboardUrl()
     {
         $url_type = '';
-        if ($this->state == 1) {
-            $url_type = 'test';
+        if (1 == $this->state) {
+            $url_type = 'test/';
         }
 
         switch ($this->result) {
@@ -367,11 +350,39 @@ class StripePayment extends ObjectModel
                 break;
         }
 
-        $url_dashboard = array(
-            'charge' => 'https://dashboard.stripe.com/'.$url_type.'/payments/'.$this->id_stripe,
-            'paymentIntent' => 'https://dashboard.stripe.com/'.$url_type.'/payments/'.$this->id_payment_intent
-        );
+        $url_dashboard = [
+            'charge' => 'https://dashboard.stripe.com/' . $url_type . 'payments/' . $this->id_stripe,
+            'paymentIntent' => 'https://dashboard.stripe.com/' . $url_type . 'payments/' . $this->id_payment_intent,
+        ];
 
         return $url_dashboard;
+    }
+
+    public function updateIdStripe($chargeId, $cartId)
+    {
+        $sql = 'UPDATE `' . _DB_PREFIX_ . 'stripe_payment`
+        SET `id_stripe` = "' . $chargeId . '"
+        WHERE  `id_cart` = "' . $cartId . '"';
+        Db::getInstance()->execute($sql);
+    }
+
+    /**
+     * Get the payment id by its cart id.
+     *
+     * @param int $id_cart Cart id
+     *
+     * @return int|bool $id_order
+     */
+    public static function getIdByCartId($id_cart)
+    {
+        if ($id_cart < 1) {
+            return false;
+        }
+        $sql = 'SELECT `id_payment`
+            FROM `' . _DB_PREFIX_ . 'stripe_payment`
+            WHERE `id_cart` = ' . (int) $id_cart;
+        $result = Db::getInstance()->getValue($sql);
+
+        return !empty($result) ? (int) $result : false;
     }
 }

@@ -1,0 +1,10 @@
+
+[{shop_url}]
+
+Die Sicherung wurde am {date_start} um {hours_start} gestartet, und wurde am {date_end} um {hours_end} beendet.
+
+Nachricht:
+{backup_result}
+
+{shop_name} [{shop_url}]
+

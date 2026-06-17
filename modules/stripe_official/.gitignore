@@ -1,0 +1,13 @@
+/.idea
+/node_modules
+/vendor/*
+!/vendor/composer
+!/vendor/stripe
+!/vendor/totpsclasslib
+!/vendor/.htaccess
+!/vendor/autoload.php
+!/vendor/index.php
+!/vendor/php-scoper.phar
+/.scannerwork
+sonar-project.properties
+.php-cs-fixer.cache

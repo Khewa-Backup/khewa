@@ -22,9 +22,7 @@
 namespace PrestaShop\Module\Ps_metrics\Api;
 
 use PrestaShop\Module\Ps_metrics\Api\Client\AnalyticsClient;
-use PrestaShop\Module\Ps_metrics\Context\PrestaShopContext;
-use PrestaShop\Module\Ps_metrics\Environment\AnalyticsEnv;
-use PrestaShop\Module\Ps_metrics\Helper\JsonHelper;
+use PrestaShop\Module\Ps_metrics\Helper\ConfigHelper;
 
 class AnalyticsApi
 {
@@ -34,50 +32,20 @@ class AnalyticsApi
     private $client;
 
     /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-
-    /**
-     * @var AnalyticsEnv
-     */
-    private $analyticsEnv;
-
-    /**
-     * @var JsonHelper
-     */
-    private $jsonHelper;
-
-    /**
      * AnalyticsApi constructor.
      *
      * @param AnalyticsClient $analyticsClient
-     * @param PrestaShopContext $prestaShopContext
-     * @param AnalyticsEnv $analyticsEnv
-     * @param JsonHelper $jsonHelper
+     * @param ConfigHelper $configHelper
      */
     public function __construct(
         AnalyticsClient $analyticsClient,
-        PrestaShopContext $prestaShopContext,
-        AnalyticsEnv $analyticsEnv,
-        JsonHelper $jsonHelper
+        ConfigHelper $configHelper
     ) {
         $this->client = $analyticsClient;
-        $this->prestaShopContext = $prestaShopContext;
-        $this->analyticsEnv = $analyticsEnv;
-        $this->jsonHelper = $jsonHelper;
 
-        $this->client->setUrl($this->getServiceUrl());
+        $this->client->setUrl($configHelper->getApiBaseUrl());
         $this->client->setMiddlewares();
         $this->client->setHeader($this->client->getHeader());
-    }
-
-    /**
-     * @return string
-     */
-    private function getServiceUrl()
-    {
-        return $this->analyticsEnv->getServiceUrl();
     }
 
     /**
@@ -86,28 +54,6 @@ class AnalyticsApi
     private function getShopId()
     {
         return $this->client->getShopId();
-    }
-
-    /**
-     * @return string
-     */
-    private function getLanguageIsoCode()
-    {
-        return $this->prestaShopContext->getLanguageIsoCode();
-    }
-
-    /**
-     * getTipsCardsList
-     *
-     * @return mixed
-     */
-    public function getTipsCardsList()
-    {
-        $this->client->setRoute('/tipscards/' . $this->getLanguageIsoCode());
-
-        $tipscards = $this->client->get();
-
-        return (!empty($tipscards['error'])) ? [] : $tipscards['body'];
     }
 
     /**
@@ -121,11 +67,9 @@ class AnalyticsApi
     {
         $this->client->setRoute('/shops/' . $this->getShopId() . '/reportings');
 
-        $reportings = $this->client->post([
-            'json' => $data,
-        ]);
+        $reportings = $this->client->post($data);
 
-        return (!empty($reportings['error'])) ? [] : $reportings;
+        return !empty($reportings['error']) ? [] : $reportings;
     }
 
     /**
@@ -135,10 +79,12 @@ class AnalyticsApi
      */
     public function getAccountsList()
     {
-        $this->client->setRoute('/shops/' . $this->getShopId() . '/accounts/list');
+        $this->client->setRoute(
+            '/shops/' . $this->getShopId() . '/accounts/list'
+        );
         $accounts = $this->client->get();
 
-        return (!empty($accounts['error'])) ? [] : $accounts['body'];
+        return !empty($accounts['error']) ? [] : $accounts['body'];
     }
 
     /**
@@ -150,13 +96,15 @@ class AnalyticsApi
      */
     public function setAccountSelection(array $data)
     {
-        $this->client->setRoute('/shops/' . $this->getShopId() . '/accounts/selection');
+        $this->client->setRoute(
+            '/shops/' . $this->getShopId() . '/accounts/selection'
+        );
 
-        $accountSelected = $this->client->post([
-            'json' => $data,
-        ]);
+        $accountSelected = $this->client->post($data);
 
-        return (!empty($accountSelected['error'])) ? false : $accountSelected['body'];
+        return !empty($accountSelected['error'])
+            ? false
+            : $accountSelected['body'];
     }
 
     /**
@@ -166,7 +114,9 @@ class AnalyticsApi
      */
     public function unsubscribe()
     {
-        $this->client->setRoute('/shops/' . $this->getShopId() . '/accounts/unsubscribe');
+        $this->client->setRoute(
+            '/shops/' . $this->getShopId() . '/accounts/unsubscribe'
+        );
 
         $unsubscribed = $this->client->post();
 
@@ -180,7 +130,9 @@ class AnalyticsApi
      */
     public function refreshGA()
     {
-        $this->client->setRoute('/shops/' . $this->getShopId() . '/accounts/refresh');
+        $this->client->setRoute(
+            '/shops/' . $this->getShopId() . '/accounts/refresh'
+        );
 
         return $this->client->post();
     }
@@ -194,12 +146,12 @@ class AnalyticsApi
      */
     public function generateAuthUrl(array $data)
     {
-        $this->client->setRoute('/shops/' . $this->getShopId() . '/google/generate-auth-url');
+        $this->client->setRoute(
+            '/shops/' . $this->getShopId() . '/google/generate-auth-url'
+        );
 
-        $generated = $this->client->post([
-            'json' => $data,
-        ]);
+        $generated = $this->client->post($data);
 
-        return (!empty($generated['error'])) ? [] : $generated['body'];
+        return !empty($generated['error']) ? [] : $generated['body'];
     }
 }

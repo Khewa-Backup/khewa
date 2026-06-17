@@ -138,7 +138,7 @@
 	        		{$post->likes}
 	        	</span>
 	        	<span>
-		        	{l s='likes'  mod='ph_simpleblog'}
+		        	{l s='likes'  d='Modules.Simpleblog.Shop'}
 		        </span>
 	        </a>
         </li>
@@ -147,7 +147,7 @@
         <li>
             <i class="fa fa-eye"></i>
         	<span>
-	        	{$post->views} {l s='views'  mod='ph_simpleblog'}
+	        	{$post->views} {l s='views'  d='Modules.Simpleblog.Shop'}
 	        </span>
         </li>
         {/if}
@@ -155,10 +155,18 @@
         <li>
             <i class="fa fa-comments"></i>
         	<span>
-        		<a href="{$post->url}#phsimpleblog_comments">{$post->comments} {l s='comments'  mod='ph_simpleblog'}</a>
+        		<a href="{$post->url}#phsimpleblog_comments">{$post->comments} {l s='comments'  d='Modules.Simpleblog.Shop'}</a>
         	</span>
         </li>
         {/if}
+		{if $post->tags && Configuration::get('PH_BLOG_DISPLAY_TAGS') && isset($post->tags_list)}
+		<li>
+			<i class="fa fa-tags"></i>
+				{foreach from=$post->tags_list item=tag name='tagsLoop'}
+					{$tag|escape:'html':'UTF-8'}{if !$smarty.foreach.tagsLoop.last}, {/if}
+				{/foreach}
+		</li>
+		{/if}
     </ul>
 </div>
 <div class="simpleblog__post blog-mb cardblog">
@@ -180,7 +188,7 @@
             {if $post->gallery_style == 'masonry'}
             <div class="post-gallery__gallery-js">
                 {foreach $post->gallery as $image}
-                    <a rel="post-gallery-{$post->id_simpleblog_post}" class="blog-fancybox gallery-js__elem" href="{$gallery_dir}{$image.image}.jpg" title="{l s='View full' mod='ph_simpleblog'}"><img src="{$gallery_dir}{$image.image}-thumb.jpg" class="img-fluid" /></a>
+                    <a rel="post-gallery-{$post->id_simpleblog_post}" class="blog-fancybox gallery-js__elem" href="{$gallery_dir}{$image.image}.jpg" title="{l s='View full' d='Modules.Simpleblog.Shop'}"><img src="{$gallery_dir}{$image.image}-thumb.jpg" class="img-fluid" /></a>
                 {/foreach}
             </div><!-- .post-gallery -->
             {else}
@@ -194,7 +202,7 @@
                 {$galleryCols = 'col-lg-6 col-md-6'}
                 {/if}
                 <div class="{$galleryCols} col-xs-6 post-gallery__elem">
-                    <a rel="post-gallery-{$post->id_simpleblog_post}" class="blog-fancybox" href="{$gallery_dir}{$image.image}.jpg" title="{l s='View full' mod='ph_simpleblog'}"><img src="{$gallery_dir}{$image.image}-square.jpg" class="img-fluid" /></a>
+                    <a rel="post-gallery-{$post->id_simpleblog_post}" class="blog-fancybox" href="{$gallery_dir}{$image.image}.jpg" title="{l s='View full' d='Modules.Simpleblog.Shop'}"><img src="{$gallery_dir}{$image.image}-square.jpg" class="img-fluid" /></a>
                 </div>
                 {/foreach}
             </div><!-- .post-gallery -->
@@ -215,7 +223,7 @@
 
 {if Configuration::get('PH_BLOG_DISPLAY_SHARER')}
 <div class="simpleblog__share blog-mb">
-    <h2 class="section-title"><span>{l s='Share this post' mod='ph_simpleblog'}</span></h2>
+    <h2 class="section-title"><span>{l s='Share this post' d='Modules.Simpleblog.Shop'}</span></h2>
     <ul class="my-2">
         <li>
         	<a

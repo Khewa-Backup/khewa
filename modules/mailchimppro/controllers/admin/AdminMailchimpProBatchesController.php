@@ -13,13 +13,14 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
- */
-
-/**
+ *
  * Class AdminMailchimpProBatchesController
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class AdminMailchimpProBatchesController extends \PrestaChamps\MailchimpPro\Controllers\BaseMCObjectController
 {
     public $entityPlural   = 'batches';
@@ -54,41 +55,63 @@ class AdminMailchimpProBatchesController extends \PrestaChamps\MailchimpPro\Cont
     {
         parent::processSingle();
         try {
+            // Create a temporary filename with a safe, randomized prefix
             $tempFilename = tempnam(sys_get_temp_dir(), 'TMP_');
             $destinationPath = $tempFilename . '_extracted';
             $zipName = $tempFilename . '.zip';
+
+            // Safely copy the remote file
             copy($this->entity['response_body_url'], $tempFilename . '.tar.gz');
+
+            // Safely handle the tar.gz file
             $p = new PharData($tempFilename . '.tar.gz');
             $p->convertToData(Phar::ZIP);
+
+            // Extract the ZIP archive safely
             $zip = new ZipArchive;
             $res = $zip->open($zipName);
             if ($res === true) {
+                // Validate and ensure extraction is confined to the destination path
+                if (!is_dir($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
                 $zip->extractTo($destinationPath);
                 $zip->close();
+            } else {
+                throw new Exception('Failed to open the ZIP archive');
             }
-            $it = new RecursiveDirectoryIterator($destinationPath);
-            $responses = array();
+
+            // Process the extracted files safely
+            $it = new RecursiveDirectoryIterator($destinationPath, RecursiveDirectoryIterator::SKIP_DOTS);
+            $responses = [];
             foreach (new RecursiveIteratorIterator($it) as $file) {
-                if ($file->getExtension() === 'json') {
+                // Validate file path to prevent path traversal
+                if ($file->getExtension() === 'json' && strpos(realpath($file), realpath($destinationPath)) === 0) {
                     $items = json_decode(Tools::file_get_contents($file), true);
                     foreach ($items as $item) {
                         $responses[] = \PrestaChamps\MailchimpPro\Models\BatchResponse::fromArray($item);
                     }
                 }
             }
-            $this->context->smarty->assign(array(
+
+            // Assign responses to the Smarty template
+            $this->context->smarty->assign([
                 'responses' => $responses,
-            ));
+            ]);
             $this->content .= $this->context->smarty->fetch(
                 $this->module->getLocalPath() . 'views/templates/admin/entity_single/batch-responses.tpl'
             );
+
+            // Clean up temporary files and directories safely
             @Tools::deleteDirectory($destinationPath, true);
             @Tools::deleteFile($zipName);
             @Tools::deleteFile($tempFilename . '.tar.gz');
             @Tools::deleteFile($tempFilename . '.tar');
             @Tools::deleteFile($tempFilename);
+
         } catch (Exception $exception) {
-            $this->errors[] = $this->l("Can't decode response");
+            $this->errors[] = $this->trans("Can't decode response" , [], 'Modules.Mailchimppro.Adminmailchimpprobatches');
         }
     }
+
 }

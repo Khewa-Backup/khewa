@@ -1,182 +1,209 @@
 <?php
 /**
- * 2007-2020 ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
  *
  * NOTICE OF LICENSE
  *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
  * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- * 
+ *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please contact us for extra customization service at an affordable price
+ * versions in the future.
  *
- *  @author ETS-Soft <etssoft.jsc@gmail.com>
- *  @copyright  2007-2021 ETS-Soft
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of ETS-Soft
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
  */
 
+if (!defined('_PS_VERSION_')) { exit; }
 class Ets_ss_class_cache
 {
-    public $user_agent = '';
+    public $user_agent = 'Desktop';
+    public $context;
     protected static $instance;
-    public $is_cache_enabled;
-	public	function __construct()
-	{
-        $this->context = Context::getContext();
-        if(Configuration::get('ETS_SPEED_CHECK_USER_AGENT'))
-        {
-            $this->user_agent .= str_replace(array('/','(',')','.','\\','_',';'),'_',isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] :'' );
+    public function __construct($context = null)
+    {
+        if($context){
+            $this->context = $context;
+            if (Configuration::get('ETS_SPEED_CHECK_USER_AGENT')) {
+                if($this->context->isMobile())
+                    $this->user_agent ='Mobile';
+                elseif($this->context->isTablet())
+                    $this->user_agent ='Tablet';
+                else
+                    $this->user_agent ='Desktop';
+            }
         }
-        $this->is_cache_enabled = (defined('_PS_CACHE_ENABLED_')) ? _PS_CACHE_ENABLED_ : false;
-	}
-    public static function getInstance()
+
+    }
+
+    public static function getInstance($context = null)
     {
         if (!isset(self::$instance)) {
-            self::$instance = new Ets_ss_class_cache();
+            self::$instance = new Ets_ss_class_cache($context);
         }
         return self::$instance;
     }
+
     public function getFileCacheByUrl()
     {
-        if(!isset($_SERVER['SERVER_PORT']))
+        if (!isset($_SERVER['SERVER_PORT']))
             return '';
-        if($_SERVER['SERVER_PORT']!="80")
-        {
-            $url =$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-        }
-        else
-            $url = $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+        if ($_SERVER['SERVER_PORT'] != "80") {
+            $url = $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
+        } else
+            $url = $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) {
-            $url ='https://'.$url;
+            $url = 'https://' . $url;
+        } else
+            $url = 'http://' . $url;
+        if (Tools::strpos($url, '#') !== FALSE) {
+            $url = Tools::substr($url, 0, Tools::strpos($url, '#'));
         }
-        else
-            $url ='http://'.$url;
-        if (strpos($url, '#') !== FALSE) {
-            $url = Tools::substr($url, 0, strpos($url, '#'));
-        }
-        $this->context = Context::getContext();
-        $query_string = parse_url( $url, PHP_URL_QUERY );
-        $params = '&ets_currency='.($this->context->cookie->id_currency ? $this->context->cookie->id_currency : Configuration::get('PS_CURRENCY_DEFAULT'));
+        $query_string = parse_url($url, PHP_URL_QUERY);
+        $params = '&ets_currency=' . ((Tools::isSubmit('submitCurrency') || Tools::isSubmit('SubmitCurrency')) && ($id_currency = (int)Tools::getValue('id_currency')) ? $id_currency:  ($this->context->cookie->id_currency ? $this->context->cookie->id_currency : Configuration::get('PS_CURRENCY_DEFAULT')));
         $id_customer = (isset($this->context->customer->id)) ? (int)($this->context->customer->id) : 0;
         $id_group = null;
         if ($id_customer) {
-            $id_group = Customer::getDefaultGroupId((int)$id_customer);
+            if(Configuration::get('ETS_CACHE_ALL_CUSTOM_GROUPS'))
+            {
+                $id_group = implode('_', Customer::getGroupsStatic($id_customer));
+            }
+            else {
+                $id_group = Customer::getDefaultGroupId((int)$id_customer);
+            }
+
         }
         if (!$id_group) {
             $id_group = (int)Group::getCurrent()->id;
         } 
-        $params .= '&ets_group='.(int)$id_group; 
-        $id_country =isset($this->context->cookie->iso_code_country) && $this->context->cookie->iso_code_country && Validate::isLanguageIsoCode($this->context->cookie->iso_code_country) ?
-                    (int) Country::getByIso(Tools::strtoupper($this->context->cookie->iso_code_country)) : (int) Tools::getCountry();
-        $params .='&ets_country='.($id_country ? $id_country : (int)$this->context->country->id);
+        $params .= '&ets_group='.$id_group;
+        $id_country = $this->getIDCountry();
+        $params .='&ets_country='.($id_country ? : (int)$this->context->country->id);
         if(isset($this->context->cookie->id_cart) && $this->context->cookie->id_cart)
             $params .='&hascart=1';
         $params .='&user_agent='.$this->user_agent;
         if ($query_string == '') {
             $query_string .= Tools::substr($params, 1);
-        }
-        else {
+        } else {
             $query_string .= $params;
         }
         $uri = http_build_url($url, array("query" => $query_string));
-        return md5(_COOKIE_KEY_.$uri);
+        return hash('sha256', _COOKIE_KEY_ . $uri);
+    }
+    public function getIDCountry()
+    {
+        if($this->context->cookie->id_cart)
+        {
+            $cart = new Cart($this->context->cookie->id_cart);
+            $id_address = $cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')};
+            $address = new Address($id_address);
+            if(Validate::isLoadedObject($address))
+                return $address->id_country;
+        }
+        if(isset($this->context->cart) && isset($this->context->cart->id) && ($id_address = $this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}))
+        {
+            $address = new Address($id_address);
+            if(Validate::isLoadedObject($address))
+                return $address->id_country;
+        }
+
+        if(isset($this->context->cookie->iso_code_country) && $this->context->cookie->iso_code_country && Validate::isLanguageIsoCode($this->context->cookie->iso_code_country) && ($idCountry = Country::getByIso(Tools::strtoupper($this->context->cookie->iso_code_country))))
+        {
+            return $idCountry;
+        }
+        elseif (Configuration::get('PS_DETECT_COUNTRY')) {
+            if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
+                && preg_match('#(?<=-)\w\w|\w\w(?!-)#', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $array)
+                && Validate::isLanguageIsoCode($array[0]) && ($idCountry = (int) Country::getByIso($array[0], true))) {
+                return $idCountry;
+            }
+        }
+        return Tools::getCountry();
+    }
+    public static function isInWhitelistForGeolocation()
+    {
+        static $allowed = null;
+
+        if ($allowed !== null) {
+            return $allowed;
+        }
+
+        $allowed = false;
+        $user_ip = Tools::getRemoteAddr();
+        $ips = [];
+
+        // retrocompatibility
+        $ips_old = explode(';', Configuration::get('PS_GEOLOCATION_WHITELIST'));
+        foreach ($ips_old as $ip) {
+            $ips = array_merge($ips, explode("\n", $ip));
+        }
+        $ips = array_map('trim', $ips);
+        foreach ($ips as $ip) {
+            if (!empty($ip) && preg_match('/^' . $ip . '.*/', $user_ip)) {
+                $allowed = true;
+            }
+        }
+        return $allowed;
     }
     public function getCache($check_connect=false)
     {
-        if((isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD']=='POST') || !Configuration::get('ETS_SPEED_ENABLE_PAGE_CACHE') || !Configuration::get('PS_SHOP_ENABLE') )
+        if(defined('_PS_ADMIN_DIR_') && isset($this->context->employee) && isset($this->context->employee->id) && $this->context->employee->id)
+            return ;
+        if((isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD']=='POST') || self::isAjax() || !Configuration::get('ETS_SPEED_ENABLE_PAGE_CACHE') || !Configuration::get('PS_SHOP_ENABLE') )
             return false;
-        
+        if (isset($_SERVER['REQUEST_URI']) && (Tools::strpos($_SERVER['REQUEST_URI'], '/api') !== false || Tools::strpos($_SERVER['REQUEST_URI'], 'api/') !== false)) {
+            return false;
+        }
         $file_name=$this->getFileCacheByUrl();
-        if(Configuration::get('ETS_SPEED_COMPRESS_CACHE_FIIE') && class_exists('ZipArchive'))
-            $file_cache = _ETS_SPEED_CACHE_DIR_.(int)$this->context->shop->id.'/'.$file_name.'.zip';
-        else
-            $file_cache = _ETS_SPEED_CACHE_DIR_.(int)$this->context->shop->id.'/'.$file_name.'.html';
-        $file_cache = str_replace('\\','/',$file_cache); 
-        $cache_key = 'ss_cache_' .(int)$this->context->shop->id . '_'.$file_name;
-        if(!$this->is_cache_enabled || !Cache::getInstance()->exists($cache_key))
-        {
-            $pageCache = Ets_ss_class_cache::getPageCacheByFile($file_cache);
-            if($this->is_cache_enabled)
-                Cache::getInstance()->set($cache_key, $pageCache);
-        }
-        else    
-        {
-            $pageCache = Cache::getInstance()->get($cache_key);
-        }
-        
-        if(file_exists($file_cache) && $pageCache && $this->checkLifeTime($pageCache))
+        if(($pageCache = Ets_superspeed_cache_page::getCacheContent($file_name, $this->context))!==false)
         {
             if(!Ets_ss_class_cache::isCheckSpeed() && $check_connect && (int)Configuration::get('ETS_RECORD_PAGE_CLICK'))
             {
-                Db::getInstance()->execute('UPDATE `'._DB_PREFIX_.'ets_superspeed_cache_page` SET click = click+1 WHERE file_cache="'.pSQL($file_cache).'" AND id_shop="'.(int)Context::getContext()->shop->id.'"');
+                Db::getInstance()->execute('UPDATE `'._DB_PREFIX_.'ets_superspeed_cache_page` SET click = click+1 WHERE file_cache="'.pSQL($file_name).'"');
             }
-            if (!defined('_PS_ADMIN_DIR_') && ($context =Context::getContext()) && isset($context->ss_start_time) && ($start_time =  (float)$context->ss_start_time))
-                    header('X-SS: cached at ' .Tools::displayDate($pageCache['date_add'],null,true). ', '.(Tools::ps_round((microtime(true)-$start_time),3)*1000).'ms'.(isset($context->ss_total_sql) ? '/'.$context->ss_total_sql:'') );
-            if(Configuration::get('ETS_SPEED_COMPRESS_CACHE_FIIE') && class_exists('ZipArchive'))
+            if (!defined('_PS_ADMIN_DIR_') && ($this->context) && isset(Ets_superspeed::$start_time)  &&  ($start_time =  (float)Ets_superspeed::$start_time))
             {
-                $zip = new ZipArchive();
-                if($zip->open($file_cache))
-                {
-                    return $zip->getFromName($file_name);
-                }
+                header('X-SS: cached at ' .$pageCache['date_add']. ', '.(Tools::ps_round((microtime(true)-$start_time),3)*1000).'ms'.( isset(Ets_superspeed::$query_count) &&  ($totalSql = Ets_superspeed::$query_count) ? '/'.$totalSql:'') );
             }
-            return  Tools::file_get_contents($file_cache);
-        }else
-        {
-            if($this->is_cache_enabled)
-                Cache::getInstance()->delete($cache_key);
-            if(!file_exists($file_cache) && ($cache = self::getPageCacheByFile($file_cache,true)))
-            {
-                $cache->delete();
-            }
-        } 
+            return $pageCache['cache_content'];
+        }
         return false;
     }
-    static public function getPageCacheByFile($file_cache,$obj = false)
+    public function setCache($value,$params)
     {
-       $pageCache =  Db::getInstance()->getRow('SELECT id_cache_page,page,date_upd as date_add FROM `'._DB_PREFIX_.'ets_superspeed_cache_page` WHERE file_cache="'.pSQL($file_cache).'" AND id_shop="'.(int)Context::getContext()->shop->id.'"',false);
-       if($obj)
-       {
-            if($pageCache['id_cache_page'])
-                return new Ets_superspeed_cache_page($pageCache['id_cache_page']);
-            else
-                return false;
-       }
-       return $pageCache; 
-    }
-    public function checkLifeTime($pageCache)
-    {
-        if(Configuration::get('ETS_SPEED_TIME_CACHE_'.Tools::strtoupper($pageCache['page']))!=31)
-        {
-            if(strtotime($pageCache['date_add']) > strtotime('-'.(Configuration::get('ETS_SPEED_TIME_CACHE_'.Tools::strtoupper($pageCache['page'])) ? (int)Configuration::get('ETS_SPEED_TIME_CACHE_'.Tools::strtoupper($pageCache['page'])) : 1).' DAY'))
-                return true;
-            else
-                return false;
+        if($_SERVER['REQUEST_METHOD']=='POST' || self::isAjax() || !Configuration::get('ETS_SPEED_ENABLE_PAGE_CACHE') || !Configuration::get('PS_SHOP_ENABLE') )
+            return false;
+        if (isset($_SERVER['REQUEST_URI']) && (Tools::strpos($_SERVER['REQUEST_URI'], '/api') !== false || Tools::strpos($_SERVER['REQUEST_URI'], 'api/') !== false)) {
+            return false;
         }
-        return true;
-    }
-    public function setCache($value)
-    {
-        if($_SERVER['REQUEST_METHOD']=='POST' || !Configuration::get('ETS_SPEED_ENABLE_PAGE_CACHE') || !Configuration::get('PS_SHOP_ENABLE') )
-            return '';
-        $controller = Tools::getValue('controller');
-        if(!Validate::isControllerName($controller))
-            return '';
-        $id_object = (int)Tools::getValue('id_'.$controller);
-        $fc = Tools::getValue('fc');
-        $module = Tools::getValue('module');
-        if(Module::isInstalled('ybc_blog') && Module::isEnabled('ybc_blog') && $fc=='module' && $module=='ybc_blog' && in_array($controller,array('blog','category','gallery','author')))
+        if(($pages_exception = Tools::strtolower(trim(Configuration::get('ETS_SPEED_PAGES_EXCEPTION')))) )
+        {
+            $pages_exception = explode("\n",$pages_exception);
+            foreach($pages_exception as $page_exception)
+            {
+                $page_exception = trim($page_exception);
+                if($page_exception && Tools::strpos(Tools::strtolower($_SERVER['REQUEST_URI']),$page_exception)!==false)
+                    return false;
+            }
+        }
+
+        $controller = isset($params['controller']) ? $params['controller']:'';
+        if(!$controller || !Validate::isControllerName($controller))
+            return false;
+        $id_object = isset($params['id_object']) ? (int)$params['id_object']:0;
+        $fc = isset($params['fc']) ? $params['fc']:'';
+        $module = isset($params['module']) ? $params['module']:'';
+        if($module=='ybc_blog' && Ets_superspeed_defines::getIDModuleByName('ybc_blog') && $fc=='module' && in_array($controller,array('blog','category','gallery','author')))
         {
             if($controller=='blog')
             {
-                $id_post = (int)Tools::getValue('id_post');
-                $post_url_alias = Tools::getValue('post_url_alias');
-                if(!$id_post && $post_url_alias && Validate::isCleanHtml($post_url_alias))
+                $id_post = isset($params['id_post']) ? (int)$params['id_post']:0 ;
+                $post_url_alias = isset($params['post_url_alias']) ? $params['post_url_alias']:'';
+                if(!$id_post && $post_url_alias && Validate::isLinkRewrite($post_url_alias))
                 {
                     $id_post = (int)Db::getInstance()->getValue('SELECT ps.id_post FROM `'._DB_PREFIX_.'ybc_blog_post_lang` pl ,`'._DB_PREFIX_.'ybc_blog_post_shop` ps  WHERE ps.id_shop="'.(int)$this->context->shop->id.'" AND ps.id_post=pl.id_post AND pl.url_alias ="'.pSQL($post_url_alias).'"');
                 }
@@ -184,15 +211,15 @@ class Ets_ss_class_cache
                     $id_object=$id_post;
                 else
                 {
-                    $id_category = (int)trim(Tools::getValue('id_category'));
-                    $category_url_alias = Tools::getValue('category_url_alias');
-                    if(!$id_category && $category_url_alias && Validate::isCleanHtml($category_url_alias))
+                    $id_category = isset($params['id_category']) ? (int)$params['id_category']:0;
+                    $category_url_alias = isset($params['category_url_alias']) ? $params['category_url_alias']:'';
+                    if(!$id_category && $category_url_alias && Validate::isLinkRewrite($category_url_alias))
                     {
                         $id_category = (int)Db::getInstance()->getValue('SELECT cs.id_category FROM `'._DB_PREFIX_.'ybc_blog_category_lang` cl,`'._DB_PREFIX_.'ybc_blog_category_shop` cs WHERE cs.id_category=cl.id_category AND cs.id_shop="'.(int)$this->context->shop->id.'" AND cl.url_alias ="'.pSQL($category_url_alias).'"');    
                     }
                     if($id_category)
                         $id_object=$id_category;
-                    else($id_author = (int)Tools::getValue('id_author'));
+                    elseif(isset($params['id_author']) && ($id_author = (int)$params['id_author']))
                         $id_object=$id_author;
                 }
                 
@@ -201,172 +228,297 @@ class Ets_ss_class_cache
         }
         $id_currency = ($this->context->cookie->id_currency ? $this->context->cookie->id_currency : Configuration::get('PS_CURRENCY_DEFAULT'));
         $id_lang = $this->context->language->id;
-        $id_country =isset($this->context->cookie->iso_code_country) && $this->context->cookie->iso_code_country && Validate::isLanguageIsoCode($this->context->cookie->iso_code_country) ?
-                    (int) Country::getByIso(Tools::strtoupper($this->context->cookie->iso_code_country)) : (int) Tools::getCountry();
-        if(!$id_country)
-            $id_country = $this->context->country->id;
+        $id_country = $this->getIDCountry();
         $id_shop= $this->context->shop->id;
-        $sql = 'SELECT id_cache_page FROM `'._DB_PREFIX_.'ets_superspeed_cache_page` 
-        WHERE ip="'.pSQL(Tools::getRemoteAddr()).'" 
-        AND page="'.pSQL($controller).'" 
-        AND id_lang="'.(int)$id_lang.'"
-        AND id_country = "'.(int)$id_country.'"
-        AND id_currency = "'.(int)$id_currency.'"
-        AND id_shop="'.(int)$id_shop.'"
-        AND date_upd > "'.pSQL(date('Y-m-d H:i:s', strtotime('-1 HOUR'))).'"'
-        .((int)$id_object ? 'AND id_object="'.(int)$id_object.'"':'')
-        .($this->context->customer->id ? ' AND has_customer=1':' AND has_customer=0')
-        .($this->context->cart->id ? ' AND has_cart=1':' AND has_cart=0');
-        if(Db::getInstance()->getValue($sql))
-            return '';
-        if($pages_exception = Configuration::get('ETS_SPEED_PAGES_EXCEPTION'))
+        $file_name = $this->getFileCacheByUrl();
+        $ip = Tools::getRemoteAddr();
+        if($id_cache_page = (int)Db::getInstance()->getValue('
+            SELECT id_cache_page FROM `'._DB_PREFIX_.'ets_superspeed_cache_page`
+            WHERE page="'.pSQL($controller).'" 
+            AND id_lang="'.(int)$id_lang.'"
+            AND id_country = "'.(int)$id_country.'"
+            AND id_currency = "'.(int)$id_currency.'"
+            AND id_shop="'.(int)$id_shop.'"
+            AND user_agent="'.pSQL($this->user_agent).'"
+            AND date_add > "'.pSQL(date('Y-m-d H:i:s', strtotime('-'.($controller=='blog' ? '1':'15').' minutes'))).'"'
+            .((int)$id_object ? 'AND id_object="'.(int)$id_object.'"':'')
+            .($this->context->customer->id ? ' AND has_customer=1':' AND has_customer=0')
+            .($this->context->cart->id ? ' AND has_cart=1':' AND has_cart=0')
+        ))
         {
-            $pages_exception = explode("\n",$pages_exception);
-            foreach($pages_exception as $page_exception)
+            if(Configuration::get('ETS_SPEED_ENABLE_LOG_CACHE_ERROR'))
             {
-                if($page_exception && Tools::strpos($_SERVER['REQUEST_URI'],$page_exception)!==false)
-                    return '';
+                $pageError = new Ets_superspeed_cache_page_error();
+                $pageError->id_cache_page = $id_cache_page;
+                $pageError->page = $controller;
+                $pageError->id_object = (int)$id_object;
+                $pageError->id_product_attribute = isset($params['id_product_attribute']) ? (int)$params['id_product_attribute']:0;
+                $pageError->id_lang = (int)$id_lang;
+                $pageError->id_country = (int)$id_country;
+                $pageError->id_currency = (int)$id_currency;
+                $pageError->id_shop = (int)$id_shop;
+                $pageError->has_cart = $this->context->cart->id ? 1:0;
+                $pageError->has_customer = $this->context->customer->id ? 1 :0;
+                $pageError->ip = !self::isCheckSpeed() ? $ip:'';
+                $pageError->file_cache = $file_name;
+                $pageError->request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+                $pageError->error = sprintf($this->l('Cache created #%d'),$id_cache_page);
+                $pageError->add();
             }
+            return false;
         }
-        if(!is_dir(_ETS_SPEED_CACHE_DIR_))
-            mkdir(_ETS_SPEED_CACHE_DIR_,0777,true);
-        if(!is_dir(_ETS_SPEED_CACHE_DIR_.$id_shop))
-            @mkdir(_ETS_SPEED_CACHE_DIR_.$id_shop,0777,true);
-        
-        if(Configuration::get('ETS_SPEED_COMPRESS_CACHE_FIIE') && class_exists('ZipArchive'))
-        {
-            $file_name=$this->getFileCacheByUrl();
-            $cache_file = _ETS_SPEED_CACHE_DIR_.(int)$id_shop.'/'.$file_name.'.zip';
-            $zip = new ZipArchive();
-            
-            if(!file_exists($cache_file))
-            {
-                if($zip->open($cache_file, ZipArchive::CREATE | ZipArchive::CHECKCONS)===true)
-                {
-                    $zip->addFromString($file_name, $value);
-                }
-            }
-            else
-            {
-                if($zip->open($cache_file))
-                {
-                    $zip->addFromString($file_name, $value);
-                }
-            }
-            $zip->close();
-        }
-        else
-        {
-            $cache_file = _ETS_SPEED_CACHE_DIR_.(int)$id_shop.'/'.$this->getFileCacheByUrl().'.html';
-            file_put_contents($cache_file, $value);
-        }
-        $cache_file = str_replace('\\','/',$cache_file);   
-        if($id_page_cache = Db::getInstance()->getValue('SELECT id_cache_page FROM `'._DB_PREFIX_.'ets_superspeed_cache_page` WHERE file_cache = "'.pSQL($cache_file).'" AND id_shop="'.(int)Context::getContext()->shop->id.'"'))
+        Ets_superspeed::ensureCacheDir(_ETS_SPEED_CACHE_DIR_);
+        Ets_superspeed::ensureCacheDir(_ETS_SPEED_CACHE_DIR_.$id_shop);
+
+        if($id_page_cache = Db::getInstance()->getValue('SELECT id_cache_page FROM `'._DB_PREFIX_.'ets_superspeed_cache_page` WHERE file_cache = "'.pSQL($file_name).'" AND id_shop="'.(int)$this->context->shop->id.'"'))
         {
             $page_cache = new Ets_superspeed_cache_page($id_page_cache);
-            $page_cache->page = $controller;
-            $page_cache->id_object=  (int)$id_object;
-            $page_cache->id_country = (int)$id_country;
-            $page_cache->id_lang = (int)$id_lang;
-            $page_cache->id_currency = (int)$id_currency;
-            $page_cache->date_upd = date('Y-m-d H:i:s');
-            $page_cache->file_size = Tools::ps_round(@filesize($cache_file)/1024,2);
-            $page_cache->update();
-            Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'ets_superspeed_cache_page_hook` WHERE id_cache_page="'.(int)$id_page_cache.'"'); 
         }
         else
         {
-            $id_product_attribute = (int)Tools::getValue('id_product_attribute');
             $page_cache= new Ets_superspeed_cache_page();
-            $page_cache->page= $controller;
-            $page_cache->id_object = (int)$id_object;
-            $page_cache->id_country = (int)$id_country;
-            $page_cache->id_lang = (int)$id_lang;
-            $page_cache->id_currency = (int)$id_currency;
-            $page_cache->ip= Tools::getRemoteAddr();
-            $page_cache->id_product_attribute = (int)$id_product_attribute;
-            $page_cache->id_shop = Context::getContext()->shop->id;
-            $page_cache->file_cache= $cache_file;
-            $page_cache->has_customer = $this->context->customer->id ? 1 : 0;
-            $page_cache->has_cart = $this->context->cart->id ? 1 : 0;
-            $page_cache->request_uri = $_SERVER['REQUEST_URI'];
-            $page_cache->file_size = Tools::ps_round(@filesize($cache_file)/1024,2);
-            $page_cache->user_agent = $this->user_agent;
-            $page_cache->date_add = date('Y-m-d H:i:s');
-            $page_cache->date_upd=date('Y-m-d H:i:s');
-            $page_cache->add();
-            $id_page_cache = $page_cache->id;
-            
+            $page_cache->click=1;
         }
-        if(Hook::$executed_hooks && $id_page_cache)
+        $page_cache->page = $controller;
+        $page_cache->id_object = (int)$id_object;
+        $page_cache->id_country = (int)$id_country;
+        $page_cache->id_lang = (int)$id_lang;
+        $page_cache->id_currency = (int)$id_currency;
+        $page_cache->ip = !self::isCheckSpeed() ? Tools::getRemoteAddr():'';
+        $page_cache->id_product_attribute = isset($params['id_product_attribute']) ? (int)$params['id_product_attribute']:0;
+        $page_cache->id_shop = $this->context->shop->id;
+        $page_cache->file_cache= $file_name;
+        $page_cache->has_customer = $this->context->customer->id ? 1 : 0;
+        $page_cache->has_cart = $this->context->cart->id ? 1 : 0;
+        $page_cache->request_uri = $_SERVER['REQUEST_URI'];
+        $page_cache->user_agent = $this->user_agent;
+        $page_cache->date_add = date('Y-m-d H:i:s');
+        if(($lifetime = (int)Configuration::get('ETS_SPEED_TIME_CACHE_' . Tools::strtoupper($controller))) && $lifetime != 31)
         {
-            foreach(Hook::$executed_hooks as $hook_name)
+            $page_cache->date_expired = date('Y-m-d H:i:s',strtotime('+'.$lifetime.' DAY'));
+        }
+        else
+            $page_cache->date_expired ='';
+        $error ='';
+        if($page_cache->id)
+        {
+            $page_cache->file_size = $page_cache->setFileCache($value);
+            if($page_cache->file_size && Validate::isUnsignedFloat($page_cache->file_size))
             {
-                if(!Db::getInstance()->getRow('SELECT * FROM `'._DB_PREFIX_.'ets_superspeed_cache_page_hook` WHERE id_cache_page="'.(int)$id_page_cache.'" AND hook_name="'.pSQL($hook_name).'"'))
-                    Db::getInstance()->execute('INSERT INTO `'._DB_PREFIX_.'ets_superspeed_cache_page_hook` set id_cache_page="'.(int)$id_page_cache.'", hook_name="'.pSQL($hook_name).'"');
+                if($page_cache->update())
+                {
+                    Db::getInstance()->delete('ets_superspeed_cache_page_hook', 'id_cache_page = ' . (int)$id_page_cache);
+                }
+                else
+                    $error = $this->l('Create cache for object failed');
+            }
+            else
+                $error = $this->l('Create cache file failed');
+
+        }
+        elseif($page_cache->add())
+        {
+            $page_cache->file_size = $page_cache->setFileCache($value);
+            if($page_cache->file_size && Validate::isUnsignedFloat($page_cache->file_size))
+            {
+                if(!$page_cache->update())
+                    $error = $this->l('Create cache for object failed');
+                $id_page_cache = $page_cache->id;
+            }
+            else
+                $error = $this->l('Create cache file failed');
+        }
+        else
+            $error = $this->l('Create cache for object failed');
+        if($error)
+        {
+            if(Configuration::get('ETS_SPEED_ENABLE_LOG_CACHE_ERROR'))
+            {
+                $pageError = new Ets_superspeed_cache_page_error();
+                $pageError->id_cache_page = $id_cache_page;
+                $pageError->page = $controller;
+                $pageError->id_object = (int)$id_object;
+                $pageError->id_product_attribute = isset($params['id_product_attribute']) ? (int)$params['id_product_attribute']:0;
+                $pageError->id_lang = (int)$id_lang;
+                $pageError->id_country = (int)$id_country;
+                $pageError->id_currency = (int)$id_currency;
+                $pageError->id_shop = (int)$id_shop;
+                $pageError->has_cart = $this->context->cart->id ? 1:0;
+                $pageError->has_customer = $this->context->customer->id ? 1 :0;
+                $pageError->ip = !self::isCheckSpeed() ? Tools::getRemoteAddr():'';
+                $pageError->file_cache = $file_name;
+                $pageError->request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+                $pageError->error = $error;
+                $pageError->add();
             }
         }
+        else
+        {
+            if(Hook::$executed_hooks && $id_page_cache)
+            {
+                foreach(Hook::$executed_hooks as $hook_name)
+                    Db::getInstance()->execute('INSERT IGNORE INTO `'._DB_PREFIX_.'ets_superspeed_cache_page_hook` set id_cache_page="'.(int)$id_page_cache.'", hook_name="'.pSQL($hook_name).'"');
+            }
+        }
+
     }
     public function deleteCache($page='',$id_object=0,$hook_name='')
     {
-        
         if(Db::getInstance()->executeS('SHOW TABLES LIKE "'._DB_PREFIX_.'ets_superspeed_cache_page"'))
         {
             if(!$page && !$id_object && !$hook_name)
             {
-                Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'ets_superspeed_cache_page`');
-                Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'ets_superspeed_cache_page_hook`');
-                if($this->is_cache_enabled)
-                    Cache::getInstance()->flush();
+                Db::getInstance()->execute('TRUNCATE TABLE `'._DB_PREFIX_.'ets_superspeed_cache_page`');
+                Db::getInstance()->execute('TRUNCATE TABLE `'._DB_PREFIX_.'ets_superspeed_cache_page_hook`');
+                Db::getInstance()->execute('TRUNCATE TABLE `'._DB_PREFIX_.'ets_superspeed_cache_page_error`');
                 $this->rmDir(_ETS_SPEED_CACHE_DIR_);
+                Ets_superspeed::ensureCacheDir(_ETS_SPEED_CACHE_DIR_);
             }
             else
             {
-                $pages_cache= Db::getInstance()->executeS('SELECT * FROM `'._DB_PREFIX_.'ets_superspeed_cache_page`
-                    WHERE 1 '.($page ? ' AND page="'.pSQL($page).'"':'').($id_object ? ' AND id_object="'.(int)$id_object.'"':'').($hook_name ? ' AND id_cache_page IN (SELECT id_cache_page FROM `'._DB_PREFIX_.'ets_superspeed_cache_page_hook` WHERE hook_name="'.pSQL($hook_name).'")':''));
-    
-                if($pages_cache)
-                {
-                    foreach($pages_cache as $page_cache)
-                    {
-                        Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'ets_superspeed_cache_page` WHERE id_cache_page ='.(int)$page_cache['id_cache_page']);
-                        Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'ets_superspeed_cache_page_hook` WHERE id_cache_page="'.(int)$page_cache['id_cache_page'].'"');
-                        @unlink($page_cache['file_cache']);
+                $id_object = is_array($id_object) ? implode(',', $id_object) : $id_object;
+                $pageCaches = Db::getInstance()->executeS('SELECT * FROM `' . _DB_PREFIX_ . 'ets_superspeed_cache_page`
+                    WHERE 1 ' . ($page ? ' AND page="' . pSQL($page) . '"' : '') . ($id_object ? ' AND id_object IN (' . $id_object . ')' : '') . ($hook_name ? ' AND id_cache_page IN (SELECT id_cache_page FROM `' . _DB_PREFIX_ . 'ets_superspeed_cache_page_hook` WHERE hook_name="' . pSQL($hook_name) . '")' : ''));
+                if ($pageCaches) {
+                    foreach ($pageCaches as $pageCache) {
+                        $pageCacheObj = new Ets_superspeed_cache_page($pageCache['id_cache_page']);
+                        $pageCacheObj->delete();
                     }
                 }
             }
-            
         }
-        
         return true;
     }
     public function rmDir($directory)
     {
+        $baseDir = realpath(_PS_ROOT_DIR_);
+        $directory = realpath($directory);
+        if ($directory === false || Tools::strpos($directory, $baseDir) !== 0) {
+            return false;
+        }
         if(is_dir($directory))
         {
             $dir = @opendir(trim($directory));
             while (false !== ($file = @readdir($dir))) {
-                if (($file != '.') && ($file != '..') &&$file) {
-                    if (is_dir($directory . $file.'/')) {
-                        $this->rmDir($directory . $file.'/');
-                    } else {
-                        if (file_exists($directory  . $file)) {
-                            @unlink($directory . $file);
+                if (($file != '.') && ($file != '..') &&$file!=='') {
+                    if (is_file($directory .DIRECTORY_SEPARATOR. $file)) {
+                        if (file_exists($directory  .DIRECTORY_SEPARATOR. $file)) {
+                            Ets_superspeed_defines::unlink($directory.DIRECTORY_SEPARATOR . $file);
                         }
+                    } else {
+                        $this->rmDir($directory .DIRECTORY_SEPARATOR. $file.DIRECTORY_SEPARATOR);
                     }
                 }
             }
             @closedir($dir);
+            @rmdir($directory); 
         }
-        
         return true;
     }
-    static public function isCheckSpeed()
+    public static function getallheaders()
     {
-        $headers = getallheaders();
+        $headers = [];
+        if($_SERVER)
+        {
+            foreach ($_SERVER as $name => $value)
+            {
+                if (Tools::substr($name, 0, 5) == 'HTTP_')
+                {
+                    $headers[str_replace(' ', '-', ucwords(Tools::strtolower(str_replace('_', ' ', Tools::substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        return $headers;
+    }
+    public static function isCheckSpeed()
+    {
+        $headers = self::getallheaders();
         if($headers && ((isset($headers['XTestSS']) && $headers['XTestSS']=='click') || (isset($headers['Xtestss']) && $headers['Xtestss']=='click') || (isset($headers['xtestss']) && $headers['xtestss']=='click') ))
             return true;
         else
             return false;
+    }
+    public function l($string)
+    {
+        return Translate::getModuleTranslation('ets_superspeed', $string, pathinfo(__FILE__, PATHINFO_FILENAME));
+    }
+    public static function displayDate($date, $full, $context)
+    {
+        if (!$date || !($time = strtotime($date))) {
+            return $date;
+        }
+
+        if ($date == '0000-00-00 00:00:00' || $date == '0000-00-00') {
+            return '';
+        }
+        $date_format = ($full ? $context->language->date_format_full : $context->language->date_format_lite);
+
+        return date($date_format, $time);
+    }
+    public static function isAjax()
+    {
+        if(self::isCheckSpeed())
+            return false;
+        $isAjax = Tools::isSubmit('ajax') || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest');
+        if (isset($_SERVER['HTTP_ACCEPT'])) {
+            $isAjax = $isAjax || preg_match(
+                    '#\bapplication/json\b#',
+                    $_SERVER['HTTP_ACCEPT']
+                );
+        }
+        return $isAjax;
+    }
+    /**
+     * Clear Cloudflare cache using API
+     * @param string $zoneId
+     * @param string $apiToken
+     * @return array
+     */
+    public static function clearCloudflareCache($zoneId, $apiToken)
+    {
+        $url = 'https://api.cloudflare.com/client/v4/zones/' . $zoneId . '/purge_cache';
+
+        $data = array(
+            'purge_everything' => true
+        );
+
+        $headers = array(
+            'Authorization: Bearer ' . $apiToken,
+            'Content-Type: application/json'
+        );
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            return array(
+                'success' => false,
+                'message' => $error
+            );
+        }
+
+        $responseData = json_decode($response, true);
+
+        if ($httpCode == 200 && isset($responseData['success']) && $responseData['success']) {
+            return array(
+                'success' => true,
+            );
+        } else {
+            $errorMessage = isset($responseData['errors'][0]['message']) ? $responseData['errors'][0]['message'] : 'Unknown error';
+            return array(
+                'success' => false,
+                'message' => $errorMessage
+            );
+        }
     }
 }

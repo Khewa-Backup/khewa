@@ -1,11 +1,10 @@
 <?php
 
-namespace Lcobucci\JWT;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT;
 
-use Lcobucci\JWT\Validation\Constraint;
-use Lcobucci\JWT\Validation\NoConstraintsGiven;
-use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Validation\Constraint;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Validation\NoConstraintsGiven;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 interface Validator
 {
     /**
@@ -13,7 +12,6 @@ interface Validator
      * @throws NoConstraintsGiven
      */
     public function assert(Token $token, Constraint ...$constraints);
-
     /**
      * @return bool
      *

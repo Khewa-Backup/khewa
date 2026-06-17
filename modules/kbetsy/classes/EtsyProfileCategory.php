@@ -12,7 +12,9 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class EtsyProfileCategory extends ObjectModel
 {
     public $id_profile_category;
@@ -21,7 +23,7 @@ class EtsyProfileCategory extends ObjectModel
     public $prestashop_category;
     public $date_add;
     public $date_upd;
-    
+
     public static $definition = array(
         'table' => 'etsy_category_mapping',
         'primary' => 'id_profile_category',
@@ -42,7 +44,7 @@ class EtsyProfileCategory extends ObjectModel
                 'type' => self::TYPE_HTML,
                 'validate' => 'isCleanHTML'
             ),
-            
+
             'date_add' => array(
                 'type' => self::TYPE_DATE,
                 'validate' => 'isDate',
@@ -53,19 +55,19 @@ class EtsyProfileCategory extends ObjectModel
                 'validate' => 'isDate',
                 'copy_post' => false
             ),
-            
+
         ),
     );
-    
+
     public function __construct($id_profile_category = null)
     {
         parent::__construct($id_profile_category);
     }
-    
-    
+
+
     public static function getProfileCategory($id_etsy_profiles)
     {
-        $data = Db::getInstance()->executeS('SELECT * FROM '._DB_PREFIX_.'etsy_category_mapping WHERE id_etsy_profiles='.(int)$id_etsy_profiles);
+        $data = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'etsy_category_mapping WHERE id_etsy_profiles=' . (int)$id_etsy_profiles);
         return $data;
     }
 }

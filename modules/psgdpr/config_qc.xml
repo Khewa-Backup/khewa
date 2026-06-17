@@ -2,8 +2,8 @@
 <module>
     <name>psgdpr</name>
     <displayName><![CDATA[RGPD Officiel ]]></displayName>
-    <version><![CDATA[1.2.1]]></version>
-    <description><![CDATA[R&eacute;pondez aux obligations du R&egrave;glement g&eacute;n&eacute;ral sur la protection des donn&eacute;es (RGPD) gr&acirc;ce &agrave; ce module d&eacute;velopp&eacute; par PrestaShop.]]></description>
+    <version><![CDATA[1.4.3]]></version>
+    <description><![CDATA[Make your store comply with the General Data Protection Regulation (GDPR).]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[administration]]></tab>
 	<confirmUninstall><![CDATA[Êtes-vous sûr de vouloir désinstaller ce module?]]></confirmUninstall>

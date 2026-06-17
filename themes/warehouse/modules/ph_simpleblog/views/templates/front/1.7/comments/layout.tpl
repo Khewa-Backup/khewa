@@ -1,5 +1,5 @@
 <div class="blog-mb simpleblog__comments{if $post->comments == 0}-empty{/if}" id="phsimpleblog_comments">
-    <h2 class="section-title"><span>{l s='Comments' mod='ph_simpleblog'} ({$post->comments})</span></h2>
+    <h2 class="section-title"><span>{l s='Comments' d='Modules.Simpleblog.Shop'} ({$post->comments})</span></h2>
     {if $post->comments}
     <ul class="cardblog mb-0">
     	{foreach $comments as $comment}
@@ -12,7 +12,7 @@
                 {$comment.comment}
             </div>
             {if $comment.depth == 0} 
-                <button class="reply-simpleblog-button btn btn-secondary btn-sm mt-3" data-id-comment="{$comment.id}" type="button">{l s='Reply' mod='ph_simpleblog'}</button>
+                <button class="reply-simpleblog-button btn btn-secondary btn-sm mt-3" data-id-comment="{$comment.id}" type="button">{l s='Reply' d='Modules.Simpleblog.Shop'}</button>
             {/if}
             {if $comment.replies|@count > 0}
             {foreach $comment.replies as $commentReply}
@@ -34,7 +34,7 @@
     </ul>
     {else}
     	<div class="warning alert alert-warning mb-2">
-    		{l s='No comments at this moment' mod='ph_simpleblog'}
+    		{l s='No comments at this moment' d='Modules.Simpleblog.Shop'}
     	</div><!-- .warning -->
     {/if}
 </div>

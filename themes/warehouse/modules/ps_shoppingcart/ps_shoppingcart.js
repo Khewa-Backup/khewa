@@ -59,6 +59,7 @@ $(document).ready(function () {
 
                         $('#mobile-cart-products-count').text($(resp.preview).find('.cart-products-count-btn').first().text());
 
+
                         prestashop.emit('updatedAjaxCart', {});
                         if(event.reason.linkAction == 'delete-from-cart'){
                             prestashop.emit('updateProductListAddToCart',
@@ -67,7 +68,6 @@ $(document).ready(function () {
                                     id_product_attribute: event.reason.idProductAttribute,
                                     new_html: event.reason.newAddBtn
                                 });
-
                         } else{
                             prestashop.emit('updateProductListAddToCart',
                                 {
@@ -75,6 +75,9 @@ $(document).ready(function () {
                                     id_product_attribute: event.reason.idProductAttribute,
                                     new_html: $(resp.preview).find('#updated-add-cart-btn-' + event.reason.idProduct + '-' + event.reason.idProductAttribute).html()
                                 });
+                        }
+                        if(event.reason.linkPlace == 'cart-preview'){
+                            prestashop.emit('updateProduct', {});
                         }
 
                         if (resp.modal) {

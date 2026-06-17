@@ -9,7 +9,6 @@ return array(
     'Symfony\\Component\\CssSelector\\' => array($vendorDir . '/symfony/css-selector'),
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
     'PrestaShop\\Module\\BlockReassurance\\' => array($baseDir . '/src'),
-    'PrestaShop\\CircuitBreaker\\' => array($vendorDir . '/prestashop/circuit-breaker/src'),
     'GuzzleHttp\\Subscriber\\Cache\\' => array($vendorDir . '/guzzlehttp/cache-subscriber/src'),
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),
     'GuzzleHttp\\Ring\\' => array($vendorDir . '/guzzlehttp/ringphp/src'),

@@ -1,5 +1,5 @@
 /**
- * 2007-2019 PrestaShop
+ * 2007-2022 Stripe
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  *
  * @author    202-ecommerce <tech@202-ecommerce.com>
  * @copyright Copyright (c) Stripe
- * @license   Commercial license
+ * @license   Academic Free License (AFL 3.0)
  */
 
 $(function(){
@@ -336,13 +336,15 @@ $(function(){
           });
         } else if (payment === 'oxxo') {
           if (typeof paymentIntentDatas != 'undefined') {
+            let oxxo_name = $('#oxxo-name').val();
+            let oxxo_email = $('#oxxo-email').val();
             const response = stripe.confirmOxxoPayment(
               paymentIntentDatas.intent.client_secret,
               {
                 payment_method: {
                   billing_details: {
-                    name: $('#oxxo-name').val(),
-                    email: $('#oxxo-email').val(),
+                    name: oxxo_name,
+                    email: oxxo_email,
                   },
                 },
               },
@@ -354,7 +356,12 @@ $(function(){
                 if (response.error) {
                   // Display error to your customer
                   var errorMsg = document.getElementById('error-message');
-                  errorMsg.innerText = response.error.message;
+
+                  if (oxxo_name == '' || oxxo_email == '') {
+                    response.error.message = 'Name and Email fields are required';
+                  }
+
+                  updateError(errorMsg, response.error);
                 } else {
                   redirectAfterOrder(response);
                 }

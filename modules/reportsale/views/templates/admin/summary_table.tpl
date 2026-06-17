@@ -1,5 +1,5 @@
 {*
-* 2007-2021 PrestaShop
+* 2007-2023 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,32 +18,32 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author Buy-addons <contact@buy-addons.com>
-*  @copyright  2007-2021 Buy-addons
+*  @copyright  2007-2023 Buy-addons
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 {if count($summary) > 0}
 <div class="summary_parent">
-	<div class="summary_wrapper">
-		{assign var="i" value="0"}
-		{foreach from=$fields_list item=field key=k}
-		{assign var="i" value=$i + 1}
-		<div class="summary_col_{$i|escape:'htmlall':'UTF-8'} summary_col">
-			{foreach from=$summary.$k item=line}
-				<span class="summary_line">{$line|escape:'htmlall':'UTF-8'}</span>
-			{/foreach}
-		</div>
-		{/foreach}
-	</div>
+    <div class="summary_wrapper">
+        {assign var="i" value="0"}
+        {foreach from=$fields_list item=field key=k}
+        {assign var="i" value=$i + 1}
+        <div class="summary_col_{$i|escape:'htmlall':'UTF-8'} summary_col">
+            {foreach from=$summary.$k item=line}
+                <span class="summary_line">{$line|escape:'htmlall':'UTF-8'}</span>
+            {/foreach}
+        </div>
+        {/foreach}
+    </div>
 </div>
 {literal}
 <script>
 /**** align Summary block ***********/
 jQuery(document).ready(function(){
-	reportsale_alignSummaryTable();
-	$(".panel.col-lg-12 .table-responsive-row, .panel.col-lg-12 .table-responsive").scroll(function(){
-		reportsale_alignSummaryTable();
-	});
+    reportsale_alignSummaryTable();
+    $(".panel.col-lg-12 .table-responsive-row, .panel.col-lg-12 .table-responsive").scroll(function(){
+        reportsale_alignSummaryTable();
+    });
 });
 </script>
 {/literal}

@@ -1,0 +1,319 @@
+/**
+ * @author    ELEGANTAL <info@elegantal.com>
+ * @copyright (c) 2023, ELEGANTAL <www.elegantal.com>
+ * @license   Proprietary License - It is forbidden to resell or redistribute copies of the module or modified copies of the module.
+ */
+
+/** General Bootstrap **/
+#content .elegantalBootstrapWrapper {
+    position: relative;
+}
+#content .elegantalBootstrapWrapper textarea {
+    min-height: 180px;
+    resize: vertical !important;
+}
+#content .elegantalBootstrapWrapper .help-block {
+    clear: both !important;
+}
+#content .elegantalBootstrapWrapper select[multiple] {
+    width: auto !important;
+    height: auto !important;
+    min-width: 400px;
+    min-height: 120px;
+}
+#content .elegantalBootstrapWrapper .fixed-width-xl {
+    width: 400px !important;
+}
+#content .elegantalBootstrapWrapper .fixed-width-xl[multiple] {
+    width: auto !important;
+    height: auto !important;
+    min-width: 500px;
+    min-height: 300px;
+}
+@media (max-width: 992px) {
+    #content .elegantalBootstrapWrapper select[multiple] {
+        min-width: 200px;
+        width: 100% !important;
+    }
+    #content .elegantalBootstrapWrapper .fixed-width-xl {
+        width: 100% !important;
+    }
+}
+
+#content .elegantalBootstrapWrapper .panel .panel-heading {
+    position: relative;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+#content .elegantalBootstrapWrapper .panel .panel-heading .panel-heading-action {
+    text-align: center;
+}
+#content .elegantalBootstrapWrapper .panel .panel-heading:after,
+#content .elegantalBootstrapWrapper .panel .panel-footer::after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+}
+#content .elegantalBootstrapWrapper .panel .panel-footer {
+    overflow: visible !important;
+    height: auto !important;
+    padding: 15px;
+}
+#content .elegantalBootstrapWrapper .panel .panel-footer .btn {
+    font-size: 12px !important;
+    line-height: 1.6;
+    padding: 6px 10px;
+    margin: 0 3px;
+}
+#content .elegantalBootstrapWrapper .panel .panel-footer .btn i,
+#content .elegantalBootstrapWrapper .panel .panel-footer .btn-group i {
+    display: inline;
+}
+#content .elegantalBootstrapWrapper .panel .panel-footer [class^="process-icon-"] {
+    display: block !important;
+}
+#content .elegantalBootstrapWrapper .panel table td .btn-group i {
+    display: inline;
+    font-size: 14px;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+#content .elegantalBootstrapWrapper .btn,
+#content .elegantalBootstrapWrapper .table .btn-group .btn {
+    display: inline-block !important;
+}
+
+#content .elegantalBootstrapWrapper .btn-default:hover,
+#content .elegantalBootstrapWrapper .btn-default:focus,
+#content .elegantalBootstrapWrapper .btn-default:active,
+#content .elegantalBootstrapWrapper .btn-default.active {
+    color: #fff;
+    background-color: #889da2;
+    border-color: #889da2 !important;
+}
+#content .elegantalBootstrapWrapper .btn-default:hover i,
+#content .elegantalBootstrapWrapper .btn-default:focus i,
+#content .elegantalBootstrapWrapper .btn-default:active i,
+#content .elegantalBootstrapWrapper .btn-default.active i {
+    color: #fff;
+}
+#content .elegantalBootstrapWrapper .btn-default:active,
+#content .elegantalBootstrapWrapper .btn-default:focus {
+    -webkit-box-shadow: 0 0 0 0.2rem rgb(136 157 162 / 50%);
+    box-shadow: 0 0 0 0.2rem rgb(136 157 162 / 50%);
+}
+#content .elegantalBootstrapWrapper .btn-group .btn-warning {
+    color: #fff;
+    background-color: #fbbb22;
+    border-color: #fbb309;
+}
+#content .elegantalBootstrapWrapper .btn-warning:hover,
+#content .elegantalBootstrapWrapper .btn-warning:focus,
+#content .elegantalBootstrapWrapper .btn-warning:active,
+#content .elegantalBootstrapWrapper .btn-warning.active {
+    color: #fff;
+    background-color: #e6a304;
+    border-color: #c38a04;
+}
+#content .elegantalBootstrapWrapper .btn-group .btn-success {
+    color: #fff;
+    background-color: #72c279;
+    border-color: #60ba68;
+}
+#content .elegantalBootstrapWrapper .btn-success:hover,
+#content .elegantalBootstrapWrapper .btn-success:focus,
+#content .elegantalBootstrapWrapper .btn-success:active,
+#content .elegantalBootstrapWrapper .btn-success.active {
+    color: #fff;
+    background-color: #4eb357;
+    border-color: #439a4a;
+}
+#content .elegantalBootstrapWrapper .btn-group .btn-danger {
+    color: #fff;
+    background-color: #e08f95;
+    border-color: #da7b82;
+}
+#content .elegantalBootstrapWrapper .btn-danger:hover,
+#content .elegantalBootstrapWrapper .btn-danger:focus,
+#content .elegantalBootstrapWrapper .btn-danger:active,
+#content .elegantalBootstrapWrapper .btn-danger.active {
+    color: #fff;
+    background-color: #d5676f;
+    border-color: #cd4b55;
+}
+#content .elegantalBootstrapWrapper .btn-group .caret {
+    -webkit-transition: 0.25s ease-out;
+    transition: 0.25s ease-out;
+}
+#content .elegantalBootstrapWrapper .btn-group .btn-default .caret {
+    border-top-color: #6c868e !important;
+}
+#content .elegantalBootstrapWrapper .btn-group .btn-info .caret,
+#content .elegantalBootstrapWrapper .btn-group .btn-success .caret,
+#content .elegantalBootstrapWrapper .btn-group .btn-warning .caret,
+#content .elegantalBootstrapWrapper .btn-group .btn-danger .caret,
+#content .elegantalBootstrapWrapper .btn-group .btn-primary .caret,
+#content .elegantalBootstrapWrapper .btn-group .btn-default:hover .caret,
+#content .elegantalBootstrapWrapper .btn-group .btn-default:focus .caret,
+#content .elegantalBootstrapWrapper .btn-group .btn-default:active .caret {
+    border-top-color: #fff !important;
+}
+
+/** General ELEGANTAL **/
+#content .elegantalBootstrapWrapper .elegantal_hidden,
+#content .elegantalBootstrapWrapper .elegantaleasyimportJsDef {
+    display: none;
+}
+#content .elegantalBootstrapWrapper .pull_right {
+    float: right;
+}
+#content .elegantalBootstrapWrapper .pull_left {
+    float: left;
+}
+#content .elegantalBootstrapWrapper .elegantal_panel_footer .btn,
+#content .elegantalBootstrapWrapper .elegantal_panel_footer .btn-group {
+    float: right;
+}
+#content .elegantalBootstrapWrapper .alert.alert_with_link_icon:before {
+    content: "\F0C1";
+    font-size: 25px;
+    top: 15px;
+}
+
+/** Short-Codes **/
+#content .elegantal_shortcodes {
+    display: none;
+}
+#content .elegantalBootstrapWrapper .elegantal_shortcodes_wrapper h3 {
+    margin: 0;
+    padding: 0;
+    height: auto;
+    border: 0;
+    text-transform: uppercase;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 1.2;
+}
+#content .elegantalBootstrapWrapper .elegantal_shortcodes_list {
+    list-style: none;
+    margin: 0 0 10px 0 !important;
+    padding: 0;
+    clear: both;
+}
+#content .elegantalBootstrapWrapper .elegantal_shortcodes_list li {
+    padding: 2px 0;
+    font-size: 14px;
+}
+#content .elegantalBootstrapWrapper .elegantal_shortcodes_list li span {
+    color: #00aff0;
+    cursor: pointer;
+}
+#content .elegantalBootstrapWrapper .elegantal_shortcodes_list li span:hover {
+    color: #0077a4;
+    cursor: pointer;
+    border-bottom: 1px solid #0077a4;
+}
+
+/** Popover in Form Edit Page **/
+#content .elegantalBootstrapWrapper .popover.bottom > .arrow {
+    border-bottom-color: #999 !important;
+}
+#content .elegantalBootstrapWrapper table .popover {
+    min-width: 300px;
+    max-width: none !important;
+}
+#content .elegantalBootstrapWrapper .form-group .popover {
+    width: 99% !important;
+    max-width: none !important;
+}
+#content .elegantalBootstrapWrapper .form-group .popover ul {
+    list-style: none;
+    padding: 0;
+}
+
+/** Home Page **/
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns {
+    padding: 20px 0;
+}
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns .elegantal_home_list_btn {
+    display: block;
+    position: relative;
+    line-height: normal;
+    margin-bottom: 10px;
+    color: #555;
+    text-decoration: none;
+    text-align: center;
+}
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns .elegantal_home_list_btn .btn_icon {
+    display: block;
+    position: relative;
+    background: #fff;
+    height: 100px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #e1e1e1;
+    padding-top: 20px;
+    color: #555;
+    margin-bottom: 5px;
+}
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns .elegantal_home_list_btn .btn_icon .elegantal_version_num {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    color: #aaa;
+    font-size: 10px;
+}
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns .elegantal_home_list_btn .btn_icon i {
+    font-size: 60px;
+}
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns .elegantal_home_list_btn .btn_text {
+    display: inline-block;
+    text-transform: uppercase;
+    min-height: 35px;
+}
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns .elegantal_home_list_btn:hover,
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns .elegantal_home_list_btn:focus,
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns .elegantal_home_list_btn:active {
+    text-decoration: none;
+    color: #333;
+}
+#content .elegantalBootstrapWrapper .elegantal_home_list_btns .elegantal_home_list_btn:hover .btn_icon {
+    box-shadow: 0px 1px 3px #ddd;
+    border-color: #d5d5d5;
+    color: #333;
+}
+
+/** HTML Block List Page and Sortable Table **/
+#content .elegantalBootstrapWrapper .elegantal_sortable_table tbody:after {
+    content: " ";
+    display: block;
+    height: 55px;
+}
+#content .elegantalBootstrapWrapper .ui-sortable-helper {
+    display: table;
+    border: 1px solid #d5d5d5;
+    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 0 6px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 0 6px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 6px;
+}
+#content .elegantalBootstrapWrapper .ui-sortable-helper td {
+    border-color: #d5d5d5 !important;
+}
+#content .elegantalBootstrapWrapper .position_handle {
+    cursor: pointer;
+}
+#content .elegantalBootstrapWrapper .position_handle i {
+    color: #999;
+    padding-right: 5px;
+}
+#content .elegantalBootstrapWrapper .position_handle:hover i {
+    color: #666;
+}
+#content .elegantalBootstrapWrapper .process-icon-facebook:before {
+    content: "";
+}
+#content .elegantalBootstrapWrapper .process-icon-twitter:before {
+    content: "";
+}

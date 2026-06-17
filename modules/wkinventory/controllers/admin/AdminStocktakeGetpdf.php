@@ -13,13 +13,6 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 */
  
-if (!class_exists('mPDF')) {
-    include_once(_PS_ROOT_DIR_.'/modules/wkinventory/libraries/mpdf_lib/mpdf.php');
-}
-if (!class_exists('fpdi_pdf_parser')) {
-    include_once(_PS_ROOT_DIR_.'/modules/wkinventory/libraries/mpdf_lib/vendor/setasign/fpdi/fpdi_pdf_parser.php');
-}
-
 class AdminStocktakegetpdfController extends ModuleAdminController
 {
     private $template_dir;
@@ -28,10 +21,11 @@ class AdminStocktakegetpdfController extends ModuleAdminController
 
     public function __construct()
     {
-        include dirname(__FILE__).'/../../classes/StockTake.php';
-        include dirname(__FILE__).'/../../classes/StockTakeProduct.php';
-        include dirname(__FILE__).'/../../classes/StockTakeLog.php';
-        include dirname(__FILE__).'/../../classes/Workshop.php';
+        require_once dirname(__FILE__).'/../../libs/mpdf/vendor/autoload.php';
+        include_once dirname(__FILE__).'/../../classes/StockTake.php';
+        include_once dirname(__FILE__).'/../../classes/StockTakeProduct.php';
+        include_once dirname(__FILE__).'/../../classes/StockTakeLog.php';
+        include_once dirname(__FILE__).'/../../classes/Workshop.php';
 
         $this->bootstrap = true;
         $this->display = 'view';
@@ -47,7 +41,7 @@ class AdminStocktakegetpdfController extends ModuleAdminController
         $module_dir = _PS_ROOT_DIR_.'/modules/'.$this->module->name.'/';
 
         $this->pdf_list_dir = $module_dir.'pdf_list/';
-        $this->template_dir = $module_dir.'libraries/templates/'.$template_name.'/';
+        $this->template_dir = $module_dir.'libs/templates/'.$template_name.'/';
         $this->products2page = 10;
     }
 
@@ -64,7 +58,7 @@ class AdminStocktakegetpdfController extends ModuleAdminController
                 Tools::getValue('createpdf'),
                 Tools::getValue('page_num'),
                 Tools::getValue('pdf_length'),
-                Tools::jsonDecode(htmlspecialchars_decode(Tools::getValue('post_data')))
+                json_decode(htmlspecialchars_decode(Tools::getValue('post_data')))
             );
             echo $page_num;
             exit();
@@ -72,12 +66,12 @@ class AdminStocktakegetpdfController extends ModuleAdminController
         if (Tools::getValue('getpdf')) {
             if (Tools::getValue('pdfList')) {
                 $this->concatePDF(
-                    Tools::jsonDecode(htmlspecialchars_decode(Tools::getValue('post_data'))),
+                    json_decode(htmlspecialchars_decode(Tools::getValue('post_data'))),
                     Tools::getValue('pdfList'),
                     Tools::getValue('key') + 1
                 );
             } else {
-                $this->concatePDF(Tools::jsonDecode(htmlspecialchars_decode(Tools::getValue('post_data'))));
+                $this->concatePDF(json_decode(htmlspecialchars_decode(Tools::getValue('post_data'))));
             }
             exit();
         }
@@ -106,7 +100,6 @@ class AdminStocktakegetpdfController extends ModuleAdminController
             $inventory = new StockTake($id_inventory);
             if (Validate::isLoadedObject($inventory)) {
                 $results = $inventory->getInventoryProducts(true, false);
-
                 foreach ($results as $result) {
                     $inventories_products_ids[] = (int)$result['id_inventory_product'];
                 }
@@ -118,13 +111,13 @@ class AdminStocktakegetpdfController extends ModuleAdminController
         }
 
         if (count($this->errors) == 0) {
-            $this->tpl_view_vars['inventories_products_ids'] = Tools::jsonEncode($inventories_products_ids);
+            $this->tpl_view_vars['inventories_products_ids'] = json_encode($inventories_products_ids);
             $this->tpl_view_vars['parts'] = count(array_chunk($inventories_products_ids, $products2pdf));
             $post_data = $_POST;
             $post_data['parts'] = $this->tpl_view_vars['parts'];
             $post_data['products2pdf'] = $products2pdf;
             $post_data['id_inventory'] = $id_inventory;
-            $this->tpl_view_vars['post_data'] = Tools::jsonEncode($post_data);
+            $this->tpl_view_vars['post_data'] = json_encode($post_data);
             $this->tpl_view_vars['url'] = $this->context->link->getAdminLink('AdminStocktakegetpdf', true);
             $this->tpl_view_vars['getpdflink'] = $this->context->link->getAdminLink('AdminStocktakegetpdf', true).'&getpdf=1';
 
@@ -149,27 +142,26 @@ class AdminStocktakegetpdfController extends ModuleAdminController
     ) {
         //$this->setEnvironmentParameters();
         $store_name = Configuration::get('PS_SHOP_NAME');
-
         $post_data = (array)$post_data;
         $post_data['pdf_num'] = $pdf_num;
 
         $sql = 'SELECT a.`id_product`, a.`real_quantity`, a.`unit_price`,
-                IF(a.`id_product_attribute` > 0, pa.`reference`, p.`reference`) as reference,
-                IF(a.`id_product_attribute` > 0, pa.`ean13`, p.`ean13`) as ean13, pl.`name`
-                FROM `'._DB_PREFIX_.StockTakeProduct::$definition['table'].'` a 
-                LEFT JOIN `'._DB_PREFIX_.'product` p ON (p.`id_product` = a.`id_product`) 
-                '.Shop::addSqlAssociation('product', 'p').'
-                LEFT JOIN `'._DB_PREFIX_.'product_lang` pl ON (
-                    p.`id_product` = pl.`id_product` AND pl.`id_lang` = '.(int)$this->context->language->id
-                    .Shop::addSqlRestrictionOnLang('pl').'
-                )
-                LEFT JOIN `'._DB_PREFIX_.'product_attribute` pa ON (
-                    a.`id_product_attribute` = pa.`id_product_attribute`
-                )
-                WHERE a.`id_inventory` = '.(int)$post_data['id_inventory'].' AND 
-                a.`'.StockTakeProduct::$definition['primary'].'` IN (%inventories_products_ids%)
-                ORDER BY a.`'.StockTakeProduct::$definition['primary'].'` DESC
-                LIMIT %offset%, %limit%';
+					IF(a.`id_product_attribute` > 0, pa.`reference`, p.`reference`) as reference,
+					IF(a.`id_product_attribute` > 0, pa.`ean13`, p.`ean13`) as ean13, pl.`name`
+					FROM `'._DB_PREFIX_.StockTakeProduct::$definition['table'].'` a 
+					LEFT JOIN `'._DB_PREFIX_.'product` p ON (p.`id_product` = a.`id_product`) 
+					'.Shop::addSqlAssociation('product', 'p').'
+					LEFT JOIN `'._DB_PREFIX_.'product_lang` pl ON (
+						p.`id_product` = pl.`id_product` AND pl.`id_lang` = '.(int)$this->context->language->id
+						.Shop::addSqlRestrictionOnLang('pl').'
+					)
+					LEFT JOIN `'._DB_PREFIX_.'product_attribute` pa ON (
+						a.`id_product_attribute` = pa.`id_product_attribute`
+					)
+					WHERE a.`id_inventory` = '.(int)$post_data['id_inventory'].' AND 
+					a.`'.StockTakeProduct::$definition['primary'].'` IN (%inventories_products_ids%)
+					ORDER BY a.`'.StockTakeProduct::$definition['primary'].'` DESC
+					LIMIT %offset%, %limit%';
 
         $products = $this->getProducts($sql, $inventories_products_ids, $post_data);
         $create_result = array();
@@ -228,28 +220,28 @@ class AdminStocktakegetpdfController extends ModuleAdminController
                 }
             }
 
-            if (!empty($orientation)) {
-                $orientation = '-' . $orientation;
-            }
-
             $template_config_fonts = $this->template_dir.'fonts/template_config_fonts.php';
             if (file_exists($template_config_fonts)) {
                 define('_MPDF_SYSTEM_TTFONTS_CONFIG', $template_config_fonts);
             }
 
-            $mpdf = new mPDF(
-                $mode,
-                $format,
-                $default_font_size,
-                $default_font,
-                $margin_left,
-                $margin_right,
-                $margin_top,
-                $margin_bottom,
-                $margin_header,
-                $margin_footer,
-                $orientation
+            $config = array(
+                'format' => $format,
+                'mode' => $mode,
+                'default_font_size' => $default_font_size,
+                'default_font' => $default_font,
+                'margin_left' => $margin_left,
+                'margin_right' => $margin_right,
+                'margin_top' => $margin_top,
+                'margin_bottom' => $margin_bottom,
+                'margin_header' => $margin_header,
+                'margin_footer' => $margin_footer,
+                'orientation' => $orientation,
             );
+			$mpdf = new \Mpdf\Mpdf($config);
+			$mpdf->debug = false;
+			$mpdf->useSubstitutions = false;
+			$mpdf->simpleTables = false;
 
             if (Tools::strlen($stylesheet) > 0) {
                 $mpdf->WriteHTML($stylesheet, 1);
@@ -273,15 +265,12 @@ class AdminStocktakegetpdfController extends ModuleAdminController
 
                 $template_has_cover = Tools::strlen($page_html) > 0;
                 if ($template_has_cover === true) {
-                    $mpdf->OVO_SetMargins(0, 0, 0, 0, 0, 0);
+                    $mpdf->SetMargins(0, 0, 0);
                     $mpdf->WriteHTML($page_html);
-                    $mpdf->OVO_SetMargins(
+                    $mpdf->SetMargins(
                         $margin_left,
                         $margin_right,
-                        $margin_top,
-                        $margin_bottom,
-                        $margin_header,
-                        $margin_footer
+                        $margin_top
                     );
 
                     $type = 'E';       //$type = E|O|even|odd|next-odd|next-even
@@ -338,7 +327,7 @@ class AdminStocktakegetpdfController extends ModuleAdminController
                     $page_html = $this->context->smarty->fetch($this->template_dir.'back_page.tpl');
                 }
                 if (Tools::strlen($page_html) > 0) {
-                    $mpdf->OVO_SetMargins(0, 0, 0, 0, 0, 0); // Left, Right, Top, Bottom, MH MF
+                    $mpdf->SetMargins(0, 0, 0); // Left, Right, Top
                     $mpdf->WriteHTML($page_html);
                 }
             }
@@ -366,7 +355,7 @@ class AdminStocktakegetpdfController extends ModuleAdminController
             $inventory->id,
             true
         );
-        return Tools::jsonEncode($create_result);
+        return json_encode($create_result);
     }
 
     public function getProducts(&$sql, $inventories_products_ids, $options)
@@ -443,8 +432,10 @@ class AdminStocktakegetpdfController extends ModuleAdminController
             $first = reset($pdf_files);
             rename($this->pdf_list_dir.$first, $file_name_full);
         } else {
-            $mpdf = new mPDF('utf-8');
-            $mpdf->SetImportUse();
+			$mpdf = new \Mpdf\Mpdf(array(
+                'mode' => 'utf-8',
+            ));
+			$mpdf->enableImports = true;
 
             foreach ($pdf_files as $fk => $f) {
                 for ($i = 1; $i <= $mpdf->SetSourceFile($this->pdf_list_dir.$f); $i++) {
@@ -452,25 +443,25 @@ class AdminStocktakegetpdfController extends ModuleAdminController
                         $tpl_id = $mpdf->ImportPage(1);
                     }
                     $tpl_id = $mpdf->ImportPage($i);
-                    $pgw = $mpdf->tpls[$tpl_id]['w'];
-                    $pgh = $mpdf->tpls[$tpl_id]['h'];
-
-                    $orientation = $pgw > $pgh ? 'L' : 'P';
+					$size = $mpdf->getTemplateSize($tpl_id);
+                    $orientation = $size['width'] > $size['height'] ? 'L' : 'P';
 
                     $mpdf->AddPage($orientation);
-                    $mpdf->UseTemplate($tpl_id);
+                    $mpdf->useTemplate($tpl_id);
 
                     if ($fk == 1) {
                         break;
                     }
                 }
             }
-
+			if (ob_get_level() && ob_get_length() > 0) {
+				ob_clean();
+			}
             $mpdf->Output($file_name_full, 'F');
         }
         $json['link'] = $file_url_full.$file_version;
 
-        echo Tools::jsonEncode($json);
+        die(json_encode($json));
     }
 
     /**
@@ -547,7 +538,7 @@ class AdminStocktakegetpdfController extends ModuleAdminController
     {
         if (method_exists('Context', 'getTranslator')) {
             $this->translator = Context::getContext()->getTranslator();
-            $translated = $this->translator->trans($string);
+            $translated = $this->translator->trans($string, [], 'Modules.Wkinventory.Adminstocktakegetpdfcontroller');
             if ($translated !== $string) {
                 return $translated;
             }

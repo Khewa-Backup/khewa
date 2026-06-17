@@ -130,6 +130,29 @@ class OrdersExportSalesReportPro extends Module
     public function getContent()
     {
 
+        //delete
+        // $langs    = Language::getLanguages();
+        // $tabvalue = array(
+        //     array(
+        //         'class_name' => 'AdminReportExportConfig',
+        //         'id_parent'  => 2,
+        //         'module'     => 'ordersexportsalesreportpro',
+        //         'name'       => 'Advanced Orders Exports & Reports',
+        //     ),
+        // );
+        // foreach ( $tabvalue as $tab ) {
+        //     $newtab             = new Tab();
+        //     $newtab->class_name = $tab['class_name'];
+        //     $newtab->module     = $tab['module'];
+        //     $newtab->id_parent  = $tab['id_parent'];
+        //     $newtab->position  = 10;
+        //     foreach ( $langs as $l ) {
+        //         $newtab->name[ $l['id_lang'] ] = $this->l( $tab['name'] );
+        //     }
+        //     $newtab->save();
+        // }
+        //delete end
+
 
 
         //
@@ -157,8 +180,8 @@ class OrdersExportSalesReportPro extends Module
 
             if($_GET['auto_export'] == 'true'){
 
-                $do_export =  $this->doExport();
 
+                $do_export =  $this->doExport(); 
                 exit;
             }
         }

@@ -16,6 +16,7 @@
     <div class="col col-info">
         <div class="pb-1">
             <a href="{$product.url}">{$product.name}</a>
+            {$product.reference}
         </div>
 
         {block name='product_add_cart'}

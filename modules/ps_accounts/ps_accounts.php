@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -22,53 +23,66 @@ if (!defined('_PS_VERSION_')) {
 }
 require_once __DIR__ . '/vendor/autoload.php';
 
+if (!class_exists('\PrestaShop\Module\PsAccounts\Hook\HookableTrait')) {
+    ps_accounts_fix_upgrade();
+}
+
 class Ps_accounts extends Module
 {
-    const DEFAULT_ENV = '';
+    use \PrestaShop\Module\PsAccounts\Hook\HookableTrait;
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '4.0.0';
+    const VERSION = '8.0.9';
 
     /**
-     * @var array
-     */
-    public $adminControllers;
-
-    /**
-     * @var \Monolog\Logger
-     */
-    private $logger;
-
-    /**
-     * List of hook to install at the installation of the module
+     * Admin tabs
      *
-     * @var array
+     * @var array class names
      */
-    private $hookToInstall = [
-        'actionObjectShopUrlUpdateAfter',
-        //'addWebserviceResources',
+    private $adminControllers = [
+        'AdminAjaxPsAccountsController',
+        'AdminAjaxV2PsAccountsController',
+        'AdminOAuth2PsAccountsController',
+        'AdminLoginPsAccountsController',
     ];
 
     /**
-     * @var \PrestaShop\Module\PsAccounts\DependencyInjection\ServiceContainer
-     */
-    private $serviceContainer;
-
-//    /**
-//     * @var \Symfony\Component\DependencyInjection\ContainerInterface
-//     */
-//    protected $container;
-
-    /**
+     * Hooks exposed by the module
+     *
      * @var array
      */
-    private $configuration;
+    private $customHooks = [
+        [
+            'name' => 'actionShopAccessTokenRefreshAfter',
+            'title' => 'Shop access token refreshed event',
+            'description' => 'Shop access token refreshed event',
+            'position' => 1,
+        ],
+    ];
 
     /**
-     * @var \PrestaShop\Module\PsAccounts\Installer\Installer
+     * Hooks to register
+     *
+     * @var array hook or class names
      */
-    private $moduleInstaller;
+    private $hooks = [
+        //\PrestaShop\Module\PsAccounts\Hook\ActionAdminLoginControllerLoginAfter::class,
+        'actionAdminLoginControllerLoginAfter',
+        'actionAdminLoginControllerSetMedia',
+        //'actionAdminControllerSetMedia',
+        'displayBackOfficeHeader',
+        'actionObjectEmployeeDeleteAfter',
+        'actionObjectShopAddAfter',
+        'actionObjectShopDeleteAfter',
+        'actionShopAccessTokenRefreshAfter',
+        'displayBackOfficeEmployeeMenu',
+    ];
+
+    /**
+     * @var \PrestaShop\Module\PsAccounts\ServiceContainer\PsAccountsContainer
+     */
+    private $moduleContainer;
 
     /**
      * Ps_accounts constructor.
@@ -79,46 +93,39 @@ class Ps_accounts extends Module
         $this->tab = 'administration';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
-        $this->bootstrap = false;
+        $this->bootstrap = true;
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '4.0.0';
+        $this->version = '8.0.9';
 
         $this->module_key = 'abf2cd758b4d629b2944d3922ef9db73';
 
         parent::__construct();
 
-        $this->moduleInstaller = $this->getService(\PrestaShop\Module\PsAccounts\Installer\Installer::class);
+        $this->displayName = $this->l('PrestaShop Account');
+        $this->description = $this->l(
+            'Link your store to your PrestaShop account to activate and manage your subscriptions in your ' .
+                'back office. Do not uninstall this module if you have a current subscription.'
+        );
+        $this->description_full = $this->l(
+            'Link your store to your PrestaShop account to activate and manage your subscriptions in your ' .
+                'back office. Do not uninstall this module if you have a current subscription.'
+        );
+        $this->confirmUninstall = $this->l(
+            'This action will prevent immediately your PrestaShop services and Community services from ' .
+                'working as they are using PrestaShop Accounts module for authentication.'
+        );
 
-        $this->displayName = $this->l('ps_accounts.display_name');
-        $this->description = $this->l('ps_accounts.description');
-        $this->description_full = $this->l('ps_accounts.description_full');
-        $this->confirmUninstall = $this->l('ps_accounts.confirm_uninstall');
-
-        $this->ps_versions_compliancy = ['min' => '1.6', 'max' => _PS_VERSION_];
-
-        $this->adminControllers = [
-            'hmac' => 'AdminConfigureHmacPsAccounts',
-            'ajax' => 'AdminAjaxPsAccounts',
-            'debug' => 'AdminDebugPsAccounts',
-        ];
-
-        $this->getLogger()->info('Loading ' . $this->name . ' Env : [' . $this->getModuleEnv() . ']');
+        $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
     }
 
     /**
-     * @return \Monolog\Logger
+     * @return \PrestaShop\Module\PsAccounts\Vendor\Monolog\Logger
      */
     public function getLogger()
     {
-        if (null !== $this->logger) {
-            return $this->logger;
-        }
-
-        $this->logger = PrestaShop\Module\PsAccounts\Factory\PsAccountsLogger::create();
-
-        return $this->logger;
+        return $this->getService('ps_accounts.logger');
     }
 
     /**
@@ -130,11 +137,26 @@ class Ps_accounts extends Module
     }
 
     /**
-     * @return array
+     * @return bool
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws Exception
      */
-    public function getAdminControllers()
+    public function install()
     {
-        return $this->adminControllers;
+        $installer = new PrestaShop\Module\PsAccounts\Module\Install($this, Db::getInstance());
+
+        $status = $installer->installInMenu()
+            && $installer->installDatabaseTables()
+            && parent::install()
+            && $this->addCustomHooks($this->customHooks)
+            && $this->registerHook($this->getHooksToRegister());
+
+        // FIXME: implement safe "reset" method
+        $this->onModuleReset();
+
+        return $status;
     }
 
     /**
@@ -142,254 +164,329 @@ class Ps_accounts extends Module
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws Throwable
-     */
-    public function install()
-    {
-        // if ps version is 1.7.6 or above
-        if (version_compare(_PS_VERSION_, '1.7.6.0', '>=')) {
-            array_push($this->hookToInstall, 'actionMetaPageSave');
-        } else {
-            array_push($this->hookToInstall, 'displayBackOfficeHeader');
-        }
-
-        $installer = new PrestaShop\Module\PsAccounts\Module\Install($this, Db::getInstance());
-
-        $status = $installer->installInMenu()
-            //&& $installer->installDatabaseTables()
-            && parent::install()
-            && $this->registerHook($this->hookToInstall);
-
-        // Ignore fail on ps_eventbus install
-        $this->moduleInstaller->installModule('ps_eventbus');
-
-        return $status;
-    }
-
-    /**
-     * @return bool
      */
     public function uninstall()
     {
         $uninstaller = new PrestaShop\Module\PsAccounts\Module\Uninstall($this, Db::getInstance());
 
         return $uninstaller->uninstallMenu()
-            //&& $uninstaller->uninstallDatabaseTables()
+            && $uninstaller->uninstallDatabaseTables()
             && parent::uninstall();
+    }
+
+    /**
+     * @phpstan-ignore-next-line
+     *
+     * @return \PrestaShop\PrestaShop\Adapter\SymfonyContainer|\Symfony\Component\DependencyInjection\ContainerInterface|null
+     */
+    public function getCoreServiceContainer()
+    {
+        /* @phpstan-ignore-next-line */
+        if (method_exists($this, 'getContainer')) {
+            return $this->getContainer();
+        }
+
+        if (class_exists('\PrestaShop\PrestaShop\Adapter\SymfonyContainer')) {
+            return \PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return \PrestaShop\Module\PsAccounts\ServiceContainer\PsAccountsContainer
+     *
+     * @throws Exception
+     */
+    public function getServiceContainer()
+    {
+        if (null === $this->moduleContainer) {
+            $this->moduleContainer = (new \PrestaShop\Module\PsAccounts\ServiceContainer\PsAccountsContainer(
+                __DIR__ . '/config.php'
+            ))->init();
+        }
+
+        return $this->moduleContainer;
     }
 
     /**
      * @param string $serviceName
      *
      * @return mixed
-     *
-     * @throws Exception
      */
     public function getService($serviceName)
     {
-        if (null === $this->serviceContainer) {
-            //$this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
-            $this->serviceContainer = new \PrestaShop\Module\PsAccounts\DependencyInjection\ServiceContainer(
-                // append version number to force cache generation (1.6 Core won't clear it)
-                $this->name . str_replace(['.', '-'], '', $this->version),
-                $this->getLocalPath(),
-                $this->getModuleEnv()
-            );
-        }
-
-        return $this->serviceContainer->getService($serviceName);
+        return $this->getServiceContainer()->getService($serviceName);
     }
 
-//    /**
-//     * Override of native function to always retrieve Symfony container instead of legacy admin container on legacy context.
-//     *
-//     * @param string $serviceName
-//     *
-//     * @return mixed
-//     */
-//    public function getService($serviceName)
-//    {
-//        if ((new \PrestaShop\Module\PsAccounts\Context\ShopContext())->isShop173()) {
-//            // 1.7.3
-//            // 1.7.6
-//            //$this->context->controller->getContainer()
-//
-//            if (null === $this->container) {
-//                $this->container = \PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance();
-//            }
-//        }
-//        return $this->container->get($serviceName);
-//    }
-
     /**
-     * Hook executed on every backoffice pages
-     * Used in order to listen changes made to the AdminMeta controller
-     *
-     * @since 1.6
-     * @deprecated since 1.7.6
-     *
-     * @param array $params
+     * @param string $serviceName
      *
      * @return bool
-     *
-     * @throws \Exception
      */
-    public function hookDisplayBackOfficeHeader($params)
+    public function hasService($serviceName)
     {
-        // Add a limitation in order to execute the code only if we are on the AdminMeta controller
-        if ($this->context->controller->controller_name !== 'AdminMeta') {
-            return false;
-        }
-
-        // If multishop is enable don't continue
-        if (true === \Shop::isFeatureActive()) {
-            return false;
-        }
-
-        // If a changes is make to the meta form
-        if (Tools::isSubmit('submitOptionsmeta')) {
-            $domain = Tools::getValue('domain'); // new domain to update
-            $domainSsl = Tools::getValue('domain_ssl'); // new domain with ssl - needed ?
-
-            $bodyHttp = [
-                'params' => $params,
-                'domain' => $domain,
-                'domain_ssl' => $domainSsl,
-            ];
-
-            /** @var \PrestaShop\Module\PsAccounts\Service\ShopLinkAccountService $shopLinkAccountService */
-            $shopLinkAccountService = $this->getService(
-                \PrestaShop\Module\PsAccounts\Service\ShopLinkAccountService::class
-            );
-
-            $shopLinkAccountService->updateShopUrl($bodyHttp, '1.6');
-        }
-
-        return true;
+        return $this->getServiceContainer()->has($serviceName);
     }
 
     /**
-     * Hook executed when performing some changes to the meta page and save them
+     * @param string $name
+     * @param mixed $default
      *
-     * @since 1.7.6
-     *
-     * @param array $params
+     * @return mixed
+     */
+    public function getParameter($name, $default = null)
+    {
+        return $this->getServiceContainer()->getParameter($name, $default);
+    }
+
+    /**
+     * @param string $name
      *
      * @return bool
-     *
-     * @throws \Exception
      */
-    public function hookActionMetaPageSave($params)
+    public function hasParameter($name)
     {
-        // If multishop is enable don't continue
-        if (true === \Shop::isFeatureActive()) {
-            return false;
-        }
-
-        $bodyHttp = [
-            'params' => $params,
-            'domain' => $params['form_data']['shop_urls']['domain'],
-            'domain_ssl' => $params['form_data']['shop_urls']['domain_ssl'],
-        ];
-
-        /** @var \PrestaShop\Module\PsAccounts\Service\ShopLinkAccountService $shopLinkAccountService */
-        $shopLinkAccountService = $this->getService(
-            \PrestaShop\Module\PsAccounts\Service\ShopLinkAccountService::class
-        );
-
-        $shopLinkAccountService->updateShopUrl($bodyHttp, '1.7.6');
-
-        return true;
+        return $this->getServiceContainer()->hasParameter($name);
     }
 
     /**
-     * Hook trigger when a change is made on the domain name
-     *
-     * @param array $params
+     * @return array
+     */
+    public function getAdminControllers()
+    {
+        return array_map(function ($className) {
+            return preg_replace('/^.*?(\w+)Controller$/', '\1', $className);
+        //return preg_replace('/^(.*?)Controller$/', '\1', $className);
+        }, $this->adminControllers);
+    }
+
+    /**
+     * @return array
+     */
+    public function getHooksToRegister()
+    {
+        return array_map(function ($className) {
+            return is_a($className, '\PrestaShop\Module\PsAccounts\Hook\Hook', true) ?
+                $className::getName() : $className;
+        }, $this->hooks);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomHooks()
+    {
+        return $this->customHooks;
+    }
+
+    /**
+     * @param array $customHooks
      *
      * @return bool
-     *
-     * @throws Exception
      */
-    public function hookActionObjectShopUrlUpdateAfter($params)
+    public function addCustomHooks($customHooks)
     {
-        $bodyHttp = [
-            'params' => $params,
-            'domain' => $params['object']->domain,
-            'domain_ssl' => $params['object']->domain_ssl,
-            'shop_id' => $params['object']->id_shop,
-            'main' => $params['object']->main,
-            'active' => $params['object']->active,
-        ];
+        $ret = true;
+        foreach ($customHooks as $customHook) {
+            try {
+                $verify = true;
+                if ((bool) Hook::getIdByName($customHook['name']) === false) {
+                    $hook = new Hook();
+                    $hook->name = $customHook['name'];
+                    $hook->title = $customHook['title'];
+                    $hook->description = $customHook['description'];
+                    $hook->position = $customHook['position'];
+                    $verify = $hook->add(); // return true on success
+                }
+                $ret = $ret && $verify;
+            } catch (\Throwable $e) {
+                /* @phpstan-ignore-next-line */
+            } catch (\Exception $e) {
+            }
+        }
 
-        /** @var \PrestaShop\Module\PsAccounts\Service\ShopLinkAccountService $shopLinkAccountService */
-        $shopLinkAccountService = $this->getService(
-            \PrestaShop\Module\PsAccounts\Service\ShopLinkAccountService::class
-        );
-
-        $shopLinkAccountService->updateShopUrl($bodyHttp, 'multishop');
-
-        return true;
+        return $ret;
     }
 
     /**
-     * @return string
-     */
-    public function getModuleEnvVar()
-    {
-        return strtoupper($this->name) . '_ENV';
-    }
-
-    /**
-     * @param string $default
-     *
-     * @return string
-     */
-    public function getModuleEnv($default = null)
-    {
-        return getenv($this->getModuleEnvVar()) ?: $default ?: self::DEFAULT_ENV;
-    }
-
-    /**
-     * Load the configuration form.
+     * Render the configuration form.
      *
      * @return string
      *
-     * @throws Throwable
+     * @throws PrestaShopException
      */
     public function getContent()
     {
-        $this->loadAssets(\Tools::getValue('google_message_error'), \Tools::getValue('countProperty'));
+        if (!empty($settingsForm = (new \PrestaShop\Module\PsAccounts\Settings\SettingsForm($this))->render())) {
+            return $settingsForm;
+        }
 
-        return $this->display(__FILE__, '/views/templates/admin/app.tpl');
+        $psAccountsService = $this->getService(\PrestaShop\Module\PsAccounts\Service\PsAccountsService::class);
+
+        //$this->context->smarty->assign('pathVendor', $this->_path . 'views/js/chunk-vendors.' . $this->version . '.js');
+        $this->context->smarty->assign('urlAccountsCdn', $this->getParameter('ps_accounts.accounts_cdn_url'));
+        $this->context->smarty->assign('componentInitParams', $psAccountsService->getComponentInitParams());
+
+        return $this->display(__FILE__, 'views/templates/admin/app.tpl');
     }
 
     /**
-     * Load VueJs App and set JS variable for Vuex
-     *
-     * @param string $responseApiMessage
-     * @param int $countProperty
+     * @param array $params
      *
      * @return void
-     *
-     * @throws Throwable
      */
-    protected function loadAssets($responseApiMessage = 'null', $countProperty = 0)
+    public function redirectSettingsPage(array $params = [])
     {
-        $this->context->smarty->assign('pathVendor', $this->_path . 'views/js/chunk-vendors.js');
-        $this->context->smarty->assign('pathApp', $this->_path . 'views/js/app.js');
+        Tools::redirectAdmin($this->getSettingsPageUrl($params));
+    }
 
-        $storePresenter = new PrestaShop\Module\PsAccounts\Presenter\Store\StorePresenter($this, $this->context);
+    /**
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getSettingsPageUrl(array $params = [])
+    {
+        if (version_compare(_PS_VERSION_, '1.7', '>')) {
+            return $this->context->link->getAdminLink(
+                'AdminModules',
+                true,
+                [],
+                array_merge($params, [
+                    'configure' => $this->name,
+                ])
+            );
+        } else {
+            return AdminController::$currentIndex . '&' . http_build_query(array_merge($params, [
+                'configure' => $this->name,
+                'token' => Tools::getAdminTokenLite('AdminModules'),
+            ]));
+        }
+    }
 
-        Media::addJsDef([
-            'storePsAccounts' => $storePresenter->present(),
-        ]);
+    /**
+     * @return string
+     */
+    public function getAccountsUiUrl()
+    {
+        return $this->getParameter('ps_accounts.accounts_ui_url');
+    }
 
-        /** @var \PrestaShop\Module\PsAccounts\Presenter\PsAccountsPresenter $psAccountsPresenter */
-        $psAccountsPresenter = $this->getService(\PrestaShop\Module\PsAccounts\Presenter\PsAccountsPresenter::class);
+    /**
+     * @return string
+     */
+    public function getSsoAccountUrl()
+    {
+        $url = $this->getParameter('ps_accounts.sso_account_url');
+        $langIsoCode = $this->getContext()->language->iso_code;
 
-        Media::addJsDef([
-            'contextPsAccounts' => $psAccountsPresenter->present($this->name),
-        ]);
+        return $url . '?lang=' . substr($langIsoCode, 0, 2);
+    }
+
+    /**
+     * @return \PrestaShop\Module\PsAccounts\Context\ShopContext
+     */
+    public function getShopContext()
+    {
+        return $this->getService(\PrestaShop\Module\PsAccounts\Context\ShopContext::class);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShopEdition()
+    {
+        return Module::isEnabled('smb_edition');
+    }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\Session\SessionInterface
+     *
+     * @throws Exception
+     */
+    public function getSession()
+    {
+        // Class name must be literal here in case interface is not present (PrestaShop 1.6)
+        return $this->getService('\Symfony\Component\HttpFoundation\Session\SessionInterface');
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function onModuleReset()
+    {
+        /** @var \PrestaShop\Module\PsAccounts\Http\Client\CircuitBreaker\Factory $circuitBreakerFactory */
+        $circuitBreakerFactory = $this->getService(\PrestaShop\Module\PsAccounts\Http\Client\CircuitBreaker\Factory::class);
+        $circuitBreakerFactory->resetAll();
+
+        /** @var \PrestaShop\Module\PsAccounts\Service\OAuth2\OAuth2Service $oAuth2Service */
+        $oAuth2Service = $this->getService(\PrestaShop\Module\PsAccounts\Service\OAuth2\OAuth2Service::class);
+        $oAuth2Service->clearCache();
+
+        /** @var \PrestaShop\Module\PsAccounts\Repository\ConfigurationRepository $configurationRepository */
+        $configurationRepository = $this->getService(\PrestaShop\Module\PsAccounts\Repository\ConfigurationRepository::class);
+        $configurationRepository->fixMultiShopConfig();
+
+        // FIXME: this wont prevent from re-implanting override on reset of module
+        $uninstaller = new PrestaShop\Module\PsAccounts\Module\Uninstall($this, Db::getInstance());
+        $uninstaller->deleteAdminTab('AdminLogin');
+
+        /** @var \PrestaShop\Module\PsAccounts\Cqrs\CommandBus $commandBus */
+        $commandBus = $this->getService(\PrestaShop\Module\PsAccounts\Cqrs\CommandBus::class);
+
+        // Verification flow
+        $commandBus->handle(new \PrestaShop\Module\PsAccounts\Account\Command\MigrateOrCreateIdentitiesV8Command());
+    }
+
+    /**
+     * @return string
+     */
+    public function getCloudShopId()
+    {
+        /** @var \PrestaShop\Module\PsAccounts\Account\StatusManager $statusManager */
+        $statusManager = $this->getService(\PrestaShop\Module\PsAccounts\Account\StatusManager::class);
+
+        return $statusManager->getCloudShopId();
+    }
+
+    /**
+     * @param string $source
+     *
+     * @return bool
+     */
+    public function getVerifiedStatus($source = 'ps_accounts')
+    {
+        /** @var \PrestaShop\Module\PsAccounts\Account\StatusManager $statusManager */
+        $statusManager = $this->getService(\PrestaShop\Module\PsAccounts\Account\StatusManager::class);
+
+        try {
+            if ($statusManager->getStatus(false, \PrestaShop\Module\PsAccounts\Account\StatusManager::CACHE_TTL, $source)->isVerified) {
+                return true;
+            }
+        } catch (\PrestaShop\Module\PsAccounts\Account\Exception\UnknownStatusException $e) {
+        }
+
+        return false;
+    }
+}
+
+/**
+ * @return void
+ */
+function ps_accounts_fix_upgrade()
+{
+    $root = __DIR__;
+    $requires = array_merge([
+        $root . '/src/Module/Install.php',
+        //$root . '/src/Hook/Hook.php',
+        $root . '/src/Hook/HookableTrait.php',
+        $root . '/src/Settings/SettingsForm.php',
+    ], []/*, glob($root . '/src/Hook/*.php')*/);
+
+    foreach ($requires as $filename) {
+        require_once $filename;
     }
 }

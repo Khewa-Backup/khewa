@@ -18,7 +18,9 @@
  */
 
 namespace PrestaChamps\PrestaShop\Tab;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class TabInstaller
  *
@@ -49,14 +51,24 @@ class TabInstaller
      */
     public function installTab($name, $className, $parentClassName, $isRoot = false, $visible = true)
     {
-        $tab = new \Tab();
-        $tab->id_parent = $isRoot ? 0 : \Tab::getIdFromClassName($parentClassName);
-        $tab->name = array_fill_keys(array_values(\Language::getIDs(true)), $name);
-        $tab->class_name = $className;
-        $tab->module = $this->moduleName;
-        $tab->active = (bool)$visible;
+        if (!$idTab = (int) \Tab::getIdFromClassName($className)) {
+            $tab = new \Tab();
+            $tab->id_parent = $isRoot ? 0 : \Tab::getIdFromClassName($parentClassName);
+            // $tab->name = array_fill_keys(array_values(\Language::getIDs(true)), $name); // from Ps 1.6.1.0
+            $langIDs = [];
+            foreach(\Language::getLanguages(true) as $language){
+                $langIDs[] = $language['id_lang'];
+            }
+            
+            $tab->name = array_fill_keys(array_values($langIDs), $name);
+            $tab->class_name = $className;
+            $tab->module = $this->moduleName;
+            $tab->active = (bool)$visible;
 
-        return $tab->save();
+            return $tab->save();
+        }
+
+        return true;
     }
 
     /**

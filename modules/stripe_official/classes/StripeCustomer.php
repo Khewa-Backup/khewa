@@ -1,30 +1,31 @@
 <?php
+
 /**
- * 2007-2019 PrestaShop
+ * Copyright (c) since 2010 Stripe, Inc. (https://stripe.com)
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
+ * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    202-ecommerce <tech@202-ecommerce.com>
- * @copyright Copyright (c) Stripe
- * @license   Commercial license
+ * @author    Stripe <https://support.stripe.com/contact/email>
+ * @copyright Since 2010 Stripe, Inc.
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class StripeCustomer extends ObjectModel
 {
+    const CUSTOMER_CREATE = '_CUSTOMER_CREATE';
+    const CUSTOMER_UPDATE = '_CUSTOMER_UPDATE';
+
     /** @var int */
     public $id_customer;
     /** @var string */
@@ -35,27 +36,27 @@ class StripeCustomer extends ObjectModel
     /**
      * @see ObjectModel::$definition
      */
-    public static $definition = array(
-        'table'        => 'stripe_customer',
-        'primary'      => 'id_stripe_customer',
-        'fields'       => array(
-            'id_customer' => array(
-                'type'     => ObjectModel::TYPE_INT,
+    public static $definition = [
+        'table' => 'stripe_customer',
+        'primary' => 'id_stripe_customer',
+        'fields' => [
+            'id_customer' => [
+                'type' => ObjectModel::TYPE_INT,
                 'validate' => 'isInt',
                 'size' => 10,
-            ),
-            'stripe_customer_key'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+            ],
+            'stripe_customer_key' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 50,
-            ),
-            'id_account'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+                'size' => 50,
+            ],
+            'id_account' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 50,
-            ),
-        ),
-    );
+                'size' => 50,
+            ],
+        ],
+    ];
 
     public function setIdCustomer($id_customer)
     {
@@ -89,37 +90,29 @@ class StripeCustomer extends ObjectModel
 
     public function getCustomerById($id_customer, $id_account)
     {
+        // Validate parameters in order to prevent SQL errors
+
+        if (empty($id_customer) || !is_numeric($id_customer)) {
+            return $this;
+        }
+
+        if (empty($id_account)) {
+            return $this;
+        }
+
         $query = new DbQuery();
         $query->select('*');
         $query->from(static::$definition['table']);
-        $query->where('id_customer = '.pSQL($id_customer));
-        $query->where('id_account = "'.pSQL($id_account).'"');
+        $query->where('id_customer = ' . pSQL($id_customer));
+        $query->where('id_account = "' . pSQL($id_account) . '"');
 
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query->build());
-        if ($result == false) {
+        if (true === empty($result)) {
             return $this;
         }
 
         $this->hydrate($result);
 
         return $this;
-    }
-
-    public function stripeCustomerExists($email, $stripe_customer_id)
-    {
-        $customersList = \Stripe\Customer::all(
-            [
-                'email' => $email,
-                'limit' => 100
-            ]
-        );
-
-        foreach ($customersList as $customer) {
-            if ($customer['id'] == $stripe_customer_id) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

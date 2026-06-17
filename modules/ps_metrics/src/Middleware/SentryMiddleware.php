@@ -28,7 +28,7 @@ class SentryMiddleware extends Middleware
      *
      * @return array
      */
-    public function execute($response)
+    public function execute($response): array
     {
         // do nothing for the moment
         return parent::execute($response);

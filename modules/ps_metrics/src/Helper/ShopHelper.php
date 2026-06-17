@@ -24,11 +24,28 @@ namespace PrestaShop\Module\Ps_metrics\Helper;
 class ShopHelper
 {
     /**
+     * @var ToolsHelper
+     */
+    private $toolsHelper;
+
+    /**
+     * Shop Helper constructor.
+     *
+     * @param ToolsHelper $toolsHelper
+     *
+     * @return void
+     */
+    public function __construct(ToolsHelper $toolsHelper)
+    {
+        $this->toolsHelper = $toolsHelper;
+    }
+
+    /**
      * @param int $shopId
      *
      * @return array
      */
-    public function getShop($shopId)
+    public function getShop($shopId): array
     {
         $shop = \Shop::getShop($shopId);
 
@@ -46,9 +63,9 @@ class ShopHelper
      *
      * @return array
      */
-    public function getShops($active = true, $id_shop_group = null, $get_as_list_id = false)
+    public function getShops(bool $active = true, $id_shop_group = null, bool $get_as_list_id = false): array
     {
-        return \Shop::getShops($active = true, $id_shop_group = null, $get_as_list_id = false);
+        return \Shop::getShops($active, $id_shop_group, $get_as_list_id);
     }
 
     /**
@@ -62,20 +79,22 @@ class ShopHelper
     /**
      * @return int
      */
-    public function getContext()
+    public function getContext(): int
     {
         return \Shop::getContext();
     }
 
     /**
-     * @param false $share
+     * @param bool $share
      * @param string|null $alias
      *
      * @return string
      */
-    public function addSqlRestriction($share = false, $alias = null)
+    public function addSqlRestriction(bool $share = false, string $alias = null): string
     {
-        return \Shop::addSqlRestriction($share, $alias);
+        $share_ = ($share) ? 1 : 0;
+
+        return \Shop::addSqlRestriction($share_, $alias);
     }
 
     /**
@@ -84,5 +103,65 @@ class ShopHelper
     public function getShopId()
     {
         return \Shop::getContextShopID();
+    }
+
+    /**
+     * Get one Shop Url
+     *
+     * @param int $shopId
+     *
+     * @return array
+     */
+    public function getShopUrl($shopId)
+    {
+        $shop = $this->getShop($shopId);
+        $protocol = $this->getShopsProtocolInformations();
+
+        return [
+            'id_shop' => $shop['id_shop'],
+            'domain' => $shop[$protocol['domain_type']],
+            'url' => $protocol['protocol'] . $shop[$protocol['domain_type']] . $shop['uri'],
+        ];
+    }
+
+    /**
+     * Get all shops Urls
+     *
+     * @return array
+     */
+    public function getShopsUrl()
+    {
+        $shopList = $this->getShops();
+        $protocol = $this->getShopsProtocolInformations();
+        $urlList = [];
+
+        foreach ($shopList as $shop) {
+            $urlList[] = [
+                'id_shop' => $shop['id_shop'],
+                'url' => $protocol['protocol'] . $shop[$protocol['domain_type']] . $shop['uri'],
+            ];
+        }
+
+        return $urlList;
+    }
+
+    /**
+     * getShopsProtocol
+     *
+     * @return array
+     */
+    protected function getShopsProtocolInformations()
+    {
+        if (true === $this->toolsHelper->usingSecureMode()) {
+            return [
+                'domain_type' => 'domain_ssl',
+                'protocol' => 'https://',
+            ];
+        }
+
+        return [
+            'domain_type' => 'domain',
+            'protocol' => 'http://',
+        ];
     }
 }

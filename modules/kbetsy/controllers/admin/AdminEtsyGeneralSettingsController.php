@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 //Include Etsy Module Class to inherit some common functions and callbacks
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 
@@ -52,9 +55,9 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
     {
         $lang_arr = array();
         $etsycurrency = array();
-        
+
         $etsy_carrier_option = $this->getEtsyCarrierList();
-        
+
         $langs = Language::getLanguages();
         $etsy_lang_arr = explode(',', 'de,en,es,fr,it,ja,nl,pt,ru,pl');
         foreach ($langs as $lang) {
@@ -68,27 +71,46 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
         $desc_type_arr = array(
             array(
                 'desc_type' => 'short',
-                'desc_name' => $this->l('Short Description')
+                'desc_name' => $this->module->l('Short Description', 'AdminEtsyGeneralSettingsController')
             ),
             array(
                 'desc_type' => 'long',
-                'desc_name' => $this->l('Long Descritpion')
+                'desc_name' => $this->module->l('Long Descritpion', 'AdminEtsyGeneralSettingsController')
             ),
             array(
                 'desc_type' => 'both',
-                'desc_name' => $this->l('Both Short & Long Descritpion')
+                'desc_name' => $this->module->l('Both Short & Long Descritpion', 'AdminEtsyGeneralSettingsController')
             ),
         );
 
         //Buttons List
-        $etsyOAuthAccessToken = Configuration::get('etsy_oauth_access_token');
-        if (!empty($etsyOAuthAccessToken)) {
+        /**
+         * Access token is saved in the kb_etsy_token key
+         * @date 15-04-2023
+         * @modifier Tanisha Gupta
+         */
+        //$etsyOAuthAccessToken = Configuration::get('etsy_oauth_access_token');
+        $etsyOAuthAccessToken = Configuration::get('kb_etsy_token');
+        $connected = 1;
+        if (empty($etsyOAuthAccessToken)) {
+            $connected = 0;
+        } else {
+            $token_data_array = json_decode($etsyOAuthAccessToken, true);
+            if (isset($token_data_array['access_token'])) {
+                if ($token_data_array['access_token'] == 'null') {
+                    $connected = 0;
+                }
+            } else {
+                $connected = 0;
+            }
+        }
+        if (!empty($connected)) {
             $buttonsList = array(
                 'class' => 'btn btn-default pull-right',
                 'name' => 'disconnect_btn',
                 'id' => 'disconnect_btn',
                 'js' => "disconnect()",
-                'title' => $this->l('Disconnect'),
+                'title' => $this->module->l('Disconnect','AdminEtsyGeneralSettingsController'),
                 'icon' => 'process-icon-ban'
             );
         } else {
@@ -97,13 +119,13 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                 'name' => 'submit_gs_btn',
                 'id' => 'submit_gs_btn',
                 'js' => "validation('configuration_form')",
-                'title' => $this->l('Connect'),
+                'title' => $this->module->l('Connect','AdminEtsyGeneralSettingsController'),
                 'icon' => 'process-icon-refresh'
             );
         }
 
         $store_currencies = Currency::getCurrenciesByIdShop(Context::getContext()->shop->id);
-        $etsycurrency[] = array("id_option" => "", "name" => $this->l('Select Etsy Default Currency'));
+        $etsycurrency[] = array("id_option" => "", "name" => $this->module->l('Select Etsy Default Currency', 'AdminEtsyGeneralSettingsController'));
         foreach ($store_currencies as $currency) {
             $etsycurrency[] = array(
                 'id_option' => $currency['iso_code'],
@@ -119,11 +141,10 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                 'name' => $status['name']
             );
         }
-        
+
         /*
          * cjhanges by rishabh jain for order carrier
          */
-        
         $shipping_methods = Carrier::getCarriers($this->context->language->id, true, false, false, null, 5);
         $i = 0;
         $option1 = array();
@@ -135,14 +156,25 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
         /*
          * changes over
          */
+        //changes by gopi for adding image setting selection
+        //changes by gopi to get all image types
+        $allTypes = ImageType::getImagesTypes();
+        $typesQuery = array();
+        foreach ($allTypes as $types) {
+            $typesQuery[] = array(
+                'id' => $types['name'],
+                'name' => $types['name']
+            );
+        }
+        //changes by gopi end
         $desc = '';
         if (Language::getIdByIso('gb')) {
-            $desc = '</br>'.$this->l('ETSY does not support ENGLISH(GB).');
+            $desc = '</br>' . $this->module->l('ETSY does not support ENGLISH(GB).', 'AdminEtsyGeneralSettingsController');
         }
         $fields_form = array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->l('General Settings'),
+                    'title' => $this->module->l('General Settings','AdminEtsyGeneralSettingsController'),
                     'icon' => 'icon-cogs'
                 ),
                 'input' => array(
@@ -160,19 +192,21 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => $this->l('Enabled'),
+                        'label' => $this->module->l('Enabled','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_switch_value',
-                        'desc' => $this->l('Toggle to enable or disable module'),
+                        'desc' => $this->module->l('Toggle to enable or disable module','AdminEtsyGeneralSettingsController'),
                         'is_bool' => true,
                         'values' => array(
                             array(
-                                'id' => 'switch_value_on',
+                                'id' => 'etsy_switch_value_on',
                                 'value' => 1,
-                                'label' => $this->l('Yes')),
+                                'label' => $this->module->l('Yes','AdminEtsyGeneralSettingsController')
+                            ),
                             array(
-                                'id' => 'switch_value_off',
+                                'id' => 'etsy_switch_value_off',
                                 'value' => 0,
-                                'label' => $this->l('No')),
+                                'label' => $this->module->l('No','AdminEtsyGeneralSettingsController')
+                            ),
                         ),
                     ),
                     array(
@@ -189,22 +223,22 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                     ),
                     array(
                         'type' => 'text',
-                        'label' => $this->l('Etsy API Key String'),
-                        'desc' => $this->l('API Key required to setup connection between store and Etsy Marketplace'),
+                        'label' => $this->module->l('Etsy API Key String','AdminEtsyGeneralSettingsController'),
+                        'desc' => $this->module->l('API Key required to setup connection between store and Etsy Marketplace','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_api_key',
                         'required' => true
                     ),
                     array(
                         'type' => 'text',
-                        'label' => $this->l('Etsy API Shared Secret'),
-                        'desc' => $this->l('API Secret required to setup connection between store and Etsy Marketplace'),
+                        'label' => $this->module->l('Etsy API Shared Secret','AdminEtsyGeneralSettingsController'),
+                        'desc' => $this->module->l('API Secret required to setup connection between store and Etsy Marketplace','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_api_secret',
                         'required' => true
                     ),
                     array(
                         'type' => 'hidden',
-                        'label' => $this->l('Etsy API Host'),
-                        'desc' => $this->l('API Host to send request'),
+                        'label' => $this->module->l('Etsy API Host','AdminEtsyGeneralSettingsController'),
+                        'desc' => $this->module->l('API Host to send request','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_api_host',
                         'required' => true,
                         'value' => 'https://openapi.etsy.com/',
@@ -212,48 +246,63 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                     ),
                     array(
                         'type' => 'hidden',
-                        'label' => $this->l('Etsy API Version'),
-                        'desc' => $this->l('API Version to access Etsy Marketplace library functions'),
+                        'label' => $this->module->l('Etsy API Version','AdminEtsyGeneralSettingsController'),
+                        'desc' => $this->module->l('API Version to access Etsy Marketplace library functions','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_api_version',
                         'required' => true,
-                        'value' => 'v2',
+                        'value' => 'v3',
                         'readonly' => true
                     ),
+                    //changes by gopi start here
+                    array(
+                        'type' => 'select',
+                        'label' => $this->module->l('Image Size of Product','AdminEtsyGeneralSettingsController'),
+                        'name' => 'KBETSY_IMAGE_SIZE',
+                        'hint' => $this->module->l('Select size of image','AdminEtsyGeneralSettingsController'),
+                        'options' => array(
+                            'query' => $typesQuery,
+                            'id' => 'id',
+                            'name' => 'name'
+                        ),
+                    ),
+                    //chnages by gopi end here
                     array(
                         'type' => 'switch',
-                        'label' => $this->l('Map Etsy Orders with store carrier'),
+                        'label' => $this->module->l('Map Etsy Orders with store carrier','AdminEtsyGeneralSettingsController'),
                         'name' => 'map_etsy_order_store_carrier',
-                        'desc' => $this->l('If enabled then the imported orders will be mapped with the select carrier.'),
+                        'desc' => $this->module->l('If enabled then the imported orders will be mapped with the select carrier.','AdminEtsyGeneralSettingsController'),
                         'is_bool' => true,
                         'values' => array(
                             array(
-                                'id' => 'switch_value_on',
+                                'id' => 'map_etsy_order_store_carrier_on',
                                 'value' => 1,
-                                'label' => $this->l('Yes')),
+                                'label' => $this->module->l('Yes','AdminEtsyGeneralSettingsController')
+                            ),
                             array(
-                                'id' => 'switch_value_off',
+                                'id' => 'map_etsy_order_store_carrier_off',
                                 'value' => 0,
-                                'label' => $this->l('No')),
+                                'label' => $this->module->l('No','AdminEtsyGeneralSettingsController')
+                            ),
                         ),
                     ),
                     array(
                         'type' => 'select',
-                            'label' => $this->l('Select Shipping Methods for etsy orders'), // The <label> for this <select> tag.
-                            'id' => 'KB_SHIPPING_METHOD_ETSY_ORDER',
-                            'name' => 'KB_SHIPPING_METHOD_ETSY_ORDER', // The content of the 'id' attribute of the <select> tag.
-                            'class' => 'fixed-width-xxl',
-                            'options' => array(
-                                'query' => $option1,
-                                'id' => 'id_reference',
-                                'name' => 'name'
-                            )
-                        ),
+                        'label' => $this->module->l('Select Shipping Methods for etsy orders','AdminEtsyGeneralSettingsController'), // The <label> for this <select> tag.
+                        'id' => 'KB_SHIPPING_METHOD_ETSY_ORDER',
+                        'name' => 'KB_SHIPPING_METHOD_ETSY_ORDER', // The content of the 'id' attribute of the <select> tag.
+                        'class' => 'fixed-width-xxl',
+                        'options' => array(
+                            'query' => $option1,
+                            'id' => 'id_reference',
+                            'name' => 'name'
+                        )
+                    ),
                     array(
                         'type' => 'select',
-                        'label' => $this->l('Select Etsy Default Language'),
+                        'label' => $this->module->l('Select Etsy Default Language','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_default_lang',
                         'required' => true,
-                        'desc' => $this->l('It should be same as the default language of your Etsy store.').$desc,
+                        'desc' => $this->module->l('It should be same as the default language of your Etsy store.','AdminEtsyGeneralSettingsController') . $desc,
                         'value' => Configuration::get('etsy_default_lang'),
                         'options' => array(
                             'query' => $lang_arr,
@@ -263,9 +312,9 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                     ),
                     array(
                         'type' => 'select',
-                        'label' => $this->l('Select Language(s) to Sync'),
+                        'label' => $this->module->l('Select Language(s) to Sync','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_sync_lang[]',
-                        'desc' => $this->l('Except the language selected in the above dropdown.').$desc,
+                        'desc' => $this->module->l('Except the language selected in the above dropdown.','AdminEtsyGeneralSettingsController') . $desc,
                         'required' => true,
                         'multiple' => true,
                         'options' => array(
@@ -276,14 +325,14 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                     ),
                     array(
                         'type' => 'hidden',
-                        'label' => $this->l('Minimum Threshold Quantity'),
-                        'desc' => $this->l('If inventory goes below the threshold value then the inventory status of these products under the products tab will display the Inventory Status as Critical.'),
+                        'label' => $this->module->l('Minimum Threshold Quantity','AdminEtsyGeneralSettingsController'),
+                        'desc' => $this->module->l('If inventory goes below the threshold value then the inventory status of these products under the products tab will display the Inventory Status as Critical.','AdminEtsyGeneralSettingsController'),
                         'name' => 'min_threshold_quant',
                         'required' => true
                     ),
                     array(
                         'type' => 'select',
-                        'label' => $this->l('Select Description to Sync On Etsy'),
+                        'label' => $this->module->l('Select Description to Sync On Etsy','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_desc_type',
                         'required' => true,
                         'options' => array(
@@ -294,19 +343,21 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => $this->l('Upload Order Tracking Number On ETSY'),
+                        'label' => $this->module->l('Upload Order Tracking Number On ETSY','AdminEtsyGeneralSettingsController'),
                         'name' => 'upload_tracking_number',
-                        'desc' => $this->l('If enabled then tracking number will be uploaded on the etsy.'),
+                        'desc' => $this->module->l('If enabled then tracking number will be uploaded on the etsy.','AdminEtsyGeneralSettingsController'),
                         'is_bool' => true,
                         'values' => array(
                             array(
-                                'id' => 'switch_value_on',
+                                'id' => 'upload_tracking_number_on',
                                 'value' => 1,
-                                'label' => $this->l('Yes')),
+                                'label' => $this->module->l('Yes','AdminEtsyGeneralSettingsController')
+                            ),
                             array(
-                                'id' => 'switch_value_off',
+                                'id' => 'upload_tracking_number_off',
                                 'value' => 0,
-                                'label' => $this->l('No')),
+                                'label' => $this->module->l('No','AdminEtsyGeneralSettingsController')
+                            ),
                         ),
                     ),
                     array(
@@ -314,7 +365,7 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                         'label' => $this->module->l('Etsy Carrier Name for Tracking Url', 'AdminEtsyOrderSettingsController'),
                         'desc' => $this->module->l('Choose the carrier used for tracking etsy order', 'AdminEtsyOrderSettingsController'),
                         'name' => 'etsy_selected_shipment_name',
-//                        'class' => 'fixed-width-xxl',
+                        //                        'class' => 'fixed-width-xxl',
                         'required' => true,
                         'class' => 'fixed-width-xxl',
                         'options' => array(
@@ -362,25 +413,27 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => $this->l('Show taxes in Etsy Order Invoice'),
+                        'label' => $this->module->l('Show taxes in Etsy Order Invoice','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_order_tax',
-                        'desc' => $this->l('If enabled then the tax breakup will be shown in etsy orders.'),
+                        'desc' => $this->module->l('If enabled then the tax breakup will be shown in etsy orders.','AdminEtsyGeneralSettingsController'),
                         'is_bool' => true,
                         'values' => array(
                             array(
-                                'id' => 'switch_value_on',
+                                'id' => 'etsy_order_tax_on',
                                 'value' => 1,
-                                'label' => $this->l('Yes')),
+                                'label' => $this->module->l('Yes','AdminEtsyGeneralSettingsController')
+                            ),
                             array(
-                                'id' => 'switch_value_off',
+                                'id' => 'etsy_order_tax_off',
                                 'value' => 0,
-                                'label' => $this->l('No')),
+                                'label' => $this->module->l('No','AdminEtsyGeneralSettingsController')
+                            ),
                         ),
                     ),
                     array(
                         'type' => 'text',
-                        'label' => $this->l('No of Item Sync Per CRON Run'),
-                        'desc' => $this->l('The number of item will be synced on each CRON run. In case of script timeout while running the CRON URL, Try reducing the number.'),
+                        'label' => $this->module->l('No of Item Sync Per CRON Run','AdminEtsyGeneralSettingsController'),
+                        'desc' => $this->module->l('The number of item will be synced on each CRON run. In case of script timeout while running the CRON URL, Try reducing the number.','AdminEtsyGeneralSettingsController'),
                         'name' => 'etsy_sync_item',
                         'required' => true
                     ),
@@ -392,7 +445,7 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                         'name' => 'submit_gs_btn2',
                         'id' => 'submit_gs_btn2',
                         'js' => "validation('saveonly_configuration_form')",
-                        'title' => $this->l('Save'),
+                        'title' => $this->module->l('Save','AdminEtsyGeneralSettingsController'),
                         'icon' => 'process-icon-save'
                     )
                 )
@@ -416,28 +469,30 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
 
         $helper->fields_value['etsy_currency'] = Configuration::get('etsy_currency');
         $helper->fields_value['etsy_api_host'] = 'https://openapi.etsy.com/';
-        $helper->fields_value['etsy_api_version'] = 'v2';
+        $helper->fields_value['etsy_api_version'] = 'v3';
         $helper->fields_value['etsy_api_user_id'] = Configuration::get('etsy_api_user_id');
         $helper->fields_value['etsy_default_lang'] = Configuration::get('etsy_default_lang');
-        
+
         $helper->fields_value['KB_SHIPPING_METHOD_ETSY_ORDER'] = Configuration::get('KB_SHIPPING_METHOD_ETSY_ORDER');
-        
-        
+        //changes by gopi for image selcetion
+        $helper->fields_value['KBETSY_IMAGE_SIZE'] = Configuration::get('KBETSY_IMAGE_SIZE');
+        //changes by gopi end here
+
         $helper->fields_value['min_threshold_quant'] = Configuration::get('min_threshold_quant') != "" ? Configuration::get('min_threshold_quant') : 0;
         $helper->fields_value['etsy_desc_type'] = Configuration::get('etsy_desc_type');
         $lang_ids = explode(',', Configuration::get('etsy_sync_lang'));
         $helper->fields_value['etsy_sync_lang[]'] = $lang_ids;
 
         $helper->fields_value['etsy_order_default_status'] = Configuration::get('etsy_order_default_status');
-        
+
         $helper->fields_value['etsy_selected_shipment_name'] = Configuration::get('etsy_selected_shipment_name');
-        
+
         $helper->fields_value['upload_tracking_number'] = Configuration::get('upload_tracking_number');
-        
+
         $helper->fields_value['map_etsy_order_store_carrier'] = Configuration::get('map_etsy_order_store_carrier');
-        
+
         $helper->fields_value['etsy_order_tax'] = Configuration::get('etsy_order_tax');
-        
+
         $helper->fields_value['etsy_order_unpaid_status'] = Configuration::get('etsy_order_unpaid_status');
         $helper->fields_value['etsy_order_shipped_status[]'] = explode(",", Configuration::get('etsy_order_shipped_status'));
         $helper->fields_value['etsy_sync_item'] = Configuration::get('etsy_sync_item') != "" ? Configuration::get('etsy_sync_item') : 20;
@@ -445,13 +500,37 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
 
         $this->content .= $helper->generateForm(array($fields_form));
         $this->content .= $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/velovalidation.tpl');
-
+        /*Added to show instruction to add redirect URL in etsy
+         * @date 15-04-2023
+         * @author Tanisha Gupta
+         */
+        $this->context->smarty->assign(array(
+            'redirect_url' => $this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'testConnection'))
+        ));
+        $redirection_instruction_content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'kbetsy/views/templates/admin/redirect_instruction.tpl');
+        $this->content .= $redirection_instruction_content;
         parent::initContent();
         if (!Tools::isEmpty(trim(Tools::getValue('action'))) && Tools::getValue('action') == 'disconnect') {
+            /**
+             * Start Changes to disable the Disconnect feature for Demo
+             * Adding condition such that if the Demo key is set to 1, then the disconnect will not work
+             * @date 25-06-2024
+             * @modifier Nikhil Aggarwal
+             */
+            if(Configuration::get('KBETSY_DEMO')) {
+                echo $this->module->l('This is a demo version. This feature is not allowed in the demo version.', 'cron');
+                die();
+            }
+            // Changes end by Nikhil
             EtsyModule::disconnect();
             Context::getContext()->cookie->__set('redirectAdminLink', '');
-            Configuration::updateGlobalValue('etsy_oauth_access_token', null);
-
+            /**
+             * Changed etsy_oauth_access_token to kb_etsy_token as token is saved into the kb_etsy_token
+             * @date 15-04-2023
+             * @modifier Tanisha Gupta
+             */
+            //Configuration::updateGlobalValue('etsy_oauth_access_token', null);
+            Configuration::updateGlobalValue('kb_etsy_token', null);
             //Audit Log Entry
             $auditLogEntryString = 'Disconnected Successfully';
             $auditMethodName = 'AdminEtsyGeneralSettings::initContent()';
@@ -460,7 +539,6 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
             Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyGeneralSettings') . '&etsyConf=2');
         }
     }
-
     // function to fetch etsy carrier array list for tracking
     public function getEtsyCarrierList()
     {
@@ -644,7 +722,6 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
             'Yodel International' => 'yodel-international',
             'i-parcel' => 'i-parcel',
         );
-        
         $etsy_carrier_option = array();
         foreach ($etsy_carrier_array as $carrier_name => $carrier_value) {
             $etsy_carrier_option[] = array(
@@ -654,7 +731,7 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
         }
         return $etsy_carrier_option;
     }
-    
+
     //Function definition to handle Form Submission
     public function postProcess()
     {
@@ -670,14 +747,14 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                 Configuration::updateGlobalValue('etsy_api_secret', Tools::getValue('etsy_api_secret'));
             }
             Configuration::updateGlobalValue('etsy_currency', Tools::getValue('etsy_currency'));
-            
+
             Configuration::updateGlobalValue('etsy_selected_shipment_name', Tools::getValue('etsy_selected_shipment_name'));
-            
+
             Configuration::updateGlobalValue('upload_tracking_number', Tools::getValue('upload_tracking_number'));
             Configuration::updateGlobalValue('map_etsy_order_store_carrier', Tools::getValue('map_etsy_order_store_carrier'));
             Configuration::updateGlobalValue('etsy_order_tax', Tools::getValue('etsy_order_tax'));
-            
-            
+
+
             Configuration::updateGlobalValue('etsy_api_host', Tools::getValue('etsy_api_host'));
             Configuration::updateGlobalValue('etsy_api_version', Tools::getValue('etsy_api_version'));
             Configuration::updateGlobalValue('etsy_api_user_id', Tools::getValue('etsy_api_user_id'));
@@ -722,9 +799,11 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                 }
             }
             Configuration::updateGlobalValue('etsy_default_lang', Tools::getValue('etsy_default_lang'));
-            
+
             Configuration::updateGlobalValue('KB_SHIPPING_METHOD_ETSY_ORDER', Tools::getValue('KB_SHIPPING_METHOD_ETSY_ORDER'));
-            
+            //changes by gopi for image selction setting
+            Configuration::updateGlobalValue('KBETSY_IMAGE_SIZE', Tools::getValue('KBETSY_IMAGE_SIZE'));
+            //changes by gopi end here
             Configuration::updateGlobalValue('etsy_sync_item', Tools::getValue('etsy_sync_item'));
 
             //Audit Log Entry
@@ -743,7 +822,7 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                 }
                 $redirect_url = $this->context->link->getAdminlink('AdminEtsyGeneralSettings');
                 Configuration::updateGlobalValue('etsy_redirect_url', $redirect_url);
-                Tools::redirect($this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'testConnection')));
+                Tools::redirect($this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'testConnection', 'cron' => 'token_generate')));
             }
         }
     }

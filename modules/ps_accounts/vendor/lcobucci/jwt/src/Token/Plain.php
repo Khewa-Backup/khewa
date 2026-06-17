@@ -1,8 +1,7 @@
 <?php
 
-namespace Lcobucci\JWT\Token;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token;
 
-use Lcobucci\JWT\Token;
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token;
 use function class_alias;
-
-class_exists(Plain::class, false) || class_alias(Token::class, Plain::class);
+\class_exists(Plain::class, \false) || class_alias(Token::class, Plain::class);

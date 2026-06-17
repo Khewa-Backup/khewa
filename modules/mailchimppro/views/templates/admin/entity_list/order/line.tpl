@@ -12,10 +12,9 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
-
 <tr>
     <td>{$order.id|escape:'htmlall':'UTF-8'}</td>
     <td>
@@ -54,8 +53,11 @@
         {include file='./../cart/line.tpl' lines=$order.lines currency_code=$order.currency_code}
     </td>
     <td>
-        <a href="{$link->getAdminLink('AdminMailchimpProOrders', true, [], ['action' => 'entitydelete', 'entity_id' => $order.id])|escape:'htmlall':'UTF-8'}">
-            Delete
-        </a>
+		<div class="btn-group btn-group-xs">
+			<a class="btn btn-default" href="{$link->getAdminLink('AdminMailchimpProOrders', true, [], ['action' => 'entitydelete', 'entity_id' => $order.id])|escape:'htmlall':'UTF-8'}" title="{l s='Delete' mod='mailchimppro'}">
+				<i class="icon icon-trash" aria-hidden="true"></i>
+				<span>{l s='Delete' mod='mailchimppro'}</span>
+			</a>
+		</div>
     </td>
 </tr>

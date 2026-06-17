@@ -1,0 +1,10 @@
+
+[{shop_url}]
+
+备份在 {hours_start} 启动 {date_start}，并在 [hours_end] 结束 {date_end}。
+
+消息：
+{backup_result}
+
+{shop_name} [{shop_url}]
+

@@ -2,7 +2,7 @@
  * 2003-2016 Business Tech
  *
  *  @author    Business Tech SARL <http://www.businesstech.fr/en/contact-us>
- *  @copyright 2003-2020 Business Tech SARL
+ *  @copyright 2003-2021 Business Tech SARL
  */
 
 var GmcProFeatureByCat = function(sName) {
@@ -69,7 +69,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       case "pattern":
@@ -97,7 +99,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       case "agegroup":
@@ -125,7 +129,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       case "gender":
@@ -153,7 +159,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       case "adult":
@@ -181,7 +189,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country'
         ];
         break;
       case "sizeType":
@@ -209,7 +219,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       case "sizeSystem":
@@ -237,7 +249,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       case "energy":
@@ -267,7 +281,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       case "shipping_label":
@@ -298,7 +314,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country'
         ];
         break;
       case "unit_pricing_measure":
@@ -332,7 +350,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_base_unit_pricing_measure",
           ".value_base_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       case "base_unit_pricing_measure":
@@ -366,7 +386,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_unit_pricing_measure",
           ".value_unit_pricing_measure",
           "#bulk_action_excluded_destination",
-          ".value_excluded_destination"
+          ".value_excluded_destination",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       case "excluded_destination":
@@ -400,9 +422,44 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_unit_pricing_measure",
           ".value_unit_pricing_measure",
           "#bulk_action_base_unit_pricing_measure",
-          ".value_base_unit_pricing_measure"
+          ".value_base_unit_pricing_measure",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
+        case 'excluded_country':
+            oGmcPro.doSet('#set_tag', 'excluded_country');
+						aShow = [
+              '#bulk_action_excluded_country', 
+              '.value_excluded_country'
+            ];
+						aHide = [
+              "#bulk_action_material",
+              "#bulk_action_pattern",
+              "#bulk_action_adult",
+              "#bulk_action_gender",
+              "#bulk_action_tagadult",
+              ".value_material",
+              ".value_pattern",
+              ".value_agegroup",
+              ".value_gender",
+              ".value_tagadult",
+              "#bulk_action_sizeType",
+              ".value_sizeType",
+              "#bulk_action_sizeSystem",
+              ".value_sizeSystem",
+              "#bulk_action_energy",
+              ".value_energy",
+              "#bulk_action_shipping_label",
+              ".value_shipping_label",
+              "#bulk_action_unit_pricing_measure",
+              ".value_unit_pricing_measure",
+              "#bulk_action_base_unit_pricing_measure",
+              ".value_base_unit_pricing_measure",
+              "#bulk_action_excluded_destination",
+              ".value_excluded_destination",
+						];
+						break;	
       case "0":
         aHide = [
           "#bulk_action_material",
@@ -415,7 +472,6 @@ var GmcProFeatureByCat = function(sName) {
           ".value_agegroup",
           ".value_gender",
           ".value_tagadult",
-          ,
           "#bulk_action_sizeType",
           ".value_sizeType",
           "#bulk_action_sizeType",
@@ -430,7 +486,9 @@ var GmcProFeatureByCat = function(sName) {
           "#bulk_action_unit_pricing_measure",
           ".value_unit_pricing_measure",
           "#bulk_action_base_unit_pricing_measure",
-          ".value_base_unit_pricing_measure"
+          ".value_base_unit_pricing_measure",
+          '#bulk_action_excluded_country', 
+          '.value_excluded_country' 
         ];
         break;
       default:
@@ -441,4 +499,3 @@ var GmcProFeatureByCat = function(sName) {
     oGmcPro.initShow(aShow);
   };
 };
-

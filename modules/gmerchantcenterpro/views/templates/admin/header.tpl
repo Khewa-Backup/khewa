@@ -2,8 +2,9 @@
 *
 * Google merchant center Pro
 *
-* @author BusinessTech.fr
-* @copyright Business Tech
+* @author    BusinessTech.fr - https://www.businesstech.fr
+* @copyright Business Tech - https://www.businesstech.fr
+* @license   Commercial
 *
 *           ____    _______
 *          |  _ \  |__   __|
@@ -20,15 +21,6 @@
 <script type="text/javascript" src="{$smarty.const._GMCP_URL_JS|escape:'htmlall':'UTF-8'}jquery.tablesorter.js"></script>
 <script type="text/javascript" src="{$smarty.const._GMCP_URL_JS|escape:'htmlall':'UTF-8'}jquery-ui-1.11.4.min.js"></script>
 
-
-{* USE CASE - load CSS and JS when PS version is under 1.6 *}
-{if empty($bCompare16)}
-	<link rel="stylesheet" type="text/css" href="{$smarty.const._GMCP_URL_CSS|escape:'htmlall':'UTF-8'}admin-theme.css">
-	<link rel="stylesheet" type="text/css" href="{$smarty.const._GMCP_URL_CSS|escape:'htmlall':'UTF-8'}admin-15.css">
-	<link rel="stylesheet" type="text/css" href="{$smarty.const._GMCP_URL_CSS|escape:'htmlall':'UTF-8'}bootstrap-theme.min.css">
-
-	<script type="text/javascript" src="{$smarty.const._GMCP_URL_JS|escape:'htmlall':'UTF-8'}bootstrap.min.js"></script>
-{/if}
 <script type="text/javascript" src="{$autocmp_js|escape:'htmlall':'UTF-8'}"></script>
 <link rel="stylesheet" type="text/css" href="{$autocmp_css|escape:'htmlall':'UTF-8'}" />
 <script type="text/javascript" src="{$smarty.const._GMCP_URL_JS|escape:'htmlall':'UTF-8'}module.js"></script>

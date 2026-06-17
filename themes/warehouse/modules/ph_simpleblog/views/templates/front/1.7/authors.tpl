@@ -2,14 +2,14 @@
 
 
 {block name='page_title'}
-    {l s='Authors' mod='ph_simpleblog'}
+    {l s='Authors' d='Modules.Simpleblog.Shop'}
 {/block}
 
 {block name='head_seo_title'}{strip}{$meta_title}{/strip}{/block}
 
 {block name='page_content'}
 {if !$authors|@count}
-<div class="alert alert-info">{l s='There are no authors' mod='ph_simpleblog'}</div>
+<div class="alert alert-info">{l s='There are no authors' d='Modules.Simpleblog.Shop'}</div>
 {else}
 <div class="simpleblog__listing">
     <div class="row">
@@ -30,7 +30,7 @@
 
                     <div class="clearfix">
                         <a href="{$author->getUrl()}" class="btn btn-primary float-xs-right authorMiniature__btn">
-                            {l s='See the author\'s articles' mod='ph_simpleblog'}
+                            {l s='See the author\'s articles' d='Modules.Simpleblog.Shop'}
                         </a>
                     </div>
                 </div>

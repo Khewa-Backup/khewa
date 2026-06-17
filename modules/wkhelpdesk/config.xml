@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>wkhelpdesk</name>
+    <displayName><![CDATA[Help Desk]]></displayName>
+    <version><![CDATA[5.0.0]]></version>
+    <description><![CDATA[Customer can create tickets.]]></description>
+    <author><![CDATA[Webkul]]></author>
+    <tab><![CDATA[front_office_features]]></tab>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

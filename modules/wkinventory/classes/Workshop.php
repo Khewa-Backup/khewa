@@ -82,7 +82,7 @@ class WorkshopInv
     public static function renderJSON(array $data)
     {
         header('Content-Type: application/json');
-        die(Tools::jsonEncode($data));
+        die(json_encode($data));
     }
 
     public static function getAttributesCombinationNames($id_product_attribute)
@@ -131,10 +131,6 @@ class WorkshopInv
             } else {
                 $unit_price = $product->wholesale_price;
             }
-        }
-        if ($unit_price == 0) {
-            // Be carefull, if price = 0, that may cause error in calculateWA function
-            $unit_price = Product::getPriceStatic($id_product, false, 0, 6, null, false, false);
         }
         $unit_price = round((float)$unit_price, 6);
 
@@ -204,7 +200,7 @@ class WorkshopInv
     /*
      * Search products by terms (Autocomplete Search)
     */
-    public static function searchByTerms($query)
+    public static function searchByTerms($query, $product_has_isbn, $product_has_mpn)
     {
         $query = Tools::strtolower(trim($query));
         $id_lang = (int)Context::getContext()->language->id;
@@ -229,6 +225,8 @@ class WorkshopInv
         $where = 'pl.`name` LIKE \'%'.pSQL($query).'%\'
             OR LOWER(p.`ean13`) LIKE \'%'.pSQL($query).'%\'
             OR LOWER(p.`upc`) LIKE \'%'.pSQL($query).'%\'
+			'.($product_has_isbn ? 'OR LOWER(p.`isbn`) LIKE \'%'.pSQL($query).'%\'' : '').'
+			'.($product_has_mpn ? 'OR LOWER(p.`mpn`) LIKE \'%'.pSQL($query).'%\'' : '').'
             OR LOWER(p.`reference`) LIKE \'%'.pSQL($query).'%\'
             OR LOWER(p.`supplier_reference`) LIKE \'%'.pSQL($query).'%\'
             OR EXISTS(
@@ -237,15 +235,13 @@ class WorkshopInv
             )';
         if (Combination::isFeatureActive()) {
             $sql->select('pa.`id_product_attribute`');
-            $sql->leftJoin(
-                'product_attribute',
-                'pa',
-                'p.`id_product` = pa.`id_product`'
-            );
-            $where .= ' OR LOWER(pa.`reference`) LIKE \'%'.pSQL($query).'%\' OR
-                    LOWER(pa.`supplier_reference`) LIKE \'%'.pSQL($query).'%\' OR
-                    LOWER(pa.`ean13`) LIKE \'%'.pSQL($query).'%\' OR
-                    LOWER(pa.`upc`) LIKE \'%'.pSQL($query).'%\' ';
+            $sql->leftJoin('product_attribute', 'pa', 'p.`id_product` = pa.`id_product`');
+            $where .= ' OR LOWER(pa.`reference`) LIKE \'%'.pSQL($query).'%\' 
+				OR LOWER(pa.`supplier_reference`) LIKE \'%'.pSQL($query).'%\' 
+				'.($product_has_isbn ? 'OR LOWER(pa.`isbn`) LIKE \'%'.pSQL($query).'%\'' : '').'
+				'.($product_has_mpn ? 'OR LOWER(pa.`mpn`) LIKE \'%'.pSQL($query).'%\'' : '').'
+				OR LOWER(pa.`ean13`) LIKE \'%'.pSQL($query).'%\' 
+				OR LOWER(pa.`upc`) LIKE \'%'.pSQL($query).'%\' ';
         }
         $sql->join(Product::sqlStock('p', 0));
         $sql->where('('.$where.')');
@@ -286,6 +282,7 @@ class WorkshopInv
              WHERE 1 '.
              (!empty($id_warehouse) ? ' AND id_warehouse = '.(int)$id_warehouse : '').
              (!empty($ids) ? ' AND id_warehouse_product_location IN ('.implode(',', array_map('intval', $ids)).')' : '')
+             .' ORDER BY location'
         );
         foreach ($locations as $location) {
             if (empty($location['location'])) {
@@ -301,6 +298,20 @@ class WorkshopInv
             }
         }
         return $warehouses_locations;
+    }
+
+    /**
+    * Check if product has at least one combination with empty barcode 
+    */
+    public static function hasEmptyBarcode($id_product, $field)
+    {
+        $count_empty = (int)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			'SELECT COUNT(*)
+			 FROM `'._DB_PREFIX_.'product_attribute` pa
+			 '.Shop::addSqlAssociation('product_attribute', 'pa').'
+			 WHERE pa.`id_product` = '.(int)$id_product.' AND (pa.`'.$field.'` IS NULL OR pa.`'.$field.'` = "")'
+        );
+		return $count_empty != 0 ? true : false;
     }
 
     /**

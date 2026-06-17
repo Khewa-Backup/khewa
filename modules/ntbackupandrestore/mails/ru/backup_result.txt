@@ -1,0 +1,10 @@
+
+[{shop_url}]
+
+Резервное копирование: начало {date_start} {hours_start}, завершение {date_end} и {hours_end}.
+
+Сообщение:
+{backup_result}
+
+{shop_name} [{shop_url}]
+

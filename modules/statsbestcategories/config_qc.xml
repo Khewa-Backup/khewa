@@ -2,8 +2,8 @@
 <module>
     <name>statsbestcategories</name>
     <displayName><![CDATA[Meilleures cat&eacute;gories]]></displayName>
-    <version><![CDATA[2.0.0]]></version>
-    <description><![CDATA[Ajoute une liste des meilleures cat&eacute;gories dans le tableau de bord des statistiques.]]></description>
+    <version><![CDATA[2.0.1]]></version>
+    <description><![CDATA[Enrichissez vos statistiques en ajoutant une liste des meilleures cat&eacute;gories au tableau de bord.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[analytics_stats]]></tab>
     <is_configurable>0</is_configurable>

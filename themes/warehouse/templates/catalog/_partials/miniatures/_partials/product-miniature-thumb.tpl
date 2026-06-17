@@ -30,11 +30,11 @@
                 <img
                         {if $iqitTheme.pl_lazyload}
                             data-src="{$product.cover.bySize.home_default.url}"
-                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {$product.cover.bySize.home_default.width} {$product.cover.bySize.home_default.height}'%3E%3C/svg%3E"
+                            src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20{$product.cover.bySize.home_default.width}%20{$product.cover.bySize.home_default.height}'%3E%3C/svg%3E"
                         {else}
                             src="{$product.cover.bySize.home_default.url}"
                         {/if}
-                        alt="{if !empty($product.cover.legend)}{$product.cover.legend}{else}{$product.name|truncate:30:'...'}{/if}"
+                        alt="{if !empty($product.cover.legend)}{$product.cover.legend}{else}{$product.name|truncate:60:'...'}{/if}"
                         data-full-size-image-url="{$product.cover.large.url}"
                         width="{$product.cover.bySize.home_default.width}"
                         height="{$product.cover.bySize.home_default.height}"
@@ -45,11 +45,11 @@
                         {foreach from=$product.images item=image}
                             {if !$image.cover}
                                 <img
-                                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {$product.cover.bySize.home_default.width} {$product.cover.bySize.home_default.height}'%3E%3C/svg%3E"
+                                        src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20{$product.cover.bySize.home_default.width}%20{$product.cover.bySize.home_default.height}'%3E%3C/svg%3E"
                                         data-src="{$image.bySize.home_default.url}"
                                         width="{$image.bySize.home_default.width}"
                                         height="{$image.bySize.home_default.height}"
-                                        alt="{if !empty($product.cover.legend)}{$product.cover.legend}{else}{$product.name|truncate:30:'...'}{/if} 2"
+                                        alt="{if !empty($product.cover.legend)}{$product.cover.legend}{else}{$product.name|truncate:60:'...'}{/if} 2"
                                         class="img-fluid {if isset($carousel) && $carousel}swiper-lazy{else}js-lazy-product-image{/if} lazy-product-image product-thumbnail-second"
                                 >
                                 {break}
@@ -59,7 +59,7 @@
                 {/if}
             {else}
                     <img class="img-fluid product-thumbnail-first" src="{$urls.no_picture_image.bySize.home_default.url}"
-                        alt="{if !empty($product.cover.legend)}{$product.cover.legend}{else}{$product.name|truncate:30:'...'}{/if}"
+                        alt="{if !empty($product.cover.legend)}{$product.cover.legend}{else}{$product.name|truncate:60:'...'}{/if}"
                          width="{$urls.no_picture_image.bySize.home_default.width}"
                          height="{$urls.no_picture_image.bySize.home_default.height}">
             {/if}

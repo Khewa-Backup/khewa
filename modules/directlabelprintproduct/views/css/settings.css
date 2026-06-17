@@ -1,0 +1,168 @@
+#editer_header_buttons {
+    background-color:#F5F5F5;
+    border: 1px solid #e2e2e2;
+    border-radius:3px;
+    height: 37px;
+}
+#editer_header_buttons select{
+    margin-top:2px;
+    margin-left:4px;
+}
+#editer_header_buttons select option[value="header"] {
+    background: white;
+    font-weight:bold;
+}
+
+select option{
+    background: #F5F5F5;
+}
+
+.white{
+    background: white !important;
+}
+
+.image_add{
+    display:inline-block;
+    margin-right:0px;
+    background:white;
+    height:31px;
+    width:85px;
+    margin-top:0px;
+    color:#777777 !important;
+    border: 1px solid #e2e2e2;
+    border-radius:3px;
+    position:relative;
+    text-align: center;
+    padding-top:6px;
+}
+
+.editor_print{
+    float:right;
+    margin-right:8px;
+    background:white;
+    height:31px;
+    width:105px;
+    margin-top:2px;
+    border: 1px solid #e2e2e2;
+    border-radius:3px;
+}
+
+.editor_print img{
+    height:21px;
+    margin-top:4px;
+    margin-left:42px;
+}
+
+#ConfigTabBar{
+    width:100%;
+    margin-bottom:15px;
+}
+
+#ConfigTabBar button{
+    width:18%;
+    height:60px;
+    font-size: 14px;
+    margin:0px;
+    padding:0px;
+}
+#recommendedModulesButton{
+    float:right;
+}
+
+#ConfigTabBar .selected_button{
+    background: transparent !important;
+    border:0px !important;
+    color: #363A41 !important;
+}
+
+#ConfigTabBar button i{
+    line-height: 25px;
+    font-size: 28px !important;
+}
+
+#ConfigTabBar .selected_button i{
+    color: #363A41 !important;
+}
+
+.advancedSettingsArea, .manageTemplatesArea, .helpArea, .recommendedModulesArea{
+    display:none;
+}
+#generalSettingsButton, #manageTemplatesButton, #advancedSettingsButton,#helpButton,#recommendedModulesButton{
+    display:none;
+}
+
+#noDymoFoundError{
+    display: none;
+}
+
+#chooseTemplate{
+    position: relative;
+}
+
+.chooseTemplateArea, .chooseVariantArea{
+    position: relative !important;
+    left:10px;
+    height:35px;
+    width: 300px;
+    z-index:10;
+}
+
+.chooseTemplateArea .dropdown{
+    position: absolute;
+    height:40px;
+    width: 300px;
+    z-index:5;
+    top:0px;
+    left:0px;
+}
+.chooseTemplateArea .search{
+    position: absolute;
+    height:450px;
+    line-height:450px;
+    width: 300px;
+    top:31px;
+    display: none;
+    z-index:10;
+}
+.chooseTemplateArea input[type=text]{
+    position: absolute;
+    top:0px;
+    height:30px;
+    width: 300px;
+    z-index:10;
+    display: none;
+}
+
+.chooseTemplateArea .newTemplateOption{
+    background-color:white;
+}
+
+#removeCurrentTemplate, #removeCurrentVariant{
+    position: absolute;
+    height:30px;
+    width: 150px;
+    top:63px;
+    right:20px;
+    display: none;
+    z-index:10;
+}
+
+#downloadDymoTemplate{
+    position: absolute;
+    right:15px;
+    top:45px;
+}
+
+.barcode, .qrcode {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.insertProductImage{
+    background: black;
+}
+
+#chooseVariant,#chooseVariantDiv{
+    display:none;
+}

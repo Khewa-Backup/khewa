@@ -16,11 +16,22 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
-<link href="{$pathMetricsApp|escape:'htmlall':'UTF-8'}" rel=preload as=script>
-<link href="{$pathVendorMetrics|escape:'htmlall':'UTF-8'}" rel=preload as=script>
 
-<div id="app"></div>
+<div id="metrics-app"></div>
 
-<link rel="stylesheet" href="{$pathMetricsAssets|escape:'htmlall':'UTF-8'}">
-<script type="module" src="{$pathMetricsApp|escape:'htmlall':'UTF-8'}"></script>
-<script type="module" src="{$pathVendorMetrics|escape:'htmlall':'UTF-8'}"></script>
+{if $useLocalVueApp == false}
+  <link rel="stylesheet" href="{$pathAssetsCdn|escape}" type="text/css" media="all">
+{elseif $useLocalVueApp == true and $useBuildModeOnly == true}
+  <link rel="stylesheet" href="{$pathAssetsBuilded|escape}" type="text/css" media="all">
+{/if}
+
+{if $useLocalVueApp == true}
+  {if $useBuildModeOnly == true}
+    <script type="module" src="{$pathAppBuilded|escape:'htmlall':'UTF-8'}"></script>
+  {else}
+    <script type="module" src="https://localhost:3001/@vite/client"></script>
+    <script type="module" src="https://localhost:3001/src/main.ts"></script>
+  {/if}
+{else}
+  <script type="module" src="{$pathAppCdn|escape:'htmlall':'UTF-8'}"></script>
+{/if}

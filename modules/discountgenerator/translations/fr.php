@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{discountgenerator}prestashop>discountgenerator_87a9f31e78bf9c1ccf0d4240c481f0d3'] = 'Discount generator';
 $_MODULE['<{discountgenerator}prestashop>discountgenerator_070c80c1aaf227f9fe8382fc991ae775'] = 'Générez-en une seule fois des quantités de bons de réduction ayant chacun un code unique.';
 $_MODULE['<{discountgenerator}prestashop>discountgenerator_9ea7a8314098521cefbe5a4c49abef01'] = 'Êtes-vous sûr de vouloir supprimer le module ?';
@@ -26,9 +26,9 @@ $_MODULE['<{discountgenerator}prestashop>configure_94bf68ed2c7b80b6887c8c400c1bc
 $_MODULE['<{discountgenerator}prestashop>configure_8ca07722557fb75c25a58142e9531657'] = 'Pour créer plusieurs centaines voire milliers de codes de réduction uniques en une seule fois, il vous suffit, lors d\'une création d\'une nouvelle règle panier, de cocher la case \"Générer avec Discount Generator\".  Si vous ne cochez pas cette case, vous créerez tout simplement des règles panier standard, avec un code par règle.';
 $_MODULE['<{discountgenerator}prestashop>configure_09b09ff1ad6b6db107a4ee214f3c93a6'] = 'Pensez ensuite à remplir tous les champs obligatoires du formulaire dans les onglets Informations, Conditions, Actions et validez votre règle panier.';
 $_MODULE['<{discountgenerator}prestashop>configure_93cd6a401273be8e804864fc2d58f601'] = 'Côté front, vos clients pourrons rentrer un code généré à l\'endroit habituel prévu pour tous les codes promos.';
-$_MODULE['<{discountgenerator}prestashop>configure_06086cac8e94239ee8d7fcd391c9c0db'] = 'Vous pourrez ensuite suivre l\'utilisation de vos codes grâce aux tableaux Excel « Codes utilisés », « Codes non utilisés », « Tous » téléchargeables depuis le bloc « Historique du module », que vous trouverez en base de la module configuration page.';
-$_MODULE['<{discountgenerator}prestashop>configure_cabf3cc0d633ec9ef3a2b0ca13742e45'] = 'Bonne création de codes ! Pour toute question, merci de nous contacter depuis votre interface Addons :';
-$_MODULE['<{discountgenerator}prestashop>configure_dc145df40c5cfa55080ce783a98b904b'] = 'Si votre site est une multiboutique, n\'oubliez pas de cocher l\'option ci-dessous « Activer le module pour ce contexte de boutique ».';
+$_MODULE['<{discountgenerator}prestashop>configure_06086cac8e94239ee8d7fcd391c9c0db'] = 'Vous pourrez ensuite suivre l\'utilisation de vos codes grâce aux tableaux Excel « Codes utilisés », « Codes non utilisés », « Tous » téléchargeables depuis le bloc « Historique du module », que vous trouverez en base de la module configuration page.';
+$_MODULE['<{discountgenerator}prestashop>configure_cabf3cc0d633ec9ef3a2b0ca13742e45'] = 'Bonne création de codes ! Pour toute question, merci de nous contacter depuis votre interface Addons :';
+$_MODULE['<{discountgenerator}prestashop>configure_dc145df40c5cfa55080ce783a98b904b'] = 'Si votre site est une multiboutique, n\'oubliez pas de cocher l\'option ci-dessous « Activer le module pour ce contexte de boutique ».';
 $_MODULE['<{discountgenerator}prestashop>configure_5a3e34aac7ef2af7a16c24974cf6ef43'] = 'PASSER À LA GÉNÉRATION DES CODES UNIQUES';
 $_MODULE['<{discountgenerator}prestashop>configure_255c0cf88748334216f7a562e6d7b915'] = 'Historique du module Discount Generator';
 $_MODULE['<{discountgenerator}prestashop>configure_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';

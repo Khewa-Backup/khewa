@@ -6,7 +6,7 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * This source file is subject to the Academic Free License version 3.0
  * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
@@ -14,18 +14,14 @@
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
  * @author    PrestaShop SA and Contributors <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-use PrestaShop\Module\AutoUpgrade\Tools14;
-use PrestaShop\Module\AutoUpgrade\UpgradeTools\TaskRepository;
+
+use PrestaShop\Module\AutoUpgrade\Router\Router;
+use PrestaShop\Module\AutoUpgrade\Task\Runner\SingleTask;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This file is the entrypoint for all ajax requests during a upgrade, rollback or configuration.
@@ -34,7 +30,12 @@ use PrestaShop\Module\AutoUpgrade\UpgradeTools\TaskRepository;
  * Calling it from the module/autoupgrade folder will have unwanted consequences on the upgrade and your shop.
  */
 require_once realpath(dirname(__FILE__) . '/../../modules/autoupgrade') . '/ajax-upgradetabconfig.php';
-$container = autoupgrade_init_container(dirname(__FILE__));
+
+autoupgrade_require_autoload(dirname(__FILE__));
+
+$request = Request::createFromGlobals();
+
+$container = autoupgrade_init_container($request);
 
 (new \PrestaShop\Module\AutoUpgrade\ErrorHandler($container->getLogger()))->enable();
 
@@ -45,10 +46,22 @@ if (!$container->getCookie()->check($_COOKIE)) {
     }
     echo '{wrong token}';
     http_response_code(401);
-    die(1);
+    exit(1);
 }
 
-$controller = TaskRepository::get(Tools14::getValue('action'), $container);
-$controller->init();
-$controller->run();
-echo $controller->getJsonResponse();
+$container->loadNecessaryClasses();
+$action = $request->get('action');
+
+if (!empty($action)) {
+    $controller = new SingleTask($container);
+    $controller->setOptions(['action' => $action]);
+    $controller->run();
+    echo $controller->getJsonResponse();
+} else {
+    $response = (new Router($container))->handle($request);
+    if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
+        $response->send();
+    } else {
+        echo $response;
+    }
+}

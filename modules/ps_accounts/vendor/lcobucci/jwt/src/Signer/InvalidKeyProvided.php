@@ -1,10 +1,9 @@
 <?php
 
-namespace Lcobucci\JWT\Signer;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer;
 
 use InvalidArgumentException;
-use Lcobucci\JWT\Exception;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 final class InvalidKeyProvided extends InvalidArgumentException implements Exception
 {
     /**
@@ -16,7 +15,6 @@ final class InvalidKeyProvided extends InvalidArgumentException implements Excep
     {
         return new self('It was not possible to parse your key, reason: ' . $details);
     }
-
     /** @return self */
     public static function incompatibleKey()
     {

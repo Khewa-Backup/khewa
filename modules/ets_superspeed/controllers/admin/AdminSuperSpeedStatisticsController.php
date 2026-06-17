@@ -1,33 +1,34 @@
 <?php
 /**
- * 2007-2020 ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
  *
  * NOTICE OF LICENSE
  *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
  * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- * 
+ *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please contact us for extra customization service at an affordable price
+ * versions in the future.
  *
- *  @author ETS-Soft <etssoft.jsc@gmail.com>
- *  @copyright  2007-2021 ETS-Soft
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of ETS-Soft
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
  */
 
-if (!defined('_PS_VERSION_'))
-    	exit;
+if (!defined('_PS_VERSION_')) { exit; }
+
+/**
+ * Class AdminSuperSpeedStatisticsController
+ * @property Ets_superspeed $module
+ */
 class AdminSuperSpeedStatisticsController extends ModuleAdminController
 {
     public function __construct()
     {
        parent::__construct();
-       $this->context= Context::getContext();
        $this->bootstrap = true;
     }
     public function initContent()
@@ -36,20 +37,10 @@ class AdminSuperSpeedStatisticsController extends ModuleAdminController
         if(Tools::isSubmit('getTimeSpeed'))
         {
             $request_time = (float)Tools::getValue('request_time');
-            if($request_time)
-            {
-                $request_time = Tools::ps_round($request_time/1000,2);
-                Db::getInstance()->execute('INSERT INTO `'._DB_PREFIX_.'ets_superspeed_time`(id_shop,`date`,`time`) VALUES("'.(int)$this->context->shop->id.'","'.pSQL(date('Y-m-d H:i:s')).'","'.(float)$request_time.'")');
-                $count= Db::getInstance()->getValue('SELECT COUNT(*) FROM `'._DB_PREFIX_.'ets_superspeed_time` WHERE id_shop="'.(int)$this->context->shop->id.'"');
-                if($count > 150)
-                {
-                    $mintime= Db::getInstance()->getValue('SELECT MIN(`date`) FROM `'._DB_PREFIX_.'ets_superspeed_time` WHERE id_shop="'.(int)$this->context->shop->id.'"');
-                    Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'ets_superspeed_time` WHERE id_shop="'.(int)$this->context->shop->id.'" AND `date` ="'.pSQL($mintime).'"');
-                }
-            }
-            $times= $this->module->getTimeSpeed(true);
+            Ets_superspeed_cache_page::submitTimeSpeed($request_time, $this->context->shop->id);
+            $times= $this->getTimeSpeed(true);
             die(
-                Tools::jsonEncode(
+                json_encode(
                     array(
                        'time' => $times['time'],
                        'value'=>$times['value'],
@@ -57,6 +48,61 @@ class AdminSuperSpeedStatisticsController extends ModuleAdminController
                 )
             );
         }
+    }
+    public function renderSpeedStatistics()
+    {
+        $firstime = $this->getTimeSpeed(true);
+        $this->context->smarty->assign(
+            array(
+                'times' => $this->getTimeSpeed(),
+                'start_time' => $firstime['value'],
+                'time_zone' => date('Z') / 3600,
+                'updateInterval' => (float)Configuration::get('ETS_TIME_AJAX_CHECK_SPEED') ? 1000 * (float)Configuration::get('ETS_TIME_AJAX_CHECK_SPEED') : 5000,
+                'url_home' => $this->module->getLinkHomePage(),
+                'link_logo' => $this->module->getBaseLink() . '/modules/ets_superspeed/logo.png'
+            )
+        );
+        return $this->module->display(_PS_MODULE_DIR_.$this->module->name.DIRECTORY_SEPARATOR.$this->module->name.'.php', 'statistics.tpl');
+    }
+    public function getTimeSpeed($first = false)
+    {
+        $times = Ets_superspeed_cache_page::getTimeSpeed($this->context->shop->id);
+        if ($first) {
+            if ($times) {
+                return array(
+                    'time' => date('Y-m-d H:i:s'),
+                    'value' => $times[0]['time'],
+                );
+            } else
+                return array(
+                    'time' => date('Y-m-d H:i:s'),
+                    'value' => 0,
+                );
+
+        }
+
+        $second = 0;
+        $time_datas = array();
+        if ($times) {
+            foreach ($times as $time) {
+                $time_datas[] = array(
+                    'time' => date("Y-m-d H:i:s", strtotime("-$second seconds")),
+                    'value' => $time['time'],
+                );
+                $second += 2;
+            }
+        }
+        if (Count($time_datas) < 150) {
+            $n = count($time_datas);
+            for ($i = $n; $i < 150; $i++) {
+                $time_datas[] = array(
+                    'time' => date("Y-m-d H:i:s", strtotime("-$second seconds")),
+                    'value' => 0,
+                );
+                $second += 2;
+            }
+        }
+        return array_reverse($time_datas);
     }
     public function renderList()
     {
@@ -66,14 +112,15 @@ class AdminSuperSpeedStatisticsController extends ModuleAdminController
         $this->context->smarty->assign(
             array(
                 'link' => $this->context->link,
-                'html_form' =>$this->module->renderSpeedStatistics(),
+                'site_url_home' => $this->module->getLinkHomePage(),
+                'html_form' =>$this->renderSpeedStatistics(),
             )
         );
         return $this->module->display(_PS_MODULE_DIR_.$this->module->name.DIRECTORY_SEPARATOR.$this->module->name.'.php', 'admin.tpl');
     }
     public function getCacheSettingFieldsValues()
     {
-        $file_caches= Db::getInstance()->executeS('SELECT * FROM `'._DB_PREFIX_.'ets_superspeed_cache_page` WHERE id_shop="'.(int)$this->context->shop->id.'" ORDER BY date_upd desc LIMIT 0,10');
+        $file_caches = Ets_superspeed_cache_page::getListFileCache($this->context->shop->id, 10);
         if($file_caches)
         {
             foreach($file_caches as &$file_cache)
@@ -123,11 +170,13 @@ class AdminSuperSpeedStatisticsController extends ModuleAdminController
         $total_optimized_images += $total_image_others_optimizaed; 
         $total_unoptimized_images = $total_images - $total_optimized_images;
         $percent_optimized_images = $total_images ? Tools::ps_round(($total_optimized_images/$total_images)*100,2) :0;
-        $percent_unoptimized_images= 100 - $percent_optimized_images;
-        $cache = Db::getInstance()->getRow('SELECT SUM(file_size) as total_cache,COUNT(file_cache) as total_file FROM `'._DB_PREFIX_.'ets_superspeed_cache_page` WHERE id_shop='.(int)$this->context->shop->id);
-        $total_cache = $cache['total_cache'];
+        $percent_unoptimized_images= Tools::ps_round(100 - $percent_optimized_images,2);
+        $cache = Ets_superspeed_cache_page::getRowCache($this->context->shop->id);
+        $total_cache =  $cache && isset($cache['total_cache']) ? $cache['total_cache'] : 0;
         if($total_cache <1024)
+        {
             $total_text ='KB';
+        }
         else
         {
             $total_cache = $total_cache/1024;
@@ -140,14 +189,11 @@ class AdminSuperSpeedStatisticsController extends ModuleAdminController
             }
         }
         $check_points = array();
-        $total_point = (int)Db::getInstance()->getValue('SELECT COUNT(*) FROM `'._DB_PREFIX_.'ets_superspeed_hook_time` pht
-        INNER JOIN `'._DB_PREFIX_.'hook` h ON (pht.hook_name = h.name)
-        INNER JOIN `'._DB_PREFIX_.'hook_module` hm ON (hm.id_hook=h.id_hook AND hm.id_module=pht.id_module)
-        WHERE hm.id_shop="'.(int)$this->context->shop->id.'" AND pht.time >1');
+        $total_point = Ets_superspeed_defines::getHookTimeByFilter($this->context->shop->id, 'AND pht.time >1',true);
         $check_points[] = array(
-            'check_point' => $this->l('Number of module hooks have execution time greater than 1000 ms'),
+            'check_point' => $this->module->l('Number of module hooks have execution time greater than 1000 ms', 'AdminSuperSpeedStatisticsController'),
             'number_data' => $total_point ,
-            'status' =>$total_point ? $this->l('Bad') : $this->l('Good'),
+            'status' => $total_point ? $this->module->l('Bad', 'AdminSuperSpeedStatisticsController') : $this->module->l('Good', 'AdminSuperSpeedStatisticsController'),
             'class_status' => $total_point ? 'status-bad' :'status-good',
         );
         $PS_CSS_THEME_CACHE = (int)Tools::getValue('PS_CSS_THEME_CACHE',Configuration::get('PS_CSS_THEME_CACHE'));
@@ -155,6 +201,7 @@ class AdminSuperSpeedStatisticsController extends ModuleAdminController
         $PS_HTML_THEME_COMPRESSION = (int)Tools::getValue('PS_HTML_THEME_COMPRESSION',Configuration::get('PS_HTML_THEME_COMPRESSION'));
         $PS_SMARTY_CACHE = (int)Tools::getValue('PS_SMARTY_CACHE',Configuration::get('PS_SMARTY_CACHE'));
         $ETS_SPEED_SMARTY_CACHE = (int)Tools::getValue('ETS_SPEED_SMARTY_CACHE' , Configuration::get('PS_SMARTY_FORCE_COMPILE'));
+        $quality = (int)Tools::getValue('ETS_SPEED_QUALITY_OPTIMIZE', Configuration::getGlobalValue('ETS_SPEED_QUALITY_OPTIMIZE'));
         return array(
             'ETS_SPEED_SMARTY_CACHE' => $ETS_SPEED_SMARTY_CACHE==0 || (Configuration::get('PS_SMARTY_FORCE_COMPILE')==1 && $PS_SMARTY_CACHE),
             'PS_SMARTY_CACHE' => $PS_SMARTY_CACHE,
@@ -162,7 +209,6 @@ class AdminSuperSpeedStatisticsController extends ModuleAdminController
             'PS_JS_THEME_CACHE' => $PS_JS_THEME_CACHE,
             'PS_CSS_THEME_CACHE' => $PS_CSS_THEME_CACHE,
             'ETS_SPEED_ENABLE_PAGE_CACHE' => Configuration::get('ETS_SPEED_ENABLE_PAGE_CACHE'),
-            'ETS_SPEED_OPTIMIZE_NEW_IMAGE' => Configuration::get('ETS_SPEED_OPTIMIZE_NEW_IMAGE'),
             'PS_HTACCESS_CACHE_CONTROL' => Configuration::get('PS_HTACCESS_CACHE_CONTROL'),
             'PS_MODE_DEV' => _PS_MODE_DEV_,
             'lazy_load' => Configuration::get('ETS_SPEED_ENABLE_LAYZY_LOAD') && Configuration::get('ETS_SPEED_LAZY_FOR'),
@@ -173,11 +219,11 @@ class AdminSuperSpeedStatisticsController extends ModuleAdminController
             'total_unoptimized_images' => $total_unoptimized_images,
             'percent_optimized_images' => $percent_optimized_images,
             'percent_unoptimized_images' => $percent_unoptimized_images,
-            'total_optimized_size_images' => $this->module->getTotalSizeSave(),
+            'total_optimized_size_images' => Ets_superspeed_compressor_image::getInstance()->getTotalSizeSave($quality),
             'check_points' => array_merge($check_points,$this->module->getCheckPoints()),
             'link_optimize_image' => $this->context->link->getAdminLink('AdminSuperSpeedImage'),
             'total_cache' => $total_cache ? Tools::ps_round($total_cache,2).$total_text :'',
-            'total_file' => $cache['total_file'],
+            'total_file' => $cache ? $cache['total_file']:0,
             
         );
     }

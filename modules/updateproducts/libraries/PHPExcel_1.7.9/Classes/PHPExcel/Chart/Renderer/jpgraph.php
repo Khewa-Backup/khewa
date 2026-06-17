@@ -25,7 +25,9 @@
  * @license		http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version		1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 require_once(PHPExcel_Settings::getChartRendererPath().'/jpgraph.php');
 

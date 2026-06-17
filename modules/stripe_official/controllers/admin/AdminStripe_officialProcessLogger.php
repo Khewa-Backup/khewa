@@ -1,6 +1,6 @@
 <?php
 /**
- * NOTICE OF LICENSE
+ * NOTICE OF LICENSE.
  *
  * This source file is subject to a commercial license from SARL 202 ecommerce
  * Use, copy, modification or distribution of this source file without written
@@ -26,6 +26,10 @@
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
 use Stripe_officialClasslib\Extensions\ProcessLogger\Controllers\Admin\AdminProcessLoggerController;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class AdminStripe_officialProcessLoggerController extends AdminProcessLoggerController
 {

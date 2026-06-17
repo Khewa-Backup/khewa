@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 <div class="table-responsive">
@@ -27,7 +27,8 @@
             <th>{l s='Signup time' mod='mailchimppro'}</th>
             <th>{l s='IP Opt-in' mod='mailchimppro'}</th>
             <th>{l s='Language' mod='mailchimppro'}</th>
-            <th>{l s='VIP' mod='mailchimppro'}</th>
+			<th>{l s='Tags' mod='mailchimppro'}</th>
+            <th>{l s='VIP' mod='mailchimppro'}</th>			
         </tr>
         </thead>
         <tbody>
@@ -37,11 +38,22 @@
                 <td>{$member.id|escape:'htmlall':'UTF-8'}</td>
                 <td>{$member.email_address|escape:'htmlall':'UTF-8'}</td>
                 <td>{$member.email_type|escape:'htmlall':'UTF-8'}</td>
-                <td>{$member.status|escape:'htmlall':'UTF-8'}</td>
+                <td>
+					<span class="member-status {$member.status|escape:'htmlall':'UTF-8'}">{$member.status|escape:'htmlall':'UTF-8'}</span>
+				</td>
                 <td>{$member.ip_signup|escape:'htmlall':'UTF-8'}</td>
                 <td>{$member.timestamp_signup|escape:'htmlall':'UTF-8'}</td>
                 <td>{$member.ip_opt|escape:'htmlall':'UTF-8'}</td>
                 <td>{$member.language|escape:'htmlall':'UTF-8'}</td>
+				<td>
+					{if $member.tags_count}
+						{foreach $member.tags as $tag}
+							<span class="member-tag">{$tag.name|escape:'htmlall':'UTF-8'}</span>
+						{/foreach}
+					{else}
+						—
+					{/if}
+				</td>
                 <td>{$member.vip|escape:'htmlall':'UTF-8'}</td>
             </tr>
         {/foreach}

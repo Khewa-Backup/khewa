@@ -47,7 +47,7 @@
                                 {/block}
                             </div>
                             {block name='product_description_short'}
-                                <div id="product-description-short">{$product.description_short nofilter}</div>
+                                <div id="product-description-short"><div class="rte-content">{$product.description_short nofilter}</div></div>
                             {/block}
                             {block name='product_buy'}
                                 <div class="product-actions js-product-actions">

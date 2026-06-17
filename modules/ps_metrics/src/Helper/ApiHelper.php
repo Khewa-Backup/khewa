@@ -23,16 +23,12 @@ namespace PrestaShop\Module\Ps_metrics\Helper;
 
 class ApiHelper
 {
-    public function __construct()
-    {
-    }
-
     /**
      * @param array $period
      *
      * @return array
      */
-    public function getLastedPeriodRange($period)
+    public function getLastedPeriodRange(array $period): array
     {
         $startDate = strtotime($period['startDate']);
         $endDate = strtotime($period['endDate']);

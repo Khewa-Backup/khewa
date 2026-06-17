@@ -2,9 +2,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -40,7 +40,7 @@ class BT_XmlGenerateReviews extends BT_BaseXml
         $oReviewsXml = new BT_XmlReviews();
 
         $aParams = array(
-            'iLangId' => Tools::getValue('id_lang'),
+            'iLangId' => !empty(Tools::getValue('gmcp_lang_id'))  ? Tools::getValue('gmcp_lang_id') : Tools::getValue('id_lang'),
             'bOutput' => 1,
             'sType' => Tools::getValue('feed_type'),
         );

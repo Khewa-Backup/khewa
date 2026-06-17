@@ -2,9 +2,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -47,11 +47,11 @@ class BT_XmlProduct extends BT_BaseProductXml
         $this->data->step->weight = (float)$this->data->p->weight;
 
         // handle different prices and shipping fees
-        $this->data->step->price_default_currency_no_tax = Tools::convertPrice(Product::getPriceStatic((int)$this->data->p->id,
-            false, null), $this->data->currency, false);
+        $this->data->step->price_default_currency_no_tax = Tools::convertPrice(Product::getPriceStatic((int)$this->data->p->id, false, null), $this->data->currency, false);
 
         // Exclude based on min price
-        if (!empty(GMerchantCenterPro::$conf['GMCP_MIN_PRICE'])
+        if (
+            !empty(GMerchantCenterPro::$conf['GMCP_MIN_PRICE'])
             && ((float)$this->data->step->price_default_currency_no_tax < (float)GMerchantCenterPro::$conf['GMCP_MIN_PRICE'])
         ) {
             BT_GmcProReporting::create()->set('_no_export_min_price', array('productId' => $this->data->step->id_reporting));
@@ -59,7 +59,8 @@ class BT_XmlProduct extends BT_BaseProductXml
         }
 
         // Exclude based on max weight
-        if (!empty(GMerchantCenterPro::$conf['GMCP_MAX_WEIGHT'])
+        if (
+            !empty(GMerchantCenterPro::$conf['GMCP_MAX_WEIGHT'])
             && ((float)$this->data->step->weight > (float)GMerchantCenterPro::$conf['GMCP_MAX_WEIGHT'])
         ) {
             BT_GmcProReporting::create()->set('_no_export_max_weight', array('productId' => $this->data->step->id_reporting));
@@ -77,14 +78,34 @@ class BT_XmlProduct extends BT_BaseProductXml
         $this->data->step->price = number_format(BT_GmcProModuleTools::round($this->data->step->price_raw), 2, '.', '') . ' ' . $this->data->currency->iso_code;
         $this->data->step->price_no_discount = number_format(BT_GmcProModuleTools::round($this->data->step->price_raw_no_discount), 2, '.', '') . ' ' . $this->data->currency->iso_code;
 
+        // Use case override the price with the pack price
+        if (
+            GMerchantCenterPro::$bAdvancedPack && AdvancedPack::isValidPack($this->data->p->id)
+        ) {
+            $oPack = new AdvancedPack($this->data->p->id);
+            $this->data->step->price_raw_no_discount = number_format(AdvancedPack::getPackPrice($oPack->id, $bUseTax, false), 2, '.', '') . ' ' . $this->data->currency->iso_code;
+            $this->data->step->price_raw = number_format(AdvancedPack::getPackPrice($oPack->id), 2, '.', '') . ' ' . $this->data->currency->iso_code;
+            $this->data->step->price_no_discount = number_format(AdvancedPack::getPackPrice($oPack->id, $bUseTax, false), 2, '.', '') . ' ' . $this->data->currency->iso_code;
+            $this->data->step->price = number_format(AdvancedPack::getPackPrice($oPack->id), 2, '.', '') . ' ' . $this->data->currency->iso_code;
+        }
+
+        // Available date
+        $this->data->step->availabilty_date = "";
+
+        if ($this->data->p->available_date != "0000-00-00") {
+            $this->data->step->availabilty_date = $this->data->p->available_date;
+        }
+
         // Cost price
         if (!empty((int)$this->data->p->wholesale_price)) {
             $this->data->step->cost_price = number_format(BT_GmcProModuleTools::round($this->data->p->wholesale_price), 2, '.', '') . ' ' . $this->data->currency->iso_code;
         }
 
         // shipping fees
-        if (!empty(GMerchantCenterPro::$conf['GMCP_SHIPPING_USE'])
-            && empty($this->aParams['sFreeShipping'][$this->data->p->id])) {
+        if (
+            !empty(GMerchantCenterPro::$conf['GMCP_SHIPPING_USE'])
+            && empty($this->aParams['sFreeShipping'][$this->data->p->id])
+        ) {
             $fPrice = number_format((float)$this->getProductShippingFees((float)BT_GmcProModuleTools::round($this->data->step->price_raw)), 2, '.', '');
         } else {
             $fPrice = number_format((float)0, 2, '.', '');
@@ -96,7 +117,8 @@ class BT_XmlProduct extends BT_BaseProductXml
 
         // quantity
         // Do not export if the quantity is 0 for the combination and export out of stock setting is not On
-        if ((int)$this->data->p->quantity < 1
+        if (
+            (int)$this->data->p->quantity < 1
             && (int)GMerchantCenterPro::$conf['GMCP_EXPORT_OOS'] == 0
         ) {
             BT_GmcProReporting::create()->set('_no_export_no_stock', array('productId' => $this->data->step->id_reporting));
@@ -110,7 +132,8 @@ class BT_XmlProduct extends BT_BaseProductXml
         $this->data->step->gtin = BT_GmcProModuleTools::getGtin(GMerchantCenterPro::$conf['GMCP_GTIN_PREF'], (array)$this->data->p);
 
         // Exclude without EAN
-        if (GMerchantCenterPro::$conf['GMCP_EXC_NO_EAN']
+        if (
+            GMerchantCenterPro::$conf['GMCP_EXC_NO_EAN']
             && empty($this->data->step->gtin)
         ) {
             BT_GmcProReporting::create()->set('_no_export_no_ean_upc', array('productId' => $this->data->step->id_reporting));
@@ -118,11 +141,11 @@ class BT_XmlProduct extends BT_BaseProductXml
         }
 
         // supplier reference
-        $this->data->step->mpn = $this->getSupplierReference($this->data->p->id, $this->data->p->id_supplier,
-            $this->data->p->supplier_reference, $this->data->p->reference);
+        $this->data->step->mpn = $this->getSupplierReference($this->data->p->id, $this->data->p->id_supplier, $this->data->p->supplier_reference, $this->data->p->reference);
 
         // exclude if mpn is empty
-        if (!empty(GMerchantCenterPro::$conf['GMCP_EXC_NO_MREF'])
+        if (
+            !empty(GMerchantCenterPro::$conf['GMCP_EXC_NO_MREF'])
             && !GMerchantCenterPro::$conf['GMCP_INC_ID_EXISTS']
             && empty($this->data->step->mpn)
         ) {
@@ -139,6 +162,42 @@ class BT_XmlProduct extends BT_BaseProductXml
         }
 
         $this->data->step->visibility = $this->data->p->visibility;
+
+        if ($this->data->p->minimal_quantity > 1) {
+            $this->data->multipack = $this->data->p->minimal_quantity;
+        } else {
+            $this->data->multipack = 0;
+        }
+
+        if (!empty(GMerchantCenterPro::$conf['GMCP_DIMENSION'])) {
+            $aDataDimension = BT_GmcProModuleTools::getDimension($this->data->p->width, $this->data->p->height, $this->data->p->depth);
+            if (!empty($aDataDimension)) {
+                $this->data->step->shipping_width =  $aDataDimension['shipping_width'];
+                $this->data->step->shipping_height = $aDataDimension['shipping_height'];
+                $this->data->step->shipping_length  = $aDataDimension['shipping_length'];
+            }
+        }
+
+        // Use case for dimension of shipping
+        if (!empty(GMerchantCenterPro::$conf['GMCP_PRODUCT_DIMENSION'])) {
+            $aDataDimension = BT_GmcProModuleTools::getDimension($this->data->p->width, $this->data->p->height, $this->data->p->depth, $this->data->p->weight);
+
+            if (!empty($aDataDimension)) {
+                $this->data->step->product_width =  $aDataDimension['product_width'];
+                $this->data->step->product_height = $aDataDimension['product_height'];
+                $this->data->step->product_length  = $aDataDimension['product_length'];
+                $this->data->step->product_weight  = $aDataDimension['product_weight'];
+            }
+        }
+
+        $this->data->step->free_shipping = false;
+        // Use case to set the free shipping 
+        if (!empty(GMerchantCenterPro::$conf['GMCP_FREE_SHIPPING_PRICE'])) {
+            if ((float)Product::getPriceStatic((int)$this->data->p->id, false, null, 6) >= (float)GMerchantCenterPro::$conf['GMCP_FREE_SHIPPING_PRICE']) {
+                $this->data->step->free_shipping = true;
+            }
+        }
+
 
         return true;
     }
@@ -207,14 +266,12 @@ class BT_XmlProduct extends BT_BaseProductXml
      */
     public function getSupplierReference($iProdId, $iSupplierId, $sSupplierRef = null, $sProductRef = null, $iProdAttributeId = 0, $sCombiSupplierRef = null, $sCombiRef = null)
     {
-        // set  vars
-        $sReturnRef = '';
-
-        // detect the MPN type
-        $sReturnRef = BT_GmcProModuleDao::getProductSupplierReference($iProdId, $iSupplierId);
-
-        if (empty($sReturnRef) && !empty($sProductRef)) {
-            $sReturnRef = $sProductRef;
+        if (empty(GMerchantCenterPro::$bCompare1770)) {
+            // detect the MPN type
+            $sReturnRef = BT_GmcProModuleDao::getProductSupplierReference($iProdId, $iSupplierId);
+        } else {
+            $oProduct = new Product($iProdId);
+            $sReturnRef = $oProduct->mpn;
         }
 
         return $sReturnRef;

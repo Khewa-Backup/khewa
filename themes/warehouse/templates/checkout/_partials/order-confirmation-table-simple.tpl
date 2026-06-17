@@ -35,7 +35,11 @@
           <div class="col-sm-2 col-3">
             <span class="image">
               {if $add_product_link}<a href="{$product.url}" target="_blank">{/if}
-                <img src="{$product.cover.medium.url}" class="img-fluid" />
+                {if !empty($product.default_image)}
+                  <img src="{$product.default_image.medium.url}"  class="img-fluid" loading="lazy" />
+                {else}
+                  <img src="{$urls.no_picture_image.bySize.medium_default.url}" class="img-fluid" loading="lazy" />
+                {/if}
               {if $add_product_link}</a>{/if}
             </span>
           </div>

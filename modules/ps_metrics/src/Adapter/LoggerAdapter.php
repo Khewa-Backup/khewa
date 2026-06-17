@@ -32,19 +32,19 @@ class LoggerAdapter implements LoggerInterface
     /**
      * Detailed debug information
      */
-    const DEBUG = 100;
+    public const DEBUG = 100;
 
     /**
      * Interesting events
      *
      * Examples: User logs in, SQL logs.
      */
-    const INFO = 200;
+    public const INFO = 200;
 
     /**
      * Uncommon events
      */
-    const NOTICE = 250;
+    public const NOTICE = 250;
 
     /**
      * Exceptional occurrences that are not errors
@@ -52,19 +52,19 @@ class LoggerAdapter implements LoggerInterface
      * Examples: Use of deprecated APIs, poor use of an API,
      * undesirable things that are not necessarily wrong.
      */
-    const WARNING = 300;
+    public const WARNING = 300;
 
     /**
      * Runtime errors
      */
-    const ERROR = 400;
+    public const ERROR = 400;
 
     /**
      * Critical conditions
      *
      * Example: Application component unavailable, unexpected exception.
      */
-    const CRITICAL = 500;
+    public const CRITICAL = 500;
 
     /**
      * Action must be taken immediately
@@ -72,12 +72,12 @@ class LoggerAdapter implements LoggerInterface
      * Example: Entire website down, database unavailable, etc.
      * This should trigger the SMS alerts and wake you up.
      */
-    const ALERT = 550;
+    public const ALERT = 550;
 
     /**
      * Urgent alert.
      */
-    const EMERGENCY = 600;
+    public const EMERGENCY = 600;
 
     /**
      * {@inheritdoc}
@@ -170,7 +170,7 @@ class LoggerAdapter implements LoggerInterface
         $errorCode = !empty($context['error_code']) ? (int) $context['error_code'] : null;
         $objectType = !empty($context['object_type']) ? $context['object_type'] : null;
         $objectId = !empty($context['object_id']) ? (int) $context['object_id'] : null;
-        $allowDuplicate = !empty($context['allow_duplicate']) && (bool) $context['allow_duplicate'];
+        $allowDuplicate = !empty($context['allow_duplicate']) ? (bool) $context['allow_duplicate'] : false;
         $idEmployee = !empty($context['id_employee']) ? (int) $context['id_employee'] : null;
         unset($context['error_code'], $context['object_type'], $context['object_id'], $context['allow_duplicate'], $context['id_employee']);
 

@@ -535,12 +535,6 @@ class DispatcherCore
         if (!Validate::isLoadedObject($shop)) {
             $shop = null;
         }
-        $url_got = $this->getRequest()->getRequestUri();
-        if($url_got == '/sitemap.xml'){
-            $new_url = 'https://khewa.com/1_index_sitemap.xml';
-            Tools::redirect( $new_url );
-        }
-
 
         $this->request_uri = $this->buildRequestUri(
             $this->getRequest()->getRequestUri(),

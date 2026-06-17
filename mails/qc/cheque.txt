@@ -20,9 +20,9 @@ Montant :  {total_paid}
 
 Veuillez envoyer votre chèque à l'adresse suivante :  {check_address_html}
 
-Suivez votre commande et téléchargez votre facture sur notre site, rendez-vous dans la section [Historique et détails de mes commandes]({history_url}) de votre compte client.
+Suivez votre commande et téléchargez votre facture sur notre site, rendez-vous dans la section [Historique et détails des commandes]({history_url}) de votre compte client.
 
-Si vous avez un compte invité, vous pouvez suivre votre commande via la section [Suivi de commande]({guest_tracking_url}) sur notre boutique.
+Si vous avez un compte invité, vous pouvez suivre votre commande via la section [Suivi des visiteurs]({guest_tracking_url}) sur notre boutique.
 
 [{shop_name}]({shop_url})
 

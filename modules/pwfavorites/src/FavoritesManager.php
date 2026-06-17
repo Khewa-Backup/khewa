@@ -136,10 +136,16 @@ class FavoritesManager
             return [];
         }
 
+        $context = Context::getContext();
+
         return Db::getResults(
-            Db::query(self::TABLE)
-                ->select('`id_product`')
-                ->where('`id_product` NOT IN('.pSQL(implode(', ', array_column($products, 'id_product'))).')')
+            Db::query(self::TABLE, 'f')
+                ->select('f.`id_product`')
+                ->leftJoin('product_shop', 'ps', 'ps.`id_product` = f.`id_product`')
+                ->where('f.`id_product` NOT IN('.pSQL(implode(', ', array_column($products, 'id_product'))).')')
+                ->where('f.`id_customer` = ' . (int) $context->customer->id)
+                ->where('ps.`active` = 1')
+                ->where('ps.`id_shop` = ' . (int) $context->shop->id)
         );
     }
 

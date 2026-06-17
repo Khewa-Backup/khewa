@@ -113,7 +113,7 @@ class SimpleBlogPostAuthor extends ObjectModel
 
     public function __toString()
     {
-        return $this->firstname.' '.$this->lastname;
+        return $this->firstname . ' ' . $this->lastname;
     }
 
     public function getPosts()
@@ -151,7 +151,7 @@ class SimpleBlogPostAuthor extends ObjectModel
         $sql->select('id_simpleblog_author');
         $sql->from('simpleblog_author', 'a');
         $sql->where('a.active = 1');
-        $sql->where('a.link_rewrite = "'.pSQL($rewrite).'"');
+        $sql->where('a.link_rewrite = "' . pSQL($rewrite) . '"');
 
         $idAuthor = Db::getInstance()->getValue($sql);
 

@@ -12,6 +12,9 @@ class DefaultListBlogForPrestaShopController extends ModuleFrontController
     protected $blogAuthor = null;
     protected $blogPost = null;
 
+    /** @var ph_simpleblog $module */
+    public $module;
+
     public function init()
     {
         parent::init();
@@ -69,7 +72,7 @@ class DefaultListBlogForPrestaShopController extends ModuleFrontController
             }
         } else {
             if (empty($defaultMetaTitleForBlog)) {
-                $meta_title = $pageVariables['meta']['title'] . ' ' . $this->l('Blog', 'list-v17');
+                $meta_title = $pageVariables['meta']['title'] . ' ' . $this->l('Blog', 'default_list');
             } else {
                 $meta_title = $defaultMetaTitleForBlog;
             }
@@ -158,10 +161,8 @@ class DefaultListBlogForPrestaShopController extends ModuleFrontController
     {
         $breadcrumb = parent::getBreadcrumbLinks();
 
-        $id_lang = $this->context->language->id;
-
         $breadcrumb['links'][] = [
-            'title' => $this->l('Blog'),
+            'title' => $this->l('Blog', 'default_list'),
             'url' => $this->context->link->getModuleLink('ph_simpleblog', 'list'),
         ];
 

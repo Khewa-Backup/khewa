@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PsAccounts\Handler\Error;
 
 use Module;
-use PrestaShop\Module\PsAccounts\Adapter\Configuration;
 use PrestaShop\Module\PsAccounts\Repository\ConfigurationRepository;
 use Ps_accounts;
 use Raven_Client;
@@ -60,22 +59,15 @@ class Sentry
         $this->client = new Raven_Client(
             $sentryCredentials,
             [
-                'level' => 'warning',
+                'environment' => $environment,
+                'release' => \Ps_accounts::VERSION,
                 'tags' => [
-                    'environment' => $environment,
                     'php_version' => phpversion(),
                     'ps_accounts_version' => \Ps_accounts::VERSION,
                     'prestashop_version' => _PS_VERSION_,
                     'ps_accounts_is_enabled' => \Module::isEnabled('ps_accounts'),
-                    'ps_accounts_is_installed' => \Module::isInstalled('ps_accounts'),
                     'email' => $this->configuration->getFirebaseEmail(),
-                    Configuration::PS_ACCOUNTS_FIREBASE_ID_TOKEN => $this->configuration->getFirebaseIdToken(),
-                    Configuration::PS_ACCOUNTS_FIREBASE_REFRESH_TOKEN => $this->configuration->getFirebaseRefreshToken(),
-                    Configuration::PSX_UUID_V4 => $this->configuration->getShopUuid(),
-                    Configuration::PS_ACCOUNTS_FIREBASE_EMAIL_IS_VERIFIED => $this->configuration->firebaseEmailIsVerified(),
-                    Configuration::PS_ACCOUNTS_FIREBASE_EMAIL => $this->configuration->getFirebaseEmail(),
-                    Configuration::PS_ACCOUNTS_RSA_PUBLIC_KEY => $this->configuration->getAccountsRsaPublicKey(),
-                    Configuration::PS_ACCOUNTS_RSA_SIGN_DATA => $this->configuration->getAccountsRsaSignData(),
+                    'shop_uuid' => $this->configuration->getShopUuid(),
                 ],
             ]
         );
@@ -84,13 +76,13 @@ class Sentry
     }
 
     /**
-     * @param \Throwable $exception
+     * @param mixed $exception
      *
      * @return void
      *
      * @throws \Exception
      */
-    public static function capture(\Throwable $exception)
+    public static function capture($exception)
     {
         /** @var Ps_accounts $psAccounts */
         $psAccounts = Module::getInstanceByName('ps_accounts');
@@ -98,17 +90,19 @@ class Sentry
         /** @var self $instance */
         $instance = $psAccounts->getService(self::class);
 
+        $psAccounts->getLogger()->debug($exception);
+
         $instance->client->captureException($exception);
     }
 
     /**
-     * @param \Throwable $exception
+     * @param mixed $exception
      *
      * @return void
      *
-     * @throws \Throwable
+     * @throws \Exception
      */
-    public static function captureAndRethrow(\Throwable $exception)
+    public static function captureAndRethrow($exception)
     {
         self::capture($exception);
 

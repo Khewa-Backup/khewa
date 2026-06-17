@@ -26,18 +26,18 @@
 
 
 <div class="block-categories block block-links block-toggle js-block-toggle">
-	<h5 class="block-title"><a class="text-uppercase h6" href="{ph_simpleblog::getLink()}" title="{l s='Blog' mod='ph_simpleblog'}"><span>{l s='Blog' mod='ph_simpleblog'}</span></a></h5>
+	<h5 class="block-title"><a class="text-uppercase h6" href="{ph_simpleblog::getLink()}" title="{l s='Blog' d='Modules.Simpleblog.Shop'}"><span>{l s='Blog' d='Modules.Simpleblog.Shop'}</span></a></h5>
 	<div class="block-content">
             <ul class="category-sub-menu">
         	{foreach $categories AS $category}
-				<li><a href="{$category['url']}" title="{l s='Link to' mod='ph_simpleblog'} {$category['name']}">{$category['name']}</a>
+				<li><a href="{$category['url']}" title="{l s='Link to' d='Modules.Simpleblog.Shop'} {$category['name']}">{$category['name']}</a>
 					{if isset($category['childrens'])}
 					<div class="navbar-toggler collapse-icons" data-toggle="collapse" data-target="#blog_subcategory_{$category['id']}"><i class="material-icons add"></i><i class="material-icons remove"></i></div>
 					<div class="collapse" id="blog_subcategory_{$category['id']}">
 						<ul class="category-sub-menu">
 							{foreach $category['childrens'] as $child_category}
 							<li>
-								<a class="category-sub-link" href="{$child_category['url']}" title="{l s='Link to' mod='ph_simpleblog'} {$child_category['name']}">
+								<a class="category-sub-link" href="{$child_category['url']}" title="{l s='Link to' d='Modules.Simpleblog.Shop'} {$child_category['name']}">
 									{$child_category['name']}
 								</a>
 							</li>
@@ -51,15 +51,15 @@
 	</div>
 </div>
 {* <div id="ph_simpleblog_categories" class="block informations_block_left">
-	<p class="title_block"><a href="{ph_simpleblog::getLink()}" title="{l s='Blog' mod='ph_simpleblog'}">{l s='Blog' mod='ph_simpleblog'}</a></p>
+	<p class="title_block"><a href="{ph_simpleblog::getLink()}" title="{l s='Blog' d='Modules.Simpleblog.Shop'}">{l s='Blog' d='Modules.Simpleblog.Shop'}</a></p>
 	<div class="block_content list-block">
 		<ul>
 			{foreach $categories AS $category}
-				<li><a href="{$category['url']}" title="{l s='Link to' mod='ph_simpleblog'} {$category['name']}">{$category['name']}</a>
+				<li><a href="{$category['url']}" title="{l s='Link to' d='Modules.Simpleblog.Shop'} {$category['name']}">{$category['name']}</a>
 					{if isset($category['childrens'])}
 					<ul class="child_categories">
 						{foreach $category['childrens'] as $child_category}
-						<li><a href="{$link->getModuleLink('ph_simpleblog', 'category', ['sb_category' => $child_category.link_rewrite])}" title="{l s='Link to' mod='ph_simpleblog'} {$child_category['name']}">{$child_category['name']}</a>
+						<li><a href="{$link->getModuleLink('ph_simpleblog', 'category', ['sb_category' => $child_category.link_rewrite])}" title="{l s='Link to' d='Modules.Simpleblog.Shop'} {$child_category['name']}">{$child_category['name']}</a>
 						{/foreach}
 					</ul>
 					{/if}

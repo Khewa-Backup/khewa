@@ -140,4 +140,3 @@ var CanadaPost = {
         return url;
     },
 };
-

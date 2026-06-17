@@ -196,7 +196,7 @@ class CanadaPostLabels extends CarrierModule
     public function __construct()
     {
         $this->name                   = 'canadapostlabels';
-        $this->version                = '4.0.8';
+        $this->version                = '4.1.1';
         $this->author                 = 'ZH Media';
         $this->tab                    = 'shipping_logistics';
         $this->bootstrap              = true;
@@ -2679,6 +2679,10 @@ class CanadaPostLabels extends CarrierModule
                 $this->context->controller->addCSS(_MODULE_DIR_ . $this->name . '/views/css/material-styles.css');
             }
 
+            if (version_compare(_PS_VERSION_, '1.7.8.0') >= 0) {
+                $this->context->controller->addJS(_MODULE_DIR_ . $this->name . '/views/js/tab.js');
+            }
+
             if (Tools::getValue('configure') == $this->name) {
                 Media::addJsDef(array(
                     'configUrl' => AdminController::$currentIndex . '&configure=' . $this->name . '&token=' . Tools::getAdminTokenLite('AdminModules'),
@@ -2832,7 +2836,7 @@ class CanadaPostLabels extends CarrierModule
      * */
     public function hookActionCartSave($params)
     {
-        if (!$this->isVerified() || !$this->isConnected() || !isset($this->context->cart)) {
+        if (!$this->isVerified() || !$this->isConnected()) {
             return false;
         }
 

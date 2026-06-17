@@ -1,3 +1,28 @@
+/**
+* 2023 - Keyrnel
+*
+* NOTICE OF LICENSE
+*
+* The source code of this module is under a commercial license.
+* Each license is unique and can be installed and used on only one shop.
+* Any reproduction or representation total or partial of the module, one or more of its components,
+* by any means whatsoever, without express permission from us is prohibited.
+* If you have not received this module from us, thank you for contacting us.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade this module to newer
+* versions in the future.
+*
+* @author    Keyrnel
+* @copyright 2023 - Keyrnel
+* @license   commercial
+* International Registered Trademark & Property of Keyrnel
+*/
+#module-thegiftcard-page .fancybox-overlay {
+    z-index: 10000;
+}
+
 /******************************************************************************
 Responsivity
 ******************************************************************************/
@@ -26,6 +51,9 @@ Responsivity
 #giftcard_product .col-xs-4 {
     width: 33.33333%;
     float: left;
+}
+#giftcard_product {
+    margin: auto;
 }
 @media (min-width: 992px) {
     #giftcard_product {
@@ -132,6 +160,9 @@ Responsivity
     background-color: #999999;
     border-radius: 10px;
 }
+#giftcard_product .full-width {
+    width: 100%;
+}
 
 /******************************************************************************
 Banner image
@@ -140,11 +171,11 @@ Banner image
     position: relative;
     line-height: 19px;
     margin: 0 !important;
-    border-top: 5px solid #333333;
 }
 #giftcard_product .content_scene_cat .content_scene_cat_bg {
     padding: 18px 10px 10px 42px;
     background-color: #464646 !important;
+    width: 100%;
 }
 @media (max-width: 1199px) {
     #giftcard_product .content_scene_cat .content_scene_cat_bg {
@@ -254,25 +285,28 @@ Fields
     height: 24px;
 }
 #giftcard_product .icon-photo {
-    background-image: url(../img/icon-photo.svg);
+    background-image: url(../../img/icon-photo.svg);
 }
 #giftcard_product .icon-giftcard {
-    background-image: url(../img/icon-giftcard.svg);
+    background-image: url(../../img/icon-giftcard.svg);
 }
 #giftcard_product .icon-zoom {
     display: block !important;
     width: 48px !important;
     height: 48px !important;
-    background-image: url(../img/icon-zoom.svg);
+    background-image: url(../../img/icon-zoom.svg);
 }
 #giftcard_product .icon-email {
-    background-image: url(../img/icon-email.svg);
+    background-image: url(../../img/icon-email.svg);
 }
 #giftcard_product .icon-calendar {
-    background-image: url(../img/icon-calendar.svg);
+    background-image: url(../../img/icon-calendar.svg);
 }
 #giftcard_product .form-group {
     margin-bottom: 15px;
+}
+#giftcard_product .form-group.hide {
+    display: none;
 }
 #giftcard_product .input-group {
     position: relative;
@@ -354,7 +388,7 @@ Templates
 Button add to cart
 ******************************************************************************/
 #block_button {
-    margin-top: 10px;
+    margin-top: 30px;
     margin-bottom: 20px
 }
 

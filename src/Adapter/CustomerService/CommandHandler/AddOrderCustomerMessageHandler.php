@@ -42,6 +42,9 @@ use PrestaShop\PrestaShop\Core\Domain\Order\Exception\OrderNotFoundException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Tools;
+// Customization By Ram Chandra : add link in reply notification
+use Context;
+// END
 
 final class AddOrderCustomerMessageHandler implements AddOrderCustomerMessageHandlerInterface
 {
@@ -135,7 +138,10 @@ final class AddOrderCustomerMessageHandler implements AddOrderCustomerMessageHan
         $failedMailSentMessage = 'An unexpected error occurred when sending the email';
 
         try {
-            $isSent = $this->sendMail($customer, $order, $command);
+            // Customization By Ram Chandra : add link in reply notification
+            $isSent = $this->sendMail($customer, $order, $command, $customerServiceThreadId);
+            // $isSent = $this->sendMail($customer, $order, $command);
+            // END
 
             if (!$isSent) {
                 throw new CannotSendEmailException($failedMailSentMessage);
@@ -218,7 +224,10 @@ final class AddOrderCustomerMessageHandler implements AddOrderCustomerMessageHan
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    private function sendMail(Customer $customer, Order $order, AddOrderCustomerMessageCommand $command): bool
+    // Customization By Ram Chandra : add link in reply notification
+    private function sendMail(Customer $customer, Order $order, AddOrderCustomerMessageCommand $command, $customerServiceThreadId): bool
+    // private function sendMail(Customer $customer, Order $order, AddOrderCustomerMessageCommand $command): bool
+    // END
     {
         if ($command->isPrivate()) {
             return true;
@@ -231,9 +240,19 @@ final class AddOrderCustomerMessageHandler implements AddOrderCustomerMessageHan
         }
 
         $orderLanguage = $order->getAssociatedLanguage();
+        // Customization By Ram Chandra : add link in reply notification
+        $context = Context::getContext();
+        $ct = new CustomerThread($customerServiceThreadId);
+        // END
         $varsTpl = [
             '{lastname}' => $customer->lastname,
             '{firstname}' => $customer->firstname,
+            // Customization By Ram Chandra : add link in reply notification
+            '{link}' => Tools::url(
+                $context->link->getPageLink('contact', true, null, null, false, $ct->id_shop),
+                'id_customer_thread=' . (int) $ct->id . '&token=' . $ct->token
+            ),
+            // END
             '{id_order}' => $order->id,
             '{order_name}' => $order->getUniqReference(),
             '{message}' => $message,

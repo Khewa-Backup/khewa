@@ -148,6 +148,8 @@ $(function() {
 
 
 function initProductPageGallery() {
+	if (typeof fancybox !== 'undefined') {
+
 	$(".blog-fancybox").fancybox({
 		helpers : {
 	        overlay : {
@@ -155,6 +157,7 @@ function initProductPageGallery() {
 	        }
 	    }
 	});
+}
 
 	var $gallery = $('.post-gallery__gallery-js');
 

@@ -41,9 +41,9 @@ class DefaultActions
     /**
      * Values conveyored by the classes
      *
-     * @var array
+     * @var \ConveyorModel
      */
-    protected $conveyor = [];
+    protected $conveyor = null;
 
     /**
      * Set the modelObject
@@ -62,7 +62,7 @@ class DefaultActions
     /**
      * Set the conveyor
      *
-     * @param array $conveyorData
+     * @param \ConveyorModel $conveyorData
      *
      * @return $this
      */
@@ -76,7 +76,7 @@ class DefaultActions
     /**
      * Return data in conveyor
      *
-     * @return array
+     * @return \ConveyorModel
      */
     public function getConveyor()
     {

@@ -500,12 +500,17 @@ class ProductController extends FrameworkBundleAdminController
                 $request->files->all(),
                 $request->server->all()
             );
+
         }
 
         /* @var Form $form */
         $form->handleRequest($request);
         $formData = $form->getData();
         $formData['step3']['combinations'] = $combinationsList;
+
+        //debug
+//        file_put_contents(__DIR__.'/test.log', 'id_product: '.$formData['id_product']."\n", FILE_APPEND);
+        //end
 
         try {
             if ($form->isSubmitted()) {
@@ -518,6 +523,8 @@ class ProductController extends FrameworkBundleAdminController
                     );
                 }
 
+
+
                 if ($form->isValid()) {
                     //define POST values for keeping legacy adminController skills
                     $_POST = $modelMapper->getModelData($formData, $isMultiShopContext) + $_POST;
@@ -526,6 +533,7 @@ class ProductController extends FrameworkBundleAdminController
 
                     $adminProductController = $adminProductWrapper->getInstance();
                     $adminProductController->setIdObject($formData['id_product']);
+
                     $adminProductController->setAction('save');
 
                     // Hooks: this will trigger legacy AdminProductController, postProcess():
@@ -545,17 +553,53 @@ class ProductController extends FrameworkBundleAdminController
 
                     /* @var Product $product */
                     $adminProductController->processSuppliers($product->id);
+
                     $adminProductController->processFeatures($product->id);
+
                     $adminProductController->processSpecificPricePriorities();
+                    //debug
+                    // file_put_contents(_PS_ROOT_DIR_.'/'.$formData['id_product'].'.log', '');
+                    // file_put_contents(_PS_ROOT_DIR_.'/'.$formData['id_product'].'.log', '---- Start ---- '.__METHOD__.", Line:".__LINE__."\n");
+                    // file_put_contents(__DIR__.'/'.$formData['id_product'].'.log', 'Prod id: '.$formData['id_product']."\n".print_r($_POST['combinations'], true)."\n", FILE_APPEND);
+//                    if($formData['id_product'] == 13165){
+//                        die('problems here.');
+//                    }
+                    // $indx = 0;
+                    //end
                     foreach ($_POST['combinations'] as $combinationValues) {
+                        
+                        //debug
+                        // if($formData['id_product'] == 13165){
+                            // file_put_contents(_PS_ROOT_DIR_.'/'.$formData['id_product'].'.log', $indx.' id_product_attibute: '.$combinationValues['id_product_attribute'].' '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+                        //     if (!isset($combinationValues['attribute_default']) || $combinationValues['attribute_default'] != 1) 
+                        //         continue;
+                        // }
+                        // $debug_time_start = microtime(true);
+                        // file_put_contents(_PS_ROOT_DIR_.'/'.$formData['id_product'].'.log', 'Processing: '.$combinationValues['id_product_attribute'].' '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+                        //end
+
                         $adminProductWrapper->processProductAttribute($product, $combinationValues);
+
+                        //debug
+                        // $debug_time_end = microtime(true);
+                        // file_put_contents(_PS_ROOT_DIR_.'/'.$formData['id_product'].'.log', 'End Processing: '.$combinationValues['id_product_attribute'].', Time took: '.($debug_time_end-$debug_time_start).' Seconds.... '.__METHOD__.", Line:".__LINE__."\n\n", FILE_APPEND);
+                        // if($formData['id_product'] == 13165){
+                        //     file_put_contents(__DIR__.'/'.$formData['id_product'].'.log', 'Passed $adminProductWrapper->processProductAttribute: '.$combinationValues['id_product_attribute']."\n", FILE_APPEND);
+                        // }
+                        //end
                         // For now, each attribute set the same value.
                         $adminProductWrapper->processDependsOnStock(
                             $product,
                             ($_POST['depends_on_stock'] == '1'),
                             $combinationValues['id_product_attribute']
                         );
+                        //debug
+//                        if($formData['id_product'] == 13165){
+//                            file_put_contents(__DIR__.'/'.$formData['id_product'].'.log', 'Passed $adminProductWrapper->processDependsOnStock: '.$combinationValues['id_product_attribute']."\n", FILE_APPEND);
+//                        }
+                        //end
                     }
+
                     $adminProductWrapper->processDependsOnStock($product, ($_POST['depends_on_stock'] == '1'));
 
                     // If there is no combination, then quantity and location are managed for the whole product (as combination ID 0)
@@ -564,6 +608,7 @@ class ProductController extends FrameworkBundleAdminController
                         $adminProductWrapper->processQuantityUpdate($product, $_POST['qty_0']);
                         $adminProductWrapper->processLocation($product, (string) $_POST['location']);
                     }
+
                     // else quantities are managed from $adminProductWrapper->processProductAttribute() above.
 
                     $adminProductWrapper->processProductOutOfStock($product, $_POST['out_of_stock']);
@@ -573,6 +618,7 @@ class ProductController extends FrameworkBundleAdminController
 
                     $adminProductWrapper->processAttachments($product, $_POST['attachments']);
 
+
                     $adminProductController->processWarehouses();
 
                     $response = new JsonResponse();
@@ -580,6 +626,11 @@ class ProductController extends FrameworkBundleAdminController
                         'product' => $product,
                         'customization_fields_ids' => $customizationFieldsIds,
                     ]);
+
+                    //debug
+//                    file_put_contents(__DIR__.'/test.log', 'end ajax '.__LINE__."\n", FILE_APPEND);
+                    //end
+
 
                     if ($request->isXmlHttpRequest()) {
                         return $response;
@@ -633,10 +684,12 @@ class ProductController extends FrameworkBundleAdminController
         $attributeRepository = $doctrine->getRepository('PrestaShopBundle:Attribute');
         $attributeGroups = $attributeRepository->findByLangAndShop((int) $language['id_lang'], (int) $language['id_shop']);
 
+
         $drawerModules = (new HookFinder())->setHookName('displayProductPageDrawer')
             ->setParams(['product' => $product])
             ->addExpectedInstanceClasses('PrestaShop\PrestaShop\Core\Product\ProductAdminDrawer')
             ->present();
+
 
         return [
             'form' => $form->createView(),

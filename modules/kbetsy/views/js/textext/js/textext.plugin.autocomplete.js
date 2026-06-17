@@ -1108,4 +1108,3 @@
 		return this.core().wrapElement().find(element).size() > 0;
 	}
 })(jQuery);
-

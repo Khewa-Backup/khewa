@@ -18,7 +18,9 @@
 // +----------------------------------------------------------------------+
 //
 // $Id: OLE.php,v 1.13 2007/03/07 14:38:25 schmidt Exp $
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
 * Array for storing OLE instances that are accessed from

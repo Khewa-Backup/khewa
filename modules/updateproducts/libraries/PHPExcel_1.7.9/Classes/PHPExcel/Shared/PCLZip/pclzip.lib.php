@@ -187,6 +187,9 @@
   //   extract() : Extract the content of the archive
   //   properties() : List the properties of the archive
   // --------------------------------------------------------------------------------
+if (!defined('_PS_VERSION_')){
+  exit;
+}
   class PclZip
   {
     // ----- Filename of the zip file

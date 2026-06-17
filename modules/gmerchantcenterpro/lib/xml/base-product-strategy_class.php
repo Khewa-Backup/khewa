@@ -1,11 +1,10 @@
 <?php
-
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -121,33 +120,26 @@ abstract class BT_BaseProductStrategy extends BT_BaseXml
         // store the current carrier
         $this->data->currentCarrier = new stdClass();
         if (!empty(GMerchantCenterPro::$conf['GMCP_SHIP_CARRIERS'][Tools::strtoupper($this->aParams['sCountryIso'])])) {
-            $this->data->currentCarrier = new Carrier((int) GMerchantCenterPro::$conf['GMCP_SHIP_CARRIERS'][Tools::strtoupper($this->aParams['sCountryIso'])]);
+            $carrier= new \Carrier((int) \GMerchantCenterPro::$conf['GMCP_SHIP_CARRIERS'][\Tools::strtoupper($this->aParams['sCountryIso'])]);
+
+            if ((int)$carrier->id == (int)$carrier->id_reference) {
+                $this->data->currentCarrier = $carrier;
+            } else {
+                $carrier_updated = \Carrier::getCarrierByReference($carrier->id_reference);
+                $this->data->currentCarrier = $carrier_updated;
+            }
         }
         $this->data->countryId = Country::getByIso($this->aParams['sCountryIso']);
         $this->data->currentZone = new stdClass();
         $this->data->currentZone = new Zone((int) Country::getIdZone((int) $this->data->countryId));
-        $this->data->shippingConfig = Configuration::getMultiple(array(
-            'PS_SHIPPING_FREE_PRICE',
-            'PS_SHIPPING_FREE_WEIGHT',
-            'PS_SHIPPING_HANDLING',
-            'PS_SHIPPING_METHOD'
-        ));
+        $this->data->shippingConfig = Configuration::getMultiple(array('PS_SHIPPING_FREE_PRICE', 'PS_SHIPPING_FREE_WEIGHT', 'PS_SHIPPING_HANDLING', 'PS_SHIPPING_METHOD'));
 
         Context::getContext()->currency = new Currency((int) $this->data->currencyId);
         Context::getContext()->cookie->id_country = $this->data->countryId;
         Context::getContext()->cookie->id_currency = $this->data->currencyId;
 
-        return BT_GmcProModuleDao::getProductIds(
-            $this->aParams['iShopId'],
-            $this->bExport,
-            false,
-            $this->aParams['iFloor'],
-            $this->aParams['iStep'],
-            $bExportCombination,
-            $bExcludedProduct
-        );
+        return BT_GmcProModuleDao::getProductIds($this->aParams['iShopId'], $this->bExport, false, $this->aParams['iFloor'], $this->aParams['iStep'], $bExportCombination, $bExcludedProduct);
     }
-
 
     /**
      * generate get the XML for current data feed type
@@ -337,6 +329,7 @@ abstract class BT_BaseProductStrategy extends BT_BaseXml
             }
             $aAssign['aErrors'][] = $aErrorParam;
         }
+
         return array(
             'tpl' => _GMCP_TPL_ADMIN_PATH . _GMCP_TPL_FEED_GENERATE_OUTPUT,
             'assign' => $aAssign,
@@ -354,7 +347,6 @@ abstract class BT_BaseProductStrategy extends BT_BaseXml
     public static function get($sStrategyType, array $aParams = null)
     {
         $sStrategyType = strtolower($sStrategyType);
-
         // if valid controller
         if (file_exists(_GMCP_PATH_LIB_XML . 'xml-' . $sStrategyType . '-strategy_class.php')) {
             // require
@@ -407,22 +399,13 @@ abstract class BT_BaseProductStrategy extends BT_BaseXml
                 if ($oReflection->isInstantiable()) {
                     $this->oCurrentProd = $oReflection->newInstance($aParams);
                 } else {
-                    throw new Exception(GMerchantCenterPro::$oModule->l(
-                        'Internal server error => object isn\'t instantiable',
-                        'base-xml_class'
-                    ), 1000);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('Internal server error => object isn\'t instantiable', 'base-xml_class'), 1000);
                 }
             } catch (ReflectionException $e) {
-                throw new Exception(GMerchantCenterPro::$oModule->l(
-                    'Internal server error => invalid object',
-                    'base-xml_class'
-                ), 1001);
+                throw new Exception(GMerchantCenterPro::$oModule->l('Internal server error => invalid object', 'base-xml_class'), 1001);
             }
         } else {
-            throw new Exception(GMerchantCenterPro::$oModule->l(
-                'Internal server error => the object file doesn\'t exist',
-                'base-xml_class'
-            ), 1002);
+            throw new Exception(GMerchantCenterPro::$oModule->l('Internal server error => the object file doesn\'t exist', 'base-xml_class'), 1002);
         }
     }
 }

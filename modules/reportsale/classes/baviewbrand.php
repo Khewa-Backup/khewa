@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2021 PrestaShop
+ * 2007-2023 PrestaShop
  *
  * NOTICE OF LICENSE
  *
@@ -19,16 +19,15 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  *  @author    PrestaShop SA <contact@buy-addons.com>
- *  @copyright 2007-2021 PrestaShop SA
+ *  @copyright 2007-2023 PrestaShop SA
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
-
 class BaViewBrand extends ReportSale
 {
     private $orderby;
     private $orderway;
-    private $ps_searchable_fields = array('id_shop','shop_name', 'id_cart',
+    private $ps_searchable_fields = ['id_shop', 'shop_name', 'id_cart',
         'id_order',
         'order_number', 'invoice_number',
         'invoice_status', 'manufacturer_id',
@@ -38,37 +37,40 @@ class BaViewBrand extends ReportSale
         'gross_profit', 'gross_margin',
         'net_profit', 'net_margin',
         'of_total_sales', 'of_total_gross_profits',
-        'of_total_net_profits');
+        'of_total_net_profits', ];
+
     public function setWhereClauseDate($helper)
     {
         $sql = null;
-        $orderDateArr_order_date = Tools::getValue($helper->list_id . "Filter_order_add_date", null);
-        $orderDateArr_invoice_date = Tools::getValue($helper->list_id . "Filter_invoice_add_date", null);
-        $orderDateArr_delivery_date = Tools::getValue($helper->list_id . "Filter_delivery_date", null);
+        $orderDateArr_order_date = Tools::getValue($helper->list_id . 'Filter_order_add_date', null);
+        $orderDateArr_invoice_date = Tools::getValue($helper->list_id . 'Filter_invoice_add_date', null);
+        $orderDateArr_delivery_date = Tools::getValue($helper->list_id . 'Filter_delivery_date', null);
         if (!empty($orderDateArr_order_date[0])) {
-            $sql.=" AND order_add_date >= '" . pSQL($orderDateArr_order_date[0]) . " 00:00:00' ";
+            $sql .= " AND order_add_date >= '" . pSQL($orderDateArr_order_date[0]) . " 00:00:00' ";
         }
         if (!empty($orderDateArr_order_date[1])) {
-            $sql.=" AND order_add_date <= '" . pSQL($orderDateArr_order_date[1]) . " 23:59:59' ";
+            $sql .= " AND order_add_date <= '" . pSQL($orderDateArr_order_date[1]) . " 23:59:59' ";
         }
         if (!empty($orderDateArr_invoice_date[0])) {
-            $sql.=" AND invoice_add_date >= '" . pSQL($orderDateArr_invoice_date[0]) . " 00:00:00' ";
+            $sql .= " AND invoice_add_date >= '" . pSQL($orderDateArr_invoice_date[0]) . " 00:00:00' ";
         }
         if (!empty($orderDateArr_invoice_date[1])) {
-            $sql.=" AND invoice_add_date <= '" . pSQL($orderDateArr_invoice_date[1]) . " 23:59:59' ";
+            $sql .= " AND invoice_add_date <= '" . pSQL($orderDateArr_invoice_date[1]) . " 23:59:59' ";
         }
         if (!empty($orderDateArr_delivery_date[0])) {
-            $sql.=" AND delivery_date >= '" . pSQL($orderDateArr_delivery_date[0]) . " 00:00:00' ";
+            $sql .= " AND delivery_date >= '" . pSQL($orderDateArr_delivery_date[0]) . " 00:00:00' ";
         }
         if (!empty($orderDateArr_delivery_date[1])) {
-            $sql.=" AND delivery_date <= '" . pSQL($orderDateArr_delivery_date[1]) . " 23:59:59' ";
+            $sql .= " AND delivery_date <= '" . pSQL($orderDateArr_delivery_date[1]) . " 23:59:59' ";
         }
+
         return $sql;
     }
+
     public function setWhereClause($helper)
     {
         foreach ($this->ps_searchable_fields as $search_field) {
-            $search_value = Tools::getValue($helper->list_id . "Filter_" . $search_field, null);
+            $search_value = Tools::getValue($helper->list_id . 'Filter_' . $search_field, null);
             if ($search_value !== null) {
                 $this->ps_where[] = " $search_field LIKE '%" . pSQL($search_value) . "%' ";
                 $this->context->cookie->{$helper->list_id . 'Filter_' . $search_field} = pSQL($search_value);
@@ -77,112 +79,115 @@ class BaViewBrand extends ReportSale
             }
         }
         if (!empty($this->ps_where)) {
-            $whereClause = " WHERE " . implode(" AND ", $this->ps_where);
+            $whereClause = ' WHERE ' . implode(' AND ', $this->ps_where);
         } else {
             $whereClause = '';
         }
-        $whereClause.=$this->setWhereClauseDate($helper);
+        $whereClause .= $this->setWhereClauseDate($helper);
+
         return $whereClause;
     }
+
     public function resetList()
     {
         $helper_list_id = $this->name . 'ba_report_brand';
         foreach ($this->ps_searchable_fields as $search_field) {
             $this->context->cookie->{$helper_list_id . 'Filter_' . $search_field} = null;
         }
-        Configuration::updateValue($this->name.'_brand_where', null);
+        Configuration::updateValue($this->name . '_brand_where', null);
     }
+
     public function viewbrandlist()
     {
         $helper = new HelperList();
-        $fields_list = array(
-            'id_shop' => array(
+        $fields_list = [
+            'id_shop' => [
                 'title' => $this->l('ID Shop'),
-                'type' => 'text'
-            ),
-            'shop_name' => array(
+                'type' => 'text',
+            ],
+            'shop_name' => [
                 'title' => $this->l('Shop name'),
-                'type' => 'text'
-            ),
-            'manufacturer_id' => array(
+                'type' => 'text',
+            ],
+            'manufacturer_id' => [
                 'title' => $this->l('Manufacturer ID'),
-                'type' => 'text'
-            ),
-            'manufacturer_name' => array(
+                'type' => 'text',
+            ],
+            'manufacturer_name' => [
                 'title' => $this->l('Manufacturer Name'),
-                'type' => 'text'
-            ),
-            'total_quantity' => array(
+                'type' => 'text',
+            ],
+            'total_quantity' => [
                 'title' => $this->l('Total Sold'),
-                'type' => 'text'
-            ),
-            'total_discounts_tax_excl' => array(
+                'type' => 'text',
+            ],
+            'total_discounts_tax_excl' => [
                 'title' => $this->l('Total Discounts Tax Excl'),
                 'type' => 'text',
                 'callback' => 'convertMoneyBrand',
-                'callback_object' => $this
-            ),
-            'total_products_no_tax' => array(
+                'callback_object' => $this,
+            ],
+            'total_products_no_tax' => [
                 'title' => $this->l('Total Products No Tax'),
                 'type' => 'text',
                 'callback' => 'convertMoneyBrand',
-                'callback_object' => $this
-            ),
-            'including_ecotax_tax_excl' => array(
+                'callback_object' => $this,
+            ],
+            'including_ecotax_tax_excl' => [
                 'title' => $this->l('Including Ecotax Tax Excl'),
                 'type' => 'text',
                 'callback' => 'convertMoneyBrand',
-                'callback_object' => $this
-            ),
-            'total_cost' => array(
+                'callback_object' => $this,
+            ],
+            'total_cost' => [
                 'title' => $this->l('Total Cost'),
                 'type' => 'text',
                 'callback' => 'convertMoneyBrand',
-                'callback_object' => $this
-            ),
-            'gross_profit' => array(
+                'callback_object' => $this,
+            ],
+            'gross_profit' => [
                 'title' => $this->l('Gross Profit'),
                 'type' => 'text',
                 'callback' => 'convertMoneyBrand',
-                'callback_object' => $this
-            ),
-            'gross_margin' => array(
+                'callback_object' => $this,
+            ],
+            'gross_margin' => [
                 'title' => $this->l('Gross Margin'),
                 'type' => 'text',
                 'callback' => 'convertPercentBrand',
-                'callback_object' => $this
-            ),
-            'net_profit' => array(
+                'callback_object' => $this,
+            ],
+            'net_profit' => [
                 'title' => $this->l('Net Profit'),
                 'type' => 'text',
                 'callback' => 'convertMoneyBrand',
-                'callback_object' => $this
-            ),
-            'net_margin' => array(
+                'callback_object' => $this,
+            ],
+            'net_margin' => [
                 'title' => $this->l('Net Margin'),
                 'type' => 'text',
                 'callback' => 'convertPercentBrand',
-                'callback_object' => $this
-            ),
-            'of_total_sales' => array(
+                'callback_object' => $this,
+            ],
+            'of_total_sales' => [
                 'title' => $this->l('% Of Total Sales'),
                 'type' => 'text',
                 'callback' => 'convertPercentBrand',
-                'callback_object' => $this
-            ),
-            'of_total_gross_profits' => array(
+                'callback_object' => $this,
+            ],
+            'of_total_gross_profits' => [
                 'title' => $this->l('% Of Total Gross Profits'),
                 'type' => 'text',
                 'callback' => 'convertPercentBrand',
-                'callback_object' => $this
-            ),
-            'of_total_net_profits' => array(
+                'callback_object' => $this,
+            ],
+            'of_total_net_profits' => [
                 'title' => $this->l('% Of Total Net Profits'),
                 'type' => 'text',
                 'callback' => 'convertPercentBrand',
-                'callback_object' => $this
-            )
-        );
+                'callback_object' => $this,
+            ],
+        ];
         $helper->shopLinkType = '';
         $helper->identifier = 'id_report';
         $helper->show_toolbar = true;
@@ -191,27 +196,27 @@ class BaViewBrand extends ReportSale
         $helper->title = $this->l('Report Manufacturers');
         $helper->table = $this->name . 'ba_report_brand';
         $helper->list_id = $this->name . 'ba_report_brand';
-        $this->orderby = pSQL(Tools::getValue($helper->list_id . "Orderby", "manufacturer_id"));
-        $this->orderway = pSQL(Tools::getValue($helper->list_id . "Orderway", "ASC"));
+        $this->orderby = pSQL(Tools::getValue($helper->list_id . 'Orderby', 'manufacturer_id'));
+        $this->orderway = pSQL(Tools::getValue($helper->list_id . 'Orderway', 'ASC'));
         $helper->orderBy = $this->orderby;
         $helper->orderWay = Tools::strtoupper($this->orderway);
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $c1 = AdminController::$currentIndex;
         $n1 = $this->name;
         $ad1 = Tools::getAdminTokenLite('AdminModules');
-        $rp1 = "reportsaleba_report_brandOrderby";
-        $rp2 = "reportsaleba_report_brandOrderway";
+        $rp1 = 'reportsaleba_report_brandOrderby';
+        $rp2 = 'reportsaleba_report_brandOrderway';
         $tor1 = $this->orderby;
         $tor2 = $this->orderway;
-        $mn1 = "csv=manufacturers";
-        $ts1 = "task=manufacturers";
-        $helper->toolbar_btn['export'] = array(
-            'href' => $c1.'&configure='.$n1.'&token='.$ad1.'&'.$ts1.'&'.$rp1.'='.$tor1.'&'.$rp2.'='.$tor2.'&'.$mn1.'',
-            'desc' => $this->l('export csv')
-        );
+        $mn1 = 'csv=manufacturers';
+        $ts1 = 'task=manufacturers';
+        $helper->toolbar_btn['export'] = [
+            'href' => $c1 . '&configure=' . $n1 . '&token=' . $ad1 . '&' . $ts1 . '&' . $rp1 . '=' . $tor1 . '&' . $rp2 . '=' . $tor2 . '&' . $mn1 . '',
+            'desc' => $this->l('export csv'),
+        ];
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name . '&task=manufacturers';
-        $helper->currentIndex .= '&'.$helper->list_id . "Orderby=".$helper->orderBy;
-        $helper->currentIndex .= '&'.$helper->list_id . "Orderway=".$helper->orderWay;
+        $helper->currentIndex .= '&' . $helper->list_id . 'Orderby=' . $helper->orderBy;
+        $helper->currentIndex .= '&' . $helper->list_id . 'Orderway=' . $helper->orderWay;
         $con = (int) $this->countData($helper);
         $helper->listTotal = $con;
         if ($this->context->cookie->{$helper->list_id . '_pagination'} < 20) {
@@ -226,12 +231,14 @@ class BaViewBrand extends ReportSale
         if (!$page) {
             $page = 1;
         }
-        $start = ($page - 1 ) * $selected_pagination;
+        $start = ($page - 1) * $selected_pagination;
         $rows = $this->selectdatabrand($helper, $start, $selected_pagination);
         $table_helper = $helper->generateList($rows, $fields_list);
         $table_helper .= $this->getSummaryBlock($helper, $fields_list);
+
         return $table_helper;
     }
+
     public function getSummaryBlock($helper, $fields_list)
     {
         $sql = 'SELECT COUNT(DISTINCT id_shop) as id_shop';
@@ -264,7 +271,7 @@ class BaViewBrand extends ReportSale
         if (empty($item2)) {
             return false;
         }
-        $data = array(
+        $data = [
             'total_discounts_tax_excl' => $item2['total_discounts_tax_excl'],
             'total_products_no_tax' => $item2['total_products_no_tax'],
             'including_ecotax_tax_excl' => $item2['including_ecotax_tax_excl'],
@@ -276,7 +283,7 @@ class BaViewBrand extends ReportSale
             'of_total_sales' => $item2['of_total_sales'],
             'of_total_gross_profits' => $item2['of_total_gross_profits'],
             'of_total_net_profits' => $item2['of_total_net_profits'],
-        );
+        ];
         $default_currency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
         $c_to = new Currency($default_currency);
         // calculate % gross margin
@@ -286,86 +293,90 @@ class BaViewBrand extends ReportSale
             $data['net_margin'] = (float) $data['net_profit'] / $t;
         }
         $data = array_merge($item1, $data);
-        $summary = array();
-        $summary['id_shop'] = array(
+        $summary = [];
+        $summary['id_shop'] = [
             $this->l('#ID Shop'),
-            number_format($data['id_shop'])
-        );
-        $summary['shop_name'] = array(
+            number_format($data['id_shop']),
+        ];
+        $summary['shop_name'] = [
             $this->l('#Shop name'),
-            number_format($data['shop_name'])
-        );
-        $summary['manufacturer_id'] = array(
+            number_format($data['shop_name']),
+        ];
+        $summary['manufacturer_id'] = [
             $this->l('#Manufacturer ID'),
-            number_format($data['manufacturer_id'])
-        );
-        $summary['manufacturer_name'] = array(
+            number_format($data['manufacturer_id']),
+        ];
+        $summary['manufacturer_name'] = [
             $this->l('#Manufacturer Name'),
-            number_format($data['manufacturer_name'])
-        );
-        $summary['total_quantity'] = array(
+            number_format($data['manufacturer_name']),
+        ];
+        $summary['total_quantity'] = [
             $this->l('#Total Sold'),
-            number_format($data['total_quantity'])
-        );
-        $summary['total_discounts_tax_excl'] = array(
+            number_format($data['total_quantity']),
+        ];
+        $summary['total_discounts_tax_excl'] = [
             $this->l('Total Discounts Tax Excl'),
-            Tools::displayPrice($data['total_discounts_tax_excl'], $c_to)
-        );
-        $summary['total_products_no_tax'] = array(
+            Tools::displayPrice($data['total_discounts_tax_excl'], $c_to),
+        ];
+        $summary['total_products_no_tax'] = [
             $this->l('Total Products No Tax'),
-            Tools::displayPrice($data['total_products_no_tax'], $c_to)
-        );
-        $summary['including_ecotax_tax_excl'] = array(
+            Tools::displayPrice($data['total_products_no_tax'], $c_to),
+        ];
+        $summary['including_ecotax_tax_excl'] = [
             $this->l('Including Ecotax Tax Excl'),
-            Tools::displayPrice($data['including_ecotax_tax_excl'], $c_to)
-        );
-        $summary['total_cost'] = array(
+            Tools::displayPrice($data['including_ecotax_tax_excl'], $c_to),
+        ];
+        $summary['total_cost'] = [
             $this->l('Total Cost'),
-            Tools::displayPrice($data['total_cost'], $c_to)
-        );
-        $summary['gross_profit'] = array(
+            Tools::displayPrice($data['total_cost'], $c_to),
+        ];
+        $summary['gross_profit'] = [
             $this->l('Gross Profit'),
-            Tools::displayPrice($data['gross_profit'], $c_to)
-        );
-        $summary['gross_margin'] = array(
+            Tools::displayPrice($data['gross_profit'], $c_to),
+        ];
+        $summary['gross_margin'] = [
             $this->l('Gross Margin'),
-            round($data['gross_margin'] * 100, 2).$this->l('%')
-        );
-        $summary['net_profit'] = array(
+            round($data['gross_margin'] * 100, 2) . $this->l('%'),
+        ];
+        $summary['net_profit'] = [
             $this->l('Net Profit'),
-            Tools::displayPrice($data['net_profit'], $c_to)
-        );
-        $summary['net_margin'] = array(
+            Tools::displayPrice($data['net_profit'], $c_to),
+        ];
+        $summary['net_margin'] = [
             $this->l('Net Margin'),
-            round($data['net_margin'] * 100, 2).$this->l('%')
-        );
-        $summary['of_total_sales'] = array(
+            round($data['net_margin'] * 100, 2) . $this->l('%'),
+        ];
+        $summary['of_total_sales'] = [
             $this->l('% Of Total Sales'),
-            round($data['of_total_sales'], 2).$this->l('%')
-        );
-        $summary['of_total_gross_profits'] = array(
+            round($data['of_total_sales'], 2) . $this->l('%'),
+        ];
+        $summary['of_total_gross_profits'] = [
             $this->l('% Of Total Gross Profits'),
-            round($data['of_total_gross_profits'], 2).$this->l('%')
-        );
-        $summary['of_total_net_profits'] = array(
+            round($data['of_total_gross_profits'], 2) . $this->l('%'),
+        ];
+        $summary['of_total_net_profits'] = [
             $this->l('% Of Total Net Profits'),
-            round($data['of_total_net_profits'], 2).$this->l('%')
-        );
+            round($data['of_total_net_profits'], 2) . $this->l('%'),
+        ];
         $this->smarty->assign('summary', $summary);
         $this->smarty->assign('fields_list', $fields_list);
+
         return $this->shortDisplay('views/templates/admin/summary_table.tpl');
     }
+
     public function selectdatabrand($helper, $start, $selected_pagination)
     {
         $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_brand ';
         $where = $this->setWhereClause($helper);
         $sql .= $where;
-        Configuration::updateValue($this->name.'_brand_where', $where);
-        $sql .=' ORDER BY ' . pSQL($this->orderby) . ' ' . pSQL($this->orderway)
+        Configuration::updateValue($this->name . '_brand_where', $where);
+        $sql .= ' ORDER BY ' . pSQL($this->orderby) . ' ' . pSQL($this->orderway)
         . ' LIMIT ' . (int) $start . ', ' . (int) $selected_pagination;
         $rows = Db::getInstance()->ExecuteS($sql, true, false);
-        return($rows);
+
+        return $rows;
     }
+
     public function insertreportbrand($id_order)
     {
         $order = new Order($id_order);
@@ -381,14 +392,17 @@ class BaViewBrand extends ReportSale
             $p = $this->convertProductToDefaultCurrenct($product, $c_from);
             $this->insertbrand($p, $order);
         }
+
         return true;
     }
+
     public function insertbrand($product, $order)
     {
         $manufacturer_id = (int) $product['id_manufacturer'];
         $manufacturer_name = Manufacturer::getNameById($manufacturer_id);
         $unit_price = $product['unit_price_tax_excl'];
-        $shop_name = $this->getShopName((int)$order->id_shop);
+        $original_price = (float) $product['original_product_price'];
+        $shop_name = $this->getShopName((int) $order->id_shop);
         $id_cart = $order->id_cart;
         $id_order = $order->id;
         $order_add_date = $order->date_add;
@@ -401,19 +415,25 @@ class BaViewBrand extends ReportSale
         /******** discount total ****/
         $product_discount = $this->calcDiscount($product);
         $total_discounts_tax_excl = $product_discount['total_discounts_tax_excl'];
-        $total_products_no_tax = (double) $unit_price * (int) $total_quantity;
+        $total_products_no_tax = (float) $unit_price * (int) $total_quantity;
         /** eco TAX **/
         $ecotax_incl = $product['ecotax'];
         $ecotax_tax_rate = $product['ecotax_tax_rate'];
-        $ecotax_tax_excl = ($ecotax_incl/ (1+$ecotax_tax_rate/100));
+        $ecotax_tax_excl = ($ecotax_incl / (1 + $ecotax_tax_rate / 100));
         $including_ecotax_tax_excl = $ecotax_tax_excl * $total_quantity;
 
-        $total_cost = ($product['original_wholesale_price']) * (int) $total_quantity;
-        $gross_profit = (($unit_price) - ($product['original_wholesale_price'])) * (int) $total_quantity;
-        $gross_margin = ($gross_profit / ($unit_price * $total_quantity)) * 100;
+        $total_cost = $product['original_wholesale_price'] * (int) $total_quantity;
+        $gross_profit = ($original_price - $product['original_wholesale_price']) * (int) $total_quantity;
         $net_profit = $gross_profit - $total_discounts_tax_excl;
-        $net_margin = ($net_profit / $total_products_no_tax) * 100;
-        $data = $this->getreportBrand($manufacturer_id, (int)$order->id_shop);
+
+        if ($total_products_no_tax > 0) {
+            $gross_margin = ($gross_profit / $total_products_no_tax) * 100;
+            $net_margin = ($net_profit / $total_products_no_tax) * 100;
+        } else {
+            $gross_margin = 0;
+            $net_margin = 0;
+        }
+        $data = $this->getreportBrand($manufacturer_id, (int) $order->id_shop);
         if ($data != null) {
             $getdata = $data[0];
             $total_quantity = $total_quantity + $getdata['total_quantity'];
@@ -424,113 +444,136 @@ class BaViewBrand extends ReportSale
             $gross_profit = $gross_profit + $getdata['gross_profit'];
             $net_profit = $net_profit + $getdata['net_profit'];
             $query = 'UPDATE ' . _DB_PREFIX_ . 'ba_report_brand SET '
-                    .'total_quantity="' . (int)$total_quantity . '",'
-                    . 'total_products_no_tax="' . (double)$total_products_no_tax . '",'
-                    .'including_ecotax_tax_excl="' . (double)$including_ecotax_tax_excl . '",'
-                    .'total_cost="' . (double)$total_cost . '",'
-                    .'gross_profit="' . (double)$gross_profit . '",'
-                    . 'net_profit="' . (double)$net_profit . '",'
-                    .'total_discounts_tax_excl="' . (double)$total_discounts_tax_excl . '" WHERE '
-                    .'manufacturer_id = ' . (int) $manufacturer_id
-                    .' AND id_shop = '.(int)$order->id_shop;
+                    . 'total_quantity="' . (int) $total_quantity . '",'
+                    . 'total_products_no_tax="' . (float) $total_products_no_tax . '",'
+                    . 'including_ecotax_tax_excl="' . (float) $including_ecotax_tax_excl . '",'
+                    . 'total_cost="' . (float) $total_cost . '",'
+                    . 'gross_profit="' . (float) $gross_profit . '",'
+                    . 'net_profit="' . (float) $net_profit . '",'
+                    . 'total_discounts_tax_excl="' . (float) $total_discounts_tax_excl . '" WHERE '
+                    . 'manufacturer_id = ' . (int) $manufacturer_id
+                    . ' AND id_shop = ' . (int) $order->id_shop;
             Db::getInstance()->query($query);
             $this->updateAllBrandReport();
         }
         if ($data == null) {
-            Db::getInstance()->insert('ba_report_brand', array(
-                'id_shop' => (int)$order->id_shop,
+            Db::getInstance()->insert('ba_report_brand', [
+                'id_shop' => (int) $order->id_shop,
                 'shop_name' => pSQL($shop_name),
-                'id_cart' => (int)$id_cart,
-                'id_order' => (int)$id_order,
+                'id_cart' => (int) $id_cart,
+                'id_order' => (int) $id_order,
                 'order_add_date' => pSQL($order_add_date),
                 'invoice_add_date' => pSQL($invoice_add_date),
                 'delivery_date' => pSQL($delivery_date),
                 'order_number' => '',
-                'invoice_number' => (int)$invoice_number,
-                'invoice_status' => (int)$invoice_status,
-                'manufacturer_id' => (int)$manufacturer_id,
+                'invoice_number' => (int) $invoice_number,
+                'invoice_status' => (int) $invoice_status,
+                'manufacturer_id' => (int) $manufacturer_id,
                 'manufacturer_name' => pSQL($manufacturer_name),
-                'total_quantity' => (int)$total_quantity,
-                'total_discounts_tax_excl' => (double)$total_discounts_tax_excl,
-                'total_products_no_tax' => (double)$total_products_no_tax,
-                'including_ecotax_tax_excl' => (double)$including_ecotax_tax_excl,
-                'total_cost' => (double)$total_cost,
-                'gross_profit' => (double)$gross_profit,
-                'gross_margin' => (double)$gross_margin,
-                'net_profit' => (double)$net_profit,
-                'net_margin' => (double)$net_margin
-            ));
+                'total_quantity' => (int) $total_quantity,
+                'total_discounts_tax_excl' => (float) $total_discounts_tax_excl,
+                'total_products_no_tax' => (float) $total_products_no_tax,
+                'including_ecotax_tax_excl' => (float) $including_ecotax_tax_excl,
+                'total_cost' => (float) $total_cost,
+                'gross_profit' => (float) $gross_profit,
+                'gross_margin' => (float) $gross_margin,
+                'net_profit' => (float) $net_profit,
+                'net_margin' => (float) $net_margin,
+            ]);
             $this->updateAllBrandReport();
         }
+
         return true;
     }
+
     public function gettotalproducnotax()
     {
         $query = 'SELECT SUM(total_products_no_tax) FROM ' . _DB_PREFIX_ . 'ba_report_brand';
-        $data = (double) Db::getInstance()->getValue($query, false);
+        $data = (float) Db::getInstance()->getValue($query, false);
+
         return $data;
     }
+
     public function gettotalgrossprofits()
     {
         $query = 'SELECT SUM(gross_profit) FROM ' . _DB_PREFIX_ . 'ba_report_brand';
-        $data = (double) Db::getInstance()->getValue($query, false);
+        $data = (float) Db::getInstance()->getValue($query, false);
+
         return $data;
     }
+
     public function gettotalnetprofits()
     {
         $query = 'SELECT SUM(net_profit) FROM ' . _DB_PREFIX_ . 'ba_report_brand';
-        $data = (double) Db::getInstance()->getValue($query, false);
+        $data = (float) Db::getInstance()->getValue($query, false);
+
         return $data;
     }
+
     public function getreportBrand($manufacturer_id, $id_shop)
     {
         $query = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_brand WHERE '
-                .'manufacturer_id = ' . (int) $manufacturer_id;
-        $query .= ' AND id_shop='.(int)$id_shop;
+                . 'manufacturer_id = ' . (int) $manufacturer_id;
+        $query .= ' AND id_shop=' . (int) $id_shop;
         $data = DB::getInstance()->executeS($query, true, false);
+
         return $data;
     }
+
     public function updateAllBrandReport()
     {
         $query = 'SELECT * FROM ' . _DB_PREFIX_ . 'ba_report_brand';
         $data = DB::getInstance()->executeS($query, true, false);
         $n = count($data);
-        for ($i = 0; $i < $n; $i++) {
+        for ($i = 0; $i < $n; ++$i) {
             $get_data = $data[$i];
-            $of_total_sales = ((double)$get_data['total_products_no_tax']/(double)$this->gettotalproducnotax())*100;
-            $of_total_gross_profits =((double)$get_data['gross_profit']/(double) $this->gettotalgrossprofits())*100;
-            $of_total_net_profits = ((double) $get_data['net_profit'] / (double) $this->gettotalnetprofits()) * 100;
-            $net_margin = ($get_data['net_profit'] / $get_data['total_products_no_tax']) * 100;
-            $gross_margin = ($get_data['gross_profit'] / $get_data['total_products_no_tax']) * 100;
+            $of_total_sales = ((float) $get_data['total_products_no_tax'] / (float) $this->gettotalproducnotax()) * 100;
+            $of_total_gross_profits = ((float) $get_data['gross_profit'] / (float) $this->gettotalgrossprofits()) * 100;
+            $of_total_net_profits = ((float) $get_data['net_profit'] / (float) $this->gettotalnetprofits()) * 100;
 
+            $total_no_tx = (float) $get_data['total_products_no_tax'];
+            if ($total_no_tx > 0) {
+                $net_margin = ($get_data['net_profit'] / $total_no_tx) * 100;
+                $gross_margin = ($get_data['gross_profit'] / $total_no_tx) * 100;
+            } else {
+                $net_margin = 0;
+                $gross_margin = 0;
+            }
             $query = 'UPDATE ' . _DB_PREFIX_ . 'ba_report_brand SET '
-                    .'of_total_sales="' . (double)$of_total_sales . '",'
-                    . 'of_total_gross_profits="' . (double)$of_total_gross_profits . '",'
-                    .'of_total_net_profits="' . (double)$of_total_net_profits . '",'
-                    . 'net_margin="' . (double)$net_margin . '",'
-                    .'gross_margin="' . (double)$gross_margin . '" '
-                    .'WHERE id_report=' . (int)$get_data['id_report'];
+                    . 'of_total_sales="' . (float) $of_total_sales . '",'
+                    . 'of_total_gross_profits="' . (float) $of_total_gross_profits . '",'
+                    . 'of_total_net_profits="' . (float) $of_total_net_profits . '",'
+                    . 'net_margin="' . (float) $net_margin . '",'
+                    . 'gross_margin="' . (float) $gross_margin . '" '
+                    . 'WHERE id_report=' . (int) $get_data['id_report'];
             Db::getInstance()->query($query);
         }
+
         return true;
     }
+
     public function convertPercentBrand($value)
     {
         $data_view = round($value, 2) . '%';
+
         return $data_view;
     }
+
     public function convertMoneyBrand($value)
     {
         $tool = new Tools();
         $a = round($value, 2);
         $data_view = $tool->displayPrice($a);
+
         return $data_view;
     }
+
     public function countData($helper)
     {
         $sql = 'SELECT count(*) FROM ' . _DB_PREFIX_ . 'ba_report_brand '
                 . $this->setWhereClause($helper);
         $data = DB::getInstance()->getValue($sql, false);
+
         return $data;
     }
 }

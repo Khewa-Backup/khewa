@@ -2,8 +2,8 @@
 <module>
     <name>statssearch</name>
     <displayName><![CDATA[Recherches de la boutique]]></displayName>
-    <version><![CDATA[2.0.1]]></version>
-    <description><![CDATA[Ajouter un onglet au tableau de bord, affichant les mots-cl&eacute;s les plus recherch&eacute;s par les visiteurs de votre boutique.]]></description>
+    <version><![CDATA[2.0.2]]></version>
+    <description><![CDATA[Enrichissez vos statistiques en ajoutant un onglet indiquant les mots-cl&eacute;s recherch&eacute;s par vos visiteurs.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[analytics_stats]]></tab>
     <is_configurable>0</is_configurable>

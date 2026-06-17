@@ -103,7 +103,7 @@
             {block name="layout_row_end"}
                 </div>
             {/block}
-            {block name='`hook_display_wrapper_bottom_container'}{hook h="displayWrapperBottomInContainer"}{/block}
+            {block name='hook_display_wrapper_bottom_container'}{hook h="displayWrapperBottomInContainer"}{/block}
         </div>
         {block name='hook_display_wrapper_bottom'}{hook h="displayWrapperBottom"}{/block}
     </section>

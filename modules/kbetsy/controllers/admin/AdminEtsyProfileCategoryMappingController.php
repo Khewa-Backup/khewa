@@ -12,7 +12,10 @@
  * @license   see file: LICENSE.txt
  * @category  PrestaShop Module
  */
-
+//First condition to check if PS Version defined
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 //Include Etsy Module Class to inherit some common functions and callbacks
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyModule.php');
 require_once(_PS_MODULE_DIR_ . 'kbetsy/classes/EtsyProfiles.php');
@@ -82,11 +85,11 @@ class AdminEtsyProfileCategoryMappingController extends ModuleAdminController
         }
         
         if (Tools::isSubmit('addetsy_category_mapping')) {
-            $this->toolbar_title = $this->l('Add Etsy Profile Category Mapping', 'AdminEtsyProfileCategoryMappingController');
+            $this->toolbar_title = $this->module->l('Add Etsy Profile Category Mapping', 'AdminEtsyProfileCategoryMappingController');
         } elseif (Tools::isSubmit('updateetsy_category_mapping')) {
-            $this->toolbar_title = $this->l('Update Etsy Profile Category Mapping', 'AdminEtsyProfileCategoryMappingController');
+            $this->toolbar_title = $this->module->l('Update Etsy Profile Category Mapping', 'AdminEtsyProfileCategoryMappingController');
         } else {
-            $this->toolbar_title = $this->l('Etsy Profile Category Mapping', 'AdminEtsyProfileCategoryMappingController');
+            $this->toolbar_title = $this->module->l('Etsy Profile Category Mapping', 'AdminEtsyProfileCategoryMappingController');
         }
     }
     

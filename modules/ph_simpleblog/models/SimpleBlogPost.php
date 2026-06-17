@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Blog for PrestaShop module by PrestaHome Team.
  *
@@ -6,6 +7,7 @@
  * @copyright Copyright (c) 2011-2021 PrestaHome Team - www.PrestaHome.com
  * @license   You only can use module, nothing more!
  */
+
 require_once _PS_MODULE_DIR_ . 'ph_simpleblog/ph_simpleblog.php';
 
 class SimpleBlogPost extends ObjectModel
@@ -271,7 +273,7 @@ class SimpleBlogPost extends ObjectModel
         return Db::getInstance()->executeS($sql);
     }
 
-    public static function getSimplePosts($id_lang, $id_shop = null, Context $context = null, $filter = null, $selected = [], $archive = false)
+    public static function getSimplePosts($id_lang, $id_shop = null, Context $context = null, $filter = null, $selected = [])
     {
         if (!isset($context)) {
             $context = Context::getContext();
@@ -406,10 +408,10 @@ class SimpleBlogPost extends ObjectModel
         }
 
         if ($author && Configuration::get('PH_BLOG_POST_BY_AUTHOR')) {
-            $sql->where('sbp.author = \'' . pSQL($author) . '\'');
+            $sql->where('sbp.author = "\'' . pSQL($author) . '\'"');
         }
 
-        if ($filter) {
+        if ($filter && in_array($filter, ['IN', 'NOT IN'])) {
             $sql->where('sbp.id_simpleblog_post ' . pSQL($filter) . ' (' . implode(',', $selected) . ')');
         }
 
@@ -433,55 +435,53 @@ class SimpleBlogPost extends ObjectModel
             $result = self::checkAccess($result);
         }
 
-        if (is_array($result) && sizeof($result)) {
-            $banner_sizes = array(
-                'thumb' => [
-                    'width' => Configuration::get('PH_BLOG_THUMB_X'),
-                    'height' => Configuration::get('PH_BLOG_THUMB_Y'),
-                ],
-                'wide' => [
-                    'width' => Configuration::get('PH_BLOG_THUMB_X_WIDE'),
-                    'height' => Configuration::get('PH_BLOG_THUMB_Y_WIDE'),
-                ],
-            );
-
-            foreach ($result as &$row) {
-                $category_rewrite = SimpleBlogCategory::getRewriteByCategory($row['id_simpleblog_category'], $id_lang);
-
-                $category_obj = new SimpleBlogCategory($row['id_simpleblog_category'], $id_lang);
-
-                $category_url = SimpleBlogCategory::getLink($category_obj->link_rewrite, $id_lang);
-
-                if (file_exists(_PS_MODULE_DIR_ . 'ph_simpleblog/covers/' . $row['id_simpleblog_post'] . '.' . $row['cover'])) {
-                    $row['banner'] = _MODULE_DIR_ . 'ph_simpleblog/covers/' . $row['id_simpleblog_post'] . '.' . $row['cover'];
-                    $row['banner_thumb'] = _MODULE_DIR_ . 'ph_simpleblog/covers/' . $row['id_simpleblog_post'] . '-thumb.' . $row['cover'];
-                    $row['banner_wide'] = _MODULE_DIR_ . 'ph_simpleblog/covers/' . $row['id_simpleblog_post'] . '-wide.' . $row['cover'];
-                    $row['banner_sizes'] = $banner_sizes;
-                }
-
-                if (file_exists(_PS_MODULE_DIR_ . 'ph_simpleblog/featured/' . $row['id_simpleblog_post'] . '.' . $row['featured'])) {
-                    $row['featured'] = _MODULE_DIR_ . 'ph_simpleblog/featured/' . $row['id_simpleblog_post'] . '.' . $row['featured'];
-                }
-
-                $row['url'] = self::getLink($row['link_rewrite'], $category_obj->link_rewrite, $id_lang);
-                $row['category'] = $category_obj->name;
-                $row['category_rewrite'] = $category_obj->link_rewrite;
-                $row['category_url'] = $category_url;
-
-                $row['allow_comments'] = self::checkIfAllowComments($row['allow_comments']);
-                $row['comments'] = SimpleBlogComment::getCommentsCount((int) $row['id_simpleblog_post']);
-
-                $tags = SimpleBlogTag::getPostTags((int) $row['id_simpleblog_post']);
-
-                $row['tags'] = (isset($tags[$id_lang]) && is_array($tags[$id_lang]) && (sizeof($tags[$id_lang]) > 0)) ? $tags[$id_lang] : false;
-                $row['post_type'] = SimpleBlogPostType::getSlugById((int) $row['id_simpleblog_post_type']);
-
-                if ($row['post_type'] == 'gallery') {
-                    $row['gallery'] = SimpleBlogPostImage::getAllById((int) $row['id_simpleblog_post']);
-                }
-            }
-        } else {
+        if (empty($result)) {
             return;
+        }
+
+
+        $banner_sizes = array(
+            'thumb' => [
+                'width' => Configuration::get('PH_BLOG_THUMB_X'),
+                'height' => Configuration::get('PH_BLOG_THUMB_Y'),
+            ],
+            'wide' => [
+                'width' => Configuration::get('PH_BLOG_THUMB_X_WIDE'),
+                'height' => Configuration::get('PH_BLOG_THUMB_Y_WIDE'),
+            ],
+        );
+
+        foreach ($result as &$row) {
+            $category_obj = new SimpleBlogCategory($row['id_simpleblog_category'], $id_lang);
+            $category_url = SimpleBlogCategory::getLink($category_obj->link_rewrite, $id_lang);
+
+            if (file_exists(_PS_MODULE_DIR_ . 'ph_simpleblog/covers/' . $row['id_simpleblog_post'] . '.' . $row['cover'])) {
+                $row['banner'] = _MODULE_DIR_ . 'ph_simpleblog/covers/' . $row['id_simpleblog_post'] . '.' . $row['cover'];
+                $row['banner_thumb'] = _MODULE_DIR_ . 'ph_simpleblog/covers/' . $row['id_simpleblog_post'] . '-thumb.' . $row['cover'];
+                $row['banner_wide'] = _MODULE_DIR_ . 'ph_simpleblog/covers/' . $row['id_simpleblog_post'] . '-wide.' . $row['cover'];
+                $row['banner_sizes'] = $banner_sizes;
+            }
+
+            if (file_exists(_PS_MODULE_DIR_ . 'ph_simpleblog/featured/' . $row['id_simpleblog_post'] . '.' . $row['featured'])) {
+                $row['featured'] = _MODULE_DIR_ . 'ph_simpleblog/featured/' . $row['id_simpleblog_post'] . '.' . $row['featured'];
+            }
+
+            $row['url'] = self::getLink($row['link_rewrite'], $category_obj->link_rewrite, $id_lang);
+            $row['category'] = $category_obj->name;
+            $row['category_rewrite'] = $category_obj->link_rewrite;
+            $row['category_url'] = $category_url;
+
+            $row['allow_comments'] = self::checkIfAllowComments($row['allow_comments']);
+            $row['comments'] = SimpleBlogComment::getCommentsCount((int) $row['id_simpleblog_post']);
+
+            $tags = SimpleBlogTag::getPostTags((int) $row['id_simpleblog_post']);
+
+            $row['tags'] = (isset($tags[$id_lang]) && is_array($tags[$id_lang]) && (sizeof($tags[$id_lang]) > 0)) ? $tags[$id_lang] : false;
+            $row['post_type'] = SimpleBlogPostType::getSlugById((int) $row['id_simpleblog_post_type']);
+
+            if ($row['post_type'] == 'gallery') {
+                $row['gallery'] = SimpleBlogPostImage::getAllById((int) $row['id_simpleblog_post']);
+            }
         }
 
         return $result;
@@ -499,7 +499,7 @@ class SimpleBlogPost extends ObjectModel
 
     public static function getByRewrite($rewrite = null, $id_lang = null, $category_rewrite = null)
     {
-        if (!$rewrite) {
+        if (empty($rewrite) || !Validate::isLinkRewrite($rewrite)) {
             return;
         }
 
@@ -521,7 +521,7 @@ class SimpleBlogPost extends ObjectModel
 
         if ($category) {
             $sql->innerJoin('simpleblog_post', 'p', 'p.id_simpleblog_post = l.id_simpleblog_post');
-            $sql->where('p.`id_simpleblog_category` = '.(int) $category->id);
+            $sql->where('p.`id_simpleblog_category` = ' . (int) $category->id);
         }
 
         $result = Db::getInstance()->getValue($sql);
@@ -585,7 +585,6 @@ class SimpleBlogPost extends ObjectModel
 
     public static function getPageLink($page_nb, $type = false, $rewrite = false)
     {
-        $id_lang = Context::getContext()->language->id;
         $context = Context::getContext();
 
         $params = [];
@@ -604,7 +603,7 @@ class SimpleBlogPost extends ObjectModel
                 unset($params['p']);
                 return $context->link->getModuleLink('ph_simpleblog', 'category', $params);
             }
-            
+
             return $context->link->getModuleLink('ph_simpleblog', 'categorypage', $params);
         }
 
@@ -614,7 +613,7 @@ class SimpleBlogPost extends ObjectModel
                 unset($params['p']);
                 return $context->link->getModuleLink('ph_simpleblog', 'author', $params);
             }
-            
+
             return $context->link->getModuleLink('ph_simpleblog', 'authorpage', $params);
         }
 
@@ -624,9 +623,9 @@ class SimpleBlogPost extends ObjectModel
 
         if ($page_nb > 1) {
             return $context->link->getModuleLink('ph_simpleblog', 'page', array_merge($params, $additionalParams));
-        } else {
-            return $context->link->getModuleLink('ph_simpleblog', 'list', $additionalParams);
         }
+
+        return $context->link->getModuleLink('ph_simpleblog', 'list', $additionalParams);
     }
 
     public static function getPaginationLink($nb = false, $sort = false, $pagination = true, $array = false)
@@ -821,37 +820,32 @@ class SimpleBlogPost extends ObjectModel
                         $wide->save($destFiles['wide']);
                     }
                 }
-
             }
         }
     }
 
     public static function changeRating($way = 'up', $id_simpleblog_post = false)
     {
+        if (!in_array($way, ['up', 'down'])) {
+            return false;
+        }
+
         if ($way == 'up') {
             $sql = 'UPDATE `' . _DB_PREFIX_ . 'simpleblog_post` SET `likes` = `likes` + 1 WHERE id_simpleblog_post = ' . (int) $id_simpleblog_post;
-        } elseif ($way == 'down') {
+        }
+
+        if ($way == 'down') {
             $sql = 'UPDATE `' . _DB_PREFIX_ . 'simpleblog_post` SET `likes` = `likes` - 1 WHERE id_simpleblog_post = ' . (int) $id_simpleblog_post;
-        } else {
-            return;
         }
 
         Db::getInstance()->Execute($sql);
 
-        $sql = 'SELECT `likes` FROM `' . _DB_PREFIX_ . 'simpleblog_post` WHERE id_simpleblog_post = ' . (int) $id_simpleblog_post;
-
-        $res = Db::getInstance()->ExecuteS($sql);
-
-        return $res;
+        return Db::getInstance()->ExecuteS('SELECT `likes` FROM `' . _DB_PREFIX_ . 'simpleblog_post` WHERE id_simpleblog_post = ' . (int) $id_simpleblog_post);
     }
 
     public function increaseViewsNb()
     {
-        $sql = 'UPDATE `' . _DB_PREFIX_ . 'simpleblog_post` SET `views` = `views` + 1 WHERE id_simpleblog_post = ' . (int) $this->id_simpleblog_post;
-
-        $result = Db::getInstance()->Execute($sql);
-
-        return $result;
+        return Db::getInstance()->Execute('UPDATE `' . _DB_PREFIX_ . 'simpleblog_post` SET `views` = `views` + 1 WHERE id_simpleblog_post = ' . (int) $this->id_simpleblog_post);
     }
 
     public function isAccessGranted()

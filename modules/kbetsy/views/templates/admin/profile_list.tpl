@@ -52,26 +52,3 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        /* Below code is no longer requured. It was added to display category selection on the Popup
-        $("#page-header-desc-etsy_profiles-new_template").bind("click", function () {
-            $("#myModal").modal();
-            return false;
-        });
-        
-        $("#etsy_category").bind("change", function() {
-              $.ajax({
-                url: '{$ajax_category_action}', {*Variable contains url, can not escape*}
-                data: 'id_etsy_categories=' + $(this).val() + "&action=getEtsyCategory",
-                type: 'post',
-                dataType: 'json',
-                success: function (json) {
-                    
-                }
-            });
-        });
-        */
-    });
-</script>

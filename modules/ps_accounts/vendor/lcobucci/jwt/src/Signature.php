@@ -1,14 +1,13 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT;
 
-namespace Lcobucci\JWT;
-
-use Lcobucci\JWT\Signer\Key;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Signer\Key;
 /**
  * This class represents a token signature
  *
@@ -23,10 +22,8 @@ class Signature
      * @var string
      */
     protected $hash;
-
     /** @var string */
     private $encoded;
-
     /**
      * Initializes the object
      *
@@ -35,16 +32,14 @@ class Signature
      */
     public function __construct($hash, $encoded = '')
     {
-        $this->hash    = $hash;
+        $this->hash = $hash;
         $this->encoded = $encoded;
     }
-
     /** @return self */
     public static function fromEmptyData()
     {
         return new self('', '');
     }
-
     /**
      * Verifies if the current hash matches with with the result of the creation of
      * a new signature with given data
@@ -59,7 +54,6 @@ class Signature
     {
         return $signer->verify($this->hash, $payload, $key);
     }
-
     /**
      * Returns the current hash as a string representation of the signature
      *
@@ -72,13 +66,11 @@ class Signature
     {
         return $this->hash;
     }
-
     /** @return string */
     public function hash()
     {
         return $this->hash;
     }
-
     /** @return string */
     public function toString()
     {

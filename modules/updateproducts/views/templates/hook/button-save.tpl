@@ -1,0 +1,1 @@
+<button type="button" class="btn btn-default {$class_button|escape:'htmlall':'UTF-8'}" style="padding: 4px 30px;font-size: 16px;">{l s='Save'  mod='updateproducts'}</button>

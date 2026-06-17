@@ -47,27 +47,42 @@
                     <div class="col-lg-6">
                         <label class="control-label required col-lg-12" style="display: block; text-align: left">
                             {l s='Origin Country' mod='kbetsy'}
-                    </label>
+                        </label>
                         <div class="col-lg-12"  style="display: block">
-                            <select name="shipping_origin_country_id" id="shipping_origin_country_id" onchange="setOriginCountry()">
+                            {*
+                            * If editing the shipping template, disabled the origin country field
+                            * @date 10-04-2023
+                            * @author Tanisha Gupta
+                            *}
+                            <select name="shipping_origin_country_id" id="shipping_origin_country_id" onchange="setOriginCountry()" {if $fields_value['id_etsy_shipping_templates'] != ""} disabled='disabled' {/if}>
                                 {foreach $countries_list as $country}
                                 {if $fields_value['shipping_origin_country_id'] == $country['id_option']} 
-                                <option value="{$country['id_option']|escape:'htmlall':'UTF-8'}" selected="selected">{$country['name']|escape:'htmlall':'UTF-8'}</option>
+                                <option value="{$country['id_option']|escape:'htmlall':'UTF-8'}" selected="selected">{$country['name']|escape:'htmlall':'UTF-8'}</option> {*Variable contains HTML, can't escape*}
                                 {else}
-                                <option value="{$country['id_option']|escape:'htmlall':'UTF-8'}">{$country['name']|escape:'htmlall':'UTF-8'}</option>
+                                <option value="{$country['id_option']|escape:'htmlall':'UTF-8'}">{$country['name']|escape:'htmlall':'UTF-8'}</option> {*Variable contains HTML, can't escape*}
                                 {/if}
                                 {/foreach}
                             </select>
+                            {if $fields_value['id_etsy_shipping_templates'] != ""}
+                                <input type="hidden" name="shipping_origin_country_id"  value="{$fields_value['shipping_origin_country_id']}" class=""/> {*Variable contains HTML, can't escape*}
+                            {/if}
                             <p class="help-block">{l s='Choose a country as an origin country of Shipment' mod='kbetsy'}</p>
                         </div>
                     </div>
                 </div>
             </div>
-
-
             <div class="form-group">
                 <div class="row">
-                    <div class="col-lg-6">
+                     <div class="col-lg-4">
+                        <label class="control-label required col-lg-12" style="display: block; text-align: left">
+                            {l s='Origin post code' mod='kbetsy'}
+                        </label>
+                        <div class="col-lg-12" style="display: block">
+                            <input type="text" name="postal_code" id="postal_code" value="{$fields_value['postal_code']|escape:'htmlall':'UTF-8'}" class=""/>
+                            <p class="help-block">{l s='Where do you dispatch packages from?' mod='kbetsy'}</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
                         <label class="control-label required col-lg-12" style="display: block; text-align: left">
                             {l s='Min Processing Days' mod='kbetsy'}
                         </label>
@@ -76,7 +91,7 @@
                             <p class="help-block">{l s='Provide minimum number of days of a shipment' mod='kbetsy'}</p>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <label class="control-label required col-lg-12" style="display: block; text-align: left">
                             {l s='Max Processing Days' mod='kbetsy'}
                         </label>
@@ -114,21 +129,43 @@
         </div>
     </div>
 </form>
+
+{*
+* Added a hidden field to collection the translated value for kb_empty_carrier_msg in the script.js
+* @date 08-03-2024
+* @author Ashis
+*}
+<input type="hidden" name="" value="{l s='Shipping service not available. Switch to Delivery Time' mod='kbetsy'}" id="kb_empty_carrier_msg"/> 
+
 <style type="text/css">
-    #etsy_shipping_templates_form .form-group {
-        margin-bottom: 0px;
-    }    
+#etsy_shipping_templates_form .form-group {
+    margin-bottom: 0px;
+}    
 </style>
 
 <script type="text/javascript">
-    //changes by vishal for adding velovalidation in shipping template 
-    var kb_shipping_template_entry_error = "{l s='Kindly Add atleast 1 row in Shipping Delivery' mod='kbetsy'}";
-    var kb_title_multiple_error = "{l s='Duplicate Titles' mod='kbetsy'}";
-    var kb_title_multiple_country_error = "{l s='Duplicate Country Selection' mod='kbetsy'}";
-    var greater_amount_shipping_secoundary_cost = "{l s='Additional Item cost should be less than One Item Cost' mod='kbetsy'}";
-    //changes end
+//changes by vishal for adding velovalidation in shipping template 
+var kb_shipping_template_entry_error = "{l s='Kindly Add atleast 1 row in Shipping Delivery' mod='kbetsy'}";
+var kb_title_multiple_error = "{l s='Duplicate Titles' mod='kbetsy'}";
+var kb_title_multiple_country_error = "{l s='Duplicate Country Selection' mod='kbetsy'}";
+var greater_amount_shipping_secoundary_cost = "{l s='Additional Item cost should be less than One Item Cost' mod='kbetsy'}";
+/**
+* Set url to send request to fetch the shipping carrier while creating or adding shipping profile
+* @date 15-04-2023
+* @author Tanisha Gupta
+*/
+var controller_url = "{$controller_url}"; {*Variable contains HTML, can't escape*}
+/**
+* Set message if shipping carrier is not available for the country.
+* @date 15-04-2023
+* @author Tanisha Gupta
+*/
+var kb_carrier_empty_msg = "{l s='No Carrier is available. Please select the Delivery Time option' mod='kbetsy'}";
+var kb_carrier_error = "{l s='Please select the carrier' mod='kbetsy'}";
+var delivery_time_err = "{l s='Minimum Processing Days cannot be greater than to Maximum Processing Days.' mod='kbetsy'}";
+//changes end
+
 $(document).ready(function() {
-    
     
     $("body").on("click", ".deleteEntry", function() {
         if($(this).parent().parent().parent().find('.existing_entry').val() == '1') {
@@ -182,21 +219,10 @@ $(document).ready(function() {
            data: 'type=entry',
            success: function(html) {
                $("#shipping_template_entry").append(html);
-               $(".destination_type").each(function() {
-                    $(this).on("change", function() {
-                        if ($(this).val() == '1') {
-                        $(this).parent().parent().parent().find(".country_list").show();
-                        $(this).parent().parent().parent().find(".region_list").hide();
-                        } else {
-                        $(this).parent().parent().parent().find(".country_list").hide();
-                        $(this).parent().parent().parent().find(".region_list").show();
-                        }
-                    });
-                });
            }
         });
     });
-    
+
     $(".addnew_upgrade").bind("click", function() {
         $.ajax({
            url:'{$controller_url}&action=fetchentry',       /*Variable contains URL, can't escape*/
@@ -206,6 +232,6 @@ $(document).ready(function() {
                $("#shipping_upgrades_entry").append(html);
            }
         });
-    });    
+    }); 
 });  
 </script>

@@ -6,7 +6,7 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * This source file is subject to the Academic Free License version 3.0
  * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
@@ -14,160 +14,135 @@
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
  * @author    PrestaShop SA and Contributors <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 class Autoupgrade extends Module
 {
+    /**
+     * @var int
+     */
+    public $multishop_context;
+
+    /**
+     * @var \PrestaShop\Module\AutoUpgrade\UpgradeContainer
+     */
+    protected $container;
+
     public function __construct()
     {
         $this->name = 'autoupgrade';
         $this->tab = 'administration';
         $this->author = 'PrestaShop';
-        $this->version = '4.14.0';
+        $this->version = '7.5.0';
         $this->need_instance = 1;
+        $this->module_key = '926bc3e16738b7b834f37fc63d59dcf8';
 
         $this->bootstrap = true;
         parent::__construct();
 
         $this->multishop_context = Shop::CONTEXT_ALL;
 
-        if (!defined('_PS_ADMIN_DIR_')) {
-            if (defined('PS_ADMIN_DIR')) {
-                define('_PS_ADMIN_DIR_', PS_ADMIN_DIR);
-            } else {
-                $this->_errors[] = $this->trans('This version of PrestaShop cannot be upgraded: the PS_ADMIN_DIR constant is missing.', array(), 'Modules.Autoupgrade.Admin');
-            }
-        }
+        $this->displayName = $this->trans('Update Assistant');
+        $this->description = $this->trans('The Update Assistant module helps you backup, update and restore your PrestaShop store. With just a few clicks, you can move to the latest version of PrestaShop with confidence.');
 
-        $this->displayName = $this->trans('1-Click Upgrade', array(), 'Modules.Autoupgrade.Admin');
-        $this->description = $this->trans('Upgrade to the latest version of PrestaShop in a few clicks, thanks to this automated method.', array(), 'Modules.Autoupgrade.Admin');
-
-        $this->ps_versions_compliancy = array('min' => '1.6.0.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = ['min' => '1.7.0.0', 'max' => _PS_VERSION_];
     }
 
+    /**
+     * following the Core documentation :
+     * https://devdocs.prestashop-project.org/8/modules/creation/module-translation/new-system/#translating-your-module
+     *
+     * @return bool
+     */
+    public function isUsingNewTranslationSystem()
+    {
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
     public function install()
     {
-        if (50600 > PHP_VERSION_ID) {
-            $this->_errors[] = $this->trans('This version of 1-click upgrade requires PHP 5.6 to work properly. Please upgrade your server configuration.', array(), 'Modules.Autoupgrade.Admin');
+        require_once _PS_ROOT_DIR_ . '/modules/autoupgrade/classes/VersionUtils.php';
+        if (!\PrestaShop\Module\AutoUpgrade\VersionUtils::isActualPHPVersionCompatible()) {
+            $this->_errors[] = $this->trans(
+                'This module requires PHP %s to work properly. Please upgrade your server configuration.',
+                [\PrestaShop\Module\AutoUpgrade\VersionUtils::getHumanReadableVersionOf(\PrestaShop\Module\AutoUpgrade\VersionUtils::MODULE_COMPATIBLE_PHP_VERSION)]
+            );
 
             return false;
-        }
-
-        if (defined('_PS_HOST_MODE_') && _PS_HOST_MODE_) {
-            return false;
-        }
-
-
-        // Before creating a new tab "AdminSelfUpgrade" we need to remove any existing "AdminUpgrade" tab (present in v1.4.4.0 and v1.4.4.1)
-        if ($id_tab = Tab::getIdFromClassName('AdminUpgrade')) {
-            $tab = new Tab((int) $id_tab);
-            if (!$tab->delete()) {
-                $this->_errors[] = $this->trans('Unable to delete outdated "AdminUpgrade" tab (tab ID: %idtab%).', array('%idtab%' => (int) $id_tab), 'Modules.Autoupgrade.Admin');
-            }
         }
 
         // If the "AdminSelfUpgrade" tab does not exist yet, create it
-        if (!$id_tab = Tab::getIdFromClassName('AdminSelfUpgrade')) {
+        $moduleTabName = 'AdminSelfUpgrade';
+        if (!Tab::getIdFromClassName($moduleTabName)) {
             $tab = new Tab();
-            $tab->class_name = 'AdminSelfUpgrade';
+            $tab->class_name = $moduleTabName;
+            $tab->icon = 'arrow_upward';
             $tab->module = 'autoupgrade';
-            $tab->id_parent = (int) Tab::getIdFromClassName('AdminTools');
+
+            // We use DEFAULT to add Upgrade tab as a standalone tab in the back office menu
+            $tab->id_parent = (int) Tab::getIdFromClassName('CONFIGURE');
+
             foreach (Language::getLanguages(false) as $lang) {
-                $tab->name[(int) $lang['id_lang']] = '1-Click Upgrade';
+                $tab->name[(int) $lang['id_lang']] = 'Update assistant';
             }
             if (!$tab->save()) {
-                return $this->_abortInstall($this->trans('Unable to create the "AdminSelfUpgrade" tab', array(), 'Modules.Autoupgrade.Admin'));
+                return $this->_abortInstall($this->trans('Unable to create the %s tab', [$moduleTabName]));
             }
-            if (!@copy(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'logo.gif', _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . 't' . DIRECTORY_SEPARATOR . 'AdminSelfUpgrade.gif')) {
-                return $this->_abortInstall($this->trans('Unable to copy logo.gif in %s', array(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . 't' . DIRECTORY_SEPARATOR), 'Modules.Autoupgrade.Admin'));
-            }
-        } else {
-            $tab = new Tab((int) $id_tab);
         }
 
-        // Update the "AdminSelfUpgrade" tab id in database or exit
-        if (Validate::isLoadedObject($tab)) {
-            Configuration::updateValue('PS_AUTOUPDATE_MODULE_IDTAB', (int) $tab->id);
-        } else {
-            return $this->_abortInstall($this->trans('Unable to load the "AdminSelfUpgrade" tab', array(), 'Modules.Autoupgrade.Admin'));
+        $ajaxTabName = 'AdminAutoupgradeAjax';
+        if (!Tab::getIdFromClassName($ajaxTabName)) {
+            $ajaxTab = new Tab();
+            $ajaxTab->class_name = $ajaxTabName;
+            $ajaxTab->module = 'autoupgrade';
+            $ajaxTab->id_parent = -1;
+
+            foreach (Language::getLanguages(false) as $lang) {
+                $ajaxTab->name[(int) $lang['id_lang']] = 'Update assistant';
+            }
+            if (!$ajaxTab->save()) {
+                return $this->_abortInstall($this->trans('Unable to create the %s tab', [$ajaxTabName]));
+            }
         }
 
-
-        return parent::install() && $this->registerHookAndSetToTop('dashboardZoneOne');
+        return parent::install() && $this->registerHook('displayBackOfficeHeader') && $this->registerHook('displayBackOfficeEmployeeMenu');
     }
 
+    /**
+     * @return bool
+     */
     public function uninstall()
     {
-        // Delete the 1-click upgrade Back-office tab
-        if ($id_tab = Tab::getIdFromClassName('AdminSelfUpgrade')) {
+        // Delete the module Back-office tab
+        $id_tab = Tab::getIdFromClassName('AdminSelfUpgrade');
+        if ($id_tab) {
             $tab = new Tab((int) $id_tab);
             $tab->delete();
         }
 
-        // Remove the 1-click upgrade working directory
-        self::_removeDirectory(_PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'autoupgrade');
+        $id_ajax_tab = Tab::getIdFromClassName('AdminAutoupgradeAjax');
+        if ($id_ajax_tab) {
+            $ajaxTab = new Tab((int) $id_ajax_tab);
+            $ajaxTab->delete();
+        }
 
-        Configuration::deleteByName('PS_AUTOUP_IGNORE_REQS');
-        Configuration::deleteByName('PS_AUTOUP_IGNORE_PHP_UPGRADE');
+        // Remove the 'autoupgrade' admin directory except backups
+        $this->getUpgradeContainer()->getFilesystemAdapter()->clearDirectory(_PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'autoupgrade', ['backup']);
 
         return parent::uninstall();
     }
 
     /**
-     * Register the current module to a given hook and moves it at the first position.
-     *
-     * @param string $hookName
-     *
-     * @return bool
+     * @return void
      */
-    public function registerHookAndSetToTop($hookName)
-    {
-        return $this->registerHook($hookName) && $this->updatePosition((int) Hook::getIdByName($hookName), 0);
-    }
-
-    public function hookDashboardZoneOne($params)
-    {
-        // Display panel if PHP is not supported by the community
-        require_once __DIR__ . '/vendor/autoload.php';
-
-        $upgradeContainer = new \PrestaShop\Module\AutoUpgrade\UpgradeContainer(_PS_ROOT_DIR_, _PS_ADMIN_DIR_);
-        $upgrader = $upgradeContainer->getUpgrader();
-        $upgradeSelfCheck = new \PrestaShop\Module\AutoUpgrade\UpgradeSelfCheck(
-            $upgrader,
-            _PS_ROOT_DIR_,
-            _PS_ADMIN_DIR_,
-            __DIR__
-        );
-
-        $upgradeNotice = $upgradeSelfCheck->isPhpUpgradeRequired();
-        if (false === $upgradeNotice) {
-            return '';
-        }
-
-        $this->context->controller->addCSS($this->_path . '/css/styles.css');
-        $this->context->controller->addJS($this->_path . '/js/dashboard.js');
-
-        $this->context->smarty->assign([
-            'ignore_link' => Context::getContext()->link->getAdminLink('AdminSelfUpgrade') . '&ignorePhpOutdated=1',
-            'learn_more_link' => 'http://build.prestashop.com/news/announcing-end-of-support-for-obsolete-php-versions/',
-        ]);
-
-        return $this->context->smarty->fetch($this->local_path . 'views/templates/hook/dashboard_zone_one.tpl');
-    }
-
     public function getContent()
     {
-        global $cookie;
-        header('Location: index.php?tab=AdminSelfUpgrade&token=' . md5(pSQL(_COOKIE_KEY_ . 'AdminSelfUpgrade' . (int) Tab::getIdFromClassName('AdminSelfUpgrade') . (int) $cookie->id_employee)));
-        exit;
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminSelfUpgrade'));
     }
 
     /**
@@ -184,39 +159,113 @@ class Autoupgrade extends Module
         return false;
     }
 
-    private static function _removeDirectory($dir)
-    {
-        if ($handle = @opendir($dir)) {
-            while (false !== ($entry = @readdir($handle))) {
-                if ($entry != '.' && $entry != '..') {
-                    if (is_dir($dir . DIRECTORY_SEPARATOR . $entry) === true) {
-                        self::_removeDirectory($dir . DIRECTORY_SEPARATOR . $entry);
-                    } else {
-                        @unlink($dir . DIRECTORY_SEPARATOR . $entry);
-                    }
-                }
-            }
-
-            @closedir($handle);
-            @rmdir($dir);
-        }
-    }
-
     /**
      * Adapter for trans calls, existing only on PS 1.7.
      * Making them available for PS 1.6 as well.
      *
      * @param string $id
-     * @param array $parameters
+     * @param array<int|string, int|string> $parameters $parameters
      * @param string $domain
      * @param string $locale
+     *
+     * @return string
      */
-    public function trans($id, array $parameters = array(), $domain = null, $locale = null)
+    public function trans($id, array $parameters = [], $domain = null, $locale = null)
     {
         require_once _PS_ROOT_DIR_ . '/modules/autoupgrade/classes/UpgradeTools/Translator.php';
 
-        $translator = new \PrestaShop\Module\AutoUpgrade\UpgradeTools\Translator(__CLASS__);
+        $translator = new \PrestaShop\Module\AutoUpgrade\UpgradeTools\Translator(
+            _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'autoupgrade' . DIRECTORY_SEPARATOR . 'translations' . DIRECTORY_SEPARATOR,
+            \Context::getContext()->language->iso_code
+        );
 
-        return $translator->trans($id, $parameters, $domain, $locale);
+        return $translator->trans($id, $parameters);
+    }
+
+    /**
+     * Hook called after the backoffice content is rendered.
+     * Used to display the update notification dialog.
+     *
+     * @return string
+     *
+     * @throws \PrestaShop\Module\AutoUpgrade\Exceptions\DistributionApiException
+     * @throws \PrestaShop\Module\AutoUpgrade\Exceptions\UpgradeException
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function hookDisplayBackOfficeHeader()
+    {
+        if (!$this->initAutoloaderIfCompliant()) {
+            return '';
+        }
+
+        if (isset($this->context->controller->ajax) && $this->context->controller->ajax) {
+            return '';
+        }
+
+        return (new \PrestaShop\Module\AutoUpgrade\Hooks\DisplayBackOfficeHeader($this->getUpgradeContainer()))->renderUpdateNotification();
+    }
+
+    /**
+     * Only available from PS8.
+     *
+     * @param array{links: \PrestaShop\PrestaShop\Core\Action\ActionsBarButtonsCollection} $params
+     *
+     * @return void
+     */
+    public function hookDisplayBackOfficeEmployeeMenu(array $params)
+    {
+        if (
+            !$this->initAutoloaderIfCompliant()
+            || !class_exists(\PrestaShop\PrestaShop\Core\Action\ActionsBarButtonsCollection::class)
+            || !class_exists(\PrestaShop\PrestaShop\Core\Action\ActionsBarButton::class)
+            // @phpstan-ignore instanceof.alwaysTrue (Depends on the PrestaShop version)
+            || !($params['links'] instanceof \PrestaShop\PrestaShop\Core\Action\ActionsBarButtonsCollection)
+        ) {
+            return;
+        }
+
+        $params['links']->add(
+            new \PrestaShop\PrestaShop\Core\Action\ActionsBarButton(
+                __CLASS__,
+                [
+                    'link' => \PrestaShop\Module\AutoUpgrade\DocumentationLinks::getPrestashopReleasesUrl(),
+                    'icon' => 'history',
+                    'isExternalLink' => true,
+                ],
+                $this->trans('Discover the latest releases')
+            )
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function initAutoloaderIfCompliant()
+    {
+        require_once _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'autoupgrade' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'VersionUtils.php';
+        if (!\PrestaShop\Module\AutoUpgrade\VersionUtils::isActualPHPVersionCompatible()) {
+            return false;
+        }
+
+        $autoloadPath = __DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        if (file_exists($autoloadPath)) {
+            require_once $autoloadPath;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return \PrestaShop\Module\AutoUpgrade\UpgradeContainer
+     */
+    public function getUpgradeContainer()
+    {
+        if (null === $this->container) {
+            $this->container = new \PrestaShop\Module\AutoUpgrade\UpgradeContainer(_PS_ROOT_DIR_, realpath(_PS_ADMIN_DIR_));
+        }
+
+        return $this->container;
     }
 }

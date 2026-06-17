@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2021 PrestaShop
+ * 2007-2023 PrestaShop
  *
  * NOTICE OF LICENSE
  *
@@ -19,16 +19,15 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  *  @author    Buy-addons <contact@buy-addons.com>
- *  @copyright 2007-2021 Buy-addons
+ *  @copyright 2007-2023 Buy-addons
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
-
 header('Content-Type: text/html; charset=ISO-8859-1');
-include_once('../../config/config.inc.php');
+require_once '../../config/config.inc.php';
 // if maintaince mode enable
 $remote_ip = Tools::getRemoteAddr();
-if (!(int)Configuration::get('PS_SHOP_ENABLE')) {
+if (!(int) Configuration::get('PS_SHOP_ENABLE')) {
     if (!in_array($remote_ip, explode(',', Configuration::get('PS_MAINTENANCE_IP')))) {
         if (!Configuration::get('PS_MAINTENANCE_IP')) {
             Configuration::updateValue('PS_MAINTENANCE_IP', $remote_ip);
@@ -37,16 +36,17 @@ if (!(int)Configuration::get('PS_SHOP_ENABLE')) {
         }
     }
 }
-include_once('../../init.php');
-require_once('./reportsale.php');
-require_once('./classes/autoexport.php');
+require_once '../../init.php';
+require_once './reportsale.php';
+require_once './classes/autoexport.php';
 $ba_reportsale = new ReportSale();
 $ba_exportrp = new Autoexport();
 $cookiekey = $ba_reportsale->cookiekeymodule();
-$batoken = Tools::getValue("batoken");
+$batoken = Tools::getValue('batoken');
+set_time_limit(0);
 if ($batoken == $cookiekey) {
     $ba_exportrp->funcAutoExport();
 } else {
-    echo $ba_reportsale->l("You do not have permission to access it.");
-    die;
+    echo $ba_reportsale->l('You do not have permission to access it.');
+    exit;
 }

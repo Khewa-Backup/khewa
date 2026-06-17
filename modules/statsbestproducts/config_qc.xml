@@ -2,8 +2,9 @@
 <module>
     <name>statsbestproducts</name>
     <displayName><![CDATA[Meilleures ventes]]></displayName>
-    <version><![CDATA[2.0.0]]></version>
-    <description><![CDATA[Ajoute une liste des vos meilleures ventes dans le tableau de bord des statistiques.]]></description>
+    <version><![CDATA[2.0.1]]></version>
+    <description><![CDATA[Enrichissez vos statistiques et apprenez &agrave; mieux conna&icirc;tre vos
+clients gr&acirc;ce &agrave; la liste de vos meilleures ventes.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[analytics_stats]]></tab>
     <is_configurable>0</is_configurable>

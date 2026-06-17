@@ -26,7 +26,7 @@
         <div class="simpleblog__listing__post__wrapper__footer__block d-inline-block mr-2">
             <i class="fa fa-comments"></i>
             <span>
-                {$post.comments} {l s='comments'  mod='ph_simpleblog'}
+                {$post.comments} {l s='comments'  d='Modules.Simpleblog.Shop'}
             </span>
         </div>
         {/if}
@@ -34,7 +34,7 @@
         <div class="simpleblog__listing__post__wrapper__footer__block d-inline-block mr-2">
             <i class="fa fa-eye"></i>
             <span>
-                {$post.views} {l s='views'  mod='ph_simpleblog'}
+                {$post.views} {l s='views'  d='Modules.Simpleblog.Shop'}
             </span>
         </div>
         {/if}

@@ -30,9 +30,21 @@ class EtsyAttributeMappings extends ObjectModel
     /**
      * @see ObjectModel::$definition
      */
+    /*
+     * Added missing 'fields' definition to fix "Undefined array key 'fields'" error in PrestaShop 9.0
+     * Updated primary key from 'id_attribute_group' to 'id_attribute_mapping' to match database structure
+     * 27-12-2024
+     */
     public static $definition = array(
         'table' => 'etsy_attribute_mapping1',
         'primary' => 'id_attribute_group',
+        'fields' => array(
+            'property_id' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
+            'property_title' => array('type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 500),
+            'id_attribute_group' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
+            'date_added' => array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
+            'date_updated' => array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
+        ),
     );
 
     public function __construct($id = null)

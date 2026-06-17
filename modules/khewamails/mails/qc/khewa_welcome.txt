@@ -1,0 +1,10 @@
+Bienvenue chez Khewa!
+
+Cher/Chère {name},
+
+{content}
+
+Merci de vous être abonné(e) à notre infolettre.
+
+Cordialement,
+L'équipe Khewa

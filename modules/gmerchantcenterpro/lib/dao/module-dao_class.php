@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -57,9 +57,11 @@ class BT_GmcProModuleDao
             . Shop::addSqlAssociation('product', 'p', false)
             . (!$bExportMode ? ' LEFT JOIN `' . _DB_PREFIX_ . 'category_product` cp ON (p.id_product = cp.id_product)' : ' LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` man ON (p.id_manufacturer = man.id_manufacturer)')
             . ' WHERE product_shop.active = 1'
-            . ' AND ' . (!$bExportMode ? 'cp.`id_category`' : 'man.`id_manufacturer`') . ' IN (SELECT id_' . (!$bExportMode ? 'category' : 'brands') . ' FROM `' . _DB_PREFIX_ . 'gmcp_' . (!$bExportMode ? 'categories' : 'brands') . '` gc ' . (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') ? ' WHERE gc.`id_shop` = ' . (int) $iShopId : '') . ')'
-            . (!empty($bExcludedProduct) ? ' AND p.id_product NOT IN (SELECT id_product FROM `' . _DB_PREFIX_ . 'gmcp_product_excluded' . '`)' : '');
-        // range or not
+            . ' AND ' . (!$bExportMode ? 'cp.`id_category`' : 'man.`id_manufacturer`') . ' IN (SELECT id_' . (!$bExportMode ? 'category' : 'brands') . ' FROM `' . _DB_PREFIX_ . 'gmcp_' . (!$bExportMode ? 'categories' : 'brands') . '` gc ' . (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') ? ' WHERE gc.`id_shop` = ' . (int) $iShopId : '') . ')';
+
+        //Use case if we don't export each combo as a product
+        $sQuery  .= (!empty($bExcludedProduct) ? ' AND p.id_product NOT IN (SELECT id_product FROM `' . _DB_PREFIX_ . 'gmcp_product_excluded`' . ' WHERE id_product_attribute = 0)' : '');
+
         if ($iFloor !== null && !empty($iStep)) {
             $sQuery .= ' LIMIT ' . (int) $iFloor . ', ' . (int) $iStep;
         }
@@ -140,21 +142,12 @@ class BT_GmcProModuleDao
      */
     public static function getProductCombination($iShopId, $iProductId, $bExcludedProduct = false)
     {
-        // get if the multishop  group share the stock or not
-        $bShareStock = BT_GmcProModuleTools::getGroupShopDetail('share_stock');
-
         $sQuery = 'SELECT *, pa.id_product_attribute, pas.id_shop, sa.`quantity` as combo_quantity'
             . ' FROM ' . _DB_PREFIX_ . 'product_attribute pa '
-            . ' LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute_shop` pas ON (pa.id_product_attribute = pas.id_product_attribute AND pas.id_shop = ' . (int) $iShopId . ')';
-
-        // use case - share stock - it shouldn't make problem in most cases because the filtering is made on the previous jointed left table nut some shops have the id_shop to 0 and in that case the query couldn't work.
-        if ($bShareStock) {
-            $sQuery .= ' LEFT JOIN `' . _DB_PREFIX_ . 'stock_available` sa ON (pas.id_product_attribute = sa.id_product_attribute)';
-        } else {
-            $sQuery .= ' LEFT JOIN `' . _DB_PREFIX_ . 'stock_available` sa ON (pas.id_product_attribute = sa.id_product_attribute AND pas.id_shop = sa.id_shop AND sa.id_shop = ' . (int) $iShopId . ')';
-        }
-
-        $sQuery .= ' WHERE pa.`id_product` = ' . (int) $iProductId;
+            . ' LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute_shop` pas ON (pa.id_product_attribute = pas.id_product_attribute AND pas.id_shop = ' . (int) $iShopId . ')'
+            . ' LEFT JOIN `' . _DB_PREFIX_ . 'stock_available` sa ON (pas.id_product_attribute = sa.id_product_attribute)'
+            .  'WHERE pa.`id_product` = ' . (int) $iProductId
+            .  ' AND pas.`id_shop` = ' . (int) $iShopId;
 
         // USE CASE if there is product in gmcp_product_excluded
         if (!empty($bExcludedProduct)) {
@@ -176,6 +169,7 @@ class BT_GmcProModuleDao
      */
     public static function getProductComboAttributes($iProdAttributeId, $iLangId, $iShopId)
     {
+
         $sQuery = 'SELECT distinct(al.`name`)'
             . ' FROM `' . _DB_PREFIX_ . 'product_attribute_shop` pa'
             . ' LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute_combination` pac ON pac.`id_product_attribute` = pa.`id_product_attribute`'
@@ -187,129 +181,6 @@ class BT_GmcProModuleDao
         $aResult = Db::getInstance()->ExecuteS($sQuery);
 
         return !empty($aResult) ? $aResult : false;
-    }
-
-    /**
-     * returns the product's combination link
-     *
-     * @param string $sBaseLink
-     * @param int $iProdAttributeId
-     * @param int $iLangId
-     * @param int $iShopId
-     * @return mixed
-     */
-    public static function getProductComboLink($sBaseLink, $iProdAttributeId, $iLangId, $iShopId, $iProdid = null, $iCurrencyId = null)
-    {
-        // USE CASE < 1.7
-        if (empty(GMerchantCenterPro::$bCompare17)) {
-
-            $sQuery = 'SELECT distinct(al.`name`), agl.`name` as group_name, a.`id_attribute`'
-                . ' FROM `' . _DB_PREFIX_ . 'product_attribute_shop` pas'
-                . ' LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute_combination` pac ON pac.`id_product_attribute` = pas.`id_product_attribute`'
-                . ' LEFT JOIN `' . _DB_PREFIX_ . 'attribute` a ON pac.`id_attribute` = a.`id_attribute`'
-                . ' LEFT JOIN `' . _DB_PREFIX_ . 'attribute_lang` al ON (pac.`id_attribute` = al.`id_attribute`)'
-                . ' LEFT JOIN `' . _DB_PREFIX_ . 'attribute_group_lang` agl ON a.id_attribute_group = agl.id_attribute_group'
-                . ' WHERE pac.`id_product_attribute` = ' . (int) $iProdAttributeId
-                . ' AND al.`id_lang` = ' . (int) $iLangId
-                . ' AND agl.`id_lang` = ' . (int) $iLangId
-                . ' AND pas.id_shop = ' . (int) $iShopId
-                . ' ORDER BY al.`name`';
-
-            $aResult = Db::getInstance()->ExecuteS($sQuery);
-
-            if (!empty($aResult)) {
-                $sBaseLink .= (strstr(
-                    $sBaseLink,
-                    '?'
-                ) ? '&' : '?') . 'bt_product_attribute=' . $iProdAttributeId . '#/';
-
-                // only for PS 1.6
-                if (!empty(GMerchantCenterPro::$bCompare16)) {
-                    // get product attributes params to check if the url_name is defined or not
-                    $aProdAttrParams = Product::getAttributesParams($iProdid, $iProdAttributeId);
-                }
-                foreach ($aResult as $id => $aRow) {
-                    if (!empty($aProdAttrParams)) {
-                        foreach ($aProdAttrParams as $aAttrParams) {
-                            if (
-                                $aRow['id_attribute'] == $aAttrParams['id_attribute']
-                                && $aAttrParams['name'] != $aRow['name']
-                            ) {
-                                $aRow['name'] = $aAttrParams['name'];
-                            }
-                        }
-                    }
-
-                    /*  handle the fact that some attribute values can include numeric values with a ',' or '.', and in that case by default PS 1.6 doesn't apply the _ to replace the , or .
-                        for example: weight 3,5 kg becomes weight_35_kg, but for the same product you can also have this value : weight 35 kg and unfortunately it becomes the same => weight_35_kg, and it's not good for the SEO
-                     */
-                    if (!empty(GMerchantCenterPro::$conf['GMCP_URL_NUM_ATTR_REWRITE'])) {
-                        $aRow['name'] = str_replace(array(',', '.'), '-', $aRow['name']);
-                    }
-
-                    // handle to include the attribute id or not into the URL
-                    $bIncludeAttrID = !empty(GMerchantCenterPro::$bCompare16013) && empty(GMerchantCenterPro::$bCompare17) && !empty(GMerchantCenterPro::$conf['GMCP_URL_ATTR_ID_INCL']) ? true : false;
-
-                    $sBaseLink .= ($bIncludeAttrID ? $aRow['id_attribute'] . Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR') : '');
-                    $sBaseLink .= str_replace(
-                        Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR'),
-                        '_',
-                        Tools::link_rewrite($aRow['group_name'])
-                    );
-                    $sBaseLink .= Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR') . str_replace(
-                        Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR'),
-                        '_',
-                        Tools::link_rewrite($aRow['name'])
-                    ) . ((isset($aResult[$id + 1])) ? '/' : '');
-                }
-            }
-        } // USE CASE > 1.7
-        elseif (!empty($iProdid)) {
-            $sBaseLink = '';
-
-            // handle to include the attribute id or not into the URL
-            $bIncludeAttrID = !empty(GMerchantCenterPro::$conf['GMCP_URL_ATTR_ID_INCL']) ? true : false;
-
-            $sProductUrl = Context::getContext()->link->getProductLink((int) $iProdid, null, null, null, $iLangId, null, 0, false, false, false);
-            $sCombData = Context::getContext()->link->getProductLink((int) $iProdid, null, null, null, $iLangId, null, (int) $iProdAttributeId, false, false, $bIncludeAttrID);
-            $sStringCombo = str_replace($sProductUrl, '', $sCombData);
-
-            $sBaseLink .= Context::getContext()->link->getProductLink((int) $iProdid, null, null, null, $iLangId, null, 0, false, false, false);
-
-            if (empty(GMerchantCenterPro::$conf['GMCP_URL_PROD_ERROR'])) {
-                $sBaseLink = $sStringCombo;
-            } else {
-                $sBaseLink .= $sStringCombo;
-            }
-
-            // format the current URL with currency or Google campaign parameters
-            if (!empty(GMerchantCenterPro::$conf['GMCP_ADD_CURRENCY'])) {
-                $sBaseLink .= (strpos(
-                    $sBaseLink,
-                    '?'
-                ) !== false) ? '&SubmitCurrency=1&id_currency=' . (int) $iCurrencyId : '?SubmitCurrency=1&id_currency=' . (int) $iCurrencyId;
-            }
-            if (!empty(GMerchantCenterPro::$conf['GMCP_UTM_CAMPAIGN'])) {
-                $sBaseLink .= (strpos(
-                    $sBaseLink,
-                    '?'
-                ) !== false) ? '&utm_campaign=' . GMerchantCenterPro::$conf['GMCP_UTM_CAMPAIGN'] : '?utm_campaign=' . GMerchantCenterPro::$conf['GMCP_UTM_CAMPAIGN'];
-            }
-            if (!empty(GMerchantCenterPro::$conf['GMCP_UTM_SOURCE'])) {
-                $sBaseLink .= (strpos(
-                    $sBaseLink,
-                    '?'
-                ) !== false) ? '&utm_source=' . GMerchantCenterPro::$conf['GMCP_UTM_SOURCE'] : '?utm_source=' . GMerchantCenterPro::$conf['GMCP_UTM_SOURCE'];
-            }
-            if (!empty(GMerchantCenterPro::$conf['GMCP_UTM_MEDIUM'])) {
-                $sBaseLink .= (strpos(
-                    $sBaseLink,
-                    '?'
-                ) !== false) ? '&utm_medium=' . GMerchantCenterPro::$conf['GMCP_UTM_MEDIUM'] : '?utm_medium=' . GMerchantCenterPro::$conf['GMCP_UTM_MEDIUM'];
-            }
-        }
-
-        return $sBaseLink;
     }
 
     /**
@@ -550,7 +421,7 @@ class BT_GmcProModuleDao
      */
     public static function insertFeatureByCat($iCategoryId, $aData, $iShopId)
     {
-        return Db::getInstance()->Execute('INSERT INTO `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_features_by_cat` VALUES(' . (int) $iCategoryId . ', ' . (int) $iShopId . ',  \'' . pSQL(serialize($aData)) . '\')');
+        return Db::getInstance()->Execute('INSERT INTO `' . _DB_PREFIX_ . Tools::strtolower(_GMCP_MODULE_NAME) . '_features_by_cat` (`id_cat`, `id_shop`, `values`) VALUES(' . (int) $iCategoryId . ', ' . (int) $iShopId . ',  \'' . pSQL(serialize($aData)) . '\')');
     }
 
     /**
@@ -650,14 +521,7 @@ class BT_GmcProModuleDao
      */
     public static function getAvailableCarriers($iCountryZone)
     {
-        return Carrier::getCarriers(
-            (int) GMerchantCenterPro::$oContext->cookie->id_lang,
-            true,
-            false,
-            (int) $iCountryZone,
-            null,
-            5
-        );
+        return Carrier::getCarriers((int) GMerchantCenterPro::$oContext->cookie->id_lang, false, false, (int) $iCountryZone, null, 5);
     }
 
     /**
@@ -788,16 +652,14 @@ class BT_GmcProModuleDao
 
         $sQuery = 'SELECT p.`id_product`, pl.`name`' . ($bCombination ? ',pa.`id_product_attribute`' : '')
             . ' FROM ' . _DB_PREFIX_ . 'product p'
-            . (version_compare(_PS_VERSION_, '1.5', '>') ? Shop::addSqlAssociation('product', 'p', false) : '')
+            . Shop::addSqlAssociation('product', 'p', false)
             . ($bCombination ? ' LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute` pa ON (p.id_product = pa.id_product)' : '')
-            . ' LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (p.id_product = pl.id_product ' . (version_compare(
-                _PS_VERSION_,
-                '1.5',
-                '>'
-            ) ? Shop::addSqlRestrictionOnLang('pl') : '') . ')'
-            . ' WHERE pl.name LIKE \'%' . pSQL($sSearch) . '%\' AND pl.id_lang = ' . (int) GMerchantCenterPro::$iCurrentLang
-            . (!empty($sExcludeIds) ? ' AND p.id_product NOT IN (' . $sExcludeIds . ') ' : ' ');
+            . ' LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (p.id_product = pl.id_product ' . Shop::addSqlRestrictionOnLang('pl') . ')'
+            . ' WHERE pl.name LIKE \'%' . pSQL($sSearch) . '%\' AND pl.id_lang = ' . (int) GMerchantCenterPro::$iCurrentLang;
 
+        if (empty(GMerchantCenterPro::$conf['GMCP_P_COMBOS'])) {
+            $sQuery .= (!empty($sExcludeIds) ? ' AND p.id_product NOT IN (' . $sExcludeIds . ') ' : ' ');
+        }
         $aResult = Db::getInstance()->ExecuteS($sQuery);
 
         return $aResult;

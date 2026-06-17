@@ -13,13 +13,14 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
- */
-
-/**
+ *
  * Class AdminMailchimpProBatchesController
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class AdminMailchimpProAutomationsController extends \PrestaChamps\MailchimpPro\Controllers\BaseMCObjectController
 {
     public $entityPlural   = 'automations';
@@ -45,4 +46,5 @@ class AdminMailchimpProAutomationsController extends \PrestaChamps\MailchimpPro\
 
         return false;
     }
+
 }

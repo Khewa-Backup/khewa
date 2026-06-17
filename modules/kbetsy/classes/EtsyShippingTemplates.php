@@ -52,7 +52,18 @@ class EtsyShippingTemplates extends ObjectModel
             'shipping_destination_region_id' => array('type' => self::TYPE_STRING, 'required' => false),
             'shipping_destination_region' => array('type' => self::TYPE_STRING, 'required' => false),
             'shipping_min_process_days' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
-            'shipping_max_process_days' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true)
+            'shipping_max_process_days' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
+            /**
+             * To set additional fields
+             * @date 10-04-2023
+             * @author Tanisha Gupta
+             */
+            'postal_code' => array('type' => self::TYPE_STRING, 'required' => true)
+//            'shipping_transmit_type' => array('type' => self::TYPE_STRING, 'required' => true),
+//            'shipping_carrier_id' => array('type' => self::TYPE_STRING, 'required' => false),
+//            'shipping_mail_class_key' => array('type' => self::TYPE_STRING, 'required' => false),
+//            'shipping_min_delivery_days' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => false),
+//            'shipping_max_delivery_days' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => false),
         )
     );
     

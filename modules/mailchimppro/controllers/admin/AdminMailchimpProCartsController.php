@@ -13,13 +13,14 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
- */
-
-/**
+ *
  * Class AdminMailchimpProCartsController
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class AdminMailchimpProCartsController extends \PrestaChamps\MailchimpPro\Controllers\BaseMCObjectController
 {
     public $entityPlural   = 'carts';
@@ -30,7 +31,7 @@ class AdminMailchimpProCartsController extends \PrestaChamps\MailchimpPro\Contro
         $this->addCSS($this->module->getLocalPath() . 'views/css/main.css');
         if (\Shop::getContext() !== \Shop::CONTEXT_SHOP) {
             $this->content = '';
-            $this->warnings[] = $this->module->l('Please select a shop');
+            $this->warnings[] = $this->trans('Please select a shop', [], 'Modules.Mailchimppro.Adminmailchimpprocarts');
         } else {
             parent::initContent();
         }

@@ -1,11 +1,31 @@
 <?php
+/**
+ * Copyright (c) since 2010 Stripe, Inc. (https://stripe.com)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    Stripe <https://support.stripe.com/contact/email>
+ * @copyright Since 2010 Stripe, Inc.
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class AdminStripe_officialPaymentIntentController extends ModuleAdminController
 {
     /** @var bool Active bootstrap for Prestashop 1.6 */
     public $bootstrap = true;
 
-    /** @var \Module Instance of your module automatically set by ModuleAdminController */
+    /** @var Module Instance of your module automatically set by ModuleAdminController */
     public $module;
 
     /** @var string Associated object class name */
@@ -36,9 +56,9 @@ class AdminStripe_officialPaymentIntentController extends ModuleAdminController
 
         $this->_select = 'o.id_order, sp.id_cart, sp.id_payment_intent, sp.type, spi.status, o.reference';
         $this->_join =
-            'INNER JOIN `'._DB_PREFIX_.'stripe_payment` sp ON (a.id_payment_intent = sp.id_payment_intent AND sp.result > 0)
-            INNER JOIN `'._DB_PREFIX_.'stripe_payment_intent` spi ON (sp.id_payment_intent = spi.id_payment_intent)
-            INNER JOIN `'._DB_PREFIX_.'orders` o ON (sp.id_cart = o.id_cart)';
+            'INNER JOIN `' . _DB_PREFIX_ . 'stripe_payment` sp ON (a.id_payment_intent = sp.id_payment_intent AND sp.result > 0)
+            INNER JOIN `' . _DB_PREFIX_ . 'stripe_payment_intent` spi ON (sp.id_payment_intent = spi.id_payment_intent)
+            INNER JOIN `' . _DB_PREFIX_ . 'orders` o ON (sp.id_cart = o.id_cart)';
 
         $this->explicitSelect = true;
 
@@ -70,7 +90,7 @@ class AdminStripe_officialPaymentIntentController extends ModuleAdminController
             'reference' => [
                 'title' => $this->module->l('Order Reference', 'AdminStripe_officialPaymentIntentController'),
                 'orderby' => false,
-            ]
+            ],
         ];
     }
 
@@ -87,6 +107,7 @@ class AdminStripe_officialPaymentIntentController extends ModuleAdminController
 
     /**
      * @throws PrestaShopException
+     *
      * @see AdminController::initToolbar()
      */
     public function renderDetails()
@@ -95,7 +116,7 @@ class AdminStripe_officialPaymentIntentController extends ModuleAdminController
         $this->_join = null;
         $this->_group = null;
         $this->_filter = null;
-        $this->_where = ' AND a.id_payment_intent = "' . Tools::getValue('id_payment_intent') . '"';
+        $this->_where = ' AND a.id_payment_intent = "' . pSQL(Tools::getValue('id_payment_intent')) . '"';
         $this->_orderBy = 'date_add';
 
         $this->actions = [];

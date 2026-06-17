@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2021 PrestaShop
+ * 2007-2023 PrestaShop
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,10 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  *  @author    PrestaShop SA <contact@buy-addons.com>
- *  @copyright 2007-2021 PrestaShop SA
+ *  @copyright 2007-2023 PrestaShop SA
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
-
 class ReportSaleData extends ReportSale
 {
     public function createTableInstall()
@@ -48,10 +47,6 @@ class ReportSaleData extends ReportSale
                 . 'net_margin_tax_excl decimal(20,6),sign_currency nvarchar(8),'
                 . 'iso_currency nvarchar(10),id_currency int(11), reference nvarchar(250) NULL'
                 . ',id_state int(11) DEFAULT "0", state nvarchar(255) NULL'
-                . ',total_tax_5 decimal(20,6), total_tax_9975 decimal(20,6)'
-                . ',payment_method nvarchar(200)'
-                . ',refunded_amount decimal(20,6), refunded_quantity int(11) DEFAULT "0"'
-                . ',refunded_tax decimal(20,6)'
                 . ')';
         Db::getInstance()->query($sql_basic);
         $sql_tax_only = 'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'ba_report_tax_only(id_report INT(11) '
@@ -71,7 +66,6 @@ class ReportSaleData extends ReportSale
                 . 'company nvarchar(50),sign_currency nvarchar(8),'
                 . 'iso_currency nvarchar(10),id_currency int(11), reference nvarchar(250) NULL'
                 . ',id_state int(11) DEFAULT "0", state nvarchar(255) NULL'
-				. ',total_tax_5 decimal(20,6), total_tax_9975 decimal(20,6)'
                 . ')';
         Db::getInstance()->query($sql_tax_only);
         $sql_profit = 'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'ba_report_profit(id_report INT(11) '
@@ -113,10 +107,9 @@ class ReportSaleData extends ReportSale
                 . 'address_1 nvarchar(100),address_2 nvarchar(100),postcode nvarchar(10),city nvarchar(50),'
                 . 'country nvarchar(50),id_country int(11),phone nvarchar(38),'
                 . 'sign_currency nvarchar(8),iso_currency nvarchar(10),id_currency int(11),'
-                .'`weight` decimal(11,6) NULL, reference nvarchar(250) NULL'
+                . '`weight` decimal(11,6) NULL, reference nvarchar(250) NULL'
                 . ',id_state int(11) DEFAULT "0", state nvarchar(255) NULL'
-				. ',total_tax_5 decimal(20,6), total_tax_9975 decimal(20,6)'
-                .')';
+                . ')';
         Db::getInstance()->query($sql_full);
         $sql_products = 'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'ba_report_products(id_report INT(11) '
                 . 'UNSIGNED AUTO_INCREMENT PRIMARY KEY,'
@@ -143,7 +136,7 @@ class ReportSaleData extends ReportSale
                 . 'UNSIGNED AUTO_INCREMENT PRIMARY KEY,'
                 . 'id_shop int(11),shop_name nvarchar(50),id_cart int(11),id_order int(11),order_add_date DATETIME,'
                 . 'invoice_add_date DATETIME,delivery_date DATETIME,order_number int(11),'
-                . 'invoice_number int(11),invoice_status int(11),' /*                 * ********* */
+                . 'invoice_number int(11),invoice_status int(11),'
                 . 'manufacturer_id int(11),manufacturer_name nvarchar(50),total_quantity int(11),'
                 . 'total_discounts_tax_excl decimal(20,6),total_products_no_tax decimal(20,6),'
                 . 'including_ecotax_tax_excl decimal(20,6),total_cost decimal(20,6),gross_profit decimal(20,6),'
@@ -172,7 +165,7 @@ class ReportSaleData extends ReportSale
                 . 'UNSIGNED AUTO_INCREMENT PRIMARY KEY,'
                 . 'id_shop int(11),shop_name nvarchar(50),id_cart int(11),id_order int(11),order_add_date DATETIME,'
                 . 'invoice_add_date DATETIME,delivery_date DATETIME,order_number int(11),'
-                . 'invoice_number int(11),invoice_status int(11),' /*                 * ********* */
+                . 'invoice_number int(11),invoice_status int(11),'
                 . 'category_id int(11),category_name nvarchar(50),total_quantity int(11),'
                 . 'total_discounts_tax_excl decimal(20,6),discounts_tax_amount decimal(20,6),'
                 . 'total_products_no_tax decimal(20,6),including_ecotax_tax_excl decimal(20,6),'
@@ -187,7 +180,7 @@ class ReportSaleData extends ReportSale
                 . 'UNSIGNED AUTO_INCREMENT PRIMARY KEY,'
                 . 'id_shop int(11),shop_name nvarchar(50),id_cart int(11),id_order int(11),order_add_date DATETIME,'
                 . 'invoice_add_date DATETIME,delivery_date DATETIME,order_number int(11),'
-                . 'invoice_number int(11),invoice_status int(11),' /*                 * ********* */
+                . 'invoice_number int(11),invoice_status int(11),'
                 . 'customer_id int(11),last_name nvarchar(50),first_name nvarchar(50),email nvarchar(50),'
                 . 'company nvarchar(50),address_1 nvarchar(100),address_2 nvarchar(100),postcode nvarchar(10),'
                 . 'city nvarchar(50),country nvarchar(50),id_country int(11),phone nvarchar(30),'
@@ -215,8 +208,10 @@ class ReportSaleData extends ReportSale
                 . ',id_state int(11) DEFAULT "0", state nvarchar(255) NULL'
                 . ')';
         Db::getInstance()->query($sql_store_credit);
+
         return true;
     }
+
     public function deleteTableUninstall()
     {
         $ba_report_basic = 'DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'ba_report_basic';
@@ -239,6 +234,7 @@ class ReportSaleData extends ReportSale
         Db::getInstance()->query($ba_report_customer);
         $ba_report_store_credit = 'DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'ba_report_store_credit';
         Db::getInstance()->query($ba_report_store_credit);
+
         return true;
     }
 }

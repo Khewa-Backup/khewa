@@ -18,8 +18,10 @@
  */
 
 namespace PrestaChamps\MailchimpPro\Commands;
-
-use DrewM\MailChimp\MailChimp;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+use PrestaChamps\MailChimpAPI;
 use PrestaChamps\MailchimpPro\Exceptions\MailChimpException;
 
 /**
@@ -32,7 +34,7 @@ class SiteVerifyCommand extends BaseApiCommand
     public $mailchimp;
     public $siteId;
 
-    public function __construct(MailChimp $mailchimp, $siteId)
+    public function __construct(MailChimpAPI $mailchimp, $siteId)
     {
         $this->mailchimp = $mailchimp;
         $this->siteId = $siteId;
@@ -44,7 +46,9 @@ class SiteVerifyCommand extends BaseApiCommand
      */
     public function execute()
     {
-        $this->mailchimp->post("connected-sites/{$this->siteId}/actions/verify-script-installation");
+        $formattedId = \Mailchimppro::shopIdTransformer($this->siteId);
+        
+        $this->mailchimp->post("connected-sites/{$formattedId}/actions/verify-script-installation");
 
         if ($this->mailchimp->success()) {
             return true;

@@ -1,5 +1,5 @@
 {*
-* 2017 - Keyrnel SARL
+* 2023 - Keyrnel
 *
 * NOTICE OF LICENSE
 *
@@ -15,24 +15,33 @@
 * versions in the future.
 *
 * @author    Keyrnel
-* @copyright 2017 - Keyrnel SARL
+* @copyright 2023 - Keyrnel
 * @license   commercial
-* International Registered Trademark & Property of Keyrnel SARL
+* International Registered Trademark & Property of Keyrnel
 *}
 
 <div id="modulecontent" class="clearfix">
-    <!-- Nav tabs -->
+    <div id="drawer-overlay" class="drawer-overlay"></div>
+
+    {if isset($showGiftCardForm) && $showGiftCardForm}
+        {include file="./drawers/gift-card-form.tpl"}
+    {/if}
+
     <div class="col-lg-2">
         <div class="list-group">
-            <a href="#stats" class="list-group-item active" data-toggle="gc_tab"><i class="icon-bar-chart"></i> {l s='Statistics' mod='thegiftcard'}</a>
-            <a href="#generator" class="list-group-item" data-toggle="gc_tab"><i class="icon-cogs"></i> {l s='Gift card generator' mod='thegiftcard'}</a>
-            <a href="#emails" class="list-group-item" data-toggle="gc_tab"><i class="icon-pencil-square-o"></i> {l s='Email templates' mod='thegiftcard'}</a>
-            <a href="#display" class="list-group-item" data-toggle="gc_tab"><i class="icon-picture-o"></i> {l s='Display settings' mod='thegiftcard'}</a>
-            <a href="#translations" class="list-group-item" data-toggle="gc_tab"><i class="icon-globe"></i> {l s='Translations' mod='thegiftcard'}</a>
+            <a href="#stats" class="list-group-item active" data-toggle="gc_tab"><i class="icon-bar-chart"></i>
+                {l s='Statistics' mod='thegiftcard'}</a>
+            <a href="#generator" class="list-group-item" data-toggle="gc_tab"><i class="icon-cogs"></i>
+                {l s='Gift card generator' mod='thegiftcard'}</a>
+            <a href="#display" class="list-group-item" data-toggle="gc_tab"><i class="icon-picture-o"></i>
+                {l s='Display settings' mod='thegiftcard'}</a>
+            <a href="#translations" class="list-group-item" data-toggle="gc_tab"><i class="icon-globe"></i>
+                {l s='Translations' mod='thegiftcard'}</a>
         </div>
     </div>
     <!-- Tab panes -->
-    <form id="giftcard_form" class="form-horizontal" action="{$currentIndex|escape:'html':'UTF-8'}" method="post" autocomplete="off" enctype="multipart/form-data">
+    <form id="giftcard_form" class="form-horizontal" action="{$currentIndex|escape:'html':'UTF-8'}" method="post"
+        autocomplete="off" enctype="multipart/form-data">
         <div class="tab-content col-lg-10">
             <div class="tab-pane active" id="stats">
                 {include file="./tabs/stats.tpl"}
@@ -40,13 +49,10 @@
             <div class="tab-pane" id="generator">
                 {include file="./tabs/generator.tpl"}
             </div>
-            <div class="tab-pane" id="emails">
-                {include file="./tabs/emails.tpl"}
-            </div>
             <div class="tab-pane" id="display">
                 {include file="./tabs/display.tpl"}
             </div>
-			<div class="tab-pane" id="translations">
+            <div class="tab-pane" id="translations">
                 {include file="./tabs/translations.tpl"}
             </div>
         </div>
@@ -58,31 +64,91 @@
 <!-- The Canvas to Blob plugin is included for image resizing functionality -->
 <script src="//blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
 <script type="text/javascript">
-	var currentIndex = "{$currentIndex|escape:'quotes':'UTF-8'}";
-	var iso = "{$iso|escape:'html':'UTF-8'}";
-	var pathCSS = "{$path_css|escape:'html':'UTF-8'}";
-	var ad = "{$ad|escape:'html':'UTF-8'}";
+    var currentIndex = "{$currentIndex|escape:'quotes':'UTF-8'}";
+    var iso = "{$iso|escape:'html':'UTF-8'}";
+    var pathCSS = "{$path_css|escape:'html':'UTF-8'}";
+    var ad = "{$ad|escape:'html':'UTF-8'}";
     var defaultLanguage = "{$defaultLanguage|intval}";
     var defaultCurrency = "{$default_currency|intval}";
     var current_shop_id = {$current_shop_id|intval};
 
-	$(document).ready(function(){
-		tinySetup({
-			editor_selector :"autoload_rte"
-		});
-		hideOtherLanguage(defaultLanguage);
+    $(document).ready(function() {
+        var $drawer = $('#drawer');
+        var $overlay = $('#drawer-overlay');
+        var $body = $('body');
+
+        // Ouvrir le drawer
+        $('#drawer-open').on('click', function () {
+            $drawer.addClass('open');
+            $overlay.addClass('open');
+            $body.addClass('drawer-open');
+        });
+
+        // Fermer le drawer
+        $('#drawer-close, #drawer-overlay').on('click', function () {
+            $drawer.removeClass('open');
+            $overlay.removeClass('open');
+            $body.removeClass('drawer-open');
+        });
+
+        // Fermer avec la touche Échap
+        $(document).on('keyup', function (e) {
+            if (e.key === "Escape") {
+                $drawer.removeClass('open');
+                $overlay.removeClass('open');
+            }
+        });
+
+        tinySetup({
+            editor_selector: "autoload_rte"
+        });
+        hideOtherLanguage(defaultLanguage);
 
         //tabs
-        $(".list-group-item").on('click', function() {
-			var $el = $(this).parent().closest(".list-group").children(".active");
-			if ($el.hasClass("active")) {
-				target = $(this).find('i').attr('data-target');
-				if (target !== undefined) {
-					loadTable('#'+target);
-				}
-				$el.removeClass("active");
-				$(this).addClass("active");
-			}
-		});
-	});
+        $(document).on('click', '.list-group-item', function() {
+            var $el = $(this).parent().closest(".list-group").children(".active");
+            if ($el.hasClass("active")) {
+                target = $(this).find('i').attr('data-target');
+                if (target !== undefined) {
+                    loadTable('#' + target);
+                }
+                $el.removeClass("active");
+                $(this).addClass("active");
+            }
+        });
+
+        $(document).on('click', '#giftcard_form [js-action="generate-pdf"]', function() {
+            var params = {
+                ajax: true,
+                action: 'generatePdf',
+                id_giftcard: $(this).closest('tr').attr('data-id')
+            };
+
+            $.post(currentIndex, params, null, 'json').then(function(resp) {
+                if (!resp.error) {
+                    var byteString = window.atob(resp.url.split(',')[1]);
+                    var mimeString = resp.url
+                        .split(',')[0]
+                        .split(':')[1]
+                        .split(';')[0];
+
+                    var ab = new ArrayBuffer(byteString.length);
+                    var ia = new Uint8Array(ab);
+                    for (var i = 0; i < byteString.length; i++) {
+                        ia[i] = byteString.charCodeAt(i);
+                    }
+
+                    var blob = new Blob([ab], { type: mimeString });
+                    window.open(URL.createObjectURL(blob), '_blank');
+                } else {
+                    $.each(resp.errors, function(key, val) {
+                        showErrorMessage(val);
+                    });
+
+                }
+            }).fail(function(resp) {
+                alert("[TECHNICAL ERROR]");
+            });
+        });
+    });
 </script>

@@ -696,4 +696,3 @@
 		return node;
 	};
 })(jQuery);
-

@@ -34,6 +34,7 @@ return array(
     'PrestaShop\\Module\\FacetedSearch\\Hook\\Attribute' => $baseDir . '/src/Hook/Attribute.php',
     'PrestaShop\\Module\\FacetedSearch\\Hook\\AttributeGroup' => $baseDir . '/src/Hook/AttributeGroup.php',
     'PrestaShop\\Module\\FacetedSearch\\Hook\\Category' => $baseDir . '/src/Hook/Category.php',
+    'PrestaShop\\Module\\FacetedSearch\\Hook\\Configuration' => $baseDir . '/src/Hook/Configuration.php',
     'PrestaShop\\Module\\FacetedSearch\\Hook\\Design' => $baseDir . '/src/Hook/Design.php',
     'PrestaShop\\Module\\FacetedSearch\\Hook\\Feature' => $baseDir . '/src/Hook/Feature.php',
     'PrestaShop\\Module\\FacetedSearch\\Hook\\FeatureValue' => $baseDir . '/src/Hook/FeatureValue.php',

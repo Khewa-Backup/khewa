@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit6f24e822d5c52f55e0e8bb37ee79a09d
+class ComposerStaticInit73cf36188590acf53a2b671d89cc5a55
 {
     public static $classMap = array (
         'Ps_MainMenu' => __DIR__ . '/../..' . '/ps_mainmenu.php',
@@ -13,7 +13,7 @@ class ComposerStaticInit6f24e822d5c52f55e0e8bb37ee79a09d
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit6f24e822d5c52f55e0e8bb37ee79a09d::$classMap;
+            $loader->classMap = ComposerStaticInit73cf36188590acf53a2b671d89cc5a55::$classMap;
 
         }, null, ClassLoader::class);
     }

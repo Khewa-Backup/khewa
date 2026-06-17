@@ -1,21 +1,21 @@
 'use strict';
 /**
- * 2007-2020 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
 var mbo = {};
@@ -46,6 +46,26 @@ var mbo = {};
     modulesListModalContent: '#modules_list_container_tab_modal',
     modulesListLoader: '#modules_list_loader',
   };
+
+  var decodeHTMLEntities = function(text) {
+    var entities = [
+        ['amp', '&'],
+        ['apos', '\''],
+        ['#x27', '\''],
+        ['#x2F', '/'],
+        ['#39', '\''],
+        ['#47', '/'],
+        ['lt', '<'],
+        ['gt', '>'],
+        ['nbsp', ' '],
+        ['quot', '"']
+    ];
+
+    for (var i = 0, max = entities.length; i < max; ++i) 
+        text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1]);
+
+    return text;
+  }
 
   /**
    * Handles page interactions
@@ -180,15 +200,16 @@ var mbo = {};
     if (config.shouldUseLegacyTheme) {
       $markup = $(
         '<li id="recommended-modules-button-container">\n' +
-        '  <a id="' + buttonId + '" class="toolbar_btn pointer" href="' + config.recommendedModulesUrl + '" title="' + label + '">\n' +
-        '    <i class="process-icon-modules-list"></i>\n' +
+        '  <a id="' + buttonId + '" class="toolbar_btn pointer mbo-modules-recommended-button " href="' + config.recommendedModulesUrl + '" title="' + label + '">\n' +
+        '    <i class="material-icons mi-extension">extension</i>\n' +
         '    <div>' + label + '</div>\n' +
         '  </a>\n' +
         '</li>'
       );
     } else {
       $markup = $(
-        '<a class="btn btn-outline-secondary" id="' + buttonId + '" href="' + config.recommendedModulesUrl + '" title="' + label + '">\n' +
+        '<a class="btn btn-secondary" id="' + buttonId + '" href="' + config.recommendedModulesUrl + '" title="' + label + '">' +
+        '<i class="material-icons">extension</i>\n' +
         label +
         '</a>'
       );
@@ -217,6 +238,7 @@ var mbo = {};
    */
   var RecommendedModulesContainer = function(config, content) {
     var containerTitle = config.translations['Recommended Modules and Services'];
+    var containerDescription = decodeHTMLEntities(config.translations['description']);
     var containerId = 'recommended-modules-container';
     var $markup;
 
@@ -227,7 +249,9 @@ var mbo = {};
         '    <i class="icon-puzzle-piece"></i>\n' +
         '    ' + containerTitle + '\n' +
         '  </h3>\n' +
+        '  <div class="recommended-modal-content-description">' + containerDescription + '</div>\n' +
         '  <div class="modules_list_container_tab row">\n' +
+        
         '    ' + content +'\n' +
         '  </div>\n' +
         '</div>'
@@ -241,8 +265,9 @@ var mbo = {};
         '        <i class="material-icons">extension</i>\n' +
         '        ' + containerTitle + '\n' +
         '      </h3>\n' +
+        '        <div class="recommended-modal-content-description">'+ containerDescription +'</div>\n'+
         '      <div class="card-block">\n' +
-        '        ' + content +'\n' +
+        '       ' + content +'\n' +
         '      </div>\n' +
         '    </div>\n' +
         '  </div>\n' +
@@ -365,6 +390,7 @@ var mbo = {};
             }
           }
         });
+        $(pageMap.modulesListModal).find('h3.modal-title').text(config.translations['Recommended Modules and Services']);
       } else {
         if (!$(pageMap.modulesListModal).length) {
           var modal = new RecommendedModulesModal(pageMap, config);
@@ -383,7 +409,8 @@ var mbo = {};
       $(pageMap.modulesListModal).modal('show');
 
       recommendedModulesRequest.done(function (data) {
-        $(pageMap.modulesListModalContent).html(data.content).slideDown();
+        var descriptionHtml = decodeHTMLEntities(config.translations['description']);
+        $(pageMap.modulesListModalContent).html('<div class="recommended-modal-description">' + descriptionHtml  + '</div>' + data.content).slideDown();
         $(pageMap.modulesListLoader).hide();
       });
 
@@ -446,4 +473,3 @@ var mbo = {};
   };
 
 })();
-

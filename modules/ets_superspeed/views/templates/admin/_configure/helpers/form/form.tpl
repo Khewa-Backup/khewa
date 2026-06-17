@@ -1,22 +1,20 @@
 {*
-* 2007-2020 ETS-Soft
-*
-* NOTICE OF LICENSE
-*
-* This file is not open source! Each license that you purchased is only available for 1 wesite only.
-* If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
-* You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
-* 
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs, please contact us for extra customization service at an affordable price
-*
-*  @author ETS-Soft <etssoft.jsc@gmail.com>
-*  @copyright  2007-2021 ETS-Soft
-*  @license    Valid for 1 website (or project) for each purchase of license
-*  International Registered Trademark & Property of ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
+ * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future.
+ *
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
 *}
 {extends file="helpers/form/form.tpl"}
 {block name="description"}
@@ -26,14 +24,6 @@
             <span id="optimize_script_php">{l s='PHP image optimization script is built-in script included in Super Speed, no API service required, it\'s the fastest way to optimize images.' mod='ets_superspeed'}</span>
             <span id="optimize_script_resmush">{l s='Resmush is completely free image optimization web API service. Read more' mod='ets_superspeed'} <a href="https://resmush.it/" target="_blank">{l s='here' mod='ets_superspeed'}</a></span>
             <span id="optimize_script_tynypng">{l s='TinyPNG offers free optimization for 500 jpg/png images per month, with additional cost, you can optimize more images. You can also enter multi free TinyPNG keys to optimize as many images as you want. see more' mod='ets_superspeed'} <a href="https://tinyjpg.com/" target="_blank" rel="noreferrer noopener"
-                >{l s='here' mod='ets_superspeed'}</a></span>
-		</p>
-	{/if}
-    {if $input.name=='ETS_SPEED_OPTIMIZE_SCRIPT_NEW'}
-		<p class="help-block">
-            <span id="optimize_script_new_php">{l s='PHP image optimization script is built-in script included in Super Speed, no API service required, it\'s the fastest way to optimize images.' mod='ets_superspeed'}</span>
-            <span id="optimize_script_new_resmush">{l s='Resmush is completely free image optimization web API service. Read more' mod='ets_superspeed'} <a href="https://resmush.it/" target="_blank">{l s='here' mod='ets_superspeed'}</a></span>
-            <span id="optimize_script_new_tynypng">{l s='TinyPNG offers free optimization for 500 jpg/png images per month, with additional cost, you can optimize more images. You can also enter multi free TinyPNG keys to optimize as many images as you want. see more' mod='ets_superspeed'} <a href="https://tinyjpg.com/" target="_blank" rel="noreferrer noopener"
                 >{l s='here' mod='ets_superspeed'}</a></span>
 		</p>
 	{/if}
@@ -58,11 +48,6 @@
                 {l s='If you are not an Prestashop developer who is familiar with code changes, we recommend you to contact us, we will help you to fix this issue quickly.' mod='ets_superspeed'}
             </div>
         {/if}
-        {if isset($cronjob_auto_no_run) && $cronjob_auto_no_run}
-            <div class="form-group form_cache_page page_setting alert alert-warning">
-                <p>{l s='Cronjob didn\'t run in last 24 hours. Please check again cronjob configuration to make sure Cronjob run correctly.' mod='ets_superspeed'}</p>
-            </div>
-        {/if}
         <div class="form-group form_cache_page page_setting alert alert-info">
             <p>{l s='Page cache helps improve your website speed considerably by storing all static contents into HTML files. The HTML files will be displayed instantly to website visitors everytime they query a page.' mod='ets_superspeed'}</p>
         </div>
@@ -83,42 +68,29 @@
         {/if}
     {/if}
     {if $input.name=='ETS_SPEED_OPTIMIZE_IMAGE_PRODCUT_TYPE'}
-        <div class="col-lg-3"></div>
-        <div class="col-lg-9">
+        <div class="col-lg-12">
             <div class="sp_sussec form-group form_cache_page image_old congratulations_image_success {if !$check_optimize} hide{/if}">
                 {l s='Congratulations! All' mod='ets_superspeed'} <span class="total_all_image_optimized">{$check_optimize|intval}</span> {l s='image(s) on your website have been optimized to the selected image quality.' mod='ets_superspeed'}
                 <span class="total_all_size_image {if !$total_size_save} hide{/if}">{l s='This helps ' mod='ets_superspeed'} <span class="total_all_size_image_optimize">{$total_size_save|escape:'html':'UTF-8'}.</span></span> {l s='Adjust "Image quality" value if you want to change quality of the images.' mod='ets_superspeed'}
             </div>
-            <div class="alert alert-info form-group form_cache_page image_old">{l s='Manually optimize all existing images available on your website. Please select your preferred image quality and types of image to optimize on the following list' mod='ets_superspeed'}</div>
-        </div>
-    {/if}
-    {if $input.name=='ETS_SPEED_OPTIMIZE_NEW_IMAGE'}
-        {if isset($install_logs) && $install_logs}
-            <div class="alert form-group form_cache_page image_new alert-danger">
-                {l s='Could not create override files:' mod='ets_superspeed'} {$install_logs|escape:'html':'UTF-8'}, {l s='Try to mannually copy the file(s) from' mod='ets_superspeed'} {$dir_override|escape:'html':'UTF-8'} {l s='to' mod='ets_superspeed'} {$sp_dir_override|escape:'html':'UTF-8'}.
-            </div>
-        {/if}
-        <div class="col-lg-3"></div>
-        <div class="col-lg-9">
-            <div class="alert alert-info form-group form_cache_page image_new">{l s='Automatically optimize newly uploaded images. (For example: when you add new products, new product categories, new suppliers, etc.)' mod='ets_superspeed'}</div>
+            <div class="alert alert-info form-group form_cache_page image_old">{l s='Automatically or manually optimize all existing images available on your website. Please select your preferred image quality and types of image to optimize on the following list' mod='ets_superspeed'}</div>
         </div>
     {/if}
     {$smarty.block.parent}
-
-    {if $input.name =='ETS_SPEED_OPTIMIZE_SCRIPT_NEW'}
+    {if $input.name =='ETS_SPEED_OPTIMIZE_SCRIPT'}
         <div class="form-group tinypng">
             <label class="control-label col-lg-3 required">{l s='TinyPNG API key' mod='ets_superspeed'}</label>
             <div class="col-lg-6 tinypng-input">
                 <div class="input-inline">
                     <input placeholder="{l s='TinyPNG API key' mod='ets_superspeed'}" type="text" name="ETS_SPEED_API_TYNY_KEY[]" value="{if $ETS_SPEED_API_TYNY_KEY && isset($ETS_SPEED_API_TYNY_KEY[0])}{$ETS_SPEED_API_TYNY_KEY[0]|escape:'html':'UTF-8'}{/if}"/>
-                    <button class="delete_api_key btn btn-default" {if ($ETS_SPEED_API_TYNY_KEY && Count($ETS_SPEED_API_TYNY_KEY)==1) || !$ETS_SPEED_API_TYNY_KEY}style="display:none;"{/if}><i class="icon icon-trash"></i></button>
+                    <button class="delete_api_key" {if ($ETS_SPEED_API_TYNY_KEY && Count($ETS_SPEED_API_TYNY_KEY)==1) || !$ETS_SPEED_API_TYNY_KEY}style="display:none;"{/if}><i class="icon icon-trash"></i></button>
                 </div>
                 {if $ETS_SPEED_API_TYNY_KEY}
                     {foreach from = $ETS_SPEED_API_TYNY_KEY key='key' item='api'}
                         {if $key!=0 && $api}
                             <div class="input-inline">
                                 <input type="text" name="ETS_SPEED_API_TYNY_KEY[]" value="{$api|escape:'html':'UTF-8'}"/>
-                                <button class="delete_api_key btn btn-default"><i class="icon icon-trash"></i></button>
+                                <button class="delete_api_key"><i class="icon icon-trash"></i></button>
                             </div>
                         {/if}
                     {/foreach}
@@ -318,23 +290,19 @@
             <div class="image_upload_form">
                 <input type="file" name="multiple_imamges[]" id="ets_sp_multiple_imamges" multiple="multiple"  />
                 <i class="fa fa-cloud-upload"></i> {l s='Upload images to optimize' mod='ets_superspeed'}
+                <p class="help-block">{l s='Accepted formats: jpg, gif, jpeg, png, webp. Limit' mod='ets_superspeed'} {Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE')|intval}Mb </p>
             </div>
         </div>
         <div class="form-group form_cache_page image_upload optimize">
             <ul id="list_added_images">
-                {hook h='displayImagesUploaded'}
+                {Module::getInstanceByName('ets_superspeed')->hookDisplayImagesUploaded() nofilter}
             </ul>
         </div>
         <div class="form-group form_cache_page image_browse optimize">
-            {hook h='displayImagesBrowse'}
+            {Module::getInstanceByName('ets_superspeed')->hookDisplayImagesBrowse() nofilter}
         </div>
         <div class="form-group form_cache_page image_cleaner optimize">
-            {hook h='displayImagesCleaner'}
-        </div>
-    {/if}
-    {if $input.name=='live_script'}
-        <div class="form-group form_cache_page page-list-caches">
-            {$file_caches nofilter}
+            {Module::getInstanceByName('ets_superspeed')->hookDisplayImagesCleaner() nofilter}
         </div>
     {/if}
 {/block}
@@ -345,7 +313,7 @@
     {if $input.type == 'switch'}
 		<span class="switch prestashop-switch fixed-width-lg">
 			{foreach $input.values as $value}
-                <input type="radio" name="{$input.name|escape:'html':'UTF-8'}"{if $value.value == 1} id="{$input.name|escape:'html':'UTF-8'}_on"{else} id="{$input.name|escape:'html':'UTF-8'}_off"{/if} value="{$value.value|escape:'html':'UTF-8'}"{if $fields_value[$input.name] == $value.value} checked="checked"{/if}{if isset($input.disabled) && $input.disabled} disabled="disabled"{/if}/>
+                <input type="radio" name="{$input.name|escape:'html':'UTF-8'}"{if $value.value == 1} id="{$input.name|escape:'html':'UTF-8'}_on"{else} id="{$input.name|escape:'html':'UTF-8'}_off"{/if} value="{$value.value|escape:'html':'UTF-8'}"{if $fields_value[$input.name]|intval == $value.value|intval} checked="checked"{/if}{if isset($input.disabled) && $input.disabled} disabled="disabled"{/if}/>
                 {strip}
                     <label {if $value.value == 1} for="{$input.name|escape:'html':'UTF-8'}_on"{else} for="{$input.name|escape:'html':'UTF-8'}_off"{/if}>
                         {$value.label|escape:'html':'UTF-8'}
@@ -412,7 +380,7 @@
                  </div>
                  {/if}
                 {foreach $input.values.query as $value}
-                    {if $input.name!='ETS_SPEED_OPTIMIZE_IMAGE_HOME_SLIDE_TYPE' && $input.name!='ETS_SPEED_OPTIMIZE_IMAGE_BLOG_SLIDE_TYPE' && $input.name!='ETS_SPEED_OPTIMIZE_NEW_IMAGE_BLOG_SLIDE_TYPE'}
+                    {if $input.name!='ETS_SPEED_OPTIMIZE_IMAGE_HOME_SLIDE_TYPE' && $input.name!='ETS_SPEED_OPTIMIZE_IMAGE_BLOG_SLIDE_TYPE'}
         				{assign var=id_checkbox value=$input.name|cat:'_'|cat:$value[$input.values.id]|escape:'html':'UTF-8'}
                         {if isset($value.extra)}
                             <div class="col-lg-5 sp_input_checkbox_left">
@@ -456,16 +424,6 @@
                                                     <span class="total_unoptimized_image"><span class="alert-blue">{if $quality_optimize==100}{l s='100% restored' mod='ets_superspeed'}{else}{l s='100% optimized' mod='ets_superspeed'}{/if}</span>{if $quality_optimize==100}, <span>{$value.total_image_optimized|intval} {l s='unoptimized' mod='ets_superspeed'}</span>{/if}</span>
                                                 {/if}   
                                             {/if}
-                						</label>
-                					{/strip}
-                				</div>
-                            {elseif $input.name=='ETS_SPEED_OPTIMIZE_NEW_IMAGE_BLOG_GALLERY_TYPE' && $value.value=='blog_slide' }
-                                <div class="checkbox{if isset($input.expand) && strtolower($input.expand.default) == 'show'} hidden{/if}">
-                					 {strip}
-                						<label for="ETS_SPEED_OPTIMIZE_NEW_IMAGE_BLOG_SLIDE_TYPE_image" class="unoptimized_image" data-image="blog_slide_image">                                
-                							<input type="checkbox" name="ETS_SPEED_OPTIMIZE_NEW_IMAGE_BLOG_SLIDE_TYPE[]" id="ETS_SPEED_OPTIMIZE_NEW_IMAGE_BLOG_SLIDE_TYPE_image" value="image" {if isset($fields_value['ETS_SPEED_OPTIMIZE_NEW_IMAGE_BLOG_SLIDE_TYPE']) && is_array($fields_value['ETS_SPEED_OPTIMIZE_NEW_IMAGE_BLOG_SLIDE_TYPE']) && $fields_value['ETS_SPEED_OPTIMIZE_NEW_IMAGE_BLOG_SLIDE_TYPE'] && in_array('image',$fields_value['ETS_SPEED_OPTIMIZE_NEW_IMAGE_BLOG_SLIDE_TYPE'])} checked="checked"{/if} />
-                                            <i class="md-checkbox-control"></i>
-                                            {$value[$input.values.name]|escape:'html':'UTF-8'}
                 						</label>
                 					{/strip}
                 				</div>
@@ -634,12 +592,37 @@
     {/if} 
 {/block}
 {block name="legend"}
+    {if isset($configTabs) && $configTabs}<div class="ets_sp_confitab_wrap">{/if}
     {$smarty.block.parent} 
     {if isset($configTabs) && $configTabs}
         <ul class="tab_config_page_cache">
             {foreach from=$configTabs item='tab' key='tabId'}
-                <li class="confi_tab config_tab_{$tabId|escape:'html':'UTF-8'} {if isset($current_tab) && $current_tab==$tabId}active{/if}" data-tab-id="{$tabId|escape:'html':'UTF-8'}" >{$tab|escape:'html':'UTF-8'}</li>
+                <li class="confi_tab config_tab_{$tabId|escape:'html':'UTF-8'} {if isset($current_tab) && $current_tab==$tabId}active{/if}" data-tab-id="{$tabId|escape:'html':'UTF-8'}" >
+                    <span>{$tab|escape:'html':'UTF-8'}</span>
+                </li>
             {/foreach}
+            <li class="viewmore_dropdown">
+                <span class="threedots"></span>
+            </li>
         </ul>
+        </div>
+    {/if}
+{/block}
+{block name="defaultForm"}
+    {$smarty.block.parent}
+    {if isset($file_caches) && $file_caches}
+        <div class="form-group form_cache_page page-list-caches">
+            {$file_caches nofilter}
+        </div>
+    {/if}
+    {if isset($file_no_caches) && $file_no_caches}
+        <div class="form-group form_cache_page page-list-no-caches">
+            {$file_no_caches nofilter}
+        </div>
+    {/if}
+    {if isset($list_log_clear_history) && $list_log_clear_history}
+        <div class="form-group form_cache_page page-list-log-clear-history">
+            {$list_log_clear_history nofilter}
+        </div>
     {/if}
 {/block}

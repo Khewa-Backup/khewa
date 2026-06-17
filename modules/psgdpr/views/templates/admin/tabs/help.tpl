@@ -1,10 +1,11 @@
 {**
- * 2007-2020 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
@@ -12,9 +13,8 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
+ * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
  *}
 
 <div class="panel col-lg-10 right-panel">
@@ -68,20 +68,20 @@
                 <b>{l s='Need help ?' mod='psgdpr'}</b><br>
                 {l s='Find here the documentation of this module' mod='psgdpr'}
                 <a class="btn btn-primary" href="{$doc|escape:'htmlall':'UTF-8'}" target="_blank" style="margin-left:20px;" href="#">
-                    <i class="fa fa-book"></i> {l s='Documentation' mod='psgdpr'}</a>
+                    <i class="fa fa-book"></i>&nbsp;{l s='Documentation' mod='psgdpr'}</a>
                 </a>
                 <br><br>
                 <div class="tab-pane panel" id="faq">
                     <div class="panel-heading"><i class="icon-question"></i> {l s='FAQ' mod='psgdpr'}</div>
-                    {foreach from=$apifaq item=categorie name='faq'}
-                        <span class="faq-h1">{$categorie->title|escape:'htmlall':'UTF-8'}</span>
+                    {foreach from=$faq item=category name='faq'}
+                        <span class="faq-h1">{$category.title|escape:'htmlall':'UTF-8'}</span>
                         <ul>
-                            {foreach from=$categorie->blocks item=QandA}
-                                {if !empty($QandA->question)}
+                            {foreach from=$category.blocks item=qa}
+                                {if !empty($qa.question)}
                                     <li>
-                                        <span class="faq-h2"><i class="icon-info-circle"></i> {$QandA->question|escape:'htmlall':'UTF-8'}</span>
+                                        <span class="faq-h2"><i class="icon-info-circle"></i> {$qa.question|escape:'htmlall':'UTF-8'}</span>
                                         <p class="faq-text hide">
-                                            {$QandA->answer|escape:'htmlall':'UTF-8'|replace:"\n":"<br />"}
+                                            {$qa.answer|escape:'htmlall':'UTF-8'|replace:"\n":"<br />"}
                                         </p>
                                     </li>
                                 {/if}
@@ -90,8 +90,6 @@
                         {if !$smarty.foreach.faq.last}<hr/>{/if}
                     {/foreach}
                 </div>
-                {l s='You couldn\'t find any answer to your question ?' mod='psgdpr'}
-                <b><a href="http://addons.prestashop.com/contact-form.php" target="_blank">{l s='Contact us on PrestaShop Addons' mod='psgdpr'}</a></b>
             </div>
         </div>
     </div>

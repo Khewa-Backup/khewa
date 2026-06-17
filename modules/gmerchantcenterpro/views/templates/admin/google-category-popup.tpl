@@ -2,8 +2,9 @@
 *
 * Google merchant center Pro
 *
-* @author BusinessTech.fr
-* @copyright Business Tech
+* @author    BusinessTech.fr - https://www.businesstech.fr
+* @copyright Business Tech - https://www.businesstech.fr
+* @license   Commercial
 *
 *           ____    _______
 *          |  _ \  |__   __|
@@ -63,7 +64,7 @@
 				<tbody>
 				{foreach from=$aShopCategories name=category item=aCategory}
 					<tr>
-						<td class="label_tag_categories">{$aCategory.path|escape:'htmlall':'UTF-8'}</td>
+						<td class="label_tag_categories">{$aCategory.path}</td>
 						<td>
 							<input class="autocmp" style="font-size: 11px; width: 800px;" type="text" name="bt_google-cat[{$aCategory.id_category}]" id="bt_google-cat{$aCategory.id_category|intval}" value="{$aCategory.google_category_name|escape:'htmlall':'UTF-8'}" />
 							<p class="duplicate_category">

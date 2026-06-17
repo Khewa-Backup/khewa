@@ -1,14 +1,13 @@
 <?php
+
 /**
  * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
  *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
  */
-
-namespace Lcobucci\JWT;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT;
 
 use JsonSerializable;
-
 /**
  * Basic interface for token claims
  *
@@ -23,14 +22,12 @@ interface Claim extends JsonSerializable
      * @return string
      */
     public function getName();
-
     /**
      * Returns the claim value
      *
      * @return mixed
      */
     public function getValue();
-
     /**
      * Returns the string representation of the claim
      *

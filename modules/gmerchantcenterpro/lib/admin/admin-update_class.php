@@ -3,9 +3,9 @@
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -32,7 +32,6 @@ class BT_AdminUpdate implements BT_IAdmin
         switch ($sType) {
             case 'stepPopup': // use case - step by step bar
             case 'basic': // use case - update basic settings
-            case 'gsa': // use case - update gsa
             case 'shopLink': // use case for shop link management
             case 'feed': // use case - update feed settings
             case 'advancedfeed': // use case - configure advanced feed for export
@@ -43,6 +42,7 @@ class BT_AdminUpdate implements BT_IAdmin
             case 'customLabelList': // use case - update customlabelList with bulk action
             case 'position': // use case - update position with bulk action
             case 'customLabelDate': // use case - update custome label date with bulk action
+            case 'customCheck': // use case - associate product to custom label during the data feed udpdate
             case 'google': // use case - update google campaign settings
             case 'googleCategoriesMatching': // use case - update google categories matching settings
             case 'reporting': // use case - update reporting settings
@@ -50,6 +50,7 @@ class BT_AdminUpdate implements BT_IAdmin
             case 'xml': // use case - update the xml filecase 'xml'
             case 'exclusionRule': // use case - update exclusion rules
             case 'rulesList': // use case - update exclusion rules from list
+            case 'inventory': // use case - update exclusion rules from list
                 // execute match function
                 $aDisplayData = call_user_func_array(array($this, 'update' . ucfirst($sType)), array($aParam));
                 break;
@@ -68,7 +69,6 @@ class BT_AdminUpdate implements BT_IAdmin
      */
     private function updateStepPopup(array $aPost)
     {
-
         // clean headers
         @ob_end_clean();
 
@@ -120,11 +120,13 @@ class BT_AdminUpdate implements BT_IAdmin
                     throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during lang id update', 'admin-update_class') . '.', 101);
                 }
             }
+
             // register prefix
             $sPrefix = Tools::getValue('bt_prefix-id');
             if (!Configuration::updateValue('GMCP_ID_PREFIX', BT_GmcProModuleTools::cleanUpPrefix($sPrefix))) {
                 throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during shop prefix ID update', 'admin-update_class') . '.', 102);
             }
+
             // register home category name in all active languages
             $this->updateLang($aPost, 'bt_home-cat-name', 'GMCP_HOME_CAT', false, GMerchantCenterPro::$oModule->l('type of product sold', 'admin-update_class'));
 
@@ -145,17 +147,25 @@ class BT_AdminUpdate implements BT_IAdmin
             if (!Configuration::updateValue('GMCP_HOME_CAT_ID', $iHomeCatId)) {
                 throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during home category ID update', 'admin-update_class') . '.', 105);
             }
+
+            // Register add additionnal images option
             if (!Configuration::updateValue('GMCP_ADD_IMAGES', Tools::getValue('bt_add_images'))) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during home category ID update', 'admin-update_class') . '.', 106);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during additional images update', 'admin-update_class') . '.', 106);
             }
 
-            if (!Configuration::updateValue('GMCP_FORCE_IDENTIFIER', Tools::getValue('bt_identifier_exist'))) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during home category ID update', 'admin-update_class') . '.', 107);
+            if (!Configuration::updateValue('GMCP_PRODUCT_DIMENSION', Tools::getValue('bt_manage_product_size'))) {
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during package dimensions option update', 'admin-update_class') . '.', 541);
             }
+
+            // Register force identifier exist
+            if (!Configuration::updateValue('GMCP_FORCE_IDENTIFIER', Tools::getValue('bt_identifier_exist'))) {
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during identifier exists forcing update', 'admin-update_class') . '.', 107);
+            }
+
             // register if add currency or not
             $bAddCurrency = Tools::getValue('bt_add-currency');
             if (!Configuration::updateValue('GMCP_ADD_CURRENCY', $bAddCurrency)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during adding currency update', 'admin-update_class') . '.', 108);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during currency adding update', 'admin-update_class') . '.', 108);
             }
 
             // register product condition
@@ -172,11 +182,13 @@ class BT_AdminUpdate implements BT_IAdmin
                     throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of the option about export by product or combinations', 'admin-update_class') . '.', 110);
                 }
             }
+
             // register advanced product name
             $sAdvancedProdName = Tools::getValue('bt_advanced-prod-name');
             if (!Configuration::updateValue('GMCP_ADV_PRODUCT_NAME', $sAdvancedProdName)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during advanced format name update', 'admin-update_class') . '.', 111);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during advanced name format update', 'admin-update_class') . '.', 111);
             }
+
             // Update the values if the option is for free field option
             if ($sAdvancedProdName == 5) {
                 // the prefix for advanced prefix product name
@@ -200,9 +212,10 @@ class BT_AdminUpdate implements BT_IAdmin
             // register advanced product title
             $sAdvancedProdTitle = Tools::getValue('bt_advanced-prod-title');
             if (!Configuration::updateValue('GMCP_ADV_PROD_TITLE', $sAdvancedProdTitle)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during format title update', 'admin-update_class') . '.', 114);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during title format update', 'admin-update_class') . '.', 114);
             }
 
+            // Update stepper
             Configuration::updateValue('GMCP_CONF_STEP_1', 1);
         } catch (Exception $e) {
             $aData['aErrors'][] = array('msg' => $e->getMessage(), 'code' => $e->getCode());
@@ -224,178 +237,6 @@ class BT_AdminUpdate implements BT_IAdmin
 
         // force xhr mode
         GMerchantCenterPro::$sQueryMode = 'xhr';
-
-        return $aDisplay;
-    }
-
-    /**
-     * update basic settings
-     *
-     * @param array $aPost
-     * @return array
-     */
-    private function updateGsa(array $aPost)
-    {
-        // clean headers
-        @ob_end_clean();
-
-        // set
-        $aData = array();
-
-        require_once(_GMCP_PATH_LIB_GSA . 'gsa-client_class.php');
-
-        try {
-
-            // register apiKey
-            $sApiKey = Tools::getValue('bt_api-key');
-            if (!Configuration::updateValue('GMCP_API_KEY', $sApiKey)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during api key update', 'admin-update_class') . '.', 100);
-            }
-
-            // Update merchant ID
-            $sMerchantId = Tools::getValue('bt_merchant-id');
-            if (!Configuration::updateValue('GMCP_MERCHANT_ID', $sMerchantId)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during Merchant Center ID update', 'admin-update_class') . '.', 101);
-            }
-
-            //Customer group update
-            if (Tools::getIsset('bt_default-group')) {
-                $iDefaultCustGroup = Tools::getValue('bt_default-group');
-
-                if (is_numeric($iDefaultCustGroup)) {
-                    if (!Configuration::updateValue('GMCP_GSA_CUSTOMER_GROUP', $iDefaultCustGroup)) {
-                        throw new Exception(GMerchantCenterPro::$oModule->l(
-                            'An error occurred during default customer group update',
-                            'admin-update_class'
-                        ) . '.', 114);
-                    }
-                } else {
-                    throw new Exception(GMerchantCenterPro::$oModule->l(
-                        'Default customer group is not a numeric',
-                        'admin-update_class'
-                    ) . '.', 115);
-                }
-            }
-            // Update gsa carrier ID
-            $iCarrierId = Tools::getValue('bt_gsa-carrier-default');
-            if (!Configuration::updateValue('GMCP_GSA_DEFAULT_CARRIER', (int)$iCarrierId)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during carrier ID update', 'admin-update_class') . '.', 101);
-            }
-
-            // Update the gsa carrier mapping
-            if (Tools::getIsset('bt_gsa-carrier')) {
-                $aShippingCarriers = array();
-                $aPostShippingCarriers = Tools::getValue('bt_gsa-carrier');
-
-                if (
-                    !empty($aPostShippingCarriers)
-                    && is_array($aPostShippingCarriers)
-                ) {
-                    foreach ($aPostShippingCarriers as $iKey => $mVal) {
-                        $aShippingCarriers[$iKey] = $mVal;
-                    }
-                    $sShippingCarriers = serialize($aShippingCarriers);
-                } else {
-                    $sShippingCarriers = '';
-                }
-                if (!Configuration::updateValue('GMCP_GSA_CARRIERS_MAP', $sShippingCarriers)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during carriers matching update', 'admin-update_class') . '.', 102);
-                }
-            }
-
-            //Use case to build the module configuration return URL
-            if (empty(GMerchantCenterPro::$bCompare17)) {
-                $sAdminFolder = array_pop((array_slice(explode('/', _PS_ADMIN_DIR_), -1)));
-            }
-
-            //Get the adminModule tab
-            $sModuleConfiguration = !empty(GMerchantCenterPro::$bCompare17) ? Context::getContext()->link->getAdminLink('AdminModules') : _PS_BASE_URL_ . __PS_BASE_URI__ . $sAdminFolder . '/' . Context::getContext()->link->getAdminLink('AdminModules');
-
-            // Mangage data send to API
-            $aConf = array(
-                'api_key' => GMerchantCenterPro::$conf['GMCP_API_KEY'],
-                'merchant_id' => GMerchantCenterPro::$conf['GMCP_MERCHANT_ID'],
-                'module_name' => GMerchantCenterPro::$oModule->name,
-                'module_url' => str_replace('controller=AdminModules', 'controller=AdminModules&configure=' . GMerchantCenterPro::$oModule->name, $sModuleConfiguration),
-                'backoffice_url' =>  !empty(GMerchantCenterPro::$bCompare17) ? Context::getContext()->link->getAdminLink('AdminModules') : _PS_BASE_URL_ . __PS_BASE_URI__ . $sAdminFolder . '/' . Context::getContext()->link->getAdminLink('AdminDashboard'),
-                'backoffice_orders_url' => !empty(GMerchantCenterPro::$bCompare17) ? Context::getContext()->link->getAdminLink('AdminModules') : _PS_BASE_URL_ . __PS_BASE_URI__ . $sAdminFolder . '/' . Context::getContext()->link->getAdminLink('AdminOrders'),
-                'module_conf' => GMerchantCenterPro::$conf,
-                'module_version' => GMerchantCenterPro::$conf['GMCP_VERSION'],
-            );
-
-            //Use case for shop link creation with our API
-            if (GsaClient::authApi($sApiKey)) {
-                if (!Configuration::updateValue('GMCP_SHOP_LINK_API', 1)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during carrier ID update', 'admin-update_class') . '.', 101);
-                }
-            } else {
-                if (!Configuration::updateValue('GMCP_SHOP_LINK_API', 0)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during carrier ID update', 'admin-update_class') . '.', 101);
-                }
-            }
-
-            //Use case if the shop is created on our service and if we have API key we can send the configuration via the API
-            if (!empty(GMerchantCenterPro::$conf['GMCP_SHOP_LINK_API']) && !empty($sApiKey)) {
-                GsaClient::updateModuleConfigurationForGsa(GMerchantCenterPro::$conf['GMCP_API_KEY'], $aConf);
-            }
-        } catch (Exception $e) {
-            $aData['aErrors'][] = array('msg' => $e->getMessage(), 'code' => $e->getCode());
-        }
-
-        // get configuration options
-        BT_GmcProModuleTools::getConfiguration();
-
-        // require admin configure class - to factorise
-        require_once(_GMCP_PATH_LIB_ADMIN . 'admin-display_class.php');
-
-        // get run of admin display in order to display first page of admin with basics settings updated
-        $aDisplay = BT_AdminDisplay::create()->run('gsa');
-
-        // use case - empty error and updating status
-        $aDisplay['assign'] = array_merge($aDisplay['assign'], array(
-            'bUpdate' => (empty($aData['aErrors']) ? true : false),
-        ), $aData);
-
-        // force xhr mode
-        GMerchantCenterPro::$sQueryMode = 'xhr';
-
-        return $aDisplay;
-    }
-
-
-    /**
-     * update shop link association
-     *
-     * @param array $aPost
-     * @return array
-     */
-    private function updateShopLink(array $aPost)
-    {
-        // clean headers
-        @ob_end_clean();
-        $aData = array();
-        require_once(_GMCP_PATH_LIB_GSA . 'gsa-client_class.php');
-
-        $bActivate = Tools::getValue('bLink');
-
-        if (empty($bActivate)) {
-            GsaClient::disableShop(GMerchantCenterPro::$conf['GMCP_API_KEY']);
-        } else {
-            GsaClient::enableShop(GMerchantCenterPro::$conf['GMCP_API_KEY']);
-        }
-
-        // get configuration options
-        BT_GmcProModuleTools::getConfiguration();
-
-        require_once(_GMCP_PATH_LIB_ADMIN . 'admin-display_class.php');
-
-        // get run of admin display in order to display first page of admin with basics settings updated
-        $aDisplay = BT_AdminDisplay::create()->run('gsa');
-
-        // use case - empty error and updating status
-        $aDisplay['assign'] = array_merge($aDisplay['assign'], array(
-            'bUpdate' => (empty($aData['aErrors']) ? true : false),
-        ), $aData);
 
         return $aDisplay;
     }
@@ -431,7 +272,7 @@ class BT_AdminUpdate implements BT_IAdmin
                     $aCategoryBox = Tools::getValue('bt_category-box');
 
                     if (empty($aCategoryBox)) {
-                        throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred because you would select one category at least', 'admin-update_class') . '.', 201);
+                        throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred because you must select one category at least', 'admin-update_class') . '.', 201);
                     } else {
                         // delete previous categories
                         $bResult = BT_GmcProModuleDao::deleteCategories(GMerchantCenterPro::$iShopId);
@@ -445,7 +286,7 @@ class BT_AdminUpdate implements BT_IAdmin
                     $aBrandBox = Tools::getValue('bt_brand-box');
 
                     if (empty($aBrandBox)) {
-                        throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred because you would select one brand at least', 'admin-update_class') . '.', 202);
+                        throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred because you must select one brand at least', 'admin-update_class') . '.', 202);
                     } else {
                         // delete previous brands
                         BT_GmcProModuleDao::deleteBrands(GMerchantCenterPro::$iShopId);
@@ -467,13 +308,13 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_export-oos')) {
                 $bExportOOSMode = Tools::getValue('bt_export-oos');
                 if (!Configuration::updateValue('GMCP_EXPORT_OOS', $bExportOOSMode)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during export out of stock mode update', 'admin-update_class') . '.', 203);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of the option about out of stock product export', 'admin-update_class') . '.', 203);
                 }
 
                 if ($bExportOOSMode) {
                     $bProductOosOrder = Tools::getValue('bt_product-oos-order');
                     if (!Configuration::updateValue('GMCP_EXPORT_PROD_OOS_ORDER', $bProductOosOrder)) {
-                        throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during product out of stock update', 'admin-update_class') . '.', 204);
+                        throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during out of stock product update', 'admin-update_class') . '.', 204);
                     }
                 }
             }
@@ -481,14 +322,14 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_excl-no-ean')) {
                 $bExportNoEan = Tools::getValue('bt_excl-no-ean');
                 if (!Configuration::updateValue('GMCP_EXC_NO_EAN', $bExportNoEan)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during export without EAN code update', 'admin-update_class') . '.', 205);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of the option about the export of product without EAN', 'admin-update_class') . '.', 205);
                 }
             }
             // handle if we export or not products without manufacturer code
             if (Tools::getIsset('bt_excl-no-mref')) {
                 $bExportNoMref = Tools::getValue('bt_excl-no-mref');
                 if (!Configuration::updateValue('GMCP_EXC_NO_MREF', $bExportNoMref)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during export without manufacturer ref update', 'admin-update_class') . '.', 206);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of the option about the export of product without MPN', 'admin-update_class') . '.', 206);
                 }
             }
             // handle if we export products over a min price
@@ -498,7 +339,7 @@ class BT_AdminUpdate implements BT_IAdmin
                     'GMCP_MIN_PRICE',
                     (!empty($fMinPrice) ? number_format(str_replace(',', '.', $fMinPrice), 2) : 0.00)
                 )) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during export with a min price update', 'admin-update_class') . '.', 207);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of the option about the min price', 'admin-update_class') . '.', 207);
                 }
             }
             // handle if we export products over a weight
@@ -508,7 +349,7 @@ class BT_AdminUpdate implements BT_IAdmin
                     'GMCP_MAX_WEIGHT',
                     (!empty($fMaxWeight) ? number_format(str_replace(',', '.', $fMaxWeight), 2) : 0.00)
                 )) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during export with a max weight update', 'admin-update_class') . '.', 208);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of the option about the max weight', 'admin-update_class') . '.', 208);
                 }
             }
             /* USE CASE - update feed data options */
@@ -532,22 +373,21 @@ class BT_AdminUpdate implements BT_IAdmin
                     if (Tools::getIsset('bt_rewrite-num-attr')) {
                         $bRewriteNumAttr = Tools::getValue('bt_rewrite-num-attr');
                         if (!Configuration::updateValue('GMCP_URL_NUM_ATTR_REWRITE', $bRewriteNumAttr)) {
-                            throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during rewrite numeric attributes update', 'admin-update_class') . '.', 211);
+                            throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of the option about numeric attributes rewriting', 'admin-update_class') . '.', 211);
                         }
                     }
                     if (Tools::getIsset('bt_incl-attr-id')) {
                         $bInclAttrId = Tools::getValue('bt_incl-attr-id');
                         if (!Configuration::updateValue('GMCP_URL_ATTR_ID_INCL', $bInclAttrId)) {
-                            throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include attribute id update', 'admin-update_class') . '.', 212);
+                            throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of the option about attribute ID adding', 'admin-update_class') . '.', 212);
                         }
                     }
-                }
-            }
-
-            if (Tools::getIsset('bt_url-error')) {
-                $bUrlError = Tools::getValue('bt_url-error');
-                if (!Configuration::updateValue('GMCP_URL_PROD_ERROR', $bUrlError)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during error url update', 'admin-update_class') . '.', 546);
+                    if (Tools::getIsset('bt_combo-separator')) {
+                        $sComboSeparator = Tools::getValue('bt_combo-separator');
+                        if (!Configuration::updateValue('GMCP_COMBO_SEPARATOR', $sComboSeparator)) {
+                            throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of the option about combination separator', 'admin-update_class') . '.', 213);
+                        }
+                    }
                 }
             }
 
@@ -571,14 +411,18 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_incl-tag-adult')) {
                 $bInclAdultTag = Tools::getValue('bt_incl-tag-adult');
                 if (!Configuration::updateValue('GMCP_INC_TAG_ADULT', $bInclAdultTag)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include tag adult update', 'admin-update_class') . '.', 215);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during adult tag update', 'admin-update_class') . '.', 215);
                 }
             }
             // include cost of good sold
             if (Tools::getIsset('bt_incl-tag-cost')) {
                 if (!Configuration::updateValue('GMCP_INC_COST', Tools::getValue('bt_incl-tag-cost'))) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include tag cost update', 'admin-update_class') . '.', 216);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cost of goods sold tag update', 'admin-update_class') . '.', 216);
                 }
+            }
+
+            if (Tools::getIsset('bt_ships_from')) {
+                Configuration::updateValue('GMCP_SHIPS_FROM', strtoupper(Tools::getValue('bt_ships_from')));
             }
 
             // include size tag
@@ -586,7 +430,7 @@ class BT_AdminUpdate implements BT_IAdmin
                 $sInclSize = Tools::getValue('bt_incl-size');
                 $aSizeIds = Tools::getValue('bt_size-opt');
                 if (!Configuration::updateValue('GMCP_INC_SIZE', $sInclSize)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include size tag update', 'admin-update_class') . '.', 217);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during size tag update', 'admin-update_class') . '.', 217);
                 }
 
                 // update attributes and the feature for size tag
@@ -602,7 +446,7 @@ class BT_AdminUpdate implements BT_IAdmin
                 $sInclColor = Tools::getValue('bt_incl-color');
                 $aColorIds = Tools::getValue('bt_color-opt');
                 if (!Configuration::updateValue('GMCP_INC_COLOR', $sInclColor)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include color tag update', 'admin-update_class') . '.', 219);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during color tag update', 'admin-update_class') . '.', 219);
                 }
                 // update attributes and the feature for color tag
                 if (!empty($sInclColor) && !empty($aColorIds)) {
@@ -617,7 +461,7 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_incl-material')) {
                 $bInclMaterial = Tools::getValue('bt_incl-material');
                 if (!Configuration::updateValue('GMCP_INC_MATER', $bInclMaterial)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include material update', 'admin-update_class') . '.', 221);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during material tag update', 'admin-update_class') . '.', 221);
                 }
             }
 
@@ -625,7 +469,7 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_incl-pattern')) {
                 $bInclPattern = Tools::getValue('bt_incl-pattern');
                 if (!Configuration::updateValue('GMCP_INC_PATT', $bInclPattern)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include pattern update', 'admin-update_class') . '.', 222);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during pattern tag update', 'admin-update_class') . '.', 222);
                 }
             }
 
@@ -633,7 +477,7 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_incl-gender')) {
                 $bInclGender = Tools::getValue('bt_incl-gender');
                 if (!Configuration::updateValue('GMCP_INC_GEND', $bInclGender)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include gender update', 'admin-update_class') . '.', 223);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during gender tag update', 'admin-update_class') . '.', 223);
                 }
             }
 
@@ -641,7 +485,7 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_incl-age')) {
                 $bInclAge = Tools::getValue('bt_incl-age');
                 if (!Configuration::updateValue('GMCP_INC_AGE', $bInclAge)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include age group update', 'admin-update_class') . '.', 224);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during age group tag update', 'admin-update_class') . '.', 224);
                 }
             }
 
@@ -649,7 +493,7 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_incl-size_type')) {
                 $bInclSizeType = Tools::getValue('bt_incl-size_type');
                 if (!Configuration::updateValue('GMCP_SIZE_TYPE', $bInclSizeType)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include size type update', 'admin-update_class') . '.', 225);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during size type tag update', 'admin-update_class') . '.', 225);
                 }
             }
 
@@ -657,7 +501,7 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_incl-size_system')) {
                 $bInclSizeSystem = Tools::getValue('bt_incl-size_system');
                 if (!Configuration::updateValue('GMCP_SIZE_SYSTEM', $bInclSizeSystem)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include size type update', 'admin-update_class') . '.', 226);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during size system tag update', 'admin-update_class') . '.', 226);
                 }
             }
 
@@ -665,20 +509,28 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_incl-energy')) {
                 $bInclEnergy = Tools::getValue('bt_incl-energy');
                 if (!Configuration::updateValue('GMCP_INC_ENERGY', $bInclEnergy)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include energy update', 'admin-update_class') . '.', 227);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during energy efficiency class tag update', 'admin-update_class') . '.', 227);
                 }
             }
 
             if (Tools::getIsset('bt_excl_dest')) {
                 $bExclDest = Tools::getValue('bt_excl_dest');
                 if (!Configuration::updateValue('GMCP_EXCLUDED_DEST', $bExclDest)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during exclusion destination update', 'admin-update_class') . '.', 227);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during exluded destination tag update', 'admin-update_class') . '.', 227);
+                }
+            }
+
+            // include exclusion destination
+            if (Tools::getIsset('bt_excl_country')) {
+                $bExclCountry = Tools::getValue('bt_excl_country');
+                if (!Configuration::updateValue('GMCP_EXCLUDED_COUNTRY', $bExclCountry)) {
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during excluded country tag update', 'admin-update_class') . '.', 230);
                 }
             }
 
             if (Tools::getIsset('bt_incl-shipping-label')) {
                 if (!Configuration::updateValue('GMCP_INC_SHIPPING_LABEL', Tools::getValue('bt_incl-shipping-label'))) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include shipping label update', 'admin-update_class') . '.', 228);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during shipping label tag update', 'admin-update_class') . '.', 228);
                 }
             }
 
@@ -687,7 +539,7 @@ class BT_AdminUpdate implements BT_IAdmin
                     'GMCP_INC_UNIT_PRICING',
                     Tools::getValue('bt_incl_unit_pricing_measure')
                 )) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include shipping label update', 'admin-update_class') . '.', 229);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during unit pricing measure tag update', 'admin-update_class') . '.', 229);
                 }
             }
 
@@ -696,7 +548,7 @@ class BT_AdminUpdate implements BT_IAdmin
                     'GMCP_INC_B_UNIT_PRICING',
                     Tools::getValue('bt_incl_unit_base_pricing_measure')
                 )) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include shipping label update', 'admin-update_class') . '.', 230);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during unit base pricing measure tag update', 'admin-update_class') . '.', 230);
                 }
             }
 
@@ -704,8 +556,19 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_manage-shipping')) {
                 $bShippingUse = Tools::getValue('bt_manage-shipping');
                 if (!Configuration::updateValue('GMCP_SHIPPING_USE', $bShippingUse)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during shipping use update', 'admin-update_class') . '.', 231);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during shipping management option update', 'admin-update_class') . '.', 231);
                 }
+            }
+
+            if (Tools::getIsset('bt_manage-dimension')) {
+                $bDimension = Tools::getValue('bt_manage-dimension');
+                if (!Configuration::updateValue('GMCP_DIMENSION', $bDimension)) {
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during package dimensions option update', 'admin-update_class') . '.', 541);
+                }
+            }
+
+            if (Tools::getIsset('bt_free_shipping_price')) {
+                Configuration::updateValue('GMCP_FREE_SHIPPING_PRICE', Tools::getValue('bt_free_shipping_price'));
             }
 
             if (Tools::getIsset('bt_ship-carriers')) {
@@ -724,7 +587,7 @@ class BT_AdminUpdate implements BT_IAdmin
                     $sShippingCarriers = '';
                 }
                 if (!Configuration::updateValue('GMCP_SHIP_CARRIERS', $sShippingCarriers)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during shipping carriers update', 'admin-update_class') . '.', 232);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during shipping carriers option update', 'admin-update_class') . '.', 232);
                 }
             }
 
@@ -755,7 +618,7 @@ class BT_AdminUpdate implements BT_IAdmin
                 }
 
                 if (!Configuration::updateValue('GMCP_FREE_SHIP_PROD', serialize($aIdsFreeShipping))) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during free shipping product IDs update', 'admin-update_class') . '.', 234);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during the update of IDs of products with free shipping', 'admin-update_class') . '.', 234);
                 }
             }
 
@@ -763,7 +626,7 @@ class BT_AdminUpdate implements BT_IAdmin
             if (Tools::getIsset('bt_gtin-pref')) {
                 $sGtinPref = Tools::getValue('bt_gtin-pref');
                 if (!Configuration::updateValue('GMCP_GTIN_PREF', $sGtinPref)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during gtin preference update', 'admin-update_class') . '.', 235);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during GTIN preferences update', 'admin-update_class') . '.', 235);
                 }
             }
 
@@ -818,11 +681,6 @@ class BT_AdminUpdate implements BT_IAdmin
 
     private function updateAdvancedfeed(array $aPost)
     {
-
-        require_once(_GMCP_PATH_LIB_DAO . 'cart-rules-dao_class.php');
-        // clean headers
-        @ob_end_clean();
-
         // set
         $aData = array();
 
@@ -830,85 +688,91 @@ class BT_AdminUpdate implements BT_IAdmin
             //manage configuration for filter
             $bFilterName = Tools::getValue('bt_option-name') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_DSC_FILT_NAME', $bFilterName)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cumulable update', 'admin-update_class') . '.', 300);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the name', 'admin-update_class') . '.', 300);
             }
 
             $bFilterDate = Tools::getValue('bt_option-date') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_DSC_FILT_DATE', $bFilterDate)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cumulable update', 'admin-update_class') . '.', 301);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the date', 'admin-update_class') . '.', 301);
             }
 
             $bFilterMinAmount = Tools::getValue('bt_option-min-amount') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_DSC_FILT_MIN_AMOUNT', $bFilterMinAmount)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cumulable update', 'admin-update_class') . '.', 302);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the min amount', 'admin-update_class') . '.', 302);
             }
 
             $bFilterValue = Tools::getValue('bt_option-value') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_DSC_FILT_VALUE', $bFilterValue)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cumulable update', 'admin-update_class') . '.', 303);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the value', 'admin-update_class') . '.', 303);
             }
 
             $bFilterType = Tools::getValue('bt_option-type') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_DSC_FILT_TYPE', $bFilterType)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cumulable update', 'admin-update_class') . '.', 304);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the type', 'admin-update_class') . '.', 304);
             }
 
             $bFilterCumulable = Tools::getValue('bt_option-cumulable') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_DSC_FILT_CUMU', $bFilterCumulable)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cumulable update', 'admin-update_class') . '.', 305);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the option about cumulation', 'admin-update_class') . '.', 305);
             }
 
             $bFilterFor = Tools::getValue('bt_option-for') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_DSC_FILT_FOR', $bFilterFor)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cumulable update', 'admin-update_class') . '.', 306);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the "for" option', 'admin-update_class') . '.', 306);
             }
 
             //Discount name
             $sDiscountName = Tools::getValue('bt_discount-name');
             if (!Configuration::updateValue('GMCP_DSC_NAME', $sDiscountName)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during discount name update', 'admin-update_class') . '.', 307);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the discount name', 'admin-update_class') . '.', 307);
             }
 
             //Discount date from
             $sDateFrom = Tools::getValue('bt_discount-date-from');
             if (!Configuration::updateValue('GMCP_DSC_DATE_FROM', $sDateFrom)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during discount date from update', 'admin-update_class') . '.', 308);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the discount start date', 'admin-update_class') . '.', 308);
             }
 
             //Discount date to
             $sDateTo = Tools::getValue('bt_discount-date-to');
             if (!Configuration::updateValue('GMCP_DSC_DATE_TO', $sDateTo)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during discount date to update', 'admin-update_class') . '.', 309);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the discount end date', 'admin-update_class') . '.', 309);
             }
 
             //Value min for export
             $fValueMin = Tools::getValue('bt_discount-value-min');
             if (!Configuration::updateValue('GMCP_DSC_VALUE_MIN', $fValueMin)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during value update', 'admin-update_class') . '.', 310);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the voucher min value', 'admin-update_class') . '.', 310);
             }
 
             //Value min for export
             $fValueMax = Tools::getValue('bt_discount-value-max');
             if (!Configuration::updateValue('GMCP_DSC_VALUE_MAX', $fValueMax)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during value update', 'admin-update_class') . '.', 311);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the voucher max value', 'admin-update_class') . '.', 311);
             }
 
             //Discount min amount
             $fMinAmount = Tools::getValue('bt_discount-min-amount');
             if (!Configuration::updateValue('GMCP_DSC_MIN_AMOUNT', $fMinAmount)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during min amount to update', 'admin-update_class') . '.', 312);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the min purchase amount', 'admin-update_class') . '.', 312);
             }
 
             //Type of discount to expert  date to
             $sDiscountType = Tools::getValue('bt_discount-type');
             if (!Configuration::updateValue('GMCP_DSC_TYPE', $sDiscountType)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during include discount type update', 'admin-update_class') . '.', 313);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the discount type', 'admin-update_class') . '.', 313);
             }
 
             //Discount min amount
             $bCumulable = Tools::getValue('bt_discount-cumulable');
             if (!Configuration::updateValue('GMCP_DSC_CUMULABLE', $bCumulable)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cumulable update', 'admin-update_class') . '.', 314);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the option about cumulation of vouchers', 'admin-update_class') . '.', 314);
+            }
+
+            //Handle the save of channel for promotion feed
+            $aDiscountChannel = Tools::getValue('bt-discount_channel');
+            if (!Configuration::updateValue('GMCP_PROMO_DEST', serialize($aDiscountChannel))) {
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the promotion destination tag', 'admin-update_class') . '.', 319);
             }
 
             //Use case for review feed
@@ -926,22 +790,22 @@ class BT_AdminUpdate implements BT_IAdmin
             }
 
             if (!Configuration::updateValue('GMCP_FORBIDDEN_WORDS', serialize($aWords))) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during cumulable update', 'admin-update_class') . '.', 315);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the forbidden words', 'admin-update_class') . '.', 315);
             }
 
             $bPrice = Tools::getValue('bt_inventory-price') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_INV_PRICE', $bPrice)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during price update', 'admin-update_class') . '.', 316);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the price', 'admin-update_class') . '.', 316);
             }
 
             $bStock = Tools::getValue('bt_inventory-stock') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_INV_STOCK', $bStock)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during stock update', 'admin-update_class') . '.', 317);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the stock', 'admin-update_class') . '.', 317);
             }
 
             $bSalePrice = Tools::getValue('bt_inventory-sale-price') == 'true' ? true : false;
             if (!Configuration::updateValue('GMCP_INV_SALE_PRICE', $bSalePrice)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during sale_price_update update', 'admin-update_class') . '.', 318);
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred when updating the sale price', 'admin-update_class') . '.', 318);
             }
         } catch (Exception $e) {
             $aData['aErrors'][] = array('msg' => $e->getMessage(), 'code' => $e->getCode());
@@ -986,7 +850,7 @@ class BT_AdminUpdate implements BT_IAdmin
                 $aCronExport = Tools::getValue('bt_cron-export');
 
                 if (!Configuration::updateValue('GMCP_CHECK_EXPORT', serialize($aCronExport))) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during check export', 'admin-update_class') . '.', 400);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during export checking', 'admin-update_class') . '.', 400);
                 }
             }
         } catch (Exception $e) {
@@ -1038,13 +902,21 @@ class BT_AdminUpdate implements BT_IAdmin
                     !empty($aPost[$sTagType])
                     && is_array($aPost[$sTagType])
                 ) {
-                    if ($sTagType != 'excluded_destination') {
+                    if ($sTagType != 'excluded_destination' && $sTagType != 'excluded_country') {
                         foreach ($aPost[$sTagType] as $iCatId => $mVal) {
                             $aCategoryList[$iCatId][$sTagType] = strip_tags($mVal);
                         }
-                    } else { // Use for excluded destination this a multiple select
-                        foreach ($aPost['excluded_destination'] as $iCatId => $mVal) {
-                            $aCategoryList[$iCatId][$sTagType] = strip_tags(implode(' ', $mVal));
+                    } else { // Use for excluded destination this a multiple selectt
+                        if ($sTagType == 'excluded_destination') {
+                            foreach ($aPost['excluded_destination'] as $iCatId => $mVal) {
+                                $aCategoryList[$iCatId][$sTagType] = strip_tags(implode(' ', $mVal));
+                            }
+                        }
+
+                        if ($sTagType == 'excluded_country') {
+                            foreach ($aPost['excluded_country'] as $iCatId => $mVal) {
+                                $aCategoryList[$iCatId][$sTagType] = strip_tags(implode(' ', $mVal));
+                            }
                         }
                     }
                 }
@@ -1093,6 +965,7 @@ class BT_AdminUpdate implements BT_IAdmin
             // include
             require_once(_GMCP_PATH_LIB_DAO . 'module-dao_class.php');
             require_once(_GMCP_PATH_LIB_DAO . 'custom-label-dao_class.php');
+            require_once(_GMCP_PATH_LIB . 'label-tools_class.php');
 
             // get the label name
             $sLabelName = Tools::getValue('bt_label-name');
@@ -1103,181 +976,80 @@ class BT_AdminUpdate implements BT_IAdmin
             $sDateNewProduct = Tools::getValue('bt_cl_dyn_date_start');
 
             // update attributes and the feature for size tag
-            $sExcludedIds = Tools::getValue('hiddenProductIds-cl');
+            $sProductSpecific = Tools::getValue('hiddenProductIds-cl');
 
             // get an array of
-            $aExcludedIds = !empty($sExcludedIds) ? explode('-', $sExcludedIds) : array();
+            $aProductSpecific = !empty($sProductSpecific) ? explode('-', $sProductSpecific) : array();
 
             //get option for best sales from form
             $sBestSaleType = Tools::getValue('dynamic_best_sales_unit');
             $fBestSaleAmount = Tools::getValue('bt_cl_dyn_amount');
             $sBestSaleStartDate = Tools::getValue('bt_dyn_best_sale_start');
-            $sBestSaleStartEnd = Tools::getValue('bt_dyn_best_sale_end');
+            $sBestSalesEndDate = Tools::getValue('bt_dyn_best_sale_end');
 
             //get the option for price range option
             $fPriceMin = Tools::getValue('bt_dyn_min_price');
             $fPriceMax = Tools::getValue('bt_dyn_max_price');
 
+            //get data for last ordered product
+            $sLastOrderedStart = Tools::getValue('bt_dyn_last_order_start');
+            $sLastOrderedEnd = Tools::getValue('bt_dyn_last_order_end');
+
             $iLastId = (int) BT_GmcProCustomLabelDao::getLastId();
             $iNextId = $iLastId + 1;
 
-
             if (empty($sLabelName)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('You haven\'t filled out the label name', 'admin-update_class') . '.', 500);
+                throw new Exception(GMerchantCenterPro::$oModule->l('You haven\'t filled out the label name', 'admin-update_class') . '.', 560);
             } else {
                 // USE CASE - The tag is already saved
                 if (!empty($iTagId)) {
+
                     // get the postion save for the tag
                     $iPositionTag = BT_GmcProCustomLabelDao::getTagPosition($iTagId);
+                    BT_GmcProCustomLabelDao::updateGmcTag($iTagId, $sLabelName, $sLabelType, $bActivateTag, $iPositionTag, $sDateEnd);
 
-                    BT_GmcProCustomLabelDao::updateGmcTag(
-                        $iTagId,
-                        $sLabelName,
-                        $sLabelType,
-                        $bActivateTag,
-                        $iPositionTag,
-                        $sDateEnd
-                    );
-
-                    if ($sLabelType == "custom_label" || $sLabelType == "dynamic_new_product") {
-                        foreach ($GLOBALS['GMCP_LABEL_LIST'] as $sTableName => $sFieldType) {
-                            // delete related tables
-                            BT_GmcProCustomLabelDao::deleteGmcCatTag($iTagId, $sTableName, $sLabelType);
-                        }
-                        BT_GmcProCustomLabelDao::deleteGmcpProductTag($iTagId);
-                    }
-
-                    // USE CASE - Dynamic feature product
-                    if ($sLabelType == "dynamic_features_list") {
-                        BT_GmcProCustomLabelDao::deleteFeatureSave($iTagId);
-                    }
-
-                    // USE CASE - Dynamic categories
-                    if ($sLabelType == "dynamic_categorie") {
-                        BT_GmcProCustomLabelDao::deleteDynamicCat($iTagId);
-                    }
-
-                    // USE CASE - Dynamic new product
-                    if ($sLabelType == "dynamic_new_product") {
-                        BT_GmcProCustomLabelDao::deleteDynamicNew($iTagId);
-                    }
-
-                    // USE CASE - Dynamic best sales
-                    if ($sLabelType == "dynamic_best_sale") {
-                        BT_GmcProCustomLabelDao::deleteDynamicBestSales($iTagId);
-                    }
-
-                    // USE CASE - Dynamic price range
-                    if ($sLabelType == "dynamic_price_range") {
-                        BT_GmcProCustomLabelDao::deleteDynamicPriceRange($iTagId);
-                    }
+                    // Clean the tag
+                    BT_GmcpLabelTools::cleanTag($iTagId, $sLabelType);
                 } // use case - create tag
                 else {
                     $iTagId = BT_GmcProCustomLabelDao::insertGmcTag(GMerchantCenterPro::$iShopId, $sLabelName, $sLabelType, $bActivateTag, $iNextId, $sDateEnd);
                 }
-                // use case - insert
-                if (
-                    $sLabelType == "custom_label"
-                    || $sLabelType == "dynamic_new_product"
-                ) {
-                    foreach ($GLOBALS['GMCP_LABEL_LIST'] as $sTableName => $sFieldType) {
-                        if (Tools::getIsset('bt_' . $sFieldType . '-box')) {
-                            $aSelectedIds = Tools::getValue('bt_' . $sFieldType . '-box');
-                            foreach ($aSelectedIds as $iSelectedId) {
-                                BT_GmcProCustomLabelDao::insertGmcCatTag($iTagId, $iSelectedId, $sTableName, $sFieldType, $sLabelType);
-                            }
-                        }
-                    }
-                    if (!empty($aExcludedIds)) {
-                        foreach ($aExcludedIds as $key => $aProduct) {
-                            $oProduct = new Product((int) $aProduct, true, GMerchantCenterPro::$iCurrentLang);
 
-                            if (Validate::isLoadedObject($oProduct)) {
-                                $sProductName = $oProduct->name;
-                                BT_GmcProCustomLabelDao::insertGmcpProductTag($iTagId, (int) $aProduct, $sProductName);
-                            }
-                        }
-                    }
+                if ($sLabelType == "custom_label" || $sLabelType == "dynamic_new_product") {
+                    BT_GmcpLabelTools::handleDefautTag($iTagId, $sLabelType, $aProductSpecific);
                 }
 
                 if ($sLabelType == "dynamic_features_list") {
-                    $iFeatureId = (int) Tools::getValue('dynamic_features_list');
-                    BT_GmcProCustomLabelDao::insertGmcpDynFeatureTag($iTagId, $iFeatureId);
+                    BT_GmcpLabelTools::handleFeatureTag($iTagId, (int) Tools::getValue('dynamic_features_list'));
                 }
 
                 if ($sLabelType == "dynamic_categorie") {
-                    $aSelectedIds = Tools::getValue('bt_category-box');
-                    foreach ($aSelectedIds as $iSelectedId) {
-                        BT_GmcProCustomLabelDao::insertDynamicCat($iTagId, $iSelectedId);
-                    }
+                    BT_GmcpLabelTools::handleCatDynmaicTag($iTagId, Tools::getValue('bt_category-box'));
                 }
 
                 // USE CASE - Dynamic new product
                 if ($sLabelType == "dynamic_new_product") {
-
-                    $aProductIds = BT_GmcProCustomLabelDao::getNewProducts($sDateNewProduct);
-
-                    if (!empty($aProductIds)) {
-                        foreach ($aProductIds as $aProduct) {
-                            BT_GmcProCustomLabelDao::insertDynamicNew(
-                                $iTagId,
-                                $sDateNewProduct,
-                                $aProduct['id_product']
-                            );
-                        }
-                    } else {
-                        BT_GmcProCustomLabelDao::insertDynamicNew($iTagId, $sDateNewProduct, 0);
-                        $aAssign['aErrors'][] = array(
-                            'msg' => $GLOBALS['GMCP_CL_PRODUCT_ASSOCIATION'][GMerchantCenterPro::$sCurrentLang],
-                            'code' => ''
-                        );
-                    }
+                    BT_GmcpLabelTools::handleDynamicNewProduct($iTagId, $sDateNewProduct);
                 }
 
                 // USE CASE - Dynamic best sales
                 if ($sLabelType == "dynamic_best_sale") {
-                    //getProductIds for selected parameters in best sales form
-                    $aProductIds = BT_GmcProCustomLabelDao::getProductBestSales(
-                        $sBestSaleType,
-                        $fBestSaleAmount,
-                        $sBestSaleStartDate,
-                        $sBestSaleStartEnd
-                    );
-
-                    if (!empty($aProductIds)) {
-                        foreach ($aProductIds as $aProduct) {
-                            if (!empty($aProduct['product_id'])) {
-                                BT_GmcProCustomLabelDao::insertDynamicBestSales($iTagId, $fBestSaleAmount, $sBestSaleType, $sBestSaleStartDate, $sBestSaleStartEnd, $aProduct['product_id']);
-                            } elseif (!empty($aProduct['id_product'])) {
-                                BT_GmcProCustomLabelDao::insertDynamicBestSales($iTagId, $fBestSaleAmount, $sBestSaleType, $sBestSaleStartDate, $sBestSaleStartEnd, $aProduct['id_product']);
-                            }
-                        }
-                    } else {
-                        // Fake the insert when we don't have product just to have data for filter and make the display on the popup later
-                        BT_GmcProCustomLabelDao::insertDynamicBestSales($iTagId, $fBestSaleAmount, $sBestSaleType, $sBestSaleStartDate, $sBestSaleStartEnd, 0);
-                        $aAssign['aErrors'][] = array(
-                            'msg' => $GLOBALS['GMCP_CL_PRODUCT_ASSOCIATION'][GMerchantCenterPro::$sCurrentLang],
-                            'code' => ''
-                        );
-                    }
+                    BT_GmcpLabelTools::handleDynamicBestSales($iTagId, $sBestSaleType, $fBestSaleAmount, $sBestSaleStartDate, $sBestSalesEndDate);
                 }
 
                 //Use case dynamic price range
                 if ($sLabelType == "dynamic_price_range") {
+                    BT_GmcpLabelTools::handleDynamicPriceRange($iTagId, $fPriceMin, $fPriceMax);
+                }
 
-                    $aProductIds = BT_GmcProCustomLabelDao::getPriceRangeProduct($fPriceMin, $fPriceMax);
+                // Use case handle last ordered products
+                if ($sLabelType == "dynamic_last_order") {
+                    BT_GmcpLabelTools::handleDynamicLastOrdered($iTagId, $sLastOrderedStart, $sLastOrderedEnd);
+                }
 
-                    if (!empty($aProductIds)) {
-                        foreach ($aProductIds as $aProduct) {
-                            BT_GmcProCustomLabelDao::insertDynamicPriceRange($iTagId, $fPriceMin, $fPriceMax, $aProduct['id_product']);
-                        }
-                    } else {
-                        BT_GmcProCustomLabelDao::insertDynamicPriceRange($iTagId, $fPriceMin, $fPriceMax, 0);
-                        $aAssign['aErrors'][] = array(
-                            'msg' => $GLOBALS['GMCP_CL_PRODUCT_ASSOCIATION'][GMerchantCenterPro::$sCurrentLang],
-                            'code' => ''
-                        );
-                    }
+                // Use case handle product in promotion
+                if ($sLabelType == "dynamic_promotion") {
+                    BT_GmcpLabelTools::handleDynamicPromotion($iTagId, $sLastOrderedStart, $sLastOrderedEnd);
                 }
             }
         } catch (Exception $e) {
@@ -1328,7 +1100,6 @@ class BT_AdminUpdate implements BT_IAdmin
                 } elseif (
                     $sDeleteType == 'bulk'
                     && !empty($aTagIds)
-                    && is_array($aTagIds)
                 ) {
                     $aIdsDelete = explode(",", $aTagIds);
 
@@ -1337,7 +1108,7 @@ class BT_AdminUpdate implements BT_IAdmin
                     }
                 }
             } else {
-                throw new Exception(GMerchantCenterPro::$oModule->l('Your Custom label ID is not valid or activate paramerters is wrong', 'admin-update_class') . '.', 600);
+                throw new Exception(GMerchantCenterPro::$oModule->l('Your custom label ID is not valid or some parameters are wrong', 'admin-update_class') . '.', 600);
             }
         } catch (Exception $e) {
             $aData['aErrors'][] = array('msg' => $e->getMessage(), 'code' => $e->getCode());
@@ -1479,6 +1250,12 @@ class BT_AdminUpdate implements BT_IAdmin
             $sUtmMedium = Tools::getValue('bt_utm-medium');
             if (!Configuration::updateValue('GMCP_UTM_MEDIUM', $sUtmMedium)) {
                 throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during utm medium update', 'admin-update_class') . '.', 702);
+            }
+
+            // add google UTM content
+            $sUtmContent = Tools::getValue('bt_utm_content');
+            if (!Configuration::updateValue('GMCP_UTM_CONTENT', $sUtmContent)) {
+                throw new Exception(GMerchantCenterPro::$oModule->l('An error occurred during utm content update', 'admin-update_class') . '.', 703);
             }
         } catch (Exception $e) {
             $aData['aErrors'][] = array('msg' => $e->getMessage(), 'code' => $e->getCode());
@@ -1863,74 +1640,45 @@ class BT_AdminUpdate implements BT_IAdmin
             }
             $sExclusionValue = serialize($aRulevalue);
 
-            //use case for add riules
+            //use case for add rules
             if (empty($iExclusionId)) {
-                if (!BT_GmcProExclusionDao::addExclusionRule(
-                    $bActive,
-                    GMerchantCenterPro::$iShopId,
-                    $sExclusionName,
-                    $sExclusionType,
-                    $sExclusionValue
-                )) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('Error during rule ADD', 'admin-update_class') . '.', 1100);
+                if (!BT_GmcProExclusionDao::addExclusionRule($bActive, GMerchantCenterPro::$iShopId, $sExclusionName, $sExclusionType, $sExclusionValue)) {
+                    throw new Exception(GMerchantCenterPro::$oModule->l('Error while adding the rule', 'admin-update_class') . '.', 1100);
                 } else {
                     // Use case for the product exclusion tab according to the option active
                     if (!empty($bActive)) {
                         $aLastRule = BT_GmcProExclusionDao::getLastRuleId();
                         foreach ($aRulevalue['aProductIds'] as $aProductData) {
                             if (!empty(GMerchantCenterpro::$conf['GMCP_P_COMBOS'])) {
-                                if (!BT_GmcProExclusionDao::addProductExcluded(
-                                    $aLastRule['last_id'],
-                                    $aProductData['id_product'],
-                                    $aProductData['id_product_attribute']
-                                )) {
-                                    throw new Exception(GMerchantCenterPro::$oModule->l('Error during rule ADD', 'admin-update_class') . '.', 1101);
+                                if (!BT_GmcProExclusionDao::addProductExcluded($aLastRule['last_id'], $aProductData['id_product'], $aProductData['id_product_attribute'])) {
+                                    throw new Exception(GMerchantCenterPro::$oModule->l('Error while adding the rule', 'admin-update_class') . '.', 1101);
                                 }
                             } else {
-                                if (!BT_GmcProExclusionDao::addProductExcluded(
-                                    $aLastRule['last_id'],
-                                    $aProductData,
-                                    0
-                                )) {
-                                    throw new Exception(GMerchantCenterPro::$oModule->l('Error during rule ADD', 'admin-update_class') . '.', 1102);
+                                if (!BT_GmcProExclusionDao::addProductExcluded($aLastRule['last_id'], $aProductData, 0)) {
+                                    throw new Exception(GMerchantCenterPro::$oModule->l('Error while adding the rule', 'admin-update_class') . '.', 1102);
                                 }
                             }
                         }
                     }
                 }
             } else {
-                if (!BT_GmcProExclusionDao::updateExclusionRule(
-                    $bActive,
-                    GMerchantCenterPro::$iShopId,
-                    $sExclusionName,
-                    $sExclusionType,
-                    $sExclusionValue,
-                    $iExclusionId
-                )) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('Error during rule Update', 'admin-update_class') . '.', 1103);
+                if (!BT_GmcProExclusionDao::updateExclusionRule($bActive, GMerchantCenterPro::$iShopId, $sExclusionName, $sExclusionType, $sExclusionValue, $iExclusionId)) {
+                    throw new Exception(GMerchantCenterPro::$oModule->l('Error while updating the rule', 'admin-update_class') . '.', 1103);
                 } else {
                     // Use case for the product exclusion tab according to the option active
                     if (empty($bActive)) {
                         if (!BT_GmcProExclusionDao::deleteProductExcluded($iExclusionId)) {
-                            throw new Exception(GMerchantCenterPro::$oModule->l('Error product exclusion DELETE', 'admin-update_class') . '.', 1104);
+                            throw new Exception(GMerchantCenterPro::$oModule->l('Error while deleting product exclusions', 'admin-update_class') . '.', 1104);
                         }
                     } else {
                         foreach ($aRulevalue['aProductIds'] as $aProductData) {
                             if (!empty(GMerchantCenterpro::$conf['GMCP_P_COMBOS'])) {
-                                if (!BT_GmcProExclusionDao::addProductExcluded(
-                                    $iExclusionId,
-                                    $aProductData['id_product'],
-                                    $aProductData['id_product_attribute']
-                                )) {
-                                    throw new Exception(GMerchantCenterPro::$oModule->l('Error product exclusion ADD', 'admin-update_class') . '.', 1105);
+                                if (!BT_GmcProExclusionDao::addProductExcluded($iExclusionId, $aProductData['id_product'], $aProductData['id_product_attribute'])) {
+                                    throw new Exception(GMerchantCenterPro::$oModule->l('Error while adding product exclusions', 'admin-update_class') . '.', 1105);
                                 }
                             } else {
-                                if (!BT_GmcProExclusionDao::addProductExcluded(
-                                    $iExclusionId,
-                                    $aProductData,
-                                    0
-                                )) {
-                                    throw new Exception(GMerchantCenterPro::$oModule->l('Error product exclusion ADD', 'admin-update_class') . '.', 1106);
+                                if (!BT_GmcProExclusionDao::addProductExcluded($iExclusionId, $aProductData, 0)) {
+                                    throw new Exception(GMerchantCenterPro::$oModule->l('Error while adding product exclusions', 'admin-update_class') . '.', 1106);
                                 }
                             }
                         }
@@ -1976,24 +1724,24 @@ class BT_AdminUpdate implements BT_IAdmin
             $bActivate = Tools::getValue('bActivate');
 
             if (empty($iRuleId) || empty($sType)) {
-                throw new Exception(GMerchantCenterPro::$oModule->l('Your rules id isn\'t valid or update type is no valid or activate parameters is forgotten', 'admin-update_class') . '.', 1200);
+                throw new Exception(GMerchantCenterPro::$oModule->l('The rule ID or the update type is missing', 'admin-update_class') . '.', 1200);
             } else {
                 // include
 
 
                 if (!BT_GmcProExclusionDao::updateRulesStatus($iRuleId, $sType, $bActivate)) {
-                    throw new Exception(GMerchantCenterPro::$oModule->l('Error during the rule status update', 'admin-update_class') . '.', 1201);
+                    throw new Exception(GMerchantCenterPro::$oModule->l('Error while updating the rule status', 'admin-update_class') . '.', 1201);
                 } else {
                     if (!empty($bActivate)) {
                         $aProducts = BT_GmcProExclusionTools::getProductFromRules();
                         foreach ($aProducts as $aProductData) {
                             if (!BT_GmcProExclusionDao::addProductExcluded($iRuleId, $aProductData['id_product'], $aProductData['id_product_attribute'])) {
-                                throw new Exception(GMerchantCenterPro::$oModule->l('Error product exclusion ADD', 'admin-update_class') . '.', 1202);
+                                throw new Exception(GMerchantCenterPro::$oModule->l('Error while adding product exclusions', 'admin-update_class') . '.', 1202);
                             }
                         }
                     } else {
                         if (!BT_GmcProExclusionDao::deleteProductExcluded($iRuleId)) {
-                            throw new Exception(GMerchantCenterPro::$oModule->l('Error product exclusion DELETE', 'admin-update_class') . '.', 1203);
+                            throw new Exception(GMerchantCenterPro::$oModule->l('Error while deleting product exclusions', 'admin-update_class') . '.', 1203);
                         }
                     }
                 }
@@ -2059,6 +1807,59 @@ class BT_AdminUpdate implements BT_IAdmin
         return $aLangs;
     }
 
+    /**
+     * update custom label product association durong the data feed update
+     * @param array $aPost
+     * @return array
+     */
+    private function updateCustomCheck(array $aPost = null)
+    {
+        require_once(_GMCP_PATH_LIB . 'label-tools_class.php');
+        BT_GmcpLabelTools::updateCustomLabelFeedProcess();
+    }
+
+    /**
+     * update iventory settings 
+     *
+     * @param array $aPost
+     * @return array
+     */
+    private function updateInventory(array $aPost)
+    {
+        // clean headers
+        @ob_end_clean();
+
+        // set
+        $aData = array();
+
+        try {
+            // Update configuration values
+            Configuration::updateValue('GMCP_STORE_CODE', Tools::getValue('bt_store_code'));
+            Configuration::updateValue('GMCP_LIA_PICKUP', Tools::getValue('bt_lia_pickup'));
+            Configuration::updateValue('GMCP_LIA_PICKUP_SLA', Tools::getValue('bt_lia_pickup_sla'));
+        } catch (Exception $e) {
+            $aData['aErrors'][] = array('msg' => $e->getMessage(), 'code' => $e->getCode());
+        }
+
+        // get configuration options
+        BT_GmcProModuleTools::getConfiguration();
+
+        // require admin configure class - to factorise
+        require_once(_GMCP_PATH_LIB_ADMIN . 'admin-display_class.php');
+
+        // get run of admin display in order to display first page of admin with basics settings updated
+        $aDisplay = BT_AdminDisplay::create()->run('inventory');
+
+        // use case - empty error and updating status
+        $aDisplay['assign'] = array_merge($aDisplay['assign'], array(
+            'bUpdate' => (empty($aData['aErrors']) ? true : false),
+        ), $aData);
+
+        // force xhr mode
+        GMerchantCenterPro::$sQueryMode = 'xhr';
+
+        return $aDisplay;
+    }
 
     /**
      * create() method set singleton

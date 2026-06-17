@@ -1,39 +1,28 @@
 <?php
 /**
- * 2007-2021 ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
  *
  * NOTICE OF LICENSE
  *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
  * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- * 
+ *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please contact us for extra customization service at an affordable price
+ * versions in the future.
  *
- *  @author ETS-Soft <etssoft.jsc@gmail.com>
- *  @copyright  2007-2021 ETS-Soft
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of ETS-Soft
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
  */
 
 namespace WebPConvert\Convert\Converters\BaseTraits;
 
+if (!defined('_PS_VERSION_')) { exit; }
 use WebPConvert\Convert\Converters\Stack;
 
-/**
- * Trait for handling options
- *
- * This trait is currently only used in the AbstractConverter class. It has been extracted into a
- * trait in order to bundle the methods concerning options.
- *
- * @package    WebPConvert
- * @author     Bjørn Rosell <it@rosell.dk>
- * @since      Class available since Release 2.0.0
- */
 trait OptionsTrait
 {
     abstract protected function getMimeTypeOfSource();
@@ -47,17 +36,6 @@ trait OptionsTrait
     /** @var Options  */
     protected $options2;
 
-    /**
-     * Set "provided options" (options provided by the user when calling convert().
-     *
-     * This also calculates the protected options array, by merging in the default options, merging
-     * jpeg and png options and merging prefixed options (such as 'vips-quality').
-     * The resulting options array are set in the protected property $this->options and can be
-     * retrieved using the public ::getOptions() function.
-     *
-     * @param   array $providedOptions (optional)
-     * @return  void
-     */
     public function setProvidedOptions($providedOptions = [])
     {
         $isPng = ($this->getMimeTypeOfSource() == 'image/png');
@@ -89,16 +67,6 @@ trait OptionsTrait
         
     }
 
-    /**
-     * Change an option specifically.
-     *
-     * This method is probably rarely neeeded. We are using it to change the "encoding" option temporarily
-     * in the EncodingAutoTrait.
-     *
-     * @param  string  $id      Id of option (ie "metadata")
-     * @param  mixed   $value   The new value.
-     * @return void
-     */
     protected function setOption($id, $value)
     {
         $this->options[$id] = $value;

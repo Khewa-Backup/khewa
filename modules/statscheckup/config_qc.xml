@@ -2,8 +2,8 @@
 <module>
     <name>statscheckup</name>
     <displayName><![CDATA[&Eacute;valuation du catalogue]]></displayName>
-    <version><![CDATA[2.0.1]]></version>
-    <description><![CDATA[Ajoute une &eacute;valuation rapide de la qualit&eacute; de votre catalogue dans le tableau de bord des statistiques.]]></description>
+    <version><![CDATA[2.0.2]]></version>
+    <description><![CDATA[Enrichissez vos statistiques en &eacute;valuant votre catalogue rapidement pour mieux analyser votre activit&eacute;.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[analytics_stats]]></tab>
     <is_configurable>0</is_configurable>

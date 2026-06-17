@@ -17,6 +17,9 @@
  *	@license PHP v3.0
  *	@version 1.1
  */
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 class SingularValueDecomposition  {
 
 	/**

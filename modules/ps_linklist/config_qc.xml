@@ -2,8 +2,8 @@
 <module>
     <name>ps_linklist</name>
     <displayName><![CDATA[Liste de liens]]></displayName>
-    <version><![CDATA[3.2.0]]></version>
-    <description><![CDATA[Ajoute un bloc avec plusieurs liens.]]></description>
+    <version><![CDATA[5.0.4]]></version>
+    <description><![CDATA[Donnez plus de visibilit&eacute; &agrave; votre contenu et &agrave; vos pages statiques pour susciter l&#039;int&eacute;r&ecirc;t de vos visiteurs. ]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[front_office_features]]></tab>
     <is_configurable>1</is_configurable>

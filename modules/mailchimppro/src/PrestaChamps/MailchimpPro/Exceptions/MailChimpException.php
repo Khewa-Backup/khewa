@@ -13,12 +13,14 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  */
 
 namespace PrestaChamps\MailchimpPro\Exceptions;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class MailChimpException
  *

@@ -32,7 +32,7 @@
     <div id="manufacturer-description-wrapper" class="mb-3">
     {if $manufacturer.short_description}
         <div class="card">
-        <div id="manufacturer-short-description">
+        <div id="manufacturer-short-description" class="rte-content">
                 {$manufacturer.short_description nofilter}
 
                 {if $manufacturer.description}
@@ -47,7 +47,7 @@
 
         {if $manufacturer.description}
             <div class="card">
-                <div id="manufacturer-description" class="collapse" role="tabpanel">
+                <div id="manufacturer-description" class="collapse rte-content" role="tabpanel">
                     {$manufacturer.description nofilter}
                     <a class="btn btn-secondary float-right"  data-toggle="collapse" data-parent="#manufacturer-description"
                        href="#manufacturer-description">
@@ -57,7 +57,7 @@
         {/if}
         {else}
         <div class="card">
-            <div id="manufacturer-description">
+            <div id="manufacturer-description" class="rte-content">
                 {$manufacturer.description nofilter}
             </div>
         </div>

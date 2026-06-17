@@ -38,9 +38,6 @@ class PwFavoritesAjaxModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-
-
-
         if (!$this->isAjax()) {
             $this->redirect();
         }

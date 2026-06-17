@@ -13,11 +13,14 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  */
 
 namespace PrestaChamps\MailchimpPro\Formatters;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class OrderStateFormatter
 {
@@ -43,36 +46,36 @@ class OrderStateFormatter
     public function format()
     {
         $statuses = \Configuration::getMultiple(
-            array(
+            [
                 \MailchimpProConfig::STATUSES_FOR_PAID,
                 \MailchimpProConfig::STATUSES_FOR_CANCELLED,
                 \MailchimpProConfig::STATUSES_FOR_REFUNDED,
                 \MailchimpProConfig::STATUSES_FOR_PENDING,
-            ),
-            $this->context->language->id,
+            ],
+            null,
             $this->context->shop->id_shop_group,
             $this->context->shop->id
         );
 
         $paid = isset($statuses[\MailchimpProConfig::STATUSES_FOR_PAID]) ?
-            json_decode($statuses[\MailchimpProConfig::STATUSES_FOR_PAID]) : array();
+            json_decode($statuses[\MailchimpProConfig::STATUSES_FOR_PAID]) : [];
         $cancelled = isset($statuses[\MailchimpProConfig::STATUSES_FOR_CANCELLED]) ?
-            json_decode($statuses[\MailchimpProConfig::STATUSES_FOR_CANCELLED]) : array();
+            json_decode($statuses[\MailchimpProConfig::STATUSES_FOR_CANCELLED]) : [];
         $refunded = isset($statuses[\MailchimpProConfig::STATUSES_FOR_REFUNDED]) ?
-            json_decode($statuses[\MailchimpProConfig::STATUSES_FOR_REFUNDED]) : array();
+            json_decode($statuses[\MailchimpProConfig::STATUSES_FOR_REFUNDED]) : [];
         $pending = isset($statuses[\MailchimpProConfig::STATUSES_FOR_PENDING]) ?
-            json_decode($statuses[\MailchimpProConfig::STATUSES_FOR_PENDING]) : array();
+            json_decode($statuses[\MailchimpProConfig::STATUSES_FOR_PENDING]) : [];
 
-        if ($this->orderState->paid || in_array($this->orderState->id, $paid, false)) {
+        if ($this->orderState->paid || in_array($this->orderState->id, $paid,false)) {
             return 'paid';
         }
-        if (in_array($this->orderState->id, $cancelled, false)) {
+        if (in_array($this->orderState->id, $cancelled,false)) {
             return 'cancelled';
         }
-        if (in_array($this->orderState->id, $refunded, false)) {
+        if (in_array($this->orderState->id, $refunded,false)) {
             return 'refunded';
         }
-        if (in_array($this->orderState->id, $pending, false)) {
+        if (in_array($this->orderState->id, $pending,false)) {
             return 'pending';
         }
 

@@ -13,7 +13,7 @@
 *
 *}
 
-<div id="iqitwishlist-product-{$product.id_iqitwishlist_product|intval}" class="iqitwishlist-product">
+<div id="iqitwishlist-product-{$product.id_iqitwishlist_product|intval}" class="iqitwishlist-product product-miniature-grid ">
     <div class="row align-items-center">
         <div class="col-3 col-sm-auto">
             <a href="{$product.url}"> 
@@ -38,6 +38,10 @@
         <div class="col {if $readOnly} text-right{/if}">
             <span class="product-price">{$product.price}</span>
         </div>
+        <div class="col col-auto{if $readOnly} text-right{/if}">
+            {include file='catalog/_partials/miniatures/_partials/product-miniature-btn.tpl'}
+        </div>
+      
         {if !$readOnly}
             <div class="col col-auto">
                 <a href="#" class="js-iqitwishlist-remove"

@@ -104,15 +104,12 @@ class AccessCore extends ObjectModel
     {
         $idProfile = (int) $idProfile;
 
-
         $accesses = Db::getInstance()->executeS('
             SELECT r.`slug`
             FROM `' . _DB_PREFIX_ . 'authorization_role` r
             INNER JOIN `' . _DB_PREFIX_ . 'access` a ON a.`id_authorization_role` = r.`id_authorization_role`
             WHERE a.`id_profile` = "' . $idProfile . '"
         ');
-
-
 
         $accessesFromModules = Db::getInstance()->executeS('
             SELECT r.`slug`
@@ -127,9 +124,6 @@ class AccessCore extends ObjectModel
             $roles[$key] = $role['slug'];
         }
 
-
-//        var_dump($roles);
-//        die("okman");
         return $roles;
     }
 

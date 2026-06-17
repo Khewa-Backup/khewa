@@ -22,6 +22,7 @@
 namespace PrestaShop\Module\Ps_metrics\Middleware;
 
 use PrestaShop\Module\Ps_metrics\Helper\JsonHelper;
+use Psr\Http\Message\ResponseInterface;
 
 class CheckResponseMiddleware extends Middleware
 {
@@ -47,8 +48,11 @@ class CheckResponseMiddleware extends Middleware
      *
      * @return array
      */
-    public function execute($response)
+    public function execute($response): array
     {
+        /** @var ResponseInterface $response */
+        $response = $response;
+
         $responseFormatted = [
             'code' => $response->getStatusCode(),
             'body' => [],
@@ -59,16 +63,15 @@ class CheckResponseMiddleware extends Middleware
             200 != $response->getStatusCode() &&
             201 != $response->getStatusCode()
         ) {
-            $responseFormatted['error'] = $response->getReasonPhrase();
+            $responseFormatted['error'] = 'There was an error with the request. Code: ' . $response->getStatusCode();
         }
-        if (!empty($response->getBody())) {
-            $content = $response->getBody()->getContents();
 
-            if (!empty($content) && $this->jsonHelper->isJson($content)) {
-                $responseFormatted['body'] = $this->jsonHelper->jsonDecode($content, true);
-            } else {
-                $responseFormatted['body'] = $content;
-            }
+        $content = $response->getBody()->getContents();
+
+        if (!empty($content) && $this->jsonHelper->isJson($content)) {
+            $responseFormatted['body'] = $this->jsonHelper->jsonDecode($content, true);
+        } else {
+            $responseFormatted['body'] = $content;
         }
 
         return parent::execute($responseFormatted);

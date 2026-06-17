@@ -57,7 +57,7 @@
 	border-bottom: 1px solid #9FD1EB;
 }
 .selected-atts-summary {
-	color: #BBB;
+	color: #6C868E;
 	margin-top: 7px;
 	float: right;
 }
@@ -111,7 +111,8 @@ th.last, td.last {
 }
 
 /* pre/suffixes */
-.bootstrap .input-prefix, .bootstrap .input-suffix {
+.bootstrap .input-prefix,
+.bootstrap .input-suffix {
 	position: absolute;
 	bottom: 1px;
 	right: 1px;
@@ -120,12 +121,13 @@ th.last, td.last {
 	height: 27px;
 	width: auto;
 }
-.bootstrap .input-prefix {
+#content .bcg-container .input-prefix {
 	left: 1px;
 	right: auto;
 	font-family: monospace;
 }
-.bootstrap .input-prefix:focus, .bootstrap .input-suffix:focus {
+.bootstrap .input-prefix:focus,
+.bootstrap .input-suffix:focus {
 	box-shadow: none;
 }
 
@@ -139,6 +141,9 @@ th.last, td.last {
 .attribute-impact.has-value .no-value {
 	display: none;
 }
+.selected-att-options {
+	margin: 10px 0 15px 0;
+}
 .att-option {
 	padding-top: 5px;
 }
@@ -151,11 +156,34 @@ th.last, td.last {
 }
 .att-option label {
 	font-weight: normal;
+	white-space: nowrap;
+	padding: 0 1px;
+}
+
+/* override settings */
+.override-settings .panel-header {
+	margin-bottom: 10px;
+}
+#content.bootstrap .override-settings .panel {
+	padding-bottom: 10px;
+}
+.bootstrap .override-label {
+	line-height: 31px;
+	font-weight: normal;
+	margin: 0 1em 0 0;
+}
+.override-label input[type="checkbox"] {
+	vertical-align: middle;
+	margin: -3px 0 0 0;
+}
+.override-settings .override-impacts {
+	display: inline-block;
+	width: auto;
 }
 
 #duplicate-combinations .additional-info {
 	padding-top: 7px;
-	color: #BBB;
+	color: #6C868E;
 }
 
 /* filter products */
@@ -303,16 +331,20 @@ label.opt-action {
 	font-family: monospace;
 	background: #373A41;
 	color: #72C279;
-	min-height: 123px;
+	min-height: 135px;
 	position: relative;
 }
-.dynamic-log .error {
-	color: #DA7A82;
+.log-error {
+	color: #E79098;
 }
-.dynamic-log .note {
-	color: #999;
+.log-note {
+	color: #6C868E;
 }
-.dynamic-log .warning {
+.log-info {
+	color: #9FD1EB;
+	margin-top: 5px;
+}
+.log-warning {
 	color: #DCBD72;
 }
 .dynamic-log .loading-indicator {
@@ -325,12 +357,6 @@ label.opt-action {
 	display: block;
 }
 
-.bootstrap .override-label {
-	color: #BBB;
-	font-size: 0.9em;
-	line-height: 28px;
-	margin: 0 0 0 1px;
-}
 #content.bootstrap .panel.attributes {
 	border-top-left-radius: 0;
 	padding-bottom: 5px;
@@ -354,17 +380,18 @@ label.opt-action {
 	position: absolute;
 	bottom: 100%;
 	margin-bottom: 3px;
-	padding: 10px;
-	border: 1px dashed #1f94ab;
+	padding: 15px 30px 15px 15px;
+	color: #2F8196;
+	border: 1px dashed #1F94AB;
 	border-radius: 4px;
-	width: 500px;
-	z-index: 100000;
+	width: 550px;
+	z-index: 1000;
 	box-shadow: 0px 0px 20px rgba(100,100,100,0.1);
 	display: none;
 }
 @media (min-width: 1200px) {
 	.variables-container .variables-list {
-		left: -250px;
+		left: -275px;
 	}
 }
 .variables-container.show-list .variables-list {
@@ -397,6 +424,7 @@ label.opt-action {
 }
 .panel .process-form .runAction {
 	outline: none;
+	height: 31px;
 }
 .blocked .panel.attributes:before, .blocked .att-actions:before,
 .blocked .products-form:before, .blocked .process-form:before {
@@ -416,16 +444,20 @@ label.opt-action {
 }
 
 /* modal */
-#dynamic-popup .dynamic-content {
+#bcg-dynamic-popup .dynamic-content {
 	padding: 10px;
 }
-#dynamic-popup .modal-title {
+#bcg-dynamic-popup .modal-title {
 	margin: 0;
 	font-size: 18px;
 	text-transform: uppercase;
 }
-#dynamic-popup .close {
+#bcg-dynamic-popup .close {
 	margin-top: -19px;
+}
+#bcg-dynamic-popup.loading .modal-title,
+#bcg-dynamic-popup.loading .dynamic-content {
+	opacity: 0;
 }
 
 /* info */
@@ -436,7 +468,45 @@ label.opt-action {
 	margin-right: 15px;
 	font-size: 14px;
 	line-height: 30px;
-	color: #BBB;
+	color: #6C868E;
+}
+
+/* 1.7.8+ */
+.bootstrap .bcg-container .btn,
+.bootstrap .bcg-container input,
+.bootstrap .bcg-container select {
+	padding: 5px 7px;
+	max-height: 31px;
+	line-height: 1.5;
+}
+.bcg-container select {
+	padding: 5px;
+}
+.bcg-container .btn,
+#bcg-dynamic-popup .btn {
+	display: inline-block;
+}
+.bootstrap .bcg-container .control-label {
+	padding-right: 7px;
+	font-size: 1.1em;
+	line-height: 1.2;
+}
+.bcg-container .form-group {
+	margin-bottom: 19px;
+}
+
+/* unicode icons */
+.u-times:before {
+	content: '×';
+	font-family: Tahoma;
+	font-size: 1em;
+	line-height: 1;
+}
+.u-check:before {
+	content: '✓';
+	font-family: Tahoma;
+	font-size: 1em;
+	line-height: 1;
 }
 
 /* general styles */
@@ -454,9 +524,10 @@ label.opt-action {
 .overflow-scroll {overflow: scroll;}
 .overflow-ellipsis {white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 .opaque {opacity: 0; cursor: normal;}
-select.minimalistic {border: 0; background: none; height: 20px; font-weight: normal; box-shadow: none;}
-select.minimalistic:focus {box-shadow: none;}
+.bootstrap select.minimalistic {border: 0; background: none; height: 20px; padding: 0; font-weight: normal; box-shadow: none;}
+.bootstrap select.minimalistic:focus {box-shadow: none;}
+.uppercase {text-transform: uppercase;}
 .b {font-weight:bold;}
 .i {font-style:italic;}
 .u {text-decoration:underline;}
-/* since 2.1.1 */
+/* since 2.1.3 */

@@ -1,1 +1,1 @@
-<iframe style="height: 1150px; border: none; width: 100%" src="https://addons.prestashop.com/contact-community.php?id_product=17611&amp;content_only=1&amp;licence_number=&amp;lang=en#contact-form"></iframe>
+<input class="support_url" type="hidden" value="https://addons.prestashop.com/en/contact-us?id_product=17611#contact-form">

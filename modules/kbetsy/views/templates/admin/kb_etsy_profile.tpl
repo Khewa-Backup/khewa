@@ -1,18 +1,24 @@
 {if isset($custom_pricing)}
+    {*
+        Changed col-lg-3 to col-lg-4 and col-lg-9 to col-lg-8 to fix the layout issue of the Custom pricing dropdown box
+        *And removed fixed-width-xl class to fix the collapse issue.
+        * @date 17-04-2023
+        * @modifier Tanisha Gupta
+    *}
     <div class="form-group" id="etsy_custom_pricing" style="display: none;">
-        <label class="control-label col-lg-3 required">{l s='Custom Pricing' mod='kbetsy'}</label>
-        <div class="col-lg-9">
+        <label class="control-label col-lg-4 required">{l s='Custom Pricing' mod='kbetsy'}</label>
+        <div class="col-lg-8">
             <div class="col-lg-3">
                 <input type="text" name="custom_price" id="custom_price" value="{if !empty($custom_pricing_array)}{$custom_pricing_array['custom_price']|escape:'htmlall':'UTF-8'}{/if}">
             </div>
             <div class="col-lg-3">
-                <select name="price_type" class=" fixed-width-xl" id="price_type">
+                <select name="price_type" class="" id="price_type">
                     <option value="Fixed" {if !empty($custom_pricing_array)}{if $custom_pricing_array['price_type'] == 'Fixed'}selected{/if}{/if}>{l s='Fixed' mod='kbetsy'}</option>
                     <option value="Percentage" {if !empty($custom_pricing_array)}{if $custom_pricing_array['price_type'] == 'Percentage'}selected{/if}{/if}>{l s='Percentage' mod='kbetsy'}</option>
                 </select>
             </div>
             <div class="col-lg-3">
-                <select name="price_reduction" class=" fixed-width-xl" id="price_reduction">
+                <select name="price_reduction" class="" id="price_reduction">
                     <option value="increase" {if !empty($custom_pricing_array)}{if $custom_pricing_array['price_reduction'] == 'increase'}selected{/if}{/if}>{l s='Increase' mod='kbetsy'}</option>
                     <option value="decrease" {if !empty($custom_pricing_array)}{if $custom_pricing_array['price_reduction'] == 'decrease'}selected{/if}{/if}>{l s='Decrease' mod='kbetsy'}</option>
                 </select>
@@ -21,7 +27,6 @@
         </div>
     </div>
 {/if}
-
 {if isset($is_size_chart_image_exists)}
     <script>
         var is_size_chart_image_exists = {$is_size_chart_image_exists|escape:'htmlall':'UTF-8'};
@@ -38,6 +43,9 @@
         background-color: #eaeaea;
         color: #555;
         cursor: pointer;
+    }
+    a#expand-all-prestashop_category, a#collapse-all-prestashop_category {
+    display: none;
     }
 </style>
 <script>

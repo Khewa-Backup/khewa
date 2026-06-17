@@ -47,14 +47,28 @@
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     var info=JSON.parse(xhttp.responseText);
-                    printProductLabel(product_label_template,info,count,isLast);
-                    if(callback)
-                        callback();
+                    getProductLabelTemplateURL(id,function(product_label_template) {
+                        printProductLabel(product_label_template,info,count,isLast);
+
+                        if(info["reference_generated"]=="yes")
+                        {
+                            $("#combination_" + combination_id + "_attribute_reference").val(info["reference"]);
+                        }
+                        if(info["ean13_generated"]=="yes"){
+                            $("#combination_"+combination_id+"_attribute_ean13").val(info["ean13"]);
+                        }
+                        if(info["upc_generated"]=="yes"){
+                            $("#combination_" + combination_id + "_attribute_upc").val(info["upc"]);
+                        }
+
+                        if(callback)
+                            callback();
+                    });
                 }else if(this.readyState == 4){
-                    alert("DirectLabelPrint couldn't load product data because shop is deactivated. Please enable shop or enter your IP-address as Maintanance IP.")
+                    alert("{l s='Direct Label Print couldn\'t load product data.' mod='directlabelprintproduct'}");
                 }
             };
-            xhttp.open("GET", "{$dlppb_module_folder|escape:'html':'UTF-8'}getproductinfo.php?id="+id+"&combination_id="+combination_id+"&token={$token|escape:'html':'UTF-8'}", true);
+            xhttp.open("GET", dlpp_controller_url+"&action=getProductInfo&id="+id+"&lang_id={$lang_id|escape:'html':'UTF-8'}&combination_id="+combination_id, true);
             xhttp.send();
 
         }
@@ -64,15 +78,14 @@
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var info=JSON.parse(xhttp.responseText);
-                printProductLabel(product_label_template,info,quantity, isLast);
-                if(callback){
-                    callback();
-                }
+                getProductLabelTemplateURL(info["id_product"],function(product_label_template) {
+                    printProductLabel(product_label_template,info,quantity, isLast,callback);
+                });
             }else if(this.readyState == 4){
-                alert("DirectLabelPrint couldn't load product data because shop is deactivated. Please enable shop or enter your IP-address as Maintanance IP.")
+                alert("{l s='Direct Label Print couldn\'t load product data.' mod='directlabelprintproduct'}");
             }
         };
-        xhttp.open("GET", "{$dlppb_module_folder|escape:'html':'UTF-8'}getproductinfo.php?barcode="+barcode+"&token={$token|escape:'html':'UTF-8'}", true);
+        xhttp.open("GET", dlpp_controller_url+"&action=getProductInfo&barcode="+barcode+"&langid={$lang_id|escape:'html':'UTF-8'}", true);
         xhttp.send();
 
     }
@@ -100,7 +113,7 @@
         document.body.appendChild(waitDiv);
 
         function processNext(i){
-            waitDiv.innerText="Loading Label Info "+(i+1)+" / "+selected.length;
+            waitDiv.innerText="{l s='Loading Label Info' mod='directlabelprintproduct'} "+(i+1)+" / "+selected.length;
             console.log(waitDiv.innerText);
             var isLast = (selected.length - 1 == i);
             if(isLast){
@@ -116,13 +129,14 @@
         processNext(0);
     }
 
-    function printLabelSelectedProducts(pForm,includingCombinations) {
+    function printLabelSelectedProducts(pForm,includingCombinations,excludeMainProduct) {
+
+        window.scrollTo(0, 0);
 
         var waitDiv=document.createElement("div");
         waitDiv.className="labelPrintWait";
-        document.body.appendChild(waitDiv);
 
-        var count = prompt("Please enter number of labels (per product/combination).", "1");
+        var count = prompt("{l s='Please enter number of labels (per product/combination).' mod='directlabelprintproduct'}", "1");
 
         var selected=[];
         for (var i = 0; i < pForm.elements.length; i++){
@@ -135,17 +149,19 @@
 
         function processNext(i){
             var isLast = (selected.length - 1 == i);
-            var combination_ids=[0];
+            var combination_ids=[];
             if(includingCombinations){
                 for(var j=0;j<product_ids_array.length;j++){
                     var product=product_ids_array[j];
-                    if(product.id_product==selected[i]) {
+                    if(product.id_product==selected[i] && (!excludeMainProduct || product.id_product_attribute!="0")) {
                         combination_ids[combination_ids.length]=product.id_product_attribute;
                     }
                 }
+            }else{
+                combination_ids=[0];
             }
             function processCombination(j){
-                waitDiv.innerText="Loading Label Info "+(i+1)+" / "+selected.length+" - Item "+j+" / "+combination_ids.length;
+                waitDiv.innerText="{l s='Loading Label Info' mod='directlabelprintproduct'} "+(i+1)+" / "+selected.length+" - {l s='Item' mod='directlabelprintproduct'} "+j+" / "+combination_ids.length;
                 var isLastComb=(j==combination_ids.length-1);
                 printProductLabelOf(selected[i], combination_ids[j], count, isLast&&isLastComb,function() {
                     j++;
@@ -156,6 +172,7 @@
                             processNext(i+1);
                         }else{
                             document.body.removeChild(waitDiv);
+                            batchVariant=undefined;
                         }
                     }
 
@@ -164,7 +181,27 @@
             processCombination(0);
         }
 
-        processNext(0);
+        //Check if multiple templates are defined
+        var check_multiple_url=dlpp_controller_url+"&action=hasTemplateVariants&id_product=DEFAULT&cache="+Math.round(Math.random()*1000);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if(this.responseText=="1"){
+                    askVariantChoice(function(choice) {
+                        document.body.appendChild(waitDiv);
+                        batchVariant = choice;
+                        processNext(0);
+                    });
+                }else{
+                    document.body.appendChild(waitDiv);
+                    batchVariant=1;
+                    processNext(0);
+                }
+            }
+        }.bind(xhttp);
+        xhttp.open("GET", check_multiple_url, true);
+        xhttp.send();
+
 
     }
 
@@ -176,10 +213,11 @@
                 product_ids_array=JSON.parse(xhttp.responseText);
                 documentReadyDLPP2();
             }else if(this.readyState == 4){
-                alert("Direct Label Print couldn't load product data because shop is deactivated. Please enable shop or enter your IP-address as Maintanance IP.")
+                console.log("Retrieval Error:"+this.readyState+"-"+this.status);
+                alert("{l s='Direct Label Print couldn\'t load product data.' mod='directlabelprintproduct'}");
             }
         };
-        xhttp.open("GET", "{$dlppb_module_folder|escape:'html':'UTF-8'}getproductids.php?token={$token|escape:'html':'UTF-8'}", true);
+        xhttp.open("GET", dlpp_controller_url+"&action=getProductIds", true);
         xhttp.send();
     }
 
@@ -204,36 +242,49 @@
            //Add Bulk (1.6)
                var bulk6 = $(".adminproducts .bulk-actions .dropdown-menu");
                bulk6.append("<li>"+
-                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($(this).closest('form').get(0),false);return false;\">"+
-                       "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;Print Product Labels - Products Only"+
+                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($(this).closest('form').get(0),false,false);return false;\">"+
+                       "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;{l s='Print Product Labels' mod='directlabelprintproduct'} - {l s='Products Only' mod='directlabelprintproduct'}"+
                        "</a>"+
                        "</li>");
                bulk6.append("<li>"+
-                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($(this).closest('form').get(0),true);return false;\">"+
-                       "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;Print Product Labels - Products + Combinations"+
+                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($(this).closest('form').get(0),true,false);return false;\">"+
+                       "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;{l s='Print Product Labels' mod='directlabelprintproduct'} - {l s='Products + Combinations' mod='directlabelprintproduct'}"+
+                       "</a>"+
+                       "</li>");
+               bulk6.append("<li>"+
+                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($(this).closest('form').get(0),true,true);return false;\">"+
+                       "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;{l s='Print Product Labels' mod='directlabelprintproduct'} - {l s='Combinations Only' mod='directlabelprintproduct'}"+
                        "</a>"+
                        "</li>");
            //Add Bulk (1.7)
                var bulk7 = $(".adminproducts .bulk-catalog .dropdown-menu");
             console.log("1.7 bulk:"+bulk7.length);
                bulk7.append(
-                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],false);return false;\" class=\"dropdown-item\">"+
-                       "<img src=\"{$dlppb_module_folder|escape:'html':'UTF-8'}views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;Print Product Labels - Products Only"+
+                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],false,false);return false;\" class=\"dropdown-item\">"+
+                       "<img src=\"{$dlppb_module_folder|escape:'html':'UTF-8'}views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;{l s='Print Product Labels' mod='directlabelprintproduct'} - {l s='Products Only' mod='directlabelprintproduct'}"+
                        "</a>");
                bulk7.append(
-                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],true);return false;\" class=\"dropdown-item\">"+
-                       "<img src=\"{$dlppb_module_folder|escape:'html':'UTF-8'}views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;Print Product Labels - Products + Combinations"+
+                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],true,false);return false;\" class=\"dropdown-item\">"+
+                       "<img src=\"{$dlppb_module_folder|escape:'html':'UTF-8'}views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;{l s='Print Product Labels' mod='directlabelprintproduct'} - {l s='Products + Combinations' mod='directlabelprintproduct'}"+
+                       "</a>");
+               bulk7.append(
+                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],true,true);return false;\" class=\"dropdown-item\">"+
+                       "<img src=\"{$dlppb_module_folder|escape:'html':'UTF-8'}views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;{l s='Print Product Labels' mod='directlabelprintproduct'} - {l s='Combinations Only' mod='directlabelprintproduct'}"+
                        "</a>");
 
            if(bulk6.length==0 && bulk7.length==0){
                //Fix for early 1.7 releases
                var bulk7b = $(".adminproducts .dropup .dropdown-menu");
-               bulk7b.append("<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],false);return false;\" class=\"dropdown-item\">"+
-               "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;Print Product Labels - Products Only"+
+               bulk7b.append("<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],false,false);return false;\" class=\"dropdown-item\">"+
+               "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;{l s='Print Product Labels' mod='directlabelprintproduct'} - {l s='Products Only' mod='directlabelprintproduct'}"+
                "</a>");
                bulk7b.append(
-                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],true);return false;\" class=\"dropdown-item\">"+
-                       "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;Print Product Labels - Products + Combinations"+
+                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],true,false);return false;\" class=\"dropdown-item\">"+
+                       "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;{l s='Print Product Labels' mod='directlabelprintproduct'} - {l s='Products + Combinations' mod='directlabelprintproduct'}"+
+                       "</a>");
+               bulk7b.append(
+                       "<a href=\"#\" onclick=\"javascript:printLabelSelectedProducts($('#product_catalog_list')[0],true,true);return false;\" class=\"dropdown-item\">"+
+                       "<img src=\"../modules/directlabelprintproduct/views/img/icon-print.png\" style=\"height:100%\"/>&nbsp;{l s='Print Product Labels' mod='directlabelprintproduct'} - {l s='Combinations Only' mod='directlabelprintproduct'}"+
                        "</a>");
            }
 
@@ -275,7 +326,7 @@
                            }
                            all_parent.append("" +
                                    "<button type=\"button\" class=\""+className+"\" style=\"padding:5px\" onclick=\"printStockChange()\">" +
-                                   "<img src=\"{$dlppb_module_folder|escape:'html':'UTF-8'}views/img/icon-print.png\" style=\"height:25px\"/> Print New Qty</button>");
+                                   "<img src=\"{$dlppb_module_folder|escape:'html':'UTF-8'}views/img/icon-print.png\" style=\"height:25px\"/> {l s='Print New Qty' mod='directlabelprintproduct'}</button>");
                        }
                    }
 
@@ -326,20 +377,31 @@
 
         var directLabelPrintActions=new Array();
 
-        var dlppb_generic_label_width={$generic_label_width|escape:'html':'UTF-8'};
+        /*var dlppb_generic_label_width={$generic_label_width|escape:'html':'UTF-8'};
         var dlppb_generic_label_height={$generic_label_height|escape:'html':'UTF-8'};
         var dlppb_generic_label_rotate={$generic_label_rotate|escape:'html':'UTF-8'};
-        var dlppb_generic_label_content='{$generic_label_content|escape:'quotes':'UTF-8'}';
+        var dlppb_generic_label_content='{$generic_label_content|escape:'quotes':'UTF-8'}';*/
         var printer_type_set={$printertypeset|escape:'html':'UTF-8'};
         var dlppb_printer_type_isDymo={$dlppb_printer_type_isDymo|escape:'html':'UTF-8'};
         var dlppb_printer_type_isGeneric={$dlppb_printer_type_isGeneric|escape:'html':'UTF-8'};
 
-        var product_label_template="{$product_label_template|escape:'html':'UTF-8'}";
+        /*var product_label_template="{$product_label_template|escape:'html':'UTF-8'}";*/
         var dlppb_module_folder="{$dlppb_module_folder|escape:'html':'UTF-8'}";
 
         var dymoPrinterIndex_dlpp={$dymoPrinterIndex|escape:'html':'UTF-8'};
 
         var selectedDymoIndex_dlpp={$selectedDymoIndex|escape:'html':'UTF-8'};//SDI
 
+        var dlpp_controller_url="{$dlpp_controller_url|escape:'quotes':'UTF-8'}";
 
+        var message_setup_before_use="{l s='Module requires setup before use, please go to Module Settings.' mod='directlabelprintproduct'}";
+        var enter_label_count="{l s='Please enter number of labels.' mod='directlabelprintproduct'}";
+        var no_dymo_found="{l s='Can\'t find DYMO label printers. Please go to module settings for details.' mod='directlabelprintproduct'}";
+        var incorrect_dymo_selected="{l s='Incorrect printer set in settings. Please set available Dymo printer.' mod='directlabelprintproduct'}";
+
+        var chooseTemplateVariant_text="{l s='Choose Template Variant' mod='directlabelprintproduct'}";
+        var defaultTemplateVariant_text="{l s='Default' mod='directlabelprintproduct'}";
+        var variant1_text="{l s='Variant 1' mod='directlabelprintproduct'}";
+        var variant2_text="{l s='Variant 2' mod='directlabelprintproduct'}";
+        var cancel_text="{l s='Cancel' mod='directlabelprintproduct'}";
 </script>

@@ -6,7 +6,7 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * This source file is subject to the Academic Free License version 3.0
  * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
@@ -14,41 +14,23 @@
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
  * @author    PrestaShop SA and Contributors <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-use PrestaShop\Module\AutoUpgrade\Tools14;
 
-if (function_exists('date_default_timezone_set')) {
-    // date_default_timezone_get calls date_default_timezone_set, which can provide warning
-    $timezone = @date_default_timezone_get();
-    date_default_timezone_set($timezone);
-}
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Set constants & general values used by the autoupgrade.
- *
  * @param string $callerFilePath Path to the caller file. Needed as the two files are not in the same folder
+ *
+ * @return void
  */
-function autoupgrade_init_container($callerFilePath)
+function autoupgrade_require_autoload($callerFilePath)
 {
-    if (PHP_SAPI === 'cli') {
-        $options = getopt('', array('dir:'));
-        if (isset($options['dir'])) {
-            $_POST['dir'] = $options['dir'];
-        }
-    }
-
     // the following test confirm the directory exists
     if (empty($_POST['dir'])) {
-        echo 'No admin directory provided (dir). 1-click upgrade cannot proceed.';
+        echo 'No admin directory provided (dir). Update assistant cannot proceed.';
         exit(1);
     }
 
@@ -63,10 +45,19 @@ function autoupgrade_init_container($callerFilePath)
     }
 
     define('AUTOUPGRADE_MODULE_DIR', _PS_MODULE_DIR_ . 'autoupgrade' . DIRECTORY_SEPARATOR);
-    require_once AUTOUPGRADE_MODULE_DIR . 'functions.php';
     require_once AUTOUPGRADE_MODULE_DIR . 'vendor/autoload.php';
+}
 
-    $dir = Tools14::safeOutput(Tools14::getValue('dir'));
+/**
+ * Set constants & general values used by the autoupgrade.
+ *
+ * @param Request $request
+ *
+ * @return \PrestaShop\Module\AutoUpgrade\UpgradeContainer
+ */
+function autoupgrade_init_container($request)
+{
+    $dir = $request->get('dir');
     define('_PS_ADMIN_DIR_', _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . $dir);
 
     if (_PS_ADMIN_DIR_ !== realpath(_PS_ADMIN_DIR_)) {
@@ -75,7 +66,9 @@ function autoupgrade_init_container($callerFilePath)
     }
 
     $container = new \PrestaShop\Module\AutoUpgrade\UpgradeContainer(_PS_ROOT_DIR_, _PS_ADMIN_DIR_);
-    $container->getState()->importFromArray(empty($_REQUEST['params']) ? array() : $_REQUEST['params']);
+    $container->getBackupState()->importFromArray(empty($_REQUEST['params']) ? [] : $_REQUEST['params']);
+    $container->getRestoreState()->importFromArray(empty($_REQUEST['params']) ? [] : $_REQUEST['params']);
+    $container->getUpdateState()->importFromArray(empty($_REQUEST['params']) ? [] : $_REQUEST['params']);
 
     return $container;
 }

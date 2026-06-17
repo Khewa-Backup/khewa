@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
  * @version    1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  * PHPExcel_Worksheet
@@ -1415,7 +1417,7 @@ class PHPExcel_Worksheet implements PHPExcel_IComparable
      * @param $pValue PHPExcel_Style_Conditional[]
      * @return PHPExcel_Worksheet
      */
-    public function setConditionalStyles($pCoordinate = 'A1', $pValue)
+    public function setConditionalStyles($pCoordinate = 'A1', array $pValue = null)
     {
         $this->_conditionalStylesCollection[$pCoordinate] = $pValue;
         return $this;
@@ -2810,7 +2812,7 @@ class PHPExcel_Worksheet implements PHPExcel_IComparable
                     $this->_autoFilter = $newAutoFilter;
                     $this->_autoFilter->setParent($this);
                 } else {
-                    $this->{$key} = unserialize(serialize($val));
+                    $this->{$key} = json_decode(json_encode($val), true);
                 }
             }
         }

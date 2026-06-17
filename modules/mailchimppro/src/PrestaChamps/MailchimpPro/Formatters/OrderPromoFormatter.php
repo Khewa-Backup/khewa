@@ -18,6 +18,9 @@
  */
 
 namespace PrestaChamps\MailchimpPro\Formatters;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class OrderPromoFormatter extends PromoRuleFormatter
 {
@@ -31,12 +34,12 @@ class OrderPromoFormatter extends PromoRuleFormatter
 
     public function format()
     {
-        $data = array();
+        $data = [];
         $data['code'] = $this->cartRule->code;
         if ($this->cartRule->free_shipping) {
             $data['type'] = self::TYPE_FIXED;
             $data['amount_discounted'] = $this->order->total_shipping;
-        } elseif (isset($this->cartRule->reduction_percent) && $this->cartRule->reduction_percent != 0) {
+        } else if (isset($this->cartRule->reduction_percent) && $this->cartRule->reduction_percent != 0) {
             $data['type'] = self::TYPE_PERCENTAGE;
             $data['amount_discounted'] = $this->cartRule->reduction_percent / 100.0;
         } else {

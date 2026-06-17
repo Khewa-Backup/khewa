@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>newprodslider</name>
+    <displayName><![CDATA[New products slider]]></displayName>
+    <version><![CDATA[1.0.0]]></version>
+    <description><![CDATA[Displays a slider block featuring your store&#039;s newest products.]]></description>
+    <author><![CDATA[prestashoot]]></author>
+    <tab><![CDATA[]]></tab>
+    <is_configurable>0</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>

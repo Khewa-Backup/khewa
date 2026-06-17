@@ -1,6 +1,6 @@
 [{shop_url}]
 
-Hi {customer}
+Hi {name}
 
 Here is your gift card worth {giftcard_amount}.
 

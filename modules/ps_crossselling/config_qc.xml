@@ -3,7 +3,7 @@
     <name>ps_crossselling</name>
     <displayName><![CDATA[Vente crois&eacute;e]]></displayName>
     <version><![CDATA[2.0.1]]></version>
-    <description><![CDATA[Offer your customers the possibility to buy matching items when on a product page.]]></description>
+    <description><![CDATA[Offrez &agrave; vos clients la possibilit&eacute; d&#039;acheter des articles associ&eacute;s lorsqu&#039;ils consultent une page produit. ]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[]]></tab>
     <is_configurable>1</is_configurable>

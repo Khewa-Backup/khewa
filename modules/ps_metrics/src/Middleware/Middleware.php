@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -32,7 +33,7 @@ abstract class Middleware
      *
      * @return Middleware
      */
-    public function linkWith(Middleware $next)
+    public function linkWith(Middleware $next): Middleware
     {
         $this->next = $next;
 
@@ -40,14 +41,14 @@ abstract class Middleware
     }
 
     /**
-     * @param array $response
+     * @param mixed $response
      *
      * @return array
      */
-    public function execute($response)
+    public function execute($response): array
     {
-        if (empty($this->next)) {
-            return $response;
+        if (null === $this->next) {
+            return (array) $response;
         }
 
         return $this->next->execute($response);

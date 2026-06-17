@@ -113,6 +113,8 @@ class ProductController extends FrameworkBundleAdminController
      */
     public function editAction(Request $request, int $productId): Response
     {
+        var_dump(__LINE__);
+        die();
         if (!$this->isProductPageV2Enabled()) {
             $this->addFlashMessageProductV2IsDisabled();
 
@@ -132,7 +134,6 @@ class ProductController extends FrameworkBundleAdminController
 
         try {
             $productForm->handleRequest($request);
-
             $result = $this->getProductFormHandler()->handleFor($productId, $productForm);
 
             if ($result->isSubmitted()) {

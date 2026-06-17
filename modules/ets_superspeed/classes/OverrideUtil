@@ -1,0 +1,1416 @@
+<?php
+/**
+ * Copyright ETS Software Technology Co., Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
+ * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future.
+ *
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
+ */
+
+if (!defined('_PS_VERSION_'))
+    exit;
+class Ets_superspeed_overrideUtil
+{
+    /**
+     * @var array[]
+     */
+    static public $conflict = [
+        [
+            'class' => 'Link',
+            'file' => 'classes/Link.php',
+            'method' => 'getImageLink',
+            'conflicts' => ['ets_multilangimages','ets_superspeed'],
+            'priority' => [
+                0 => 'ets_multilangimages',
+                1 => 'ets_superspeed',
+            ]
+        ],
+        [
+            'class' => 'FrontController',
+            'file' => 'classes/controller/FrontController.php',
+            'method' => 'smartyOutputContent',
+            'conflicts' => ['ets_contactform7','ets_superspeed','ybc_instagram'],
+            'priority' => [
+                0 => 'ets_contactform7',
+                1 => 'ets_superspeed',
+                2 => 'ybc_instagram',
+            ]
+        ],
+    ];
+    /**
+     * Run AFTER enable
+     * @param Module $currentModule
+     * @throws Exception
+     */
+    public static function onModuleEnabled(Module $currentModule)
+    {
+        $curModuleName = $currentModule->name;
+        foreach (self::$conflict as $item) {
+            if(in_array($curModuleName, $item['conflicts'])){
+                $matchedByPriority = null;
+                foreach ($item['priority'] as $i => $name) {
+                    if(self::isEnabled($name) || $name==$curModuleName){
+                        $matchedByPriority = $name;
+                        break;
+                    }
+                }
+                if($matchedByPriority !== null){
+                    if($matchedByPriority !== $curModuleName){
+                        self::removeOverrideMethod($currentModule, $item['class'], $item['method']);
+                        $instance = Module::getInstanceByName($matchedByPriority);
+                        $instance && self::addOverrideMethod($instance, $item['class'], $item['method']);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Run BEFORE enable module
+     * @param \Module $currentModule
+     * @throws \ReflectionException
+     */
+    public static function resolveConflict(Module $currentModule)
+    {
+        $curModuleName = $currentModule->name;
+        foreach (self::$conflict as $item) {
+            if(in_array($curModuleName, $item['conflicts'])){
+                foreach ($item['conflicts'] as $name) {
+                    $instance = Module::getInstanceByName($name);
+                    self::isEnabled($name) && $instance && self::removeOverrideMethod($instance, $item['class'], $item['method']);
+                }
+            }
+        }
+    }
+
+    /**
+     * Run after disable module
+     * @param \Module $moddule
+     * @throws \ReflectionException
+     */
+    public static function restoreReplacedMethod(\Module $moddule)
+    {
+        $curModuleName = $moddule->name;
+        foreach (self::$conflict as $item) {
+            if(in_array($curModuleName, $item['conflicts']) && ($currentPriority = array_search($curModuleName, $item['priority'], true)) !== false){
+                foreach ($item['priority'] as $i => $name) {
+
+                    if(self::isEnabled($name) && $name!=$curModuleName){
+                        if ($i > $currentPriority) {
+                            $instance = Module::getInstanceByName($name);
+                            $instance && self::addOverrideMethod($instance, $item['class'], $item['method']);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * @param Module $module
+     * @param $classname
+     * @param $method_name
+     */
+    public static function addOverrideMethod($module,$classname,$method_name)
+    {
+        $autoload = self::getPrestashopAutoload();
+        if (version_compare(_PS_VERSION_, '1.7', '>='))
+            $autoload->generateIndex();
+        $orig_path = $path = $autoload->getClassPath($classname . 'Core');
+        if (!$path) {
+            $path = 'modules' . DIRECTORY_SEPARATOR . $classname . DIRECTORY_SEPARATOR . $classname . '.php';
+        }
+        $path_override = $module->getLocalPath() . 'override' . DIRECTORY_SEPARATOR . $path;
+
+        if (!file_exists($path_override)) {
+            return false;
+        } else {
+            file_put_contents($path_override, preg_replace('#(\r\n|\r)#ism', "\n", file_get_contents($path_override)));
+        }
+
+        $pattern_escape_com = '#(^\s*?\/\/.*?\n|\/\*(?!\n\s+\* module:.*?\* date:.*?\* version:.*?\*\/).*?\*\/)#ism';
+        // Check if there is already an override file, if not, we just need to copy the file
+        if ($file = $autoload->getClassPath($classname)) {
+            // Check if override file is writable
+            $override_path = _PS_ROOT_DIR_ . '/' . $file;
+
+            if ((!file_exists($override_path) && !is_writable(dirname($override_path))) || (file_exists($override_path) && !is_writable($override_path))) {
+                throw new Exception(Context::getContext()->getTranslator()->trans('file (%s) not writable', [$override_path], 'Admin.Notifications.Error'));
+            }
+
+            // Get a uniq id for the class, because you can override a class (or remove the override) twice in the same session and we need to avoid redeclaration
+            do {
+                $uniq = uniqid();
+            } while (class_exists($classname . 'OverrideOriginal_remove', false));
+
+            // Make a reflection of the override class and the module override class
+            $override_file = file($override_path);
+            $override_file = array_diff($override_file, ["\n"]);
+            eval(
+            preg_replace(
+                ['#^\s*<\?(?:php)?#', '#class\s+' . $classname . '\s+extends\s+([a-z0-9_]+)(\s+implements\s+([a-z0-9_]+))?#i'],
+                [' ', 'class ' . $classname . 'OverrideOriginal' . $uniq . ' extends \stdClass'],
+                implode('', $override_file)
+            )
+            );
+            $override_class = new ReflectionClass($classname . 'OverrideOriginal' . $uniq);
+
+            $module_file = file($path_override);
+            $module_file = array_diff($module_file, ["\n"]);
+            eval(
+            preg_replace(
+                ['#^\s*<\?(?:php)?#', '#class\s+' . $classname . '(\s+extends\s+([a-z0-9_]+)(\s+implements\s+([a-z0-9_]+))?)?#i'],
+                [' ', 'class ' . $classname . 'Override' . $uniq . ' extends \stdClass'],
+                implode('', $module_file)
+            )
+            );
+            $module_class = new ReflectionClass($classname . 'Override' . $uniq);
+
+            $matchedMethod = null;
+            // Check if none of the methods already exists in the override class
+            foreach ($module_class->getMethods() as $method) {
+                if($method->getName() != $method_name)
+                    continue;
+
+                if ($override_class->hasMethod($method->getName()) ) {
+                    return true;
+                }
+                $module_file = preg_replace('/((:?public|private|protected)\s+(static\s+)?function\s+(?:\b' . $method->getName() . '\b))/ism', "/*\n    * module: " . $module->name . "\n    * date: " . date('Y-m-d H:i:s') . "\n    * version: " . $module->version . "\n    */\n    $1", $module_file);
+                $matchedMethod = $method;
+            }
+            // Insert the methods from module override in override
+            $copy_from = array_slice($module_file, $matchedMethod->getStartLine() - 1, $matchedMethod->getEndLine() - $matchedMethod->getStartLine() + 1);
+
+
+            array_splice($override_file, $override_class->getEndLine() - 1, 0, $copy_from);
+
+            $code = implode('', $override_file);
+            file_put_contents($override_path, preg_replace($pattern_escape_com, '', $code));
+        } else {
+            $override_src = $path_override;
+
+            $override_dest = _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'override' . DIRECTORY_SEPARATOR . $path;
+            $dir_name = dirname($override_dest);
+
+            if (!$orig_path && !is_dir($dir_name)) {
+                @mkdir($dir_name, FileSystem::DEFAULT_MODE_FOLDER);
+            }
+
+            if (!is_writable($dir_name)) {
+                throw new Exception(Context::getContext()->getTranslator()->trans('directory (%s) not writable', [$dir_name], 'Admin.Notifications.Error'));
+            }
+            $module_file = file($override_src);
+            $module_file = array_diff($module_file, ["\n"]);
+            if ($orig_path) {
+                do {
+                    $uniq = uniqid();
+                } while (class_exists($classname . 'OverrideOriginal_remove', false));
+                eval(
+                preg_replace(
+                    ['#^\s*<\?(?:php)?#', '#class\s+' . $classname . '(\s+extends\s+([a-z0-9_]+)(\s+implements\s+([a-z0-9_]+))?)?#i'],
+                    [' ', 'class ' . $classname . 'Override' . $uniq . ' extends \stdClass'],
+                    implode('', $module_file)
+                )
+                );
+                $module_class = new ReflectionClass($classname . 'Override' . $uniq);
+
+                // For each method found in the override, prepend a comment with the module name and version
+                foreach ($module_class->getMethods() as $method) {
+                    if($method->getName()== $method_name)
+                    {
+                        $module_file = preg_replace('/((:?public|private|protected)\s+(static\s+)?function\s+(?:\b' . $method->getName() . '\b))/ism', "/*\n    * module: " . $module->name . "\n    * date: " . date('Y-m-d H:i:s') . "\n    * version: " . $module->version . "\n    */\n    $1", $module_file);
+                        if ($module_file === null) {
+                            throw new Exception(Context::getContext()->getTranslator()->trans('Failed to override method %1$s in class %2$s.', [$method->getName(), $classname], 'Admin.Modules.Notification'));
+                        }
+                    }
+
+                }
+            }
+            file_put_contents($override_dest, preg_replace($pattern_escape_com, '', $module_file));
+        }
+        $autoload->generateIndex();
+    }
+
+    /**
+     * @param Module $module
+     * @param $classname
+     * @param $method_name
+     */
+    public static function removeOverrideMethod($module,$classname,$method_name)
+    {
+        $autoload = self::getPrestashopAutoload();
+        $autoload->generateIndex();
+        $orig_path = $path = $autoload->getClassPath($classname . 'Core');
+
+        if ($orig_path && !$file = $autoload->getClassPath($classname)) {
+            return true;
+        } elseif (!$orig_path && Module::getModuleIdByName($classname)) {
+            $path = 'modules' . DIRECTORY_SEPARATOR . $classname . DIRECTORY_SEPARATOR . $classname . '.php';
+        }
+
+        // Check if override file is writable
+        if ($orig_path) {
+            $override_path = _PS_ROOT_DIR_ . '/' . $file;
+        } else {
+            $override_path = _PS_OVERRIDE_DIR_ . $path;
+        }
+
+        if (!is_file($override_path)) {
+            return true;
+        }
+
+        if (!is_writable($override_path)) {
+            return false;
+        }
+
+        file_put_contents($override_path, preg_replace('#(\r\n|\r)#ism', "\n", file_get_contents($override_path)));
+
+        if ($orig_path) {
+            // Get a uniq id for the class, because you can override a class (or remove the override) twice in the same session and we need to avoid redeclaration
+            do {
+                $uniq = uniqid();
+            } while (class_exists($classname . 'OverrideOriginal_remove', false));
+
+            // Make a reflection of the override class and the module override class
+            $override_file = file($override_path);
+
+            eval(
+            preg_replace(
+                ['#^\s*<\?(?:php)?#', '#class\s+' . $classname . '\s+extends\s+([a-z0-9_]+)(\s+implements\s+([a-z0-9_]+))?#i'],
+                [' ', 'class ' . $classname . 'OverrideOriginal_remove' . $uniq . ' extends \stdClass'],
+                implode('', $override_file)
+            )
+            );
+            $override_class = new ReflectionClass($classname . 'OverrideOriginal_remove' . $uniq);
+
+            $module_file = file($module->getLocalPath() . 'override/' . $path);
+            eval(
+            preg_replace(
+                ['#^\s*<\?(?:php)?#', '#class\s+' . $classname . '(\s+extends\s+([a-z0-9_]+)(\s+implements\s+([a-z0-9_]+))?)?#i'],
+                [' ', 'class ' . $classname . 'Override_remove' . $uniq . ' extends \stdClass'],
+                implode('', $module_file)
+            )
+            );
+            $module_class = new ReflectionClass($classname . 'Override_remove' . $uniq);
+
+            // Remove methods from override file
+            foreach ($module_class->getMethods() as $method) {
+                if (!$override_class->hasMethod($method->getName()) || $method->getName()!=$method_name) {
+                    continue;
+                }
+                $method = $override_class->getMethod($method->getName());
+                $length = $method->getEndLine() - $method->getStartLine() + 1;
+
+                $module_method = $module_class->getMethod($method->getName());
+                $override_file_orig = $override_file;
+
+                $orig_content = preg_replace('/\s/', '', implode('', array_splice($override_file, $method->getStartLine() - 1, $length, array_pad([], $length, '#--remove--#'))));
+                $module_content = preg_replace('/\s/', '', implode('', array_splice($module_file, $module_method->getStartLine() - 1, $length, array_pad([], $length, '#--remove--#'))));
+
+                $replace = true;
+                if (preg_match('/\* module: (' . $module->name . ')/ism', $override_file[$method->getStartLine() - 5])) {
+                    $override_file[$method->getStartLine() - 6] = $override_file[$method->getStartLine() - 5] = $override_file[$method->getStartLine() - 4] = $override_file[$method->getStartLine() - 3] = $override_file[$method->getStartLine() - 2] = '#--remove--#';
+                    $replace = false;
+                }
+
+                if (md5($module_content) != md5($orig_content) && $replace) {
+                    $override_file = $override_file_orig;
+                }
+            }
+            $count = count($override_file);
+            for ($i = 0; $i < $count; ++$i) {
+                if (preg_match('/(^\s*\/\/.*)/i', $override_file[$i])) {
+                    $override_file[$i] = '#--remove--#';
+                } elseif (preg_match('/(^\s*\/\*)/i', $override_file[$i])) {
+                    if (!preg_match('/(^\s*\* module:)/i', $override_file[$i + 1])
+                        && !preg_match('/(^\s*\* date:)/i', $override_file[$i + 2])
+                        && !preg_match('/(^\s*\* version:)/i', $override_file[$i + 3])
+                        && !preg_match('/(^\s*\*\/)/i', $override_file[$i + 4])) {
+                        for (; $override_file[$i] && !preg_match('/(.*?\*\/)/i', $override_file[$i]); ++$i) {
+                            $override_file[$i] = '#--remove--#';
+                        }
+                        $override_file[$i] = '#--remove--#';
+                    }
+                }
+            }
+            // Rewrite nice code
+            $code = '';
+            foreach ($override_file as $line) {
+                if ($line == '#--remove--#') {
+                    continue;
+                }
+
+                $code .= $line;
+            }
+            $to_delete = preg_match('/<\?(?:php)?\s+(?:abstract|interface)?\s*?class\s+' . $classname . '\s+extends\s+' . $classname . 'Core\s*?[{]\s*?[}]/ism', $code);
+        }
+
+        if (!isset($to_delete) || $to_delete) {
+            Ets_superspeed_defines::unlink($override_path);
+        } else {
+            file_put_contents($override_path, $code);
+        }
+        $autoload->generateIndex();
+        return true;
+    }
+    public static function isEnabled($module_name)
+    {
+        $id_module = Module::getModuleIdByName($module_name);
+        if (Db::getInstance()->getValue('SELECT `id_module` FROM `' . _DB_PREFIX_ . 'module_shop` WHERE `id_module` = ' . (int) $id_module)) {
+            return true;
+        }
+        return false;
+    }
+    public static function compressByPhp($path, $name, $source, $destination, $temp, $quality, $type, $file_size_old, $quality_old, $is_product)
+    {
+        ini_set('gd.jpeg_ignore_warning', 1);
+        // Validate and sanitize paths
+        $path = realpath($path) ?: $path;
+        $source = realpath($source) ?: $source;
+        $destination = realpath($destination) ?: $destination;
+        $temp = realpath($temp) ?: $temp;
+
+        // Ensure paths are within allowed directories
+        $allowedDir = realpath(_PS_ROOT_DIR_);
+        foreach ([$path, $source, $destination, $temp] as $dir) {
+            if (Tools::strpos($dir, $allowedDir) !== 0) {
+                return false;
+            }
+        }
+
+        $temp2 = $path . 'temp2-' . $name;
+        Tools::copy($source, $temp2);
+
+        $image = @getimagesize($source);
+        $default = false;
+
+        if ($quality >= 100 || ($quality <= 80 && is_array($type) && isset($type['width']) && $type['width'] <= 260) || ($name == Configuration::get('PS_LOGO') && $quality <= 80)) {
+            if ($is_product) {
+                $destination_webp = str_replace('.jpg', '.webp', $destination);
+                if (file_exists($destination_webp)) {
+                    Ets_superspeed_defines::unlink($destination_webp);
+                }
+            }
+            if ($quality_old <= 80) {
+                if (file_exists($temp2)) Ets_superspeed_defines::unlink($temp2);
+                if (file_exists($temp)) Ets_superspeed_defines::unlink($temp);
+                return array(
+                    'file_size' => $file_size_old,
+                    'optimize_type' => Configuration::getGlobalValue('ETS_SPEED_OPTIMIZE_SCRIPT') ? Configuration::getGlobalValue('ETS_SPEED_OPTIMIZE_SCRIPT') : 'php',
+                );
+            }
+            $default = true;
+        }
+
+        if ($image) {
+            ini_set('gd.jpeg_ignore_warning', 1);
+            $widthImage = $image[0];
+            $heightImage = $image[1];
+
+            $imageCanves = imagecreatetruecolor($widthImage, $heightImage);
+            switch (Tools::strtolower($image['mime'])) {
+                case 'image/jpeg':
+                    $NewImage = imagecreatefromjpeg($source);
+                    break;
+                case 'image/png':
+                    $NewImage = imagecreatefrompng($source);
+                    break;
+                case 'image/gif':
+                    $NewImage = imagecreatefromgif($source);
+                    break;
+                default:
+                    if (file_exists($temp2)) Ets_superspeed_defines::unlink($temp2);
+                    return array(
+                        'file_size' => $file_size_old,
+                        'optimize_type' => Configuration::getGlobalValue('ETS_SPEED_OPTIMIZE_SCRIPT') ? Configuration::getGlobalValue('ETS_SPEED_OPTIMIZE_SCRIPT') : 'php',
+                    );
+            }
+
+            $white = imagecolorallocate($imageCanves, 255, 255, 255);
+            imagefill($imageCanves, 0, 0, $white);
+
+            if (imagecopyresampled($imageCanves, $NewImage, 0, 0, 0, 0, $widthImage, $heightImage, $widthImage, $heightImage)) {
+                if (imagejpeg($imageCanves, $destination, $default ? 80 : $quality)) {
+                    imagedestroy($imageCanves);
+
+                    if (Tools::copy($destination, $temp)) {
+                        $file_size = Tools::ps_round(@filesize($temp) / 1024, 2);
+                        if ($file_size > $file_size_old) {
+                            Tools::copy($temp2, $destination);
+                            $file_size = $file_size_old;
+                        }
+                        if (file_exists($temp)) Ets_superspeed_defines::unlink($temp);
+                        if (file_exists($temp2)) Ets_superspeed_defines::unlink($temp2);
+                        if (file_exists($path . 'fileType')) Ets_superspeed_defines::unlink($path . 'fileType');
+                        if ($is_product) {
+                            $destination_webp = str_replace('.jpg', '.webp', $destination);
+                            if (file_exists($destination_webp)) Ets_superspeed_defines::unlink($destination_webp);
+                        }
+                        return array(
+                            'file_size' => $file_size,
+                            'optimize_type' => Configuration::getGlobalValue('ETS_SPEED_OPTIMIZE_SCRIPT') ? Configuration::getGlobalValue('ETS_SPEED_OPTIMIZE_SCRIPT') : 'php',
+                        );
+                    }
+                }
+            }
+        }
+
+        if (file_exists($temp2)) Ets_superspeed_defines::unlink($temp2);
+        if (file_exists($temp)) Ets_superspeed_defines::unlink($temp);
+        if (file_exists($path . 'fileType')) Ets_superspeed_defines::unlink($path . 'fileType');
+        return array(
+            'file_size' => $file_size_old,
+            'optimize_type' => Configuration::getGlobalValue('ETS_SPEED_OPTIMIZE_SCRIPT') ? Configuration::getGlobalValue('ETS_SPEED_OPTIMIZE_SCRIPT') : 'php',
+        );
+    }
+    public static function getPrestashopAutoload(){
+        if (version_compare(_PS_VERSION_, '9.0.0', '>='))
+            return \PrestaShop\Autoload\PrestashopAutoload::getInstance();
+        else
+            return PrestaShopAutoload::getInstance();
+    }
+    public static function executePhP($php_code)
+    {
+        eval($php_code);
+    }
+    public static function Ets_generateHtaccess16($path = null, $rewrite_settings = null, $cache_control = null, $specific = '', $disable_multiviews = null, $medias = false, $disable_modsec = null)
+    {
+            if (defined('PS_INSTALLATION_IN_PROGRESS') && $rewrite_settings === null) {
+                return true;
+            }
+
+            // Default values for parameters
+            if (is_null($path)) {
+                $path = _PS_ROOT_DIR_.'/.htaccess';
+            }
+
+            if (is_null($cache_control)) {
+                $cache_control = (int)Configuration::get('PS_HTACCESS_CACHE_CONTROL');
+            }
+            if (is_null($disable_multiviews)) {
+                $disable_multiviews = (int)Configuration::get('PS_HTACCESS_DISABLE_MULTIVIEWS');
+            }
+
+            if ($disable_modsec === null) {
+                $disable_modsec = (int)Configuration::get('PS_HTACCESS_DISABLE_MODSEC');
+            }
+
+            // Check current content of .htaccess and save all code outside of prestashop comments
+            $specific_before = $specific_after = '';
+            if (file_exists($path)) {
+                $content = Tools::file_get_contents($path);
+                if (preg_match('#^(.*)\# ~~start~~.*\# ~~end~~[^\n]*(.*)$#s', $content, $m)) {
+                    $specific_before = $m[1];
+                    $specific_after = $m[2];
+                } else {
+                    // For retrocompatibility
+                    if (preg_match('#\# http://www\.prestashop\.com - http://www\.prestashop\.com/forums\s*(.*)<IfModule mod_rewrite\.c>#si', $content, $m)) {
+                        $specific_before = $m[1];
+                    } else {
+                        $specific_before = $content;
+                    }
+                }
+            }
+
+            // Write .htaccess data
+            if (!$write_fd = @fopen($path, 'w')) {
+                return false;
+            }
+            if ($specific_before) {
+                fwrite($write_fd, trim($specific_before)."\n\n");
+            }
+
+            $domains = array();
+            foreach (ShopUrl::getShopUrls() as $shop_url) {
+                /** @var ShopUrl $shop_url */
+                if (!isset($domains[$shop_url->domain])) {
+                    $domains[$shop_url->domain] = array();
+                }
+
+                $domains[$shop_url->domain][] = array(
+                    'physical' =>    $shop_url->physical_uri,
+                    'virtual' =>    $shop_url->virtual_uri,
+                    'id_shop' =>    $shop_url->id_shop
+                );
+
+                if ($shop_url->domain == $shop_url->domain_ssl) {
+                    continue;
+                }
+
+                if (!isset($domains[$shop_url->domain_ssl])) {
+                    $domains[$shop_url->domain_ssl] = array();
+                }
+
+                $domains[$shop_url->domain_ssl][] = array(
+                    'physical' =>    $shop_url->physical_uri,
+                    'virtual' =>    $shop_url->virtual_uri,
+                    'id_shop' =>    $shop_url->id_shop
+                );
+            }
+
+            // Write data in .htaccess file
+            fwrite($write_fd, "# ~~start~~ Do not remove this comment, Prestashop will keep automatically the code outside this comment when .htaccess will be generated again\n");
+            fwrite($write_fd, "# .htaccess automaticaly generated by PrestaShop e-commerce open-source solution\n");
+            fwrite($write_fd, "# http://www.prestashop.com - http://www.prestashop.com/forums\n\n");
+
+            if ($disable_modsec) {
+                fwrite($write_fd, "<IfModule mod_security.c>\nSecFilterEngine Off\nSecFilterScanPOST Off\n</IfModule>\n\n");
+            }
+
+            // RewriteEngine
+            fwrite($write_fd, "<IfModule mod_rewrite.c>\n");
+
+            // Ensure HTTP_MOD_REWRITE variable is set in environment
+            fwrite($write_fd, "<IfModule mod_env.c>\n");
+            fwrite($write_fd, "SetEnv HTTP_MOD_REWRITE On\n");
+            fwrite($write_fd, "</IfModule>\n\n");
+
+            // Disable multiviews ?
+            if ($disable_multiviews) {
+                fwrite($write_fd, "\n# Disable Multiviews\nOptions -Multiviews\n\n");
+            }
+
+            fwrite($write_fd, "RewriteEngine on\n");
+
+            if (!$medias && Configuration::getMultiShopValues('PS_MEDIA_SERVER_1')
+                && Configuration::getMultiShopValues('PS_MEDIA_SERVER_2')
+                && Configuration::getMultiShopValues('PS_MEDIA_SERVER_3')
+            ) {
+                $medias = array(
+                    Configuration::getMultiShopValues('PS_MEDIA_SERVER_1'),
+                    Configuration::getMultiShopValues('PS_MEDIA_SERVER_2'),
+                    Configuration::getMultiShopValues('PS_MEDIA_SERVER_3')
+                );
+            }
+
+            $media_domains = '';
+            foreach ($medias as $media) {
+                foreach ($media as $media_url) {
+                    if ($media_url) {
+                        $media_domains .= 'RewriteCond %{HTTP_HOST} ^'.$media_url.'$ [OR]'."\n";
+                    }
+                }
+            }
+
+            if (Configuration::get('PS_WEBSERVICE_CGI_HOST')) {
+                fwrite($write_fd, "RewriteCond %{HTTP:Authorization} ^(.*)\nRewriteRule . - [E=HTTP_AUTHORIZATION:%1]\n\n");
+            }
+
+            foreach ($domains as $domain => $list_uri) {
+                foreach ($list_uri as $uri) {
+                    fwrite($write_fd, PHP_EOL.PHP_EOL.'#Domain: '.$domain.PHP_EOL);
+                    if (Shop::isFeatureActive()) {
+                        fwrite($write_fd, 'RewriteCond %{HTTP_HOST} ^'.$domain.'$'."\n");
+                    }
+                    fwrite($write_fd, 'RewriteRule . - [E=REWRITEBASE:'.$uri['physical'].']'."\n");
+
+                    // Webservice
+                    fwrite($write_fd, 'RewriteRule ^api$ api/ [L]'."\n\n");
+                    fwrite($write_fd, 'RewriteRule ^api/(.*)$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]'."\n\n");
+
+                    if (!$rewrite_settings) {
+                        $rewrite_settings = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, (int)$uri['id_shop']);
+                    }
+
+                    $domain_rewrite_cond = 'RewriteCond %{HTTP_HOST} ^'.$domain.'$'."\n";
+                    // Rewrite virtual multishop uri
+                    if ($uri['virtual']) {
+                        if (!$rewrite_settings) {
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^'.trim($uri['virtual'], '/').'/?$ '.$uri['physical'].$uri['virtual']."index.php [L,R]\n");
+                        } else {
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^'.trim($uri['virtual'], '/').'$ '.$uri['physical'].$uri['virtual']." [L,R]\n");
+                        }
+                        fwrite($write_fd, $media_domains);
+                        if (Shop::isFeatureActive()) {
+                            fwrite($write_fd, $domain_rewrite_cond);
+                        }
+                        fwrite($write_fd, 'RewriteRule ^'.ltrim($uri['virtual'], '/').'(.*) '.$uri['physical']."$1 [L]\n\n");
+                    }
+
+                    if ($rewrite_settings) {
+                        // Compatibility with the old image filesystem
+                        fwrite($write_fd, "# Images\n");
+                        if (Configuration::get('PS_LEGACY_IMAGES')) {
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^([a-z0-9]+)\-([a-z0-9]+)(\-[_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1-$2$3$4.jpg [L]'."\n");
+                            fwrite($write_fd, 'RewriteRule ^([a-z0-9]+)\-([a-z0-9]+)(\-[_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.webp$ %{ENV:REWRITEBASE}img/p/$1-$2$3$4.webp [L]'."\n");
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^([0-9]+)\-([0-9]+)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1-$2$3.jpg [L]'."\n");
+                            fwrite($write_fd, 'RewriteRule ^([0-9]+)\-([0-9]+)(-[0-9]+)?/.+\.webp$ %{ENV:REWRITEBASE}img/p/$1-$2$3.webp [L]'."\n");
+                        }
+
+                        // Rewrite product images < 100 millions
+                        for ($i = 1; $i <= 8; $i++) {
+                            $img_path = $img_name = '';
+                            for ($j = 1; $j <= $i; $j++) {
+                                $img_path .= '$'.$j.'/';
+                                $img_name .= '$'.$j;
+                            }
+                            $img_name .= '$'.$j;
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^'.str_repeat('([0-9])', $i).'(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/'.$img_path.$img_name.'$'.($j + 1).".jpg [L]\n");
+                            fwrite($write_fd, 'RewriteRule ^'.str_repeat('([0-9])', $i).'(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.webp$ %{ENV:REWRITEBASE}img/p/'.$img_path.$img_name.'$'.($j + 1).".webp [L]\n");
+                        }
+                        fwrite($write_fd, $media_domains);
+                        if (Shop::isFeatureActive()) {
+                            fwrite($write_fd, $domain_rewrite_cond);
+                        }
+                        fwrite($write_fd, 'RewriteRule ^c/([0-9]+)(\-[\.*_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2$3.jpg [L]'."\n");
+                        fwrite($write_fd, $media_domains);
+                        if (Shop::isFeatureActive()) {
+                            fwrite($write_fd, $domain_rewrite_cond);
+                        }
+                        fwrite($write_fd, 'RewriteRule ^c/([a-zA-Z_-]+)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2.jpg [L]'."\n");
+                    }
+
+                    fwrite($write_fd, "# AlphaImageLoader for IE and fancybox\n");
+                    if (Shop::isFeatureActive()) {
+                        fwrite($write_fd, $domain_rewrite_cond);
+                    }
+                    fwrite($write_fd, 'RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ js/jquery/plugins/fancybox/images/$1.$2 [L]'."\n");
+                }
+                // Redirections to dispatcher
+                if ($rewrite_settings) {
+                    fwrite($write_fd, "\n# Dispatcher\n");
+                    fwrite($write_fd, "RewriteCond %{REQUEST_FILENAME} -s [OR]\n");
+                    fwrite($write_fd, "RewriteCond %{REQUEST_FILENAME} -l [OR]\n");
+                    fwrite($write_fd, "RewriteCond %{REQUEST_FILENAME} -d\n");
+                    if (Shop::isFeatureActive()) {
+                        fwrite($write_fd, $domain_rewrite_cond);
+                    }
+                    fwrite($write_fd, "RewriteRule ^.*$ - [NC,L]\n");
+                    if (Shop::isFeatureActive()) {
+                        fwrite($write_fd, $domain_rewrite_cond);
+                    }
+                    fwrite($write_fd, "RewriteRule ^.*\$ %{ENV:REWRITEBASE}index.php [NC,L]\n");
+                }
+            }
+
+            fwrite($write_fd, "</IfModule>\n\n");
+
+            fwrite($write_fd, "AddType application/vnd.ms-fontobject .eot\n");
+            fwrite($write_fd, "AddType font/ttf .ttf\n");
+            fwrite($write_fd, "AddType font/otf .otf\n");
+            fwrite($write_fd, "AddType font/woff2 .woff2\n");
+            fwrite($write_fd, "AddType application/x-font-woff .woff\n");
+            fwrite($write_fd, "<IfModule mod_headers.c>
+    	<FilesMatch \"\.(ttf|ttc|otf|eot|woff|woff2|svg)$\">
+    		Header set Access-Control-Allow-Origin \"*\"
+    	</FilesMatch>
+    </IfModule>\n\n");
+
+            // Cache control
+            if ($cache_control) {
+                $cache_control = "<IfModule mod_expires.c>
+    	ExpiresActive On
+    	ExpiresByType image/gif \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    	ExpiresByType image/jpeg \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    	ExpiresByType image/png \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    	ExpiresByType image/webp \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    	ExpiresByType text/css \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_CSS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_CSS').' weeks')."\"
+    	ExpiresByType text/javascript \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS').' weeks')."\"
+    	ExpiresByType application/javascript \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS').' weeks')."\"
+    	ExpiresByType application/x-javascript \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS').' weeks')."\"
+    	ExpiresByType image/x-icon \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON').' years')."\"
+    	ExpiresByType image/svg+xml \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON').' years')."\"
+    	ExpiresByType image/vnd.microsoft.icon \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON').' years')."\"
+    	ExpiresByType application/font-woff \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType application/x-font-woff \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType font/woff2 \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType application/vnd.ms-fontobject \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType font/opentype \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType font/ttf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType font/otf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType application/x-font-ttf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType application/x-font-otf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    </IfModule>
+
+    <IfModule mod_headers.c>
+    	Header unset Etag
+    </IfModule>
+    FileETag none
+    <IfModule mod_deflate.c>
+    	<IfModule mod_filter.c>
+    		AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/x-javascript font/ttf application/x-font-ttf font/otf application/x-font-otf font/opentype image/svg+xml
+    	</IfModule>
+    </IfModule>\n\n";
+                fwrite($write_fd, $cache_control);
+            }
+
+            // In case the user hasn't rewrite mod enabled
+            fwrite($write_fd, "#If rewrite mod isn't enabled\n");
+
+            // Do not remove ($domains is already iterated upper)
+            reset($domains);
+            $domain = current($domains);
+            fwrite($write_fd, 'ErrorDocument 404 '.$domain[0]['physical']."index.php?controller=404\n\n");
+
+            fwrite($write_fd, "# ~~end~~ Do not remove this comment, Prestashop will keep automatically the code outside this comment when .htaccess will be generated again");
+            if ($specific_after) {
+                fwrite($write_fd, "\n\n".trim($specific_after));
+            }
+            fclose($write_fd);
+            unset($specific);
+            return true;
+    }
+    public static function Ets_generateHtaccess17($path = null, $rewrite_settings = null, $cache_control = null, $specific = '', $disable_multiviews = null, $medias = false, $disable_modsec = null)
+        {
+
+            if (defined('_PS_IN_TEST_')
+                || (defined('PS_INSTALLATION_IN_PROGRESS') && $rewrite_settings === null)
+            ) {
+                return true;
+            }
+
+            // Default values for parameters
+            if (is_null($path)) {
+                $path = _PS_ROOT_DIR_.'/.htaccess';
+            }
+
+            if (is_null($cache_control)) {
+                $cache_control = (int)Configuration::get('PS_HTACCESS_CACHE_CONTROL');
+            }
+            if (is_null($disable_multiviews)) {
+                $disable_multiviews = (int)Configuration::get('PS_HTACCESS_DISABLE_MULTIVIEWS');
+            }
+
+            if ($disable_modsec === null) {
+                $disable_modsec = (int)Configuration::get('PS_HTACCESS_DISABLE_MODSEC');
+            }
+
+            // Check current content of .htaccess and save all code outside of prestashop comments
+            $specific_before = $specific_after = '';
+            if (file_exists($path)) {
+                $content = Tools::file_get_contents($path);
+                if (preg_match('#^(.*)\# ~~start~~.*\# ~~end~~[^\n]*(.*)$#s', $content, $m)) {
+                    $specific_before = $m[1];
+                    $specific_after = $m[2];
+                } else {
+                    // For retrocompatibility
+                    if (preg_match('#\# http://www\.prestashop\.com - http://www\.prestashop\.com/forums\s*(.*)<IfModule mod_rewrite\.c>#si', $content, $m)) {
+                        $specific_before = $m[1];
+                    } else {
+                        $specific_before = $content;
+                    }
+                }
+            }
+
+            // Write .htaccess data
+            if (!$write_fd = @fopen($path, 'w')) {
+                return false;
+            }
+            if ($specific_before) {
+                fwrite($write_fd, trim($specific_before)."\n\n");
+            }
+
+            $domains = array();
+            foreach (ShopUrl::getShopUrls() as $shop_url) {
+                /** @var ShopUrl $shop_url */
+                if (!isset($domains[$shop_url->domain])) {
+                    $domains[$shop_url->domain] = array();
+                }
+
+                $domains[$shop_url->domain][] = array(
+                    'physical' =>    $shop_url->physical_uri,
+                    'virtual' =>    $shop_url->virtual_uri,
+                    'id_shop' =>    $shop_url->id_shop
+                );
+
+                if ($shop_url->domain == $shop_url->domain_ssl) {
+                    continue;
+                }
+
+                if (!isset($domains[$shop_url->domain_ssl])) {
+                    $domains[$shop_url->domain_ssl] = array();
+                }
+
+                $domains[$shop_url->domain_ssl][] = array(
+                    'physical' =>    $shop_url->physical_uri,
+                    'virtual' =>    $shop_url->virtual_uri,
+                    'id_shop' =>    $shop_url->id_shop
+                );
+            }
+
+            // Write data in .htaccess file
+            fwrite($write_fd, "# ~~start~~ Do not remove this comment, Prestashop will keep automatically the code outside this comment when .htaccess will be generated again\n");
+            fwrite($write_fd, "# .htaccess automaticaly generated by PrestaShop e-commerce open-source solution\n");
+            fwrite($write_fd, "# http://www.prestashop.com - http://www.prestashop.com/forums\n\n");
+
+            if ($disable_modsec) {
+                fwrite($write_fd, "<IfModule mod_security.c>\nSecFilterEngine Off\nSecFilterScanPOST Off\n</IfModule>\n\n");
+            }
+
+            // RewriteEngine
+            fwrite($write_fd, "<IfModule mod_rewrite.c>\n");
+
+            // Ensure HTTP_MOD_REWRITE variable is set in environment
+            fwrite($write_fd, "<IfModule mod_env.c>\n");
+            fwrite($write_fd, "SetEnv HTTP_MOD_REWRITE On\n");
+            fwrite($write_fd, "</IfModule>\n\n");
+
+            // Disable multiviews ?
+            if ($disable_multiviews) {
+                fwrite($write_fd, "\n# Disable Multiviews\nOptions -Multiviews\n\n");
+            }
+
+            fwrite($write_fd, "RewriteEngine on\n");
+
+            if (!$medias && Configuration::getMultiShopValues('PS_MEDIA_SERVER_1')
+                && Configuration::getMultiShopValues('PS_MEDIA_SERVER_2')
+                && Configuration::getMultiShopValues('PS_MEDIA_SERVER_3')
+            ) {
+                $medias = array(
+                    Configuration::getMultiShopValues('PS_MEDIA_SERVER_1'),
+                    Configuration::getMultiShopValues('PS_MEDIA_SERVER_2'),
+                    Configuration::getMultiShopValues('PS_MEDIA_SERVER_3')
+                );
+            }
+
+            $media_domains = '';
+            foreach ($medias as $media) {
+                foreach ($media as $media_url) {
+                    if ($media_url) {
+                        $media_domains .= 'RewriteCond %{HTTP_HOST} ^'.$media_url.'$ [OR]'."\n";
+                    }
+                }
+            }
+
+            if (Configuration::get('PS_WEBSERVICE_CGI_HOST')) {
+                fwrite($write_fd, "RewriteCond %{HTTP:Authorization} ^(.*)\nRewriteRule . - [E=HTTP_AUTHORIZATION:%1]\n\n");
+            }
+
+            foreach ($domains as $domain => $list_uri) {
+                foreach ($list_uri as $uri) {
+                    fwrite($write_fd, PHP_EOL.PHP_EOL.'#Domain: '.$domain.PHP_EOL);
+                    if (Shop::isFeatureActive()) {
+                        fwrite($write_fd, 'RewriteCond %{HTTP_HOST} ^'.$domain.'$'."\n");
+                    }
+                    fwrite($write_fd, 'RewriteRule . - [E=REWRITEBASE:'.$uri['physical'].']'."\n");
+
+                    // Webservice
+                    fwrite($write_fd, 'RewriteRule ^api$ api/ [L]'."\n\n");
+                    fwrite($write_fd, 'RewriteRule ^api/(.*)$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]'."\n\n");
+
+                    if (!$rewrite_settings) {
+                        $rewrite_settings = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, (int)$uri['id_shop']);
+                    }
+
+                    $domain_rewrite_cond = 'RewriteCond %{HTTP_HOST} ^'.$domain.'$'."\n";
+                    // Rewrite virtual multishop uri
+                    if ($uri['virtual']) {
+                        if (!$rewrite_settings) {
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^'.trim($uri['virtual'], '/').'/?$ '.$uri['physical'].$uri['virtual']."index.php [L,R]\n");
+                        } else {
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^'.trim($uri['virtual'], '/').'$ '.$uri['physical'].$uri['virtual']." [L,R]\n");
+                        }
+                        fwrite($write_fd, $media_domains);
+                        if (Shop::isFeatureActive()) {
+                            fwrite($write_fd, $domain_rewrite_cond);
+                        }
+                        fwrite($write_fd, 'RewriteRule ^'.ltrim($uri['virtual'], '/').'(.*) '.$uri['physical']."$1 [L]\n\n");
+                    }
+
+                    if ($rewrite_settings) {
+                        // Compatibility with the old image filesystem
+                        fwrite($write_fd, "# Images\n");
+                        if (Configuration::get('PS_LEGACY_IMAGES')) {
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^([a-z0-9]+)\-([a-z0-9]+)(\-[_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1-$2$3$4.jpg [L]'."\n");
+                            fwrite($write_fd, 'RewriteRule ^([a-z0-9]+)\-([a-z0-9]+)(\-[_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.webp$ %{ENV:REWRITEBASE}img/p/$1-$2$3$4.webp [L]'."\n");
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^([0-9]+)\-([0-9]+)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1-$2$3.jpg [L]'."\n");
+                            fwrite($write_fd, 'RewriteRule ^([0-9]+)\-([0-9]+)(-[0-9]+)?/.+\.webp$ %{ENV:REWRITEBASE}img/p/$1-$2$3.webp [L]'."\n");
+                        }
+
+                        // Rewrite product images < 100 millions
+                        for ($i = 1; $i <= 8; $i++) {
+                            $img_path = $img_name = '';
+                            for ($j = 1; $j <= $i; $j++) {
+                                $img_path .= '$'.$j.'/';
+                                $img_name .= '$'.$j;
+                            }
+                            $img_name .= '$'.$j;
+                            fwrite($write_fd, $media_domains);
+                            if (Shop::isFeatureActive()) {
+                                fwrite($write_fd, $domain_rewrite_cond);
+                            }
+                            fwrite($write_fd, 'RewriteRule ^'.str_repeat('([0-9])', $i).'(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/'.$img_path.$img_name.'$'.($j + 1).".jpg [L]\n");
+                            fwrite($write_fd, 'RewriteRule ^'.str_repeat('([0-9])', $i).'(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.webp$ %{ENV:REWRITEBASE}img/p/'.$img_path.$img_name.'$'.($j + 1).".webp [L]\n");
+                        }
+                        fwrite($write_fd, $media_domains);
+                        if (Shop::isFeatureActive()) {
+                            fwrite($write_fd, $domain_rewrite_cond);
+                        }
+                        fwrite($write_fd, 'RewriteRule ^c/([0-9]+)(\-[\.*_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2$3.jpg [L]'."\n");
+                        fwrite($write_fd, $media_domains);
+                        if (Shop::isFeatureActive()) {
+                            fwrite($write_fd, $domain_rewrite_cond);
+                        }
+                        fwrite($write_fd, 'RewriteRule ^c/([a-zA-Z_-]+)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2.jpg [L]'."\n");
+                    }
+
+                    fwrite($write_fd, "# AlphaImageLoader for IE and fancybox\n");
+                    if (Shop::isFeatureActive()) {
+                        fwrite($write_fd, $domain_rewrite_cond);
+                    }
+                    fwrite($write_fd, 'RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ js/jquery/plugins/fancybox/images/$1.$2 [L]'."\n");
+                }
+                // Redirections to dispatcher
+                if ($rewrite_settings) {
+                    fwrite($write_fd, "\n# Dispatcher\n");
+                    fwrite($write_fd, "RewriteCond %{REQUEST_FILENAME} -s [OR]\n");
+                    fwrite($write_fd, "RewriteCond %{REQUEST_FILENAME} -l [OR]\n");
+                    fwrite($write_fd, "RewriteCond %{REQUEST_FILENAME} -d\n");
+                    if (Shop::isFeatureActive()) {
+                        fwrite($write_fd, $domain_rewrite_cond);
+                    }
+                    fwrite($write_fd, "RewriteRule ^.*$ - [NC,L]\n");
+                    if (Shop::isFeatureActive()) {
+                        fwrite($write_fd, $domain_rewrite_cond);
+                    }
+                    fwrite($write_fd, "RewriteRule ^.*\$ %{ENV:REWRITEBASE}index.php [NC,L]\n");
+                }
+            }
+
+            fwrite($write_fd, "</IfModule>\n\n");
+
+            fwrite($write_fd, "AddType application/vnd.ms-fontobject .eot\n");
+            fwrite($write_fd, "AddType font/ttf .ttf\n");
+            fwrite($write_fd, "AddType font/otf .otf\n");
+            fwrite($write_fd, "AddType application/font-woff .woff\n");
+            fwrite($write_fd, "AddType font/woff2 .woff2\n");
+            fwrite($write_fd, "<IfModule mod_headers.c>
+    	<FilesMatch \"\.(ttf|ttc|otf|eot|woff|woff2|svg)$\">
+    		Header set Access-Control-Allow-Origin \"*\"
+    	</FilesMatch>
+    </IfModule>\n\n");
+
+            // Cache control
+            if ($cache_control) {
+                $cache_control = "<IfModule mod_expires.c>
+        ExpiresActive On
+    	ExpiresByType image/gif \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    	ExpiresByType image/jpeg \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    	ExpiresByType image/png \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    	ExpiresByType image/webp \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    	ExpiresByType text/css \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_CSS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_CSS').' weeks')."\"
+    	ExpiresByType text/javascript \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS').' weeks')."\"
+    	ExpiresByType application/javascript \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS').' weeks')."\"
+    	ExpiresByType application/x-javascript \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS').' weeks')."\"
+    	ExpiresByType image/x-icon \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON').' years')."\"
+    	ExpiresByType image/svg+xml \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON').' years')."\"
+    	ExpiresByType image/vnd.microsoft.icon \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON').' years')."\"
+    	ExpiresByType application/font-woff \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType application/x-font-woff \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType font/woff2 \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType application/vnd.ms-fontobject \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType font/opentype \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType font/ttf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType font/otf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType application/x-font-ttf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    	ExpiresByType application/x-font-otf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    </IfModule>
+
+    <IfModule mod_headers.c>
+        Header unset Etag
+    </IfModule>
+    FileETag none
+    <IfModule mod_deflate.c>
+        <IfModule mod_filter.c>
+            AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/x-javascript font/ttf application/x-font-ttf font/otf application/x-font-otf font/opentype image/svg+xml
+        </IfModule>
+    </IfModule>\n\n";
+                fwrite($write_fd, $cache_control);
+            }
+            // In case the user hasn't rewrite mod enabled
+            fwrite($write_fd, "#If rewrite mod isn't enabled\n");
+
+            // Do not remove ($domains is already iterated upper)
+            reset($domains);
+            $domain = current($domains);
+            fwrite($write_fd, 'ErrorDocument 404 '.$domain[0]['physical']."index.php?controller=404\n\n");
+
+            fwrite($write_fd, "# ~~end~~ Do not remove this comment, Prestashop will keep automatically the code outside this comment when .htaccess will be generated again");
+            if ($specific_after) {
+                fwrite($write_fd, "\n\n".trim($specific_after));
+            }
+            fclose($write_fd);
+            unset($specific);
+            return true;
+        }
+    public static function Ets_generateHtaccess80($path = null, $rewrite_settings = null, $cache_control = null, $specific = '', $disable_multiviews = null, $medias = false, $disable_modsec = null)
+    {
+
+        if (
+            defined('_PS_IN_TEST_')
+            || (defined('PS_INSTALLATION_IN_PROGRESS') && $rewrite_settings === null)
+        ) {
+            return true;
+        }
+
+        // Default values for parameters
+        if (null === $path) {
+            $path = _PS_ROOT_DIR_ . '/.htaccess';
+        }
+
+        if (null === $cache_control) {
+            $cache_control = (int) Configuration::get('PS_HTACCESS_CACHE_CONTROL');
+        }
+        if (null === $disable_multiviews) {
+            $disable_multiviews = (bool) Configuration::get('PS_HTACCESS_DISABLE_MULTIVIEWS');
+        }
+
+        if ($disable_modsec === null) {
+            $disable_modsec = (int) Configuration::get('PS_HTACCESS_DISABLE_MODSEC');
+        }
+
+        // Check current content of .htaccess and save all code outside of prestashop comments
+        $specific_before = $specific_after = '';
+        if (file_exists($path)) {
+            $content = file_get_contents($path);
+            if (preg_match('#^(.*)\# ~~start~~.*\# ~~end~~[^\n]*(.*)$#s', $content, $m)) {
+                $specific_before = $m[1];
+                $specific_after = $m[2];
+            } else {
+                // For retrocompatibility
+                if (preg_match('#\# http://www\.prestashop\.com - http://www\.prestashop\.com/forums\s*(.*)<IfModule mod_rewrite\.c>#si', $content, $m)) {
+                    $specific_before = $m[1];
+                } else {
+                    $specific_before = $content;
+                }
+            }
+        }
+
+        // Write .htaccess data
+        if (!$write_fd = @fopen($path, 'wb')) {
+            return false;
+        }
+        if ($specific_before) {
+            fwrite($write_fd, trim($specific_before) . "\n\n");
+        }
+
+        $domains = self::getDomains();
+
+        // Write data in .htaccess file
+        fwrite($write_fd, "# ~~start~~ Do not remove this comment, Prestashop will keep automatically the code outside this comment when .htaccess will be generated again\n");
+        fwrite($write_fd, "# .htaccess automaticaly generated by PrestaShop e-commerce open-source solution\n");
+        fwrite($write_fd, "# https://www.prestashop-project.org\n\n");
+
+        fwrite($write_fd, "# Prevent directory listings\n");
+        fwrite($write_fd, "Options -Indexes\n\n");
+
+        if ($disable_modsec) {
+            fwrite($write_fd, "<IfModule mod_security.c>\nSecFilterEngine Off\nSecFilterScanPOST Off\n</IfModule>\n\n");
+        }
+
+        // RewriteEngine
+        fwrite($write_fd, "<IfModule mod_rewrite.c>\n");
+
+        // Ensure HTTP_MOD_REWRITE variable is set in environment
+        fwrite($write_fd, "<IfModule mod_env.c>\n");
+        fwrite($write_fd, "SetEnv HTTP_MOD_REWRITE On\n");
+        fwrite($write_fd, "</IfModule>\n\n");
+
+        // Disable multiviews ?
+        if ($disable_multiviews) {
+            fwrite($write_fd, "\n# Disable Multiviews\nOptions -Multiviews\n\n");
+        }
+
+        fwrite($write_fd, "RewriteEngine on\n");
+
+        // Protect .git files or folders
+        fwrite($write_fd, "# Protect .git\nRewriteRule \.git - [F,L]\n");
+
+        if (
+            !$medias
+            && Configuration::getMultiShopValues('PS_MEDIA_SERVER_1')
+            && Configuration::getMultiShopValues('PS_MEDIA_SERVER_2')
+            && Configuration::getMultiShopValues('PS_MEDIA_SERVER_3')
+        ) {
+            $medias = [
+                Configuration::getMultiShopValues('PS_MEDIA_SERVER_1'),
+                Configuration::getMultiShopValues('PS_MEDIA_SERVER_2'),
+                Configuration::getMultiShopValues('PS_MEDIA_SERVER_3'),
+            ];
+        }
+
+        $media_domains = '';
+        foreach ($medias as $media) {
+            foreach ($media as $media_url) {
+                if ($media_url) {
+                    $media_domains .= 'RewriteCond %{HTTP_HOST} ^' . $media_url . '$ [OR]' . PHP_EOL;
+                }
+            }
+        }
+
+        if (Configuration::get('PS_WEBSERVICE_CGI_HOST')) {
+            fwrite($write_fd, "RewriteCond %{HTTP:Authorization} ^(.*)\nRewriteRule . - [E=HTTP_AUTHORIZATION:%1]\n\n");
+        }
+
+        foreach ($domains as $domain => $list_uri) {
+            // As we use regex in the htaccess, ipv6 surrounded by brackets must be escaped
+            $domain = str_replace(['[', ']'], ['\[', '\]'], $domain);
+
+            $domain_rewrite_cond = '';
+            foreach ($list_uri as $uri) {
+                fwrite($write_fd, PHP_EOL . PHP_EOL . '#Domain: ' . $domain . PHP_EOL);
+                if (Shop::isFeatureActive()) {
+                    fwrite($write_fd, 'RewriteCond %{HTTP_HOST} ^' . $domain . '$' . PHP_EOL);
+                }
+                fwrite($write_fd, 'RewriteRule . - [E=REWRITEBASE:' . $uri['physical'] . ']' . PHP_EOL);
+
+                // Webservice
+                fwrite($write_fd, 'RewriteRule ^api(?:/(.*))?$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]' . PHP_EOL);
+                // upload folder
+                fwrite($write_fd, 'RewriteRule ^upload/.+$ %{ENV:REWRITEBASE}index.php [QSA,L]' . "\n\n");
+
+                if (!$rewrite_settings) {
+                    $rewrite_settings = (int) Configuration::get('PS_REWRITING_SETTINGS', null, null, (int) $uri['id_shop']);
+                }
+
+                $domain_rewrite_cond = 'RewriteCond %{HTTP_HOST} ^' . $domain . '$' . PHP_EOL;
+                // Rewrite virtual multishop uri
+                if ($uri['virtual']) {
+                    if (!$rewrite_settings) {
+                        fwrite($write_fd, $media_domains);
+                        fwrite($write_fd, $domain_rewrite_cond);
+                        fwrite($write_fd, 'RewriteRule ^' . trim($uri['virtual'], '/') . '/?$ ' . $uri['physical'] . $uri['virtual'] . "index.php [L,R]\n");
+                    } else {
+                        fwrite($write_fd, $media_domains);
+                        fwrite($write_fd, $domain_rewrite_cond);
+                        fwrite($write_fd, 'RewriteRule ^' . trim($uri['virtual'], '/') . '$ ' . $uri['physical'] . $uri['virtual'] . " [L,R]\n");
+                    }
+                    fwrite($write_fd, $media_domains);
+                    fwrite($write_fd, $domain_rewrite_cond);
+                    fwrite($write_fd, 'RewriteRule ^' . ltrim($uri['virtual'], '/') . '(.*) ' . $uri['physical'] . "$1 [L]\n\n");
+                }
+
+                if ($rewrite_settings) {
+                    // Compatibility with the old image filesystem
+                    fwrite($write_fd, "# Rewrites for product images (support up to < 10 million images)\n");
+
+                    // Rewrite product images < 10 millions
+                    $path_components = [];
+                    for ($i = 1; $i <= 7; ++$i) {
+                        $path_components[] = '$' . ($i + 1); // paths start on 2
+                        $path_images = implode('/', $path_components);
+                        fwrite($write_fd, $media_domains);
+                        fwrite($write_fd, $domain_rewrite_cond);
+                        fwrite($write_fd, 'RewriteRule ^(' . str_repeat('([\d])', $i) . '(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/' . $path_images . '/$1$' . ($i + 2) . " [L]\n");
+                    }
+
+                    fwrite($write_fd, "# Rewrites for category images\n");
+                    fwrite($write_fd, $media_domains);
+                    fwrite($write_fd, $domain_rewrite_cond);
+                    fwrite($write_fd, 'RewriteRule ^c/([\d]+)(|_thumb)(\-[\.*\w-]*)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/c/$1$2$3$4 [L]' . PHP_EOL);
+                    fwrite($write_fd, $media_domains);
+                    fwrite($write_fd, $domain_rewrite_cond);
+                    fwrite($write_fd, 'RewriteRule ^c/([a-zA-Z_-]+)(|_thumb)(-[\d]+)?/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/c/$1$2$3$4 [L]' . PHP_EOL);
+                }
+
+                fwrite($write_fd, "# AlphaImageLoader for IE and fancybox\n");
+                if (Shop::isFeatureActive()) {
+                    fwrite($write_fd, $domain_rewrite_cond);
+                }
+                fwrite($write_fd, 'RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ %{ENV:REWRITEBASE}js/jquery/plugins/fancybox/images/$1.$2 [L]' . PHP_EOL);
+            }
+            // Redirections to dispatcher
+            if ($rewrite_settings) {
+                fwrite($write_fd, "\n# Send all other traffic to dispatcher\n");
+                fwrite($write_fd, "RewriteCond %{REQUEST_FILENAME} -s [OR]\n");
+                fwrite($write_fd, "RewriteCond %{REQUEST_FILENAME} -l [OR]\n");
+                fwrite($write_fd, "RewriteCond %{REQUEST_FILENAME} -d\n");
+                if (Shop::isFeatureActive()) {
+                    fwrite($write_fd, $domain_rewrite_cond);
+                }
+                fwrite($write_fd, "RewriteRule ^.*$ - [NC,L]\n");
+                if (Shop::isFeatureActive()) {
+                    fwrite($write_fd, $domain_rewrite_cond);
+                }
+                fwrite($write_fd, "RewriteRule ^.*\$ %{ENV:REWRITEBASE}index.php [NC,L]\n");
+            }
+        }
+
+        fwrite($write_fd, "</IfModule>\n\n");
+
+        fwrite($write_fd, "AddType application/vnd.ms-fontobject .eot\n");
+        fwrite($write_fd, "AddType font/ttf .ttf\n");
+        fwrite($write_fd, "AddType font/otf .otf\n");
+        fwrite($write_fd, "AddType application/font-woff .woff\n");
+        fwrite($write_fd, "AddType font/woff2 .woff2\n");
+        fwrite($write_fd, "<IfModule mod_headers.c>
+	<FilesMatch \"\.(ttf|ttc|otf|eot|woff|woff2|svg)$\">
+		Header set Access-Control-Allow-Origin \"*\"
+	</FilesMatch>
+</IfModule>\n\n");
+        fwrite($write_fd, '<Files composer.lock>
+    # Apache 2.2
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+
+    # Apache 2.4
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</Files>
+');
+        // Cache control
+        if ($cache_control) {
+            $cache_control = "<IfModule mod_expires.c>
+	ExpiresActive On
+    AddType image/webp .webp
+    ExpiresByType image/gif \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    ExpiresByType image/jpeg \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    ExpiresByType image/png \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    ExpiresByType image/webp \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE')<=1 ? '1 month' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_IMAGE').' months')."\"
+    ExpiresByType text/css \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_CSS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_CSS').' weeks')."\"
+    ExpiresByType text/javascript \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS').' weeks')."\"
+    ExpiresByType application/javascript \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS').' weeks')."\"
+    ExpiresByType application/x-javascript \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS')<=1 ? '1 week' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_JS').' weeks')."\"
+    ExpiresByType image/x-icon \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON').' years')."\"
+    ExpiresByType image/svg+xml \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON').' years')."\"
+    ExpiresByType image/vnd.microsoft.icon \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_ICON').' years')."\"
+    ExpiresByType application/font-woff \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    ExpiresByType application/x-font-woff \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    ExpiresByType font/woff2 \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    ExpiresByType application/vnd.ms-fontobject \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    ExpiresByType font/opentype \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    ExpiresByType font/ttf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    ExpiresByType font/otf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    ExpiresByType application/x-font-ttf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+    ExpiresByType application/x-font-otf \"access plus ".(Configuration::get('ETS_SPEED_USE_DEFAULT_CACHE') || (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT')<=1 ? '1 year' : (int)Configuration::get('ETS_SPEED_LIFETIME_CACHE_FONT').' years')."\"
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header unset Etag
+</IfModule>
+FileETag none
+<IfModule mod_deflate.c>
+    <IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/x-javascript font/ttf application/x-font-ttf font/otf application/x-font-otf font/opentype image/svg+xml
+    </IfModule>
+</IfModule>\n\n";
+            fwrite($write_fd, $cache_control);
+        }
+
+        // In case the user hasn't rewrite mod enabled
+        fwrite($write_fd, "#If rewrite mod isn't enabled\n");
+
+        // Do not remove ($domains is already iterated upper)
+        reset($domains);
+        $domain = current($domains);
+        fwrite($write_fd, 'ErrorDocument 404 ' . $domain[0]['physical'] . "index.php?controller=404\n\n");
+
+        fwrite($write_fd, '# ~~end~~ Do not remove this comment, Prestashop will keep automatically the code outside this comment when .htaccess will be generated again');
+        if ($specific_after) {
+            fwrite($write_fd, "\n\n" . trim($specific_after));
+        }
+        fclose($write_fd);
+        return true;
+    }
+    public static function Ets_generateHtaccessIMG(){
+        $path = _PS_IMG_DIR_.'/.htaccess';
+        if (!$write_fd = @fopen($path, 'w')) {
+            return false;
+        }
+        $str ="<IfModule mod_php5.c>
+        php_flag engine off
+    </IfModule>\n\n";
+
+        fwrite($write_fd, $str);
+        fwrite($write_fd,"# Apache 2.2\n");
+        $str ="<IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+        <Files ~ \"(?i)^.*\.(jpg|jpeg|gif|png|bmp|tiff|svg|pdf|mov|mpeg|mp4|avi|mpg|wma|flv|webm|ico|webp)$\">
+            Allow from all
+        </Files>
+    </IfModule>\n\n";
+        fwrite($write_fd, $str);
+        fwrite($write_fd,"# Apache 2.4\n");
+        $str ="<IfModule mod_authz_core.c>
+        Require all denied
+        <Files ~ \"(?i)^.*\.(jpg|jpeg|gif|png|bmp|tiff|svg|pdf|mov|mpeg|mp4|avi|mpg|wma|flv|webm|ico|webp)$\">
+            Require all granted
+        </Files>
+    </IfModule>\n\n";
+        fwrite($write_fd, $str);
+        fclose($write_fd);
+    }
+    public static function getDomains()
+    {
+        $domains = [];
+        foreach (ShopUrl::getShopUrls() as $shop_url) {
+            /** @var ShopUrl $shop_url */
+            if (!isset($domains[$shop_url->domain])) {
+                $domains[$shop_url->domain] = [];
+            }
+
+            $domains[$shop_url->domain][] = [
+                'physical' => $shop_url->physical_uri,
+                'virtual' => $shop_url->virtual_uri,
+                'id_shop' => $shop_url->id_shop,
+            ];
+
+            if ($shop_url->domain == $shop_url->domain_ssl) {
+                continue;
+            }
+
+            if (!isset($domains[$shop_url->domain_ssl])) {
+                $domains[$shop_url->domain_ssl] = [];
+            }
+
+            $domains[$shop_url->domain_ssl][] = [
+                'physical' => $shop_url->physical_uri,
+                'virtual' => $shop_url->virtual_uri,
+                'id_shop' => $shop_url->id_shop,
+            ];
+        }
+
+        return $domains;
+    }
+}

@@ -1,27 +1,21 @@
 <?php
 /**
- * 2007-2020 PrestaShop.
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
 /**
@@ -95,12 +89,12 @@ class Ps_EmailAlertsActionsModuleFrontController extends ModuleFrontController
         } elseif (Validate::isEmail((string) Tools::getValue('customer_email'))) {
             $customer_email = (string) Tools::getValue('customer_email');
             $customer = $context->customer->getByEmail($customer_email);
-            $id_customer = (isset($customer->id) && ($customer->id != null)) ? (int) $customer->id : null;
+            $id_customer = (isset($customer->id) && ($customer->id != null)) ? (int) $customer->id : 0;
         } else {
             exit(json_encode(
                 [
                     'error' => true,
-                    'message' => $this->trans('Your e-mail address is invalid', [], 'Modules.Mailalerts.Shop'),
+                    'message' => $this->trans('Your email address is invalid.', [], 'Modules.Emailalerts.Shop'),
                 ]
             ));
         }
@@ -117,32 +111,32 @@ class Ps_EmailAlertsActionsModuleFrontController extends ModuleFrontController
             exit(json_encode(
                 [
                     'error' => true,
-                    'message' => $this->trans('You already have an alert for this product', [], 'Modules.Mailalerts.Shop'),
+                    'message' => $this->trans('You already have set an alert for this product.', [], 'Modules.Emailalerts.Shop'),
                 ]
             ));
         } elseif (!Validate::isLoadedObject($product)) {
             exit(json_encode(
                 [
                     'error' => true,
-                    'message' => $this->trans('Your e-mail address is invalid', [], 'Modules.Mailalerts.Shop'),
+                    'message' => $this->trans('Your email address is invalid.', [], 'Modules.Emailalerts.Shop'),
                 ]
             ));
         }
 
         $mail_alert = new MailAlert();
 
-        $mail_alert->id_customer = (int) $id_customer;
-        $mail_alert->customer_email = (string) $customer_email;
-        $mail_alert->id_product = (int) $id_product;
-        $mail_alert->id_product_attribute = (int) $id_product_attribute;
-        $mail_alert->id_shop = (int) $id_shop;
-        $mail_alert->id_lang = (int) $id_lang;
+        $mail_alert->id_customer = $id_customer;
+        $mail_alert->customer_email = $customer_email;
+        $mail_alert->id_product = $id_product;
+        $mail_alert->id_product_attribute = $id_product_attribute;
+        $mail_alert->id_shop = $id_shop;
+        $mail_alert->id_lang = $id_lang;
 
         if ($mail_alert->add() !== false) {
             exit(json_encode(
                 [
                     'error' => false,
-                    'message' => $this->trans('Request notification registered', [], 'Modules.Mailalerts.Shop'),
+                    'message' => $this->trans('Request notification registered', [], 'Modules.Emailalerts.Shop'),
                 ]
             ));
         }
@@ -150,7 +144,7 @@ class Ps_EmailAlertsActionsModuleFrontController extends ModuleFrontController
         exit(json_encode(
             [
                 'error' => true,
-                'message' => $this->trans('Your e-mail address is invalid', [], 'Modules.Mailalerts.Shop'),
+                'message' => $this->trans('Your email address is invalid.', [], 'Modules.Emailalerts.Shop'),
             ]
         ));
     }
@@ -172,7 +166,7 @@ class Ps_EmailAlertsActionsModuleFrontController extends ModuleFrontController
 
         $id_product_attribute = (int) Tools::getValue('id_product_attribute');
 
-        if (MailAlert::customerHasNotification((int) $id_customer, (int) $id_product, (int) $id_product_attribute, (int) $this->context->shop->id)) {
+        if (MailAlert::customerHasNotification($id_customer, $id_product, $id_product_attribute, (int) $this->context->shop->id)) {
             exit('1');
         }
 

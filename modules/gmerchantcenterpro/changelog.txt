@@ -1,6 +1,104 @@
 Change history for Google Merchant Center Pro
 ---------------------------------------------
 ===========================
+Version 1.7.20 (06/07/2022)|
+===========================
+- Handle tag for product dimension
+- Handle tag for ships from
+- Added option to set free shipping of the price is greater than an amount
+- Fix Venezuela currency
+- Fix use case for Korean currn detection
+- Fix BO tooltips
+
+===========================
+Version 1.7.19 (07/04/2022)|
+===========================
+- Update file headers
+- Fix for bad display with some icones on BO
+- Fix for export images with combination
+- Update to handle new Shop product reviews version for review feed
+- Fix use case when bad language package is set and create problem with google categories
+- Fix CRON url for multishop
+- Fix price display in data feed for pack with Prestamodule Advanced Pack
+
+===========================
+Version 1.7.18 (09/02/2022)|
+===========================
+- Fix for identifier_exist option
+- Fix for promotion feed for discount with amount in currency
+- Fix exclusion rules on specific combinations
+- Stop use hookModuleRoutes
+- Clean code around old Google Shopping actions
+- Removed Buy on Google listing on exclusion data feed, and promotion channel
+- Removed code for PS 1.6
+
+===========================
+Version 1.7.17 (14/12/2021)|
+===========================
+- Fix for preorder tag
+- Use default function from Prestashop to generate product link with combination
+- Fix for stock detection on combination with multishop
+- Added Kuwait as available data feed
+- New way to handle unit waiting by Google
+
+===========================
+Version 1.7.16 (27/10/2021)|
+===========================
+- Handle pre-order tag
+- Fix for review URL in review feed
+- Fix for local inventory feed id
+
+===========================
+Version 1.7.15 (07/10/2021)|
+===========================
+- Fix for review and promotion data feed on land detection
+- Fix for multishop and duplicated data
+
+
+===========================
+Version 1.7.14 (01/09/2021)|
+===========================
+- Handle package size in the XML
+- Handle Local iventory data feed
+- Removed shopping actions code (service stops by Google)
+
+===========================
+Version 1.7.13 (05/07/2021)|
+===========================
+- Fix tag preorder and availability
+
+
+===========================
+Version 1.7.12 (07/04/2021)|
+===========================
+- Improve GSA lib
+- Added Oauth for our API 
+- Improve GSA tab on the backoffice
+- Fix for exclusion rules on product combination
+- Fix for edit esclusion rules
+- Added utm_content tag
+- Added option for combination separator on g:id tag
+- Added option to set a percentage of the stock for GSA
+- Added google_funded_promotion_eligibility tag
+- Added country exclusion tag
+- Added excluded destination
+- Added canal diffusion for promotion feed
+- Handle on feed per lang for data feed review 
+- Use front controller for CRON and FLYOUTPUT 
+- Added Advanced Pack Compatibility for Pack with discount
+- Added function to handle retro compatibilty with old CRON and FLY url's
+- Fix for dynamic_new_product custom label
+- Fix for delete custom label tag delete
+- Added last product ordered CL
+- Added product promotion CL
+- Added auto assign of dynamic CL during data feed update
+- Added QC entry for datafeed
+- Refactor code for custom label- Handle pre-order tag from product and combination 
+- Handle MPN from product and combination for PS 1.7.7
+- Handle pre-order tag from product and combination 
+
+
+===========================
 Version 1.7.11 (05/03/2020)|
 ===========================
 - Update the getCarriers call to handle all carriers

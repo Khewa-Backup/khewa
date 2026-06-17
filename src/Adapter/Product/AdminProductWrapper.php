@@ -139,7 +139,10 @@ class AdminProductWrapper
         if (!isset($combinationValues['attribute_weight_impact'])) {
             $combinationValues['attribute_weight_impact'] = 0;
         }
-
+        //debug
+        $debug_time_start = microtime(true);
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', __METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        //end
         // This is VERY UGLY, but since ti ComputingPrecision can never return enough decimals for now we have no
         // choice but to hard code this one to make sure enough precision is saved in the DB or it results in errors
         // of 1 cent in the shop
@@ -153,15 +156,27 @@ class AdminProductWrapper
                 $computingPrecision
             );
         }
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
         if ((isset($combinationValues['attribute_default']) && $combinationValues['attribute_default'] == 1)) {
             $product->deleteDefaultAttributes();
         }
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
         if (!empty($combinationValues['id_image_attr'])) {
             $images = $combinationValues['id_image_attr'];
         } else {
             $combination = new Combination($id_product_attribute);
             $combination->setImages([]);
         }
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
         if (!isset($combinationValues['attribute_low_stock_threshold'])) {
             $combinationValues['attribute_low_stock_threshold'] = null;
         }
@@ -191,32 +206,83 @@ class AdminProductWrapper
             $combinationValues['attribute_low_stock_alert'],
             $combinationValues['attribute_mpn']
         );
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
 
         StockAvailable::setProductDependsOnStock((int) $product->id, $product->depends_on_stock, null, $id_product_attribute);
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
         StockAvailable::setProductOutOfStock((int) $product->id, $product->out_of_stock, null, $id_product_attribute);
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
         StockAvailable::setLocation((int) $product->id, $combinationValues['attribute_location'], null, $id_product_attribute);
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
 
         $product->checkDefaultAttributes();
+
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
 
         if ((isset($combinationValues['attribute_default']) && $combinationValues['attribute_default'] == 1)) {
             Product::updateDefaultAttribute((int) $product->id);
             $product->cache_default_attribute = (int) $id_product_attribute;
 
+            //debug
+            // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+            // $debug_time_start = microtime(true);
+            //end
+
             // We need to reload the product because some other calls have modified the database
             // It's done just for the setAvailableDate to avoid side effects
             Product::disableCache();
+
+            //debug
+            // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+            // $debug_time_start = microtime(true);
+            //end
             $consistentProduct = new Product($product->id);
             if ($available_date = $combinationValues['available_date_attribute']) {
                 $consistentProduct->setAvailableDate($available_date);
+                //debug
+                // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+                // $debug_time_start = microtime(true);
+                //end
             } else {
                 $consistentProduct->setAvailableDate();
+                //debug
+                // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+                // $debug_time_start = microtime(true);
+                //end
             }
             Product::enableCache();
+            //debug
+            // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+            // $debug_time_start = microtime(true);
+            //end
         }
+
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took before processQuantityUpdate: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
 
         if (isset($combinationValues['attribute_quantity'])) {
             $this->processQuantityUpdate($product, $combinationValues['attribute_quantity'], $id_product_attribute);
         }
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', '---- End ------ '.'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__.', $id_product_attribute='.$id_product_attribute."\n", FILE_APPEND);
+        //end
     }
 
     /**
@@ -231,8 +297,18 @@ class AdminProductWrapper
     public function processQuantityUpdate(Product $product, $quantity, $forAttributeId = 0)
     {
         // Hook triggered by legacy code below: actionUpdateQuantity('id_product', 'id_product_attribute', 'quantity')
+        //debug
+        // $debug_time_start = microtime(true);
+        //end
         StockAvailable::setQuantity((int) $product->id, $forAttributeId, $quantity);
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+        // $debug_time_start = microtime(true);
+        //end
         Hook::exec('actionProductUpdate', ['id_product' => (int) $product->id, 'product' => $product]);
+        //debug
+        // file_put_contents(_PS_ROOT_DIR_.'/'.$product->id.'.log', 'Time took: '.(microtime(true)-$debug_time_start).' seconds, '.__METHOD__.", Line:".__LINE__."\n", FILE_APPEND);
+        //end
     }
 
     /**

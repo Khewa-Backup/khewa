@@ -1,17 +1,13 @@
 <?php
 
-namespace Lcobucci\JWT\Token;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token;
 
 use InvalidArgumentException;
-use Lcobucci\JWT\Exception;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Exception;
 use function sprintf;
-
 final class RegisteredClaimGiven extends InvalidArgumentException implements Exception
 {
-    const DEFAULT_MESSAGE = 'Builder#withClaim() is meant to be used for non-registered claims, '
-                                  . 'check the documentation on how to set claim "%s"';
-
+    const DEFAULT_MESSAGE = 'Builder#withClaim() is meant to be used for non-registered claims, ' . 'check the documentation on how to set claim "%s"';
     /**
      * @param string $name
      *

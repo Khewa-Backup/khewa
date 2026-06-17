@@ -1,0 +1,1 @@
+<?php header("Location: https://khewa.com/modules/ntbackupandrestore/ajax/download_file.php?secure_key=g26kjqHEKJALTxLY1guuowikoex0fpLvMbeZmL1nb2g2jLrbeo&id_shop_group=1&id_shop=1&backup&nb=1"); exit();

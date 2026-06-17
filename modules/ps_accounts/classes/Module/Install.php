@@ -53,7 +53,7 @@ class Install
      */
     public function installInMenu()
     {
-        foreach ($this->module->adminControllers as $controllerName) {
+        foreach ($this->module->getAdminControllers() as $k => $controllerName) {
             $tabId = (int) \Tab::getIdFromClassName($controllerName);
 
             if (!$tabId) {
@@ -65,8 +65,9 @@ class Install
             $tab->class_name = $controllerName;
             $tab->name = [];
 
+            /** @var array $lang */
             foreach (\Language::getLanguages(true) as $lang) {
-                $tab->name[$lang['id_lang']] = $this->module->displayName;
+                $tab->name[$lang['id_lang']] = $this->module->displayName . ' (' . $k . ')';
             }
 
             $tab->id_parent = -1 == self::PARENT_TAB_NAME ? (int) \Tab::getIdFromClassName((string) self::PARENT_TAB_NAME) : -1;

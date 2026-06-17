@@ -1,0 +1,233 @@
+/**
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License version 3.0
+* that is bundled with this package in the file LICENSE.txt
+* It is also available through the world-wide-web at this URL:
+* https://opensource.org/licenses/AFL-3.0
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade this module to a newer
+* versions in the future. If you wish to customize this module for your
+* needs please refer to CustomizationPolicy.txt file inside our module for more information.
+*
+* @author Webkul IN
+* @copyright Since 2010 Webkul
+* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+*/
+.msg_div{
+    padding: 20px;
+    word-wrap: break-word;
+}
+.msg_div .row{
+	padding: 5px 0px !important;
+}
+.agent_msg_div {
+	background-color: #F2F2F2;
+}
+.border_bottom{
+	border-bottom: 1px solid #D3D3D3;
+}
+.wk_hd_status_update a{
+	display: block;
+	line-height:30px;
+	padding: 0px 5px;
+}
+
+.wk_hd_status_update:hover {
+	background: #2fb5d2;
+}
+
+.wk_hd_status_update:hover a:hover{
+	color: white;
+}
+.ticketMainAttachment div span label, #hd_btn_other_attachment {
+	color:white!important;
+}
+#hd_btn_other_attachment {
+	text-transform: none;
+}
+#replyTicket {
+	outline: none;
+}
+.wk-hd-download-attachment {
+	border:1px solid lightgray;
+	border-radius:3px;
+	white-space: initial;
+	background: white;
+	word-break:break-word;
+}
+.wk-hd-download-attachment:hover {
+	color:white;
+	background:#00B4CF;
+}
+#wk_hd_ticket_details {
+	margin:64px 0px 15px;
+	border-radius: 5px;
+	border:1px solid #D5D5D5;
+	box-shadow: 0px 4px 8px 2px lightgray;
+}
+.wk-mp-content, .wk-mp-right-column {
+	background-color:transparent;
+	box-shadow: none;
+}
+.wk_hd_td_value {
+	color: gray;
+}
+.wk_hd_msg_div, .wk_hd_msg_div_sent {
+	border: 1px solid #D7D7D7;
+	padding:20px 30px;
+	border-radius:30px;
+	background: papayawhip;
+}
+.wk_hd_msg_div p, .wk_hd_msg_div_sent p{
+	word-wrap: break-word;
+	margin:0;
+	color: black;
+	text-align : justify;
+}
+.wk_hd_datetime_received {
+	margin-left: 25px;
+}
+.wk_hd_datetime span {
+	float: right;
+	margin-right: 36px;
+}
+.wk_hd_internal_note, .wk_hd_status_update_msg {
+	min-height:60px;
+	border: 1px solid #979797;
+	border-radius:40px;
+	padding:20px 30px;
+	background:#FBFCFF;
+}
+.wk_hd_internal_note p, .wk_hd_status_update_msg p {
+	word-break:break-word;
+	margin:0px;
+	text-align : justify;
+}
+.wk_hd_internal_note div:first-child p, .wk_hd_status_update_msg div:first-child p {
+	font-size: 16px;
+	font-weight: bolder;
+	color: #FF4E5A;
+}
+.wk_hd_main_div {
+	border-radius: 5px;
+	border:1px solid #D5D5D5;
+	box-shadow: 0px 4px 8px 2px lightgray;
+	float: left;
+	width: 100%;
+	background: white;
+	margin-bottom: 18px;
+}
+.wk_hd_name_initial {
+	margin:auto;
+	width:30px;
+	height:30px;
+	border-radius:15px;
+	margin-top:15px;
+}
+#wk_hd_change_status {
+	background:white;
+	border-color:#D5D5D5;
+	border-radius:4px;
+}
+#wk_hd_change_status button {
+	text-align:left;
+	font-size:16px!important;
+	color:gray;
+	height:40px;
+	width:200px;
+	background:transparent;
+}
+#wk_hd_change_status span {
+	height:40px;
+	line-height:40px;
+	position: absolute;
+	right:5px;
+	top:0px;
+}
+#wk_hd_ticket_details div div.row {
+	color:black;
+}
+#wk_hd_conversation {
+	color:black;
+	display:block;
+	margin: 20px 0px;
+	font-weight: 800;
+}
+.wk_hd_container {
+	padding: 20px 0;
+}
+label {
+	font-weight: normal!important;
+	color: black!important;
+	text-align:left;
+	font-size:15px!important;
+}
+.ticketMainAttachment {
+	width:50%;
+}
+.ticketMainAttachment div.input-group input {
+	line-height:inherit;
+}
+.wk_hd_sender_name_div {
+	width: 60px;
+}
+.wk_hd_msg_div_sent {
+	margin-left: 35px;
+	background: powderblue;
+}
+@media screen and (max-width: 1200px) {
+	.wk_hd_msg_div_sent {
+		margin-left: 15px;
+	}
+}
+@media screen and (max-width: 992px) {
+	.wk_hd_sender_name_div {
+		padding: 0px;
+	}
+	.wk_hd_clearfix {
+		margin-left: -14px;
+	}
+	.wk_hd_status_update_msg p {
+		line-height: inherit;
+	}
+}
+@media screen and (max-width: 768px) {
+	.wk_hd_msg_div_sent {
+		margin-left: 0px;
+	}
+	.wk_hd_clearfix {
+		margin-left: 0;
+	}
+}
+@media screen and (max-width: 576px) {
+	.wk_hd_msg_div_sent {
+		margin-left: 0px;
+	}
+}
+@media screen and (max-width: 375px) {
+	.wk_hd_datetime span {
+		margin-right: 0;
+	}
+}
+
+.hd_btn_other_remove {
+    text-transform: none;
+    color: white!important;
+    text-transform: uppercase;
+}
+
+@media screen and (max-width: 284px) {
+    .mt-media-5 {
+      margin-top: 10px !important;
+    }
+}
+
+.wk_hd_msg_div_sent > p > img {
+    max-width: 100%;
+}
+.wk_hd_msg_div_sent > table {
+    max-width: 100%;
+}

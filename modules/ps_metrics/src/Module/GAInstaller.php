@@ -21,9 +21,11 @@
 
 namespace PrestaShop\Module\Ps_metrics\Module;
 
-use PrestaShop\Module\Ps_metrics\Adapter\LinkAdapter;
 use PrestaShop\Module\Ps_metrics\Helper\ModuleHelper;
+use PrestaShop\Module\Ps_metrics\Helper\PrestaShopHelper;
 use PrestaShop\Module\Ps_metrics\Helper\ToolsHelper;
+use Ps_metrics;
+use Symfony\Component\Routing\Router;
 
 class GAInstaller
 {
@@ -33,9 +35,9 @@ class GAInstaller
     private $moduleName = 'ps_googleanalytics';
 
     /**
-     * @var LinkAdapter
+     * @var Ps_metrics
      */
-    private $linkAdapter;
+    private $module;
 
     /**
      * @var ModuleHelper
@@ -48,6 +50,11 @@ class GAInstaller
     private $toolsHelper;
 
     /**
+     * @var PrestashopHelper
+     */
+    private $prestashopHelper;
+
+    /**
      * @var \Symfony\Component\DependencyInjection\ContainerInterface|null
      */
     protected $container;
@@ -55,27 +62,22 @@ class GAInstaller
     /**
      * GAInstaller constructor.
      *
-     * @param LinkAdapter $linkAdapter
      * @param ModuleHelper $moduleHelper
      * @param ToolsHelper $toolsHelper
+     * @param PrestaShopHelper $prestashopHelper
      *
      * @return void
      */
-    public function __construct(LinkAdapter $linkAdapter, ModuleHelper $moduleHelper, ToolsHelper $toolsHelper)
-    {
-        $this->linkAdapter = $linkAdapter;
+    public function __construct(
+        Ps_metrics $module,
+        ModuleHelper $moduleHelper,
+        ToolsHelper $toolsHelper,
+        PrestaShopHelper $prestashopHelper
+    ) {
+        $this->module = $module;
         $this->moduleHelper = $moduleHelper;
         $this->toolsHelper = $toolsHelper;
-    }
-
-    /**
-     * Return shop is on 1.7
-     *
-     * @return bool
-     */
-    private function isShop173()
-    {
-        return version_compare(_PS_VERSION_, '1.7.3.0', '>=');
+        $this->prestashopHelper = $prestashopHelper;
     }
 
     /**
@@ -83,7 +85,7 @@ class GAInstaller
      *
      * @return bool
      */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         return $this->moduleHelper->isInstalled($this->moduleName);
     }
@@ -93,7 +95,7 @@ class GAInstaller
      *
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->moduleHelper->isEnabled($this->moduleName);
     }
@@ -103,47 +105,19 @@ class GAInstaller
      *
      * @return string
      */
-    public function getInstallLink()
+    public function getInstallLink(): string
     {
         if (true === $this->moduleHelper->isInstalled($this->moduleName)) {
             return '';
         }
 
-        if ($this->isShop173()) {
-            $router = $this->get('router');
+        /** @var Router $router */
+        $router = $this->module->getService('router');
 
-            return substr($this->toolsHelper->getShopDomainSsl(true) . __PS_BASE_URI__, 0, -1) . $router->generate('admin_module_manage_action', [
-                'action' => 'install',
-                'module_name' => $this->moduleName,
-            ]);
-        }
-
-        return $this->linkAdapter->getAdminLink('AdminModules', true, [], [
+        return substr($this->toolsHelper->getShopDomainSsl(true) . __PS_BASE_URI__, 0, -1) . $router->generate('admin_module_manage_action', [
+            'action' => 'install',
             'module_name' => $this->moduleName,
-            'install' => $this->moduleName,
         ]);
-    }
-
-    /**
-     * Override of native function to always retrieve Symfony container instead of legacy admin container on legacy context.
-     *
-     * @param string $serviceName
-     *
-     * @return mixed
-     */
-    private function get($serviceName)
-    {
-        if (null === $this->container) {
-            $container = \PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance();
-
-            if (is_null($container)) {
-                throw new \PrestaShopException('Symfony container is null or invalid');
-            }
-
-            $this->container = $container;
-        }
-
-        return $this->container->get($serviceName);
     }
 
     /**
@@ -151,24 +125,18 @@ class GAInstaller
      *
      * @return string
      */
-    public function getEnableLink()
+    public function getEnableLink(): string
     {
         if (true === $this->moduleHelper->isEnabled($this->moduleName)) {
             return '';
         }
 
-        if ($this->isShop173()) {
-            $router = $this->get('router');
+        /** @var Router $router */
+        $router = $this->module->getService('router');
 
-            return substr($this->toolsHelper->getShopDomainSsl(true) . __PS_BASE_URI__, 0, -1) . $router->generate('admin_module_manage_action', [
-                'action' => 'enable',
-                'module_name' => $this->moduleName,
-            ]);
-        }
-
-        return $this->linkAdapter->getAdminLink('AdminModules', true, [], [
+        return substr($this->toolsHelper->getShopDomainSsl(true) . __PS_BASE_URI__, 0, -1) . $router->generate('admin_module_manage_action', [
+            'action' => 'enable',
             'module_name' => $this->moduleName,
-            'enable' => '1',
         ]);
     }
 
@@ -177,10 +145,32 @@ class GAInstaller
      *
      * @return string
      */
-    public function getConfigLink()
+    public function getConfigLink(): string
     {
-        return $this->linkAdapter->getAdminLink('AdminModules', true, [], [
+        $link = $this->prestashopHelper->getLink();
+
+        return $link->getAdminLink('AdminModules', true, [], [
             'configure' => $this->moduleName,
         ]);
+    }
+
+    /**
+     * get ps_analytics module version
+     *
+     * @return string
+     */
+    public function getModuleVersion(): string
+    {
+        if (false === $this->isInstalled()) {
+            return '0.0.0';
+        }
+
+        $module = \Module::getInstanceByName($this->moduleName);
+
+        if (false === $module) {
+            return '0.0.0';
+        }
+
+        return $module->version;
     }
 }

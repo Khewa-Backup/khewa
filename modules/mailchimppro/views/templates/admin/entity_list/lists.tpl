@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 <div class="table-responsive">
@@ -22,7 +22,7 @@
             <th>{l s='ID' mod='mailchimppro'}</th>
             <th>{l s='Web ID' mod='mailchimppro'}</th>
             <th>{l s='Name' mod='mailchimppro'}
-            <th>#</th>
+            <th>{l s='Actions' mod='mailchimppro'}</th>
         </tr>
         </thead>
         <tbody>
@@ -35,13 +35,15 @@
                 <td>
                     <div class="btn-group  btn-group-xs" role="group" aria-label="...">
                         <a class="btn btn-default"
-                           href="{LinkHelper::getAdminLink('AdminMailchimpProLists', true, [], ['action' => 'entitydelete', 'entity_id' => $list.id])|escape:'htmlall':'UTF-8'}">
-                            Delete
+                           href="{LinkHelper::getAdminLink('AdminMailchimpProLists', true, [], ['action' => 'entitydelete', 'entity_id' => $list.id])|escape:'htmlall':'UTF-8'}" title="{l s='Delete' mod='mailchimppro'}">
+                            <i class="icon icon-trash" aria-hidden="true"></i>
+							<span>{l s='Delete' mod='mailchimppro'}</span>
                         </a>
 
                         <a class="btn btn-default"
-                           href="{LinkHelper::getAdminLink('AdminMailchimpProListMembers', true, [], ['list_id' => $list.id])|escape:'htmlall':'UTF-8'}">
-                            {l s='Members' mod='mailchimppro'}
+                           href="{LinkHelper::getAdminLink('AdminMailchimpProListMembers', true, [], ['list_id' => $list.id])|escape:'htmlall':'UTF-8'}" title="{l s='Members' mod='mailchimppro'}">
+                            <i class="icon icon-users" aria-hidden="true"></i>
+							<span>{l s='Members' mod='mailchimppro'}</span>
                         </a>
                     </div>
 

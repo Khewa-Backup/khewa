@@ -8,31 +8,56 @@
 * You are not allowed to sell or redistribute this module
 * This header must not be removed
 *
-*  @author    KHOUFI Wissem - K.W
-*  @copyright 2021 Khoufi Wissem
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  @version   2.1.63; PSCompatiblity 1.5.6.x => 1.7.x
+*  @author		KHOUFI Wissem - K.W
+*  @copyright 	2023 Khoufi Wissem
+*  @license		http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  @version		2.8.90; PSCompatiblity 1.5.6.x => 8.x.x
 */
 
 class WKInventory extends Module
 {
     protected $config_form = false;
+	public $product_has_isbn = false;
+	public $product_has_mpn = false;
+	public $identifiers;
 
     public function __construct()
     {
         require_once(dirname(__FILE__).'/classes/Workshop.php');
+        require_once(dirname(__FILE__).'/classes/StockTake.php');
+        require_once(dirname(__FILE__).'/classes/StockTakeProduct.php');
 
         $this->name = 'wkinventory';
         $this->tab = 'shipping_logistics';
-        $this->version = '2.1.63';
+        $this->version = '2.8.90';
         $this->author = 'Khoufi Wissem';
         $this->need_instance = 0;
         $this->module_key = '51e798dfd6db6b8884411a003b9a798a';
-        $this->is_before_16 = version_compare(_PS_VERSION_, '1.5.6.3', '<=');
-        $this->is_greater_17 = version_compare(_PS_VERSION_, '1.7', '>=');
+        $this->isPS15 = version_compare(_PS_VERSION_, '1.5.6.3', '<=');
+        $this->isPS17 = version_compare(_PS_VERSION_, '1.7', '>=');
         $this->bootstrap = true;
 
         parent::__construct();
+
+        if (array_key_exists('isbn', Product::$definition['fields'])) {
+			$this->product_has_isbn = true;
+        }
+        if (array_key_exists('mpn', Product::$definition['fields'])) {
+			$this->product_has_mpn = true;
+        }
+
+        $this->identifiers = array(
+            $this->l('Reference'),
+            $this->l('Product Name'),
+            $this->l('EAN13'),
+            $this->l('UPC'),
+		);
+		if ($this->product_has_isbn) {
+			$this->identifiers[] = $this->l('ISBN');
+		}
+		if ($this->product_has_mpn) {
+			$this->identifiers[] = $this->l('MPN');
+		}
 
         /* T A B S */
         $this->my_tabs = array(
@@ -41,7 +66,7 @@ class WKInventory extends Module
                     'en' => 'Wk Inventory Management',
                     'fr' => 'Wk Gestion Inventaire'
                 ),
-                'className' => (!$this->is_greater_17 ? 'AdminStocktakedash' : 'AdminParentStocktakedash'),
+                'className' => (!$this->isPS17 ? 'AdminStocktakedash' : 'AdminParentStocktakedash'),
                 'id_parent' => 0,
                 'is_hidden' => 0,
                 'is_tool' => 0,
@@ -92,7 +117,7 @@ class WKInventory extends Module
                 'ico' => 'log.png'
             ),
         );
-        if ($this->is_greater_17) {
+        if ($this->isPS17) {
             $tab_dashboard = array(
                 'name' => array(
                     'en' => 'Dashboard',
@@ -117,20 +142,21 @@ class WKInventory extends Module
         if (!parent::install() ||
             !Configuration::updateValue('WKINVENTORY_EMPL_RESTRICTION', 1) ||
             !Configuration::updateValue('WKINVENTORY_DEFAULTQTY_UPDATE', 1) ||
-            !Configuration::updateValue('WKINVENTORY_GEN_EAN', 1) ||
             !Configuration::updateValue('WKINVENTORY_PREFIX_CODE', 400) ||
             !Configuration::updateValue('WKINVENTORY_ADDQTY_EXISTANT', 0) ||
+            !Configuration::updateValue('WKINVENTORY_GEN_EAN', 1) ||
             !Configuration::updateValue('WKINVENTORY_GEN_UPC', 1) ||
             !Configuration::updateValue('WKINVENTORY_ADDQTY_AUTO', 0) ||
             !Configuration::updateValue('WKINVENTORY_PDFREPORT_MODE', 'normal') ||
-            !Configuration::updateValue('WKINVENTORY_RESETSTOCK_NOTINVENT', 0) ||
             !$this->registerHook('actionProductDelete') ||
             !$this->registerHook('actionAttributeCombinationDelete') || // For PS 1.7
             !$this->registerHook('actionObjectDeleteAfter') || // For PS 1.6
             !$this->registerHook('actionProductUpdate') ||
             !$this->registerHook('actionProductSave') ||
+            !$this->registerHook('actionUpdateQuantity') ||
+            !$this->registerHook('actionObjectUpdateAfter') ||
             !$this->registerHook('displayBackOfficeFooter') ||
-            !$this->registerHook('backOfficeHeader')) {
+            !$this->registerHook('displayBackOfficeHeader')) {
             return false;
         }
         if ($install) {
@@ -143,15 +169,8 @@ class WKInventory extends Module
 
     public function installTables()
     {
-        $tables = array(
-            dirname(__FILE__).'/install/install.sql',
-            dirname(__FILE__).'/upgrade/sql/install-logs-table.sql',
-        );
-        $res = true;
-        foreach ($tables as $table) {
-            $res &= $this->loadSQLFile($table);
-        }
-        return $res;
+        require_once(dirname(__FILE__).'/install/install.php');
+        return true;
     }
 
     /*
@@ -201,12 +220,12 @@ class WKInventory extends Module
 
             // Process Parent ID
             if ($k == 0) {// First tab
-                $parent_tab = Tab::getIdFromClassName(($this->is_greater_17 ? 'IMPROVE' : 'AdminParentModules'));
+                $parent_tab = Tab::getIdFromClassName(($this->isPS17 ? 'IMPROVE' : 'AdminParentModules'));
                 if (property_exists($obj, 'icon')) {
                     $obj->icon = 'settings';
                 }
             } else {
-                $parent_tab = is_null($id_parent) || ($tab['is_hidden'] && !$this->is_greater_17) ? $tab['id_parent'] : $id_parent;
+                $parent_tab = is_null($id_parent) || ($tab['is_hidden'] && !$this->isPS17) ? $tab['id_parent'] : $id_parent;
             }
             $obj->id_parent = (int)$parent_tab;
             // End processing parent ID
@@ -216,7 +235,7 @@ class WKInventory extends Module
 
             if ($obj->add()) {
                 // Get the ID of the first tab that will be the parent ID of the next tabs
-                if ($this->is_greater_17 && $k == 0) {
+                if ($this->isPS17 && $k == 0) {
                     $id_parent = (int)$obj->id;
                 }
             }
@@ -269,13 +288,11 @@ class WKInventory extends Module
     {
         $output = '';
         if (Tools::isSubmit('submitWkinventory')) {
-            if (!preg_match('^-?[0-9]\d*(\d+)?$^', Tools::getValue('WKINVENTORY_DEFAULTQTY_UPDATE'))) {
+            $default_qty = Tools::getValue('WKINVENTORY_DEFAULTQTY_UPDATE');
+            if (!empty($default_qty) && !preg_match('^-?[0-9]\d*(\d+)?$^', Tools::getValue('WKINVENTORY_DEFAULTQTY_UPDATE'))) {
                 $output .= $this->displayError($this->l('Default quantity to update products: Invalid number!'));
             } else {
-                Configuration::updateValue(
-                    'WKINVENTORY_DEFAULTQTY_UPDATE',
-                    (int)Tools::getValue('WKINVENTORY_DEFAULTQTY_UPDATE')
-                );
+                Configuration::updateValue('WKINVENTORY_DEFAULTQTY_UPDATE', $default_qty);
                 Configuration::updateValue(
                     'WKINVENTORY_ORDER_STATES',
                     (Tools::getValue('WKINVENTORY_ORDER_STATES') ? implode(Tools::getValue('WKINVENTORY_ORDER_STATES'), ',') : '')
@@ -297,10 +314,6 @@ class WKInventory extends Module
                     'WKINVENTORY_ADDQTY_AUTO',
                     (int)Tools::getValue('WKINVENTORY_ADDQTY_AUTO')
                 );
-                Configuration::updateValue(
-                    'WKINVENTORY_RESETSTOCK_NOTINVENT',
-                    (int)Tools::getValue('WKINVENTORY_RESETSTOCK_NOTINVENT')
-                );
                 Configuration::updateValue('WKINVENTORY_PDFREPORT_MODE', Tools::getValue('WKINVENTORY_PDFREPORT_MODE'));
                 if (empty($output)) {
                     Tools::redirectAdmin(
@@ -316,7 +329,7 @@ class WKInventory extends Module
 
     protected function renderForm()
     {
-        $radio_type = $this->is_before_16 ? 'radio' : 'switch';
+        $radio_type = $this->isPS15 ? 'radio' : 'switch';
         $radioOptions = array(
             array('id' => 'active_on', 'value' => 1, 'label' => $this->l('Enabled')),
             array('id' => 'active_off', 'value' => 0, 'label' => $this->l('Disabled'))
@@ -377,9 +390,9 @@ class WKInventory extends Module
                 array(
                     'type' => 'text',
                     'label' => $this->l('Default quantity'),
-                    'desc' => $this->l('Default quantity to add/decrease to products').'.',
+                    'desc' => $this->l('Default quantity to add/decrease to products')
+                    .'.<br />'.$this->l('Empty this field to disable this feature.'),
                     'name' => 'WKINVENTORY_DEFAULTQTY_UPDATE',
-                    'required' => true,
                     'class' => 'input fixed-width-xs',
                     'hint' => $this->l('Negative values are allowed')
                 ),
@@ -400,16 +413,6 @@ class WKInventory extends Module
                     'is_bool' => true,
                     'desc' => $this->l('This option if enabled let you add/update automatically the product quantity to the inventory without having to click every time on "Correct Product Quantity" button').'.<br />'
                     .$this->l('Note: automatic addition/update is effective only if the search finds of course a single product.'),
-                    'values' => $radioOptions
-                ),
-                array(
-                    'type' => $radio_type,
-                    'label' => $this->l('Reset stock of unchanged products'),
-                    'name' => 'WKINVENTORY_RESETSTOCK_NOTINVENT',
-                    'class' => 't',
-                    'is_bool' => true,
-                    'desc' => $this->l('This option is only available for products of an inventory which they have not been inventoried (Adjustment quantities have not been changed, still at 0).').'<br />'
-                    .$this->l('If that\'s so, after the finalization (closure) of an inventory, the stock (shop quantities) of those products will be reset (set to 0).'),
                     'values' => $radioOptions
                 ),
             )
@@ -460,7 +463,7 @@ class WKInventory extends Module
                 )
             ),
             'submit' => array(
-                'class' => $this->is_before_16 ? 'button' : 'btn btn-default pull-right',
+                'class' => $this->isPS15 ? 'button' : 'btn btn-default pull-right',
                 'title' => $this->l('Save')
             )
         );
@@ -482,7 +485,7 @@ class WKInventory extends Module
             'fields_value' => $this->getConfigFormValues(),
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
-            'is_before_16' => $this->is_before_16,
+            'isPS15' => $this->isPS15,
             'this_path' => $this->_path,
         );
         return $helper->generateForm($this->fields_form);
@@ -497,27 +500,24 @@ class WKInventory extends Module
             'WKINVENTORY_ORDER_STATES[]' => Tools::getValue('WKINVENTORY_ORDER_STATES', explode(',', Configuration::get('WKINVENTORY_ORDER_STATES'))),
             'WKINVENTORY_EMPL_RESTRICTION' => Tools::getValue('WKINVENTORY_EMPL_RESTRICTION', Configuration::get('WKINVENTORY_EMPL_RESTRICTION')),
             'WKINVENTORY_DEFAULTQTY_UPDATE' => Tools::getValue('WKINVENTORY_DEFAULTQTY_UPDATE', Configuration::get('WKINVENTORY_DEFAULTQTY_UPDATE')),
-            'WKINVENTORY_GEN_EAN' => Tools::getValue('WKINVENTORY_GEN_EAN', Configuration::get('WKINVENTORY_GEN_EAN')),
-            'WKINVENTORY_GEN_UPC' => Tools::getValue('WKINVENTORY_GEN_UPC', Configuration::get('WKINVENTORY_GEN_UPC')),
             'WKINVENTORY_PREFIX_CODE' => Tools::getValue('WKINVENTORY_PREFIX_CODE', Configuration::get('WKINVENTORY_PREFIX_CODE')),
             'WKINVENTORY_ADDQTY_EXISTANT' => Tools::getValue('WKINVENTORY_ADDQTY_EXISTANT', Configuration::get('WKINVENTORY_ADDQTY_EXISTANT')),
             'WKINVENTORY_ADDQTY_AUTO' => Tools::getValue('WKINVENTORY_ADDQTY_AUTO', Configuration::get('WKINVENTORY_ADDQTY_AUTO')),
-            'WKINVENTORY_RESETSTOCK_NOTINVENT' => Tools::getValue('WKINVENTORY_RESETSTOCK_NOTINVENT', Configuration::get('WKINVENTORY_RESETSTOCK_NOTINVENT')),
             'WKINVENTORY_PDFREPORT_MODE' => Tools::getValue('WKINVENTORY_PDFREPORT_MODE', Configuration::get('WKINVENTORY_PDFREPORT_MODE')),
-            'help_tab' => '',
+            'WKINVENTORY_GEN_EAN' => Tools::getValue('WKINVENTORY_GEN_EAN', Configuration::get('WKINVENTORY_GEN_EAN')),
+            'WKINVENTORY_GEN_UPC' => Tools::getValue('WKINVENTORY_GEN_UPC', Configuration::get('WKINVENTORY_GEN_UPC')),
             'option_settings' => '',
+            'help_tab' => '',
         );
     }
 
     public function hookActionProductSave($params)
     {
-//        return true;
         return $this->modifyProduct($params);
     }
 
     public function hookActionProductUpdate($params)
     {
-//        return true;
         return $this->modifyProduct($params);
     }
 
@@ -546,7 +546,7 @@ class WKInventory extends Module
 
     public function hookActionObjectDeleteAfter($params)
     {
-        if (Module::isInstalled($this->name) && $this->active && !$this->is_greater_17) {
+        if (Module::isInstalled($this->name) && $this->active && !$this->isPS17) {
             $object = $params['object'];
 
             if ($object instanceof Combination) {
@@ -563,7 +563,7 @@ class WKInventory extends Module
     */
     public function hookActionAttributeCombinationDelete($params)
     {
-        if (Module::isInstalled($this->name) && $this->active && $this->is_greater_17) {
+        if (Module::isInstalled($this->name) && $this->active && $this->isPS17) {
             $id_product_attribute = (int)$params['id_product_attribute'];
 
             if (!empty($id_product_attribute)) {
@@ -573,10 +573,68 @@ class WKInventory extends Module
         return true;
     }
 
+    /*
+    * Hook executed after an object is updated
+    * Available for PS 1.5, 1.6 and 1.7
+    */
+    public function hookActionObjectUpdateAfter(array $params)
+    {
+        if ($this->active && Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') &&
+            isset($params['object']) && is_object($params['object'])) {
+            if ($params['object'] instanceof Stock) {
+                $stock = new Stock((int)$params['object']->id);
+                // Update inventory
+                $this->hookActionUpdateQuantity(array(
+                    'id_product' => (int)$stock->id_product,
+                    'id_product_attribute' => (int)$stock->id_product_attribute,
+                    'id_warehouse' => (int)$stock->id_warehouse,
+                    'quantity' => (int)$stock->physical_quantity,
+                ));
+            }
+        }
+        return true;
+    }
+
+    /*
+    * Update opened inventoy products if stock has been changed (increase / decrease) from outside.
+    */
+    public function hookActionUpdateQuantity($params)
+    {
+        if (!$this->active || Tools::getIsset('module')/* not from FO payment */) {
+            return;
+        }
+
+        $is_admin = defined('_PS_ADMIN_DIR_')? true : false;
+        $controller = Dispatcher::getInstance()->getController();
+
+        if ($is_admin && $controller != 'AdminOrders') {
+            $id_product = $this->getProductSID($params);
+            $id_product_attribute = isset($params['id_product_attribute']) ? $params['id_product_attribute'] : null;
+            $qty = (int)$params['quantity'];
+
+            $product = new Product((int)$id_product, false);
+            if (Validate::isLoadedObject($product)) {
+                /* A.S.M ? */
+                $id_warehouse = null;
+                if (isset($params['id_warehouse']) && $params['id_warehouse']) {
+                    $id_warehouse = $params['id_warehouse'];
+                }
+                $opened_products = StockTakeProduct::getOpenedInventoriedProducts(
+                    $id_product,
+                    $id_product_attribute,
+                    $id_warehouse
+                );
+                foreach ($opened_products as $op) {
+                    $ip = new StockTakeProduct((int)$op['id_inventory_product']);
+                    $ip->shop_quantity = (int)$qty;
+                    $ip->save();
+                }
+            }
+        }
+    }
+
     public function deleteInventoryProducts($mode, $sid)
     {
-        require_once(dirname(__FILE__).'/classes/StockTake.php');
-        require_once(dirname(__FILE__).'/classes/StockTakeProduct.php');
         $inventories = StockTake::getInventories();
         foreach ($inventories as $inventory) {
             Db::getInstance()->execute(
@@ -610,6 +668,8 @@ class WKInventory extends Module
         $count = 0;
         $ean13_barcode = $upc_barcode = array();
         $completed = true;
+		$generate_ean13 = (int)Configuration::get('WKINVENTORY_GEN_EAN');
+		$generate_upc = (int)Configuration::get('WKINVENTORY_GEN_UPC');
 
         $combinations_count = (int)$product->hasAttributes();
         $count += $combinations_count > 0 ? $combinations_count : 1;
@@ -618,16 +678,34 @@ class WKInventory extends Module
             return;
         }
 
+		$skip_ean13_generation = $skip_upc_generation = false;
+		// If all ean13 codes have been already generated before, no need to continue
+        if ($generate_ean13 && $combinations_count && !$force &&
+			!WorkshopInv::hasEmptyBarcode($product->id, 'ean13')) {
+			$skip_ean13_generation = true;
+        }
+		// If all upc codes have been already generated before, no need to continue
+        if ($generate_upc && $combinations_count && !$force &&
+			!WorkshopInv::hasEmptyBarcode($product->id, 'upc')) {
+			$skip_upc_generation = true;
+        }
+		// Product form (Backoffice)
+        if (($generate_ean13 && $generate_upc && $skip_ean13_generation && $skip_upc_generation) ||
+			 ($generate_ean13 && !$generate_upc && $skip_ean13_generation) ||
+			 ($generate_upc && !$generate_ean13 && $skip_upc_generation)) {
+            return;
+        }
+
         // Get EAN13 barcode
-        if (Configuration::get('WKINVENTORY_GEN_EAN')) {
-            $ean13_barcode = $this->generateBarcodes('ean13', $count, $force);
-        }
+        if ($generate_ean13) {
+			$ean13_barcode = $this->generateBarcodes('ean13', $count, $force);
+		}		
         // Get UPC barcode
-        if (Configuration::get('WKINVENTORY_GEN_UPC')) {
+        if ($generate_upc) {
             $upc_barcode = $this->generateBarcodes('upc', $count, $force);
-        }
-        if ((Configuration::get('WKINVENTORY_GEN_EAN') && !count($ean13_barcode)) ||
-            (Configuration::get('WKINVENTORY_GEN_UPC') && !count($upc_barcode))) {
+		}
+		// If no codes to generate
+        if (($generate_ean13 && !count($ean13_barcode)) || ($generate_upc && !count($upc_barcode))) {
             return;
         }
 
@@ -730,7 +808,7 @@ class WKInventory extends Module
      */
     public function hookDisplayBackOfficeFooter()
     {
-        if ($this->is_before_16 && Tools::getValue('controller') == 'AdminStocktake') {
+        if ($this->isPS15 && Tools::getValue('controller') == 'AdminStocktake') {
             $this->context->smarty->assign(array(
                 'modal_id' => 'importProgress',
                 'modal_class' => 'modal-md',
@@ -744,14 +822,14 @@ class WKInventory extends Module
     /**
      * Load the CSS & JavaScript files in the BO.
      */
-    public function hookBackOfficeHeader()
+    public function hookDisplayBackOfficeHeader()
     {
         $controllers = array('AdminStocktake', 'AdminStocktakedash', 'AdminBarcodesgen', 'AdminStocktakeLogs');
         if (Tools::getValue('configure') === $this->name ||
             in_array(Tools::getValue('controller'), $controllers)) {
             $this->context->controller->addJquery();
             $this->context->controller->addCSS($this->_path.'views/css/wkinventory.css');
-            if ($this->is_before_16) {
+            if ($this->isPS15) {
                 $this->context->controller->addCSS($this->_path.'views/css/wkinventory_15.css');
             }
             $this->context->controller->addJqueryPlugin('chosen');

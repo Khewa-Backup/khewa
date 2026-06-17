@@ -10,7 +10,7 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 {* TOOLBAR FOR PS 1.5 *}
-{if $is_before_16}
+{if $isPS15}
 	{include file="toolbar.tpl" toolbar_btn=$toolbar_btn toolbar_scroll=$toolbar_scroll title={$title_page|escape:'html':'UTF-8'}}
 {/if}
 <div class="panel">

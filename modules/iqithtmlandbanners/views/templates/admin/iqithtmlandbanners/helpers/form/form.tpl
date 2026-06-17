@@ -140,7 +140,7 @@
                        </div>
                    </div>
 
-                   {foreach from=$bannerImages.banners item=banner}
+                   {if $bannerImages}{foreach from=$bannerImages.banners item=banner}
                        <div class="list-group-item row-table js-list-group-item">
                            <div class="col-table">
                                <i class="icon-bars js-iqit-banner-reorder iqit-banner-reorder"></i>
@@ -172,6 +172,7 @@
                            </div>
                        </div>
                    {/foreach}
+                {/if}
 
                </div>
             </div>
@@ -183,8 +184,8 @@
             </label>
             <div class="col-lg-9">
                 <select type="text" class="js-iqit-banner-options-view">
-                    <option value="list" {if $bannerImages.options.view == 'list'} selected{/if}>{l s='List' mod='iqithtmlandbanners'}</option>
-                    <option value="slider" {if $bannerImages.options.view == 'slider'} selected{/if}>{l s='Slider' mod='iqithtmlandbanners'}</option>
+                    <option value="list" {if isset($bannerImages.options.view) && $bannerImages.options.view == 'list'} selected{/if}>{l s='List' mod='iqithtmlandbanners'}</option>
+                    <option value="slider" {if isset($bannerImages.options.view) && $bannerImages.options.view == 'slider'} selected{/if}>{l s='Slider' mod='iqithtmlandbanners'}</option>
                 </select>
             </div>
         </div>

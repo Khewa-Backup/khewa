@@ -1,27 +1,26 @@
 <?php
 /**
- * 2007-2021 ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
  *
  * NOTICE OF LICENSE
  *
- * This file is not open source! Each license that you purchased is only available for 1 wesite only.
- * If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
  * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
- * 
+ *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please contact us for extra customization service at an affordable price
+ * versions in the future.
  *
- *  @author ETS-Soft <etssoft.jsc@gmail.com>
- *  @copyright  2007-2021 ETS-Soft
- *  @license    Valid for 1 website (or project) for each purchase of license
- *  International Registered Trademark & Property of ETS-Soft
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
  */
 
 namespace WebPConvert\Convert\Converters;
 
+if (!defined('_PS_VERSION_')) { exit; }
 use WebPConvert\Convert\Converters\AbstractConverter;
 use WebPConvert\Convert\Converters\ConverterTraits\EncodingAutoTrait;
 
@@ -99,8 +98,6 @@ class Gmagick extends AbstractConverter
         // Not completely sure if setimageoption() has always been there, so lets check first. #169
         if (method_exists($im, 'setimageoption')) {
             // Finally cracked setting webp options.
-            // See #167
-            // - and https://stackoverflow.com/questions/47294962/how-to-write-lossless-webp-files-with-perlmagick
             $im->setimageoption('webp', 'method', $options['method']);
             $im->setimageoption('webp', 'lossless', $options['encoding'] == 'lossless' ? 'true' : 'false');
             $im->setimageoption('webp', 'alpha-quality', $options['alpha-quality']);

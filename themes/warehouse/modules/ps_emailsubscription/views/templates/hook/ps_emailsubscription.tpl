@@ -49,9 +49,9 @@
             <p class="mt-2 text-muted ps-emailsubscription-conditions">{$conditions}</p>
         {/if}
         {hook h='displayNewsletterRegistration'}
-        {if isset($id_module)}
-            <div class="mt-2 text-muted"> {hook h='displayGDPRConsent' id_module=$id_module}</div>
-        {/if}
+        {*if isset($id_module)}
+            <div class="mt-2 text-muted" style="display: none;"> {hook h='displayGDPRConsent' id_module=$id_module}</div>
+        {/if*}
                 <input type="hidden" name="action" value="0">
     </form>
 </div>

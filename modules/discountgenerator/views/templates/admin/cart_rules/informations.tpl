@@ -1,11 +1,27 @@
-{**
- * DiscountGenerator Prestashop Module
- *
- * @author iRessources <support-prestashop@iressources.com>
- * @link http://www.iressources.com/
- * @copyright Copyright &copy; 2015-2019 iRessources
- * @version 1.4.1
- *}
+{*
+* 2007-2025 PrestaShop SA and Contributors
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/afl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+*  @author    PrestaShop SA <contact@prestashop.com>
+*  @copyright 2007-2025 PrestaShop SA and Contributors
+*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  International Registered Trademark & Property of PrestaShop SA
+*}
 <div class="form-group">
     <label class="control-label col-lg-3 required">
 		<span class="label-tooltip" data-toggle="tooltip"
@@ -20,7 +36,7 @@
                 <div class="translatable-field lang-{$language.id_lang}" {if $language.id_lang != $id_lang_default}style="display:none"{/if}>
                 <div class="col-lg-9">
             {/if}
-            <input id="name_{$language.id_lang|intval}" type="text"  name="name_{$language.id_lang|intval}" value="{$currentTab->getFieldValue($currentObject, 'name', $language.id_lang|intval)|escape:'htmlall':'UTF-8'}">
+            <input id="name_{$language.id_lang|intval}" type="text"  name="name_{$language.id_lang|intval}" value="{$currentTab->getFieldValue($currentObject, 'name', $language.id_lang|intval)|escape:'html':'UTF-8'}">
             {if $languages|count > 1}
                 </div>
                 <div class="col-lg-2">
@@ -80,7 +96,7 @@
         </label>
         <div class="col-lg-9">
             <div class="input-group col-lg-4">
-                <input type="text" size="15" name="coupon_quantity" id="coupon_quantity" value="{if isset($coupon_quantity)}{$coupon_quantity|escape:'htmlall':'UTF-8'}{/if}" />
+                <input style="width:150px;" type="text" size="15" name="coupon_quantity" id="coupon_quantity" value="{if isset($coupon_quantity)}{$coupon_quantity|escape:'htmlall':'UTF-8'}{/if}" />
             </div>
         </div>
     </div>
@@ -93,8 +109,8 @@
         </label>
         <div class="col-lg-9">
             <div class="input-group col-lg-4" style="width:400px;">
-                <input style="width:100px;float:left;" type="text" placeholder="Prefix" size="15" name="code_prefix" value="{if isset($code_prefix)}{$code_prefix|escape:'htmlall':'UTF-8'}{/if}" onclick="" />
-                <input style="width:100px;float:left;" type="text" placeholder="Code mask" size="15" name="code_mask" value="{if isset($code_mask)}{$code_mask|escape:'htmlall':'UTF-8'}{/if}" onclick=""  />
+                <input style="width:150px;float:left;" type="text" placeholder="Prefix" size="15" name="code_prefix" value="{if isset($code_prefix)}{$code_prefix|escape:'htmlall':'UTF-8'}{/if}" onclick="" />
+                <input style="width:150px;float:left;" type="text" placeholder="Code mask" size="15" id="code_mask" name="code_mask" value="{if isset($code_mask)}{$code_mask|escape:'htmlall':'UTF-8'}{/if}" onclick=""  />
                 <div style="clear:both;"></div><p class="clear">{l s='Code generation rules (mask: x - digit, y - letter, for example "xxxyy" )' mod='discountgenerator'}</p>
             </div>
         </div>
@@ -120,7 +136,7 @@
     </div>
 </div>
 
-<div class="form-group">
+<div class="form-group" id="cart-rules-highlight"{if !$currentTab->getFieldValue($currentObject, 'code') && (!isset($show_group_discount) || $show_group_discount == 0)} style="display: none;"{/if}>
     <label class="control-label col-lg-3">
 		<span class="label-tooltip" data-toggle="tooltip"
               title="{l s='If the voucher is not yet in the cart, it will be displayed in the cart summary.' mod='discountgenerator'}">
@@ -183,6 +199,11 @@
 </div>
 <script type="text/javascript">
     $(".textarea-autosize").autosize();
+    $(document).ready(function() {
+        $('#code').bind('keyup change', function() {
+            $('#cart-rules-highlight').toggle($(this).val() !== "");
+        });
+    });
 </script>
 
 <!-- Custom block starts -->
@@ -192,9 +213,13 @@
             if($(this).is(":checked")) {
                 $("#group_discount_properties").fadeIn().find("input").removeAttr("disabled");
                 $("#single_code_field").fadeOut().find("input").attr("disabled","disabled");
+
+                $('#cart-rules-highlight').show();
             } else {
                 $("#group_discount_properties").fadeOut().find("input").attr("disabled","disabled");
                 $("#single_code_field").fadeIn().find("input").removeAttr("disabled");
+                
+                $('#cart-rules-highlight').toggle($('#code').val() !== "");
             }
         });
     });

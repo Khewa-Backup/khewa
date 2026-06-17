@@ -194,4 +194,3 @@ function kbDrawChart(json)
         '<div class="legend" style="margin-top: 0px;margin-bottom: 51px;"><div style="position: absolute; width: 362px; height: 28px; top: 9px; right: 9px; background-color: rgb(255, 255, 255); opacity: 0.85;"> </div><table style="position:absolute;color:#545454"><tbody><tr><td class="legendColorBox"><div style="border:1px solid null;padding:1px"><div style="width:4px;height:0;border:5px solid #2dd006;overflow:hidden"></div></div></td><td class="legendLabel"> ' + Order_label + '</td><td class="legendColorBox"><div style="border:1px solid null;padding:1px"><div style="width:4px;height:0;border:5px solid #61b0f5;overflow:hidden"></div></div></td><td class="legendLabel"> ' + Revenue_label + '</td></tr></tbody></table></div>');
 }
 
-

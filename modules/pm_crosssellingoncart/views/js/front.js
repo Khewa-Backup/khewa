@@ -58,4 +58,3 @@ setTimeout(function() {
 		}
 	});
 }, 50);
-

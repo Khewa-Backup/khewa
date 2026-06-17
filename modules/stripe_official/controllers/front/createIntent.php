@@ -1,333 +1,345 @@
 <?php
+
 /**
- * 2007-2019 PrestaShop
+ * Copyright (c) since 2010 Stripe, Inc. (https://stripe.com)
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
+ * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    202-ecommerce <tech@202-ecommerce.com>
- * @copyright Copyright (c) Stripe
- * @license   Commercial license
+ * @author    Stripe <https://support.stripe.com/contact/email>
+ * @copyright Since 2010 Stripe, Inc.
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-use Stripe_officialClasslib\Extensions\ProcessLogger\ProcessLoggerHandler;
+use PrestaShop\PrestaShop\Core\Domain\Order\Exception\OrderException;
+use StripeOfficial\Classes\StripeProcessLogger;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class stripe_officialCreateIntentModuleFrontController extends ModuleFrontController
 {
     /**
-     * @see FrontController::initContent()
+     * @var StripePaymentIntentService
      */
-    public function initContent()
+    private $stripePaymentIntentService;
+    /**
+     * @var PrestashopBuildOrderService
+     */
+    private $prestashopBuildOrderService;
+
+    /**
+     * @var PrestashopOrderService
+     */
+    private $prestashopOrderService;
+
+    /**
+     * @var PrestashopCartService
+     */
+    private $prestashopCartService;
+
+    private $stripeAnonymize;
+
+    /**
+     * @param string|null $secretKey
+     */
+    public function __construct($secretKey = null)
     {
-        parent::initContent();
+        parent::__construct();
+        $secretKey = $secretKey ?: Stripe_official::getSecretKey();
+        $this->stripePaymentIntentService = new StripePaymentIntentService($secretKey);
+        $this->prestashopBuildOrderService = new PrestashopBuildOrderService($this->context, $this->module, $secretKey);
+        $this->prestashopOrderService = new PrestashopOrderService($this->context, $this->module, $secretKey);
+        $this->prestashopCartService = new PrestashopCartService();
+        $this->stripeAnonymize = new StripeAnonymize();
+    }
 
-        ProcessLoggerHandler::logInfo(
-            '[ Intent Creation Beginning ]',
-            null,
-            null,
-            'createIntent - intiContent'
-        );
+    /**
+     * @throws PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws OrderException
+     * @throws Exception
+     */
+    public function postProcess()
+    {
+        $values = @Tools::file_get_contents('php://input');
+        $content = json_decode($values, true);
+        $contentAnonymized = $this->stripeAnonymize->anonymize($content);
+        $psCustomer = $this->context->customer;
 
-        try {
+        $productId = (int) ($content['productId'] ?? 0);
+        $attributeId = (int) ($content['productAttributeId'] ?? 0);
+
+        $this->validateProductAndCombination($productId, $attributeId, (int) $this->context->language->id, $content['pageName']);
+
+        // Always choose cart server-side for express checkout
+        // (Product-page express: create a new cart each time)
+        if (!empty($content['pageName']) && $content['pageName'] === 'product') {
+            $cart = $this->prestashopCartService->createPrestashopCart($psCustomer);
+            $this->prestashopCartService->createPrestashopCartProduct($content, $cart, $attributeId);
+        } else {
+            // Non-product flows: use existing session cart if valid
             $cart = $this->context->cart;
 
-            $currency = new Currency($cart->id_currency);
-            $amount = $cart->getOrderTotal();
-            $amount = Tools::ps_round($amount, 2);
-            $amount = $this->module->isZeroDecimalCurrency($currency->iso_code) ? $amount : $amount * 100;
+            if (!Validate::isLoadedObject($cart) || (int) $cart->id_customer !== (int) $psCustomer->id) {
+                $cart = $this->prestashopCartService->createPrestashopCart($psCustomer);
+            }
+        }
+        $cartId = (int) $cart->id;
 
-            $paymentOption = Tools::getValue('payment_option');
-            $paymentMethodId = Tools::getValue('id_payment_method');
+        $this->context->cart = $cart;
+        $this->context->cart->update();
 
-            $intentData = $this->constructIntentData($amount, $currency->iso_code, $paymentOption, $paymentMethodId);
+        StripeProcessLogger::logInfo('Content for Express Checkout => ' . json_encode($contentAnonymized), 'createIntent', $cartId);
+        $expressParams = $content['event'] ?? null;
 
-            $cardData = $this->constructCardData($paymentMethodId);
-
-            $intent = $this->createIdempotencyKey($intentData);
-        } catch (Exception $e) {
-            ProcessLoggerHandler::logError(
-                "Retrieve Stripe Account Error => ".$e->getMessage(),
-                null,
-                null,
-                'createIntent'
-            );
-            ProcessLoggerHandler::closeLogger();
-            http_response_code(400);
-            $this->ajaxDie('An unexpected problem has occurred. Please contact the support : https://addons.prestashop.com/en/contact-us?id_product=24922');
+        $countryId = (int) Country::getByIso($expressParams['shippingAddress']['address']['country'], true);
+        if (!$countryId) {
+            StripeProcessLogger::logInfo('Shipping country unavailable - content: ' . json_encode($contentAnonymized), 'createIntent', $cartId);
+            echo json_encode(['error' => true, 'message' => 'Shipping country unavailable']);
+            exit;
         }
 
-        ProcessLoggerHandler::logInfo(
-            '[ Intent Creation Ending ]',
-            null,
-            null,
-            'createIntent - intiContent'
-        );
-        ProcessLoggerHandler::closeLogger();
+        $customerExist = $this->checkCustomerByEmail($expressParams['billingDetails']['email']);
 
-        $this->ajaxDie(
-            json_encode([
-                'intent' => $intent,
-                'cardPayment' => $cardData['cardPayment'],
-                'saveCard' => $cardData['save_card']
-            ])
+        if ((!isset($psCustomer->id) || !$psCustomer->id) && $customerExist) {
+            $psCustomer = $customerExist;
+            $this->context->customer = $customerExist;
+            $this->context->cart->id_customer = $psCustomer->id;
+            $this->context->cart->update();
+        }
+
+        if (!isset($psCustomer->id) || !$psCustomer->id) {
+            $psCustomer = CustomerModel::createPrestashopCustomer($expressParams);
+            $psAddress = AddressModel::createPrestashopAddress($expressParams, $this->context, $psCustomer->id);
+            $this->context->customer = $psCustomer;
+            $this->context->cart->id_customer = $psCustomer->id;
+            $this->context->cart->id_address_invoice = $psAddress->id;
+            $this->context->cart->id_address_delivery = $psAddress->id;
+            $this->context->cart->id_guest = Context::getContext()->cookie->id_guest;
+            $this->context->cart->id_currency = Context::getContext()->cookie->id_currency;
+            $this->context->cart->update();
+
+            $psGuest = new Guest(Context::getContext()->cookie->id_guest);
+            $psGuest->id_customer = $psCustomer->id;
+            $psGuest->update();
+        } else {
+            AddressModel::deleteCalcShipAddresses($psCustomer->id);
+            $psAddress = $this->checkCustomerShippingAddress($expressParams, $this->context);
+        }
+
+        $this->context->cookie->id_customer = $psCustomer->id;
+        $this->context->cookie->customer_lastname = $psAddress->lastname;
+        $this->context->cookie->customer_firstname = $psAddress->firstname;
+        $this->context->cookie->check_cgv = 1;
+        $this->context->cookie->is_guest = 1;
+        $this->context->cookie->id_cart = $cart->id;
+        $this->context->cart->id_address_invoice = $psAddress->id;
+        $this->context->cart->id_address_delivery = $psAddress->id;
+        $this->context->cart->id_carrier = $expressParams['shippingRate']['id'];
+        $delivery_option[$psAddress->id] = $expressParams['shippingRate']['id'] . ',';
+        $delivery_option = json_encode($delivery_option);
+        $this->context->cart->update();
+        $cart = $this->context->cart;
+        $cart->update();
+
+        $this->prestashopCartService->updatePrestashopCart($delivery_option, $cartId);
+
+        /** Get fresh cart data and reinitialize cart context */
+        $cart = new Cart($cartId);
+        $this->context->cart = $cart;
+        $this->context->cart->update();
+
+        $amount = $this->getAmount($cart, $countryId, $expressParams['shippingRate']['id']);
+
+        $this->prestashopCartService->updatePrestashopCartProduct($psAddress->id, $cartId);
+        $contextModel = ProductContextModel::getFromExpressParams($expressParams, $amount, $this->context);
+        $contextModelAnonymized = $this->stripeAnonymize->anonymize($contextModel);
+        StripeProcessLogger::logInfo('getFromExpressParams => ' . json_encode($contextModelAnonymized), 'createIntent', $cartId);
+        $separateAuthAndCapture = Configuration::get(Stripe_official::CATCHANDAUTHORIZE);
+        $stripePaymentIntent = $this->stripePaymentIntentService->createPaymentIntent($contextModel, $separateAuthAndCapture);
+
+        $newOrderFlow = !(int) Configuration::get(Stripe_official::ORDER_FLOW);
+        StripeProcessLogger::logInfo('is new order flow => ' . json_encode($newOrderFlow), 'createIntent', $cartId);
+        if ($newOrderFlow) {
+            StripeProcessLogger::debugLog('Entering new order flow', 'createIntent', $cartId);
+            $psStripePaymentIntent = new StripePaymentIntent();
+            $psStripePaymentIntent->findByIdPaymentIntent($stripePaymentIntent->id);
+
+            StripeProcessLogger::debugLog('Payment intent is found ' . $psStripePaymentIntent->id_payment_intent, $cartId);
+
+            $cartContextModel = CartContextModel::getFromContext($this->context);
+            $cartContextModelAnonymized = $this->stripeAnonymize->anonymize($cartContextModel);
+            StripeProcessLogger::logInfo('cartContextModel => ' . json_encode($cartContextModelAnonymized), 'createIntent', $cartId);
+            $orderModel = $this->prestashopBuildOrderService->buildAndCreatePrestashopOrder($psStripePaymentIntent, $stripePaymentIntent, $cartContextModel);
+            StripeProcessLogger::debugLog('Order model is build ' . json_encode($orderModel), $cartId);
+            $this->prestashopOrderService->createPsStripePayment($stripePaymentIntent, $orderModel);
+            $this->stripePaymentIntentService->updateStripePaymentIntent($stripePaymentIntent, $orderModel->orderReference);
+        }
+
+        $redirectUrl = $this->context->link->getModuleLink(
+            'stripe_official',
+            'orderConfirmationReturn',
+            [
+                'cartId' => $cartId,
+                'key' => PrestashopCartService::getCartUniqueKey($cartId),
+            ],
+            true
         );
+
+        echo json_encode(['intent' => $stripePaymentIntent, 'stripe_express_return_url' => $redirectUrl]);
+
         exit;
     }
 
-    private function constructIntentData($amount, $currency, $paymentOption, $paymentMethodId)
+    private function getAmount($cart, $countryId, $selectedCarrierId)
     {
-        try {
-            $captureMethod = ($paymentOption == 'card') ? 'manual' : 'automatic';
-            $customerFullName = $this->getCustomerFullNameContext();
+        $currency = new Currency($cart->id_currency);
+        $precision = 2; // default precision
+        if (isset($currency->precision)) {
+            $precision = $currency->precision;
+        }
+        $idZone = Country::getIdZone($countryId);
+        $isoCode = $currency->iso_code;
+        $discountDetails = $this->prestashopCartService->checkDiscountCouponForCart($cart);
+        $carriers = Carrier::getCarriersForOrder($idZone, null, $cart);
 
-            $shippingAddress = new Address($this->context->cart->id_address_delivery);
-            $shippingAddressState = new State($shippingAddress->id_state);
-
-            $intentData = array(
-                "amount" => $amount,
-                "currency" => $currency,
-                "payment_method_types" => [$paymentOption],
-                "capture_method" => $captureMethod,
-                "metadata" => [
-                    'id_cart' => $this->context->cart->id
-                ],
-                "description" => 'Product Purchase',
-                'shipping' => [
-                    'name' => $customerFullName,
-                    'address' => [
-                        'line1' => $shippingAddress->address1,
-                        'postal_code' => $shippingAddress->postcode,
-                        'city' => $shippingAddress->city,
-                        'state' => $shippingAddressState->iso_code,
-                        'country' => Country::getIsoById($shippingAddress->id_country),
-                    ],
-                ],
-            );
-
-            if ($paymentMethodId) {
-                $stripeAccount = \Stripe\Account::retrieve();
-                $stripeCustomer = new StripeCustomer();
-                $customer = $stripeCustomer->getCustomerById($this->context->customer->id, $stripeAccount->id);
-                $intentData['customer'] = $customer->stripe_customer_key;
+        $carrierPrice = 0;
+        if ($carriers) {
+            foreach ($carriers as $carrier) {
+                if ($selectedCarrierId == $carrier['id_carrier']) {
+                    StripeProcessLogger::logInfo('Carrier found with: ' . json_encode(['id' => $carrier['id_carrier'], 'price' => $carrier['price']]), 'createIntent', $cart->id);
+                    $carrierPrice = Stripe_official::isZeroDecimalCurrency($isoCode) ?
+                        $carrier['price'] :
+                        $carrier['price'] * 100;
+                    break;
+                }
             }
+        }
 
-            ProcessLoggerHandler::logInfo(
-                'Intent Data => '.Tools::jsonEncode($intentData),
-                null,
-                null,
-                'createIntent - constructIntentData'
-            );
+        if ($discountDetails->free_shipping) {
+            $carrierPrice = 0;
+        }
 
-            return $intentData;
-        } catch (\Stripe\Exception\ApiErrorException $e) {
-            ProcessLoggerHandler::logError(
-                "Retrieve Stripe Account Error => ".$e->getMessage(),
-                null,
-                null,
-                'createIntent'
-            );
-            ProcessLoggerHandler::closeLogger();
-            http_response_code(400);
-            $this->ajaxDie('An unexpected problem has occurred. Please contact the support : https://addons.prestashop.com/en/contact-us?id_product=24922');
-        } catch (PrestaShopDatabaseException $e) {
-            ProcessLoggerHandler::logError(
-                "Retrieve Prestashop State Error => ".$e->getMessage(),
-                null,
-                null,
-                'createIntent'
-            );
-            ProcessLoggerHandler::closeLogger();
-            http_response_code(400);
-            $this->ajaxDie('An unexpected problem has occurred. Please contact the support : https://addons.prestashop.com/en/contact-us?id_product=24922');
-        } catch (PrestaShopException $e) {
-            ProcessLoggerHandler::logError(
-                "Retrieve Prestashop State Error => ".$e->getMessage(),
-                null,
-                null,
-                'createIntent'
-            );
-            ProcessLoggerHandler::closeLogger();
-            http_response_code(400);
-            $this->ajaxDie('An unexpected problem has occurred. Please contact the support : https://addons.prestashop.com/en/contact-us?id_product=24922');
+        $amount = $cart->getOrderTotal(true, Cart::BOTH_WITHOUT_SHIPPING) * pow(10, $precision);
+
+        if (in_array(Tools::strtolower($isoCode), ['ugx'])) {
+            $amount = $amount * 100;
+        }
+        $amount = $amount + $carrierPrice;
+
+        StripeProcessLogger::logInfo('Amount is calculated: ' . json_encode([
+            'amount' => $amount,
+            'carrierPrice' => $carrierPrice,
+        ]), 'createIntent', $cart->id);
+
+        return $amount;
+    }
+
+    public static function checkCustomerShippingAddress($expressParams, $context)
+    {
+        $countryId = (int) Country::getByIso($expressParams['shippingAddress']['address']['country'], true);
+        $address = AddressModel::getExistingAddress((int) $context->customer->id, [
+            'id_country' => (int) $countryId,
+            'postcode' => $expressParams['shippingAddress']['address']['postal_code'],
+            'city' => $expressParams['shippingAddress']['address']['city'],
+            'address1' => $expressParams['shippingAddress']['address']['line1'],
+        ]);
+        if (empty($address->id)) {
+            $address = AddressModel::createPrestashopAddress($expressParams, Context::getContext(), $context->customer->id);
+        }
+
+        return $address;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function validateProductAndCombination(int $productId, int $productAttributeId, int $langId, string $pageName): void
+    {
+        // Product valid
+        $product = new Product($productId, false, $langId);
+        if ((!Validate::isLoadedObject($product) || !$product->active) && $pageName === 'product') {
+            throw new Exception('Product not available');
+        }
+
+        if ($productAttributeId > 0) {
+            // Cross-version DB check: combination belongs to product
+            $sql = 'SELECT 1
+                FROM ' . _DB_PREFIX_ . 'product_attribute
+                WHERE id_product_attribute = ' . (int) $productAttributeId . '
+                  AND id_product = ' . (int) $productId;
+            if (!(int) Db::getInstance()->getValue($sql)) {
+                throw new Exception('Invalid product combination');
+            }
         }
     }
 
-    private function constructCardData($paymentMethodId)
+    /**
+     * Load an existing customer by email, multistore-safe.
+     * - Prefers non-guest if both guest & real customer exist.
+     * - Returns null if no customer found.
+     *
+     * @param string $email
+     *
+     * @return Customer|null
+     */
+    private function checkCustomerByEmail(string $email): ?Customer
     {
-        if (!$paymentMethodId) {
-            $address = new Address($this->context->cart->id_address_invoice);
+        $email = trim(Tools::strtolower($email));
 
-            $payment_method = array(
-                'billing_details' => array(
-                    'address' => array(
-                        'city' => $address->city,
-                        'country' => Country::getIsoById($address->id_country),
-                        'line1' => $address->address1,
-                        'line2' => $address->address2,
-                        'postal_code' => $address->postcode
-                    ),
-                    'email' => $this->context->customer->email,
-                    'name' => $this->getCustomerFullNameContext()
-                )
-            );
-        } else {
-            $payment_method = $paymentMethodId;
+        if ($email === '') {
+            return null;
         }
 
-        $cardData['cardPayment']['payment_method'] = $payment_method;
-        $cardData['save_card'] = false;
-
-        if (((Tools::getValue('card_form_payment') == 'true' && Tools::getValue('save_card_form') == 'true')
-            || (Tools::getValue('card_form_payment') == 'true' && Tools::getValue('stripe_auto_save_card') == 'true')
-            && (!Tools::getValue('id_payment_method') || Tools::getValue('payment_request') == 'true')
-            && Tools::getValue('payment_option') == 'card')) {
-            $cardData['cardPayment']['setup_future_usage'] = 'on_session';
-            $cardData['save_card'] = true;
-        } elseif (Tools::getValue('payment_option') != 'card') {
-            $stripe_validation_return_url = $this->context->link->getModuleLink(
-                'stripe_official',
-                'orderConfirmationReturn',
-                array(
-                    'id_cart' => $this->context->cart->id
-                ),
-                true
+        // If multistore is enabled AND customer_shop exists, use it
+        if (Shop::isFeatureActive()) {
+            // Some installations still don't have customer_shop, so we must be defensive
+            $tableExists = Db::getInstance()->getValue(
+                'SHOW TABLES LIKE "' . _DB_PREFIX_ . 'customer_shop"'
             );
-            $cardData['cardPayment']['return_url'] = $stripe_validation_return_url;
+
+            if ($tableExists) {
+                $row = Db::getInstance()->getRow(
+                    'SELECT c.id_customer
+                 FROM `' . _DB_PREFIX_ . 'customer` c
+                 INNER JOIN `' . _DB_PREFIX_ . 'customer_shop` cs
+                   ON cs.id_customer = c.id_customer
+                 WHERE c.email = "' . pSQL($email) . '"
+                   AND cs.id_shop = ' . (int) Context::getContext()->shop->id . '
+                 ORDER BY c.is_guest ASC'
+                );
+
+                if (!empty($row['id_customer'])) {
+                    $customer = new Customer((int) $row['id_customer']);
+
+                    return Validate::isLoadedObject($customer) ? $customer : null;
+                }
+            }
         }
 
-        ProcessLoggerHandler::logInfo(
-            'Card Payment => '.Tools::jsonEncode($cardData),
-            null,
-            null,
-            'createIntent - constructCardPaymentData'
+        // Fallback: non-multistore or customer_shop missing
+        $row = Db::getInstance()->getRow(
+            'SELECT id_customer
+         FROM `' . _DB_PREFIX_ . 'customer`
+         WHERE email = "' . pSQL($email) . '"
+         ORDER BY is_guest ASC'
         );
 
-        return $cardData;
-    }
-
-    private function createIdempotencyKey($intentData)
-    {
-        try {
-            $cart = $this->context->cart;
-            $stripeIdempotencyKey = new StripeIdempotencyKey();
-            $stripeIdempotencyKey = $stripeIdempotencyKey->getByIdCart($cart->id);
-
-            $lastRegisteredEvent = new StripeEvent();
-            $lastRegisteredEvent = $lastRegisteredEvent->getLastRegisteredEventByPaymentIntent($stripeIdempotencyKey->id);
-
-            if (empty($stripeIdempotencyKey->id) === true || $lastRegisteredEvent->status === 'FAILED') {
-                $intent = $stripeIdempotencyKey->createNewOne($cart->id, $intentData);
-                $this->registerStripeEvent($intent);
-            } else {
-                unset($intentData['capture_method']);
-                $intent = $stripeIdempotencyKey->updateIntentData($intentData);
-            }
-
-            ProcessLoggerHandler::logInfo(
-                'Intent => '.$intent,
-                null,
-                null,
-                'createIntent - initContent'
-            );
-
-            return $intent;
-        } catch (\Stripe\Exception\ApiErrorException $e) {
-            ProcessLoggerHandler::logError(
-                "Create Stripe Intent Error => ".$e->getMessage(),
-                null,
-                null,
-                'createIntent'
-            );
-            ProcessLoggerHandler::closeLogger();
-            http_response_code(400);
-            $this->ajaxDie($e->getMessage());
-        } catch (PrestaShopException $e) {
-            ProcessLoggerHandler::logError(
-                "Save Stripe Idempotency Key Error => ".$e->getMessage(),
-                null,
-                null,
-                'createIntent'
-            );
-            ProcessLoggerHandler::closeLogger();
-            http_response_code(400);
-            $this->ajaxDie('An unexpected problem has occurred. Please contact the support : https://addons.prestashop.com/en/contact-us?id_product=24922');
-        } catch (PrestaShopException $e) {
-            ProcessLoggerHandler::logError(
-                "Save Stripe Payment Intent Error => ".$e->getMessage(),
-                null,
-                null,
-                'createIntent'
-            );
-            ProcessLoggerHandler::closeLogger();
-            http_response_code(400);
-            $this->ajaxDie('An unexpected problem has occurred. Please contact the support : https://addons.prestashop.com/en/contact-us?id_product=24922');
-        }
-    }
-
-    private function registerStripeEvent($intent)
-    {
-        try {
-            $stripeEvent = new StripeEvent();
-            $stripeEvent->setIdPaymentIntent($intent->id);
-            $stripeEvent->setStatus(StripeEvent::CREATED_STATUS);
-            $stripeEvent->setDateAdd($intent->created);
-            $stripeEvent->setIsProcessed(1);
-            $stripeEvent->setFlowType('direct');
-
-            if ($stripeEvent->save()) {
-                ProcessLoggerHandler::logInfo(
-                    'Register created Stripe event status for payment intent '.$intent->id,
-                    'StripeEvent',
-                    $stripeEvent->id,
-                    'createIntent - registerStripeEvent'
-                );
-            } else {
-                ProcessLoggerHandler::logInfo(
-                    'An issue appears during saving Stripe module event in database (the event probably already exists).',
-                    null,
-                    null,
-                    'createIntent - registerStripeEvent'
-                );
-                ProcessLoggerHandler::closeLogger();
-                http_response_code(400);
-                $this->ajaxDie('An unexpected problem has occurred. Please contact the support : https://addons.prestashop.com/en/contact-us?id_product=24922');
-            }
-        } catch (PrestaShopException $e) {
-            ProcessLoggerHandler::logError(
-                "An issue appears during saving Stripe module event in database",
-                null,
-                null,
-                'createIntent - registerStripeEvent'
-            );
-            ProcessLoggerHandler::closeLogger();
-            http_response_code(400);
-            $this->ajaxDie('An unexpected problem has occurred. Please contact the support : https://addons.prestashop.com/en/contact-us?id_product=24922');
-        }
-    }
-
-    private function getCustomerFullNameContext()
-    {
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $firstname = str_replace('"', '\\"', $this->context->customer->firstname);
-            $lastname = str_replace('"', '\\"', $this->context->customer->lastname);
-        } else {
-            $firstname = str_replace('\'', '\\\'', $this->context->customer->firstname);
-            $lastname = str_replace('\'', '\\\'', $this->context->customer->lastname);
+        if (empty($row['id_customer'])) {
+            return null;
         }
 
-        return $firstname . ' ' . $lastname;
+        $customer = new Customer((int) $row['id_customer']);
+
+        return Validate::isLoadedObject($customer) ? $customer : null;
     }
 }

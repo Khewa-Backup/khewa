@@ -1,11 +1,10 @@
 <?php
-
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -64,13 +63,11 @@ define('_GMCP_PARAM_CTRL_NAME', 'sController');
 /* defines variable for admin ctrl name */
 define('_GMCP_ADMIN_CTRL', 'admin');
 /* defines variable for the php script file to copy */
-define('_GMCP_XML_PHP_NAME', 'gmerchantcenterpro.xml.php');
-/* defines variable for the php script file to copy */
 define('_GMCP_FEED_PHP_NAME', 'gmerchantcenterpro.feed.php');
-/* defines the API URL */
-define('_GMCP_API_URL', 'https://shopify-api.presta-module.com/');
-/* defines confirm tpl */
-define('_GMCP_TPL_GSA_OVERVIEW', 'shopping-action-overview.tpl');
+/* defines variable for front module controller for the cron */
+define('_GMCP_CTRL_CRON', 'cron');
+/* defines variable for front module controller for the fly output */
+define('_GMCP_CTRL_FLY', 'fly');
 
 /* defines variables to configuration settings */
 $GLOBALS['GMCP_CONFIGURATION'] = array(
@@ -78,7 +75,7 @@ $GLOBALS['GMCP_CONFIGURATION'] = array(
     'GMCP_HOME_CAT' => '',
     'GMCP_LINK' => '',
     'GMCP_ID_PREFIX' => '',
-    'GMCP_AJAX_CYCLE' => 200,
+    'GMCP_AJAX_CYCLE' => 1000,
     'GMCP_EXPORT_OOS' => 1,
     'GMCP_COND' => 'new',
     'GMCP_P_COMBOS' => 1,
@@ -121,6 +118,7 @@ $GLOBALS['GMCP_CONFIGURATION'] = array(
     'GMCP_UTM_CAMPAIGN' => '',
     'GMCP_UTM_SOURCE' => '',
     'GMCP_UTM_MEDIUM' => '',
+    'GMCP_UTM_CONTENT' => 0,
     'GMCP_FEED_PROTECTION' => 1,
     'GMCP_FEED_TOKEN' => md5(rand(1000, 1000000) . time()),
     'GMCP_EXPORT_MODE' => 0,
@@ -170,12 +168,22 @@ $GLOBALS['GMCP_CONFIGURATION'] = array(
     'GMCP_SIMPLE_PROD_ID' => 0,
     'GMCP_FORCE_IDENTIFIER' => 0,
     'GMCP_API_KEY' => '',
-    'GMCP_GSA_CUSTOMER_GROUP' => 3,
-    'GMCP_GSA_DEFAULT_CARRIER' => 0,
+    'GMCP_OAUTH' => array(),
     'GMCP_MERCHANT_ID' => '',
     'GMCP_SHOP_LINK_API' => 0,
-    'GMCP_URL_PROD_ERROR' => 0,
-    'GMCP_GSA_CARRIERS_MAP' => ''
+    'GMCP_EXCLUDED_COUNTRY' => '',
+    'GMCP_PROMO_DEST' => '',
+    'GMCP_COMBO_SEPARATOR' => 'v',
+    'GMCP_MIN_HANDLING_TIME' => '2',
+    'GMCP_MAX_HANDLING_TIME' => '4',
+    'GMCP_FUNDED_PROMO' => 'none',
+    'GMCP_DIMENSION' => 0,
+    'GMCP_STORE_CODE' => '',
+    'GMCP_LIA_PICKUP' => 'reserve',
+    'GMCP_LIA_PICKUP_SLA' => 'same day',
+    'GMCP_PRODUCT_DIMENSION' => false,
+    'GMCP_SHIPS_FROM' => '',
+    'GMCP_FREE_SHIPPING_PRICE' => 0,
 );
 
 /* defines variable to translate js msg */
@@ -183,6 +191,9 @@ $GLOBALS['GMCP_JS_MSG'] = array();
 
 /* defines variable to define available weight units */
 $GLOBALS['GMCP_WEIGHT_UNITS'] = array('kg', 'lb', 'g', 'oz');
+
+/* defines variable to define available dimenstion units */
+$GLOBALS['GMCP_DIMENSION_UNITS'] = array('cm', 'in');
 
 /* defines variable to define default home cat name translations */
 $GLOBALS['GMCP_HOME_CAT_NAME'] = array(
@@ -192,9 +203,7 @@ $GLOBALS['GMCP_HOME_CAT_NAME'] = array(
     'es' => 'ignacio',
 );
 
-$GLOBALS['GMCP_HOOKS'] = array(
-    array('name' => 'actionOrderStatusUpdate', 'use' => false, 'title' => 'Order status update'),
-);
+$GLOBALS['GMCP_HOOKS'] = array();
 
 /* defines available languages / countries / currencies for Google */
 $GLOBALS['GMCP_AVAILABLE_COUNTRIES'] = array(
@@ -238,13 +247,14 @@ $GLOBALS['GMCP_AVAILABLE_COUNTRIES'] = array(
         'PL' => array('currency' => array('PLN'), 'taxonomy' => 'en-US'),
         'RU' => array('currency' => array('RUB', 'GEL'), 'taxonomy' => 'en-US'),
         'PT' => array('currency' => array('EUR'), 'taxonomy' => 'en-US'),
-        'SA' => array('currency' => array('AED, SAR', 'DZD', 'EGP'), 'taxonomy' => 'en-US'),
+        'SA' => array('currency' => array('AED', 'SAR', 'DZD', 'EGP'), 'taxonomy' => 'en-US'),
         'ES' => array('currency' => array('EUR', 'GTQ'), 'taxonomy' => 'en-US'),
         'GE' => array('currency' => array('KAS'), 'taxonomy' => 'en-US'),
         'UR' => array('currency' => array('PKR'), 'taxonomy' => 'en-US'),
-        'VE' => array('currency' => array('VEF'), 'taxonomy' => 'en-US'),
+        'VE' => array('currency' => array('VES'), 'taxonomy' => 'en-US'),
         'SK' => array('currency' => array('EUR'), 'taxonomy' => 'en-US'),
         'HU' => array('currency' => array('HUF'), 'taxonomy' => 'en-US'),
+        'KW' => array('currency' => array('KWD'), 'taxonomy' => 'en-US'),
     ),
     'gb' => array(
         'AU' => array('currency' => array('AUD'), 'taxonomy' => 'en-GB'),
@@ -288,7 +298,7 @@ $GLOBALS['GMCP_AVAILABLE_COUNTRIES'] = array(
         'ES' => array('currency' => array('EUR', 'GTQ'), 'taxonomy' => 'en-GB'),
         'GE' => array('currency' => array('KAS'), 'taxonomy' => 'en-GB'),
         'UR' => array('currency' => array('PKR'), 'taxonomy' => 'en-GB'),
-        'VE' => array('currency' => array('VEF'), 'taxonomy' => 'en-GB'),
+        'VE' => array('currency' => array('VES'), 'taxonomy' => 'en-GB'),
         'SK' => array('currency' => array('EUR'), 'taxonomy' => 'en-GB'),
         'HU' => array('currency' => array('HUF'), 'taxonomy' => 'en-GB'),
     ),
@@ -301,10 +311,10 @@ $GLOBALS['GMCP_AVAILABLE_COUNTRIES'] = array(
     ),
     'de' => array(
         'EN' => array('currency' => array('EUR'), 'taxonomy' => 'de-DE'),
-        'BE' => array('currency' => array('EUR'), 'taxonomy' => 'de-DE'),
         'DE' => array('currency' => array('EUR'), 'taxonomy' => 'de-DE'),
         'CH' => array('currency' => array('CHF'), 'taxonomy' => 'de-DE'),
-        'AT' => array('currency' => array('EUR'), 'taxonomy' => 'de-DE')
+        'AT' => array('currency' => array('EUR'), 'taxonomy' => 'de-DE'),
+        'BE' => array('currency' => array('EUR'), 'taxonomy' => 'de-DE'),
     ),
     'it' => array(
         'IT' => array('currency' => array('EUR'), 'taxonomy' => 'it-IT'),
@@ -384,6 +394,7 @@ $GLOBALS['GMCP_AVAILABLE_COUNTRIES'] = array(
     'ar' => array(
         'SA' => array('currency' => array('SAR', 'AED', 'DZD', 'CRC', 'EGP', 'TND', 'DZD', 'JOD', 'LBP', 'MAD', 'OMR'), 'taxonomy' => 'ar-SA'),
         'AE' => array('currency' => array('AED', 'SAR', 'DZD', 'EGP', 'DZD', 'JOD'), 'taxonomy' => 'ar-SA'),
+        'KW' => array('currency' => array('KWD'), 'taxonomy' => 'ar-SA'),
     ),
     'id' => array(
         'ID' => array('currency' => array('IDR'), 'taxonomy' => 'en-US'),
@@ -416,7 +427,7 @@ $GLOBALS['GMCP_AVAILABLE_COUNTRIES'] = array(
         'UR' => array('currency' => array('PKR'), 'taxonomy' => 'en-US'),
     ),
     've' => array(
-        'VE' => array('currency' => array('VEF'), 'taxonomy' => 'es-ES'),
+        'VE' => array('currency' => array('VES'), 'taxonomy' => 'es-ES'),
     ),
     'sk' => array(
         'SK' => array('currency' => array('EUR'), 'taxonomy' => 'en-GB'),
@@ -429,6 +440,9 @@ $GLOBALS['GMCP_AVAILABLE_COUNTRIES'] = array(
     ),
     'lt' => array(
         'LT' => array('currency' => array('EUR'), 'taxonomy' => 'en-GB'),
+    ),
+    'qc' => array(
+        'CA' => array('currency' => array('cAD'), 'taxonomy' => 'fr-FR')
     ),
 );
 /* defines variable to set request parameters */

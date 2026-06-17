@@ -1,22 +1,20 @@
 {*
-* 2007-2020 ETS-Soft
-*
-* NOTICE OF LICENSE
-*
-* This file is not open source! Each license that you purchased is only available for 1 wesite only.
-* If you want to use this file on more websites (or projects), you need to purchase additional licenses. 
-* You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
-* 
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs, please contact us for extra customization service at an affordable price
-*
-*  @author ETS-Soft <etssoft.jsc@gmail.com>
-*  @copyright  2007-2021 ETS-Soft
-*  @license    Valid for 1 website (or project) for each purchase of license
-*  International Registered Trademark & Property of ETS-Soft
+ * Copyright ETS Software Technology Co., Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is not open source! Each license that you purchased is only available for 1 website only.
+ * If you want to use this file on more websites (or projects), you need to purchase additional licenses.
+ * You are not allowed to redistribute, resell, lease, license, sub-license or offer our resources to any third party.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future.
+ *
+ * @author ETS Software Technology Co., Ltd
+ * @copyright  ETS Software Technology Co., Ltd
+ * @license    Valid for 1 website (or project) for each purchase of license
 *}
 <script>
 var confirm_delete_data= '{l s='Do you want to clear this data?' mod='ets_superspeed' js='1'}';
@@ -45,10 +43,10 @@ var confirm_delete_all_data= '{l s='Do you want to clear all data?' mod='ets_sup
                             <td>{$data.name|escape:'html':'UTF-8'}</td>
                             <td>{$data.desc|escape:'html':'UTF-8'}</td>
                             <td><span class="total_data_row">{$data.total|intval}</span></td>
-                            <td>
+                            <td class="row-status">
                                 {if $data.total < 500}
                                     <span class="status-good">{l s='Good' mod='ets_superspeed'}</span>
-                                {else if $data.total >=500  && $data.total<1000}
+                                {elseif $data.total >=500  && $data.total<1000}
                                     <span class="status-medium">{l s='Medium' mod='ets_superspeed'}</span>
                                 {else if}
                                     <span class="status-many">{l s='So many, clearance recommended' mod='ets_superspeed'}</span>

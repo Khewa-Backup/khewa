@@ -2,8 +2,8 @@
 <module>
     <name>ps_shoppingcart</name>
     <displayName><![CDATA[Panier]]></displayName>
-    <version><![CDATA[2.0.4]]></version>
-    <description><![CDATA[Display a shopping cart icon on your pages and the number of items it contains.]]></description>
+    <version><![CDATA[2.0.6]]></version>
+    <description><![CDATA[Affichez un ic&ocirc;ne de panier ainsi que le nombre d&#039;articles qu&#039;il contient sur toutes vos pages. ]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[front_office_features]]></tab>
     <is_configurable>1</is_configurable>

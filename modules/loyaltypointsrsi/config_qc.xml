@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>loyaltypointsrsi</name>
+    <displayName><![CDATA[Customer loyalty and rewards]]></displayName>
+    <version><![CDATA[2.1.0]]></version>
+    <description><![CDATA[Provide a loyalty program to your customers for PS 1.7.]]></description>
+    <author><![CDATA[RSI]]></author>
+    <tab><![CDATA[pricing_promotion]]></tab>
+	<confirmUninstall><![CDATA[Are you sure you want to delete all loyalty points and customer history?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>

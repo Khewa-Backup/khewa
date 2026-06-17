@@ -1,5 +1,5 @@
-{*
- * 2007-2019 PrestaShop
+{**
+ * 2007-2022 Stripe
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,20 @@
  *
  * @author    202-ecommerce <tech@202-ecommerce.com>
  * @copyright Copyright (c) Stripe
- * @license   Commercial license
-*}
+ * @license   Academic Free License (AFL 3.0)
+ *}
 
 <form class="stripe-payment-form" id="stripe-oxxo-element" action="">
     <input type="hidden" name="stripe-payment-method" value="oxxo">
+
+    {if isset($prestashop_version) && $prestashop_version == '1.6'}
+      <div class="payment_module" data-method="oxxo">
+        <p title="{l s='Pay by Oxxo' mod='stripe_official'}">
+          <img id="ideal" src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/oxxo.png" alt="{l s='Pay by iDeal' mod='stripe_official'}" />
+          &nbsp;{l s='Pay by Oxxo' mod='stripe_official'}
+        </p>
+      </div>
+    {/if}
 
     <div class="form-row">
         <input id="oxxo-name" name="oxxo-name" placeholder="{l s='Name' mod='stripe_official'}" required>

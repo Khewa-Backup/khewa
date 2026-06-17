@@ -1,9 +1,8 @@
 <?php
 
-namespace Lcobucci\JWT\Validation;
+namespace PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Validation;
 
-use Lcobucci\JWT\Token;
-
+use PrestaShop\Module\PsAccounts\Vendor\Lcobucci\JWT\Token;
 interface Constraint
 {
     /** @throws ConstraintViolation */

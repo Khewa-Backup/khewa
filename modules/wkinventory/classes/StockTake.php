@@ -112,6 +112,7 @@ class StockTake extends ObjectModel
     public $free_html;
     public $stock_valuation;
     public $inventory_count;
+    public $settings;
 
     /**
      * @see ObjectModel::$definition
@@ -139,6 +140,7 @@ class StockTake extends ObjectModel
             'stock_updated' => array('type' => self::TYPE_BOOL),
             'is_empty' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
             'stock_zero' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'settings' => array('type' => self::TYPE_STRING),
         ),
     );
 
@@ -157,7 +159,6 @@ class StockTake extends ObjectModel
     public function add($autodate = true, $null_values = false)
     {
         $is_empty = (int)Tools::getValue('is_empty');
-
         if (!$is_empty) {
             if (Tools::getIsset('manufacturer_ids') && Tools::getValue('manufacturer_ids')) {
                 $this->manufacturer_ids = pSQL(implode(',', array_map('intval', Tools::getValue('manufacturer_ids'))));
@@ -170,6 +171,11 @@ class StockTake extends ObjectModel
             $this->id_supplier = 0;
             $this->manufacturer_ids = '';
         }
+		// Save settings
+		$this->settings = json_encode(array(
+			'reset_not_inventoried_stock' => Tools::getValue('reset_not_inventoried_stock')
+		));
+		// Add
         return parent::add($autodate, $null_values);
     }
 
@@ -179,7 +185,24 @@ class StockTake extends ObjectModel
     public function update($null_values = false)
     {
         $this->date_upd = date('Y-m-d H:i:s');
+		// Save settings
+		$this->settings = json_encode(array(
+			'reset_not_inventoried_stock' => Tools::getValue('reset_not_inventoried_stock')
+		));
         return parent::update($null_values);
+    }
+
+    public function delete()
+    {
+        if (!parent::delete()) {
+            return false;
+        }
+        // Delete products from inventory
+        Db::getInstance()->execute(
+            'DELETE FROM `'._DB_PREFIX_.StockTakeProduct::$definition['table'].'`
+             WHERE `id_inventory` = '.(int)$this->id
+        );
+        return true;
     }
 
     public function getInventoryProducts($stock_updated = false, $full = true, $offset = null, $limit = null)

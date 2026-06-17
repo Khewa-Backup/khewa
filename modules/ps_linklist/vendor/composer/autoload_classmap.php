@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'PrestaShop\\Module\\LinkList\\Adapter\\ObjectModelHandler' => $baseDir . '/src/Adapter/ObjectModelHandler.php',
     'PrestaShop\\Module\\LinkList\\Cache\\LegacyLinkBlockCache' => $baseDir . '/src/Cache/LegacyLinkBlockCache.php',
     'PrestaShop\\Module\\LinkList\\Cache\\LinkBlockCacheInterface' => $baseDir . '/src/Cache/LinkBlockCacheInterface.php',
     'PrestaShop\\Module\\LinkList\\Controller\\Admin\\Improve\\Design\\LinkBlockController' => $baseDir . '/src/Controller/Admin/Improve/Design/LinkBlockController.php',

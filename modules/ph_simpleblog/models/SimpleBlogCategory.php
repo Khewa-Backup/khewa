@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Blog for PrestaShop module by PrestaHome Team.
  *
@@ -6,6 +7,7 @@
  * @copyright Copyright (c) 2011-2021 PrestaHome Team - www.PrestaHome.com
  * @license   You only can use module, nothing more!
  */
+
 class SimpleBlogCategory extends ObjectModel
 {
     public $id;
@@ -271,11 +273,13 @@ class SimpleBlogCategory extends ObjectModel
 
     public function updatePosition($way, $position)
     {
-        if (!$res = Db::getInstance()->executeS('
+        if (
+            !$res = Db::getInstance()->executeS('
             SELECT sbc.`id_simpleblog_category`, sbc.`position`, sbc.`id_parent`
             FROM `' . _DB_PREFIX_ . 'simpleblog_category` sbc
             WHERE sbc.`id_parent` = ' . (int) $this->id_parent . '
-            ORDER BY sbc.`position` ASC')) {
+            ORDER BY sbc.`position` ASC')
+        ) {
             return false;
         }
 
@@ -409,7 +413,7 @@ class SimpleBlogCategory extends ObjectModel
 
     public static function getByRewrite($rewrite = null, $id_lang = false)
     {
-        if (!$rewrite) {
+        if (!$rewrite || !Validate::isLinkRewrite($rewrite)) {
             return;
         }
 

@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 <div class="table-responsive">
@@ -24,7 +24,7 @@
             <th>{l s='Redemption url' mod='mailchimppro'}
             <th>{l s='Usage count' mod='mailchimppro'}
             <th>{l s='Enabled' mod='mailchimppro'}
-            <th>#</th>
+            <th>{l s='Actions' mod='mailchimppro'}</th>
         </tr>
         </thead>
         <tbody>

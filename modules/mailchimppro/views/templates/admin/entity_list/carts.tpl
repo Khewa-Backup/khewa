@@ -12,7 +12,7 @@
  * If you need help please contact leo@prestachamps.com
  *
  * @author    Mailchimp
- * @copyright PrestaChamps
+ * @copyright Mailchimp
  * @license   commercial
  *}
 <div class="table-responsive">
@@ -25,7 +25,7 @@
             <th>{l s='Products' mod='mailchimppro'}</th>
             <th>{l s='Created at' mod='mailchimppro'}</th>
             <th>{l s='Updated at' mod='mailchimppro'}</th>
-            <th>#</th>
+            <th>{l s='Actions' mod='mailchimppro'}</th>
         </tr>
         </thead>
         <tbody>
@@ -40,9 +40,12 @@
                 <td>{$cart.created_at|escape:'htmlall':'UTF-8'}</td>
                 <td>{$cart.updated_at|escape:'htmlall':'UTF-8'}</td>
                 <td>
-                    <a href="{LinkHelper::getAdminLink('AdminMailchimpProCarts', true, [], ['action' => 'entitydelete', 'entity_id' => $cart.id])|escape:'htmlall':'UTF-8'}">
-                        Delete
-                    </a>
+					<div class="btn-group btn-group-xs">
+						<a class="btn btn-default" href="{LinkHelper::getAdminLink('AdminMailchimpProCarts', true, [], ['action' => 'entitydelete', 'entity_id' => $cart.id])|escape:'htmlall':'UTF-8'}" title="{l s='Delete' mod='mailchimppro'}">
+							<i class="icon icon-trash" aria-hidden="true"></i>
+							<span>{l s='Delete' mod='mailchimppro'}</span>
+						</a>
+					</div>
                 </td>
             </tr>
         {/foreach}

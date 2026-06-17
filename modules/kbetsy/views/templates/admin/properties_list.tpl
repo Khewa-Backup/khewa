@@ -17,10 +17,10 @@
 *}
 {foreach $property_list as $property}
 <div class="form-group">
-    <label class="control-label col-lg-3 {if $property['required'] == "1"} required {/if}">
+    <label class="control-label col-lg-4 {if $property['required'] == "1"} required {/if}">
         {$property['name']|escape:'htmlall':'UTF-8'}
     </label>
-    <div class="col-lg-9">
+    <div class="col-lg-8">
         <select name="property_attr[{$property['id']|escape:'htmlall':'UTF-8'}]{if $property['multi'] == "1"}[]{/if}" class=" fixed-width-xl" id="property[{$property['id']|escape:'htmlall':'UTF-8'}]" {if $property['multi'] == "1"} multiple="multiple" {/if}>
             {if $property['multi'] != "1"}<option value="">{l s='Select' mod='kbetsy'}</option>{/if}
             {foreach $property['values'] as $option}

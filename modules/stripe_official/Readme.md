@@ -1,16 +1,15 @@
+[![Coding Standart](https://github.com/202-ecommerce/stripe_official/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/202-ecommerce/stripe_official/actions/workflows/php.yml)
+
 # Stripe Official
 
 ## About
 
 Let customer pay with one of this payment methods : 
 
-On PrestaShop 1.7 :
+On PrestaShop 1.7 & 8 :
 - Credit card
-- bancontact
-- giropay
-- ideal
-- sofort
-
+- Payment Element
+- Stripe Checkout
 
 #### Product page on PrestaShop Addons:
 
@@ -18,10 +17,10 @@ https://addons.prestashop.com/fr/paiement-carte-wallet/24922-stripe-officiel-sca
 
 ## Module version guide
 
-| PrestaShop version | Module version |  Repo               | Doc                |  PHP Version |
-|--------------------|----------------|---------------------|--------------------|--------------|
-| 1.5.x              | 1.5.x          |  [release/1.5.2]    |                    |   5.3 or greater    |
-| 1.6.x - 1.7.x      | 2.x            |  [master]           |                    |   5.6 or greater    |
+| PrestaShop version | Module version |  Repo               | Doc                | PHP Version    |
+|--------------------|---------------|---------------------|--------------------|----------------|
+| 1.7.x - 8.x        | 3.x           |  [release/1.5.2]    |                    | 5.6 or greater |
+| 1.7.x - 8.x        | 3.x           |  [master]           |                    | 5.6 or greater |
 
 ## Requirements
 
@@ -30,7 +29,7 @@ https://addons.prestashop.com/fr/paiement-carte-wallet/24922-stripe-officiel-sca
 
 The Payment Card Industry (PCI) Council has mandated that early versions of
 TLS be retired from service. All organizations that handle credit card information
-are required to comply with this standard. As part of this obligation, Stripe has
+are required to comply with this standard. As part of this  obligation, Stripe has
 upgraded its services to require TLS 1.2 for all HTTPS connections.
 Connections to the sandbox environment use only TLS 1.2.
 
@@ -96,3 +95,24 @@ That's it: you have contributed to this open-source project! Congratulations!
 [3]: https://help.github.com/articles/using-pull-requests
 [4]: https://support.stripe.com/questions/upgrade-your-stripe-integration-from-tls-1-0-to-tls-1-2
 [composer-doc]: https://getcomposer.org/doc/04-schema.md
+
+### Command line launched by GitHub actions
+
+Please launch these command line before submitting a Pull Request.
+
+#### phpcs fixer
+
+```bash
+~$ vendor/bin/php-cs-fixer --fix
+```
+#### phpstan
+
+You need a docker container to launch phpstan:
+
+```
+# create the prestashop container
+~$ docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop
+
+# launch phpstan
+~$ docker run --rm --volumes-from temp-ps -v $PWD:/var/www/html/modules/stripe_official -e _PS_ROOT_DIR_=/var/www/html --workdir=/var/www/html/modules/stripe_official phpstan/phpstan:0.12 analyse --configuration=/var/www/html/modules/stripe_official/202/phpstan/phpstan.neon
+```

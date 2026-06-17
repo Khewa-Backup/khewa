@@ -84,7 +84,7 @@ class PwFavorites extends PwModule implements WidgetInterface
         $this->author = 'pilipiliweb';
         $this->name = 'pwfavorites';
         $this->tab = 'front_office_features';
-        $this->version = '2.1.0';
+        $this->version = '2.2.1';
 
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
         $this->module_key = '8d3b9eed6195746654b5e963b0f923e4';

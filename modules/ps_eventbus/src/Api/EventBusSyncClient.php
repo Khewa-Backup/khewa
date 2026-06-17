@@ -2,9 +2,8 @@
 
 namespace PrestaShop\Module\PsEventbus\Api;
 
-use GuzzleHttp\Client;
-use Link;
 use PrestaShop\Module\PsEventbus\Exception\EnvVarException;
+use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 class EventBusSyncClient extends GenericClient
@@ -17,32 +16,32 @@ class EventBusSyncClient extends GenericClient
     /**
      * EventBusSyncClient constructor.
      *
-     * @param Link $link
-     * @param PsAccounts $psAccountsService
+     * @param \Link $link
+     * @param PsAccounts $psAccounts
      * @param string $baseUrl
      *
      * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
      * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException
+     * @throws \Exception
      */
-    public function __construct(Link $link, PsAccounts $psAccountsService, $baseUrl)
+    public function __construct(\Link $link, PsAccounts $psAccounts, $baseUrl)
     {
         $this->baseUrl = $baseUrl;
         $this->setLink($link);
-        $token = $psAccountsService->getPsAccountsService()->getOrRefreshToken();
-
-        $client = new Client([
-            'base_url' => $this->baseUrl,
-            'defaults' => [
-                'timeout' => $this->timeout,
-                'exceptions' => $this->catchExceptions,
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Authorization' => "Bearer $token",
-                ],
+        $token = $psAccounts->getPsAccountsService()->getOrRefreshToken();
+        $options = [
+            'base_uri' => $this->baseUrl,
+            'timeout' => 60,
+            'http_errors' => $this->catchExceptions,
+            'headers' => [
+                'authorization' => "Bearer $token",
+                'Accept' => 'application/json',
             ],
-        ]);
+        ];
 
-        parent::__construct($client);
+        $client = (new ClientFactory())->getClient($options);
+
+        parent::__construct($client, $options);
     }
 
     /**

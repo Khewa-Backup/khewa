@@ -11,7 +11,7 @@
     {assign var=id value=$all_setings['id']}
     {assign var=name value=$all_setings['name']}
     {if isset($all_setings) && count($all_setings) > 0}
-      <div class="form-group {$input.class_block|escape:'html'}" data-tab-id="{$input.tab|escape:'htmlall':'UTF-8'}" {if $input.display}style="display: block" {/if}>
+      <div class="form-group {$input.class_block|escape:'htmlall':'UTF-8'}" data-tab-id="{$input.tab|escape:'htmlall':'UTF-8'}" {if $input.display}style="display: block" {/if}>
         <label class="control-label col-lg-3">
         <span class="{if $input.hint}label-tooltip{else}control-label{/if}" data-toggle="tooltip" data-html="true" title="" data-original-title="{$input.hint|escape:'htmlall':'UTF-8'}">
           {$input.label|escape:'htmlall':'UTF-8'}

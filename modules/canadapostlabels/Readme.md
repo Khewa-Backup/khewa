@@ -371,6 +371,15 @@ Enable **Error Logging** in the module configuration page to help troubleshoot r
     - use product dimensions values on order page
     - Add option to use product dimensions when calculating rates when only one product is in the cart
 
+- 4.1.1 *(17/10/2021)*
+  - Update cacert.pem bundle
+
+- 4.1.0
+  - Fix max length bug on label error messages
+
+- 4.0.9 *(19/08/2021)*
+  - Fix missing admin tab JS in PS 1.7.8
+  
 - 4.0.8 *(07/01/2021)*
     - Fix bug where product attribute weight was ignored
 
@@ -428,71 +437,71 @@ Enable **Error Logging** in the module configuration page to help troubleshoot r
     - Fix estimator showing as Free on out-of-stock products
 
 - 4.0.0
-	- Module completely re-built from the ground up with new features and better performance.
-	- NEW: Create Bulk Order Labels in one click
-	- NEW: Re-designed label interface with dozens of new label options
-	- NEW: Front-office Shipping Estimator on Product/Cart pages
-	- NEW: Front-office Order Tracking
-	- NEW: Create Return Labels
-	- NEW: Custom Rate Discount Rules
-	- NEW: Auto-Update Order Status when Delivered
-	- NEW: Box Packing Algorithm
-	- NEW: Powerful bulk-shipping workflow optimization options
-	- NEW: Smart Rate Caching to speed up the front-office
-	- NEW: Re-designed Shipment/Manifest History
-	- NEW: Bulk-re-print and bulk-void/refund labels
-	- NEW: Track parcels from the back-office
-	- NEW: Get rates with tax included OR excluded
-	- NEW: Upload your own carrier logo
-	- Added metrics for storage space used by module
-	- Rewritten documentation
-	- Contract/Non-Contract Modules are now consolidated into one module
-	- Numerous bug fixes and improvements
-	- Add Hook.php override for backwards compatibility (namespace issue)
+  - Module completely re-built from the ground up with new features and better performance.
+  - NEW: Create Bulk Order Labels in one click
+  - NEW: Re-designed label interface with dozens of new label options
+  - NEW: Front-office Shipping Estimator on Product/Cart pages
+  - NEW: Front-office Order Tracking
+  - NEW: Create Return Labels
+  - NEW: Custom Rate Discount Rules
+  - NEW: Auto-Update Order Status when Delivered
+  - NEW: Box Packing Algorithm
+  - NEW: Powerful bulk-shipping workflow optimization options
+  - NEW: Smart Rate Caching to speed up the front-office
+  - NEW: Re-designed Shipment/Manifest History
+  - NEW: Bulk-re-print and bulk-void/refund labels
+  - NEW: Track parcels from the back-office
+  - NEW: Get rates with tax included OR excluded
+  - NEW: Upload your own carrier logo
+  - Added metrics for storage space used by module
+  - Rewritten documentation
+  - Contract/Non-Contract Modules are now consolidated into one module
+  - Numerous bug fixes and improvements
+  - Add Hook.php override for backwards compatibility (namespace issue)
     - Fix carrier logo not updating during upgrades from v3
     - Change download ID
 
 - 3.0.4
-	 - FIX delivery estimate bug
+   - FIX delivery estimate bug
 
 - 3.0.3
-	 - FIX uninstall bug in Prestashop 1.7.2.2
+   - FIX uninstall bug in Prestashop 1.7.2.2
 
 - 3.0.2
-	 - FIX Bug with creating manual orders.
+   - FIX Bug with creating manual orders.
 
 - 3.0.1
-	 - Updated for Prestashop 1.7
-	 - Added more documentation
-	 - Added manual workaround for delivery times
-	 - Fixed cookie->exists
+   - Updated for Prestashop 1.7
+   - Added more documentation
+   - Added manual workaround for delivery times
+   - Fixed cookie->exists
 
 - 2.2.8
-	 - FIX Bug with adding package weight to total weight.
-	 - FIX Bug with creating custom orders.
+   - FIX Bug with adding package weight to total weight.
+   - FIX Bug with creating custom orders.
 
 - 2.2.7
-	 - FIX Some rate services not appearing for certain addresses.
+   - FIX Some rate services not appearing for certain addresses.
 
 - 2.2.6
-	 - FIX DC option code enabled on addresses that don't support it.
-	 - FIX Add conversion rate from CAD for International shipments.
-	 - FIX Bug preventing from deleting a box on some servers.
-	 - NEW Added two new International shipping methods (parcel air, parcel surface).
+   - FIX DC option code enabled on addresses that don't support it.
+   - FIX Add conversion rate from CAD for International shipments.
+   - FIX Bug preventing from deleting a box on some servers.
+   - NEW Added two new International shipping methods (parcel air, parcel surface).
 
 - 2.2.5
-	 - Fixed rate not updating for Shipping Estimator module.
-	 - Added $delay_times smarty variable.
+   - Fixed rate not updating for Shipping Estimator module.
+   - Added $delay_times smarty variable.
 
 - 2.2.4
-	 - IMPROVED: Rate volume calculation
-	 - FIX: Admin order page now correctly pre-selects the optimal package size
+   - IMPROVED: Rate volume calculation
+   - FIX: Admin order page now correctly pre-selects the optimal package size
 
 - 2.2.3
-	 - FIX: Syntax for select form fields in latest PS version on older PHP versions.
-	 - FIX: CSS and JS selectors for new select form fields in latest PS version.
+   - FIX: Syntax for select form fields in latest PS version on older PHP versions.
+   - FIX: CSS and JS selectors for new select form fields in latest PS version.
 
 - 2.2.2
-	 - NEW: Rate algorithm improvement with long edges
-	 - FIX: Syntax for select form fields in latest PS version
-	 - FIX: Bug with commercial invoices
+   - NEW: Rate algorithm improvement with long edges
+   - FIX: Syntax for select form fields in latest PS version
+   - FIX: Bug with commercial invoices

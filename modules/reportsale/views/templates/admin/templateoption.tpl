@@ -1,5 +1,5 @@
 {*
-* 2007-2021 PrestaShop
+* 2007-2023 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,233 +18,233 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author Buy-addons <contact@buy-addons.com>
-*  @copyright  2007-2021 Buy-addons
+*  @copyright  2007-2023 Buy-addons
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 <div id="ba_load_hidden">
-	<img src="{$url_bareport|escape:'htmlall':'UTF-8'}modules/reportsale/views/img/default_01.gif" alt="">
+    <img src="{$url_bareport|escape:'htmlall':'UTF-8'}modules/reportsale/views/img/default_01.gif" alt="">
 </div>
 <form action="{$url_report|escape:'htmlall':'UTF-8'}" method="post" id="{$PREFIX_FORM|escape:'htmlall':'UTF-8'}form_data">
-	<input type="hidden" value="{$prefix_report|escape:'htmlall':'UTF-8'}" name="prefixreport"/>
-	<div class="panel col-lg-12 ba-panel-report">
-		<h3 id="report_click_opent_timeline">{l s='FILTER BY DATE' mod='reportsale'} <i id="timeline_icon" class="fa fa-plus-square report_ba_click"></i></h3>
-		<div id="timeline_filtering" class="main_helper_content">
-			<div class="row">
-				<div class="form-group col-lg-3 main_text_option">
-					<h4>{l s='Order Date' mod='reportsale'}: </h4>
-				</div>
-				<div class="col-lg-8">
-					<div class="form-inline order_date">
-						<div class="form-group">
-							<label>{l s='From' mod='reportsale'}</label>
-							<input type="Date" class="form-control from" name="{$order_date_from|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['order_date_from']|escape:'htmlall':'UTF-8'}">
-						</div>
-						<div class="form-group">
-							<label>{l s='To' mod='reportsale'}</label>
-							<input type="Date" class="form-control to" name="{$order_date_to|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['order_date_to']|escape:'htmlall':'UTF-8'}">
-						</div>
-						<div class="form-group">
-							<label>{l s='Range' mod='reportsale'}</label>
-							<select class="reportsale_range" rev="order_date">
-								<option value="1" selected>{l s='Custom Date' mod='reportsale'}</option>
-								<option value="2">{l s='Today' mod='reportsale'}</option>
-								<option value="3">{l s='Yesterday' mod='reportsale'}</option>
-								<option value="4">{l s='This week (Monday - Today)' mod='reportsale'}</option>
-								<option value="5">{l s='Last week' mod='reportsale'}</option>
-								<option value="6">{l s='7 days ago' mod='reportsale'}</option>
-								<option value="7">{l s='14 days ago' mod='reportsale'}</option>
-								<option value="8">{l s='This month' mod='reportsale'}</option>
-								<option value="9">{l s='Last month' mod='reportsale'}</option>
-								<option value="10">{l s='30 days ago' mod='reportsale'}</option>
-							</select>
-						</div>
-					</div>
-					<input type="hidden" id="hidden_prefix" name="hidden_prefix" value="{$PREFIX_FORM|escape:'htmlall':'UTF-8'}">
-				</div>
-				
-			</div>
-			<div class="row">
-				<div class="form-group col-lg-3 main_text_option">
-					<h4>{l s='Invoice Date' mod='reportsale'}: </h4>
-				</div>
-				<div class="col-lg-8">
-					<div class="form-inline invoice_date">
-						<div class="form-group">
-							<label>{l s='From' mod='reportsale'}</label>
-							<input type="date" class="form-control from" name="{$invoice_date_from|escape:'htmlall':'UTF-8'}"  placeholder="" value="{$arr_configuration['invoice_date_from']|escape:'htmlall':'UTF-8'}">
-						</div>
-						<div class="form-group">
-							<label>{l s='To' mod='reportsale'}</label>
-							<input type="date" class="form-control to" name="{$invoice_date_to|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['invoice_date_to']|escape:'htmlall':'UTF-8'}">
-						</div>
-						<div class="form-group">
-							<label>{l s='Range' mod='reportsale'}</label>
-							<select class="reportsale_range" rev="invoice_date">
-								<option value="1" selected>{l s='Custom Date' mod='reportsale'}</option>
-								<option value="2">{l s='Today' mod='reportsale'}</option>
-								<option value="3">{l s='Yesterday' mod='reportsale'}</option>
-								<option value="4">{l s='This week (Monday - Today)' mod='reportsale'}</option>
-								<option value="5">{l s='Last week' mod='reportsale'}</option>
-								<option value="6">{l s='7 days ago' mod='reportsale'}</option>
-								<option value="7">{l s='14 days ago' mod='reportsale'}</option>
-								<option value="8">{l s='This month' mod='reportsale'}</option>
-								<option value="9">{l s='Last month' mod='reportsale'}</option>
-								<option value="10">{l s='30 days ago' mod='reportsale'}</option>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-lg-3 main_text_option">
-					<h4>{l s='Delivery Date' mod='reportsale'}: </h4>
-				</div>
-				<div class="col-lg-8">
-					<div class="form-inline delivery_date">
-						<div class="form-group">
-							<label>{l s='From' mod='reportsale'}</label>
-							<input type="date" class="form-control from" name="{$delivery_date_from|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['delivery_date_from']|escape:'htmlall':'UTF-8'}">
-						</div>
-						<div class="form-group">
-							<label>{l s='To' mod='reportsale'}</label>
-							<input type="date" class="form-control to" name="{$delivery_date_to|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['delivery_date_to']|escape:'htmlall':'UTF-8'}">
-						</div>
-						<div class="form-group">
-							<label>{l s='Range' mod='reportsale'}</label>
-							<select class="reportsale_range" rev="delivery_date">
-								<option value="1" selected>{l s='Custom Date' mod='reportsale'}</option>
-								<option value="2">{l s='Today' mod='reportsale'}</option>
-								<option value="3">{l s='Yesterday' mod='reportsale'}</option>
-								<option value="4">{l s='This week (Monday - Today)' mod='reportsale'}</option>
-								<option value="5">{l s='Last week' mod='reportsale'}</option>
-								<option value="6">{l s='7 days ago' mod='reportsale'}</option>
-								<option value="7">{l s='14 days ago' mod='reportsale'}</option>
-								<option value="8">{l s='This month' mod='reportsale'}</option>
-								<option value="9">{l s='Last month' mod='reportsale'}</option>
-								<option value="10">{l s='30 days ago' mod='reportsale'}</option>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-lg-3 main_text_option">
-					<h4>{l s='Order number' mod='reportsale'}: </h4>
-				</div>
-				<div class="col-lg-6">
-					<div class="form-inline">
-						<div class="form-group">
-							<label>{l s='From' mod='reportsale'}</label>
-							<input type="text" class="form-control" name="{$order_number_from|escape:'htmlall':'UTF-8'}" placeholder="" value="{if $arr_configuration['order_number_from']|escape:'htmlall':'UTF-8' ne ''}{$arr_configuration['order_number_from']|escape:'htmlall':'UTF-8'}{/if}">
-						</div>
-						<div class="form-group">
-							<label>{l s='To' mod='reportsale'}</label>
-							<input type="text" class="form-control" name="{$order_number_to|escape:'htmlall':'UTF-8'}" placeholder="" value="{if $arr_configuration['order_number_to'] ne ''}{$arr_configuration['order_number_to']|escape:'htmlall':'UTF-8'}{/if}">
-						</div>
-					</div>
-				</div>
-			</div>
-			<span id="ba_url_hidden">{$url_bareport|escape:'htmlall':'UTF-8'}</span> <!--****************-->
-			<div class="row">
-				<div class="form-group col-lg-3 main_text_option">
-					<h4>{l s='Invoice number' mod='reportsale'}: </h4>
-				</div>
-				<div class="col-lg-6">
-					<div class="form-inline">
-						<div class="form-group">
-							<label>{l s='From' mod='reportsale'}</label>
-							<input type="text" class="form-control" name="{$invoice_number_from|escape:'htmlall':'UTF-8'}" id="exampleInputName2" placeholder="" value="{if $arr_configuration['invoice_number_from']|escape:'htmlall':'UTF-8' ne ''}{$arr_configuration['invoice_number_from']|escape:'htmlall':'UTF-8'}{/if}">
-						</div>
-						<div class="form-group">
-							<label>{l s='To' mod='reportsale'}</label>
-							<input type="text" class="form-control" name="{$invoice_number_to|escape:'htmlall':'UTF-8'}" id="exampleInputEmail2" placeholder="" value="{if $arr_configuration['invoice_number_to']|escape:'htmlall':'UTF-8' ne ''}{$arr_configuration['invoice_number_to']|escape:'htmlall':'UTF-8'}{/if}">
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="panel col-lg-12 ba-panel-report">
-		<h3 id="report_click_opent_status">{l s='FILTER BY STATUS' mod='reportsale'}<i id="status_icon" class="fa fa-plus-square report_ba_click"></i></h3>
-		<div id="status_filtering" class="main_helper_content">
-			<div class="row">
-				<div class="form-group col-lg-5 main_text_option">
-					<strong><span>{l s='Select All' mod='reportsale'}: </span></strong>
-				</div>
-				<div class="col-lg-7">
-					<div class="form-inline">
-						<div class="form-group">
-							<input type="checkbox" class="checkbox_check" id="checkall" placeholder="">
-						</div>
-					</div>
-				</div>
-			</div>
-			{for $i=0 to $count_filtering-1}
-			<div class="row">
-				<div class="form-group col-lg-5 main_text_option">
-					<span>{$status_filtering[$i]['name']|escape:'htmlall':'UTF-8'} </span>
-				</div>
-				<div class="col-lg-7">
-					<div class="form-inline">
-						<div class="form-group">
-							{$name=$stt_filtering|cat:$status_filtering[$i]['id_order_state']}
-							{$value=$status_filtering[$i]['id_order_state']}
-							{if $value eq $arr_status[$name]}
-							<input type="checkbox" class="checkbox_check" name="{$name|escape:'htmlall':'UTF-8'}" checked="true" placeholder="" value="{$value|escape:'htmlall':'UTF-8'}">
-							{else}
-							<input type="checkbox" class="checkbox_check" name="{$name|escape:'htmlall':'UTF-8'}" placeholder="" value="{$value|escape:'htmlall':'UTF-8'}">
-							{/if}
-						</div>
-					</div>
-				</div>
-			</div>
-			{/for}
-		</div>
-	</div>
-	<div class="panel col-lg-12 ba-panel-report">
-		<h3 id="report_click_opent_country">{l s='Countries & Stores' mod='reportsale'}<i id="contry_icon" class="fa fa-plus-square report_ba_click"></i></h3>
-		<div id="Country_filtering" class="main_helper_content">
-			<div class="row form-group">
-				<div class="col-lg-3 main_text_option">
-					<h4>{l s='Choose your countries' mod='reportsale'}: </h4>
-				</div>
-				<div class="col-lg-3">
-					<select name="{$prefix_report|escape:'htmlall':'UTF-8'}country_filtering[]" multiple="multiple" class="form-control">
-						{foreach from=$get_coutry key=k item=v}
-							{if $v['active'] eq 1}
-								<option class="countries_selected" {for $i=0 to $count_country-1}{if $country_filtering[$i]==$k}selected="true" {/if}{/for} value="{$k|escape:'htmlall':'UTF-8'}">{$v['name']|escape:'htmlall':'UTF-8'}</option>
-							{/if}
-						{/foreach}
-					</select>
-				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-lg-3 main_text_option">
-					<h4>{l s='Stores' mod='reportsale'}: </h4>
-				</div>
-				<div class="col-lg-3">
-					<select name="{$prefix_report|escape:'htmlall':'UTF-8'}stores[]" multiple="multiple" class="form-control">
-						{foreach from=$stores item=store}
-								<option value="{$store.id_shop|escape:'htmlall':'UTF-8'}"{if in_array($store.id_shop, $stores_selected)} selected{/if}>{$store.name|escape:'htmlall':'UTF-8'}</option>
-						{/foreach}
-					</select>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-lg-4" style="padding: 10px;margin-bottom: 7px;text-align: left; max-width: max-content;">
-			<button type="button" name="{$prefix_report|escape:'htmlall':'UTF-8'}save_filter" id="{$prefix_report|escape:'htmlall':'UTF-8'}save_filter" class="btn btn-success">
-				{l s='Generate Report' mod='reportsale'} <span class="report_counter"></span>
-			</button>
-		</div>
-		<div class="col-lg-4" style="padding: 10px;margin-bottom: 7px;text-align: left; max-width: max-content;">
-			<button type="submit" name="reset_filter" id="reset_filter" class="btn btn-warning">
-				{l s='Reset' mod='reportsale'}
-			</button>
-		</div>
-		<div class="col-lg-4">
-		</div>
-	</div>
+    <input type="hidden" value="{$prefix_report|escape:'htmlall':'UTF-8'}" name="prefixreport"/>
+    <div class="panel col-lg-12 ba-panel-report">
+        <h3 id="report_click_opent_timeline">{l s='FILTER BY DATE' mod='reportsale'} <i id="timeline_icon" class="fa fa-plus-square report_ba_click"></i></h3>
+        <div id="timeline_filtering" class="main_helper_content">
+            <div class="row">
+                <div class="form-group col-lg-3 main_text_option">
+                    <h4>{l s='Order Date' mod='reportsale'}: </h4>
+                </div>
+                <div class="col-lg-8">
+                    <div class="form-inline order_date">
+                        <div class="form-group">
+                            <label>{l s='From' mod='reportsale'}</label>
+                            <input type="Date" class="form-control from" name="{$order_date_from|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['order_date_from']|escape:'htmlall':'UTF-8'}">
+                        </div>
+                        <div class="form-group">
+                            <label>{l s='To' mod='reportsale'}</label>
+                            <input type="Date" class="form-control to" name="{$order_date_to|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['order_date_to']|escape:'htmlall':'UTF-8'}">
+                        </div>
+                        <div class="form-group">
+                            <label>{l s='Range' mod='reportsale'}</label>
+                            <select class="reportsale_range" rev="order_date" name="{$PREFIX_FORM|escape:'htmlall':'UTF-8'}range_orderdate">
+                                <option value="1">{l s='Custom Date' mod='reportsale'}</option>
+                                <option value="2" {if $arr_configuration['range_orderdate'] == 2} selected="true" {/if}>{l s='Today' mod='reportsale'}</option>
+                                <option value="3" {if $arr_configuration['range_orderdate'] == 3} selected="true" {/if}>{l s='Yesterday' mod='reportsale'}</option>
+                                <option value="4" {if $arr_configuration['range_orderdate'] == 4} selected="true" {/if}>{l s='This week (Monday - Today)' mod='reportsale'}</option>
+                                <option value="5" {if $arr_configuration['range_orderdate'] == 5} selected="true" {/if}>{l s='Last week' mod='reportsale'}</option>
+                                <option value="6" {if $arr_configuration['range_orderdate'] == 6} selected="true" {/if}>{l s='7 days ago' mod='reportsale'}</option>
+                                <option value="7" {if $arr_configuration['range_orderdate'] == 7} selected="true" {/if}>{l s='14 days ago' mod='reportsale'}</option>
+                                <option value="8" {if $arr_configuration['range_orderdate'] == 8} selected="true" {/if}>{l s='This month' mod='reportsale'}</option>
+                                <option value="9" {if $arr_configuration['range_orderdate'] == 9} selected="true" {/if}>{l s='Last month' mod='reportsale'}</option>
+                                <option value="10" {if $arr_configuration['range_orderdate'] == 10} selected="true" {/if}>{l s='30 days ago' mod='reportsale'}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="hidden" id="hidden_prefix" name="hidden_prefix" value="{$PREFIX_FORM|escape:'htmlall':'UTF-8'}">
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-3 main_text_option">
+                    <h4>{l s='Invoice Date' mod='reportsale'}: </h4>
+                </div>
+                <div class="col-lg-8">
+                    <div class="form-inline invoice_date">
+                        <div class="form-group">
+                            <label>{l s='From' mod='reportsale'}</label>
+                            <input type="date" class="form-control from" name="{$invoice_date_from|escape:'htmlall':'UTF-8'}"  placeholder="" value="{$arr_configuration['invoice_date_from']|escape:'htmlall':'UTF-8'}">
+                        </div>
+                        <div class="form-group">
+                            <label>{l s='To' mod='reportsale'}</label>
+                            <input type="date" class="form-control to" name="{$invoice_date_to|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['invoice_date_to']|escape:'htmlall':'UTF-8'}">
+                        </div>
+                        <div class="form-group">
+                            <label>{l s='Range' mod='reportsale'}</label>
+                            <select class="reportsale_range" rev="invoice_date" name="{$PREFIX_FORM|escape:'htmlall':'UTF-8'}range_invoicedate">
+                                <option value="1">{l s='Custom Date' mod='reportsale'}</option>
+                                <option value="2" {if $arr_configuration['range_invoicedate'] == 2} selected="true" {/if}>{l s='Today' mod='reportsale'}</option>
+                                <option value="3" {if $arr_configuration['range_invoicedate'] == 3} selected="true" {/if}>{l s='Yesterday' mod='reportsale'}</option>
+                                <option value="4" {if $arr_configuration['range_invoicedate'] == 4} selected="true" {/if}>{l s='This week (Monday - Today)' mod='reportsale'}</option>
+                                <option value="5" {if $arr_configuration['range_invoicedate'] == 5} selected="true" {/if}>{l s='Last week' mod='reportsale'}</option>
+                                <option value="6" {if $arr_configuration['range_invoicedate'] == 6} selected="true" {/if}>{l s='7 days ago' mod='reportsale'}</option>
+                                <option value="7" {if $arr_configuration['range_invoicedate'] == 7} selected="true" {/if}>{l s='14 days ago' mod='reportsale'}</option>
+                                <option value="8" {if $arr_configuration['range_invoicedate'] == 8} selected="true" {/if}>{l s='This month' mod='reportsale'}</option>
+                                <option value="9" {if $arr_configuration['range_invoicedate'] == 9} selected="true" {/if}>{l s='Last month' mod='reportsale'}</option>
+                                <option value="10" {if $arr_configuration['range_invoicedate'] == 10} selected="true" {/if}>{l s='30 days ago' mod='reportsale'}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-3 main_text_option">
+                    <h4>{l s='Delivery Date' mod='reportsale'}: </h4>
+                </div>
+                <div class="col-lg-8">
+                    <div class="form-inline delivery_date">
+                        <div class="form-group">
+                            <label>{l s='From' mod='reportsale'}</label>
+                            <input type="date" class="form-control from" name="{$delivery_date_from|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['delivery_date_from']|escape:'htmlall':'UTF-8'}">
+                        </div>
+                        <div class="form-group">
+                            <label>{l s='To' mod='reportsale'}</label>
+                            <input type="date" class="form-control to" name="{$delivery_date_to|escape:'htmlall':'UTF-8'}" placeholder="" value="{$arr_configuration['delivery_date_to']|escape:'htmlall':'UTF-8'}">
+                        </div>
+                        <div class="form-group">
+                            <label>{l s='Range' mod='reportsale'}</label>
+                            <select class="reportsale_range" rev="delivery_date" name="{$PREFIX_FORM|escape:'htmlall':'UTF-8'}range_deliverydate">
+                                <option value="1">{l s='Custom Date' mod='reportsale'}</option>
+                                <option value="2" {if $arr_configuration['range_deliverydate'] == 2} selected="true" {/if}>{l s='Today' mod='reportsale'}</option>
+                                <option value="3" {if $arr_configuration['range_deliverydate'] == 3} selected="true" {/if}>{l s='Yesterday' mod='reportsale'}</option>
+                                <option value="4" {if $arr_configuration['range_deliverydate'] == 4} selected="true" {/if}>{l s='This week (Monday - Today)' mod='reportsale'}</option>
+                                <option value="5" {if $arr_configuration['range_deliverydate'] == 5} selected="true" {/if}>{l s='Last week' mod='reportsale'}</option>
+                                <option value="6" {if $arr_configuration['range_deliverydate'] == 6} selected="true" {/if}>{l s='7 days ago' mod='reportsale'}</option>
+                                <option value="7" {if $arr_configuration['range_deliverydate'] == 7} selected="true" {/if}>{l s='14 days ago' mod='reportsale'}</option>
+                                <option value="8" {if $arr_configuration['range_deliverydate'] == 8} selected="true" {/if}>{l s='This month' mod='reportsale'}</option>
+                                <option value="9" {if $arr_configuration['range_deliverydate'] == 9} selected="true" {/if}>{l s='Last month' mod='reportsale'}</option>
+                                <option value="10" {if $arr_configuration['range_deliverydate'] == 10} selected="true" {/if}>{l s='30 days ago' mod='reportsale'}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-3 main_text_option">
+                    <h4>{l s='Order number' mod='reportsale'}: </h4>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label>{l s='From' mod='reportsale'}</label>
+                            <input type="text" class="form-control" name="{$order_number_from|escape:'htmlall':'UTF-8'}" placeholder="" value="{if $arr_configuration['order_number_from']|escape:'htmlall':'UTF-8' ne ''}{$arr_configuration['order_number_from']|escape:'htmlall':'UTF-8'}{/if}">
+                        </div>
+                        <div class="form-group">
+                            <label>{l s='To' mod='reportsale'}</label>
+                            <input type="text" class="form-control" name="{$order_number_to|escape:'htmlall':'UTF-8'}" placeholder="" value="{if $arr_configuration['order_number_to'] ne ''}{$arr_configuration['order_number_to']|escape:'htmlall':'UTF-8'}{/if}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span id="ba_url_hidden">{$url_bareport|escape:'htmlall':'UTF-8'}</span> <!--****************-->
+            <div class="row">
+                <div class="form-group col-lg-3 main_text_option">
+                    <h4>{l s='Invoice number' mod='reportsale'}: </h4>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label>{l s='From' mod='reportsale'}</label>
+                            <input type="text" class="form-control" name="{$invoice_number_from|escape:'htmlall':'UTF-8'}" id="exampleInputName2" placeholder="" value="{if $arr_configuration['invoice_number_from']|escape:'htmlall':'UTF-8' ne ''}{$arr_configuration['invoice_number_from']|escape:'htmlall':'UTF-8'}{/if}">
+                        </div>
+                        <div class="form-group">
+                            <label>{l s='To' mod='reportsale'}</label>
+                            <input type="text" class="form-control" name="{$invoice_number_to|escape:'htmlall':'UTF-8'}" id="exampleInputEmail2" placeholder="" value="{if $arr_configuration['invoice_number_to']|escape:'htmlall':'UTF-8' ne ''}{$arr_configuration['invoice_number_to']|escape:'htmlall':'UTF-8'}{/if}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel col-lg-12 ba-panel-report">
+        <h3 id="report_click_opent_status">{l s='FILTER BY STATUS' mod='reportsale'}<i id="status_icon" class="fa fa-plus-square report_ba_click"></i></h3>
+        <div id="status_filtering" class="main_helper_content">
+            <div class="row">
+                <div class="form-group col-lg-5 main_text_option">
+                    <strong><span>{l s='Select All' mod='reportsale'}: </span></strong>
+                </div>
+                <div class="col-lg-7">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <input type="checkbox" class="checkbox_check" id="checkall" placeholder="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {for $i=0 to $count_filtering-1}
+            <div class="row">
+                <div class="form-group col-lg-5 main_text_option">
+                    <span>{$status_filtering[$i]['name']|escape:'htmlall':'UTF-8'} </span>
+                </div>
+                <div class="col-lg-7">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            {$name=$stt_filtering|cat:$status_filtering[$i]['id_order_state']}
+                            {$value=$status_filtering[$i]['id_order_state']}
+                            {if $value eq $arr_status[$name]}
+                            <input type="checkbox" class="checkbox_check" name="{$name|escape:'htmlall':'UTF-8'}" checked="true" placeholder="" value="{$value|escape:'htmlall':'UTF-8'}">
+                            {else}
+                            <input type="checkbox" class="checkbox_check" name="{$name|escape:'htmlall':'UTF-8'}" placeholder="" value="{$value|escape:'htmlall':'UTF-8'}">
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/for}
+        </div>
+    </div>
+    <div class="panel col-lg-12 ba-panel-report">
+        <h3 id="report_click_opent_country">{l s='Countries & Stores' mod='reportsale'}<i id="contry_icon" class="fa fa-plus-square report_ba_click"></i></h3>
+        <div id="Country_filtering" class="main_helper_content">
+            <div class="row form-group">
+                <div class="col-lg-3 main_text_option">
+                    <h4>{l s='Choose your countries' mod='reportsale'}: </h4>
+                </div>
+                <div class="col-lg-3">
+                    <select name="{$prefix_report|escape:'htmlall':'UTF-8'}country_filtering[]" multiple="multiple" class="form-control">
+                        {foreach from=$get_coutry key=k item=v}
+                            {if $v['active'] eq 1}
+                                <option class="countries_selected" {for $i=0 to $count_country-1}{if $country_filtering[$i]==$k}selected="true" {/if}{/for} value="{$k|escape:'htmlall':'UTF-8'}">{$v['name']|escape:'htmlall':'UTF-8'}</option>
+                            {/if}
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-3 main_text_option">
+                    <h4>{l s='Stores' mod='reportsale'}: </h4>
+                </div>
+                <div class="col-lg-3">
+                    <select name="{$prefix_report|escape:'htmlall':'UTF-8'}stores[]" multiple="multiple" class="form-control">
+                        {foreach from=$stores item=store}
+                                <option value="{$store.id_shop|escape:'htmlall':'UTF-8'}"{if in_array($store.id_shop, $stores_selected)} selected{/if}>{$store.name|escape:'htmlall':'UTF-8'}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4" style="padding: 10px;margin-bottom: 7px;text-align: left; max-width: max-content;">
+            <button type="button" name="{$prefix_report|escape:'htmlall':'UTF-8'}save_filter" id="{$prefix_report|escape:'htmlall':'UTF-8'}save_filter" class="btn btn-success">
+                {l s='Generate Report' mod='reportsale'} <span class="report_counter"></span>
+            </button>
+        </div>
+        <div class="col-lg-4" style="padding: 10px;margin-bottom: 7px;text-align: left; max-width: max-content;">
+            <button type="submit" name="reset_filter" id="reset_filter" class="btn btn-warning">
+                {l s='Reset' mod='reportsale'}
+            </button>
+        </div>
+        <div class="col-lg-4">
+        </div>
+    </div>
 </form>

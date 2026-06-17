@@ -23,7 +23,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 <div class="simpleblog__addComment blog-mb">
-    <h2 class="section-title"><span>{l s='Comments' mod='ph_simpleblog'} (<fb:comments-count href={$post->url|escape:'html':'UTF-8'}/></fb:comments-count>)</span></h2>
+    <h2 class="section-title"><span>{l s='Comments' d='Modules.Simpleblog.Shop'} (<fb:comments-count href={$post->url|escape:'html':'UTF-8'}/></fb:comments-count>)</span></h2>
 	<div class="fb-comments" data-href="{$post->url|escape:'html':'UTF-8'}" data-colorscheme="{Configuration::get('PH_BLOG_FACEBOOK_COLOR_SCHEME')|escape:'html':'UTF-8'}" data-numposts="5" data-width="100%"></div>
 </div>
 

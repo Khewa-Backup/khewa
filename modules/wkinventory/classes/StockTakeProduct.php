@@ -171,10 +171,44 @@ class StockTakeProduct extends ObjectModel
 
     public static function productsNeedInventory($id_inventory)
     {
-        return (int)Db::getInstance()->getValue(
-            'SELECT (SUM(real_quantity) - SUM(shop_quantity - sold_quantity)) as gap
-             FROM `'._DB_PREFIX_.self::$definition['table'].'` 
-             WHERE `id_inventory` = '.(int)$id_inventory.' AND `stock_updated` = 0'
+		$has_gap = false;
+        $query = new DbQuery();
+        $query->select('real_quantity, shop_quantity, sold_quantity');
+        $query->from(StockTakeProduct::$definition['table'], 'ip');
+        $query->where('ip.`id_inventory` = '.(int)$id_inventory);
+        $query->where('ip.`stock_updated` = 0');
+		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+		foreach ($result as $pi) {
+			$gap = $pi['real_quantity'] - ($pi['shop_quantity'] - $pi['sold_quantity']);
+			if ($gap != 0) {/* if at least one product has a gap, no need to continue */
+				$has_gap = true;
+				break;
+			}
+		}
+        return $has_gap;
+    }
+
+    public static function getOpenedInventoriedProducts($product_id, $product_attribute_id, $id_warehouse = null)
+    {
+        $query = new DbQuery();
+        $query->select('*');
+        $query->from(StockTakeProduct::$definition['table'], 'ip');
+        $query->innerJoin(
+            'wkinventory',
+            'i',
+            'i.`id_inventory` = ip.`id_inventory` AND
+             i.`stock_updated` <> 1 AND
+             i.`done` <> 1 AND 
+             i.`stock_zero` = 0'
         );
+        $query->where('ip.`id_product` = '.(int)$product_id);
+        $query->where('ip.`id_product_attribute` = '.(int)$product_attribute_id);
+        if (!is_null($id_warehouse)) {
+            $query->where('ip.`id_warehouse` = '.(int)$id_warehouse);
+        }
+        $query->where('ip.`stock_updated` = 0');
+        $query->groupBy('ip.`id_inventory`');
+
+        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
     }
 }

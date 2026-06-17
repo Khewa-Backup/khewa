@@ -2,9 +2,9 @@
 <module>
     <name>stripe_official</name>
     <displayName><![CDATA[Stripe payment module]]></displayName>
-    <version><![CDATA[2.4.2]]></version>
+    <version><![CDATA[3.6.8]]></version>
     <description><![CDATA[Start accepting stripe payments today, directly from your shop!]]></description>
-    <author><![CDATA[202 ecommerce]]></author>
+    <author><![CDATA[Stripe]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall?]]></confirmUninstall>
     <is_configurable>1</is_configurable>

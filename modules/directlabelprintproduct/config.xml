@@ -2,8 +2,8 @@
 <module>
     <name>directlabelprintproduct</name>
     <displayName><![CDATA[Direct Label Print - Product / Barcode Edition]]></displayName>
-    <version><![CDATA[2.1.1]]></version>
-    <description><![CDATA[Add label print button on products list for names and barcodes. Works with Dymo label printers.]]></description>
+    <version><![CDATA[3.6.3]]></version>
+    <description><![CDATA[Add label print button on products list for names and barcodes. Designed for label printers.]]></description>
     <author><![CDATA[Leon&eacute; MusicReader B.V.]]></author>
     <tab><![CDATA[shipping_logistics]]></tab>
     <is_configurable>1</is_configurable>

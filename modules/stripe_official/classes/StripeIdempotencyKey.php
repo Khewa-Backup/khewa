@@ -1,28 +1,47 @@
 <?php
+
 /**
- * 2007-2019 PrestaShop
+ * Copyright (c) since 2010 Stripe, Inc. (https://stripe.com)
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
+ * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    202-ecommerce <tech@202-ecommerce.com>
- * @copyright Copyright (c) Stripe
- * @license   Commercial license
+ * @author    Stripe <https://support.stripe.com/contact/email>
+ * @copyright Since 2010 Stripe, Inc.
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use StripeOfficial\Classes\StripeProcessLogger;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 class StripeIdempotencyKey extends ObjectModel
 {
     /** @var int */
@@ -35,27 +54,27 @@ class StripeIdempotencyKey extends ObjectModel
     /**
      * @see ObjectModel::$definition
      */
-    public static $definition = array(
-        'table'        => 'stripe_idempotency_key',
-        'primary'      => 'id_idempotency_key',
-        'fields'       => array(
-            'id_cart'  => array(
-                'type'     => ObjectModel::TYPE_INT,
+    public static $definition = [
+        'table' => 'stripe_idempotency_key',
+        'primary' => 'id_idempotency_key',
+        'fields' => [
+            'id_cart' => [
+                'type' => ObjectModel::TYPE_INT,
                 'validate' => 'isInt',
-                'size'     => 10,
-            ),
-            'idempotency_key'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+                'size' => 10,
+            ],
+            'idempotency_key' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 255,
-            ),
-            'id_payment_intent'  => array(
-                'type'     => ObjectModel::TYPE_STRING,
+                'size' => 255,
+            ],
+            'id_payment_intent' => [
+                'type' => ObjectModel::TYPE_STRING,
                 'validate' => 'isString',
-                'size'     => 255,
-            ),
-        ),
-    );
+                'size' => 255,
+            ],
+        ],
+    ];
 
     public function setIdCart($id_cart)
     {
@@ -87,88 +106,107 @@ class StripeIdempotencyKey extends ObjectModel
         return $this->id_payment_intent;
     }
 
-    public function getByIdCart($id_cart)
+    private function getByField(string $field, $value): self
     {
+        // strict whitelist of supported lookups
+        $allowed = [
+            'id_cart' => 'int',
+            'idempotency_key' => 'string',
+            'id_payment_intent' => 'string',
+        ];
+
+        if (!isset($allowed[$field])) {
+            StripeProcessLogger::logWarning("$field is not supported by getByField method", 'StripeIdempotencyKey');
+
+            return $this;
+        }
+
         $query = new DbQuery();
         $query->select('*');
         $query->from(static::$definition['table']);
-        $query->where('id_cart = '.pSQL($id_cart));
+
+        // build WHERE using explicit column names and safe value handling
+        switch ($allowed[$field]) {
+            case 'int':
+                $query->where('id_cart = ' . (int) $value);
+                break;
+
+            case 'string':
+                $safe = pSQL((string) $value);
+                $query->where(sprintf("%s = '%s'", $field, $safe));
+                break;
+        }
+
+        if ($field !== 'id_idempotency_key') {
+            $query->orderBy('id_idempotency_key DESC');
+        }
 
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query->build());
-        if ($result == false) {
+        if ($result === false || empty($result)) {
             return $this;
         }
 
         $this->hydrate($result);
 
         return $this;
+    }
+
+    public function getByIdCart($id_cart)
+    {
+        return $this->getByField('id_cart', $id_cart);
+    }
+
+    public function getByIdempotencyKey($idempotency_key)
+    {
+        return $this->getByField('idempotency_key', $idempotency_key);
     }
 
     public function getByIdPaymentIntent($id_payment_intent)
     {
-        $query = new DbQuery();
-        $query->select('*');
-        $query->from(static::$definition['table']);
-        $query->where('id_payment_intent = "'.pSQL($id_payment_intent).'"');
+        return $this->getByField('id_payment_intent', $id_payment_intent);
+    }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query->build());
-        if ($result == false) {
-            return $this;
+    /**
+     * @throws PrestaShopException
+     */
+    public function createIdempotencyKey($cartId)
+    {
+        $idempotencyKey = $cartId . '_' . uniqid();
+        $stripeIdempotencyKey = new StripeIdempotencyKey();
+        $stripeIdempotencyKey->setIdCart($cartId);
+        $stripeIdempotencyKey->setIdempotencyKey($idempotencyKey);
+
+        $stripeIdempotencyKey->save();
+
+        return $stripeIdempotencyKey;
+    }
+
+    /**
+     * @throws PrestaShopException
+     */
+    public function updateIdempotencyKey($cartId, $intent)
+    {
+        $stripeIdempotencyKey = new StripeIdempotencyKey();
+        $stripeIdempotencyKey = $stripeIdempotencyKey->getByIdCart($cartId);
+        $stripeIdempotencyKey->setIdPaymentIntent($intent->id);
+        $stripeIdempotencyKey->save();
+    }
+
+    /**
+     * @param int $cartId
+     *
+     * @return StripeIdempotencyKey|static
+     *
+     * @throws PrestaShopException
+     */
+    public static function getOrCreateIdempotencyKey($cartId)
+    {
+        $stripeIdempotencyKey = new self();
+        $stripeIdempotencyKey = $stripeIdempotencyKey->getByIdCart($cartId);
+        if (!$stripeIdempotencyKey->id) {
+            $stripeIdempotencyKey = $stripeIdempotencyKey->createIdempotencyKey($cartId);
         }
 
-        $this->hydrate($result);
-
-        return $this;
-    }
-
-    /**
-     * @throws PrestaShopException
-     * @throws \Stripe\Exception\ApiErrorException
-     */
-    public function createNewOne($id_cart, $datasIntent)
-    {
-        $idempotency_key = $id_cart.'_'.uniqid();
-
-        $intent = \Stripe\PaymentIntent::create(
-            $datasIntent,
-            [
-              'idempotency_key' => $idempotency_key
-            ]
-        );
-
-        $this->id_cart = $id_cart;
-        $this->idempotency_key = $idempotency_key;
-        $this->id_payment_intent = $intent->id;
-        $this->save();
-
-        $paymentIntent = new StripePaymentIntent();
-        $paymentIntent->setIdPaymentIntent($intent->id);
-        $paymentIntent->setStatus($intent->status);
-        $paymentIntent->setAmount($intent->amount);
-        $paymentIntent->setCurrency($intent->currency);
-        $paymentIntent->setDateAdd(date("Y-m-d H:i:s", $intent->created));
-        $paymentIntent->setDateUpd(date("Y-m-d H:i:s", $intent->created));
-        $paymentIntent->save(false, false);
-
-        return $intent;
-    }
-
-    /**
-     * @throws \Stripe\Exception\ApiErrorException
-     * @throws PrestaShopException
-     */
-    public function updateIntentData($intentData)
-    {
-        $intent = \Stripe\PaymentIntent::update($this->id_payment_intent, $intentData);
-
-        $paymentIntent = new StripePaymentIntent();
-        $paymentIntent->findByIdPaymentIntent($this->id_payment_intent);
-        $paymentIntent->setStatus($intent->status);
-        $paymentIntent->setAmount($intent->amount);
-        $paymentIntent->setCurrency($intent->currency);
-        $paymentIntent->setDateUpd(date("Y-m-d H:i:s"));
-        $paymentIntent->save(false, false);
-
-        return $intent;
+        return $stripeIdempotencyKey;
     }
 }

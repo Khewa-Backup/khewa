@@ -4,19 +4,29 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit18091b0c094dfb5da6826c2cb131663b
+class ComposerStaticInitb00a59af03899e2f8aaff65493439ad2
 {
     public static $files = array (
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
+        'fd06e17715a7a375fc3d505bebbab8d8' => __DIR__ . '/../..' . '/autoload.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Ctype\\' => 23,
+            'Symfony\\Component\\Dotenv\\' => 25,
+        ),
         'R' => 
         array (
             'React\\Promise\\' => 14,
+            'Ramsey\\Uuid\\' => 12,
         ),
         'P' => 
         array (
+            'PrestaShop\\PsAccountsInstaller\\' => 31,
             'PrestaShop\\Module\\Mbo\\' => 22,
             'PrestaShop\\CircuitBreaker\\' => 26,
         ),
@@ -26,12 +36,32 @@ class ComposerStaticInit18091b0c094dfb5da6826c2cb131663b
             'GuzzleHttp\\Ring\\' => 16,
             'GuzzleHttp\\' => 11,
         ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Polyfill\\Ctype\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
+        'Symfony\\Component\\Dotenv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/dotenv',
+        ),
         'React\\Promise\\' => 
         array (
             0 => __DIR__ . '/..' . '/react/promise/src',
+        ),
+        'Ramsey\\Uuid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ramsey/uuid/src',
+        ),
+        'PrestaShop\\PsAccountsInstaller\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/prestashop/prestashop-accounts-installer/src',
         ),
         'PrestaShop\\Module\\Mbo\\' => 
         array (
@@ -53,9 +83,21 @@ class ComposerStaticInit18091b0c094dfb5da6826c2cb131663b
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Firebase\\JWT\\BeforeValidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/BeforeValidException.php',
+        'Firebase\\JWT\\CachedKeySet' => __DIR__ . '/..' . '/firebase/php-jwt/src/CachedKeySet.php',
+        'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php',
+        'Firebase\\JWT\\JWK' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWK.php',
+        'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php',
+        'Firebase\\JWT\\Key' => __DIR__ . '/..' . '/firebase/php-jwt/src/Key.php',
+        'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
         'GuzzleHttp\\BatchResults' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/BatchResults.php',
         'GuzzleHttp\\Client' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Client.php',
         'GuzzleHttp\\ClientInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/ClientInterface.php',
@@ -206,14 +248,33 @@ class ComposerStaticInit18091b0c094dfb5da6826c2cb131663b
         'PrestaShop\\CircuitBreaker\\Transition\\NullDispatcher' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Transition/NullDispatcher.php',
         'PrestaShop\\CircuitBreaker\\Util\\Assert' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Util/Assert.php',
         'PrestaShop\\CircuitBreaker\\Util\\ErrorFormatter' => __DIR__ . '/..' . '/prestashop/circuit-breaker/src/Util/ErrorFormatter.php',
+        'PrestaShop\\Module\\Mbo\\Accounts\\Provider\\AccountsDataProvider' => __DIR__ . '/../..' . '/src/Accounts/Provider/AccountsDataProvider.php',
         'PrestaShop\\Module\\Mbo\\AddonsSelectionLinkProvider' => __DIR__ . '/../..' . '/src/AddonsSelectionLinkProvider.php',
-        'PrestaShop\\Module\\Mbo\\Controller\\Admin\\ModuleCatalogController' => __DIR__ . '/../..' . '/src/Controller/Admin/ModuleCatalogController.php',
+        'PrestaShop\\Module\\Mbo\\Addons\\AddonsDataProvider' => __DIR__ . '/../..' . '/src/Addons/AddonsDataProvider.php',
+        'PrestaShop\\Module\\Mbo\\Addons\\ApiClient' => __DIR__ . '/../..' . '/src/Addons/ApiClient.php',
+        'PrestaShop\\Module\\Mbo\\Addons\\Exception\\DownloadModuleException' => __DIR__ . '/../..' . '/src/Addons/Exception/DownloadModuleException.php',
+        'PrestaShop\\Module\\Mbo\\Addons\\User\\AddonsUser' => __DIR__ . '/../..' . '/src/Addons/User/AddonsUser.php',
+        'PrestaShop\\Module\\Mbo\\Addons\\User\\CredentialsEncryptor' => __DIR__ . '/../..' . '/src/Addons/User/CredentialsEncryptor.php',
+        'PrestaShop\\Module\\Mbo\\Addons\\User\\UserInterface' => __DIR__ . '/../..' . '/src/Addons/User/UserInterface.php',
+        'PrestaShop\\Module\\Mbo\\Controller\\Admin\\ModuleController' => __DIR__ . '/../..' . '/src/Controller/Admin/ModuleController.php',
         'PrestaShop\\Module\\Mbo\\Controller\\Admin\\ModuleRecommendedController' => __DIR__ . '/../..' . '/src/Controller/Admin/ModuleRecommendedController.php',
         'PrestaShop\\Module\\Mbo\\Controller\\Admin\\ModuleSelectionController' => __DIR__ . '/../..' . '/src/Controller/Admin/ModuleSelectionController.php',
+        'PrestaShop\\Module\\Mbo\\Controller\\Admin\\SecurityController' => __DIR__ . '/../..' . '/src/Controller/Admin/SecurityController.php',
         'PrestaShop\\Module\\Mbo\\Controller\\Admin\\ThemeCatalogController' => __DIR__ . '/../..' . '/src/Controller/Admin/ThemeCatalogController.php',
+        'PrestaShop\\Module\\Mbo\\Distribution\\AuthenticationProvider' => __DIR__ . '/../..' . '/src/Distribution/AuthenticationProvider.php',
+        'PrestaShop\\Module\\Mbo\\Distribution\\BaseClient' => __DIR__ . '/../..' . '/src/Distribution/BaseClient.php',
+        'PrestaShop\\Module\\Mbo\\Distribution\\Client' => __DIR__ . '/../..' . '/src/Distribution/Client.php',
+        'PrestaShop\\Module\\Mbo\\EventSubscriber\\ModuleEventSubscriber' => __DIR__ . '/../..' . '/src/EventSubscriber/ModuleEventSubscriber.php',
+        'PrestaShop\\Module\\Mbo\\Exception\\AddonsDownloadModuleException' => __DIR__ . '/../..' . '/src/Exception/AddonsDownloadModuleException.php',
         'PrestaShop\\Module\\Mbo\\ExternalContentProvider\\ExternalContentProvider' => __DIR__ . '/../..' . '/src/ExternalContentProvider/ExternalContentProvider.php',
         'PrestaShop\\Module\\Mbo\\ExternalContentProvider\\ExternalContentProviderInterface' => __DIR__ . '/../..' . '/src/ExternalContentProvider/ExternalContentProviderInterface.php',
+        'PrestaShop\\Module\\Mbo\\Handler\\ErrorHandler\\ErrorHandler' => __DIR__ . '/../..' . '/src/Handler/ErrorHandler/ErrorHandler.php',
+        'PrestaShop\\Module\\Mbo\\Handler\\ErrorHandler\\ErrorHandlerInterface' => __DIR__ . '/../..' . '/src/Handler/ErrorHandler/ErrorHandlerInterface.php',
+        'PrestaShop\\Module\\Mbo\\Helpers\\AddonsApiHelper' => __DIR__ . '/../..' . '/src/Helpers/AddonsApiHelper.php',
+        'PrestaShop\\Module\\Mbo\\Helpers\\Config' => __DIR__ . '/../..' . '/src/Helpers/Config.php',
+        'PrestaShop\\Module\\Mbo\\Helpers\\ErrorHelper' => __DIR__ . '/../..' . '/src/Helpers/ErrorHelper.php',
         'PrestaShop\\Module\\Mbo\\ModuleCollectionDataProvider' => __DIR__ . '/../..' . '/src/ModuleCollectionDataProvider.php',
+        'PrestaShop\\Module\\Mbo\\Module\\ModuleOverrideChecker' => __DIR__ . '/../..' . '/src/Module/ModuleOverrideChecker.php',
         'PrestaShop\\Module\\Mbo\\RecommendedLink\\RecommendedLink' => __DIR__ . '/../..' . '/src/RecommendedLink/RecommendedLink.php',
         'PrestaShop\\Module\\Mbo\\RecommendedLink\\RecommendedLinkInterface' => __DIR__ . '/../..' . '/src/RecommendedLink/RecommendedLinkInterface.php',
         'PrestaShop\\Module\\Mbo\\RecommendedLink\\RecommendedLinkProvider' => __DIR__ . '/../..' . '/src/RecommendedLink/RecommendedLinkProvider.php',
@@ -223,6 +284,9 @@ class ComposerStaticInit18091b0c094dfb5da6826c2cb131663b
         'PrestaShop\\Module\\Mbo\\RecommendedModule\\RecommendedModuleInterface' => __DIR__ . '/../..' . '/src/RecommendedModule/RecommendedModuleInterface.php',
         'PrestaShop\\Module\\Mbo\\RecommendedModule\\RecommendedModulePresenter' => __DIR__ . '/../..' . '/src/RecommendedModule/RecommendedModulePresenter.php',
         'PrestaShop\\Module\\Mbo\\RecommendedModule\\RecommendedModulePresenterInterface' => __DIR__ . '/../..' . '/src/RecommendedModule/RecommendedModulePresenterInterface.php',
+        'PrestaShop\\Module\\Mbo\\Service\\ModuleInstaller' => __DIR__ . '/../..' . '/src/Service/ModuleInstaller.php',
+        'PrestaShop\\Module\\Mbo\\Service\\View\\ContextBuilder' => __DIR__ . '/../..' . '/src/Service/View/ContextBuilder.php',
+        'PrestaShop\\Module\\Mbo\\Service\\View\\InstalledModule' => __DIR__ . '/../..' . '/src/Service/View/InstalledModule.php',
         'PrestaShop\\Module\\Mbo\\Tab\\Tab' => __DIR__ . '/../..' . '/src/Tab/Tab.php',
         'PrestaShop\\Module\\Mbo\\Tab\\TabCollection' => __DIR__ . '/../..' . '/src/Tab/TabCollection.php',
         'PrestaShop\\Module\\Mbo\\Tab\\TabCollectionDecoderXml' => __DIR__ . '/../..' . '/src/Tab/TabCollectionDecoderXml.php',
@@ -232,6 +296,60 @@ class ComposerStaticInit18091b0c094dfb5da6826c2cb131663b
         'PrestaShop\\Module\\Mbo\\Tab\\TabCollectionProvider' => __DIR__ . '/../..' . '/src/Tab/TabCollectionProvider.php',
         'PrestaShop\\Module\\Mbo\\Tab\\TabCollectionProviderInterface' => __DIR__ . '/../..' . '/src/Tab/TabCollectionProviderInterface.php',
         'PrestaShop\\Module\\Mbo\\Tab\\TabInterface' => __DIR__ . '/../..' . '/src/Tab/TabInterface.php',
+        'PrestaShop\\Module\\Mbo\\Traits\\HaveConfigurationPage' => __DIR__ . '/../..' . '/src/Traits/HaveConfigurationPage.php',
+        'PrestaShop\\Module\\Mbo\\UpgradeTracker' => __DIR__ . '/../..' . '/src/UpgradeTracker.php',
+        'PrestaShop\\PsAccountsInstaller\\Installer\\Exception\\InstallerException' => __DIR__ . '/..' . '/prestashop/prestashop-accounts-installer/src/Installer/Exception/InstallerException.php',
+        'PrestaShop\\PsAccountsInstaller\\Installer\\Exception\\ModuleNotInstalledException' => __DIR__ . '/..' . '/prestashop/prestashop-accounts-installer/src/Installer/Exception/ModuleNotInstalledException.php',
+        'PrestaShop\\PsAccountsInstaller\\Installer\\Exception\\ModuleVersionException' => __DIR__ . '/..' . '/prestashop/prestashop-accounts-installer/src/Installer/Exception/ModuleVersionException.php',
+        'PrestaShop\\PsAccountsInstaller\\Installer\\Facade\\PsAccounts' => __DIR__ . '/..' . '/prestashop/prestashop-accounts-installer/src/Installer/Facade/PsAccounts.php',
+        'PrestaShop\\PsAccountsInstaller\\Installer\\Installer' => __DIR__ . '/..' . '/prestashop/prestashop-accounts-installer/src/Installer/Installer.php',
+        'PrestaShop\\PsAccountsInstaller\\Installer\\Presenter\\InstallerPresenter' => __DIR__ . '/..' . '/prestashop/prestashop-accounts-installer/src/Installer/Presenter/InstallerPresenter.php',
+        'Ramsey\\Uuid\\BinaryUtils' => __DIR__ . '/..' . '/ramsey/uuid/src/BinaryUtils.php',
+        'Ramsey\\Uuid\\Builder\\DefaultUuidBuilder' => __DIR__ . '/..' . '/ramsey/uuid/src/Builder/DefaultUuidBuilder.php',
+        'Ramsey\\Uuid\\Builder\\DegradedUuidBuilder' => __DIR__ . '/..' . '/ramsey/uuid/src/Builder/DegradedUuidBuilder.php',
+        'Ramsey\\Uuid\\Builder\\UuidBuilderInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Builder/UuidBuilderInterface.php',
+        'Ramsey\\Uuid\\Codec\\CodecInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Codec/CodecInterface.php',
+        'Ramsey\\Uuid\\Codec\\GuidStringCodec' => __DIR__ . '/..' . '/ramsey/uuid/src/Codec/GuidStringCodec.php',
+        'Ramsey\\Uuid\\Codec\\OrderedTimeCodec' => __DIR__ . '/..' . '/ramsey/uuid/src/Codec/OrderedTimeCodec.php',
+        'Ramsey\\Uuid\\Codec\\StringCodec' => __DIR__ . '/..' . '/ramsey/uuid/src/Codec/StringCodec.php',
+        'Ramsey\\Uuid\\Codec\\TimestampFirstCombCodec' => __DIR__ . '/..' . '/ramsey/uuid/src/Codec/TimestampFirstCombCodec.php',
+        'Ramsey\\Uuid\\Codec\\TimestampLastCombCodec' => __DIR__ . '/..' . '/ramsey/uuid/src/Codec/TimestampLastCombCodec.php',
+        'Ramsey\\Uuid\\Converter\\NumberConverterInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Converter/NumberConverterInterface.php',
+        'Ramsey\\Uuid\\Converter\\Number\\BigNumberConverter' => __DIR__ . '/..' . '/ramsey/uuid/src/Converter/Number/BigNumberConverter.php',
+        'Ramsey\\Uuid\\Converter\\Number\\DegradedNumberConverter' => __DIR__ . '/..' . '/ramsey/uuid/src/Converter/Number/DegradedNumberConverter.php',
+        'Ramsey\\Uuid\\Converter\\TimeConverterInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Converter/TimeConverterInterface.php',
+        'Ramsey\\Uuid\\Converter\\Time\\BigNumberTimeConverter' => __DIR__ . '/..' . '/ramsey/uuid/src/Converter/Time/BigNumberTimeConverter.php',
+        'Ramsey\\Uuid\\Converter\\Time\\DegradedTimeConverter' => __DIR__ . '/..' . '/ramsey/uuid/src/Converter/Time/DegradedTimeConverter.php',
+        'Ramsey\\Uuid\\Converter\\Time\\PhpTimeConverter' => __DIR__ . '/..' . '/ramsey/uuid/src/Converter/Time/PhpTimeConverter.php',
+        'Ramsey\\Uuid\\DegradedUuid' => __DIR__ . '/..' . '/ramsey/uuid/src/DegradedUuid.php',
+        'Ramsey\\Uuid\\Exception\\InvalidUuidStringException' => __DIR__ . '/..' . '/ramsey/uuid/src/Exception/InvalidUuidStringException.php',
+        'Ramsey\\Uuid\\Exception\\UnsatisfiedDependencyException' => __DIR__ . '/..' . '/ramsey/uuid/src/Exception/UnsatisfiedDependencyException.php',
+        'Ramsey\\Uuid\\Exception\\UnsupportedOperationException' => __DIR__ . '/..' . '/ramsey/uuid/src/Exception/UnsupportedOperationException.php',
+        'Ramsey\\Uuid\\FeatureSet' => __DIR__ . '/..' . '/ramsey/uuid/src/FeatureSet.php',
+        'Ramsey\\Uuid\\Generator\\CombGenerator' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/CombGenerator.php',
+        'Ramsey\\Uuid\\Generator\\DefaultTimeGenerator' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/DefaultTimeGenerator.php',
+        'Ramsey\\Uuid\\Generator\\MtRandGenerator' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/MtRandGenerator.php',
+        'Ramsey\\Uuid\\Generator\\OpenSslGenerator' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/OpenSslGenerator.php',
+        'Ramsey\\Uuid\\Generator\\PeclUuidRandomGenerator' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/PeclUuidRandomGenerator.php',
+        'Ramsey\\Uuid\\Generator\\PeclUuidTimeGenerator' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/PeclUuidTimeGenerator.php',
+        'Ramsey\\Uuid\\Generator\\RandomBytesGenerator' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/RandomBytesGenerator.php',
+        'Ramsey\\Uuid\\Generator\\RandomGeneratorFactory' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/RandomGeneratorFactory.php',
+        'Ramsey\\Uuid\\Generator\\RandomGeneratorInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/RandomGeneratorInterface.php',
+        'Ramsey\\Uuid\\Generator\\RandomLibAdapter' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/RandomLibAdapter.php',
+        'Ramsey\\Uuid\\Generator\\SodiumRandomGenerator' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/SodiumRandomGenerator.php',
+        'Ramsey\\Uuid\\Generator\\TimeGeneratorFactory' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/TimeGeneratorFactory.php',
+        'Ramsey\\Uuid\\Generator\\TimeGeneratorInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Generator/TimeGeneratorInterface.php',
+        'Ramsey\\Uuid\\Provider\\NodeProviderInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Provider/NodeProviderInterface.php',
+        'Ramsey\\Uuid\\Provider\\Node\\FallbackNodeProvider' => __DIR__ . '/..' . '/ramsey/uuid/src/Provider/Node/FallbackNodeProvider.php',
+        'Ramsey\\Uuid\\Provider\\Node\\RandomNodeProvider' => __DIR__ . '/..' . '/ramsey/uuid/src/Provider/Node/RandomNodeProvider.php',
+        'Ramsey\\Uuid\\Provider\\Node\\SystemNodeProvider' => __DIR__ . '/..' . '/ramsey/uuid/src/Provider/Node/SystemNodeProvider.php',
+        'Ramsey\\Uuid\\Provider\\TimeProviderInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Provider/TimeProviderInterface.php',
+        'Ramsey\\Uuid\\Provider\\Time\\FixedTimeProvider' => __DIR__ . '/..' . '/ramsey/uuid/src/Provider/Time/FixedTimeProvider.php',
+        'Ramsey\\Uuid\\Provider\\Time\\SystemTimeProvider' => __DIR__ . '/..' . '/ramsey/uuid/src/Provider/Time/SystemTimeProvider.php',
+        'Ramsey\\Uuid\\Uuid' => __DIR__ . '/..' . '/ramsey/uuid/src/Uuid.php',
+        'Ramsey\\Uuid\\UuidFactory' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidFactory.php',
+        'Ramsey\\Uuid\\UuidFactoryInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidFactoryInterface.php',
+        'Ramsey\\Uuid\\UuidInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidInterface.php',
         'React\\Promise\\CancellablePromiseInterface' => __DIR__ . '/..' . '/react/promise/src/CancellablePromiseInterface.php',
         'React\\Promise\\CancellationQueue' => __DIR__ . '/..' . '/react/promise/src/CancellationQueue.php',
         'React\\Promise\\Deferred' => __DIR__ . '/..' . '/react/promise/src/Deferred.php',
@@ -244,15 +362,21 @@ class ComposerStaticInit18091b0c094dfb5da6826c2cb131663b
         'React\\Promise\\PromisorInterface' => __DIR__ . '/..' . '/react/promise/src/PromisorInterface.php',
         'React\\Promise\\RejectedPromise' => __DIR__ . '/..' . '/react/promise/src/RejectedPromise.php',
         'React\\Promise\\UnhandledRejectionException' => __DIR__ . '/..' . '/react/promise/src/UnhandledRejectionException.php',
+        'Symfony\\Component\\Dotenv\\Dotenv' => __DIR__ . '/..' . '/symfony/dotenv/Dotenv.php',
+        'Symfony\\Component\\Dotenv\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/dotenv/Exception/ExceptionInterface.php',
+        'Symfony\\Component\\Dotenv\\Exception\\FormatException' => __DIR__ . '/..' . '/symfony/dotenv/Exception/FormatException.php',
+        'Symfony\\Component\\Dotenv\\Exception\\FormatExceptionContext' => __DIR__ . '/..' . '/symfony/dotenv/Exception/FormatExceptionContext.php',
+        'Symfony\\Component\\Dotenv\\Exception\\PathException' => __DIR__ . '/..' . '/symfony/dotenv/Exception/PathException.php',
+        'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
         'ps_mbo' => __DIR__ . '/../..' . '/ps_mbo.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit18091b0c094dfb5da6826c2cb131663b::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit18091b0c094dfb5da6826c2cb131663b::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit18091b0c094dfb5da6826c2cb131663b::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb00a59af03899e2f8aaff65493439ad2::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb00a59af03899e2f8aaff65493439ad2::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb00a59af03899e2f8aaff65493439ad2::$classMap;
 
         }, null, ClassLoader::class);
     }

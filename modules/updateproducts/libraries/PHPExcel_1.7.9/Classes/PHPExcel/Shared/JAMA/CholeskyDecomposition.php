@@ -15,6 +15,9 @@
  *	@author Michael Bommarito
  *	@version 1.2
  */
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 class CholeskyDecomposition {
 
 	/**

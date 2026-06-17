@@ -1,5 +1,6 @@
-<?php declare(strict_types=1);
+<?php
 
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -8,11 +9,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PrestaShop\Module\PsAccounts\Vendor\Monolog\Handler;
 
-namespace Monolog\Handler;
-
-use Monolog\Formatter\FormatterInterface;
-
+use PrestaShop\Module\PsAccounts\Vendor\Monolog\Formatter\FormatterInterface;
 /**
  * Interface to describe loggers that have a formatter
  *
@@ -28,12 +27,11 @@ interface FormattableHandlerInterface
      * @param  FormatterInterface $formatter
      * @return HandlerInterface   self
      */
-    public function setFormatter(FormatterInterface $formatter): HandlerInterface;
-
+    public function setFormatter(FormatterInterface $formatter) : HandlerInterface;
     /**
      * Gets the formatter.
      *
      * @return FormatterInterface
      */
-    public function getFormatter(): FormatterInterface;
+    public function getFormatter() : FormatterInterface;
 }

@@ -35,6 +35,9 @@
  * @category   PHPExcel
  * @package    PHPExcel_Shared_OLE
  */
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 class PHPExcel_Shared_OLE_ChainedBlockStream
 {
 	/**

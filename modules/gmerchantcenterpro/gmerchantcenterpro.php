@@ -1,12 +1,11 @@
 <?php
-
 /**
  * Google Merchant Center Pro
  *
- * @author    BusinessTech.fr - https://www.businesstech.fr
- * @copyright Business Tech 2020 - https://www.businesstech.fr
- * @license   Commercial
- * @version 1.7.11
+ * @author    businesstech.fr <modules@businesstech.fr> - https://www.businesstech.fr/
+ * @copyright Business Tech 2022 - https://www.businesstech.fr/
+ * @license   see file: LICENSE.txt
+ * @version 1.7.20
  *
  *           ____    _______
  *          |  _ \  |__   __|
@@ -68,39 +67,19 @@ class GMerchantCenterPro extends Module
     public static $iShopId = 1;
 
     /**
-     * @var bool $bCompare1550 : get compare version for PS 1.5.5.0
-     */
-    public static $bCompare1550 = false;
-
-    /**
-     * @var bool $bCompare16 : get compare version for PS 1.6
-     */
-    public static $bCompare16 = false;
-
-    /**
-     * @var bool $bCompare1606 : get compare version for PS 1.6
-     */
-    public static $bCompare1606 = false;
-
-    /**
-     * @var bool $bCompare1608 : get compare version for PS 1.6
-     */
-    public static $bCompare1608 = false;
-
-    /**
-     * @var bool $bCompare16013 : get compare version for PS 1.6
-     */
-    public static $bCompare16013 = false;
-
-    /**
      * @var bool $bCompare17 : get compare version for PS 1.7
      */
     public static $bCompare17 = false;
 
     /**
-     * @var bool $bCompare17 : get compare version for PS 1.7.3.0
+     * @var bool $bCompare1730 : get compare version for PS 1.7.3.0
      */
     public static $bCompare1730 = false;
+
+     /**
+     * @var bool $bCompare1770 : get compare version for PS 1.7.7.0
+     */
+    public static $bCompare1770 = false;
 
     /**
      * @var obj $oContext : get context object
@@ -145,23 +124,20 @@ class GMerchantCenterPro extends Module
         $this->name = 'gmerchantcenterpro';
         $this->module_key = '742dd70356f9527ea97f65dd7e3c2c41';
         $this->tab = 'seo';
-        $this->version = '1.7.11';
+        $this->version = '1.7.20';
         $this->author = 'Business Tech';
+        $this->ps_versions_compliancy = array('min' => '1.7.4.0', 'max' => _PS_VERSION_);
 
         parent::__construct();
 
-        $this->displayName = $this->l('Google Merchant Center PRO (Google Shopping + Actions)');
-        $this->description = $this->l('The PRO version of Google Merchant Center: even more control on product data, export of reviews and special offers, management of Shopping Actions orders from PrestaShop');
+        $this->displayName = $this->l('Google Merchant Center PRO (Google Shopping)');
+        $this->description = $this->l('The PRO version of Google Merchant Center: even more control on product data, export of reviews and special offers.');
         $this->confirmUninstall = $this->l('Are you sure you want to remove Google Merchant Center ?');
 
         // compare PS version
-        self::$bCompare1550 = version_compare(_PS_VERSION_, '1.5.5.0', '>=');
-        self::$bCompare16 = version_compare(_PS_VERSION_, '1.6', '>=');
-        self::$bCompare1606 = version_compare(_PS_VERSION_, '1.6.0.6', '>=');
-        self::$bCompare1608 = version_compare(_PS_VERSION_, '1.6.0.8', '>=');
-        self::$bCompare16013 = version_compare(_PS_VERSION_, '1.6.0.13', '>=');
         self::$bCompare17 = version_compare(_PS_VERSION_, '1.7.0.0', '>=');
         self::$bCompare1730 = version_compare(_PS_VERSION_, '1.7.3.0', '>=');
+        self::$bCompare1770 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
         self::$bAdvancedPack = BT_GmcProModuleTools::isInstalled('pm_advancedpack');
 
         self::$oContext = $this->context;
@@ -181,10 +157,7 @@ class GMerchantCenterPro extends Module
         self::$oModule = $this;
 
         //set bootstrap
-        if (
-            !empty(self::$bCompare16)
-            || !empty(self::$bCompare17)
-        ) {
+        if (!empty(self::$bCompare17)) {
             $this->bootstrap = true;
         }
 
@@ -193,14 +166,7 @@ class GMerchantCenterPro extends Module
         self::$sHost = BT_GmcProModuleTools::setHost();
 
         // get configuration options
-        BT_GmcProModuleTools::getConfiguration(array(
-            'GMCP_COLOR_OPT',
-            'GMCP_SIZE_OPT',
-            'GMCP_SHIP_CARRIERS',
-            'GMCP_CHECK_EXPORT',
-            'GMCP_CHECK_EXPORT_STOCK',
-            'GMCP_FEED_TAX'
-        ));
+        BT_GmcProModuleTools::getConfiguration(array('GMCP_COLOR_OPT','GMCP_SIZE_OPT','GMCP_SHIP_CARRIERS','GMCP_CHECK_EXPORT','GMCP_CHECK_EXPORT_STOCK','GMCP_FEED_TAX',));
 
         // get available languages
         self::$aAvailableLanguages = BT_GmcProModuleTools::getAvailableLanguages(self::$iShopId);
@@ -229,16 +195,8 @@ class GMerchantCenterPro extends Module
             !parent::install()
             || !BT_InstallCtrl::run('install', 'sql', _GMCP_PATH_SQL . _GMCP_INSTALL_SQL_FILE)
             || !BT_InstallCtrl::run('install', 'config', array('bConfigOnly' => true))
-            || !BT_GmcProModuleTools::addOrderState('Validation in Progress (Google Shopping Action)', '#27FF00', false, _GMCP_MODULE_SET_NAME, '')
-            || !BT_GmcProModuleTools::addOrderState('Google order pending shipment', '#27FF00', false, _GMCP_MODULE_SET_NAME, '', true, true, false, true)
-            || !BT_GmcProModuleTools::addOrderState('Cancel by the customer (Google Shopping Action)', '#DC143C', false, _GMCP_MODULE_SET_NAME, '', false)
         ) {
             $bReturn = false;
-        }
-
-        if (!empty($bReturn)) {
-            // copy output files
-            BT_GmcProModuleTools::copyOutputFile();
         }
 
         return $bReturn;
@@ -259,7 +217,6 @@ class GMerchantCenterPro extends Module
 
         if (
             !parent::uninstall()
-            //            || !BT_InstallCtrl::run('uninstall', 'sql')
             || !BT_InstallCtrl::run('uninstall', 'config')
         ) {
             $bReturn = false;
@@ -328,18 +285,7 @@ class GMerchantCenterPro extends Module
             exit(0);
         }
     }
-
-    /**
-     * executes validate of new order
-     *
-     * @param array $aParams
-     * @return string
-     */
-    public function hookActionOrderStatusUpdate(array $aParams)
-    {
-        return $this->execHook('action', 'updateOrderStatus', $aParams);
-    }
-
+    
     /**
      * displays selected hook content
      *
@@ -531,9 +477,6 @@ class GMerchantCenterPro extends Module
 
         //check if update from GMC module
         //BT_GmcProModuleUpdate::create()->run('fromGmc');
-
-        //Check if there is update on the order states
-        BT_GmcProModuleUpdate::create()->run('orderState');
 
         $aErrors = BT_GmcProModuleUpdate::create()->getErrors();
 

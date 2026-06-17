@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Blog for PrestaShop module by PrestaHome Team.
  *
@@ -44,10 +45,11 @@ class PH_SimpleBlogSingleModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php?controller=404');
         }
 
-        if (Validate::isLoadedObject($SimpleBlogPost)
+        if (
+            Validate::isLoadedObject($SimpleBlogPost)
             && $this->simpleblog_post_rewrite != $SimpleBlogPost->link_rewrite
-            ||
-            Tools::getValue('sb_category') != $SimpleBlogPost->category_rewrite) {
+            || Tools::getValue('sb_category') != $SimpleBlogPost->category_rewrite
+        ) {
             header('HTTP/1.1 301 Moved Permanently');
             header('Location: ' . SimpleBlogPost::getLink($SimpleBlogPost->link_rewrite, $SimpleBlogPost->category_rewrite));
         }
@@ -114,7 +116,7 @@ class PH_SimpleBlogSingleModuleFrontController extends ModuleFrontController
             $page['canonical'] = $this->SimpleBlogPost->url;
         }
 
-        $page['body_classes']['blog-for-prestashop-single-'.$this->SimpleBlogPost->id] = true;
+        $page['body_classes']['blog-for-prestashop-single-' . $this->SimpleBlogPost->id] = true;
 
         return $page;
     }
@@ -282,7 +284,8 @@ class PH_SimpleBlogSingleModuleFrontController extends ModuleFrontController
 
                     $link = $this->context->link->getModuleLink(
                         'ph_simpleblog',
-                        'single', [
+                        'single',
+                        [
                             'rewrite' => $this->SimpleBlogPost->link_rewrite,
                             'sb_category' => $this->SimpleBlogPost->category_rewrite
                         ]
@@ -293,7 +296,6 @@ class PH_SimpleBlogSingleModuleFrontController extends ModuleFrontController
                         $fromName = strval(Configuration::get('PS_SHOP_NAME'));
                         $to = Configuration::get('PH_BLOG_COMMENT_NOTIFY_EMAIL');
                         $from = Configuration::get('PS_SHOP_EMAIL');
-                        $customer = $this->context->customer;
 
                         if ($this->context->customer->isLogged()) {
                             $lastname = $this->context->customer->lastname;

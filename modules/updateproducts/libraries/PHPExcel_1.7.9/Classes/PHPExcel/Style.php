@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
  * @version    1.7.9, 2013-06-02
  */
-
+if (!defined('_PS_VERSION_')){
+  exit;
+}
 
 /**
  * PHPExcel_Style
@@ -496,7 +498,7 @@ class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComp
      * @param PHPExcel_Style_Font $font
      * @return PHPExcel_Style
      */
-    public function setFont(PHPExcel_Style_Font $font)
+    public function setFont()
     {
         $this->_font = $font;
         return $this;

@@ -10,9 +10,6 @@ class PH_SimpleBlogListModuleFrontController extends ModuleFrontController
 {
     public $context;
     public $sb_category = false;
-    public $simpleblog_search;
-    public $simpleblog_keyword;
-    public $is_search = false;
     public $is_category = false;
 
     public $posts_per_page;
@@ -28,8 +25,6 @@ class PH_SimpleBlogListModuleFrontController extends ModuleFrontController
         parent::init();
 
         $sb_category = Tools::getValue('sb_category');
-        $simpleblog_search = Tools::getValue('simpleblog_search');
-        $simpleblog_keyword = Tools::getValue('simpleblog_keyword');
         $this->listController = Tools::getValue('controller');
 
         if ($sb_category) {
@@ -39,12 +34,6 @@ class PH_SimpleBlogListModuleFrontController extends ModuleFrontController
 
         if ($this->listController == 'category' && !$this->sb_category) {
             Tools::redirect($this->context->link->getModuleLink('ph_simpleblog', 'list'));
-        }
-
-        if ($simpleblog_search && $simpleblog_keyword) {
-            $this->simpleblog_search = $simpleblog_search;
-            $this->simpleblog_keyword = $simpleblog_keyword;
-            $this->is_search = true;
         }
 
         $this->posts_per_page = Configuration::get('PH_BLOG_POSTS_PER_PAGE');
