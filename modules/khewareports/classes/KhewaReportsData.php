@@ -300,13 +300,13 @@ class KhewaReportsData
         LEFT JOIN (
             SELECT id_order,
                    GROUP_CONCAT(
-                       CONCAT(payment_method, "($", ROUND(total_amount, 2), ")")
+                       CONCAT(normalized_method, "($", ROUND(total_amount, 2), ")")
                        ORDER BY first_id ASC
                        SEPARATOR " - "
                    ) as payment_breakdown
             FROM (
                 SELECT pb_ord.id_order,
-                       ' . $paymentMethodCase . ' as payment_method,
+                       ' . $paymentMethodCase . ' as normalized_method,
                        SUM(op.amount) as total_amount,
                        MIN(op.id_order_payment) as first_id
                 FROM (
@@ -332,7 +332,7 @@ class KhewaReportsData
                 INNER JOIN ' . _DB_PREFIX_ . 'order_payment op ON op.order_reference = pb_ord.reference
                     AND op.amount > 0
                     AND op.date_add >= "' . $this->date_from . '" AND op.date_add <= "' . $this->date_to . '"
-                GROUP BY pb_ord.id_order, payment_method
+                GROUP BY pb_ord.id_order, normalized_method
             ) grouped_payments
             GROUP BY id_order
         ) pb ON o.id_order = pb.id_order
@@ -920,19 +920,19 @@ class KhewaReportsData
         SELECT 
             op.order_reference,
             MIN(op.id_order_payment) as first_payment_id,
-            ' . $paymentMethodCase . ' as payment_method,
+            ' . $paymentMethodCase . ' as normalized_method,
             SUM(op.amount) as payment_amount
         FROM ' . _DB_PREFIX_ . 'order_payment op
         WHERE op.order_reference IN (
-            SELECT DISTINCT o.reference 
-            FROM ' . _DB_PREFIX_ . 'orders o 
+            SELECT DISTINCT o.reference
+            FROM ' . _DB_PREFIX_ . 'orders o
             WHERE o.date_add >= "' . $this->date_from . '"
             AND o.date_add <= "' . $this->date_to . '"
             AND o.current_state NOT IN (' . $excludedStates . ')
             ' . $refundDateCondition . '
         )
         AND op.amount > 0
-        GROUP BY op.order_reference, payment_method
+        GROUP BY op.order_reference, normalized_method
         ORDER BY op.order_reference, first_payment_id
         ';
         $paymentRecords = Db::getInstance()->executeS($sql);
@@ -941,7 +941,7 @@ class KhewaReportsData
         $paymentsByOrder = array();
         foreach ($paymentRecords as $payment) {
             $ref = $payment['order_reference'];
-            $paymentMethod = trim($payment['payment_method']);
+            $paymentMethod = trim($payment['normalized_method']);
             
             if (!isset($paymentsByOrder[$ref])) {
                 $paymentsByOrder[$ref] = array();
@@ -1282,21 +1282,25 @@ class KhewaReportsData
         
         // ONLINE payments: only orders with module != POS; only payment rows with date_add in range (match ExportSales).
         $sql = '
-        SELECT 
-            ' . $paymentMethodCase . ' as payment_method,
+        SELECT
+            ' . $paymentMethodCase . ' as normalized_method,
             SUM(op.amount) as payment_amount
         FROM ' . _DB_PREFIX_ . 'order_payment op
         WHERE op.order_reference IN (' . $onlineRefSubquery . ')
         AND op.amount > 0
         AND op.date_add >= "' . $this->date_from . '" AND op.date_add <= "' . $this->date_to . '"
-        GROUP BY payment_method
+        GROUP BY normalized_method
         ';
         $onlinePayments = Db::getInstance()->executeS($sql);
-        
+
         $onlineByMethod = array();
         if ($onlinePayments) {
             foreach ($onlinePayments as $p) {
-                $onlineByMethod[trim($p['payment_method'])] = (float)$p['payment_amount'];
+                $key = trim($p['normalized_method']);
+                if (!isset($onlineByMethod[$key])) {
+                    $onlineByMethod[$key] = 0;
+                }
+                $onlineByMethod[$key] += (float)$p['payment_amount'];
             }
         }
         
@@ -1305,43 +1309,47 @@ class KhewaReportsData
         // IN-STORE payments: only orders with module = POS; only payment rows with date_add in range; exclude Paypal/Stripe (instore = Cash/Credit Card/Interac only, match ExportSales).
         // IMPORTANT: op.amount > 0 only — "Paid with Cash" must show total cash received (gross), never reduced by refunds.
         $sql = '
-        SELECT 
-            ' . $paymentMethodCase . ' as payment_method,
+        SELECT
+            ' . $paymentMethodCase . ' as normalized_method,
             SUM(op.amount) as payment_amount
         FROM ' . _DB_PREFIX_ . 'order_payment op
         WHERE op.order_reference IN (' . $instoreRefSubquery . ')
         AND op.amount > 0
         AND op.date_add >= "' . $this->date_from . '" AND op.date_add <= "' . $this->date_to . '"
         AND LOWER(op.payment_method) NOT LIKE "%paypal%" AND LOWER(op.payment_method) NOT LIKE "%stripe%"
-        GROUP BY payment_method
+        GROUP BY normalized_method
         ';
         $instorePayments = Db::getInstance()->executeS($sql);
-        
+
         $instoreByMethod = array();
         if ($instorePayments) {
             foreach ($instorePayments as $p) {
-                $instoreByMethod[trim($p['payment_method'])] = (float)$p['payment_amount'];
+                $key = trim($p['normalized_method']);
+                if (!isset($instoreByMethod[$key])) {
+                    $instoreByMethod[$key] = 0;
+                }
+                $instoreByMethod[$key] += (float)$p['payment_amount'];
             }
         }
 
 
         // In-store refunds by payment method (negative amounts in order_payment) for Cash in hand
         $sql = '
-        SELECT 
-            ' . $paymentMethodCase . ' as payment_method,
+        SELECT
+            ' . $paymentMethodCase . ' as normalized_method,
             SUM(op.amount) as payment_amount
         FROM ' . _DB_PREFIX_ . 'order_payment op
         WHERE op.order_reference IN (' . $instoreRefSubquery . ')
         AND op.amount < 0
         AND op.date_add >= "' . $this->date_from . '" AND op.date_add <= "' . $this->date_to . '"
         AND LOWER(op.payment_method) NOT LIKE "%paypal%" AND LOWER(op.payment_method) NOT LIKE "%stripe%"
-        GROUP BY payment_method
+        GROUP BY normalized_method
         ';
         $instoreRefundsByMethod = Db::getInstance()->executeS($sql);
         $refundedInCash = 0;
         if ($instoreRefundsByMethod) {
             foreach ($instoreRefundsByMethod as $p) {
-                if (trim($p['payment_method']) === 'Cash') {
+                if (trim($p['normalized_method']) === 'Cash') {
                     $refundedInCash = abs((float)$p['payment_amount']);
                     break;
                 }
