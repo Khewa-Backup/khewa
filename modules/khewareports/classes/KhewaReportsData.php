@@ -639,6 +639,50 @@ class KhewaReportsData
     }
 
     /**
+     * Tax portion embedded in each order's discounts, i.e.
+     * (total_discounts_tax_incl - total_discounts_tax_excl) per order.
+     *
+     * This is the amount of tax that must be REMOVED from the per-tax columns of the
+     * top (combined) table, because the product tax stored in order_detail_tax is the
+     * full pre-discount tax and never reflects cart-rule reductions.
+     *
+     * Note on gift-card / store-credit "reductions": those are recorded with
+     * total_discounts_tax_incl == total_discounts_tax_excl (no tax embedded), so this
+     * returns 0 for them — the products were sold at full price and full tax is
+     * legitimately collected, so nothing is deducted. Only genuine price-reduction
+     * discounts (tax_incl > tax_excl) yield a non-zero deduction.
+     *
+     * Returns [id_order => discount_tax_amount].
+     *
+     * @param int[] $orderIds
+     * @return array
+     */
+    protected function getDiscountTaxByOrderIds(array $orderIds)
+    {
+        $orderIds = array_values(array_unique(array_map('intval', $orderIds)));
+        if (empty($orderIds)) {
+            return array();
+        }
+        $idList = implode(',', $orderIds);
+        $sql = '
+        SELECT o.id_order,
+               (IFNULL(o.total_discounts_tax_incl, 0) - IFNULL(o.total_discounts_tax_excl, 0)) as discount_tax
+        FROM ' . _DB_PREFIX_ . 'orders o
+        WHERE o.id_order IN (' . $idList . ')
+        ';
+        $rows = Db::getInstance()->executeS($sql);
+        $out = array();
+        if ($rows) {
+            foreach ($rows as $r) {
+                $dt = (float)$r['discount_tax'];
+                // Guard against tiny negative noise from rounding.
+                $out[(int)$r['id_order']] = $dt > 0 ? $dt : 0;
+            }
+        }
+        return $out;
+    }
+
+    /**
      * Tax-excl product base per order/tax, summed from the order_detail lines that
      * actually carry each tax id. Used by the POS tax formula so the percentage is
      * applied only to the lines that bear that tax (e.g. books — GST only — never
@@ -1107,6 +1151,7 @@ class KhewaReportsData
             $allOrderIds = array_keys($allOrderIds);
             $productTaxByOrderId = $this->getProductTaxAmountsByOrderIds($allOrderIds);
             $productExclBaseByOrderId = $this->getProductExclBaseByOrderIdsTax($allOrderIds);
+            $discountTaxByOrderId = $this->getDiscountTaxByOrderIds($allOrderIds);
             $shippingTaxByOrderId = $this->getShippingTaxAmountsByOrderIds($allOrderIds);
             $wrappingTaxByOrderId = $this->getWrappingTaxAmountsByOrderIds($allOrderIds);
             $refundByOrderId = $this->getRefundAmountsByOrderIdsForSbpm($allOrderIds, $excludePartialRefReferencesSql);
@@ -1123,6 +1168,35 @@ class KhewaReportsData
                 $taxRateById[(int)$tax['id_tax']] = (float)$tax['rate'];
             }
             $qstTaxIds = array_map('intval', array_filter(array_map('trim', explode(',', self::TAX_IDS_QST))));
+
+            // Per-order, per-tax discount-tax deduction.
+            // For each order, the tax embedded in its discounts
+            // (total_discounts_tax_incl - total_discounts_tax_excl) is distributed across
+            // the tax columns in proportion to that order's collected product tax per id.
+            // This removes the discount's tax share from every per-tax column so the top
+            // table reflects tax on the discounted base. Gift-card/store-credit reductions
+            // carry 0 embedded tax, so they yield no deduction (full tax stays).
+            $discountTaxDeductByOrderId = array();
+            foreach ($allOrderIds as $oid) {
+                $oid = (int)$oid;
+                $discountTax = isset($discountTaxByOrderId[$oid]) ? (float)$discountTaxByOrderId[$oid] : 0;
+                if ($discountTax <= 0) {
+                    continue;
+                }
+                $orderTaxById = isset($productTaxByOrderId[$oid]) ? $productTaxByOrderId[$oid] : array();
+                $orderTaxTotal = 0;
+                foreach ($orderTaxById as $amt) {
+                    $orderTaxTotal += (float)$amt;
+                }
+                if ($orderTaxTotal <= 0) {
+                    continue;
+                }
+                $discountTaxDeductByOrderId[$oid] = array();
+                foreach ($orderTaxById as $tid => $amt) {
+                    $share = (float)$amt / $orderTaxTotal;
+                    $discountTaxDeductByOrderId[$oid][(int)$tid] = $discountTax * $share;
+                }
+            }
 
             foreach ($combinedBase as &$row) {
                 $module = $row['module'];
@@ -1150,6 +1224,12 @@ class KhewaReportsData
                                 : 0;
                             $wrappingTax = (isset($wrappingTaxByOrderId[$oid]) && isset($wrappingTaxByOrderId[$oid][$taxId]))
                                 ? (float)$wrappingTaxByOrderId[$oid][$taxId]
+                                : 0;
+                            // Remove this order's discount-tax share for this tax id (0 when no discount).
+                            // Applied to the online product-tax accumulator below; the POS branch
+                            // applies the same deduction on its formula base separately.
+                            $productTax -= isset($discountTaxDeductByOrderId[$oid][$taxId])
+                                ? (float)$discountTaxDeductByOrderId[$oid][$taxId]
                                 : 0;
                             $rowProductTax[$taxId] += $productTax;
                             $rowShippingTax[$taxId] += $shippingTax;
@@ -1183,7 +1263,12 @@ class KhewaReportsData
                                 if ($exclBase <= 0) {
                                     continue;
                                 }
-                                $bucketTax += ($displayRate > 0) ? ($exclBase * $displayRate / 100) : 0;
+                                $orderTax = ($displayRate > 0) ? ($exclBase * $displayRate / 100) : 0;
+                                // Remove this order's discount-tax share for this tax id (0 when no discount).
+                                $orderTax -= isset($discountTaxDeductByOrderId[$oid][$taxId])
+                                    ? (float)$discountTaxDeductByOrderId[$oid][$taxId]
+                                    : 0;
+                                $bucketTax += $orderTax;
                             }
                         }
                         $row['taxes'][$taxId] = $bucketTax;
