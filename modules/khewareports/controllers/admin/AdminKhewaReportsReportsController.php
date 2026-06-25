@@ -163,10 +163,29 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Simply set the clean string - PhpSpreadsheet will auto-detect it as numeric
         // This avoids the float precision issues that cause DefaultValueBinder errors
         $sheet->setCellValue($cell, $cleanString);
-        
+
         // Apply number format that shows up to 2 decimals but not trailing zeros
         $sheet->getStyle($cell)->getNumberFormat()
             ->setFormatCode('#,##0.##');
+    }
+
+    /**
+     * Write a numeric value WITHOUT rounding to 2 decimals — keeps full precision.
+     * Used for the Sales-tab per-line tax columns (GST/QST) so the displayed values and
+     * their column totals retain full precision and reconcile exactly with the SBPM/Taxes
+     * tabs (which sum unrounded). The cell display format shows several decimals.
+     */
+    protected function setRawNumericValue($sheet, $cell, $value)
+    {
+        $numericValue = is_numeric($value) ? (float)$value : 0;
+        // Keep full precision; render with enough decimals to expose the fractions.
+        $cleanString = rtrim(rtrim(number_format($numericValue, 6, '.', ''), '0'), '.');
+        if ($cleanString === '' || $cleanString === '-') {
+            $cleanString = '0';
+        }
+        $sheet->setCellValue($cell, $cleanString);
+        $sheet->getStyle($cell)->getNumberFormat()
+            ->setFormatCode('#,##0.####');
     }
 
     /**
@@ -355,12 +374,12 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             // Column S: Total Price (Tax excl) - show product level detail
             $this->setNumericValue($sheet, 'S' . $row, $data['total_price_tax_excl']);
             
-            // Column T: Product GST - product level (sum all)
-            $this->setNumericValue($sheet, 'T' . $row, $data['gst_total_amount']);
+            // Column T: Product GST - product level (full precision, sum all)
+            $this->setRawNumericValue($sheet, 'T' . $row, $data['gst_total_amount']);
             $totals['product_gst'] += (float)$data['gst_total_amount'];
-            
-            // Column U: Product QST - product level (sum all)
-            $this->setNumericValue($sheet, 'U' . $row, $data['qst_total_amount']);
+
+            // Column U: Product QST - product level (full precision, sum all)
+            $this->setRawNumericValue($sheet, 'U' . $row, $data['qst_total_amount']);
             $totals['product_qst'] += (float)$data['qst_total_amount'];
             
             // Column V: Shipping (Tax excl) - order level
@@ -415,8 +434,8 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setNumericValue($sheet, 'O' . $row, $totals['products_incl']);
             $this->setNumericValue($sheet, 'R' . $row, $totals['products_incl']);
             $this->setNumericValue($sheet, 'S' . $row, $totals['products_excl']);
-            $this->setNumericValue($sheet, 'T' . $row, $totals['product_gst']);
-            $this->setNumericValue($sheet, 'U' . $row, $totals['product_qst']);
+            $this->setRawNumericValue($sheet, 'T' . $row, $totals['product_gst']);
+            $this->setRawNumericValue($sheet, 'U' . $row, $totals['product_qst']);
             $this->setNumericValue($sheet, 'V' . $row, $totals['shipping_excl']);
             $sheet->getStyle('A' . $row . ':X' . $row)->getFont()->setBold(true);
             

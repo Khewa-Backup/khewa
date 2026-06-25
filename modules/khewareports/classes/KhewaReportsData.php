@@ -230,9 +230,13 @@ class KhewaReportsData
             od.total_refunded_tax_incl,
             od.total_refunded_tax_excl,
             IFNULL(gst.unit_amount, 0) as gst_unit_amount,
-            IFNULL(gst.total_amount, 0) as gst_total_amount,
+            -- Full-precision line tax = per-unit tax x quantity (the discount is already
+            -- baked into the stored unit_amount). Using this instead of the stored,
+            -- per-line-rounded total_amount keeps precision so the Sales-tab column totals
+            -- match the SBPM and Taxes tabs (which sum unrounded and round once).
+            IFNULL(gst.unit_amount * od.product_quantity, 0) as gst_total_amount,
             IFNULL(qst.unit_amount, 0) as qst_unit_amount,
-            IFNULL(qst.total_amount, 0) as qst_total_amount,
+            IFNULL(qst.unit_amount * od.product_quantity, 0) as qst_total_amount,
             IFNULL(gst_ship.amount, 0) as shipping_gst_amount,
             IFNULL(qst_ship.amount, 0) as shipping_qst_amount,
             IFNULL(ocr.total_cart_rule_value, 0) as voucher_value,
@@ -616,8 +620,12 @@ class KhewaReportsData
             return array();
         }
         $idList = implode(',', $orderIds);
+        // Full-precision per-line tax = unit_amount x quantity (discount already baked into
+        // unit_amount). Summed unrounded here and rounded once per bucket by the caller, so
+        // the SBPM/Taxes tabs reconcile exactly with the Sales tab. Avoids the stored
+        // per-line-rounded total_amount which over/under-reports when summed.
         $sql = '
-        SELECT od.id_order, odt.id_tax, SUM(odt.total_amount) as total_tax
+        SELECT od.id_order, odt.id_tax, SUM(odt.unit_amount * od.product_quantity) as total_tax
         FROM ' . _DB_PREFIX_ . 'order_detail od
         INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
         WHERE od.id_order IN (' . $idList . ')
@@ -1228,8 +1236,6 @@ class KhewaReportsData
             }
             $allOrderIds = array_keys($allOrderIds);
             $productTaxByOrderId = $this->getProductTaxAmountsByOrderIds($allOrderIds);
-            $productExclBaseByOrderId = $this->getProductExclBaseByOrderIdsTax($allOrderIds);
-            $discountTaxByOrderId = $this->getDiscountTaxByOrderIds($allOrderIds);
             $shippingTaxByOrderId = $this->getShippingTaxAmountsByOrderIds($allOrderIds);
             $wrappingTaxByOrderId = $this->getWrappingTaxAmountsByOrderIds($allOrderIds);
             $refundByOrderId = $this->getRefundAmountsByOrderIdsForSbpm($allOrderIds, $excludePartialRefReferencesSql);
@@ -1246,35 +1252,6 @@ class KhewaReportsData
                 $taxRateById[(int)$tax['id_tax']] = (float)$tax['rate'];
             }
             $qstTaxIds = array_map('intval', array_filter(array_map('trim', explode(',', self::TAX_IDS_QST))));
-
-            // Per-order, per-tax discount-tax deduction.
-            // For each order, the tax embedded in its discounts
-            // (total_discounts_tax_incl - total_discounts_tax_excl) is distributed across
-            // the tax columns in proportion to that order's collected product tax per id.
-            // This removes the discount's tax share from every per-tax column so the top
-            // table reflects tax on the discounted base. Gift-card/store-credit reductions
-            // carry 0 embedded tax, so they yield no deduction (full tax stays).
-            $discountTaxDeductByOrderId = array();
-            foreach ($allOrderIds as $oid) {
-                $oid = (int)$oid;
-                $discountTax = isset($discountTaxByOrderId[$oid]) ? (float)$discountTaxByOrderId[$oid] : 0;
-                if ($discountTax <= 0) {
-                    continue;
-                }
-                $orderTaxById = isset($productTaxByOrderId[$oid]) ? $productTaxByOrderId[$oid] : array();
-                $orderTaxTotal = 0;
-                foreach ($orderTaxById as $amt) {
-                    $orderTaxTotal += (float)$amt;
-                }
-                if ($orderTaxTotal <= 0) {
-                    continue;
-                }
-                $discountTaxDeductByOrderId[$oid] = array();
-                foreach ($orderTaxById as $tid => $amt) {
-                    $share = (float)$amt / $orderTaxTotal;
-                    $discountTaxDeductByOrderId[$oid][(int)$tid] = $discountTax * $share;
-                }
-            }
 
             // Round-once per-tax totals (accumulated unrounded across buckets below).
             $taxTotalsUnrounded = array();
@@ -1306,12 +1283,6 @@ class KhewaReportsData
                             $wrappingTax = (isset($wrappingTaxByOrderId[$oid]) && isset($wrappingTaxByOrderId[$oid][$taxId]))
                                 ? (float)$wrappingTaxByOrderId[$oid][$taxId]
                                 : 0;
-                            // Remove this order's discount-tax share for this tax id (0 when no discount).
-                            // Applied to the online product-tax accumulator below; the POS branch
-                            // applies the same deduction on its formula base separately.
-                            $productTax -= isset($discountTaxDeductByOrderId[$oid][$taxId])
-                                ? (float)$discountTaxDeductByOrderId[$oid][$taxId]
-                                : 0;
                             $rowProductTax[$taxId] += $productTax;
                             $rowShippingTax[$taxId] += $shippingTax;
                             $rowWrappingTax[$taxId] += $wrappingTax;
@@ -1319,44 +1290,17 @@ class KhewaReportsData
                     }
                 }
 
-                // Match expected sheet behavior:
-                // - In-store buckets: formula from product excl using display rates (QST normalized to 9.975)
-                // - Online buckets: real product tax + gift-wrapping tax by same tax id (shipping excluded)
+                // Product tax for both in-store and online buckets is the exact per-line tax
+                // (unit_amount x quantity, discount already baked in) summed unrounded in
+                // $rowProductTax. This is PrestaShop's actual tax at the real rates (QST 9.976),
+                // so the SBPM, Taxes and Sales tabs reconcile to the cent. Online buckets add
+                // gift-wrapping tax; shipping tax is intentionally excluded from both.
                 if ($this->isPosModule($module)) {
-                    // POS formula: apply the display rate to the tax-excl product base of ONLY the
-                    // lines that actually carry this tax id (from order_detail joined to
-                    // order_detail_tax). This keeps the percentage approach — which reproduces the
-                    // verified report values, since PrestaShop's stored order_detail_tax.total_amount
-                    // is per-unit-rounded-then-multiplied and over-reports — while ensuring that
-                    // tax-exempt / single-tax lines (e.g. books are GST-only) never inflate another
-                    // tax column. Contributions are summed unrounded and rounded once per bucket below.
                     foreach ($taxIds as $taxId) {
-                        $displayRate = in_array((int)$taxId, $qstTaxIds, true) ? 9.975 : (isset($taxRateById[$taxId]) ? (float)$taxRateById[$taxId] : 0);
-                        $bucketTax = 0;
-                        if (!empty($row['order_ids'])) {
-                            foreach ($row['order_ids'] as $oid) {
-                                $oid = (int)$oid;
-                                // Tax-excl base of the lines bearing THIS tax id in this order.
-                                // Absent/zero => order contributes 0 to this column (the zero-gate).
-                                $exclBase = (isset($productExclBaseByOrderId[$oid][$taxId]))
-                                    ? (float)$productExclBaseByOrderId[$oid][$taxId]
-                                    : 0;
-                                if ($exclBase <= 0) {
-                                    continue;
-                                }
-                                $orderTax = ($displayRate > 0) ? ($exclBase * $displayRate / 100) : 0;
-                                // Remove this order's discount-tax share for this tax id (0 when no discount).
-                                $orderTax -= isset($discountTaxDeductByOrderId[$oid][$taxId])
-                                    ? (float)$discountTaxDeductByOrderId[$oid][$taxId]
-                                    : 0;
-                                $bucketTax += $orderTax;
-                            }
-                        }
-                        $row['taxes'][$taxId] = $bucketTax;
+                        $row['taxes'][$taxId] = $rowProductTax[$taxId];
                     }
                 } else {
                     foreach ($taxIds as $taxId) {
-                        // Online buckets: product tax + gift-wrapping tax (shipping tax intentionally excluded).
                         $row['taxes'][$taxId] = $rowProductTax[$taxId] + $rowWrappingTax[$taxId];
                     }
                 }
@@ -2110,27 +2054,17 @@ class KhewaReportsData
         $refundStates = Khewareports::getRefundStatesSQL();
 
         // 1) Tax collected on sales in the period.
-        // IMPORTANT: this must use the SAME basis as the SBPM top table so the two tabs
-        // agree to the cent:
-        //   - POS (in-store) orders: formula = SUM(total_price_tax_excl) * display rate,
-        //     where the QST rate is normalized to 9.975 (matches the rounding-fix formula
-        //     that produced the verified report values; stored per-unit-rounded amounts
-        //     over-report).
-        //   - Online orders: PrestaShop's stored per-line tax (order_detail_tax.total_amount).
-        // The CASE picks the right basis per order/line; SUM aggregates per tax id.
-        $posCond = $this->getPosModuleCondition('o.module');
+        // Uses the SAME basis as the SBPM top table and the Sales tab so all three agree
+        // to the cent: the exact per-line tax = unit_amount x quantity (the real stored
+        // tax at the actual rates, e.g. QST 9.976, with the discount already baked into
+        // unit_amount). Summed unrounded and rounded once. No display-rate normalization
+        // and no separate discount deduction are needed.
         $sql = '
         SELECT
             t.id_tax,
             IFNULL(tl.name, CONCAT("Tax ", t.id_tax)) as tax_name,
             t.rate as tax_rate,
-            SUM(
-                CASE WHEN ' . $posCond . '
-                    THEN od.total_price_tax_excl
-                         * (CASE WHEN odt.id_tax IN (' . self::TAX_IDS_QST . ') THEN 9.975 ELSE t.rate END) / 100
-                    ELSE odt.total_amount
-                END
-            ) as tax_collected
+            SUM(odt.unit_amount * od.product_quantity) as tax_collected
 
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
@@ -2303,17 +2237,9 @@ class KhewaReportsData
         $applyRefunds($slipRefundRows);
         $applyRefunds($partialRefundRows);
 
-        // Deduct the tax embedded in discounts from the collected totals, so "Net Tax"
-        // reflects tax on the discounted base — identical to the SBPM top table.
-        // Per order: discount tax = total_discounts_tax_incl - total_discounts_tax_excl,
-        // distributed across tax ids in proportion to that order's collected product tax.
-        // Gift-card/store-credit reductions carry 0 embedded tax, so they deduct nothing.
-        $discountTaxByTaxId = $this->getDiscountTaxByTaxIdForTaxSummary($excludedStates, $refundStates);
-        foreach ($discountTaxByTaxId as $tid => $deduct) {
-            if (isset($byTax[$tid])) {
-                $byTax[$tid]['tax_collected'] -= (float)$deduct;
-            }
-        }
+        // No separate discount deduction is needed: the collected tax above already uses
+        // unit_amount x quantity, which has the discount baked into PrestaShop's stored
+        // per-line tax — matching the SBPM top table and the Sales tab exactly.
 
         $out = array();
         foreach ($byTax as $row) {
