@@ -14,7 +14,7 @@ class Khewareports extends Module
     
     // Canadian Tax IDs
     const TAX_ID_CANADA_GST = 1;  // 5% GST
-    const TAX_IDS_QUEBEC_QST = array(25, 34, 32, 31, 28);  // 9.975% QST
+    const TAX_IDS_QUEBEC_QST = array(25, 34, 32, 31, 28);  // 9.976% QST
     
     // Default Payment Method Patterns (comma-separated values that map to each category)
     const DEFAULT_PM_CREDIT_CARD = 'Credit Card, Carte de crédit, Credit Card(instore)';

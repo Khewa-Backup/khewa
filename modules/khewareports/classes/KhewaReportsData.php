@@ -22,7 +22,7 @@ class KhewaReportsData
     
     // Tax IDs (Canadian specific)
     const TAX_ID_GST = 1;  // 5% Federal GST
-    const TAX_IDS_QST = '25, 34, 32, 31, 28';  // Quebec QST 9.975%
+    const TAX_IDS_QST = '25, 34, 32, 31, 28';  // Quebec QST 9.976%
     
     /**
      * Constructor
@@ -518,7 +518,7 @@ class KhewaReportsData
             od.unit_price_tax_incl,
             od.unit_price_tax_excl,
             ROUND(osd.amount_tax_excl * 0.05, 2) as refund_gst_amount,
-            ROUND(osd.amount_tax_excl * 0.09975, 2) as refund_qst_amount,
+            ROUND(osd.amount_tax_excl * 0.09976, 2) as refund_qst_amount,
             dcl.name as delivery_country,
             ds.name as delivery_state
             
@@ -586,7 +586,7 @@ class KhewaReportsData
                 'unit_price_tax_incl' => $totalIncl,
                 'unit_price_tax_excl' => $totalExcl,
                 'refund_gst_amount' => round($totalExcl * 0.05, 2),
-                'refund_qst_amount' => round($totalExcl * 0.09975, 2),
+                'refund_qst_amount' => round($totalExcl * 0.09976, 2),
                 'delivery_country' => $partialRefund['delivery_country'],
                 'delivery_state' => $partialRefund['delivery_state']
             );
