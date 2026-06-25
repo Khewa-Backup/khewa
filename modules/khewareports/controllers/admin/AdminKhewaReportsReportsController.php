@@ -178,14 +178,14 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
     protected function setRawNumericValue($sheet, $cell, $value)
     {
         $numericValue = is_numeric($value) ? (float)$value : 0;
-        // Keep full precision; render with enough decimals to expose the fractions.
-        $cleanString = rtrim(rtrim(number_format($numericValue, 6, '.', ''), '0'), '.');
-        if ($cleanString === '' || $cleanString === '-') {
-            $cleanString = '0';
-        }
+        // Store the exact value with full precision (order_detail_tax is decimal(16,6)),
+        // and display all 6 decimals so the number shown IS the exact stored value. This
+        // way the client can add up the visible cells and get the same total the report
+        // shows — no hidden rounding that would make the column appear to sum differently.
+        $cleanString = number_format($numericValue, 6, '.', '');
         $sheet->setCellValue($cell, $cleanString);
         $sheet->getStyle($cell)->getNumberFormat()
-            ->setFormatCode('#,##0.####');
+            ->setFormatCode('0.000000');
     }
 
     /**
@@ -434,8 +434,10 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setNumericValue($sheet, 'O' . $row, $totals['products_incl']);
             $this->setNumericValue($sheet, 'R' . $row, $totals['products_incl']);
             $this->setNumericValue($sheet, 'S' . $row, $totals['products_excl']);
-            $this->setRawNumericValue($sheet, 'T' . $row, $totals['product_gst']);
-            $this->setRawNumericValue($sheet, 'U' . $row, $totals['product_qst']);
+            // TOTALS row: show the column totals rounded to 2 decimals (clean final figure).
+            // Per-row cells keep full precision; the total is computed from the raw values.
+            $this->setNumericValue($sheet, 'T' . $row, $totals['product_gst']);
+            $this->setNumericValue($sheet, 'U' . $row, $totals['product_qst']);
             $this->setNumericValue($sheet, 'V' . $row, $totals['shipping_excl']);
             $sheet->getStyle('A' . $row . ':X' . $row)->getFont()->setBold(true);
             
@@ -465,7 +467,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->applyNumberFormat($sheet, 'H3:J' . $row); // Shipping amounts
             $this->applyNumberFormat($sheet, 'K3:M' . $row); // Refund amounts
             $this->applyNumberFormat($sheet, 'O3:O' . $row); // Product price tax incl
-            $this->applyNumberFormat($sheet, 'R3:U' . $row); // Product prices and taxes
+            // R, S only — T (GST) and U (QST) keep their full 6-decimal format set by
+            // setRawNumericValue so the displayed values are exact and sum correctly.
+            $this->applyNumberFormat($sheet, 'R3:S' . $row); // Product prices
             $this->applyNumberFormat($sheet, 'V3:V' . $row); // Shipping tax excl
         }
         
