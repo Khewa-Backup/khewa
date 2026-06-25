@@ -2521,4 +2521,47 @@ class KhewaReportsData
         $result = Db::getInstance()->getRow($sql);
         return $result ? $result : array();
     }
+
+    /**
+     * "Old" gift cards used within the report's date range — gift-card cart rules whose
+     * cart rule was first created before 2021-01-01 AND that were redeemed on an order
+     * placed within the selected date range.
+     *
+     * PURELY INFORMATIONAL: shown as a flagged reference block in the report so the client
+     * can see which legacy gift cards were used in this period (the source of the historical
+     * mismatch). It is NOT used in any total or tax calculation.
+     *
+     * Returns rows: created (cart rule creation date), code, amount, name, id_order,
+     * order_date — ordered by order date. One row per (gift card, order) usage.
+     *
+     * @return array
+     */
+    public function getOldGiftCards()
+    {
+        $cutoff = '2021-01-01 00:00:00';
+        $excludedStates = Khewareports::getSalesExcludedStatesSQL();
+        $sql = '
+        SELECT
+            cr.id_cart_rule,
+            cr.date_add as created,
+            cr.code,
+            cr.reduction_amount as amount,
+            IFNULL(crl.name, "") as name,
+            o.id_order,
+            o.date_add as order_date
+        FROM ' . _DB_PREFIX_ . 'cart_rule cr
+        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule_lang crl
+            ON crl.id_cart_rule = cr.id_cart_rule AND crl.id_lang = ' . (int)$this->id_lang . '
+        INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON ocr.id_cart_rule = cr.id_cart_rule
+        INNER JOIN ' . _DB_PREFIX_ . 'orders o ON o.id_order = ocr.id_order
+        WHERE cr.date_add < "' . pSQL($cutoff) . '"
+        AND (LOWER(crl.name) LIKE "%gift%" OR LOWER(crl.name) LIKE "%cadeau%")
+        AND o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        ORDER BY o.date_add ASC, cr.id_cart_rule ASC
+        ';
+        $rows = Db::getInstance()->executeS($sql);
+        return $rows ? $rows : array();
+    }
 }

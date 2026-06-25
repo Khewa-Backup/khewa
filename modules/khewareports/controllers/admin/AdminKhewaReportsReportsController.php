@@ -926,7 +926,60 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setCellValueSafe($sheet, 'A' . $row, 'Cash in hand');
         $this->setNumericValue($sheet, 'B' . $row, isset($sbpmData['instore']['cash_in_hand']) ? $sbpmData['instore']['cash_in_hand'] : 0);
         $row++;
-        
+
+        // End of the calculated bottom payment section (used to bound row styling/number
+        // formatting so the Old Gift Cards reference block below is styled separately).
+        $bottomSectionEndRow = $row - 1;
+
+        // ====================================================================
+        // OLD GIFT CARDS (reference only — NOT part of any total/calculation)
+        // Pre-2021 gift-card cart rules that were USED within this report's date range.
+        // Shown with a red fill so the client can see which legacy gift cards were
+        // redeemed in this period (the source of the historical mismatch). Listed with
+        // the date used (order date), code, amount, name, gift-card creation date and order #.
+        // ====================================================================
+        $oldGiftCards = $dataFetcher->getOldGiftCards();
+        if (!empty($oldGiftCards)) {
+            // 2-row gap after "Cash in hand"
+            $row += 2;
+
+            // Section header
+            $this->setCellValueSafe($sheet, 'A' . $row, 'Old Gift Cards used in this period (created before 2021)');
+            $sheet->getStyle('A' . $row . ':F' . $row)->getFont()->setBold(true);
+            $sheet->getStyle('A' . $row . ':F' . $row)->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('FF0000');
+            $sheet->getStyle('A' . $row . ':F' . $row)->getFont()->getColor()->setRGB('FFFFFF');
+            $row++;
+
+            // Column labels
+            $this->setCellValueSafe($sheet, 'A' . $row, 'Used On');
+            $this->setCellValueSafe($sheet, 'B' . $row, 'Code');
+            $this->setCellValueSafe($sheet, 'C' . $row, 'Amount');
+            $this->setCellValueSafe($sheet, 'D' . $row, 'Name');
+            $this->setCellValueSafe($sheet, 'E' . $row, 'Created');
+            $this->setCellValueSafe($sheet, 'F' . $row, 'Order #');
+            $sheet->getStyle('A' . $row . ':F' . $row)->getFont()->setBold(true);
+            $row++;
+
+            // One row per old gift-card usage, red background
+            foreach ($oldGiftCards as $gc) {
+                $usedOn = isset($gc['order_date']) ? substr((string)$gc['order_date'], 0, 10) : '';
+                $created = isset($gc['created']) ? substr((string)$gc['created'], 0, 10) : '';
+                $this->setCellValueSafe($sheet, 'A' . $row, $usedOn);
+                $this->setCellValueSafe($sheet, 'B' . $row, isset($gc['code']) ? (string)$gc['code'] : '');
+                $this->setNumericValue($sheet, 'C' . $row, isset($gc['amount']) ? (float)$gc['amount'] : 0);
+                $this->setCellValueSafe($sheet, 'D' . $row, isset($gc['name']) ? (string)$gc['name'] : '');
+                $this->setCellValueSafe($sheet, 'E' . $row, $created);
+                $this->setCellValueSafe($sheet, 'F' . $row, isset($gc['id_order']) ? (string)$gc['id_order'] : '');
+                $sheet->getStyle('A' . $row . ':F' . $row)->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('FFC7CE');
+                $row++;
+            }
+        }
+
+
         // Style data rows and column widths
         // Find the last data row (before we added styling)
         $lastRow = $row - 1;
@@ -939,11 +992,14 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->applyNumberFormat($sheet, 'B3:B' . $topSectionEndRow);
             $this->applyNumberFormat($sheet, 'C3:' . $lastColLetter . $topSectionEndRow);
 
-            // Style bottom section (after top section + bottom header row)
+            // Style bottom section (after top section + bottom header row).
+            // Bound at the calculated section end so the Old Gift Cards reference block
+            // (which has its own red styling and a text Code column) is left untouched.
             $bottomStartRow = $topSectionEndRow + 2;
-            if ($bottomStartRow <= $lastRow) {
-                $this->styleDataRows($sheet, 'A' . $bottomStartRow . ':B' . $lastRow);
-                $this->applyNumberFormat($sheet, 'B' . $bottomStartRow . ':B' . $lastRow);
+            $bottomStyleEndRow = isset($bottomSectionEndRow) ? $bottomSectionEndRow : $lastRow;
+            if ($bottomStartRow <= $bottomStyleEndRow) {
+                $this->styleDataRows($sheet, 'A' . $bottomStartRow . ':B' . $bottomStyleEndRow);
+                $this->applyNumberFormat($sheet, 'B' . $bottomStartRow . ':B' . $bottomStyleEndRow);
             }
         }
 
