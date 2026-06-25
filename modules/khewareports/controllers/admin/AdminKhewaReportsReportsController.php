@@ -746,7 +746,12 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setNumericValue($sheet, 'F' . $row, $totalSumTaxIncl);
         $this->setNumericValue($sheet, 'G' . $row, $totalPaid);
         foreach ($taxColMap as $taxId => $colLetter) {
-            $this->setNumericValue($sheet, $colLetter . $row, isset($totalTaxes[$taxId]) ? $totalTaxes[$taxId] : 0);
+            // Use the round-once column total from getSBPMData (not the sum of per-bucket
+            // rounded values) so the TOTALS row matches the Taxes-tab Net Tax to the cent.
+            $colTotal = isset($sbpmData['tax_totals'][$taxId])
+                ? (float)$sbpmData['tax_totals'][$taxId]
+                : (isset($totalTaxes[$taxId]) ? $totalTaxes[$taxId] : 0);
+            $this->setNumericValue($sheet, $colLetter . $row, $colTotal);
         }
         if ($hasWrapping) {
             $this->setNumericValue($sheet, $wrappingCostCol . $row, $totalWrappingCost);

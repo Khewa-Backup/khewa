@@ -683,6 +683,84 @@ class KhewaReportsData
     }
 
     /**
+     * Total discount-tax to deduct per tax id for the Taxes-tab "Net Tax", over the same
+     * order set the collected-tax query uses (date in range, not in excluded/refund states).
+     *
+     * For each qualifying order, the embedded discount tax
+     * (total_discounts_tax_incl - total_discounts_tax_excl) is distributed across the tax
+     * ids in proportion to that order's collected product tax per id. Mirrors the per-order
+     * distribution used by the SBPM top table so the two tabs agree to the cent.
+     *
+     * @param string $excludedStates CSV of excluded state ids (SQL fragment)
+     * @param string $refundStates   CSV of refund state ids (SQL fragment)
+     * @return array [id_tax => total_discount_tax_to_deduct]
+     */
+    protected function getDiscountTaxByTaxIdForTaxSummary($excludedStates, $refundStates)
+    {
+        // Orders in range with a discount, matching the collected-tax query's filters.
+        $sql = '
+        SELECT o.id_order,
+               (IFNULL(o.total_discounts_tax_incl, 0) - IFNULL(o.total_discounts_tax_excl, 0)) as discount_tax
+        FROM ' . _DB_PREFIX_ . 'orders o
+        WHERE o.date_add >= "' . $this->date_from . '"
+        AND o.date_add <= "' . $this->date_to . '"
+        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND (
+            NOT(
+                o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+            )
+            OR (
+                (
+                    o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                    AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                )
+                AND o.current_state NOT IN (' . $refundStates . ')
+            )
+        )
+        AND (IFNULL(o.total_discounts_tax_incl, 0) - IFNULL(o.total_discounts_tax_excl, 0)) > 0
+        ';
+        $rows = Db::getInstance()->executeS($sql);
+        if (!$rows) {
+            return array();
+        }
+
+        $orderIds = array();
+        $discountTaxByOrder = array();
+        foreach ($rows as $r) {
+            $oid = (int)$r['id_order'];
+            $orderIds[] = $oid;
+            $discountTaxByOrder[$oid] = (float)$r['discount_tax'];
+        }
+
+        $collectedByOrder = $this->getProductTaxAmountsByOrderIds($orderIds);
+
+        $out = array();
+        foreach ($discountTaxByOrder as $oid => $discountTax) {
+            if ($discountTax <= 0) {
+                continue;
+            }
+            $orderTaxById = isset($collectedByOrder[$oid]) ? $collectedByOrder[$oid] : array();
+            $orderTaxTotal = 0;
+            foreach ($orderTaxById as $amt) {
+                $orderTaxTotal += (float)$amt;
+            }
+            if ($orderTaxTotal <= 0) {
+                continue;
+            }
+            foreach ($orderTaxById as $tid => $amt) {
+                $tid = (int)$tid;
+                $share = (float)$amt / $orderTaxTotal;
+                if (!isset($out[$tid])) {
+                    $out[$tid] = 0;
+                }
+                $out[$tid] += $discountTax * $share;
+            }
+        }
+        return $out;
+    }
+
+    /**
      * Tax-excl product base per order/tax, summed from the order_detail lines that
      * actually carry each tax id. Used by the POS tax formula so the percentage is
      * applied only to the lines that bear that tax (e.g. books — GST only — never
@@ -1198,6 +1276,9 @@ class KhewaReportsData
                 }
             }
 
+            // Round-once per-tax totals (accumulated unrounded across buckets below).
+            $taxTotalsUnrounded = array();
+
             foreach ($combinedBase as &$row) {
                 $module = $row['module'];
                 $row['taxes'] = array();
@@ -1276,11 +1357,18 @@ class KhewaReportsData
                 } else {
                     foreach ($taxIds as $taxId) {
                         // Online buckets: product tax + gift-wrapping tax (shipping tax intentionally excluded).
-                        // $row['taxes'][$taxId] = $rowProductTax[$taxId] + $rowShippingTax[$taxId];
                         $row['taxes'][$taxId] = $rowProductTax[$taxId] + $rowWrappingTax[$taxId];
                     }
                 }
+                // Accumulate the UNROUNDED per-tax total across all buckets before rounding
+                // each bucket for display. The column TOTALS row (and the Taxes tab) use this
+                // round-once total so they never drift from per-bucket rounding noise — the two
+                // tabs then agree to the cent on every date.
                 foreach ($taxIds as $taxId) {
+                    if (!isset($taxTotalsUnrounded[$taxId])) {
+                        $taxTotalsUnrounded[$taxId] = 0;
+                    }
+                    $taxTotalsUnrounded[$taxId] += $row['taxes'][$taxId];
                     $row['taxes'][$taxId] = round($row['taxes'][$taxId], 2);
                 }
 
@@ -1324,6 +1412,12 @@ class KhewaReportsData
             }
             unset($row);
             $result['combined'] = $combinedBase;
+            // Round-once per-tax column totals (one rounding, not per-bucket) so the SBPM
+            // TOTALS row and the Taxes-tab Net Tax are cent-identical.
+            $result['tax_totals'] = array();
+            foreach ($taxTotalsUnrounded as $tid => $val) {
+                $result['tax_totals'][(int)$tid] = round($val, 2);
+            }
 
             // Only expose the Wrapping Cost / Wrapping Tax columns when at least one
             // order in the range actually had gift wrapping (cost or tax > 0).
@@ -2015,13 +2109,28 @@ class KhewaReportsData
         $excludedStates = Khewareports::getSalesExcludedStatesSQL();
         $refundStates = Khewareports::getRefundStatesSQL();
 
-        // 1) Tax collected on sales in the period (original behavior)
+        // 1) Tax collected on sales in the period.
+        // IMPORTANT: this must use the SAME basis as the SBPM top table so the two tabs
+        // agree to the cent:
+        //   - POS (in-store) orders: formula = SUM(total_price_tax_excl) * display rate,
+        //     where the QST rate is normalized to 9.975 (matches the rounding-fix formula
+        //     that produced the verified report values; stored per-unit-rounded amounts
+        //     over-report).
+        //   - Online orders: PrestaShop's stored per-line tax (order_detail_tax.total_amount).
+        // The CASE picks the right basis per order/line; SUM aggregates per tax id.
+        $posCond = $this->getPosModuleCondition('o.module');
         $sql = '
         SELECT
             t.id_tax,
             IFNULL(tl.name, CONCAT("Tax ", t.id_tax)) as tax_name,
             t.rate as tax_rate,
-            SUM(odt.total_amount) as tax_collected
+            SUM(
+                CASE WHEN ' . $posCond . '
+                    THEN od.total_price_tax_excl
+                         * (CASE WHEN odt.id_tax IN (' . self::TAX_IDS_QST . ') THEN 9.975 ELSE t.rate END) / 100
+                    ELSE odt.total_amount
+                END
+            ) as tax_collected
 
         FROM ' . _DB_PREFIX_ . 'orders o
         INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
@@ -2193,6 +2302,18 @@ class KhewaReportsData
         };
         $applyRefunds($slipRefundRows);
         $applyRefunds($partialRefundRows);
+
+        // Deduct the tax embedded in discounts from the collected totals, so "Net Tax"
+        // reflects tax on the discounted base — identical to the SBPM top table.
+        // Per order: discount tax = total_discounts_tax_incl - total_discounts_tax_excl,
+        // distributed across tax ids in proportion to that order's collected product tax.
+        // Gift-card/store-credit reductions carry 0 embedded tax, so they deduct nothing.
+        $discountTaxByTaxId = $this->getDiscountTaxByTaxIdForTaxSummary($excludedStates, $refundStates);
+        foreach ($discountTaxByTaxId as $tid => $deduct) {
+            if (isset($byTax[$tid])) {
+                $byTax[$tid]['tax_collected'] -= (float)$deduct;
+            }
+        }
 
         $out = array();
         foreach ($byTax as $row) {
