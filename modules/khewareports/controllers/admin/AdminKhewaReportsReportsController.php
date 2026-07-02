@@ -731,7 +731,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setNumericValue($sheet, 'E' . $row, (float)$data['total_shipping_tax_incl']);
             $totalSum = (float)$data['total_products_tax_incl'] + (float)$data['total_shipping_tax_incl'];
             $this->setNumericValue($sheet, 'F' . $row, $totalSum);
-            $this->setNumericValue($sheet, 'G' . $row, (float)$data['total_paid_tax_incl']);
+            // Total Bill = real cash actually tendered (gift cards / vouchers / etc. excluded).
+            $realPaid = isset($data['real_paid_tax_incl']) ? (float)$data['real_paid_tax_incl'] : (float)$data['total_paid_tax_incl'];
+            $this->setNumericValue($sheet, 'G' . $row, $realPaid);
             // Dynamic tax columns
             foreach ($taxColMap as $taxId => $colLetter) {
                 $taxAmount = isset($data['taxes'][$taxId]) ? (float)$data['taxes'][$taxId] : 0;
@@ -757,7 +759,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $totalProductsIncl += (float)$data['total_products_tax_incl'];
             $totalShipping += (float)$data['total_shipping_tax_incl'];
             $totalSumTaxIncl += $totalSum;
-            $totalPaid += (float)$data['total_paid_tax_incl'];
+            $totalPaid += $realPaid;
             $row++;
         }
         // TOTALS row

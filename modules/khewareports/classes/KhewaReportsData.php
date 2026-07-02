@@ -691,6 +691,67 @@ class KhewaReportsData
     }
 
     /**
+     * Total gift-card value used across a set of orders, counting BOTH gift cards applied
+     * as cart-rule discounts and gift cards tendered as payments — while removing the
+     * double-booked overlap (a single gift card recorded as both a discount and a payment
+     * on the same order).
+     *
+     * Per order:
+     *   gift_pay  = sum of gift-card PAYMENTS (order_payment)
+     *   gift_disc = sum of gift-card DISCOUNTS (order_cart_rule)
+     *   sum_pay   = sum of ALL payments
+     *   overlap   = LEAST(gift_disc, GREATEST(0, sum_pay - total_paid))
+     *               (when a gift card is booked as both a discount and a payment, the
+     *                payments over-record total_paid by exactly that gift amount)
+     *   order_gift = gift_disc + gift_pay - overlap
+     *
+     * This is general (not specific to "old" gift cards): it yields the correct figure
+     * whether the discount and payment are the same card (counted once) or genuinely
+     * separate cards (both counted).
+     *
+     * @param string $refSubquery SQL subquery returning the qualifying order references
+     * @return float
+     */
+    protected function getGiftCardTotalWithOverlap($refSubquery)
+    {
+        $ocrGiftValue =
+            'CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
+            END';
+        $sql = '
+        SELECT IFNULL(SUM(
+            t.gift_disc + t.gift_pay - LEAST(t.gift_disc, GREATEST(0, t.sum_pay - t.total_paid))
+        ), 0) as total_gift
+        FROM (
+            SELECT o.id_order, o.total_paid,
+                IFNULL((
+                    SELECT SUM(op.amount) FROM ' . _DB_PREFIX_ . 'order_payment op
+                    WHERE op.order_reference = o.reference AND op.amount > 0
+                    AND (LOWER(op.payment_method) LIKE "%gift%" OR LOWER(op.payment_method) LIKE "%cadeau%")
+                ), 0) as gift_pay,
+                IFNULL((
+                    SELECT SUM(' . $ocrGiftValue . ')
+                    FROM ' . _DB_PREFIX_ . 'order_cart_rule ocr
+                    LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON cr.id_cart_rule = ocr.id_cart_rule
+                    WHERE ocr.id_order = o.id_order
+                    AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
+                ), 0) as gift_disc,
+                IFNULL((
+                    SELECT SUM(op.amount) FROM ' . _DB_PREFIX_ . 'order_payment op
+                    WHERE op.order_reference = o.reference AND op.amount > 0
+                ), 0) as sum_pay
+            FROM ' . _DB_PREFIX_ . 'orders o
+            WHERE o.reference IN (' . $refSubquery . ')
+        ) t
+        WHERE t.gift_pay > 0 OR t.gift_disc > 0
+        ';
+        return (float)Db::getInstance()->getValue($sql);
+    }
+
+    /**
      * Total discount-tax to deduct per tax id for the Taxes-tab "Net Tax", over the same
      * order set the collected-tax query uses (date in range, not in excluded/refund states).
      *
@@ -1026,7 +1087,21 @@ class KhewaReportsData
             o.total_products_wt as order_total_products_incl,
             o.total_shipping_tax_incl as order_total_shipping,
             o.total_wrapping_tax_excl as order_total_wrapping_excl,
-            o.total_paid_tax_incl as order_total_paid
+            o.total_paid_tax_incl as order_total_paid,
+            IFNULL((
+                SELECT SUM(op.amount) FROM ' . _DB_PREFIX_ . 'order_payment op
+                WHERE op.order_reference = o.reference AND op.amount > 0
+                AND LOWER(op.payment_method) NOT LIKE "%gift%"
+                AND LOWER(op.payment_method) NOT LIKE "%cadeau%"
+                AND LOWER(op.payment_method) NOT LIKE "%voucher%"
+                AND LOWER(op.payment_method) NOT LIKE "%slip%"
+                AND LOWER(op.payment_method) NOT LIKE "%bon%"
+                AND LOWER(op.payment_method) NOT LIKE "%coupon%"
+                AND LOWER(op.payment_method) NOT LIKE "%promo%"
+                AND LOWER(op.payment_method) NOT LIKE "%discount%"
+                AND LOWER(op.payment_method) NOT LIKE "%refund%"
+                AND LOWER(op.payment_method) NOT LIKE "%reduction%"
+            ), 0) as order_real_paid
         FROM ' . _DB_PREFIX_ . 'orders o
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
@@ -1128,22 +1203,25 @@ class KhewaReportsData
                         'total_products_tax_incl' => 0,
                         'total_shipping_tax_incl' => 0,
                         'total_paid_tax_incl' => 0,
+                        'real_paid_tax_incl' => 0,
                         'order_ids' => array()
                     );
                 }
-                
+
                 // Count order once
                 $combinedBase[$key]['order_ids'][] = $orderId;
                 $combinedBase[$key]['order_count']++;
-                
+
                 // Add order-level product/shipping totals
                 $combinedBase[$key]['total_products_tax_excl'] += (float)$order['order_total_products_excl'];
                 $combinedBase[$key]['total_products_tax_incl'] += (float)$order['order_total_products_incl'];
                 $combinedBase[$key]['total_shipping_tax_incl'] += (float)$order['order_total_shipping'];
-                
+
                 // Total Paid = order's total_paid_tax_incl (one value per order) so it stays consistent with Total Products + Shipping.
                 // Using order total avoids Total Paid > Total Products when order_payment has duplicates or extra rows.
                 $combinedBase[$key]['total_paid_tax_incl'] += (float)$order['order_total_paid'];
+                // Total Bill = real cash actually tendered (excludes gift cards, vouchers, etc.).
+                $combinedBase[$key]['real_paid_tax_incl'] += (float)$order['order_real_paid'];
             } else {
                 // Order has NO payment records - paid entirely by gift card/voucher
                 // Add to "Gift Card_Voucher" category (using underscore for consistency)
@@ -1159,16 +1237,18 @@ class KhewaReportsData
                         'total_products_tax_incl' => 0,
                         'total_shipping_tax_incl' => 0,
                         'total_paid_tax_incl' => 0,
+                        'real_paid_tax_incl' => 0,
                         'order_ids' => array()
                     );
                 }
-                
+
                 $combinedBase[$key]['order_ids'][] = $orderId;
                 $combinedBase[$key]['order_count']++;
                 $combinedBase[$key]['total_products_tax_excl'] += (float)$order['order_total_products_excl'];
                 $combinedBase[$key]['total_products_tax_incl'] += (float)$order['order_total_products_incl'];
                 $combinedBase[$key]['total_shipping_tax_incl'] += (float)$order['order_total_shipping'];
                 $combinedBase[$key]['total_paid_tax_incl'] += (float)$order['order_total_paid'];
+                $combinedBase[$key]['real_paid_tax_incl'] += (float)$order['order_real_paid'];
             }
         }
         
@@ -1187,6 +1267,7 @@ class KhewaReportsData
                 $finalCombined[$normalizedKey]['total_products_tax_excl'] += $row['total_products_tax_excl'];
                 $finalCombined[$normalizedKey]['total_products_tax_incl'] += $row['total_products_tax_incl'];
                 $finalCombined[$normalizedKey]['total_shipping_tax_incl'] += $row['total_shipping_tax_incl'];
+                $finalCombined[$normalizedKey]['real_paid_tax_incl'] += isset($row['real_paid_tax_incl']) ? $row['real_paid_tax_incl'] : 0;
                 $finalCombined[$normalizedKey]['total_paid_tax_incl'] += $row['total_paid_tax_incl'];
                 $finalCombined[$normalizedKey]['order_ids'] = array_merge(
                     isset($finalCombined[$normalizedKey]['order_ids']) ? $finalCombined[$normalizedKey]['order_ids'] : array(),
@@ -1516,92 +1597,12 @@ class KhewaReportsData
         // ========================================================================
         
         // --- ONLINE GIFT CARD ---
+        // Count gift cards used as cart-rule discounts AND as payments, removing the
+        // double-booked overlap (same card recorded both ways). See getGiftCardTotalWithOverlap.
+        $result['online']['gift_card'] = $this->getGiftCardTotalWithOverlap($onlineRefSubquery);
 
-
-        // Source 1: From order_payment (primary - actual payment records)
-        $sql = '
-        SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'order_payment op
-        WHERE op.order_reference IN (' . $onlineRefSubquery . ')
-        AND (LOWER(op.payment_method) LIKE "%gift%" OR LOWER(op.payment_method) LIKE "%cadeau%")
-        AND op.amount > 0
-        ';
-        $giftOnlinePayment = (float)Db::getInstance()->getValue($sql);
-        
-        // Source 2: From order_cart_rule, EXCLUDING orders that have gift card in order_payment
-        // Use CASE to select correct value based on reduction type
-        $sql = '
-        SELECT IFNULL(SUM(
-            CASE
-                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
-                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
-                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
-                ELSE ocr.value_tax_excl
-            END
-        ), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        ' . $refundDateCondition . '
-        AND ' . $this->getNotPosModuleCondition('o.module') . '
-        AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
-        AND o.id_order NOT IN (
-            SELECT DISTINCT o2.id_order 
-            FROM ' . _DB_PREFIX_ . 'orders o2
-            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
-            WHERE (LOWER(op2.payment_method) LIKE "%gift%" OR LOWER(op2.payment_method) LIKE "%cadeau%")
-            AND op2.amount > 0
-        )
-        ';
-        $giftOnlineCartRule = (float)Db::getInstance()->getValue($sql);
-        
-        $result['online']['gift_card'] = $giftOnlinePayment + $giftOnlineCartRule;
-        
         // --- IN-STORE GIFT CARD ---
-        // Source 1: From order_payment
-        $sql = '
-        SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'order_payment op
-        WHERE op.order_reference IN (' . $instoreRefSubquery . ')
-        AND (LOWER(op.payment_method) LIKE "%gift%" OR LOWER(op.payment_method) LIKE "%cadeau%")
-        AND op.amount > 0
-        ';
-        $giftInstorePayment = (float)Db::getInstance()->getValue($sql);
-        
-        // Source 2: From order_cart_rule, EXCLUDING orders that have gift card in order_payment
-        // Use CASE to select correct value based on reduction type
-        $sql = '
-        SELECT IFNULL(SUM(
-            CASE
-                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
-                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
-                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
-                ELSE ocr.value_tax_excl
-            END
-        ), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
-        ' . $refundDateCondition . '
-        AND ' . $this->getPosModuleCondition('o.module') . '
-        AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
-        AND o.id_order NOT IN (
-            SELECT DISTINCT o2.id_order 
-            FROM ' . _DB_PREFIX_ . 'orders o2
-            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
-            WHERE (LOWER(op2.payment_method) LIKE "%gift%" OR LOWER(op2.payment_method) LIKE "%cadeau%")
-            AND op2.amount > 0
-        )
-        ';
-        $giftInstoreCartRule = (float)Db::getInstance()->getValue($sql);
-        
-        $result['instore']['gift_card'] = $giftInstorePayment + $giftInstoreCartRule;
+        $result['instore']['gift_card'] = $this->getGiftCardTotalWithOverlap($instoreRefSubquery);
         
         // --- ONLINE VOUCHER ---
         // Source 1: From order_payment
