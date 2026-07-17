@@ -14,6 +14,14 @@ require_once _PS_MODULE_DIR_ . 'khewareports/classes/KhewaReportsData.php';
 
 class AdminKhewaReportsReportsController extends ModuleAdminController
 {
+    /**
+     * Number format used for all monetary cells.
+     * Sections: positive;negative;zero. The zero section is a bare "0" so empty values
+     * render as "0" rather than "0." — the literal "." in "#,##0.##" is always displayed.
+     * Non-zero values keep the existing "#,##0.##" appearance (e.g. "350.", "137.4").
+     */
+    const NUMBER_FORMAT = '#,##0.##;-#,##0.##;0';
+
     public function __construct()
     {
         parent::__construct();
@@ -164,9 +172,12 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // This avoids the float precision issues that cause DefaultValueBinder errors
         $sheet->setCellValue($cell, $cleanString);
 
-        // Apply number format that shows up to 2 decimals but not trailing zeros
+        // Apply number format that shows up to 2 decimals but not trailing zeros.
+        // Sections are positive;negative;zero — the zero section is a plain "0" so an empty
+        // value renders as "0" instead of "0." (the literal "." in "#,##0.##" would otherwise
+        // always show). Non-zero values are unchanged.
         $sheet->getStyle($cell)->getNumberFormat()
-            ->setFormatCode('#,##0.##');
+            ->setFormatCode(self::NUMBER_FORMAT);
     }
 
     /**
@@ -655,15 +666,16 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
 
         // ==================== Build dynamic tax column map ====================
         // Fixed columns: A=Combined Payment, B=Confirmed Orders, C=Products Excl, D=Products Incl,
-        //                E=Shipping, F=Total Sum, G=Total Bill (Tax Incl.)  → tax columns start at index 8 (H)
+        //                E=Shipping, F=Total Sum (Tax Incl), G=Total Sum (Tax Excl),
+        //                H=Total Bill (Tax Incl), I=Total Bill (Tax Excl) → tax columns start at index 10 (J)
         $taxColumns = isset($sbpmData['tax_columns']) ? $sbpmData['tax_columns'] : array();
         $taxColMap = array(); // id_tax => column letter
         foreach ($taxColumns as $i => $tax) {
-            $colIndex = 8 + $i; // H=8, I=9, ...
+            $colIndex = 10 + $i; // J=10, K=11, ...
             $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
             $taxColMap[(int)$tax['id_tax']] = $colLetter;
         }
-        $lastTaxColIndex = 7 + count($taxColumns);
+        $lastTaxColIndex = 9 + count($taxColumns);
 
         // Optional gift-wrapping columns: only shown when at least one order in the
         // range had gift wrapping. Placed immediately after the dynamic tax columns.
@@ -676,7 +688,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $wrappingTaxCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastTaxColIndex + 2);
             $lastDataColIndex = $lastTaxColIndex + 2;
         }
-        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(max(7, $lastDataColIndex));
+        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(max(9, $lastDataColIndex));
 
         // Add sheet header spanning full dynamic width
         $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method', $lastColLetter);
@@ -690,7 +702,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             'D' => 'Total Products (Tax Incl.)',
             'E' => 'Total Shipping (Tax Incl.)',
             'F' => 'Total Sum (Tax Incl)',
-            'G' => 'Total Bill (Tax Incl.)',
+            'G' => 'Total Sum (Tax Excl.)',
+            'H' => 'Total Bill (Tax Incl.)',
+            'I' => 'Total Bill (Tax Excl.)',
         );
         // Add one column per active tax type
         foreach ($taxColumns as $tax) {
@@ -717,7 +731,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $totalProductsIncl = 0;
         $totalShipping = 0;
         $totalSumTaxIncl = 0;
+        $totalSumTaxExcl = 0;
         $totalPaid = 0;
+        $totalPaidExcl = 0;
         $totalTaxes = array(); // dynamic: id_tax => total
         $totalWrappingCost = 0;
         $totalWrappingTax = 0;
@@ -731,9 +747,15 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $this->setNumericValue($sheet, 'E' . $row, (float)$data['total_shipping_tax_incl']);
             $totalSum = (float)$data['total_products_tax_incl'] + (float)$data['total_shipping_tax_incl'];
             $this->setNumericValue($sheet, 'F' . $row, $totalSum);
+            // Total Sum (Tax Excl.) — same formula as the tax-incl column, on tax-excl amounts.
+            $totalSumExcl = (float)$data['total_products_tax_excl'] + (isset($data['total_shipping_tax_excl']) ? (float)$data['total_shipping_tax_excl'] : 0);
+            $this->setNumericValue($sheet, 'G' . $row, $totalSumExcl);
             // Total Bill = real cash actually tendered (gift cards / vouchers / etc. excluded).
             $realPaid = isset($data['real_paid_tax_incl']) ? (float)$data['real_paid_tax_incl'] : (float)$data['total_paid_tax_incl'];
-            $this->setNumericValue($sheet, 'G' . $row, $realPaid);
+            $this->setNumericValue($sheet, 'H' . $row, $realPaid);
+            // Total Bill (Tax Excl.) — same real-tender logic, tax stripped.
+            $realPaidExcl = isset($data['real_paid_tax_excl']) ? (float)$data['real_paid_tax_excl'] : 0;
+            $this->setNumericValue($sheet, 'I' . $row, $realPaidExcl);
             // Dynamic tax columns
             foreach ($taxColMap as $taxId => $colLetter) {
                 $taxAmount = isset($data['taxes'][$taxId]) ? (float)$data['taxes'][$taxId] : 0;
@@ -759,7 +781,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             $totalProductsIncl += (float)$data['total_products_tax_incl'];
             $totalShipping += (float)$data['total_shipping_tax_incl'];
             $totalSumTaxIncl += $totalSum;
+            $totalSumTaxExcl += $totalSumExcl;
             $totalPaid += $realPaid;
+            $totalPaidExcl += $realPaidExcl;
             $row++;
         }
         // TOTALS row
@@ -769,7 +793,9 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setNumericValue($sheet, 'D' . $row, $totalProductsIncl);
         $this->setNumericValue($sheet, 'E' . $row, $totalShipping);
         $this->setNumericValue($sheet, 'F' . $row, $totalSumTaxIncl);
-        $this->setNumericValue($sheet, 'G' . $row, $totalPaid);
+        $this->setNumericValue($sheet, 'G' . $row, $totalSumTaxExcl);
+        $this->setNumericValue($sheet, 'H' . $row, $totalPaid);
+        $this->setNumericValue($sheet, 'I' . $row, $totalPaidExcl);
         foreach ($taxColMap as $taxId => $colLetter) {
             // Use the round-once column total from getSBPMData (not the sum of per-bucket
             // rounded values) so the TOTALS row matches the Taxes-tab Net Tax to the cent.
@@ -801,8 +827,12 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setNumericValue($sheet, 'D' . $row, (float)$sbpmData['online']['refund_products_incl']);
         $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['online']['refund_shipping_incl']);
         $refundOnlineSum = round((float)$sbpmData['online']['refund_products_incl'] + (float)$sbpmData['online']['refund_shipping_incl'], 2);
+        // No tax-excl shipping figure is tracked for refunds; products-excl only.
+        $refundOnlineSumExcl = round((float)$sbpmData['online']['refund_products_excl'], 2);
         $this->setNumericValue($sheet, 'F' . $row, $refundOnlineSum);
-        $this->setNumericValue($sheet, 'G' . $row, $refundOnlineSum);
+        $this->setNumericValue($sheet, 'G' . $row, $refundOnlineSumExcl);
+        $this->setNumericValue($sheet, 'H' . $row, $refundOnlineSum);
+        $this->setNumericValue($sheet, 'I' . $row, $refundOnlineSumExcl);
         foreach ($taxColMap as $taxId => $colLetter) {
             $refundTax = isset($sbpmData['online']['refund_taxes'][$taxId]) ? (float)$sbpmData['online']['refund_taxes'][$taxId] : 0;
             $this->setNumericValue($sheet, $colLetter . $row, $refundTax);
@@ -815,8 +845,11 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->setNumericValue($sheet, 'D' . $row, (float)$sbpmData['instore']['refund_products_incl']);
         $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['instore']['refund_shipping_incl']);
         $refundInstoreSum = round((float)$sbpmData['instore']['refund_products_incl'] + (float)$sbpmData['instore']['refund_shipping_incl'], 2);
+        $refundInstoreSumExcl = round((float)$sbpmData['instore']['refund_products_excl'], 2);
         $this->setNumericValue($sheet, 'F' . $row, $refundInstoreSum);
-        $this->setNumericValue($sheet, 'G' . $row, $refundInstoreSum);
+        $this->setNumericValue($sheet, 'G' . $row, $refundInstoreSumExcl);
+        $this->setNumericValue($sheet, 'H' . $row, $refundInstoreSum);
+        $this->setNumericValue($sheet, 'I' . $row, $refundInstoreSumExcl);
         foreach ($taxColMap as $taxId => $colLetter) {
             $refundTax = isset($sbpmData['instore']['refund_taxes'][$taxId]) ? (float)$sbpmData['instore']['refund_taxes'][$taxId] : 0;
             $this->setNumericValue($sheet, $colLetter . $row, $refundTax);
@@ -957,13 +990,12 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $bottomSectionEndRow = $row - 1;
 
         // ====================================================================
-        // OLD GIFT CARDS (reference only — NOT part of any total/calculation)
-        // Pre-2021 gift-card cart rules that were USED within this report's date range.
-        // Shown with a red fill so the client can see which legacy gift cards were
-        // redeemed in this period (the source of the historical mismatch). Listed with
-        // the date used (order date), code, amount, name, gift-card creation date and order #.
+        // OLD GIFT CARDS block — HIDDEN for now (kept for easy re-enable).
+        // The data method getOldGiftCards() is retained; set $showOldGiftCards = true
+        // to bring the reference block back.
         // ====================================================================
-        $oldGiftCards = $dataFetcher->getOldGiftCards();
+        $showOldGiftCards = false;
+        $oldGiftCards = $showOldGiftCards ? $dataFetcher->getOldGiftCards() : array();
         if (!empty($oldGiftCards)) {
             // 2-row gap after "Cash in hand"
             $row += 2;
@@ -1004,6 +1036,21 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             }
         }
 
+        // ====================================================================
+        // TAX-PROFILE PRODUCT TOTALS (amounts only) — after the current tables.
+        //   Total Tax Exempt : total amount of products with NO tax in the range
+        //   Total One Tax    : total amount of products with only the 5% GST
+        // Shown as single amounts in the "Payment Amount" column (B).
+        // ====================================================================
+        $taxProfile = $dataFetcher->getProductAmountsByTaxProfile();
+        // 2-row gap after the section above
+        $row += 2;
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Total Tax Exempt');
+        $this->setNumericValue($sheet, 'B' . $row, (float)$taxProfile['tax_exempt']);
+        $row++;
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Total One Tax');
+        $this->setNumericValue($sheet, 'B' . $row, (float)$taxProfile['one_tax_gst']);
+        $row++;
 
         // Style data rows and column widths
         // Find the last data row (before we added styling)
@@ -1029,7 +1076,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         }
 
         // Dynamic column widths
-        $colWidths = array('A' => 22, 'B' => 12, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 16, 'G' => 16);
+        $colWidths = array('A' => 22, 'B' => 12, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 16, 'G' => 16, 'H' => 16, 'I' => 16);
         foreach ($taxColMap as $taxId => $colLetter) {
             $colWidths[$colLetter] = 14;
         }
@@ -1248,7 +1295,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
     protected function applyNumberFormat($sheet, $range)
     {
         $sheet->getStyle($range)->getNumberFormat()
-            ->setFormatCode('#,##0.##');
+            ->setFormatCode(self::NUMBER_FORMAT);
     }
     
     /**

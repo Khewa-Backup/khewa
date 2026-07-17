@@ -691,6 +691,27 @@ class KhewaReportsData
     }
 
     /**
+     * Tax-excluded counterpart of an order's "real paid" (Total Bill) figure.
+     *
+     * order_payment has no tax-excl column, so the real tender (which is tax-inclusive)
+     * is scaled by the order's own tax-excl/tax-incl ratio to strip its tax portion.
+     * Same logic as the tax-incl Total Bill, just on the tax-excluded amount.
+     *
+     * @param array $order Row from the SBPM orders query
+     * @return float
+     */
+    protected function realPaidTaxExcl(array $order)
+    {
+        $paidIncl = isset($order['order_total_paid']) ? (float)$order['order_total_paid'] : 0;
+        $paidExcl = isset($order['order_total_paid_excl']) ? (float)$order['order_total_paid_excl'] : 0;
+        $realIncl = isset($order['order_real_paid']) ? (float)$order['order_real_paid'] : 0;
+        if ($paidIncl <= 0) {
+            return 0;
+        }
+        return $realIncl * ($paidExcl / $paidIncl);
+    }
+
+    /**
      * Total gift-card value used across a set of orders, counting BOTH gift cards applied
      * as cart-rule discounts and gift cards tendered as payments — while removing the
      * double-booked overlap (a single gift card recorded as both a discount and a payment
@@ -1086,8 +1107,10 @@ class KhewaReportsData
             o.total_products as order_total_products_excl,
             o.total_products_wt as order_total_products_incl,
             o.total_shipping_tax_incl as order_total_shipping,
+            o.total_shipping_tax_excl as order_total_shipping_excl,
             o.total_wrapping_tax_excl as order_total_wrapping_excl,
             o.total_paid_tax_incl as order_total_paid,
+            o.total_paid_tax_excl as order_total_paid_excl,
             IFNULL((
                 SELECT SUM(op.amount) FROM ' . _DB_PREFIX_ . 'order_payment op
                 WHERE op.order_reference = o.reference AND op.amount > 0
@@ -1202,8 +1225,10 @@ class KhewaReportsData
                         'total_products_tax_excl' => 0,
                         'total_products_tax_incl' => 0,
                         'total_shipping_tax_incl' => 0,
+                        'total_shipping_tax_excl' => 0,
                         'total_paid_tax_incl' => 0,
                         'real_paid_tax_incl' => 0,
+                        'real_paid_tax_excl' => 0,
                         'order_ids' => array()
                     );
                 }
@@ -1216,12 +1241,14 @@ class KhewaReportsData
                 $combinedBase[$key]['total_products_tax_excl'] += (float)$order['order_total_products_excl'];
                 $combinedBase[$key]['total_products_tax_incl'] += (float)$order['order_total_products_incl'];
                 $combinedBase[$key]['total_shipping_tax_incl'] += (float)$order['order_total_shipping'];
+                $combinedBase[$key]['total_shipping_tax_excl'] += (float)$order['order_total_shipping_excl'];
 
                 // Total Paid = order's total_paid_tax_incl (one value per order) so it stays consistent with Total Products + Shipping.
                 // Using order total avoids Total Paid > Total Products when order_payment has duplicates or extra rows.
                 $combinedBase[$key]['total_paid_tax_incl'] += (float)$order['order_total_paid'];
                 // Total Bill = real cash actually tendered (excludes gift cards, vouchers, etc.).
                 $combinedBase[$key]['real_paid_tax_incl'] += (float)$order['order_real_paid'];
+                $combinedBase[$key]['real_paid_tax_excl'] += $this->realPaidTaxExcl($order);
             } else {
                 // Order has NO payment records - paid entirely by gift card/voucher
                 // Add to "Gift Card_Voucher" category (using underscore for consistency)
@@ -1236,8 +1263,10 @@ class KhewaReportsData
                         'total_products_tax_excl' => 0,
                         'total_products_tax_incl' => 0,
                         'total_shipping_tax_incl' => 0,
+                        'total_shipping_tax_excl' => 0,
                         'total_paid_tax_incl' => 0,
                         'real_paid_tax_incl' => 0,
+                        'real_paid_tax_excl' => 0,
                         'order_ids' => array()
                     );
                 }
@@ -1247,8 +1276,10 @@ class KhewaReportsData
                 $combinedBase[$key]['total_products_tax_excl'] += (float)$order['order_total_products_excl'];
                 $combinedBase[$key]['total_products_tax_incl'] += (float)$order['order_total_products_incl'];
                 $combinedBase[$key]['total_shipping_tax_incl'] += (float)$order['order_total_shipping'];
+                $combinedBase[$key]['total_shipping_tax_excl'] += (float)$order['order_total_shipping_excl'];
                 $combinedBase[$key]['total_paid_tax_incl'] += (float)$order['order_total_paid'];
                 $combinedBase[$key]['real_paid_tax_incl'] += (float)$order['order_real_paid'];
+                $combinedBase[$key]['real_paid_tax_excl'] += $this->realPaidTaxExcl($order);
             }
         }
         
@@ -1267,7 +1298,9 @@ class KhewaReportsData
                 $finalCombined[$normalizedKey]['total_products_tax_excl'] += $row['total_products_tax_excl'];
                 $finalCombined[$normalizedKey]['total_products_tax_incl'] += $row['total_products_tax_incl'];
                 $finalCombined[$normalizedKey]['total_shipping_tax_incl'] += $row['total_shipping_tax_incl'];
+                $finalCombined[$normalizedKey]['total_shipping_tax_excl'] += isset($row['total_shipping_tax_excl']) ? $row['total_shipping_tax_excl'] : 0;
                 $finalCombined[$normalizedKey]['real_paid_tax_incl'] += isset($row['real_paid_tax_incl']) ? $row['real_paid_tax_incl'] : 0;
+                $finalCombined[$normalizedKey]['real_paid_tax_excl'] += isset($row['real_paid_tax_excl']) ? $row['real_paid_tax_excl'] : 0;
                 $finalCombined[$normalizedKey]['total_paid_tax_incl'] += $row['total_paid_tax_incl'];
                 $finalCombined[$normalizedKey]['order_ids'] = array_merge(
                     isset($finalCombined[$normalizedKey]['order_ids']) ? $finalCombined[$normalizedKey]['order_ids'] : array(),
@@ -2490,5 +2523,60 @@ class KhewaReportsData
         ';
         $rows = Db::getInstance()->executeS($sql);
         return $rows ? $rows : array();
+    }
+
+    /**
+     * Product amounts (tax-excl) grouped by tax profile of each order_detail line, over the
+     * report's date range (same order date/state/refund filters as the rest of the sheet):
+     *   - tax_exempt : total amount of products that carry NO tax at all
+     *   - one_tax_gst: total amount of products that carry ONLY the 5% GST (single tax = GST)
+     *
+     * Returns ['tax_exempt' => float, 'one_tax_gst' => float].
+     *
+     * @return array
+     */
+    public function getProductAmountsByTaxProfile()
+    {
+        $excludedStates = Khewareports::getSalesExcludedStatesSQL();
+        $refundStates = Khewareports::getRefundStatesSQL();
+        $refundDateCondition = '
+            AND (
+                NOT(
+                    o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                    AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                )
+                OR (
+                    (
+                        o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
+                        AND o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
+                    )
+                    AND o.current_state NOT IN (' . $refundStates . ')
+                )
+            )';
+        $sql = '
+        SELECT
+            IFNULL(SUM(CASE WHEN t.tax_count = 0 THEN t.base ELSE 0 END), 0) as tax_exempt,
+            IFNULL(SUM(CASE WHEN t.tax_count = 1 AND t.has_gst = 1 THEN t.base ELSE 0 END), 0) as one_tax_gst
+        FROM (
+            SELECT
+                od.id_order_detail,
+                od.total_price_tax_excl as base,
+                COUNT(odt.id_order_detail) as tax_count,
+                MAX(CASE WHEN odt.id_tax = ' . (int)self::TAX_ID_GST . ' THEN 1 ELSE 0 END) as has_gst
+            FROM ' . _DB_PREFIX_ . 'orders o
+            INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON od.id_order = o.id_order
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON odt.id_order_detail = od.id_order_detail
+            WHERE o.date_add >= "' . $this->date_from . '"
+            AND o.date_add <= "' . $this->date_to . '"
+            AND o.current_state NOT IN (' . $excludedStates . ')
+            ' . $refundDateCondition . '
+            GROUP BY od.id_order_detail
+        ) t
+        ';
+        $row = Db::getInstance()->getRow($sql);
+        return array(
+            'tax_exempt' => $row ? (float)$row['tax_exempt'] : 0,
+            'one_tax_gst' => $row ? (float)$row['one_tax_gst'] : 0,
+        );
     }
 }
