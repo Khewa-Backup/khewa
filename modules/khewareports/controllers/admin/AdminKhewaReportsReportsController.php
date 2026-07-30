@@ -41,7 +41,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
     public function initContent()
     {
         parent::initContent();
-        
+
         // Add jQuery UI datepicker
         $this->addJqueryUI('ui.datepicker');
         

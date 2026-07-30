@@ -2421,7 +2421,65 @@ class HsPointOfSalePro extends PosPaymentModule
         $tax_detail = $this->getProductsTaxDetail($products);
         $total_product_discount = $this->getTotalProductDiscount($products);
         $total_order_discount = $this->getTotalOrderDiscount($order_collections, $return_products, true);
+        // Tax-EXCLUDED order discount — used by the receipt so the percentage-discount
+        // tax lines are correct on EVERY print path (live sale and re-print), instead of
+        // depending on the transient window.rockposorder global that only exists at checkout.
+        $total_order_discount_tax_excl = $this->getTotalOrderDiscount($order_collections, $return_products, false);
         $total_order_gift_discount = $this->getTotalOrderGiftDiscount($order_collections);
+
+        // ================= OWNER'S DISCOUNT/TAX RULE =================
+        // - Percentage discounts  → deducted BEFORE tax: receipt shows tax on the
+        //   discounted base and the discount tax-excluded.
+        // - Voucher / credit slip / gift card / fixed discounts → deducted AFTER tax:
+        //   tax stays on the full base and the discount is shown tax-included (unchanged).
+        // A percentage discount is computed on tax-inclusive prices, so its tax-incl value
+        // differs from its tax-excl value; a fixed/voucher/gift discount has them equal.
+        // That difference (the "tax component") is the discriminator — no schema lookup
+        // needed. Applied only to a plain sale receipt (not returns/exchanges).
+        $total_order_discount_display = $total_order_discount; // default: tax-incl (after-tax rule)
+        $order_discount_tax_component = (float) $total_order_discount - (float) $total_order_discount_tax_excl;
+        if ($order_discount_tax_component > 0.001
+            && $total_products > 0
+            && !$is_return
+            && empty($return_products)
+            && empty($exchange_products)
+        ) {
+            // Actual product tax charged on the discounted base = total paid − discounted
+            // product base − shipping. Distribute it across the tax rows in proportion to
+            // the current (full-base) amounts so per-rate split and the total both stay exact.
+            $target_product_tax = (float) $total_paid
+                - ((float) $total_products - (float) $total_order_discount_tax_excl)
+                - (float) $total_shipping_tax_incl;
+            $current_tax_sum = 0;
+            foreach ($tax_detail as $td) {
+                $current_tax_sum += (float) $td['tax_amount'];
+            }
+            if ($current_tax_sum > 0 && $target_product_tax > 0) {
+                $scale = $target_product_tax / $current_tax_sum;
+                // Scale the summed per-rate tax rows.
+                foreach ($tax_detail as $k => $td) {
+                    $tax_detail[$k]['tax_amount'] = Tools::ps_round(
+                        (float) $td['tax_amount'] * $scale,
+                        PosConstants::POS_PRICE_COMPUTE_PRECISION
+                    );
+                }
+                // Also scale the PER-PRODUCT tax detail (the receipt sums these per rate for
+                // its tax lines), so the printed tax rows match the discounted base too.
+                foreach ($products as $pk => $product) {
+                    if (!empty($product['tax_detail']) && is_array($product['tax_detail'])) {
+                        foreach ($product['tax_detail'] as $tk => $ptax) {
+                            $products[$pk]['tax_detail'][$tk]['tax_amount'] = Tools::ps_round(
+                                (float) $ptax['tax_amount'] * $scale,
+                                PosConstants::POS_PRICE_COMPUTE_PRECISION
+                            );
+                        }
+                    }
+                }
+            }
+            // Discount shown tax-excluded (deducted before tax).
+            $total_order_discount_display = $total_order_discount_tax_excl;
+        }
+        // ============================================================
 
         if ($vouchers) {
             $vouchers = array_values($vouchers);
@@ -2461,7 +2519,9 @@ class HsPointOfSalePro extends PosPaymentModule
             'product' => $products,
             'total_items' => $this->getNbProducts($products),
             'total_product_discount' => Tools::ps_round($total_product_discount, PosConstants::POS_PRICE_COMPUTE_PRECISION),
-            'total_order_discount' => Tools::ps_round($total_order_discount, PosConstants::POS_PRICE_COMPUTE_PRECISION),
+            'total_order_discount' => Tools::ps_round($total_order_discount_display, PosConstants::POS_PRICE_COMPUTE_PRECISION),
+            'total_order_discount_tax_excl' => Tools::ps_round($total_order_discount_tax_excl, PosConstants::POS_PRICE_COMPUTE_PRECISION),
+            // you_saved keeps the full (tax-incl) saving regardless of display rule — unchanged.
             'you_saved' => Tools::ps_round($total_product_discount + $total_order_discount, $currency->decimals * _PS_PRICE_DISPLAY_PRECISION_),
             'tax_detail' => $tax_detail,
             'note' => $note['public'] ? $note['note'] : null,

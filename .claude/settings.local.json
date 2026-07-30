@@ -17,7 +17,10 @@
       "Edit(/.claude/**)",
       "Write(/.claude/**)",
       "Bash(grep -E \"\\\\.php$|^d\")",
-      "Bash(grep -rn \"amount_refunded\\\\|refund_amount\" /Volumes/Workstation/khewa/1.7.8.5-live/modules/stripe_official/*.php)"
+      "Bash(grep -rn \"amount_refunded\\\\|refund_amount\" /Volumes/Workstation/khewa/1.7.8.5-live/modules/stripe_official/*.php)",
+      "Bash(mkdir -p admin556cvt7923/backups)",
+      "Bash(cp admin556cvt7923/export/index.php admin556cvt7923/backups/index.php)",
+      "Bash(cp admin556cvt7923/export/.htaccess admin556cvt7923/backups/.htaccess)"
     ]
   }
 }

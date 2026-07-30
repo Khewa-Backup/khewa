@@ -52992,7 +52992,14 @@
 		moveItemBeforeTax('subTtlAfterDiscount');
 
 		const khewaCurrency = window.rockposorder?.printData?.currency;
-		const tDiscountWoTax = window.rockposorder?.total?.discount;
+		// Tax-excl order discount for this receipt. Use the receipt payload first (it is
+		// authoritative for the exact receipt being printed, on both live sale and re-print);
+		// fall back to the live-checkout global only if the payload field is absent.
+		// window.rockposorder is a persistent global set only at checkout, so on a re-print
+		// it may be stale/undefined — which is why the payload must take precedence.
+		const tDiscountWoTax = (e.totalOrderDiscountTaxExcl != null)
+			? e.totalOrderDiscountTaxExcl
+			: window.rockposorder?.total?.discount;
 
 		function khewaFormatNum(value, currency) {
 			if (value == null || currency == null) return value;
