@@ -4388,10 +4388,10 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     $cartrule->description = sprintf($this->module->i18n['credit_card_slip_for_order'], $order->id);
                     foreach ($language_ids as $id_lang) {
                         // Define a temporary name
-                        $cartrule->name[$id_lang] = 'V0C' . (int) ($order->id_customer) . 'O' . (int) ($order->id);
+                        $cartrule->name[$id_lang] = 'V0C' . (int) ($order->id_customer) . 'P' . (int) ($order->id);
                     }
                     // Define a temporary code
-                    $cartrule->code = 'V0C' . (int) ($order->id_customer) . 'O' . (int) ($order->id);
+                    $cartrule->code = 'V0C' . (int) ($order->id_customer) . 'P' . (int) ($order->id);
 
                     $cartrule->quantity = 1;
                     $cartrule->quantity_per_user = 1;
@@ -4425,9 +4425,9 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                         if (array_sum($success) >= count($success)) {
                             // Update the voucher code and name
                             foreach ($language_ids as $id_lang) {
-                                $cartrule->name[$id_lang] = 'V' . (int) ($cartrule->id) . 'C' . (int) ($order->id_customer) . 'O' . $order->id;
+                                $cartrule->name[$id_lang] = 'V' . (int) ($cartrule->id) . 'C' . (int) ($order->id_customer) . 'P' . $order->id;
                             }
-                            $cartrule->code = 'V' . (int) ($cartrule->id) . 'C' . (int) ($order->id_customer) . 'O' . $order->id;
+                            $cartrule->code = 'V' . (int) ($cartrule->id) . 'C' . (int) ($order->id_customer) . 'P' . $order->id;
                             $voucher_code = array(
                                 'code' => $cartrule->code,
                                 'id_cart_rule' => $cartrule->id,
