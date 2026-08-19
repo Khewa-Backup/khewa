@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>khewacorechanges</name>
+    <displayName><![CDATA[Khewa Core Changes]]></displayName>
+    <version><![CDATA[1.0.0]]></version>
+    <description><![CDATA[Holds Khewa's custom overrides/core changes so they survive PrestaShop and module updates.]]></description>
+    <author><![CDATA[Khewa]]></author>
+    <tab><![CDATA[administration]]></tab>
+    <is_configurable>0</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>
