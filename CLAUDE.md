@@ -1,15 +1,15 @@
 # Project Overview
 
-This is a **PrestaShop 1.7.8.5** installation for Khewa. Most work in this repo concerns two custom modules:
+This is a **PrestaShop 1.7.8.5** installation for Khewa. A lot of work in this repo concerns two custom modules:
 
 1. **hspointofsalepro** (RockPOS) — the Point of Sale module by Hamsa Technologies. Version 4.2.7.
 2. **khewareports** — internal Khewa Reports & Quick Actions module.
 
-Other modules are touched occasionally, but unless the user says otherwise, assume any new chat is about one of the two above.
+But this is not a hard restriction — the repo is a full PrestaShop install and any module, override, or core file may be the right place to work, depending on what the user is actually describing (e.g. a cart rule / checkout / payment bug can live in `stripe_official`, core `classes/`, or elsewhere).
 
 ## Default assumption when starting a chat
 
-When the user opens a new conversation without naming a module, the request is most likely about **hspointofsalepro** or **khewareports**. If it is ambiguous, ask which one — do not guess and start editing the wrong module.
+Only default to **hspointofsalepro** or **khewareports** when the user's description actually points there — POS/till behavior, receipts, RockPOS admin screens, or the Khewa Reports/Quick Actions admin screens. If the request names or clearly implicates a different module or area (e.g. "cart rule", "Stripe payment", "shipping calculation"), follow the evidence there instead — do not force it into one of the two default modules just because they're the usual ones. If it's genuinely ambiguous which module is involved, ask rather than guessing.
 
 ## Module locations
 

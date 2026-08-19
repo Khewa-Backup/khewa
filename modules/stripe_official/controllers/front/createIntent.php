@@ -202,6 +202,11 @@ class stripe_officialCreateIntentModuleFrontController extends ModuleFrontContro
 
     private function getAmount($cart, $countryId, $selectedCarrierId)
     {
+        // Strip any cart rule that's no longer valid (e.g. cart dropped below its
+        // minimum amount) before calculating what to charge, so the amount sent
+        // to Stripe always matches the order that will actually be created.
+        $this->prestashopCartService->refreshCart($cart);
+
         $currency = new Currency($cart->id_currency);
         $precision = 2; // default precision
         if (isset($currency->precision)) {
