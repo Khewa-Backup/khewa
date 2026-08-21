@@ -24,7 +24,15 @@ class Khewareports extends Module
     const DEFAULT_PM_VOUCHER = 'Voucher';
     const DEFAULT_PM_CREDIT_SLIP = 'Credit Slip, Avoir, avoir, credit slip';
     const DEFAULT_PM_POS_MODULE = 'hspointofsalepro';
-    
+
+    // Stripe refund ledger: one row per refund made through Stripe (dashboard or module form).
+    // The Stripe module only stores the cumulative refunded amount in ps_stripe_payment.refund and
+    // never writes an order_slip, so the reports could not see Stripe refunds at all. We record a
+    // per-refund row (amount + date) every time a Stripe order enters a refund state.
+    const STRIPE_REFUND_TABLE = 'khewareports_stripe_refund';
+    const STRIPE_MODULE_NAME = 'stripe_official';
+    const CONFIG_STRIPE_REFUND_SETUP = 'KHEWA_STRIPE_REFUND_SETUP';
+
 
 
     public function __construct()
@@ -47,8 +55,10 @@ class Khewareports extends Module
     {
         return parent::install() &&
             $this->registerHook('backOfficeHeader') &&
+            $this->registerHook('actionOrderHistoryAddAfter') &&
             $this->installTabs() &&
-            $this->installDefaultConfig();
+            $this->installDefaultConfig() &&
+            self::ensureStripeRefundSetup();
     }
     
     /**
@@ -528,6 +538,57 @@ class Khewareports extends Module
     {
         return implode(',', self::getSalesExcludedStateIds());
     }
+
+    /**
+     * Ready-to-use SQL condition that decides whether an order row counts as a sale.
+     * Replaces the flat "current_state NOT IN (6,8,25)" used in Sales, SBPM, Tax and Summary queries.
+     *
+     * Canceled / Payment error are never sales. Partial refund (25) is only a refund record when the
+     * POS processed the refund: RockPOS adds a NEW order row (same reference) in state 25 and stamps
+     * possible_refund_date, and that row's amount is the refund — so "POS row, or any row with a
+     * possible_refund_date" is a refund record (unchanged behaviour). An ONLINE order (Stripe...) that
+     * was merely put into state 25 by hand has no possible_refund_date: it is still the original sale
+     * row, keeps counting as a sale on its order date, and its refund is reported separately on the
+     * refund date (see KhewaReportsData::getStripeRefundRows()).
+     *
+     * @param string $alias Orders table alias (e.g. "o")
+     * @return string e.g. "(o.current_state NOT IN (6,8) AND NOT (o.current_state = 25 AND ((o.module = "hspointofsalepro") OR o.possible_refund_date > "1000-01-01 00:00:00")))"
+     */
+    public static function buildSalesExclusionCondition($alias = 'o')
+    {
+        $states = self::getConfiguredStates();
+        $hardExcluded = array_values(array_unique(array_filter(array(
+            (int)$states['canceled'],
+            (int)$states['payment_error']
+        ), function ($v) { return $v > 0; })));
+        if (empty($hardExcluded)) {
+            $hardExcluded = array((int)self::DEFAULT_STATE_CANCELED, (int)self::DEFAULT_STATE_PAYMENT_ERROR);
+        }
+        $partialRefund = (int)$states['partial_refund'];
+        if ($partialRefund <= 0) {
+            $partialRefund = (int)self::DEFAULT_STATE_PARTIAL_REFUND;
+        }
+
+        $condition = $alias . '.current_state NOT IN (' . implode(',', $hardExcluded) . ')'
+            . ' AND NOT (' . $alias . '.current_state = ' . $partialRefund
+            . ' AND ' . self::buildPartialRefundRecordCondition($alias) . ')';
+
+        return '(' . $condition . ')';
+    }
+
+    /**
+     * SQL: the row is a POS-processed partial refund record (see buildSalesExclusionCondition()).
+     * possible_refund_date is a NOT NULL DATETIME that holds 0000-00-00 when unset, so "set" is
+     * tested by comparing against a real date instead of the zero literal (strict SQL modes reject it).
+     *
+     * @param string $alias Orders table alias
+     * @return string
+     */
+    public static function buildPartialRefundRecordCondition($alias = 'o')
+    {
+        return '(' . self::buildPosModuleCondition($alias . '.module')
+            . ' OR ' . $alias . '.possible_refund_date > "1000-01-01 00:00:00")';
+    }
     
     /**
      * Get FULL refund state IDs (refunded, refunded_old). NOT partial refund.
@@ -844,6 +905,185 @@ class Khewareports extends Module
         }
         
         return '(' . implode(' OR ', $conditions) . ')';
+    }
+
+    /* ======================================================================
+     * Stripe refund ledger
+     * ====================================================================== */
+
+    /**
+     * Runs on every back-office page. Self-heals an already-installed module: creates the ledger
+     * table, registers the order-history hook and backfills historical Stripe refunds once.
+     */
+    public function hookBackOfficeHeader($params)
+    {
+        self::ensureStripeRefundSetup();
+    }
+
+    /**
+     * Fired by OrderHistory::add() for every order state change (Stripe webhook, module refund form,
+     * or a manual change in the order page). When a Stripe order enters a refund state we compare
+     * ps_stripe_payment.refund (cumulative, already updated by the Stripe module before it changes
+     * the state) with what is already in the ledger and record the difference as a new refund row.
+     */
+    public function hookActionOrderHistoryAddAfter($params)
+    {
+        if (empty($params['order_history']) || !Validate::isLoadedObject($params['order_history'])) {
+            return;
+        }
+        $orderHistory = $params['order_history'];
+        if (!in_array((int)$orderHistory->id_order_state, self::getStripeRefundStateIds())) {
+            return;
+        }
+        $order = new Order((int)$orderHistory->id_order);
+        if (!Validate::isLoadedObject($order) || $order->module !== self::STRIPE_MODULE_NAME) {
+            return;
+        }
+        self::ensureStripeRefundSetup();
+        self::recordStripeRefund($order, date('Y-m-d H:i:s'), 'hook');
+    }
+
+    /**
+     * Order states that mean "money went back to the customer through Stripe":
+     * the Stripe module's own partial refund state, the PrestaShop refund state, and the
+     * refunded / partial refund states configured for the reports.
+     * @return int[]
+     */
+    public static function getStripeRefundStateIds()
+    {
+        $states = self::getConfiguredStates();
+        $ids = array(
+            (int)Configuration::get('STRIPE_PARTIAL_REFUND'),
+            (int)Configuration::get('PS_OS_REFUND'),
+            (int)$states['refunded'],
+            (int)$states['refunded_old'],
+            (int)$states['partial_refund'],
+        );
+        return array_values(array_unique(array_filter($ids, function ($v) { return $v > 0; })));
+    }
+
+    /**
+     * Create the ledger table, register the hook and backfill once. Cheap after the first run
+     * (a single Configuration::get, which PrestaShop caches).
+     * @return bool
+     */
+    public static function ensureStripeRefundSetup()
+    {
+        static $done = false;
+        if ($done) {
+            return true;
+        }
+        $done = true;
+        if (Configuration::get(self::CONFIG_STRIPE_REFUND_SETUP) === '1') {
+            return true;
+        }
+
+        $created = Db::getInstance()->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . self::STRIPE_REFUND_TABLE . '` (
+                `id_stripe_refund` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `id_order` INT(10) UNSIGNED NOT NULL,
+                `id_cart` INT(10) UNSIGNED NOT NULL,
+                `reference` VARCHAR(9) NOT NULL DEFAULT "",
+                `amount` DECIMAL(20,6) NOT NULL DEFAULT 0,
+                `refund_date` DATETIME NOT NULL,
+                `source` VARCHAR(16) NOT NULL DEFAULT "",
+                `date_add` DATETIME NOT NULL,
+                PRIMARY KEY (`id_stripe_refund`),
+                KEY `id_order` (`id_order`),
+                KEY `id_cart` (`id_cart`),
+                KEY `refund_date` (`refund_date`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8');
+        if (!$created) {
+            return false;
+        }
+
+        $module = Module::getInstanceByName('khewareports');
+        if ($module && !$module->isRegisteredInHook('actionOrderHistoryAddAfter')) {
+            $module->registerHook('actionOrderHistoryAddAfter');
+        }
+
+        self::backfillStripeRefunds();
+        Configuration::updateValue(self::CONFIG_STRIPE_REFUND_SETUP, '1');
+        return true;
+    }
+
+    /**
+     * Record the not-yet-recorded part of a Stripe order's refunded total as one ledger row.
+     * Works per cart because ps_stripe_payment is keyed by cart (and may hold duplicate rows).
+     *
+     * @param Order $order
+     * @param string $refundDate Y-m-d H:i:s
+     * @param string $source 'hook' | 'backfill'
+     * @return bool true when a row was written
+     */
+    public static function recordStripeRefund(Order $order, $refundDate, $source)
+    {
+        $idCart = (int)$order->id_cart;
+        if ($idCart <= 0) {
+            return false;
+        }
+        $refundedTotal = (float)Db::getInstance()->getValue('
+            SELECT MAX(refund) FROM `' . _DB_PREFIX_ . 'stripe_payment` WHERE id_cart = ' . $idCart);
+        if ($refundedTotal <= 0) {
+            return false;
+        }
+        $alreadyRecorded = (float)Db::getInstance()->getValue('
+            SELECT IFNULL(SUM(amount), 0) FROM `' . _DB_PREFIX_ . self::STRIPE_REFUND_TABLE . '` WHERE id_cart = ' . $idCart);
+        $delta = round($refundedTotal - $alreadyRecorded, 2);
+        if ($delta < 0.01) {
+            return false;
+        }
+        return Db::getInstance()->insert(self::STRIPE_REFUND_TABLE, array(
+            'id_order' => (int)$order->id,
+            'id_cart' => $idCart,
+            'reference' => pSQL($order->reference),
+            'amount' => (float)$delta,
+            'refund_date' => pSQL($refundDate),
+            'source' => pSQL($source),
+            'date_add' => date('Y-m-d H:i:s'),
+        ));
+    }
+
+    /**
+     * One-time backfill of refunds made before the ledger existed. For each Stripe order with a
+     * refunded amount, the refund date is the first time the order entered a refund state after
+     * it was placed (the Stripe webhook sets that state at refund time). Orders refunded several
+     * times before the ledger existed get a single row at the first refund date — the Stripe
+     * module does not keep a per-refund history to split them.
+     */
+    public static function backfillStripeRefunds()
+    {
+        $refundStates = self::getStripeRefundStateIds();
+        if (empty($refundStates)) {
+            return;
+        }
+        $rows = Db::getInstance()->executeS('
+            SELECT o.id_order,
+                   (SELECT MIN(h.date_add) FROM `' . _DB_PREFIX_ . 'order_history` h
+                    WHERE h.id_order = o.id_order
+                    AND h.id_order_state IN (' . implode(',', $refundStates) . ')
+                    AND h.date_add > o.date_add) AS refund_state_date,
+                   MAX(sp.date_add) AS stripe_date
+            FROM `' . _DB_PREFIX_ . 'orders` o
+            INNER JOIN `' . _DB_PREFIX_ . 'stripe_payment` sp ON sp.id_cart = o.id_cart
+            WHERE o.module = "' . pSQL(self::STRIPE_MODULE_NAME) . '"
+            AND sp.refund > 0
+            GROUP BY o.id_order
+            ORDER BY o.id_order ASC');
+        if (!$rows) {
+            return;
+        }
+        foreach ($rows as $row) {
+            $order = new Order((int)$row['id_order']);
+            if (!Validate::isLoadedObject($order)) {
+                continue;
+            }
+            $refundDate = !empty($row['refund_state_date']) ? $row['refund_state_date'] : $row['stripe_date'];
+            if (empty($refundDate) || $refundDate === '0000-00-00 00:00:00') {
+                $refundDate = $order->date_upd;
+            }
+            self::recordStripeRefund($order, $refundDate, 'backfill');
+        }
     }
 }
 

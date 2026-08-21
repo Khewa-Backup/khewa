@@ -317,7 +317,7 @@ class KhewaReportsData
                     SELECT MIN(o.id_order) as id_order, o.reference
                     FROM ' . _DB_PREFIX_ . 'orders o
                     WHERE o.date_add >= "' . $this->date_from . '" AND o.date_add <= "' . $this->date_to . '"
-                    AND o.current_state NOT IN (' . $excludedStates . ')
+                    AND ' . Khewareports::buildSalesExclusionCondition('o') . '
                     AND (
                         NOT(
                             o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
@@ -343,7 +343,7 @@ class KhewaReportsData
         
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         AND (
             NOT(
                 o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
@@ -423,25 +423,12 @@ class KhewaReportsData
         )
         ORDER BY o.possible_refund_date ASC, o.id_order ASC
         ';
-        
-
-
-        
-
 
         $rows = Db::getInstance()->executeS($sql);
         if (!$rows) {
-            return array();
+            $rows = array();
         }
-        
-        $posModules = $this->posModules;
-        $isPos = function ($module) use ($posModules) {
-            if (empty($posModules)) {
-                return (strtolower($module) === 'hspointofsalepro');
-            }
-            return in_array($module, $posModules);
-        };
-        
+
         $out = array();
         foreach ($rows as $r) {
             $paymentMethod = isset($r['first_payment_method']) ? $r['first_payment_method'] : $r['payment'];
@@ -451,7 +438,7 @@ class KhewaReportsData
                 'reference' => $r['reference'],
                 'refund_date' => $refundDate,
                 'amount' => (float)$r['amount'],
-                'is_online' => !$isPos($r['module']),
+                'is_online' => !$this->isPosModule($r['module']),
                 'payment_method_normalized' => Khewareports::normalizePaymentMethod($paymentMethod),
                 'invoice_number' => $r['invoice_number'],
                 'order_date' => $r['order_date'],
@@ -462,7 +449,125 @@ class KhewaReportsData
                 'refund_shipping_tax_incl' => (float)$r['refund_shipping_tax_incl'],
                 'refund_shipping_tax_excl' => (float)$r['refund_shipping_tax_excl'],
                 'delivery_country' => isset($r['delivery_country']) ? $r['delivery_country'] : '',
-                'delivery_state' => isset($r['delivery_state']) ? $r['delivery_state'] : ''
+                'delivery_state' => isset($r['delivery_state']) ? $r['delivery_state'] : '',
+                'source' => 'pos_partial'
+            );
+        }
+
+        // Stripe refunds (dashboard or module form) live in the khewareports ledger, not in
+        // order_slip / possible_refund_date. Same row shape so every consumer (SBPM Refund Online,
+        // Refunds tab, Sales refund total) picks them up without further changes.
+        foreach ($this->getStripeRefundRows() as $stripeRefund) {
+            $out[] = $stripeRefund;
+        }
+        return $out;
+    }
+
+    /**
+     * Stripe refunds dated within the range, from the khewareports ledger (see
+     * Khewareports::recordStripeRefund). The original order stays a sale on its order date; this
+     * is the refund side, dated by the refund.
+     *
+     * Skipped: orders that also have an order_slip (the slip path already reports them — e.g. a
+     * manual credit slip made for the same Stripe refund), orders in canceled / payment-error
+     * states (their sale is not counted, so their refund must not be deducted either), and orders
+     * the POS already processed as a partial refund record (state 25 + possible_refund_date).
+     *
+     * The refunded amount is money, not product lines: the whole amount is treated as products
+     * (tax incl.), and the tax-excl. part is derived from the order's own products incl/excl ratio.
+     *
+     * @return array Rows shaped like getPartialRefundOrders() entries, with 'source' => 'stripe'
+     */
+    public function getStripeRefundRows()
+    {
+        $table = _DB_PREFIX_ . Khewareports::STRIPE_REFUND_TABLE;
+        if (!Db::getInstance()->executeS('SHOW TABLES LIKE "' . pSQL($table) . '"')) {
+            return array();
+        }
+        $states = Khewareports::getConfiguredStates();
+        $notSaleStates = array_values(array_filter(array(
+            (int)$states['canceled'],
+            (int)$states['payment_error']
+        ), function ($v) { return $v > 0; }));
+        if (empty($notSaleStates)) {
+            $notSaleStates = array((int)Khewareports::DEFAULT_STATE_CANCELED, (int)Khewareports::DEFAULT_STATE_PAYMENT_ERROR);
+        }
+        $partialRefundStateId = (int)$states['partial_refund'];
+        if ($partialRefundStateId <= 0) {
+            $partialRefundStateId = (int)Khewareports::DEFAULT_STATE_PARTIAL_REFUND;
+        }
+
+        $sql = '
+        SELECT
+            r.id_stripe_refund,
+            r.id_order,
+            r.amount,
+            DATE_FORMAT(r.refund_date, "%Y-%m-%d") as refund_date,
+            o.reference,
+            o.invoice_number,
+            o.current_state,
+            DATE_FORMAT(o.date_add, "%Y-%m-%d") as order_date,
+            o.payment,
+            o.module,
+            o.total_paid_tax_incl,
+            o.total_products,
+            o.total_products_wt,
+            dcl.name as delivery_country,
+            ds.name as delivery_state,
+            (
+                SELECT op.payment_method
+                FROM ' . _DB_PREFIX_ . 'order_payment op
+                WHERE op.order_reference = o.reference AND op.amount > 0
+                ORDER BY op.id_order_payment ASC
+                LIMIT 1
+            ) as first_payment_method
+        FROM `' . $table . '` r
+        INNER JOIN ' . _DB_PREFIX_ . 'orders o ON o.id_order = r.id_order
+        LEFT JOIN ' . _DB_PREFIX_ . 'address da ON o.id_address_delivery = da.id_address
+        LEFT JOIN ' . _DB_PREFIX_ . 'country_lang dcl ON da.id_country = dcl.id_country AND dcl.id_lang = ' . $this->id_lang . '
+        LEFT JOIN ' . _DB_PREFIX_ . 'state ds ON da.id_state = ds.id_state
+        WHERE r.refund_date >= "' . $this->date_from . '"
+        AND r.refund_date <= "' . $this->date_to . '"
+        AND r.amount > 0
+        AND o.current_state NOT IN (' . implode(',', $notSaleStates) . ')
+        AND ' . $this->getNotPosModuleCondition('o.module') . '
+        AND NOT (o.current_state = ' . $partialRefundStateId . ' AND ' . Khewareports::buildPartialRefundRecordCondition('o') . ')
+        AND NOT EXISTS (SELECT 1 FROM ' . _DB_PREFIX_ . 'order_slip os WHERE os.id_order = o.id_order)
+        ORDER BY r.refund_date ASC, r.id_stripe_refund ASC
+        ';
+        $rows = Db::getInstance()->executeS($sql);
+        if (!$rows) {
+            return array();
+        }
+
+        $out = array();
+        foreach ($rows as $r) {
+            $amount = (float)$r['amount'];
+            $productsIncl = (float)$r['total_products_wt'];
+            $productsExcl = (float)$r['total_products'];
+            $amountExcl = ($productsIncl > 0 && $productsExcl > 0) ? $amount * ($productsExcl / $productsIncl) : $amount;
+            $paymentMethod = !empty($r['first_payment_method']) ? $r['first_payment_method'] : $r['payment'];
+            $out[] = array(
+                'id_order' => $r['id_order'],
+                'reference' => $r['reference'],
+                'refund_date' => $r['refund_date'],
+                'amount' => $amount,
+                'is_online' => true,
+                'payment_method_normalized' => Khewareports::normalizePaymentMethod($paymentMethod),
+                'invoice_number' => $r['invoice_number'],
+                'order_date' => $r['order_date'],
+                'payment' => $r['payment'],
+                'module' => $r['module'],
+                'refund_products_tax_incl' => $amount,
+                'refund_products_tax_excl' => $amountExcl,
+                'refund_shipping_tax_incl' => 0.0,
+                'refund_shipping_tax_excl' => 0.0,
+                'delivery_country' => isset($r['delivery_country']) ? $r['delivery_country'] : '',
+                'delivery_state' => isset($r['delivery_state']) ? $r['delivery_state'] : '',
+                'source' => 'stripe',
+                'id_stripe_refund' => (int)$r['id_stripe_refund'],
+                'current_state' => (int)$r['current_state'],
+                'is_partial' => ($amount + 0.005 < (float)$r['total_paid_tax_incl']) ? 1 : 0
             );
         }
         return $out;
@@ -557,9 +662,11 @@ class KhewaReportsData
         }
         
         // Merge partial refund orders (detected by state + possible_refund_date or date_add; no order_slip required)
+        // and Stripe refunds (khewareports ledger; no order_slip either)
         foreach ($partialRefunds as $partialRefund) {
             $totalIncl = $partialRefund['amount'];
             $totalExcl = $partialRefund['refund_products_tax_excl'] + $partialRefund['refund_shipping_tax_excl'];
+            $isStripe = (isset($partialRefund['source']) && $partialRefund['source'] === 'stripe');
             $slipRows[] = array(
                 'id_order' => $partialRefund['id_order'],
                 'reference' => $partialRefund['reference'],
@@ -567,9 +674,9 @@ class KhewaReportsData
                 'invoice_number' => $partialRefund['invoice_number'],
                 'payment' => $partialRefund['payment'],
                 'payment_module' => $partialRefund['module'],
-                'current_state' => 25,
-                'order_state_name' => 'Partial refund',
-                'id_order_slip' => 'partial-' . $partialRefund['id_order'],
+                'current_state' => $isStripe ? $partialRefund['current_state'] : 25,
+                'order_state_name' => $isStripe ? 'Stripe refund' : 'Partial refund',
+                'id_order_slip' => $isStripe ? 'stripe-' . $partialRefund['id_stripe_refund'] : 'partial-' . $partialRefund['id_order'],
                 'refund_date' => $partialRefund['refund_date'],
                 'refund_products_tax_incl' => $partialRefund['refund_products_tax_incl'],
                 'refund_products_tax_excl' => $partialRefund['refund_products_tax_excl'],
@@ -577,12 +684,12 @@ class KhewaReportsData
                 'refund_shipping_tax_excl' => $partialRefund['refund_shipping_tax_excl'],
                 'total_refund_tax_incl' => $totalIncl,
                 'total_refund_tax_excl' => $totalExcl,
-                'is_partial_refund' => 1,
+                'is_partial_refund' => $isStripe ? $partialRefund['is_partial'] : 1,
                 'id_order_detail' => null,
                 'refunded_quantity' => 1,
                 'product_refund_tax_incl' => $totalIncl,
                 'product_refund_tax_excl' => $totalExcl,
-                'product_name' => 'Partial refund (state 25)',
+                'product_name' => $isStripe ? 'Stripe refund (' . ($partialRefund['is_partial'] ? 'partial' : 'full') . ')' : 'Partial refund (state 25)',
                 'unit_price_tax_incl' => $totalIncl,
                 'unit_price_tax_excl' => $totalExcl,
                 'refund_gst_amount' => round($totalExcl * 0.05, 2),
@@ -794,7 +901,7 @@ class KhewaReportsData
         FROM ' . _DB_PREFIX_ . 'orders o
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         AND (
             NOT(
                 o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
@@ -1128,7 +1235,7 @@ class KhewaReportsData
         FROM ' . _DB_PREFIX_ . 'orders o
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         ';
         $allOrders = Db::getInstance()->executeS($sql);
@@ -1156,7 +1263,7 @@ class KhewaReportsData
             FROM ' . _DB_PREFIX_ . 'orders o
             WHERE o.date_add >= "' . $this->date_from . '"
             AND o.date_add <= "' . $this->date_to . '"
-            AND o.current_state NOT IN (' . $excludedStates . ')
+            AND ' . Khewareports::buildSalesExclusionCondition('o') . '
             ' . $refundDateCondition . '
         )
         AND op.amount > 0
@@ -1327,7 +1434,7 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'tax_lang tl ON t.id_tax = tl.id_tax AND tl.id_lang = ' . $this->id_lang . '
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         ORDER BY t.rate ASC
         ';
@@ -1504,7 +1611,7 @@ class KhewaReportsData
             FROM ' . _DB_PREFIX_ . 'orders o 
             WHERE o.date_add >= "' . $this->date_from . '"
             AND o.date_add <= "' . $this->date_to . '"
-            AND o.current_state NOT IN (' . $excludedStates . ')
+            AND ' . Khewareports::buildSalesExclusionCondition('o') . '
             ' . $refundDateCondition . '
             AND ' . $this->getNotPosModuleCondition('o.module');
         
@@ -1513,7 +1620,7 @@ class KhewaReportsData
             FROM ' . _DB_PREFIX_ . 'orders o 
             WHERE o.date_add >= "' . $this->date_from . '"
             AND o.date_add <= "' . $this->date_to . '"
-            AND o.current_state NOT IN (' . $excludedStates . ')
+            AND ' . Khewareports::buildSalesExclusionCondition('o') . '
             ' . $refundDateCondition . '
             AND ' . $this->getPosModuleCondition('o.module');
         
@@ -1664,7 +1771,7 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%voucher%"
@@ -1707,7 +1814,7 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         AND ' . $this->getPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%voucher%"
@@ -1750,7 +1857,7 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND LOWER(cr.description) LIKE "%slip%"
@@ -1793,7 +1900,7 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         AND ' . $this->getPosModuleCondition('o.module') . '
         AND LOWER(cr.description) LIKE "%slip%"
@@ -1827,7 +1934,7 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%promocode%"
@@ -1851,7 +1958,7 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         AND ' . $this->getPosModuleCondition('o.module') . '
         AND LOWER(ocr.name) LIKE "%point of sale%"
@@ -1865,7 +1972,7 @@ class KhewaReportsData
         FROM ' . _DB_PREFIX_ . 'orders o
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         AND ' . $this->getNotPosModuleCondition('o.module') . '
         ';
@@ -1878,7 +1985,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_invoice_tax oit ON oit.id_order_invoice = oi.id_order_invoice
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCondition . '
         AND ' . $this->getNotPosModuleCondition('o.module') . '
         AND oit.type = "shipping"
@@ -2108,7 +2215,7 @@ class KhewaReportsData
 
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         AND (
             NOT(
                 o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
@@ -2146,7 +2253,7 @@ class KhewaReportsData
         WHERE oit.type = "wrapping"
         AND o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         AND (
             NOT(
                 o.possible_refund_date >= "' . $this->date_from . '" AND o.possible_refund_date <= "' . $this->date_to . '"
@@ -2337,7 +2444,7 @@ class KhewaReportsData
         
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCond . '
         ';
         
@@ -2354,7 +2461,7 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON cr.id_cart_rule = ocr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCond . '
         AND (LOWER(ocr.name) LIKE "%gift%" OR LOWER(ocr.name) LIKE "%cadeau%")
         ';
@@ -2368,7 +2475,7 @@ class KhewaReportsData
         LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON cr.id_cart_rule = ocr.id_cart_rule
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCond . '
         AND LOWER(ocr.name) LIKE "%voucher%"
         ';
@@ -2382,7 +2489,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_invoice_tax oit ON oi.id_order_invoice = oit.id_order_invoice
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCond . '
         AND oit.id_tax = ' . self::TAX_ID_GST . '
         AND oit.type = "shipping"
@@ -2397,7 +2504,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_invoice_tax oit ON oi.id_order_invoice = oit.id_order_invoice
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCond . '
         AND oit.id_tax IN (' . self::TAX_IDS_QST . ')
         AND oit.type = "shipping"
@@ -2411,7 +2518,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ';
         $result['total_refunded_products'] = (float)Db::getInstance()->getValue($sql);
         
@@ -2422,7 +2529,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_slip os ON o.id_order = os.id_order
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ';
         $result['total_refund_amount'] = (float)Db::getInstance()->getValue($sql);
         
@@ -2435,7 +2542,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCond . '
         AND odt.id_tax = ' . self::TAX_ID_GST . '
         ';
@@ -2449,7 +2556,7 @@ class KhewaReportsData
         INNER JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON od.id_order_detail = odt.id_order_detail
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ' . $refundDateCond . '
         AND odt.id_tax IN (' . self::TAX_IDS_QST . ')
         ';
@@ -2518,7 +2625,7 @@ class KhewaReportsData
         AND (LOWER(crl.name) LIKE "%gift%" OR LOWER(crl.name) LIKE "%cadeau%")
         AND o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
-        AND o.current_state NOT IN (' . $excludedStates . ')
+        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
         ORDER BY o.date_add ASC, cr.id_cart_rule ASC
         ';
         $rows = Db::getInstance()->executeS($sql);
@@ -2568,7 +2675,7 @@ class KhewaReportsData
             LEFT JOIN ' . _DB_PREFIX_ . 'order_detail_tax odt ON odt.id_order_detail = od.id_order_detail
             WHERE o.date_add >= "' . $this->date_from . '"
             AND o.date_add <= "' . $this->date_to . '"
-            AND o.current_state NOT IN (' . $excludedStates . ')
+            AND ' . Khewareports::buildSalesExclusionCondition('o') . '
             ' . $refundDateCondition . '
             GROUP BY od.id_order_detail
         ) t
