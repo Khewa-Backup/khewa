@@ -2011,11 +2011,17 @@ class Thegiftcard extends Module
             $cart_rule->date_to = date('Y-m-d', strtotime('+' . Configuration::get('GIFTCARD_EXPIRATION_TIME') . ' ' .
                 Configuration::get('GIFTCARD_EXPIRATION_DATE'), strtotime($cart_rule->date_from)));
             $cart_rule->reduction_amount = $amount['name'];
-            $cart_rule->reduction_tax = true;
+            // Khewa rule: action (reduction) is tax excluded, condition (minimum amount) is tax included
+            $cart_rule->reduction_tax = false;
+            $cart_rule->minimum_amount_tax = true;
             $cart_rule->reduction_currency = (int) $this->context->currency->id;
             $cart_rule->cart_rule_restriction = (int) Configuration::get('GIFTCARD_CART_RULE') ? false : true;
             $cart_rule->shop_restriction = Shop::isFeatureActive() ? true : false;
             $cart_rule->add();
+
+            // Force reduction_tax to 0 (tax excluded) and minimum_amount_tax to 1 (tax included)
+            // directly in database to prevent hooks or defaults from changing them
+            Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'cart_rule` SET `reduction_tax` = 0, `minimum_amount_tax` = 1 WHERE `id_cart_rule` = ' . (int) $cart_rule->id);
 
             if (Shop::isFeatureActive()) {
                 Db::getInstance()->execute('INSERT INTO `' . _DB_PREFIX_ . 'cart_rule_shop` (`id_cart_rule`, `id_shop`)
