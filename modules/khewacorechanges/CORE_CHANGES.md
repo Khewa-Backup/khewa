@@ -4,11 +4,11 @@
 
 The Khewa site is a heavily customized PrestaShop 1.7.8.5 install — over time, core PrestaShop files (classes, `src/`, `pdf/` templates, mail templates) and vendor module files (RockPOS / `hspointofsalepro`) were edited directly, without any tracking system for what was changed or why. The site is now being upgraded to a fresh PrestaShop 1.7.8.7 install, which will bring in stock versions of all of these files and risks silently wiping out every one of those undocumented customizations.
 
-This `khewacorechanges` module exists to eventually **hold and re-apply those customizations** (as overrides or patches) so they survive future PrestaShop/module updates. This file, `CORE_CHANGES.md`, is step one: a full inventory of what was actually changed, in which files, and why — reconstructed from a list of 17 Trello "Core Change--..." cards (from the "khewa Tasks Done" board) that described the changes only vaguely, cross-referenced against a fresh 1.7.8.7 install and this repo's git history (`github.com/Khewa-Backup/khewa`).
+This `khewacorechanges` module **holds and re-applies those customizations** (as overrides, hooks, a service swap, and managed file copies — see `HOW_IT_WORKS.md`) so they survive future PrestaShop/module updates. This file, `CORE_CHANGES.md`, is the inventory of what was actually changed, in which files, and why — reconstructed from a list of 17 Trello "Core Change--..." cards (from the "khewa Tasks Done" board) that described the changes only vaguely, cross-referenced against a fresh 1.7.8.7 install and this repo's git history (`github.com/Khewa-Backup/khewa`).
 
-**As of this writing, only this documentation exists — no override files or code have been written into `khewacorechanges` yet.** Building the actual override/patch files that re-apply these changes on top of a fresh install is the next phase of this module, not yet started.
+**Status:** the module now carries every change that is a real code change (see the "Carried by module" line under each item, and `HOW_IT_WORKS.md` for the mechanism). Items with no code change (#12, #13, #17) and the unresolved #14 are documentation only.
 
-Confidence is noted per item below — some are confirmed with a file diff + matching commit, some are commit-only (no fresh-install equivalent to diff against), and a few turned out not to be code changes at all (backend config, or unresolved). Items flagged "upgrade-breaking" are the ones most likely to silently regress when the 1.7.8.7 upgrade happens and should be prioritized first when the override-building phase starts.
+Confidence is noted per item below — some are confirmed with a file diff + matching commit, some are commit-only (no fresh-install equivalent to diff against), and a few turned out not to be code changes at all (backend config, or unresolved). Items flagged "upgrade-breaking" are the ones most likely to silently regress when the 1.7.8.7 upgrade happens — check those first on the module's configuration page after any upgrade.
 
 The card "Credit slip disappears after created" was excluded from this pass per instruction. The original, verbatim Trello card text this document was built from is preserved in the **Appendix** at the bottom, in case the source cards are later archived or edited.
 
@@ -31,6 +31,8 @@ The card "Credit slip disappears after created" was excluded from this pass per 
 - `PosPayment.php` — 1 commit only (essentially untouched since import).
 - `hspointofsalepro.php` — 6 commits: tax fixes (left-side tax, voucher text, export), French/theme additions, JS updates, most recent "reciept fix" (receipt output logic, paired with `sales.js`/`sales.tpl` changes).
 
+**Carried by module:** managed golden copies `files/root/modules/hspointofsalepro/…` (4 files), re-applied from the config page. These are whole-file snapshots, not diffs — click **Pull** after editing `sales.php`, and merge before re-applying over a newer vendor version.
+
 **Real conflict found (not a Trello card, but relevant):** both `modules/hspointofsalepro/override/classes/Cart.php` (module-bundled, 1180 lines, untouched since import) and root `override/classes/Cart.php` (1204 lines, **the one PrestaShop actually loads**) override `Cart::getProducts()`. The root copy was patched in commit `edd95ec6b` ("core change online gift card issue") to handle fixed-amount/gift-card discounts exceeding product total — a fix **absent from the module-bundled copy**. If the module is ever reinstalled/reset (which typically re-copies its bundled override into `override/`), this gift-card fix would be silently overwritten. See Housekeeping Notes below.
 
 ---
@@ -38,6 +40,8 @@ The card "Credit slip disappears after created" was excluded from this pass per 
 ## 2. classes/CartRule.php
 
 **Status: confirmed via diff + git history.**
+
+**Carried by module:** `override/classes/CartRule.php` (PrestaShop-native class override, installed into root `override/` on module install).
 
 Core file `classes/CartRule.php` was edited directly (no override wrapper used). The change alters how a fixed-amount ("¤") cart-rule discount is taxed when `reduction_tax` is false but a tax-included total is requested. Stock PrestaShop always routes this through a VAT-rate-adjustment calculation; the khewa version adds a special case (inside `getContextualValue()`, ~line 1174-1450): amount-based discounts are applied to the tax-included cart total directly rather than through the normal per-product/per-cart VAT-rate math. All original logic remains as the `else` fallback for every other case.
 
@@ -52,6 +56,8 @@ Core file `classes/CartRule.php` was edited directly (no override wrapper used).
 
 **Status: confirmed via diff + git history.**
 
+**Carried by module:** `config/services.yml` re-declares `prestashop.core.grid.query_builder.order` → `src/Grid/Query/KhewaOrderQueryBuilder.php` (debug leftovers `ini_set('display_errors')` and dead `__` methods dropped from the module copy).
+
 Core file edited directly. Adds a "New Customer" column/filter to the back-office Orders grid using a different SQL strategy than stock. Stock uses a correlated subselect per row to determine if an order is a customer's first order (`getNewCustomerSubSelect()`). The khewa version instead builds a derived table of each customer's minimum `id_order` (`fo`) and LEFT JOINs it in `getBaseQueryBuilder()` (~line 154), comparing `fo.first_order = o.id_order` in both `addNewCustomerField()` (~line 133) and `applyNewCustomerFilter()` (~line 306) — a performance fix, since the correlated subselect scaled poorly on a large orders table. The old subselect methods remain in the file renamed with `__` prefixes (dead code). Debug leftovers also remain: `ini_set('display_errors', '1')` in the constructor and commented-out `dump()`/pagination experiment lines.
 
 **Commit:** `85d3d4ed1` ("Order list long time loading issue solved", 2024-12-13).
@@ -61,6 +67,8 @@ Core file edited directly. Adds a "New Customer" column/filter to the back-offic
 ## 4. URL issue (duplicate link-rewrite between products 12705 and 750)
 
 **Status: confirmed via full override read + git history.**
+
+**Carried by module:** `override/controllers/front/ProductController.php` (PrestaShop-native controller override). On install the existing hand-made root override is backed up to `backup/` and regenerated by PrestaShop from the module copy.
 
 `override/controllers/front/ProductController.php` (360 lines) is a full override of `ProductController::init()`. It adds custom logic at the top of `init()` (lines ~14-58) that manually parses `$_SERVER['REQUEST_URI']` with regex to extract the numeric product ID and `link_rewrite` slug from the URL, then looks up `ps_product_lang` directly. Critically, if the numeric ID embedded in the URL disagrees with whatever `id_product` was resolved via the (possibly colliding) `link_rewrite` slug, the code forces `$_POST['id_product']` to the numeric ID from the URL — i.e. the numeric ID is trusted as the tiebreaker over a non-unique text slug. This directly fixes the reported bug where products #12705 and #750 shared/collided on `link_rewrite`, causing the wrong product page to load.
 
@@ -73,6 +81,8 @@ Core file edited directly. Adds a "New Customer" column/filter to the back-offic
 ## 5. Added tax information in pdf/footer.tpl
 
 **Status: confirmed via diff.**
+
+**Carried by module:** managed file `files/theme/pdf/footer.tpl` → `themes/<theme>/pdf/footer.tpl` (theme pdf folder is checked before core `pdf/`).
 
 `pdf/footer.tpl` has additive-only changes vs. stock: Quebec tax registration numbers (GST `TPS 143581395RT0001`, QST `TVQ 1023112902TQ0001`) plus bilingual exchange-policy/thank-you text ("Pour échange seulement avec le reçu / For exchange only with receipt", "Merci! Thank you!"). No stock content was removed.
 
@@ -88,6 +98,8 @@ Core file edited directly. Adds a "New Customer" column/filter to the back-offic
 
 **Status: confirmed via git history.**
 
+**Carried by module:** #6 via managed file `files/root/override/controllers/admin/templates/customer_threads/helpers/view/view.tpl` (admin template override path); #7/#8 via `hookDisplayBackOfficeHeader` injecting the CSS rule — no admin theme file edit needed any more.
+
 **Commit:** `17e4f7683` ("hidding sales from customer service and customer page for guest khewa account", 2022-12-15).
 
 Two files changed:
@@ -101,6 +113,8 @@ Two files changed:
 ## 9. order_conf template — custom pickup message
 
 **Status: confirmed via diff. Upgrade-breaking — read this one carefully.**
+
+**Carried by module:** `hookActionEmailSendBefore` redirects `order_conf` to `modules/khewacorechanges/mails/<lang>/` (EN, FR, QC — FR sentence added by the module; it was missing on the live site).
 
 Custom sentence added directly after "Thank you for shopping on {shop_name}!" in the order confirmation email:
 
@@ -119,6 +133,8 @@ Found in:
 ## 10. Modifying invoice for discounts
 
 **Status: confirmed via diff + git history. Also upgrade-breaking (not covered by the mail-theme migration).**
+
+**Carried by module:** managed files `files/theme/pdf/invoice.total-tab.tpl` and `invoice.product-tab.tpl` → `themes/<theme>/pdf/`.
 
 Two files with real, substantial diffs vs. stock:
 
@@ -142,6 +158,8 @@ Two files with real, substantial diffs vs. stock:
 
 **Status: investigated — the real fix is NOT a code change.**
 
+**Carried by module:** nothing to carry — the fix is the `mailalerts_old` folder rename, which lives outside any upgraded path. Keep that folder as-is.
+
 All three `src/` candidates (`SendProcessOrderEmailHandler.php`, `SendCartToCustomerHandler.php`, `MailThemeController.php`) are **byte-for-byte identical** to stock PrestaShop 1.7.8.7. No core `src/` file was ever patched for this bug — the Trello note describes how the bug was *traced*, not where the fix ended up.
 
 The actual fix: the stock `mailalerts` module folder was **renamed to `mailalerts_old`**, but its `config.xml` still internally declares `<name>mailalerts</name>`. Since PrestaShop's module loader requires the folder name to match the registered module name, this mismatch permanently prevents the module class from ever being instantiated again — breaking any leftover hook/cron references from an incomplete uninstall, which silently stops the stray mail sends. This rename **predates the repo's git history entirely** (already present in the very first tracked commits) — there's no commit to point to.
@@ -154,6 +172,8 @@ The actual fix: the stock `mailalerts` module folder was **renamed to `mailalert
 
 **Status: investigated — likely not a code change.**
 
+**Carried by module:** nothing — back-office setting (`PS_CONTACT_INFO_DISPLAY_EMAIL`), stored in the database.
+
 `modules/ps_contactinfo/ps_contactinfo.tpl`, `ps_contactinfo-rich.tpl`, and `ps_contactinfo.php` are all unmodified stock files. The email line is already conditionally guarded in stock code by `{if $contact_infos.email && $display_email}`, where `$display_email` is controlled by the module's own back-office setting `PS_CONTACT_INFO_DISPLAY_EMAIL` (default enabled). No override, no theme-level override, and no git history touching `modules/ps_contactinfo/` was found.
 
 **Conclusion:** this was very likely done as a back-office configuration toggle (Modules → Contact Information → uncheck "Display" for the email field) rather than a code edit — a DB `ps_configuration` change, not something version control would ever show. Nothing to migrate for this one; flagging as "probably mis-filed as a code change."
@@ -164,6 +184,8 @@ The actual fix: the stock `mailalerts` module folder was **renamed to `mailalert
 
 **Status: confirmed — no code change.**
 
+**Carried by module:** nothing — backend product/attribute data.
+
 The Trello card itself states this needed no code ("this solution dont need code. it can be done from backend.") — it was a product/attribute configuration change (adding the "XS" size option) done entirely through the PrestaShop admin. No git matches found, consistent with this. Nothing to migrate.
 
 ---
@@ -171,6 +193,8 @@ The Trello card itself states this needed no code ("this solution dont need code
 ## 14. Remove Specific References
 
 **Status: unresolved — likely a mismatched Trello card/commit link. Needs confirmation.**
+
+**Carried by module:** nothing yet — pending confirmation of what this card actually refers to. (The QST 9.976% fix it was mistakenly matched to lives in `khewareports`, our own module, so it is not at risk from a core upgrade anyway.)
 
 The only plausible commit match by search, `4e061647d` ("All remaining referencess", 2026-06-25), turns out to be a **Quebec sales tax (QST) rate correction** — updating the hardcoded QST rate from 9.975% to 9.976% across three `khewareports` module files (`classes/KhewaReportsData.php`, `controllers/admin/AdminKhewaReportsReportsController.php`, `khewareports.php`), affecting SQL/PHP multipliers and report column labels. Nothing in that diff touches product references/SKUs.
 
@@ -182,6 +206,8 @@ Either this is the wrong commit for the card, or "references" in the card title 
 
 **Status: confirmed via git history.**
 
+**Carried by module:** managed files `files/theme/modules/ps_shoppingcart/ps_shoppingcart-content.tpl`, `files/theme/templates/checkout/_partials/cart-summary-subtotals.tpl` → theme; `files/theme/mails/en/order_conf_product_list.tpl` → `themes/<theme>/mails/en/` (checked before `mails/_partials/`).
+
 **Commit:** `9618980a5` ("Free shipping text was removed from card, checkout", 2023-02-18). Touches three files:
 - `themes/warehouse/modules/ps_shoppingcart/ps_shoppingcart-content.tpl` and `themes/warehouse/templates/checkout/_partials/cart-summary-subtotals.tpl` — both wrap the shipping subtotal value in a check: if the subtotal type is `shipping` **and** the formatted value contains no digits (i.e. PrestaShop is about to print the literal word "Free"), the value is suppressed and nothing is shown. Numeric shipping costs are untouched — only the "Free" text label is hidden.
 - `mails/_partials/order_conf_product_list.tpl` — unrelated change bundled into the same commit: adds `nofilter` so HTML in product customization text renders instead of being escaped.
@@ -191,6 +217,8 @@ Either this is the wrong commit for the card, or "references" in the card title 
 ## 16. Email Alert Module
 
 **Status: confirmed via git history.**
+
+**Carried by module:** managed golden copy `files/root/modules/ps_emailalerts/ps_emailalerts.php` (whole-file snapshot — merge before re-applying over a newer vendor version, then Pull).
 
 The change is a **modification of the stock `ps_emailalerts` module** (back-in-stock/out-of-stock notifications), not a custom replacement:
 
@@ -204,6 +232,8 @@ The change is a **modification of the stock `ps_emailalerts` module** (back-in-s
 ## 17. Reinstate nathaliecoutou.com
 
 **Status: unresolved — no code trace found.**
+
+**Carried by module:** nothing — not a code change.
 
 No matching commit anywhere in git history (`git log --all --grep="nathaliecoutou"` returns nothing). This is very likely a domain/hosting/DNS-level change (or a Shop URL entry in the `ps_shop_url` DB table) rather than a code change — nothing in this repo reflects it. Flagging for user confirmation on scope; there's nothing to document as a "core change" here unless more detail surfaces.
 

@@ -1,0 +1,20 @@
+# khewacorechanges — Symfony service overrides.
+#
+# PrestaShop 1.7.8 loads modules/<name>/config/services.yml for every
+# installed+active module (LoadServicesFromModulesPass), AFTER the core
+# definitions, so re-declaring a core service id here replaces it.
+#
+# CORE_CHANGES.md #3 — Orders grid "New customer" performance fix.
+# The core class is `final`, so we swap the whole service class.
+# `file:` makes Symfony require the class file itself, so no autoloader
+# entry is needed for the module's src/ folder.
+services:
+    prestashop.core.grid.query_builder.order:
+        class: 'KhewaCoreChanges\Grid\Query\KhewaOrderQueryBuilder'
+        file: '%kernel.project_dir%/modules/khewacorechanges/src/Grid/Query/KhewaOrderQueryBuilder.php'
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '%database_prefix%'
+            - '@prestashop.core.query.doctrine_search_criteria_applicator'
+            - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
+            - "@=service(\"prestashop.adapter.shop.context\").getContextListShopID(parameter('multishop.settings.share_orders'))"
