@@ -1,5 +1,4 @@
 <?php
-
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter;
 use PrestaShop\PrestaShop\Adapter\Image\ImageRetriever;
 use PrestaShop\PrestaShop\Core\Product\ProductExtraContentFinder;
@@ -7,18 +6,26 @@ use PrestaShop\PrestaShop\Core\Product\ProductListingPresenter;
 use PrestaShop\PrestaShop\Adapter\Product\ProductColorsRetriever;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use PrestaShop\PrestaShop\Core\Product\ProductInterface;
-
 class ProductController extends ProductControllerCore
 {
-	protected $quantity_discounts;
-	public function init()
+	/*
+    * module: khewacorechanges
+    * date: 2026-08-30 17:26:36
+    * version: 1.0.0
+    */
+    protected $quantity_discounts;
+	/*
+    * module: khewacorechanges
+    * date: 2026-08-30 17:26:36
+    * version: 1.0.0
+    */
+    public function init()
 	{
 		$this->context->cookie->id_unique_ipa = 0;
         $this->context->cookie->write();
         $link_rewrite_bk = $link_rewrite = Tools::safeOutput(urldecode(Tools::getValue('product_rewrite')));
 		$prod_pattern = '/.*?\/([0-9]+)\-([_a-zA-Z0-9-\pL]*)\.html/';
 		preg_match($prod_pattern, $_SERVER['REQUEST_URI'], $url_array);
-
 		if (isset($url_array[2]) && $url_array[2] != '') {
 			$link_rewrite = $url_array[2];
 		}
@@ -56,7 +63,6 @@ class ProductController extends ProductControllerCore
             $id_product = $_POST['id_product'] = $url_array[1];
             $_GET['product_rewrite'] = $link_rewrite_bk;
         }
-
 		$allow_accented_chars = (int)Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL');
 		if ($allow_accented_chars > 0) {
 			$id_product = (int)Tools::getValue('id_product');
@@ -71,7 +77,12 @@ class ProductController extends ProductControllerCore
 		parent::init();
 	}
 	
-	public function getTemplateVarProduct()
+	/*
+    * module: khewacorechanges
+    * date: 2026-08-30 17:26:36
+    * version: 1.0.0
+    */
+    public function getTemplateVarProduct()
     {
         $productSettings = $this->getProductPresentationSettings();
         $extraContentFinder = new ProductExtraContentFinder();
@@ -108,9 +119,7 @@ class ProductController extends ProductControllerCore
         $product['extraContent'] = $extraContentFinder->addParams(array('product' => $this->product))->present();
 		$product['ecotax'] = Tools::convertPrice((float) $product['ecotax'], $this->context->currency, true, $this->context);
         $product_full = Product::getProductProperties($this->context->language->id, $product, $this->context);
-
         $product_full = $this->addProductCustomizationData($product_full);
-
         $product_full['show_quantities'] = (bool) (
             Configuration::get('PS_DISPLAY_QTIES')
             && Configuration::get('PS_STOCK_MANAGEMENT')
@@ -120,13 +129,10 @@ class ProductController extends ProductControllerCore
         );
         $product_full['quantity_label'] = ($this->product->quantity > 1) ? $this->trans('Items', array(), 'Shop.Theme.Catalog') : $this->trans('Item', array(), 'Shop.Theme.Catalog');
         $product_full['quantity_discounts'] = $this->quantity_discounts;
-
-
         if ($product_full['unit_price_ratio'] > 0) {
             $unitPrice = ($productSettings->include_taxes) ? $product_full['price'] : $product_full['price_tax_exc'];
             $product_full['unit_price'] = $unitPrice / $product_full['unit_price_ratio'];
         }
-
         $group_reduction = GroupReduction::getValueForProduct($this->product->id, (int) Group::getCurrent()->id);
         if ($group_reduction === false) {
             $group_reduction = Group::getReduction((int) $this->context->cookie->id_customer) / 100;
@@ -146,12 +152,15 @@ class ProductController extends ProductControllerCore
             $product_full,
             $this->context->language
         );
-
-
         return $ret;
     }
 	
-	private function getProductPageTitle(array $meta = null)
+	/*
+    * module: khewacorechanges
+    * date: 2026-08-30 17:26:36
+    * version: 1.0.0
+    */
+    private function getProductPageTitle(array $meta = null)
     {
         $title = $this->product->name;
         if (isset($meta['title'])) {
@@ -162,7 +171,6 @@ class ProductController extends ProductControllerCore
         if (!Configuration::get('PS_PRODUCT_ATTRIBUTES_IN_TITLE')) {
             return $title;
         }
-
         $idProductAttribute = $this->getIdProductAttributeByGroupOrRequestOrDefault();
         if ($idProductAttribute) {
             $attributes = $this->product->getAttributeCombinationsById($idProductAttribute, $this->context->language->id);
@@ -172,14 +180,17 @@ class ProductController extends ProductControllerCore
                 }
             }
         }
-
         return $title;
     }
 	
-	private function getIdProductAttribute()
+	/*
+    * module: khewacorechanges
+    * date: 2026-08-30 17:26:36
+    * version: 1.0.0
+    */
+    private function getIdProductAttribute()
     {
         $requestedIdProductAttribute = (int)Tools::getValue('id_product_attribute');
-
         if (!Configuration::get('PS_DISP_UNAVAILABLE_ATTR')) {
             $productAttributes = array_filter(
                 $this->product->getAttributeCombinations(),
@@ -198,7 +209,12 @@ class ProductController extends ProductControllerCore
         return $requestedIdProductAttribute;
     }
 	
-	public function displayAjaxRefresh()
+	/*
+    * module: khewacorechanges
+    * date: 2026-08-30 17:26:36
+    * version: 1.0.0
+    */
+    public function displayAjaxRefresh()
     {
 		$requestedIdProductAttribute = 0;
 		$isPreview = ('1' === Tools::getValue('preview'));
@@ -313,26 +329,26 @@ class ProductController extends ProductControllerCore
 		
         die();
     }
-
-	protected function assignPriceAndTax()
+	/*
+    * module: khewacorechanges
+    * date: 2026-08-30 17:26:36
+    * version: 1.0.0
+    */
+    protected function assignPriceAndTax()
     {
         $id_customer = (isset($this->context->customer) ? (int) $this->context->customer->id : 0);
         $id_group = (int) Group::getCurrent()->id;
         $id_country = $id_customer ? (int) Customer::getCurrentCountry($id_customer) : (int) Tools::getCountry();
-
         $tax = (float) $this->product->getTaxesRate(new Address((int) $this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
         $this->context->smarty->assign('tax_rate', $tax);
-
         $product_price_with_tax = Product::getPriceStatic($this->product->id, true, null, 6);
         if (Product::$_taxCalculationMethod == PS_TAX_INC) {
             $product_price_with_tax = Tools::ps_round($product_price_with_tax, 2);
         }
-
         $id_currency = (int) $this->context->cookie->id_currency;
         $id_product = (int) $this->product->id;
         $id_product_attribute = Tools::getValue('id_product_attribute', null);
         $id_shop = $this->context->shop->id;
-
         $quantity_discounts = SpecificPrice::getQuantityDiscounts($id_product, $id_shop, $id_currency, $id_country, $id_group, $id_product_attribute, false, (int) $this->context->customer->id);
         foreach ($quantity_discounts as &$quantity_discount) {
             if ($quantity_discount['id_product_attribute']) {
@@ -347,10 +363,8 @@ class ProductController extends ProductControllerCore
                 $quantity_discount['reduction'] = Tools::convertPriceFull($quantity_discount['reduction'], null, Context::getContext()->currency);
             }
         }
-
         $product_price = $this->product->getPrice(Product::$_taxCalculationMethod == PS_TAX_INC, false);
         $this->quantity_discounts = $this->formatQuantityDiscounts($quantity_discounts, $product_price, (float) $tax, $this->product->ecotax);
-
         $this->context->smarty->assign(array(
             'no_tax' => Tax::excludeTaxeOption() || !$tax,
             'tax_enabled' => Configuration::get('PS_TAX') && !Configuration::get('AEUC_LABEL_TAX_INC_EXC'),
