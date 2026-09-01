@@ -22,6 +22,8 @@ Site version: PrestaShop 1.7.8.7. "Handled" = this module carries the change and
 | 16 | Email Alert Module (ps_emailalerts) | In `hookActionValidateOrder`: if the order's cart is in `pos_cart` (a RockPOS till sale), skip the employee "new order" alert email (commit `2a5628fea`); plus the earlier "Notify me" button fix (`90c571fad`) | The module's own `hookActionEmailSendBefore` blocks the `new_order` email whenever the order is a RockPOS till sale (cart in `pos_cart`) — the mail is stopped before sending, outside ps_emailalerts. **ps_emailalerts can be updated freely; the skip keeps working.** A snapshot of `ps_emailalerts.php` is also kept for the Notify-me fix. | **HANDLED** |
 
 
+**Also handled (found during the #11 recheck, no Trello card):** two customized customer-service email handlers in `src/Adapter/CustomerService/CommandHandler/` — `AddOrderCustomerMessageHandler.php` (adds a `{link}` contact-page/thread-token variable to the reply notification) and `ReplyToCustomerThreadHandler.php` (points `{link}` at the wkhelpdesk ticket when that module is enabled). Carried the same way as #3: `config/services.yml` re-declares both handler services to module copies under `src/CustomerService/CommandHandler/`. Test: replace either core file with the stock 1.7.8.7 version, clear cache, send a customer-service reply / order message — the email's link must still be the customized one. (Housekeeping: a stock backup `AddOrderCustomerMessageHandler.php_BKP` sits in the core folder; harmless.)
+
 **Also not handled by this module:** the other pre-existing files in the root `override/` folder (Cart.php with the gift-card fix, Hook.php, Dispatcher.php, etc.) — this module only carries CartRule and ProductController. If the site is ever rebuilt from a fresh copy, the whole `override/` folder must be carried over manually.
 
 ---
@@ -89,6 +91,7 @@ All new code lives inside `modules/khewacorechanges/`. Nothing outside the modul
 | `pdf/footer.tpl`, `pdf/invoice.total-tab.tpl`, `pdf/invoice.product-tab.tpl` | The customized PDF templates themselves (#5, #10), served via the override above. |
 | `config/services.yml` | Re-declares the Symfony service `prestashop.core.grid.query_builder.order` to point at the module's class (#3). |
 | `src/Grid/Query/KhewaOrderQueryBuilder.php` | Full copy of your fast Orders-grid query builder (#3), renamed/namespaced; the `ini_set('display_errors')` and dead `__`-prefixed methods were removed. |
+| `src/CustomerService/CommandHandler/AddOrderCustomerMessageHandler.php`, `ReplyToCustomerThreadHandler.php` | Copies of the customized customer-service mail handlers (reply `{link}` customizations), wired via `config/services.yml` service swap. |
 | `mails/en|fr|qc/order_conf.html + .txt` | Your customized order confirmation emails (#9). The FR pair got the pickup sentence added (it was missing on the site). |
 | `files/theme/…` | Byte-for-byte copies of the customized theme-level files: pdf footer + invoice tabs (#5, #10), the two "Free"-label cart templates and the `nofilter` mail partial (#15). No new code — snapshots for Apply. |
 | `files/root/…` | Byte-for-byte copies: admin customer-thread `view.tpl` (#6), `ps_emailalerts.php` (#16), the 4 RockPOS files (#1). No new code — snapshots for Apply. |

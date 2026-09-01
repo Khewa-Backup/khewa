@@ -18,3 +18,28 @@ services:
             - '@prestashop.core.query.doctrine_search_criteria_applicator'
             - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
             - "@=service(\"prestashop.adapter.shop.context\").getContextListShopID(parameter('multishop.settings.share_orders'))"
+
+    # CORE_CHANGES.md #11 "Also found" — customized customer-service mail handlers.
+    # Same service ids, arguments and tactician tags as core; only the class
+    # (and its file) point to the module's customized copies.
+    prestashop.adapter.customer_message.command_handler.add_order_customer_message:
+        class: 'KhewaCoreChanges\CustomerService\CommandHandler\AddOrderCustomerMessageHandler'
+        file: '%kernel.project_dir%/modules/khewacorechanges/src/CustomerService/CommandHandler/AddOrderCustomerMessageHandler.php'
+        arguments:
+            - '@translator'
+            - '@validator'
+            - '@=service("prestashop.adapter.legacy.context").getContext().shop.id'
+            - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
+            - '@=service("prestashop.adapter.legacy.context").getContext().employee.id'
+        tags:
+            - name: tactician.handler
+              command: 'PrestaShop\PrestaShop\Core\Domain\CustomerMessage\Command\AddOrderCustomerMessageCommand'
+
+    prestashop.adapter.customer_service.command_handler.reply_to_customer_thread_handler:
+        class: 'KhewaCoreChanges\CustomerService\CommandHandler\ReplyToCustomerThreadHandler'
+        file: '%kernel.project_dir%/modules/khewacorechanges/src/CustomerService/CommandHandler/ReplyToCustomerThreadHandler.php'
+        arguments:
+            - '@=service("prestashop.adapter.legacy.context").getContext()'
+        tags:
+            - name: tactician.handler
+              command: 'PrestaShop\PrestaShop\Core\Domain\CustomerService\Command\ReplyToCustomerThreadCommand'

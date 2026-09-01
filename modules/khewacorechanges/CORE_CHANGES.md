@@ -163,7 +163,7 @@ Two files with real, substantial diffs vs. stock:
 **Also found during this recheck — two more undocumented src/ edits (customer-service emails, separate from this card):**
 - `src/Adapter/CustomerService/CommandHandler/AddOrderCustomerMessageHandler.php` — "Customization By Ram Chandra": adds a `{link}` variable (contact-page link with thread token) to the order-message reply notification. A stock backup sits alongside as `AddOrderCustomerMessageHandler.php_BKP`.
 - `src/Adapter/CustomerService/CommandHandler/ReplyToCustomerThreadHandler.php` — 2024-07-12 (commit `764df5576`): when `wkhelpdesk` is enabled, `{link}` points to the helpdesk ticket view instead.
-These two are NOT yet carried by the module (would need a service swap like #3, or manual re-apply after a core update). Flagged for a decision.
+**Both are now carried by the module (2026-09-01):** service swap like #3 — `config/services.yml` re-declares both handler service ids (same arguments and tactician tags) pointing at customized copies in `modules/khewacorechanges/src/CustomerService/CommandHandler/`. Core can be updated freely; the command bus dispatches to the module's copies.
 
 *(Superseded original analysis, kept for history:)*
 
