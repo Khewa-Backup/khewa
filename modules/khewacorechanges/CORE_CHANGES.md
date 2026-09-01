@@ -82,7 +82,7 @@ Core file edited directly. Adds a "New Customer" column/filter to the back-offic
 
 **Status: confirmed via diff.**
 
-**Carried by module:** managed file `files/theme/pdf/footer.tpl` → `themes/<theme>/pdf/footer.tpl` (theme pdf folder is checked before core `pdf/`).
+**Carried by module:** `override/classes/pdf/HTMLTemplate.php` serves `modules/khewacorechanges/pdf/footer.tpl` before theme and core — update-proof. Theme copy kept as fallback.
 
 `pdf/footer.tpl` has additive-only changes vs. stock: Quebec tax registration numbers (GST `TPS 143581395RT0001`, QST `TVQ 1023112902TQ0001`) plus bilingual exchange-policy/thank-you text ("Pour échange seulement avec le reçu / For exchange only with receipt", "Merci! Thank you!"). No stock content was removed.
 
@@ -134,7 +134,7 @@ Found in:
 
 **Status: confirmed via diff + git history. Also upgrade-breaking (not covered by the mail-theme migration).**
 
-**Carried by module:** managed files `files/theme/pdf/invoice.total-tab.tpl` and `invoice.product-tab.tpl` → `themes/<theme>/pdf/`.
+**Carried by module:** same `HTMLTemplate::getTemplate()` override as #5 — both templates served from `modules/khewacorechanges/pdf/`, update-proof. Theme copies kept as fallback.
 
 Two files with real, substantial diffs vs. stock:
 
