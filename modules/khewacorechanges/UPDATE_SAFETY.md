@@ -1,25 +1,25 @@
 # Core changes — handled or not
 
-Site version: PrestaShop 1.7.8.7. "Handled" = this module carries the change and re-applies it after an update. Details per item are in `CORE_CHANGES.md`, mechanism in `HOW_IT_WORKS.md`.
+Site version: PrestaShop 1.7.8.7. "Handled" = this module carries the change and re-applies it after an update. Full details per item in `CORE_CHANGES.md`, mechanism explained in `HOW_IT_WORKS.md`.
 
-| # | Core change | Handled? |
-|---|---|---|
-| 1 | Rock (sales.php, paymentmodule, pospayment, main file) | **PARTIALLY** — those 4 files are snapshotted and restorable. Other customized RockPOS files (sales.js, sales.tpl, ExportSales.php, bundled Cart.php override) are NOT. A RockPOS update always needs manual merge. |
-| 2 | classes/CartRule.php | **HANDLED** |
-| 3 | src/Core/Grid/Query/OrderQueryBuilder.php | **HANDLED** |
-| 4 | URL issue (duplicate link-rewrite) | **HANDLED** |
-| 5 | Tax information in pdf/footer.tpl | **HANDLED** |
-| 6 | Customer service guest khewa hidden | **HANDLED** |
-| 7 | Customers > guest khewa total sales hidden | **HANDLED** |
-| 8 | Total sales from customer account / orders list hidden | **HANDLED** |
-| 9 | order_conf custom message | **HANDLED** |
-| 10 | Invoice modified for discounts | **HANDLED** |
-| 11 | Disabling mail send from core | **NOT HANDLED — nothing to handle.** The fix is the `mailalerts_old` folder rename. Just never rename it back. |
-| 12 | Remove email (contact/store info block) | **NOT HANDLED — nothing to handle.** Back-office setting in the database, updates don't touch it. |
-| 13 | Extra Small | **NOT HANDLED — nothing to handle.** Backend data, no code. |
-| 14 | Remove Specific References | **NOT HANDLED.** Still unclear what this card refers to — waiting for confirmation. |
-| 15 | Removed Free (shipping label) | **HANDLED** |
-| 16 | Email Alert Module (ps_emailalerts) | **HANDLED** — as a whole-file snapshot; a ps_emailalerts update needs manual merge first. |
-| 17 | Reinstate nathaliecoutou.com | **NOT HANDLED.** Not in this codebase (domain/hosting level). |
+| # | Core change | What was actually changed | How this module handles it | Handled? |
+|---|---|---|---|---|
+| 1 | Rock (RockPOS module) | Years of custom edits inside `hspointofsalepro`: `controllers/front/sales.php` (refunds tab, discounts, credit slips, vouchers, tax fixes), `classes/PosPaymentModule.php`, `classes/PosPayment.php`, `hspointofsalepro.php` (receipt output, exports, French) | Whole-file snapshots in `files/root/modules/hspointofsalepro/` — restore with **Apply**, refresh with **Pull** after editing. No merge capability. | **PARTIALLY** — sales.js, sales.tpl, ExportSales.php and the bundled Cart.php override are NOT snapshotted; a RockPOS update always needs manual merge |
+| 2 | classes/CartRule.php | In `getContextualValue()`: a fixed-amount voucher stored tax-excluded, when a tax-included total is asked for, is applied to the tax-included cart total directly instead of being inflated by the average VAT rate (commit `99f2dc776`) | PrestaShop class override: `override/classes/CartRule.php` redefines `getContextualValue()` and shadows the core file. Installed into root `override/` when the module is installed. | **HANDLED** |
+| 3 | src/Core/Grid/Query/OrderQueryBuilder.php | "New customer" column on the BO Orders list computed via one derived table (`fo` = each customer's first order id) LEFT JOINed once, instead of a slow per-row subquery — the Orders page slow-loading fix (commit `85d3d4ed1`) | Symfony service swap: `config/services.yml` re-declares service `prestashop.core.grid.query_builder.order` to the module's copied class `src/Grid/Query/KhewaOrderQueryBuilder.php`. Core file becomes unused. | **HANDLED** |
+| 4 | URL issue (duplicate link-rewrite) | `ProductController::init()` parses the URL itself and trusts the numeric product id in the URL over a colliding link-rewrite slug (products 12705 vs 750 opened the wrong page) | PrestaShop controller override: `override/controllers/front/ProductController.php`. The old hand-made root override is backed up and regenerated from the module on install. | **HANDLED** |
+| 5 | pdf/footer.tpl | Added TPS/TVQ tax registration numbers + bilingual "exchange only with receipt / thank you" lines to receipt/invoice PDF footer | Copy deployed to `themes/<theme>/pdf/footer.tpl` — PrestaShop checks the theme's pdf folder before core `pdf/`, so this copy wins. Restored by **Re-apply all**. | **HANDLED** |
+| 6 | Customer service guest khewa hidden | In the admin Customer Service thread view, the "…orders validated for a total amount of X" badge has its amount blanked (template's `%total%` replaced with a space) | Copy of the edited `view.tpl` deployed to `override/controllers/admin/templates/customer_threads/helpers/view/` — PrestaShop checks that path before the admin theme. | **HANDLED** |
+| 7 | Customers > guest total sales hidden | CSS rule `.column-total_spent .badge-success{display:none}` added to the admin theme's theme.css, hiding the Total spent badge in the Customers list | The module's `hookDisplayBackOfficeHeader` injects the same CSS rule on every admin page — no theme file needed. | **HANDLED** |
+| 8 | Total sales from customer account / orders list hidden | Same single CSS rule as #7 covers this screen too | Same hook as #7. | **HANDLED** |
+| 9 | order_conf custom message | Order confirmation email got the extra sentence "Please note that for pickup orders we will contact you when your order is ready." (EN + QC; FR was missing) | `hookActionEmailSendBefore` redirects the `order_conf` template to the module's own `mails/en|fr|qc/order_conf.html/.txt` (FR sentence added). Site `mails/` folder no longer matters for this email. | **HANDLED** |
+| 10 | Invoice modified for discounts | `pdf/invoice.total-tab.tpl` rewritten (correct Total Discounts / Total Tax when fixed-amount or gift-card discounts apply) and `pdf/invoice.product-tab.tpl` (tax-rate column always shown, alignment) | Copies deployed to `themes/<theme>/pdf/` — same theme-wins rule as #5. Restored by **Re-apply all**. | **HANDLED** |
+| 11 | Disabling mail send from core | Uninstalled mail-alert module kept sending mails; fixed by renaming the folder `mailalerts` → `mailalerts_old` (its config.xml still says `mailalerts`, so PrestaShop can never load it again) | Nothing to carry — the rename lives outside every update path. Rule: never rename that folder back, never reinstall mailalerts. | **NOT HANDLED — nothing to handle** |
+| 12 | Remove email (contact/store info block) | Shop email removed from the "Store information" block via the back-office toggle (`PS_CONTACT_INFO_DISPLAY_EMAIL` = 0 in the database), not by code | Nothing to carry — database setting; updates don't touch it. | **NOT HANDLED — nothing to handle** |
+| 13 | Extra Small | XS size attribute added from the back office (product/attribute data) | Nothing to carry — database data. | **NOT HANDLED — nothing to handle** |
+| 14 | Remove Specific References | Unclear — the only matching commit (`4e061647d`) is actually a QST 9.975→9.976% fix in khewareports, not reference removal | Waiting for confirmation of what this card was about before anything can be carried. | **NOT HANDLED** |
+| 15 | Removed Free (shipping label) | Cart popup + checkout summary templates suppress the shipping value when it contains no digits (i.e. the word "Free"); plus `nofilter` on customization text in the order email product list | Copies deployed into the theme: `modules/ps_shoppingcart/ps_shoppingcart-content.tpl`, `templates/checkout/_partials/cart-summary-subtotals.tpl`, and `mails/en/order_conf_product_list.tpl` (theme mails folder wins over core `mails/_partials/`). | **HANDLED** |
+| 16 | Email Alert Module (ps_emailalerts) | In `hookActionValidateOrder`: if the order's cart is in `pos_cart` (a RockPOS till sale), skip the employee "new order" alert email (commit `2a5628fea`); plus the earlier "Notify me" button fix (`90c571fad`) | Whole-file snapshot of `ps_emailalerts.php` in `files/root/`, restorable with **Apply**. Like #1, a vendor update needs a manual merge first, then **Pull**. | **HANDLED** (snapshot) |
+| 17 | Reinstate nathaliecoutou.com | Domain/hosting-level action; no trace in this codebase or git history | Nothing to carry. | **NOT HANDLED — not in code** |
 
 **Also not handled by this module:** the other pre-existing files in the root `override/` folder (Cart.php with the gift-card fix, Hook.php, Dispatcher.php, etc.) — this module only carries CartRule and ProductController. If the site is ever rebuilt from a fresh copy, the whole `override/` folder must be carried over manually.
