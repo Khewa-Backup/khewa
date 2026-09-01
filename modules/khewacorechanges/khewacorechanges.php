@@ -154,6 +154,18 @@ class Khewacorechanges extends Module
         if (!isset($params['template'], $params['templatePath'])) {
             return true;
         }
+
+        // CORE_CHANGES.md #16 — no employee "new order" alert for RockPOS till
+        // sales. Returning false makes Mail::send() abort, so this works no
+        // matter which version of ps_emailalerts is installed — the module can
+        // be updated freely.
+        if ($params['template'] === 'new_order'
+            && stripos($params['templatePath'], 'emailalert') !== false
+            && $this->isPosOrderReference(isset($params['templateVars']['{order_name}']) ? $params['templateVars']['{order_name}'] : null)
+        ) {
+            return false;
+        }
+
         if (!in_array($params['template'], self::REDIRECTED_MAIL_TEMPLATES, true)) {
             return true;
         }
@@ -164,6 +176,25 @@ class Khewacorechanges extends Module
         $params['templatePath'] = $this->getLocalPath() . 'mails/';
 
         return true;
+    }
+
+    /**
+     * Is this order reference a RockPOS till sale (cart present in pos_cart)?
+     */
+    protected function isPosOrderReference($reference)
+    {
+        if (empty($reference) || !Module::isEnabled('hspointofsalepro')) {
+            return false;
+        }
+        try {
+            return (bool) Db::getInstance()->getValue(
+                'SELECT 1 FROM `' . _DB_PREFIX_ . 'orders` o
+                 INNER JOIN `' . _DB_PREFIX_ . 'pos_cart` pc ON pc.id_cart = o.id_cart
+                 WHERE o.reference = "' . pSQL($reference) . '"'
+            );
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /* ------------------------------------------------------------------ */

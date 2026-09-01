@@ -19,8 +19,8 @@ Site version: PrestaShop 1.7.8.7. "Handled" = this module carries the change and
 | 13 | Extra Small | XS size attribute added from the back office (product/attribute data) | Nothing to carry — database data. | **NOT HANDLED — nothing to handle** |
 | 14 | Remove Specific References | Unclear — the only matching commit (`4e061647d`) is actually a QST 9.975→9.976% fix in khewareports, not reference removal | Waiting for confirmation of what this card was about before anything can be carried. | **NOT HANDLED** |
 | 15 | Removed Free (shipping label) | Cart popup + checkout summary templates suppress the shipping value when it contains no digits (i.e. the word "Free"); plus `nofilter` on customization text in the order email product list | Copies deployed into the theme: `modules/ps_shoppingcart/ps_shoppingcart-content.tpl`, `templates/checkout/_partials/cart-summary-subtotals.tpl`, and `mails/en/order_conf_product_list.tpl` (theme mails folder wins over core `mails/_partials/`). | **HANDLED** |
-| 16 | Email Alert Module (ps_emailalerts) | In `hookActionValidateOrder`: if the order's cart is in `pos_cart` (a RockPOS till sale), skip the employee "new order" alert email (commit `2a5628fea`); plus the earlier "Notify me" button fix (`90c571fad`) | Whole-file snapshot of `ps_emailalerts.php` in `files/root/`, restorable with **Apply**. Like #1, a vendor update needs a manual merge first, then **Pull**. | **HANDLED** (snapshot) |
-| 17 | Reinstate nathaliecoutou.com | Domain/hosting-level action; no trace in this codebase or git history | Nothing to carry. | **NOT HANDLED — not in code** |
+| 16 | Email Alert Module (ps_emailalerts) | In `hookActionValidateOrder`: if the order's cart is in `pos_cart` (a RockPOS till sale), skip the employee "new order" alert email (commit `2a5628fea`); plus the earlier "Notify me" button fix (`90c571fad`) | The module's own `hookActionEmailSendBefore` blocks the `new_order` email whenever the order is a RockPOS till sale (cart in `pos_cart`) — the mail is stopped before sending, outside ps_emailalerts. **ps_emailalerts can be updated freely; the skip keeps working.** A snapshot of `ps_emailalerts.php` is also kept for the Notify-me fix. | **HANDLED** |
+
 
 **Also not handled by this module:** the other pre-existing files in the root `override/` folder (Cart.php with the gift-card fix, Hook.php, Dispatcher.php, etc.) — this module only carries CartRule and ProductController. If the site is ever rebuilt from a fresh copy, the whole `override/` folder must be carried over manually.
 
@@ -69,9 +69,8 @@ Add a marker `TEST123` to core `pdf/invoice.total-tab.tpl`. Download the invoice
 Behaviour: front office, add a product with free shipping to the cart — the cart popup and checkout summary must show an empty shipping value, not the word "Free". Restore test: rename `themes/warehouse/modules/ps_shoppingcart/ps_shoppingcart-content.tpl` to `.bak` → module config shows **missing** → **Apply** brings it back identical.
 
 **16. Email alert module:**
-Behaviour: make a POS till sale — employees must get **no** "new order" email; place a normal online order — the email must still arrive. Restore test: same rename-`.bak`/Apply cycle as #1 on `modules/ps_emailalerts/ps_emailalerts.php`.
+Behaviour: make a POS till sale — employees must get **no** "new order" email; place a normal online order — the email must still arrive. Update-proof test: replace `modules/ps_emailalerts/ps_emailalerts.php` with the stock vendor file (no pos_cart code in it), make a POS sale — still **no** employee email, because the module blocks it at `Mail::send` level. Put the file back (or Apply). The snapshot copy additionally protects the "Notify me" button fix.
 
-**17. nathaliecoutou.com:** Not done — not in this codebase.
 
 ---
 

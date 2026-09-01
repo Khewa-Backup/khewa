@@ -218,7 +218,7 @@ Either this is the wrong commit for the card, or "references" in the card title 
 
 **Status: confirmed via git history.**
 
-**Carried by module:** managed golden copy `files/root/modules/ps_emailalerts/ps_emailalerts.php` (whole-file snapshot — merge before re-applying over a newer vendor version, then Pull).
+**Carried by module:** the POS-sale alert skip is re-implemented in khewacorechanges itself (`hookActionEmailSendBefore` returns false for `new_order` mails whose order is in `pos_cart`), so it survives any ps_emailalerts update. A golden copy of `ps_emailalerts.php` is also kept (covers the Notify-me fix).
 
 The change is a **modification of the stock `ps_emailalerts` module** (back-in-stock/out-of-stock notifications), not a custom replacement:
 
@@ -307,6 +307,3 @@ Description: "here is the fix" + screenshot link (prnt.sc/yRnSIToINDNr). 2 image
 
 **16. Core Change--Email Alert Module**
 Description: "here is the details of the changes. we can retrieve from git" + screenshot link (prnt.sc/5vv3xUefBOTC). No comments.
-
-**17. reinstate nathaliecoutou.com**
-No description/comments. Added by Malcolm on Aug 13, 2026.
