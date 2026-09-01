@@ -156,7 +156,16 @@ Two files with real, substantial diffs vs. stock:
 
 **Trello note:** "there was a bug in prestashop that even after uninstalling the mail alert, mails were sent to people. The solution is within src folder — search `Mail::send(`."
 
-**Status: investigated — the real fix is NOT a code change.**
+**Status: resolved (2026-09-01) — it IS a code change, found on recheck.** The Trello note ("search `Mail::send(` in src") was accurate: `src/Core/Stock/StockManager.php` lines ~319-333 — core PrestaShop itself emails every employee "Product out of stock" straight from the stock manager, no module involved. That is why the mails kept coming after the mail-alert module was uninstalled. The fix commented that `Mail::Send` call out. (The earlier comparison missed it by searching case-sensitively for `Mail::send(` — core writes `Mail::Send(`.)
+
+**Carried by module:** `hookActionEmailSendBefore` returns false for the `productoutofstock` template when its path comes from `src/Core/Stock` — update-proof; ps_emailalerts' own stock alerts are not affected. The `mailalerts_old` folder rename needs nothing on top (verified: no `mailalerts` rows left in the DB).
+
+**Also found during this recheck — two more undocumented src/ edits (customer-service emails, separate from this card):**
+- `src/Adapter/CustomerService/CommandHandler/AddOrderCustomerMessageHandler.php` — "Customization By Ram Chandra": adds a `{link}` variable (contact-page link with thread token) to the order-message reply notification. A stock backup sits alongside as `AddOrderCustomerMessageHandler.php_BKP`.
+- `src/Adapter/CustomerService/CommandHandler/ReplyToCustomerThreadHandler.php` — 2024-07-12 (commit `764df5576`): when `wkhelpdesk` is enabled, `{link}` points to the helpdesk ticket view instead.
+These two are NOT yet carried by the module (would need a service swap like #3, or manual re-apply after a core update). Flagged for a decision.
+
+*(Superseded original analysis, kept for history:)*
 
 **Carried by module:** nothing to carry — the fix is the `mailalerts_old` folder rename, which lives outside any upgraded path. Keep that folder as-is.
 
