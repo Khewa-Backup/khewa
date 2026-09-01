@@ -10,7 +10,7 @@
 	</p>
 	<p>
 		{l s='Full details of every change:' mod='khewacorechanges'} <code>modules/khewacorechanges/CORE_CHANGES.md</code> &mdash;
-		{l s='how this module works:' mod='khewacorechanges'} <code>modules/khewacorechanges/HOW_IT_WORKS.md</code>
+		{l s='what is handled and how to test:' mod='khewacorechanges'} <code>modules/khewacorechanges/UPDATE_SAFETY.md</code>
 	</p>
 </div>
 

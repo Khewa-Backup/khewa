@@ -5,8 +5,8 @@
  * Holds every custom change Khewa made to PrestaShop core / third-party
  * module files so they survive PrestaShop, theme and module updates.
  *
- * Read CORE_CHANGES.md (what was changed and why) and HOW_IT_WORKS.md
- * (how this module carries each change) before touching anything here.
+ * Read CORE_CHANGES.md (what was changed and why) and UPDATE_SAFETY.md
+ * (what is handled, how, and how to test it) before touching anything here.
  *
  * Three mechanisms are used, chosen per file:
  *   1. override/            PrestaShop class/controller overrides. PrestaShop
