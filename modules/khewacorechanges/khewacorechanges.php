@@ -87,6 +87,7 @@ class Khewacorechanges extends Module
             && $this->registerHook('displayBackOfficeHeader')
             && $this->registerHook('actionEmailSendBefore')
             && $this->registerHook('actionPresentCart')
+            && $this->registerHook('actionPresentProduct')
             && $this->deployManagedFiles() !== false;
     }
 
@@ -196,6 +197,28 @@ class Khewacorechanges extends Module
         $value = (string) $params['presentedCart']['subtotals']['shipping']['value'];
         if ($value !== '' && !preg_match('/\d/', $value)) {
             $params['presentedCart']['subtotals']['shipping']['value'] = '';
+        }
+    }
+
+    /**
+     * CORE_CHANGES.md #14 — remove the "Specific References" block
+     * (Ean13 / Isbn / Upc table) from the product page. Originally done by
+     * commenting the block out in the warehouse theme's product-details.tpl;
+     * done here at data level so it also holds on a stock/updated theme:
+     * an empty specific_references makes every template's
+     * {if $product.specific_references} guard skip the whole section.
+     */
+    public function hookActionPresentProduct($params)
+    {
+        if (!isset($params['presentedProduct'])) {
+            return;
+        }
+        $product = $params['presentedProduct'];
+        if ($product instanceof PrestaShop\PrestaShop\Adapter\Presenter\AbstractLazyArray) {
+            // third argument forces replacing a method-backed index
+            $product->offsetSet('specific_references', [], true);
+        } elseif (is_array($product) && array_key_exists('specific_references', $product)) {
+            $params['presentedProduct']['specific_references'] = [];
         }
     }
 

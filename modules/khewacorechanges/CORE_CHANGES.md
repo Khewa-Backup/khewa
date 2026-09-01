@@ -192,9 +192,11 @@ The Trello card itself states this needed no code ("this solution dont need code
 
 ## 14. Remove Specific References
 
-**Status: unresolved — likely a mismatched Trello card/commit link. Needs confirmation.**
+**Status: resolved (2026-09-01) — confirmed by the card's screenshot.** The change removes the "Specific References" block (Ean13 / Isbn / Upc table) from the product page. Implementation found in `themes/warehouse/templates/catalog/_partials/product-details.tpl` lines 68-79: the block's markup is commented out with Smarty comments (present since the "ware house theme" commit `29046a3a4`).
 
-**Carried by module:** nothing yet — pending confirmation of what this card actually refers to. (The QST 9.976% fix it was mistakenly matched to lives in `khewareports`, our own module, so it is not at risk from a core upgrade anyway.)
+**Carried by module:** `hookActionPresentProduct` force-empties `specific_references` on the presented product (LazyArray intercept), so every theme template's `{if $product.specific_references}` guard hides the section — update-proof, works even on a stock theme.
+
+(Earlier note: the commit `4e061647d` "All remaining referencess" that text-search matched to this card is actually the QST 9.975→9.976% fix in `khewareports` — unrelated to this change.)
 
 The only plausible commit match by search, `4e061647d` ("All remaining referencess", 2026-06-25), turns out to be a **Quebec sales tax (QST) rate correction** — updating the hardcoded QST rate from 9.975% to 9.976% across three `khewareports` module files (`classes/KhewaReportsData.php`, `controllers/admin/AdminKhewaReportsReportsController.php`, `khewareports.php`), affecting SQL/PHP multipliers and report column labels. Nothing in that diff touches product references/SKUs.
 
