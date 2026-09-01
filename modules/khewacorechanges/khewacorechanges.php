@@ -157,6 +157,18 @@ class Khewacorechanges extends Module
             return true;
         }
 
+        // CORE_CHANGES.md #11 — core's own StockManager emails employees
+        // "Product out of stock" directly (no module involved; that's why the
+        // mails survived uninstalling the mail-alert module). The original fix
+        // commented the Mail::Send call out of src/Core/Stock/StockManager.php;
+        // blocking it here survives core updates. Only the core sender is
+        // matched — ps_emailalerts' own stock alerts are untouched.
+        if ($params['template'] === 'productoutofstock'
+            && strpos(str_replace('\\', '/', (string) $params['templatePath']), 'src/Core/Stock') !== false
+        ) {
+            return false;
+        }
+
         // CORE_CHANGES.md #16 — no employee "new order" alert for RockPOS till
         // sales. Returning false makes Mail::send() abort, so this works no
         // matter which version of ps_emailalerts is installed — the module can
