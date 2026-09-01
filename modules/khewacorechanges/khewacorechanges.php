@@ -86,6 +86,7 @@ class Khewacorechanges extends Module
         return parent::install()
             && $this->registerHook('displayBackOfficeHeader')
             && $this->registerHook('actionEmailSendBefore')
+            && $this->registerHook('actionPresentCart')
             && $this->deployManagedFiles() !== false;
     }
 
@@ -176,6 +177,26 @@ class Khewacorechanges extends Module
         $params['templatePath'] = $this->getLocalPath() . 'mails/';
 
         return true;
+    }
+
+    /**
+     * CORE_CHANGES.md #15 — never show the word "Free" as a shipping cost in
+     * the cart popup / checkout summary. Works at data level (the presented
+     * cart array), so it holds even with a stock, un-edited theme template:
+     * when the shipping subtotal value contains no digit (i.e. it is the
+     * translated word "Free"/"Gratuit"), blank it — the templates then skip
+     * the value (and warehouse's own edited templates agree).
+     * Real prices ("$12.00") contain digits and are left alone.
+     */
+    public function hookActionPresentCart($params)
+    {
+        if (!isset($params['presentedCart']['subtotals']['shipping']['value'])) {
+            return;
+        }
+        $value = (string) $params['presentedCart']['subtotals']['shipping']['value'];
+        if ($value !== '' && !preg_match('/\d/', $value)) {
+            $params['presentedCart']['subtotals']['shipping']['value'] = '';
+        }
     }
 
     /**

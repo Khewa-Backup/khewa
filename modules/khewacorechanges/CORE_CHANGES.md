@@ -206,7 +206,7 @@ Either this is the wrong commit for the card, or "references" in the card title 
 
 **Status: confirmed via git history.**
 
-**Carried by module:** managed files `files/theme/modules/ps_shoppingcart/ps_shoppingcart-content.tpl`, `files/theme/templates/checkout/_partials/cart-summary-subtotals.tpl` → theme; `files/theme/mails/en/order_conf_product_list.tpl` → `themes/<theme>/mails/en/` (checked before `mails/_partials/`).
+**Carried by module:** `hookActionPresentCart` blanks a digit-less shipping value (the word "Free") at data level, so it holds on any theme version; the edited theme templates and the `nofilter` mail partial (`files/theme/…`) are also kept as deployable copies.
 
 **Commit:** `9618980a5` ("Free shipping text was removed from card, checkout", 2023-02-18). Touches three files:
 - `themes/warehouse/modules/ps_shoppingcart/ps_shoppingcart-content.tpl` and `themes/warehouse/templates/checkout/_partials/cart-summary-subtotals.tpl` — both wrap the shipping subtotal value in a check: if the subtotal type is `shipping` **and** the formatted value contains no digits (i.e. PrestaShop is about to print the literal word "Free"), the value is suppressed and nothing is shown. Numeric shipping costs are untouched — only the "Free" text label is hidden.
