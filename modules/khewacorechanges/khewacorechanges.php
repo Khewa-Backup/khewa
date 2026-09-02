@@ -49,11 +49,9 @@ class Khewacorechanges extends Module
         'admin_customer_thread_view' => ['src' => 'root/override/controllers/admin/templates/customer_threads/helpers/view/view.tpl', 'target' => 'root', 'path' => 'override/controllers/admin/templates/customer_threads/helpers/view/view.tpl', 'change' => '6'],
         // #16 — ps_emailalerts: skip employee "new order" alert for RockPOS sales + notify-me fix.
         'ps_emailalerts' => ['src' => 'root/modules/ps_emailalerts/ps_emailalerts.php', 'target' => 'root', 'path' => 'modules/ps_emailalerts/ps_emailalerts.php', 'change' => '16'],
-        // #1 — RockPOS golden copies (no vendor baseline; these are snapshots of the live, customised files).
-        'rock_sales' => ['src' => 'root/modules/hspointofsalepro/controllers/front/sales.php', 'target' => 'root', 'path' => 'modules/hspointofsalepro/controllers/front/sales.php', 'change' => '1'],
-        'rock_payment_module' => ['src' => 'root/modules/hspointofsalepro/classes/PosPaymentModule.php', 'target' => 'root', 'path' => 'modules/hspointofsalepro/classes/PosPaymentModule.php', 'change' => '1'],
-        'rock_payment' => ['src' => 'root/modules/hspointofsalepro/classes/PosPayment.php', 'target' => 'root', 'path' => 'modules/hspointofsalepro/classes/PosPayment.php', 'change' => '1'],
-        'rock_main' => ['src' => 'root/modules/hspointofsalepro/hspointofsalepro.php', 'target' => 'root', 'path' => 'modules/hspointofsalepro/hspointofsalepro.php', 'change' => '1'],
+        // #1 — RockPOS (hspointofsalepro) is deliberately NOT managed by this
+        // module: its customisations stay inside the module itself and any
+        // vendor update must be diffed/merged by hand.
     ];
 
     public function __construct()

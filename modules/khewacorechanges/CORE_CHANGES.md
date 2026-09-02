@@ -31,7 +31,7 @@ The card "Credit slip disappears after created" was excluded from this pass per 
 - `PosPayment.php` — 1 commit only (essentially untouched since import).
 - `hspointofsalepro.php` — 6 commits: tax fixes (left-side tax, voucher text, export), French/theme additions, JS updates, most recent "reciept fix" (receipt output logic, paired with `sales.js`/`sales.tpl` changes).
 
-**Carried by module:** managed golden copies `files/root/modules/hspointofsalepro/…` (4 files), re-applied from the config page. These are whole-file snapshots, not diffs — click **Pull** after editing `sales.php`, and merge before re-applying over a newer vendor version.
+**Carried by module: nothing — by decision (2026-09-02).** The earlier snapshot approach was removed at the user's request; this module does not touch RockPOS. All customisations live inside `modules/hspointofsalepro/` itself, and any vendor update must be diffed/merged by hand.
 
 **Real conflict found (not a Trello card, but relevant):** both `modules/hspointofsalepro/override/classes/Cart.php` (module-bundled, 1180 lines, untouched since import) and root `override/classes/Cart.php` (1204 lines, **the one PrestaShop actually loads**) override `Cart::getProducts()`. The root copy was patched in commit `edd95ec6b` ("core change online gift card issue") to handle fixed-amount/gift-card discounts exceeding product total — a fix **absent from the module-bundled copy**. If the module is ever reinstalled/reset (which typically re-copies its bundled override into `override/`), this gift-card fix would be silently overwritten. See Housekeeping Notes below.
 
