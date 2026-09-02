@@ -10,13 +10,13 @@ class ProductController extends ProductControllerCore
 {
 	/*
     * module: khewacorechanges
-    * date: 2026-08-30 17:26:36
+    * date: 2026-09-01 09:20:06
     * version: 1.0.0
     */
     protected $quantity_discounts;
 	/*
     * module: khewacorechanges
-    * date: 2026-08-30 17:26:36
+    * date: 2026-09-01 09:20:06
     * version: 1.0.0
     */
     public function init()
@@ -79,7 +79,7 @@ class ProductController extends ProductControllerCore
 	
 	/*
     * module: khewacorechanges
-    * date: 2026-08-30 17:26:36
+    * date: 2026-09-01 09:20:06
     * version: 1.0.0
     */
     public function getTemplateVarProduct()
@@ -157,7 +157,7 @@ class ProductController extends ProductControllerCore
 	
 	/*
     * module: khewacorechanges
-    * date: 2026-08-30 17:26:36
+    * date: 2026-09-01 09:20:06
     * version: 1.0.0
     */
     private function getProductPageTitle(array $meta = null)
@@ -185,7 +185,7 @@ class ProductController extends ProductControllerCore
 	
 	/*
     * module: khewacorechanges
-    * date: 2026-08-30 17:26:36
+    * date: 2026-09-01 09:20:06
     * version: 1.0.0
     */
     private function getIdProductAttribute()
@@ -211,7 +211,7 @@ class ProductController extends ProductControllerCore
 	
 	/*
     * module: khewacorechanges
-    * date: 2026-08-30 17:26:36
+    * date: 2026-09-01 09:20:06
     * version: 1.0.0
     */
     public function displayAjaxRefresh()
@@ -331,7 +331,7 @@ class ProductController extends ProductControllerCore
     }
 	/*
     * module: khewacorechanges
-    * date: 2026-08-30 17:26:36
+    * date: 2026-09-01 09:20:06
     * version: 1.0.0
     */
     protected function assignPriceAndTax()

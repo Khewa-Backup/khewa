@@ -27,7 +27,7 @@ class CartRule extends CartRuleCore
      */
     /*
     * module: khewacorechanges
-    * date: 2026-08-30 17:26:36
+    * date: 2026-09-01 09:20:05
     * version: 1.0.0
     */
     public function getContextualValue($use_tax, Context $context = null, $filter = null, $package = null, $use_cache = true)
