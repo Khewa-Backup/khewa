@@ -182,6 +182,32 @@ class KhewaReportsData
     }
 
     /**
+     * SQL boolean: does the order (alias $oAlias) carry a free-shipping cart rule?
+     * PrestaShop keeps orders.total_shipping_* at the gross carrier price even when a
+     * cart rule made shipping free; the cancellation only exists in order_cart_rule.
+     */
+    protected function getFreeShippingExistsSql($oAlias)
+    {
+        return 'EXISTS (SELECT 1 FROM ' . _DB_PREFIX_ . 'order_cart_rule fs_ocr'
+            . ' WHERE fs_ocr.id_order = ' . $oAlias . '.id_order AND fs_ocr.free_shipping = 1)';
+    }
+
+    /**
+     * SQL boolean: was the order (alias $oAlias) paid ENTIRELY with a credit slip?
+     * True when it has at least one positive credit-slip payment and no positive payment
+     * of any other kind. Such an order is "not a sale" for tax purposes (the tax was
+     * already collected on the original sale the slip came from), so the Sales, SBPM and
+     * Taxes tabs all report 0 tax for it. Mixed orders (slip + cash/card) keep their tax.
+     */
+    protected function getPaidByCreditSlipOnlySql($oAlias)
+    {
+        $slipMatch = Khewareports::buildCreditSlipOrderPaymentMatchSql('cs_op.payment_method');
+        $base = 'SELECT 1 FROM ' . _DB_PREFIX_ . 'order_payment cs_op'
+            . ' WHERE cs_op.order_reference = ' . $oAlias . '.reference AND cs_op.amount > 0 AND ';
+        return '(EXISTS (' . $base . $slipMatch . ') AND NOT EXISTS (' . $base . 'NOT ' . $slipMatch . '))';
+    }
+
+    /**
      * Get Sales Data - Orders within date range based on ORDER DATE
      */
     public function getSalesData()
@@ -254,7 +280,8 @@ class KhewaReportsData
             IFNULL(slip.refund_date, "") as refund_date,
             dcl.name as delivery_country,
             ds.name as delivery_state,
-            IFNULL(pb.payment_breakdown, "") as payment_breakdown
+            IFNULL(pb.payment_breakdown, "") as payment_breakdown,
+            (CASE WHEN ' . $this->getPaidByCreditSlipOnlySql('o') . ' THEN 1 ELSE 0 END) as paid_by_credit_slip
             
         FROM ' . _DB_PREFIX_ . 'orders o
         LEFT JOIN ' . _DB_PREFIX_ . 'order_detail od ON o.id_order = od.id_order
@@ -360,7 +387,19 @@ class KhewaReportsData
         
         ORDER BY o.date_add DESC, o.id_order DESC, od.id_order_detail ASC
         ';
-        return Db::getInstance()->executeS($sql);
+        $rows = Db::getInstance()->executeS($sql);
+        // Orders paid entirely by credit slip carry no tax on any tab (see getPaidByCreditSlipOnlySql).
+        $taxFields = array('gst_unit_amount', 'gst_total_amount', 'qst_unit_amount', 'qst_total_amount',
+            'shipping_gst_amount', 'shipping_qst_amount');
+        foreach ($rows as &$row) {
+            if (!empty($row['paid_by_credit_slip'])) {
+                foreach ($taxFields as $f) {
+                    $row[$f] = 0;
+                }
+            }
+        }
+        unset($row);
+        return $rows;
     }
 
 
@@ -1213,11 +1252,14 @@ class KhewaReportsData
             o.module,
             o.total_products as order_total_products_excl,
             o.total_products_wt as order_total_products_incl,
-            o.total_shipping_tax_incl as order_total_shipping,
-            o.total_shipping_tax_excl as order_total_shipping_excl,
+            -- Net shipping: a free-shipping cart rule cancels the carrier price, but
+            -- orders.total_shipping_* still stores the gross amount. Count 0 in that case.
+            (CASE WHEN ' . $this->getFreeShippingExistsSql('o') . ' THEN 0 ELSE o.total_shipping_tax_incl END) as order_total_shipping,
+            (CASE WHEN ' . $this->getFreeShippingExistsSql('o') . ' THEN 0 ELSE o.total_shipping_tax_excl END) as order_total_shipping_excl,
             o.total_wrapping_tax_excl as order_total_wrapping_excl,
             o.total_paid_tax_incl as order_total_paid,
             o.total_paid_tax_excl as order_total_paid_excl,
+            (CASE WHEN ' . $this->getPaidByCreditSlipOnlySql('o') . ' THEN 1 ELSE 0 END) as paid_by_credit_slip,
             IFNULL((
                 SELECT SUM(op.amount) FROM ' . _DB_PREFIX_ . 'order_payment op
                 WHERE op.order_reference = o.reference AND op.amount > 0
@@ -1464,9 +1506,11 @@ class KhewaReportsData
             $orderExclById = array();
             // Per-order gift-wrapping cost (tax-excl) for the optional Wrapping Cost column.
             $orderWrappingExclById = array();
+            $creditSlipOnlyById = array();
             foreach ($allOrders as $ord) {
                 $orderExclById[(int)$ord['id_order']] = (float)$ord['order_total_products_excl'];
                 $orderWrappingExclById[(int)$ord['id_order']] = (float)$ord['order_total_wrapping_excl'];
+                $creditSlipOnlyById[(int)$ord['id_order']] = !empty($ord['paid_by_credit_slip']);
             }
             $taxRateById = array();
             foreach ($result['tax_columns'] as $tax) {
@@ -1494,6 +1538,11 @@ class KhewaReportsData
                 if (!empty($row['order_ids'])) {
                     foreach ($row['order_ids'] as $oid) {
                         $oid = (int)$oid;
+                        // Paid entirely by credit slip: not a sale for tax purposes, contributes 0 tax
+                        // (same rule as the Sales and Taxes tabs).
+                        if (!empty($creditSlipOnlyById[$oid])) {
+                            continue;
+                        }
                         foreach ($taxIds as $taxId) {
                             $productTax = (isset($productTaxByOrderId[$oid]) && isset($productTaxByOrderId[$oid][$taxId]))
                                 ? (float)$productTaxByOrderId[$oid][$taxId]
@@ -1968,7 +2017,7 @@ class KhewaReportsData
 
         // ONLINE shipping totals (for SBPM top table "Shipping Online" row)
         $sql = '
-        SELECT IFNULL(SUM(o.total_shipping_tax_incl), 0) as shipping_incl
+        SELECT IFNULL(SUM(CASE WHEN ' . $this->getFreeShippingExistsSql('o') . ' THEN 0 ELSE o.total_shipping_tax_incl END), 0) as shipping_incl
         FROM ' . _DB_PREFIX_ . 'orders o
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
@@ -2229,6 +2278,8 @@ class KhewaReportsData
                 AND o.current_state NOT IN (' . $refundStates . ')
             )
         )
+        -- Orders paid entirely by credit slip are not a sale for tax purposes (same rule as Sales/SBPM tabs)
+        AND NOT ' . $this->getPaidByCreditSlipOnlySql('o') . '
 
         GROUP BY t.id_tax, tl.name, t.rate
         ';
@@ -2267,6 +2318,8 @@ class KhewaReportsData
                 AND o.current_state NOT IN (' . $refundStates . ')
             )
         )
+        -- Orders paid entirely by credit slip are not a sale for tax purposes (same rule as Sales/SBPM tabs)
+        AND NOT ' . $this->getPaidByCreditSlipOnlySql('o') . '
 
         GROUP BY t.id_tax, tl.name, t.rate
         ';
