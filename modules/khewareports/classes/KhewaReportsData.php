@@ -919,6 +919,56 @@ class KhewaReportsData
     }
 
     /**
+     * Voucher total for the given orders, reconciled per order.
+     *
+     * Vouchers can be recorded two ways: as cart-rule discount rows
+     * (order_cart_rule) and as payment rows (order_payment). The two are not
+     * always in step — POS in particular can write a single voucher payment row
+     * for an order that actually had several voucher cart rules applied
+     * (e.g. order 33545 / PXDNXBZVF: two $20 vouchers, one $20 payment row).
+     *
+     * Taking the larger of the two per order keeps whichever source recorded the
+     * voucher activity more completely, without double-counting an order that
+     * booked the same voucher both ways. This is decided per order, so one
+     * order's incomplete payment record cannot discard its own cart-rule value.
+     *
+     * @param string $refSubquery SQL subquery returning the qualifying order references
+     * @return float
+     */
+    protected function getVoucherTotalPerOrder($refSubquery)
+    {
+        $ocrVoucherValue =
+            'CASE
+                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
+                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
+                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
+                ELSE ocr.value_tax_excl
+            END';
+        $sql = '
+        SELECT IFNULL(SUM(GREATEST(t.voucher_disc, t.voucher_pay)), 0) as total_voucher
+        FROM (
+            SELECT o.id_order,
+                IFNULL((
+                    SELECT SUM(op.amount) FROM ' . _DB_PREFIX_ . 'order_payment op
+                    WHERE op.order_reference = o.reference AND op.amount > 0
+                    AND LOWER(op.payment_method) LIKE "%voucher%"
+                ), 0) as voucher_pay,
+                IFNULL((
+                    SELECT SUM(' . $ocrVoucherValue . ')
+                    FROM ' . _DB_PREFIX_ . 'order_cart_rule ocr
+                    LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON cr.id_cart_rule = ocr.id_cart_rule
+                    WHERE ocr.id_order = o.id_order
+                    AND LOWER(ocr.name) LIKE "%voucher%"
+                ), 0) as voucher_disc
+            FROM ' . _DB_PREFIX_ . 'orders o
+            WHERE o.reference IN (' . $refSubquery . ')
+        ) t
+        WHERE t.voucher_pay > 0 OR t.voucher_disc > 0
+        ';
+        return (float)Db::getInstance()->getValue($sql);
+    }
+
+    /**
      * Total discount-tax to deduct per tax id for the Taxes-tab "Net Tax", over the same
      * order set the collected-tax query uses (date in range, not in excluded/refund states).
      *
@@ -1794,90 +1844,13 @@ class KhewaReportsData
         $result['instore']['gift_card'] = $this->getGiftCardTotalWithOverlap($instoreRefSubquery);
         
         // --- ONLINE VOUCHER ---
-        // Source 1: From order_payment
-        $sql = '
-        SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'order_payment op
-        WHERE op.order_reference IN (' . $onlineRefSubquery . ')
-        AND LOWER(op.payment_method) LIKE "%voucher%"
-        AND op.amount > 0
-        ';
-        $voucherOnlinePayment = (float)Db::getInstance()->getValue($sql);
-        
-        // Source 2: From order_cart_rule, EXCLUDING orders that have voucher in order_payment
-        // Use CASE to select correct value based on reduction type
-        $sql = '
-        SELECT IFNULL(SUM(
-            CASE
-                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
-                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
-                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
-                ELSE ocr.value_tax_excl
-            END
-        ), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
-        ' . $refundDateCondition . '
-        AND ' . $this->getNotPosModuleCondition('o.module') . '
-        AND LOWER(ocr.name) LIKE "%voucher%"
-        AND o.id_order NOT IN (
-            SELECT DISTINCT o2.id_order 
-            FROM ' . _DB_PREFIX_ . 'orders o2
-            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
-            WHERE LOWER(op2.payment_method) LIKE "%voucher%"
-            AND op2.amount > 0
-        )
-        ';
-        $voucherOnlineCartRule = (float)Db::getInstance()->getValue($sql);
-        
-        $result['online']['voucher'] = $voucherOnlinePayment + $voucherOnlineCartRule;
+        // Reconcile the cart-rule and payment records of each voucher order and take
+        // the fuller of the two, so an order whose payment row under-records its
+        // vouchers still reports its real cart-rule value. See getVoucherTotalPerOrder.
+        $result['online']['voucher'] = $this->getVoucherTotalPerOrder($onlineRefSubquery);
         
         // --- IN-STORE VOUCHER ---
-        // Source 1: From order_payment
-        $sql = '
-        SELECT IFNULL(SUM(op.amount), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'order_payment op
-        WHERE op.order_reference IN (' . $instoreRefSubquery . ')
-        AND LOWER(op.payment_method) LIKE "%voucher%"
-        AND op.amount > 0
-        ';
-        $voucherInstorePayment = (float)Db::getInstance()->getValue($sql);
-        
-        // Source 2: From order_cart_rule, EXCLUDING orders that have voucher in order_payment
-        // Use CASE to select correct value based on reduction type
-        $sql = '
-        SELECT IFNULL(SUM(
-            CASE
-                WHEN IFNULL(cr.reduction_percent, 0) > 0 THEN ocr.value_tax_excl
-                WHEN IFNULL(cr.reduction_amount, 0) > 0 THEN
-                    (CASE WHEN IFNULL(cr.reduction_tax, 0) = 1 THEN ocr.value ELSE ocr.value_tax_excl END)
-                ELSE ocr.value_tax_excl
-            END
-        ), 0) as amount
-        FROM ' . _DB_PREFIX_ . 'orders o
-        INNER JOIN ' . _DB_PREFIX_ . 'order_cart_rule ocr ON o.id_order = ocr.id_order
-        LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
-        WHERE o.date_add >= "' . $this->date_from . '"
-        AND o.date_add <= "' . $this->date_to . '"
-        AND ' . Khewareports::buildSalesExclusionCondition('o') . '
-        ' . $refundDateCondition . '
-        AND ' . $this->getPosModuleCondition('o.module') . '
-        AND LOWER(ocr.name) LIKE "%voucher%"
-        AND o.id_order NOT IN (
-            SELECT DISTINCT o2.id_order 
-            FROM ' . _DB_PREFIX_ . 'orders o2
-            INNER JOIN ' . _DB_PREFIX_ . 'order_payment op2 ON o2.reference = op2.order_reference
-            WHERE LOWER(op2.payment_method) LIKE "%voucher%"
-            AND op2.amount > 0
-        )
-        ';
-        $voucherInstoreCartRule = (float)Db::getInstance()->getValue($sql);
-        
-        $result['instore']['voucher'] = $voucherInstorePayment + $voucherInstoreCartRule;
+        $result['instore']['voucher'] = $this->getVoucherTotalPerOrder($instoreRefSubquery);
         
         // --- ONLINE CREDIT SLIP ---
         // Source 1: From order_payment
