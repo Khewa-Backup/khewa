@@ -44,6 +44,19 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="control-label col-lg-3">
+                    <span title="" data-html="true" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Choose which tabs to include in the exported file' mod='khewareports'}">
+                        {l s='Tabs' mod='khewareports'}
+                    </span>
+                </label>
+                <div class="col-lg-9">
+                    <select name="tabs" id="tabs" class="form-control fixed-width-xl">
+                        <option value="default"{if $tabs != 'sbpm'} selected="selected"{/if}>{l s='Default' mod='khewareports'}</option>
+                        <option value="sbpm"{if $tabs == 'sbpm'} selected="selected"{/if}>{l s='SBPM' mod='khewareports'}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
                 <div class="col-lg-9 col-lg-offset-3">
                     <button type="submit" name="submitKhewaReportsExport" id="submitKhewaReportsExport" class="btn btn-primary">
                         <i class="icon-download"></i> {l s='Export' mod='khewareports'}

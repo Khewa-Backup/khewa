@@ -48,11 +48,13 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         // Get date values from POST or set defaults
         $date_from = Tools::getValue('date_from', date('Y-m-d', strtotime('-30 days')));
         $date_to = Tools::getValue('date_to', date('Y-m-d'));
-        
+        $tabs = Tools::getValue('tabs', 'default');
+
         $this->context->smarty->assign(array(
             'action_url' => $this->context->link->getAdminLink('AdminKhewaReportsReports'),
             'date_from' => $date_from,
-            'date_to' => $date_to
+            'date_to' => $date_to,
+            'tabs' => $tabs
         ));
         
         $this->content = $this->context->smarty->fetch($this->getTemplatePath().'reports.tpl');
@@ -70,11 +72,17 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             return;
         }
         
+        // Which tabs to include in the workbook: 'default' (all) or 'sbpm' (SBPM sheet only)
+        $tabs = Tools::getValue('tabs', 'default');
+        if ($tabs !== 'sbpm') {
+            $tabs = 'default';
+        }
+
         // Generate Excel file
-        $this->generateExcelExport($date_from, $date_to);
+        $this->generateExcelExport($date_from, $date_to, $tabs);
     }
 
-    public function generateExcelExport($date_from, $date_to)
+    public function generateExcelExport($date_from, $date_to, $tabs = 'default')
     {
         // Use PhpSpreadsheet from the ordersexportsalesreportpro module
         $phpspreadsheet_path = _PS_MODULE_DIR_ . 'ordersexportsalesreportpro/vendor/autoload.php';
@@ -100,26 +108,33 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
             ->setSubject('Reports Export')
             ->setDescription('Generated report from Khewa Reports module');
         
-        // Create Sales sheet (first/default sheet)
-        $salesSheet = $spreadsheet->getActiveSheet();
-        $salesSheet->setTitle('Sales');
-        $this->populateSalesSheet($salesSheet, $dataFetcher, $date_from, $date_to);
-        
-        // Create Refunds sheet
-        $refundsSheet = $spreadsheet->createSheet();
-        $refundsSheet->setTitle('Refunds');
-        $this->populateRefundsSheet($refundsSheet, $dataFetcher, $date_from, $date_to);
-        
-        // Create SBPM sheet (Sales By Payment Method)
-        $sbpmSheet = $spreadsheet->createSheet();
-        $sbpmSheet->setTitle('Sales by Payment Methods');
-        $this->populateSBPMSheet($sbpmSheet, $dataFetcher, $date_from, $date_to);
-        
-        // Create Taxes sheet
-        $taxesSheet = $spreadsheet->createSheet();
-        $taxesSheet->setTitle('Taxes');
-        $this->populateTaxesSheet($taxesSheet, $dataFetcher, $date_from, $date_to);
-        
+        if ($tabs === 'sbpm') {
+            // SBPM only — single sheet workbook, same data/calculations as the full export
+            $sbpmSheet = $spreadsheet->getActiveSheet();
+            $sbpmSheet->setTitle('Sales by Payment Methods');
+            $this->populateSBPMSheet($sbpmSheet, $dataFetcher, $date_from, $date_to);
+        } else {
+            // Create Sales sheet (first/default sheet)
+            $salesSheet = $spreadsheet->getActiveSheet();
+            $salesSheet->setTitle('Sales');
+            $this->populateSalesSheet($salesSheet, $dataFetcher, $date_from, $date_to);
+
+            // Create Refunds sheet
+            $refundsSheet = $spreadsheet->createSheet();
+            $refundsSheet->setTitle('Refunds');
+            $this->populateRefundsSheet($refundsSheet, $dataFetcher, $date_from, $date_to);
+
+            // Create SBPM sheet (Sales By Payment Method)
+            $sbpmSheet = $spreadsheet->createSheet();
+            $sbpmSheet->setTitle('Sales by Payment Methods');
+            $this->populateSBPMSheet($sbpmSheet, $dataFetcher, $date_from, $date_to);
+
+            // Create Taxes sheet
+            $taxesSheet = $spreadsheet->createSheet();
+            $taxesSheet->setTitle('Taxes');
+            $this->populateTaxesSheet($taxesSheet, $dataFetcher, $date_from, $date_to);
+        }
+
         // Set first sheet (Sales) as active
         $spreadsheet->setActiveSheetIndex(0);
         
@@ -129,7 +144,7 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         }
         
         // Output file
-        $filename = 'khewa_reports_' . $date_from . '_to_' . $date_to . '.xlsx';
+        $filename = 'khewa_reports_' . ($tabs === 'sbpm' ? 'sbpm_' : '') . $date_from . '_to_' . $date_to . '.xlsx';
         
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
