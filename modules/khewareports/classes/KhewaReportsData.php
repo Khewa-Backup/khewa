@@ -269,6 +269,8 @@ class KhewaReportsData
             ocr.voucher_names,
             IFNULL(ocr.gift_card_value, 0) as gift_card_amount,
             IFNULL(ocr.voucher_only_value, 0) as voucher_amount_sales,
+            IFNULL(pos_disc.amount, 0) as pos_discount_amount,
+            IFNULL(pos_disc.label, "") as pos_discount_label,
             GREATEST(
                 IFNULL(ocr.total_cart_rule_value, 0)
                 - IFNULL(ocr.gift_card_value, 0)
@@ -318,6 +320,28 @@ class KhewaReportsData
             LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON cr.id_cart_rule = ocr.id_cart_rule
             GROUP BY ocr.id_order
         ) ocr ON o.id_order = ocr.id_order
+        LEFT JOIN (
+            -- "Point of Sale" cart rules = the discounts given at the till. Amount uses the same
+            -- rule as SBPM "Discount InStore": percentage -> tax excl (discount applied before tax),
+            -- fixed -> incl/excl per cart_rule.reduction_tax.
+            SELECT ocr.id_order,
+                   SUM(' . $ocrLineAmt . ') as amount,
+                   GROUP_CONCAT(
+                       CONCAT(
+                           "$", FORMAT(' . $ocrLineAmt . ', 2),
+                           CASE WHEN IFNULL(cr.reduction_percent, 0) > 0
+                               THEN CONCAT(" (", TRIM(TRAILING "." FROM TRIM(TRAILING "0" FROM cr.reduction_percent)), "% - discounted before tax)")
+                               ELSE " (Fixed)"
+                           END
+                       )
+                       ORDER BY ocr.id_order_cart_rule ASC
+                       SEPARATOR ", "
+                   ) as label
+            FROM ' . _DB_PREFIX_ . 'order_cart_rule ocr
+            LEFT JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON cr.id_cart_rule = ocr.id_cart_rule
+            WHERE LOWER(ocr.name) LIKE "%point of sale%"
+            GROUP BY ocr.id_order
+        ) pos_disc ON o.id_order = pos_disc.id_order
         LEFT JOIN (
             SELECT id_order,
                    SUM(total_products_tax_incl + total_shipping_tax_incl) as total_refund_tax_incl,
