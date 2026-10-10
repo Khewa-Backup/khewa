@@ -208,6 +208,25 @@ class KhewaReportsData
     }
 
     /**
+     * SQL boolean: is the order_slip (alias $osAlias) a real refund (money given back)?
+     * False when the same return also gave the customer store credit: RockPOS "Credit Slip"
+     * checkbox (or the back-office "generate a voucher") makes a voucher for the same customer
+     * whose code ends in the returned order id (V<id>C<customer>P<order>; back-office vouchers
+     * put O / 0 before the order id).
+     * There is no id linking the slip to the voucher, so they are paired by order id, customer
+     * and creation time (within 60 seconds) — a later money-back refund on the same order
+     * is not mistaken for store credit. Store credit is not a refund: it is counted when
+     * spent ("Paid with Credit Slip", taken off TOTAL IN-STORE / TOTAL ONLINE).
+     */
+    protected function getRealRefundSlipSql($osAlias)
+    {
+        return 'NOT EXISTS (SELECT 1 FROM ' . _DB_PREFIX_ . 'cart_rule sc_cr'
+            . ' WHERE sc_cr.id_customer = ' . $osAlias . '.id_customer'
+            . ' AND sc_cr.code REGEXP CONCAT("^V[0-9]+C[0-9]+[PO0]", ' . $osAlias . '.id_order, "$")'
+            . ' AND ABS(TIMESTAMPDIFF(SECOND, sc_cr.date_add, ' . $osAlias . '.date_add)) <= 60)';
+    }
+
+    /**
      * Get Sales Data - Orders within date range based on ORDER DATE
      */
     public function getSalesData()
@@ -346,7 +365,8 @@ class KhewaReportsData
             SELECT id_order,
                    SUM(total_products_tax_incl + total_shipping_tax_incl) as total_refund_tax_incl,
                    MAX(date_add) as refund_date
-            FROM ' . _DB_PREFIX_ . 'order_slip
+            FROM ' . _DB_PREFIX_ . 'order_slip sl_os
+            WHERE ' . $this->getRealRefundSlipSql('sl_os') . '
             GROUP BY id_order
         ) slip ON o.id_order = slip.id_order
         LEFT JOIN ' . _DB_PREFIX_ . 'address da ON o.id_address_delivery = da.id_address
@@ -702,6 +722,7 @@ class KhewaReportsData
         
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
+        AND ' . $this->getRealRefundSlipSql('os') . '
         
         ORDER BY os.date_add ASC, os.id_order_slip ASC
         ';
@@ -1209,6 +1230,7 @@ class KhewaReportsData
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
         AND o.id_order IN (' . $idList . ')
+        AND ' . $this->getRealRefundSlipSql('os') . '
         ' . $excludePartialRefReferencesSql . '
         GROUP BY o.id_order
         ';
@@ -2056,6 +2078,7 @@ class KhewaReportsData
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
         AND ' . $this->getNotPosModuleCondition('o.module') . '
+        AND ' . $this->getRealRefundSlipSql('os') . '
         ' . $excludePartialRefReferencesSql . '
         ';
         $onlineRefundRow = Db::getInstance()->getRow($sql);
@@ -2083,6 +2106,7 @@ class KhewaReportsData
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
         AND ' . $this->getNotPosModuleCondition('o.module') . '
+        AND ' . $this->getRealRefundSlipSql('os') . '
         ' . $excludePartialRefReferencesSql . '
         GROUP BY tx.id_tax
         ';
@@ -2105,6 +2129,7 @@ class KhewaReportsData
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
         AND ' . $this->getPosModuleCondition('o.module') . '
+        AND ' . $this->getRealRefundSlipSql('os') . '
         ' . $excludePartialRefReferencesSql . '
         ';
         $instoreRefundRow = Db::getInstance()->getRow($sql);
@@ -2132,6 +2157,7 @@ class KhewaReportsData
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
         AND ' . $this->getPosModuleCondition('o.module') . '
+        AND ' . $this->getRealRefundSlipSql('os') . '
         ' . $excludePartialRefReferencesSql . '
         GROUP BY tx.id_tax
         ';
@@ -2220,11 +2246,13 @@ class KhewaReportsData
         
         // ========================================================================
         // DEDUCT REFUNDS FROM TOTALS
-        // Refunds are money going back to customers, so they reduce the net total
-        // TOTAL = Actual Cash Payments - Refunds
+        // Refunds are money going back to customers, so they reduce the net total.
+        // A return given as store credit is not a refund (see getRealRefundSlipSql);
+        // the credit is taken off instead on the day it is spent ("Paid with Credit Slip").
+        // TOTAL = Actual Cash Payments - Paid with Credit Slip - Refunds
         // ========================================================================
-        $result['online']['total'] = $result['online']['total'] - $result['online']['refund'];
-        $result['instore']['total'] = $result['instore']['total'] - $result['instore']['refund'];
+        $result['online']['total'] = $result['online']['total'] - $result['online']['credit_slip'] - $result['online']['refund'];
+        $result['instore']['total'] = $result['instore']['total'] - $result['instore']['credit_slip'] - $result['instore']['refund'];
         
         return $result;
     }
@@ -2346,6 +2374,7 @@ class KhewaReportsData
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
         AND ' . $this->getPosModuleCondition('o.module') . '
+        AND ' . $this->getRealRefundSlipSql('os') . '
         GROUP BY tx.id_tax, tl.name, t.rate
         ';
         $slipRefundRows = Db::getInstance()->executeS($sql);
@@ -2580,6 +2609,7 @@ class KhewaReportsData
         WHERE o.date_add >= "' . $this->date_from . '"
         AND o.date_add <= "' . $this->date_to . '"
         AND ' . Khewareports::buildSalesExclusionCondition('o') . '
+        AND ' . $this->getRealRefundSlipSql('os') . '
         ';
         $result['total_refund_amount'] = (float)Db::getInstance()->getValue($sql);
         
@@ -2633,6 +2663,7 @@ class KhewaReportsData
         
         WHERE os.date_add >= "' . $this->date_from . '"
         AND os.date_add <= "' . $this->date_to . '"
+        AND ' . $this->getRealRefundSlipSql('os') . '
         ';
         
         $result = Db::getInstance()->getRow($sql);
