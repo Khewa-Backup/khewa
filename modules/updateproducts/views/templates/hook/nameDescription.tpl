@@ -1,0 +1,2 @@
+<p class="available_url">{l s='The file will be available by link below:'  mod='updateproducts'}</p>
+<p ><strong><a class="href_export_file"  href="" data-file-url="{$file_url|escape:'htmlall':'UTF-8'}"></a></strong></p>

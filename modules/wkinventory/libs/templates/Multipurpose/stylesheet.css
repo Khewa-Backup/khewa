@@ -1,0 +1,78 @@
+/* --- header --- */
+.header{
+    height: 40px;
+    background: #5ab6fb;
+    font-size: 24px;
+    font-weight: bold; 
+    padding: 12px 40px 6px 40px;
+    border-bottom: 3px solid #000;
+}
+/* --- template --- */
+.product {
+    padding: 60px 0px 40px 40px;
+    width: 337px;
+    height: 440px;
+    background: #fff;
+    overflow: auto;
+    float: left;
+    margin-bottom: 5px;
+}
+.name {
+    background: #000;
+    border-radius: 8px;
+    width: 337px;
+    height: 35px;
+    text-align: center;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 8px;
+}
+.image {
+    width: 200px;
+    height: 200px;
+    margin: 10px 0 0 55px;
+}
+.price {
+    text-align: right;
+    font-size: 22px;
+}
+.special {
+    text-align: left;
+    font-size: 22px;
+}
+.description {
+    margin-top: 10px;
+}
+/* --- footer --- */
+.footer{
+    background: #5ab6fb; 
+    font-size: 12px;
+    height: 40px; 
+    font-weight: bold; 
+    text-align: center;
+}
+.footer_line{
+    margin-top: 0px; 
+    background: #000;
+    height: 3px;
+}
+.footer_address{
+    width: 200px;
+    background: #000;
+    color: #fff;
+    margin-top: -13px;
+    position: absolute;
+    margin-left: 40px;
+    font-size: 12px;
+    padding: 5px;
+}
+.footer_page{
+    width: 28px;
+    background: #000; 
+    color: #fff;
+    margin-top: -26px;
+    margin-left: 720px;
+    font-size: 12px; 
+    padding: 5px; 
+}

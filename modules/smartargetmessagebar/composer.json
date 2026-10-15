@@ -1,0 +1,26 @@
+{
+  "name": "prestashop/smartargetmessagebar",
+  "description": "",
+  "config": {
+    "preferred-install": "dist",
+    "optimize-autoloader": true,
+    "prepend-autoloader": false,
+    "platform": {
+      "php": "7.2.5"
+    }
+  },
+  "require": {
+    "php": ">=7.2",
+    "prestashop/prestashop-accounts-installer": "^1.0",
+    "prestashop/module-lib-service-container": "^2.0",
+    "prestashopcorp/module-lib-billing": "^4.0",
+    "prestashop/module-lib-mbo-installer": "^3.0"
+  },
+  "autoload": {
+    "classmap": [
+      "smartargetmessagebar.php"
+    ]
+  },
+  "author": "PrestaShop",
+  "license": "MIT"
+}

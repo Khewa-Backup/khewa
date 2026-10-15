@@ -1,0 +1,10 @@
+
+[{shop_url}]
+
+Sikkerhedskopieringen starter {date_start} ved {hours_start} og afslutter {date_end} på {hours_end}.
+
+Besked:
+{backup_result}
+
+{shop_name} [{shop_url}]
+

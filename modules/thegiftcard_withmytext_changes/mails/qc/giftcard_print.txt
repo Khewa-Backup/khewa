@@ -1,0 +1,15 @@
+[{shop_url}]
+
+Hi {customer}
+
+Here is your gift card worth {giftcard_amount}.
+
+Amount : {giftcard_amount}
+
+Code : {giftcard_code}
+
+Expiry date : {giftcard_expiration}
+
+Available {giftcard_expiration_date} from the purchase date, the gift card is usable throughout the store {shop_name}. It can be used in several times, including sale seasons, and can be combined with another payment method. To use the gift card, simply copy/paste the code above during the payment process of your next order.
+
+{shop_name} [{shop_url}]

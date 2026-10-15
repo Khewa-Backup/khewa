@@ -1,0 +1,53 @@
+/**
+ * 2020 ZH Media
+ *
+ * NOTICE OF LICENSE
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Do not resell or redistribute this file, either fully or partially.
+ * Do not remove this comment containing author information and copyright.
+ *
+ * @author    Zack Hussain <me@zackhussain.ca>
+ * @copyright 2020 ZH Media - All Rights Reserved
+ */
+
+#canadapost .forms, #canadapost .sidebar {
+  float: left;
+}
+
+#canadapost input[type="radio"], #canadapost input[type="checkbox"] {
+    margin-right: .3rem;
+}
+
+#canadapost-logo {
+  margin-bottom: 0;
+}
+
+#canadapost .sidebar {
+  margin-top: .9375rem;
+}
+
+#canadapost .sidebar .list-group-item i {
+  width: 24px;
+  height: 24px;
+  margin-right: 0;
+  vertical-align: middle;
+}
+
+#canadapost .sidebar .list-group-item {
+  font-size: 0.8rem;
+}
+
+#canadapost #save-changes.form-control-label,
+#canadapost #live-rate.form-control-label {
+    padding: .375rem .4375rem;
+}
+
+.zhmedia-modal .modal-header {
+    display: block;
+    border-radius: 0 !important;
+}
+
+.zhmedia-modal .modal-content {
+    padding: 0;
+}

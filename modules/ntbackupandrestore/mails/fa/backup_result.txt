@@ -1,0 +1,10 @@
+
+[{shop_url}]
+
+پشتیبان گیری در تاریخ {date_start} ساعت {hours_start} شروع شد و در تاریخ {date_end} ساعت {hours_end} به اتمام رسید.
+
+پیام:
+{backup_result}
+
+{shop_name} [{shop_url}]
+

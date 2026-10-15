@@ -1,0 +1,1 @@
+<div class="alert alert-info">{l s='If no filter is selected, module will export all products!'  mod='updateproducts'}</div>

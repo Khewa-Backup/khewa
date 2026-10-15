@@ -1,0 +1,3 @@
+Hello {name},
+
+Ticket #{ticket_id} assigned to you. Please check this ticket.

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>khwprodbulkmanu</name>
+    <displayName><![CDATA[Khewa Admin Bulk Product Manufacturer]]></displayName>
+    <version><![CDATA[1]]></version>
+    <description><![CDATA[Khewa Admin Bulk Product Manufacturer]]></description>
+    <author><![CDATA[Masudur Rahman]]></author>
+    <tab><![CDATA[administration]]></tab>
+	<confirmUninstall><![CDATA[Uninstall the module?]]></confirmUninstall>
+    <is_configurable>0</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>

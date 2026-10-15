@@ -1,0 +1,1178 @@
+*DEBUG* 	v1.7.7.5	2021/07/31 - 16:09:00: Property OrderPayment->amount is not valid
+*DEBUG* 	v1.7.7.5	2021/07/31 - 16:09:00: PosCart Object
+(
+    [id] => 8
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-07-31 16:06:43
+    [secure_key] => befb6f8063e4410d95f2cb6621156dbe
+    [id_carrier] => 25
+    [date_upd] => 2021-07-31 16:07:59
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => Array
+        (
+            [0] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 4161
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Card - Under the Same Sky
+                    [is_virtual] => 0
+                    [description_short] => <p>Blank wish card with white envelope. Wrapped individually in a clear bag. Bilingual biography of the artist in the back.</p><br /><p>Made in Canada.</p>
+                    [available_now] => In stock 2-4 days delivery
+                    [available_later] => Out of stock 7-10 days delivery
+                    [id_category_default] => 275
+                    [id_supplier] => 0
+                    [id_manufacturer] => 3
+                    [manufacturer_name] => Nathalie Coutou
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 5.5
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 8
+                    [width] => 17.780000
+                    [height] => 12.700000
+                    [depth] => 2.540000
+                    [out_of_stock] => 2
+                    [weight] => 0.03
+                    [available_date] => 0000-00-00
+                    [date_add] => 2021-02-08 13:54:04
+                    [date_upd] => 2021-07-30 12:11:04
+                    [quantity] => 1
+                    [link_rewrite] => card-under-the-same-sky
+                    [category] => wish-cards
+                    [unique_id] => 00000041610000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => A18066-7
+                    [weight_attribute] => 
+                    [ean13] => 754000034128
+                    [isbn] => 754000034126
+                    [upc] => 754000034126
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 2.400000
+                    [id_image] => 4161-4989
+                    [legend] => Card - Under the Same Sky
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 5.5
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 8
+                    [price_without_reduction_tax_incl] => 6.3236
+                    [price_without_reduction_tax_excl] => 5.5
+                    [price_with_reduction_tax_incl] => 6.3236
+                    [price_with_reduction_tax_excl] => 5.5
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 6.3236
+                    [price_without_customer_discount_tax_excl] => 5.5
+                    [total] => 5.5
+                    [total_wt] => 6.3236
+                    [price_wt] => 6.3236
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [id_feature] => 8
+                                    [id_product] => 4161
+                                    [id_feature_value] => 36
+                                )
+
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+            [1] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 4864
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Vivienne Scarf "Under the Same Sky"
+                    [is_virtual] => 0
+                    [description_short] => <p><!-- [if gte mso 9]><xml><br /> <o:OfficeDocumentSettings><br />  <o:AllowPNG/><br /> </o:OfficeDocumentSettings><br /></xml><![endif]--><!-- [if gte mso 9]><xml><br /> <w:WordDocument><br />  <w:View>Normal</w:View><br />  <w:Zoom>0</w:Zoom><br />  <w:TrackMoves/><br />  <w:TrackFormatting/><br />  <w:PunctuationKerning/><br />  <w:ValidateAgainstSchemas/><br />  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid><br />  <w:IgnoreMixedContent>false</w:IgnoreMixedContent><br />  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText><br />  <w:DoNotPromoteQF/><br />  <w:LidThemeOther>EN-CA</w:LidThemeOther><br />  <w:LidThemeAsian>X-NONE</w:LidThemeAsian><br />  <w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript><br />  <w:Compatibility><br />   <w:BreakWrappedTables/><br />   <w:SnapToGridInCell/><br />   <w:WrapTextWithPunct/><br />   <w:UseAsianBreakRules/><br />   <w:DontGrowAutofit/><br />   <w:SplitPgBreakAndParaMark/><br />   <w:EnableOpenTypeKerning/><br />   <w:DontFlipMirrorIndents/><br />   <w:OverrideTableStyleHps/><br />  </w:Compatibility><br />  <m:mathPr><br />   <m:mathFont m:val="Cambria Math"/><br />   <m:brkBin m:val="before"/><br />   <m:brkBinSub m:val="-"/><br />   <m:smallFrac m:val="off"/><br />   <m:dispDef/><br />   <m:lMargin m:val="0"/><br />   <m:rMargin m:val="0"/><br />   <m:defJc m:val="centerGroup"/><br />   <m:wrapIndent m:val="1440"/><br />   <m:intLim m:val="subSup"/><br />   <m:naryLim m:val="undOvr"/><br />  </m:mathPr></w:WordDocument><br /></xml><![endif]--><!-- [if gte mso 9]><xml><br /> <w:LatentStyles DefLockedState="false" DefUnhideWhenUsed="true"<br />  DefSemiHidden="true" DefQFormat="false" DefPriority="99"<br />  LatentStyleCount="267"><br />  <w:LsdException Locked="false" Priority="0" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Normal"/><br />  <w:LsdException Locked="false" Priority="9" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="heading 1"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 2"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 3"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 4"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 5"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 6"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 7"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 8"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 9"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 1"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 2"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 3"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 4"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 5"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 6"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 7"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 8"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 9"/><br />  <w:LsdException Locked="false" Priority="35" QFormat="true" Name="caption"/><br />  <w:LsdException Locked="false" Priority="10" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Title"/><br />  <w:LsdException Locked="false" Priority="1" Name="Default Paragraph Font"/><br />  <w:LsdException Locked="false" Priority="11" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Subtitle"/><br />  <w:LsdException Locked="false" Priority="22" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Strong"/><br />  <w:LsdException Locked="false" Priority="20" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Emphasis"/><br />  <w:LsdException Locked="false" Priority="59" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Table Grid"/><br />  <w:LsdException Locked="false" UnhideWhenUsed="false" Name="Placeholder Text"/><br />  <w:LsdException Locked="false" Priority="1" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="No Spacing"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 1"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 1"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 1"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 1"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 1"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 1"/><br />  <w:LsdException Locked="false" UnhideWhenUsed="false" Name="Revision"/><br />  <w:LsdException Locked="false" Priority="34" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="List Paragraph"/><br />  <w:LsdException Locked="false" Priority="29" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Quote"/><br />  <w:LsdException Locked="false" Priority="30" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Intense Quote"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 1"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 1"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 1"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 1"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 1"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 1"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 1"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 1"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 2"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 2"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 2"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 2"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 2"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 2"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 2"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 2"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 2"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 2"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 2"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 2"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 2"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 2"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 3"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 3"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 3"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 3"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 3"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 3"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 3"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 3"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 3"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 3"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 3"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 3"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 3"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 3"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 4"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 4"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 4"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 4"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 4"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 4"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 4"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 4"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 4"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 4"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 4"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 4"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 4"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 4"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 5"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 5"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 5"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 5"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 5"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 5"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 5"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 5"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 5"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 5"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 5"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 5"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 5"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 5"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 6"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 6"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 6"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 6"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 6"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 6"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 6"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 6"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 6"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 6"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 6"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 6"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 6"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 6"/><br />  <w:LsdException Locked="false" Priority="19" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Subtle Emphasis"/><br />  <w:LsdException Locked="false" Priority="21" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Intense Emphasis"/><br />  <w:LsdException Locked="false" Priority="31" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Subtle Reference"/><br />  <w:LsdException Locked="false" Priority="32" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Intense Reference"/><br />  <w:LsdException Locked="false" Priority="33" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Book Title"/><br />  <w:LsdException Locked="false" Priority="37" Name="Bibliography"/><br />  <w:LsdException Locked="false" Priority="39" QFormat="true" Name="TOC Heading"/><br /> </w:LatentStyles><br /></xml><![endif]--><!-- [if gte mso 10]><br /><style><br /> /* Style Definitions */<br /> table.MsoNormalTable<br />	{mso-style-name:"Table Normal";<br />	mso-tstyle-rowband-size:0;<br />	mso-tstyle-colband-size:0;<br />	mso-style-noshow:yes;<br />	mso-style-priority:99;<br />	mso-style-parent:"";<br />	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;<br />	mso-para-margin:0cm;<br />	mso-para-margin-bottom:.0001pt;<br />	mso-pagination:widow-orphan;<br />	font-size:10.0pt;<br />	font-family:"Calibri","sans-serif";}<br /></style><br /><![endif]--></p><br /><p class="MsoNoSpacing">Large soft chiffon Vivienne scarf engineered for high resolution sublimation printing. Colors and tones are made to complement the dresses and tops made with the same original art print. Art creation of "Under the Same Sky" by Nathalie Coutou. Dimensions: 19'' x 71''.</p><br /><h2 class="MsoNoSpacing"><span xml:lang="fr-ca" lang="fr-ca"> </span></h2>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 257
+                    [id_supplier] => 0
+                    [id_manufacturer] => 3
+                    [manufacturer_name] => Nathalie Coutou
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 49
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 10
+                    [width] => 25.400000
+                    [height] => 20.320000
+                    [depth] => 2.000000
+                    [out_of_stock] => 2
+                    [weight] => 0.1
+                    [available_date] => 0000-00-00
+                    [date_add] => 2021-06-09 13:08:09
+                    [date_upd] => 2021-07-30 12:11:04
+                    [quantity] => 1
+                    [link_rewrite] => vivienne-scarf-under-the-same-sky
+                    [category] => scarves
+                    [unique_id] => 00000048640000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => A14051-WAC0201NC0TA
+                    [weight_attribute] => 
+                    [ean13] => 4000000012023
+                    [isbn] => 400000002606
+                    [upc] => 400000002606
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 19.000000
+                    [id_image] => 4864-5062
+                    [legend] => 
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 49
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 10
+                    [price_without_reduction_tax_incl] => 56.3378
+                    [price_without_reduction_tax_excl] => 49
+                    [price_with_reduction_tax_incl] => 56.3378
+                    [price_with_reduction_tax_excl] => 49
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 56.3378
+                    [price_without_customer_discount_tax_excl] => 49
+                    [total] => 49
+                    [total_wt] => 56.3378
+                    [price_wt] => 56.3378
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+            [2] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 385
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Corrine Hunt Silk Inspiration Trapezoid Earrings
+                    [is_virtual] => 0
+                    [description_short] => <h3><span style="color:#000000;"><strong>Silk Inspiration Collection. Trapezoid earrings. Made of resin, silk and sterling silver. </strong></span></h3><br /><h3><span style="color:#000000;"><strong>Made in Canada.</strong></span></h3>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 120
+                    [id_supplier] => 0
+                    [id_manufacturer] => 10
+                    [manufacturer_name] => Corrine Hunt
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 38
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 2
+                    [width] => 17.780000
+                    [height] => 12.700000
+                    [depth] => 2.540000
+                    [out_of_stock] => 0
+                    [weight] => 0.1
+                    [available_date] => 0000-00-00
+                    [date_add] => 2017-05-22 17:01:40
+                    [date_upd] => 2021-07-30 12:11:04
+                    [quantity] => 1
+                    [link_rewrite] => corrine-hunt-silk-inspiration-trapezoid-earrings
+                    [category] => earrings
+                    [unique_id] => 00000003850000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => SKU: 00-07-675
+                    [weight_attribute] => 
+                    [ean13] => 7540000005993
+                    [isbn] => 754000005991
+                    [upc] => 754000005991
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 16.500000
+                    [id_image] => 385-511
+                    [legend] => Corrine Hunt Silk Inspiration Trapezoid Earrings
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 38
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 2
+                    [price_without_reduction_tax_incl] => 43.6905
+                    [price_without_reduction_tax_excl] => 38
+                    [price_with_reduction_tax_incl] => 43.6905
+                    [price_with_reduction_tax_excl] => 38
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 43.6905
+                    [price_without_customer_discount_tax_excl] => 38
+                    [total] => 38
+                    [total_wt] => 43.6905
+                    [price_wt] => 43.6905
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [id_feature] => 5
+                                    [id_product] => 385
+                                    [id_feature_value] => 6
+                                )
+
+                            [1] => Array
+                                (
+                                    [id_feature] => 5
+                                    [id_product] => 385
+                                    [id_feature_value] => 47
+                                )
+
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+        )
+
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+
+*DEBUG* 	v1.7.7.5	2021/07/31 - 16:09:27: Property OrderPayment->amount is not valid
+*DEBUG* 	v1.7.7.5	2021/07/31 - 16:09:27: PosCart Object
+(
+    [id] => 8
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-07-31 16:06:43
+    [secure_key] => befb6f8063e4410d95f2cb6621156dbe
+    [id_carrier] => 25
+    [date_upd] => 2021-07-31 16:07:59
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => Array
+        (
+            [0] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 4161
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Card - Under the Same Sky
+                    [is_virtual] => 0
+                    [description_short] => <p>Blank wish card with white envelope. Wrapped individually in a clear bag. Bilingual biography of the artist in the back.</p><br /><p>Made in Canada.</p>
+                    [available_now] => In stock 2-4 days delivery
+                    [available_later] => Out of stock 7-10 days delivery
+                    [id_category_default] => 275
+                    [id_supplier] => 0
+                    [id_manufacturer] => 3
+                    [manufacturer_name] => Nathalie Coutou
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 5.5
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 7
+                    [width] => 17.780000
+                    [height] => 12.700000
+                    [depth] => 2.540000
+                    [out_of_stock] => 2
+                    [weight] => 0.03
+                    [available_date] => 0000-00-00
+                    [date_add] => 2021-02-08 13:54:04
+                    [date_upd] => 2021-07-30 12:11:04
+                    [quantity] => 1
+                    [link_rewrite] => card-under-the-same-sky
+                    [category] => wish-cards
+                    [unique_id] => 00000041610000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => A18066-7
+                    [weight_attribute] => 
+                    [ean13] => 754000034128
+                    [isbn] => 754000034126
+                    [upc] => 754000034126
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 2.400000
+                    [id_image] => 4161-4989
+                    [legend] => Card - Under the Same Sky
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 5.5
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 7
+                    [price_without_reduction_tax_incl] => 6.3236
+                    [price_without_reduction_tax_excl] => 5.5
+                    [price_with_reduction_tax_incl] => 6.3236
+                    [price_with_reduction_tax_excl] => 5.5
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 6.3236
+                    [price_without_customer_discount_tax_excl] => 5.5
+                    [total] => 5.5
+                    [total_wt] => 6.3236
+                    [price_wt] => 6.3236
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [id_feature] => 8
+                                    [id_product] => 4161
+                                    [id_feature_value] => 36
+                                )
+
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+            [1] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 4864
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Vivienne Scarf "Under the Same Sky"
+                    [is_virtual] => 0
+                    [description_short] => <p><!-- [if gte mso 9]><xml><br /> <o:OfficeDocumentSettings><br />  <o:AllowPNG/><br /> </o:OfficeDocumentSettings><br /></xml><![endif]--><!-- [if gte mso 9]><xml><br /> <w:WordDocument><br />  <w:View>Normal</w:View><br />  <w:Zoom>0</w:Zoom><br />  <w:TrackMoves/><br />  <w:TrackFormatting/><br />  <w:PunctuationKerning/><br />  <w:ValidateAgainstSchemas/><br />  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid><br />  <w:IgnoreMixedContent>false</w:IgnoreMixedContent><br />  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText><br />  <w:DoNotPromoteQF/><br />  <w:LidThemeOther>EN-CA</w:LidThemeOther><br />  <w:LidThemeAsian>X-NONE</w:LidThemeAsian><br />  <w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript><br />  <w:Compatibility><br />   <w:BreakWrappedTables/><br />   <w:SnapToGridInCell/><br />   <w:WrapTextWithPunct/><br />   <w:UseAsianBreakRules/><br />   <w:DontGrowAutofit/><br />   <w:SplitPgBreakAndParaMark/><br />   <w:EnableOpenTypeKerning/><br />   <w:DontFlipMirrorIndents/><br />   <w:OverrideTableStyleHps/><br />  </w:Compatibility><br />  <m:mathPr><br />   <m:mathFont m:val="Cambria Math"/><br />   <m:brkBin m:val="before"/><br />   <m:brkBinSub m:val="-"/><br />   <m:smallFrac m:val="off"/><br />   <m:dispDef/><br />   <m:lMargin m:val="0"/><br />   <m:rMargin m:val="0"/><br />   <m:defJc m:val="centerGroup"/><br />   <m:wrapIndent m:val="1440"/><br />   <m:intLim m:val="subSup"/><br />   <m:naryLim m:val="undOvr"/><br />  </m:mathPr></w:WordDocument><br /></xml><![endif]--><!-- [if gte mso 9]><xml><br /> <w:LatentStyles DefLockedState="false" DefUnhideWhenUsed="true"<br />  DefSemiHidden="true" DefQFormat="false" DefPriority="99"<br />  LatentStyleCount="267"><br />  <w:LsdException Locked="false" Priority="0" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Normal"/><br />  <w:LsdException Locked="false" Priority="9" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="heading 1"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 2"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 3"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 4"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 5"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 6"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 7"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 8"/><br />  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 9"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 1"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 2"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 3"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 4"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 5"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 6"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 7"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 8"/><br />  <w:LsdException Locked="false" Priority="39" Name="toc 9"/><br />  <w:LsdException Locked="false" Priority="35" QFormat="true" Name="caption"/><br />  <w:LsdException Locked="false" Priority="10" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Title"/><br />  <w:LsdException Locked="false" Priority="1" Name="Default Paragraph Font"/><br />  <w:LsdException Locked="false" Priority="11" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Subtitle"/><br />  <w:LsdException Locked="false" Priority="22" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Strong"/><br />  <w:LsdException Locked="false" Priority="20" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Emphasis"/><br />  <w:LsdException Locked="false" Priority="59" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Table Grid"/><br />  <w:LsdException Locked="false" UnhideWhenUsed="false" Name="Placeholder Text"/><br />  <w:LsdException Locked="false" Priority="1" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="No Spacing"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 1"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 1"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 1"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 1"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 1"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 1"/><br />  <w:LsdException Locked="false" UnhideWhenUsed="false" Name="Revision"/><br />  <w:LsdException Locked="false" Priority="34" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="List Paragraph"/><br />  <w:LsdException Locked="false" Priority="29" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Quote"/><br />  <w:LsdException Locked="false" Priority="30" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Intense Quote"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 1"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 1"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 1"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 1"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 1"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 1"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 1"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 1"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 2"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 2"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 2"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 2"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 2"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 2"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 2"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 2"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 2"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 2"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 2"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 2"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 2"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 2"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 3"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 3"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 3"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 3"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 3"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 3"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 3"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 3"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 3"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 3"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 3"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 3"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 3"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 3"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 4"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 4"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 4"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 4"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 4"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 4"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 4"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 4"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 4"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 4"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 4"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 4"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 4"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 4"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 5"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 5"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 5"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 5"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 5"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 5"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 5"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 5"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 5"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 5"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 5"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 5"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 5"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 5"/><br />  <w:LsdException Locked="false" Priority="60" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Shading Accent 6"/><br />  <w:LsdException Locked="false" Priority="61" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light List Accent 6"/><br />  <w:LsdException Locked="false" Priority="62" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Light Grid Accent 6"/><br />  <w:LsdException Locked="false" Priority="63" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 6"/><br />  <w:LsdException Locked="false" Priority="64" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 6"/><br />  <w:LsdException Locked="false" Priority="65" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 1 Accent 6"/><br />  <w:LsdException Locked="false" Priority="66" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium List 2 Accent 6"/><br />  <w:LsdException Locked="false" Priority="67" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 6"/><br />  <w:LsdException Locked="false" Priority="68" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 6"/><br />  <w:LsdException Locked="false" Priority="69" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 6"/><br />  <w:LsdException Locked="false" Priority="70" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Dark List Accent 6"/><br />  <w:LsdException Locked="false" Priority="71" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Shading Accent 6"/><br />  <w:LsdException Locked="false" Priority="72" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful List Accent 6"/><br />  <w:LsdException Locked="false" Priority="73" SemiHidden="false"<br />   UnhideWhenUsed="false" Name="Colorful Grid Accent 6"/><br />  <w:LsdException Locked="false" Priority="19" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Subtle Emphasis"/><br />  <w:LsdException Locked="false" Priority="21" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Intense Emphasis"/><br />  <w:LsdException Locked="false" Priority="31" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Subtle Reference"/><br />  <w:LsdException Locked="false" Priority="32" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Intense Reference"/><br />  <w:LsdException Locked="false" Priority="33" SemiHidden="false"<br />   UnhideWhenUsed="false" QFormat="true" Name="Book Title"/><br />  <w:LsdException Locked="false" Priority="37" Name="Bibliography"/><br />  <w:LsdException Locked="false" Priority="39" QFormat="true" Name="TOC Heading"/><br /> </w:LatentStyles><br /></xml><![endif]--><!-- [if gte mso 10]><br /><style><br /> /* Style Definitions */<br /> table.MsoNormalTable<br />	{mso-style-name:"Table Normal";<br />	mso-tstyle-rowband-size:0;<br />	mso-tstyle-colband-size:0;<br />	mso-style-noshow:yes;<br />	mso-style-priority:99;<br />	mso-style-parent:"";<br />	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;<br />	mso-para-margin:0cm;<br />	mso-para-margin-bottom:.0001pt;<br />	mso-pagination:widow-orphan;<br />	font-size:10.0pt;<br />	font-family:"Calibri","sans-serif";}<br /></style><br /><![endif]--></p><br /><p class="MsoNoSpacing">Large soft chiffon Vivienne scarf engineered for high resolution sublimation printing. Colors and tones are made to complement the dresses and tops made with the same original art print. Art creation of "Under the Same Sky" by Nathalie Coutou. Dimensions: 19'' x 71''.</p><br /><h2 class="MsoNoSpacing"><span xml:lang="fr-ca" lang="fr-ca"> </span></h2>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 257
+                    [id_supplier] => 0
+                    [id_manufacturer] => 3
+                    [manufacturer_name] => Nathalie Coutou
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 49
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 9
+                    [width] => 25.400000
+                    [height] => 20.320000
+                    [depth] => 2.000000
+                    [out_of_stock] => 2
+                    [weight] => 0.1
+                    [available_date] => 0000-00-00
+                    [date_add] => 2021-06-09 13:08:09
+                    [date_upd] => 2021-07-30 12:11:04
+                    [quantity] => 1
+                    [link_rewrite] => vivienne-scarf-under-the-same-sky
+                    [category] => scarves
+                    [unique_id] => 00000048640000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => A14051-WAC0201NC0TA
+                    [weight_attribute] => 
+                    [ean13] => 4000000012023
+                    [isbn] => 400000002606
+                    [upc] => 400000002606
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 19.000000
+                    [id_image] => 4864-5062
+                    [legend] => 
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 49
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 9
+                    [price_without_reduction_tax_incl] => 56.3378
+                    [price_without_reduction_tax_excl] => 49
+                    [price_with_reduction_tax_incl] => 56.3378
+                    [price_with_reduction_tax_excl] => 49
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 56.3378
+                    [price_without_customer_discount_tax_excl] => 49
+                    [total] => 49
+                    [total_wt] => 56.3378
+                    [price_wt] => 56.3378
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+            [2] => Array
+                (
+                    [id_product_attribute] => 0
+                    [id_product] => 385
+                    [cart_quantity] => 1
+                    [id_shop] => 1
+                    [id_customization] => 
+                    [name] => Corrine Hunt Silk Inspiration Trapezoid Earrings
+                    [is_virtual] => 0
+                    [description_short] => <h3><span style="color:#000000;"><strong>Silk Inspiration Collection. Trapezoid earrings. Made of resin, silk and sterling silver. </strong></span></h3><br /><h3><span style="color:#000000;"><strong>Made in Canada.</strong></span></h3>
+                    [available_now] => 
+                    [available_later] => 
+                    [id_category_default] => 120
+                    [id_supplier] => 0
+                    [id_manufacturer] => 10
+                    [manufacturer_name] => Corrine Hunt
+                    [on_sale] => 0
+                    [ecotax] => 0.000000
+                    [additional_shipping_cost] => 0.000000
+                    [available_for_order] => 1
+                    [show_price] => 1
+                    [price] => 38
+                    [active] => 1
+                    [unity] => 
+                    [unit_price_ratio] => 0.000000
+                    [quantity_available] => 1
+                    [width] => 17.780000
+                    [height] => 12.700000
+                    [depth] => 2.540000
+                    [out_of_stock] => 0
+                    [weight] => 0.1
+                    [available_date] => 0000-00-00
+                    [date_add] => 2017-05-22 17:01:40
+                    [date_upd] => 2021-07-30 12:11:04
+                    [quantity] => 1
+                    [link_rewrite] => corrine-hunt-silk-inspiration-trapezoid-earrings
+                    [category] => earrings
+                    [unique_id] => 00000003850000000000970
+                    [id_address_delivery] => 97
+                    [advanced_stock_management] => 0
+                    [supplier_reference] => 
+                    [customization_quantity] => 
+                    [price_attribute] => 
+                    [ecotax_attr] => 
+                    [reference] => SKU: 00-07-675
+                    [weight_attribute] => 
+                    [ean13] => 7540000005993
+                    [isbn] => 754000005991
+                    [upc] => 754000005991
+                    [mpn] => 
+                    [minimal_quantity] => 1
+                    [wholesale_price] => 16.500000
+                    [id_image] => 385-511
+                    [legend] => Corrine Hunt Silk Inspiration Trapezoid Earrings
+                    [reduction_type] => 0
+                    [is_gift] => 
+                    [reduction] => 0
+                    [reduction_without_tax] => 0
+                    [price_without_reduction] => 38
+                    [specific_prices] => Array
+                        (
+                        )
+
+                    [stock_quantity] => 1
+                    [price_without_reduction_tax_incl] => 43.6905
+                    [price_without_reduction_tax_excl] => 38
+                    [price_with_reduction_tax_incl] => 43.6905
+                    [price_with_reduction_tax_excl] => 38
+                    [price_with_only_reduction_tax_incl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_incl] => 0
+                    [price_with_only_reduction_tax_excl] => 0
+                    [price_with_only_reduction_without_customer_discount_tax_excl] => 0
+                    [price_without_customer_discount_tax_incl] => 43.6905
+                    [price_without_customer_discount_tax_excl] => 38
+                    [total] => 38
+                    [total_wt] => 43.6905
+                    [price_wt] => 43.6905
+                    [reduction_applies] => 
+                    [quantity_discount_applies] => 
+                    [allow_oosp] => 0
+                    [features] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [id_feature] => 5
+                                    [id_product] => 385
+                                    [id_feature_value] => 6
+                                )
+
+                            [1] => Array
+                                (
+                                    [id_feature] => 5
+                                    [id_product] => 385
+                                    [id_feature_value] => 47
+                                )
+
+                        )
+
+                    [rate] => 5
+                    [tax_name] => CA 5%
+                )
+
+        )
+
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+

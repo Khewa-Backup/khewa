@@ -1,0 +1,163 @@
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+
+#giftcards img {
+    border: 2px solid #e0e0e0;
+    border-radius: 2px;
+}
+
+#giftcards .panel-content {
+    display: inline-flex;
+}
+#giftcards .giftcard-image {
+    width: 102px;
+    height: 102px;
+}
+#giftcards .description {
+    margin-left: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#giftcards .price {
+    font-size: 20px;
+    color: #25B9D7;
+}
+
+#giftcards .buttons {
+    text-align: center;
+}
+
+.giftcards-right-panel {
+    float: right !important;
+}
+.addons-title {
+    margin: 1em 0;
+    padding-left: 20px;
+    /* background-color: #e8faff; */
+    border-left: 4px solid #2eacce;
+    font-size: 18px !important;
+    text-decoration: underline;
+}
+
+.addons-number-fields {
+    display: block;
+    width: 22%;
+    height: 31px;
+    padding: 6px 8px;
+    font-size: 12px;
+    line-height: 1.42857;
+    color: #555;
+    background-color: #F5F8F9;
+    background-image: none;
+    border: 1px solid #C7D6DB;
+    border-radius: 3px;
+    -webkit-transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
+    -o-transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
+    transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s
+}
+
+.addons-inline-block {
+    display: inline-block;
+}
+
+.addons-text {
+    padding: 14px;
+    font-size: 13px;
+}
+
+.addons-hide {
+    display: none;
+}
+
+#demo table {
+    text-align: center;
+    border: 2px solid #00aff0;
+    border-radius: 3px;
+    background-color: #fff;
+    border-spacing: 2px !important;
+}
+
+#demo th {
+    text-align: center;
+    font-weight: bold;
+    background-color: #00aff0;
+    color: rgba(255,255,255,0.66);
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#demo td {
+    background-color: #f9f9f9;
+}
+
+#demo th, td {
+    min-width: 120px;
+    padding: 10px 20px;
+}
+
+#demo th.active {
+    color: #fff;
+}
+
+#demo th.active .arrow {
+    opacity: 1;
+}
+
+#demo .arrow {
+    display: inline-block;
+    vertical-align: middle;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    opacity: 0.66;
+}
+
+#demo .arrow.asc {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #fff;
+}
+
+#demo .arrow.dsc {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #fff;
+}
+
+.color1, .primary_color, .primary_color-backgroundcolor, .primary_color-bordercolor{
+    color:#00B9DC;
+    background-color: #00B9DC;
+}
+
+.color2 .secondary_color, .secondary_color-backgroundcolor{
+    color:#D78F00;
+}
+
+.GC-white {
+    color:white !important;
+}
+
+.delete-img{
+    float:right;
+    cursor: pointer;
+}

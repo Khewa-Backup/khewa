@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Copyright (c) since 2010 Stripe, Inc. (https://stripe.com)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    Stripe <https://support.stripe.com/contact/email>
+ * @copyright Since 2010 Stripe, Inc.
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+function upgrade_module_3_7_3($module)
+{
+    $keys = [
+        'Handle-next-action' => 'Handlenextaction',
+        'Handlenextactioninforedirect' => 'Handlenextaction',
+        'Handle-next-action-info-redirect' => 'Handlenextaction',
+        'Order-confirmation' => 'Orderconfirmation',
+        'Order-confirmation-failed' => 'Orderconfirmation',
+        'Orderconfirmationfailed' => 'Orderconfirmation',
+        'Orderconfirmationfailed17' => 'Orderconfirmation',
+        'PaymentFormCard' => 'Orderconfirmation',
+        'Payment_Form_Card' => 'Orderconfirmation',
+        'Paymentinforedirect' => 'Orderconfirmation',
+        'Payment_info_redirect' => 'Orderconfirmation',
+        'Admin_content_order' => 'Admincontentorder',
+        'admin_tab_order' => 'Admincontentorder',
+        'Admintaborder' => 'Admincontentorder',
+    ];
+    foreach ($keys as $old => $new) {
+        $old = 'ModulesStripeofficial' . $old;
+        $new = 'ModulesStripeofficial' . $new;
+        $sql = 'UPDATE `' . _DB_PREFIX_ . "translation` SET `domain` = '" . $new . "' WHERE  `domain` = '" . $old . "'";
+        Db::getInstance()->execute($sql);
+    }
+
+    /*
+     * Clear both Smarty and Symfony cache.
+     */
+    Tools::clearAllCache();
+
+    /*
+     * Clean cache for upgrade to prevent issue during module upgrade
+     */
+    $module->cleanModuleCache();
+
+    return true;
+}

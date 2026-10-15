@@ -1,0 +1,98 @@
+{
+  "id": "pi_3N1lQJILoxaMkvP30NrZc99D",
+  "object": "payment_intent",
+  "amount": 2380,
+  "amount_capturable": 0,
+  "amount_details": {
+    "tip": []
+  },
+  "amount_received": 0,
+  "application": null,
+  "application_fee_amount": null,
+  "automatic_payment_methods": {
+    "enabled": true
+  },
+  "canceled_at": null,
+  "cancellation_reason": null,
+  "capture_method": "automatic",
+  "charges": {
+    "object": "list",
+    "data": [],
+    "has_more": false,
+    "total_count": 0,
+    "url": "\/v1\/charges?payment_intent=pi_3N1lQJILoxaMkvP30NrZc99D"
+  },
+  "client_secret": "pi_3N1lQJILoxaMkvP30NrZc99D_secret_UeRGB9u9w8eZ92NCmZkc5Qgq1",
+  "confirmation_method": "automatic",
+  "created": 1682665735,
+  "currency": "eur",
+  "customer": "cus_NnAsbPYACwo8wC",
+  "description": "Product Purchase",
+  "invoice": null,
+  "last_payment_error": null,
+  "latest_charge": null,
+  "livemode": false,
+  "metadata": {
+    "id_cart": "20"
+  },
+  "next_action": null,
+  "on_behalf_of": null,
+  "payment_method": null,
+  "payment_method_options": {
+    "afterpay_clearpay": {
+      "reference": null
+    },
+    "bancontact": {
+      "preferred_language": "en"
+    },
+    "card": {
+      "installments": null,
+      "mandate_options": null,
+      "network": null,
+      "request_three_d_secure": "automatic"
+    },
+    "eps": [],
+    "giropay": [],
+    "ideal": [],
+    "klarna": {
+      "preferred_locale": null
+    },
+    "p24": [],
+    "sepa_debit": []
+  },
+  "payment_method_types": [
+    "card",
+    "bancontact",
+    "eps",
+    "giropay",
+    "ideal",
+    "p24",
+    "sepa_debit",
+    "afterpay_clearpay",
+    "klarna"
+  ],
+  "processing": null,
+  "receipt_email": null,
+  "review": null,
+  "setup_future_usage": null,
+  "shipping": {
+    "address": {
+      "city": "London",
+      "country": "GB",
+      "line1": "test 234",
+      "line2": "",
+      "postal_code": "23536",
+      "state": null
+    },
+    "carrier": null,
+    "name": "Dony Smith",
+    "phone": null,
+    "tracking_number": null
+  },
+  "source": null,
+  "statement_descriptor": null,
+  "statement_descriptor_suffix": null,
+  "status": "requires_payment_method",
+  "transfer_data": null,
+  "transfer_group": null
+}

@@ -1,0 +1,1395 @@
+<?php
+/**
+ * Khewa Reports - Reports Controller
+ * Handles Sales, Refunds, SBPM, and Taxes export
+ */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+
+
+require_once _PS_MODULE_DIR_ . 'khewareports/classes/KhewaReportsData.php';
+
+class AdminKhewaReportsReportsController extends ModuleAdminController
+{
+    /**
+     * Number format used for all monetary cells.
+     * Sections: positive;negative;zero. The zero section is a bare "0" so empty values
+     * render as "0" rather than "0." — the literal "." in "#,##0.##" is always displayed.
+     * Non-zero values keep the existing "#,##0.##" appearance (e.g. "350.", "137.4").
+     */
+    const NUMBER_FORMAT = '#,##0.##;-#,##0.##;0';
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->bootstrap = true;
+    }
+
+    public function init()
+    {
+        parent::init();
+        
+        // Handle export action
+        if (Tools::isSubmit('submitKhewaReportsExport')) {
+            $this->processExport();
+        }
+    }
+
+    public function initContent()
+    {
+        parent::initContent();
+
+        // Add jQuery UI datepicker
+        $this->addJqueryUI('ui.datepicker');
+        
+        // Get date values from POST or set defaults
+        $date_from = Tools::getValue('date_from', date('Y-m-d', strtotime('-30 days')));
+        $date_to = Tools::getValue('date_to', date('Y-m-d'));
+        $tabs = Tools::getValue('tabs', 'default');
+
+        $this->context->smarty->assign(array(
+            'action_url' => $this->context->link->getAdminLink('AdminKhewaReportsReports'),
+            'date_from' => $date_from,
+            'date_to' => $date_to,
+            'tabs' => $tabs
+        ));
+        
+        $this->content = $this->context->smarty->fetch($this->getTemplatePath().'reports.tpl');
+        $this->context->smarty->assign('content', $this->content);
+    }
+
+    public function processExport($text_delimiter = '"')
+    {
+        $date_from = Tools::getValue('date_from');
+        $date_to = Tools::getValue('date_to');
+        
+        // Validate dates
+        if (empty($date_from) || empty($date_to)) {
+            $this->errors[] = $this->module->l('Please select both date from and date to.');
+            return;
+        }
+        
+        // Which tabs to include in the workbook: 'default' (all) or 'sbpm' (SBPM sheet only)
+        $tabs = Tools::getValue('tabs', 'default');
+        if ($tabs !== 'sbpm') {
+            $tabs = 'default';
+        }
+
+        // Generate Excel file
+        $this->generateExcelExport($date_from, $date_to, $tabs);
+    }
+
+    public function generateExcelExport($date_from, $date_to, $tabs = 'default')
+    {
+        // Use PhpSpreadsheet from the ordersexportsalesreportpro module
+        $phpspreadsheet_path = _PS_MODULE_DIR_ . 'ordersexportsalesreportpro/vendor/autoload.php';
+        
+        if (!file_exists($phpspreadsheet_path)) {
+            $this->errors[] = $this->module->l('PhpSpreadsheet library not found.');
+            return;
+        }
+        
+        require_once $phpspreadsheet_path;
+        
+        // Initialize data fetcher
+        $dataFetcher = new KhewaReportsData($date_from, $date_to);
+        
+        // Create new Spreadsheet object
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        
+        // Set document properties
+        $spreadsheet->getProperties()
+            ->setCreator('Khewa Reports')
+            ->setLastModifiedBy('Khewa Reports')
+            ->setTitle('Khewa Reports Export')
+            ->setSubject('Reports Export')
+            ->setDescription('Generated report from Khewa Reports module');
+        
+        if ($tabs === 'sbpm') {
+            // SBPM only — single sheet workbook, same data/calculations as the full export
+            $sbpmSheet = $spreadsheet->getActiveSheet();
+            $sbpmSheet->setTitle('Sales by Payment Methods');
+            $this->populateSBPMSheet($sbpmSheet, $dataFetcher, $date_from, $date_to);
+        } else {
+            // Create Sales sheet (first/default sheet)
+            $salesSheet = $spreadsheet->getActiveSheet();
+            $salesSheet->setTitle('Sales');
+            $this->populateSalesSheet($salesSheet, $dataFetcher, $date_from, $date_to);
+
+            // Create Refunds sheet
+            $refundsSheet = $spreadsheet->createSheet();
+            $refundsSheet->setTitle('Refunds');
+            $this->populateRefundsSheet($refundsSheet, $dataFetcher, $date_from, $date_to);
+
+            // Create SBPM sheet (Sales By Payment Method)
+            $sbpmSheet = $spreadsheet->createSheet();
+            $sbpmSheet->setTitle('Sales by Payment Methods');
+            $this->populateSBPMSheet($sbpmSheet, $dataFetcher, $date_from, $date_to);
+
+            // Create Taxes sheet
+            $taxesSheet = $spreadsheet->createSheet();
+            $taxesSheet->setTitle('Taxes');
+            $this->populateTaxesSheet($taxesSheet, $dataFetcher, $date_from, $date_to);
+        }
+
+        // Set first sheet (Sales) as active
+        $spreadsheet->setActiveSheetIndex(0);
+        
+        // Clear output buffers
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        // Output file
+        $filename = 'khewa_reports_' . ($tabs === 'sbpm' ? 'sbpm_' : '') . $date_from . '_to_' . $date_to . '.xlsx';
+        
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        die();
+    }
+    
+    /**
+     * Safe cell value setter - converts all values to strings to avoid PhpSpreadsheet type issues
+     */
+    protected function setCellValueSafe($sheet, $cell, $value)
+    {
+        // Convert value to string to avoid type issues with older PhpSpreadsheet
+        if ($value === null || $value === '') {
+            $sheet->setCellValue($cell, '');
+        } elseif (is_numeric($value)) {
+            $sheet->setCellValueExplicit($cell, (string)$value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+        } else {
+            $sheet->setCellValue($cell, (string)$value);
+        }
+    }
+    
+    /**
+     * Set numeric cell value with proper formatting (2 decimal places, no trailing zeros)
+     * Rounds value to 2 decimals to avoid floating point precision issues
+     * Uses clean string approach to avoid PhpSpreadsheet float type detection issues
+     */
+    protected function setNumericValue($sheet, $cell, $value)
+    {
+        // Round to 2 decimal places to fix floating point precision issues
+        $numericValue = is_numeric($value) ? round((float)$value, 2) : 0;
+        
+        // Use number_format to create a clean string representation with exactly 2 decimals
+        $cleanString = number_format($numericValue, 2, '.', '');
+        
+        // Simply set the clean string - PhpSpreadsheet will auto-detect it as numeric
+        // This avoids the float precision issues that cause DefaultValueBinder errors
+        $sheet->setCellValue($cell, $cleanString);
+
+        // Apply number format that shows up to 2 decimals but not trailing zeros.
+        // Sections are positive;negative;zero — the zero section is a plain "0" so an empty
+        // value renders as "0" instead of "0." (the literal "." in "#,##0.##" would otherwise
+        // always show). Non-zero values are unchanged.
+        $sheet->getStyle($cell)->getNumberFormat()
+            ->setFormatCode(self::NUMBER_FORMAT);
+    }
+
+    /**
+     * Write a numeric value WITHOUT rounding to 2 decimals — keeps full precision.
+     * Used for the Sales-tab per-line tax columns (GST/QST) so the displayed values and
+     * their column totals retain full precision and reconcile exactly with the SBPM/Taxes
+     * tabs (which sum unrounded). The cell display format shows several decimals.
+     */
+    protected function setRawNumericValue($sheet, $cell, $value)
+    {
+        $numericValue = is_numeric($value) ? (float)$value : 0;
+        // Store the exact value with full precision (order_detail_tax is decimal(16,6)),
+        // and display all 6 decimals so the number shown IS the exact stored value. This
+        // way the client can add up the visible cells and get the same total the report
+        // shows — no hidden rounding that would make the column appear to sum differently.
+        $cleanString = number_format($numericValue, 6, '.', '');
+        $sheet->setCellValue($cell, $cleanString);
+        $sheet->getStyle($cell)->getNumberFormat()
+            ->setFormatCode('0.000000');
+    }
+
+    /**
+     * Populate Sales sheet with real data
+     */
+    protected function populateSalesSheet($sheet, $dataFetcher, $date_from, $date_to)
+    {
+        // Add header row (width = top table columns A–Y for print)
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales Report', 'Y');
+        
+        // Column headers (Row 2) - Order State after Invoice Number; Payment Breakdown just before Total Products With Tax
+        $headers = array(
+            'A' => 'Ordered At',
+            'B' => 'Order ID',
+            'C' => 'Invoice Number',
+            'D' => 'Order State',
+            'E' => 'Gift Card Payment',
+            'F' => 'Credit Slip',
+            'G' => 'Voucher',
+            'H' => 'Discounts',
+            'I' => 'Total Shipping (Tax incl)',
+            'J' => 'Shipping Tax (CA 5%)',
+            'K' => 'Shipping Tax (CA-QC 9.976%)',
+            'L' => 'Total Refunded Products (Tax incl)',
+            'M' => 'Refunded Amount',
+            'N' => 'Total Refunds ROCK (Tax incl)',
+            'O' => 'Payment Breakdown',
+            'P' => 'Total Products With Tax',
+            'Q' => 'Payment Method',
+            'R' => 'Product Name',
+            'S' => 'Total Price (Tax incl)',
+            'T' => 'Total Price (Tax excl)',
+            'U' => 'Total Amount (CA 5%)',
+            'V' => 'Total Amount (CA-QC 9.976%)',
+            'W' => 'Total Shipping Price (Tax excl)',
+            'X' => 'Delivery Country',
+            'Y' => 'Delivery State'
+        );
+        
+        foreach ($headers as $column => $header) {
+            $this->setCellValueSafe($sheet, $column . '2', $header);
+        }
+        
+        // Style header row
+        $this->styleHeaderRow($sheet, 'A2:Y2');
+        
+        // Get sales data
+        $salesData = $dataFetcher->getSalesData();
+        
+        // Populate data rows (starting from row 3)
+        // Initialize running totals - calculated from loop data to ensure consistency
+        $row = 3;
+        $lastOrderId = null;
+        $processedOrders = array(); // Track which orders we've counted for order-level totals
+        $paymentMethodTotals = array(); // Track total amounts per payment method for summary
+        $totals = array(
+            'gift_card' => 0,
+            'credit_slip' => 0,
+            'voucher' => 0,
+            'pos_discount' => 0,
+            'shipping_incl' => 0,
+            'shipping_gst' => 0,
+            'shipping_qst' => 0,
+            'refunded_products' => 0,
+            'refund_amount' => 0,
+            'products_incl' => 0,      // Will use order-level total_products_tax_incl (from orders.total_products_wt)
+            'products_excl' => 0,      // Will use order-level total_products_tax_excl (from orders.total_products)
+            'product_gst' => 0,
+            'product_qst' => 0,
+            'shipping_excl' => 0
+        );
+        
+        foreach ($salesData as $data) {
+            // Show order-level data only on first product row
+            $showOrderData = ($lastOrderId != $data['id_order']);
+            
+            $this->setCellValueSafe($sheet, 'A' . $row, $showOrderData ? $data['order_date'] : '');
+            $this->setCellValueSafe($sheet, 'B' . $row, $showOrderData ? $data['id_order'] : '');
+            $this->setCellValueSafe($sheet, 'C' . $row, $showOrderData ? '#ND' . $data['invoice_number'] : '');
+            
+            // Column D: Order State - name in English with state id in brackets (e.g. "Payment accepted (2)")
+            $orderStateDisplay = '';
+            if ($showOrderData && isset($data['current_state']) && $data['current_state'] !== '' && $data['current_state'] !== null) {
+                $stateId = (int)$data['current_state'];
+                $nameEn = isset($data['order_state_name_en']) ? trim((string)$data['order_state_name_en']) : '';
+                $nameDefault = isset($data['order_state_name']) ? trim((string)$data['order_state_name']) : '';
+                $stateName = $nameEn !== '' ? $nameEn : ($nameDefault !== '' ? $nameDefault : 'State ' . $stateId);
+                $orderStateDisplay = $stateName . ' (' . $stateId . ')';
+            }
+            $this->setCellValueSafe($sheet, 'D' . $row, $orderStateDisplay);
+            
+            // Column E: Gift Card - order level, add only once per order
+            if ($showOrderData && $data['gift_card_amount']) {
+                $this->setNumericValue($sheet, 'E' . $row, $data['gift_card_amount']);
+                $totals['gift_card'] += (float)$data['gift_card_amount'];
+            } else {
+                $this->setCellValueSafe($sheet, 'E' . $row, '');
+            }
+            
+            // Column F: Credit Slip - order level
+            if ($showOrderData && !empty($data['credit_slip_amount'])) {
+                $this->setNumericValue($sheet, 'F' . $row, $data['credit_slip_amount']);
+                $totals['credit_slip'] += (float)$data['credit_slip_amount'];
+            } else {
+                $this->setCellValueSafe($sheet, 'F' . $row, '');
+            }
+
+            // Column G: Voucher - order level
+            if ($showOrderData && !empty($data['voucher_amount_sales'])) {
+                $this->setNumericValue($sheet, 'G' . $row, $data['voucher_amount_sales']);
+                $totals['voucher'] += (float)$data['voucher_amount_sales'];
+            } else {
+                $this->setCellValueSafe($sheet, 'G' . $row, '');
+            }
+            
+            // Column H: Discounts - order level, "Point of Sale" cart rules only
+            // e.g. "$63.00 (25% - discounted before tax)" or "$10.00 (Fixed)"
+            if ($showOrderData && !empty($data['pos_discount_label'])) {
+                $this->setCellValueSafe($sheet, 'H' . $row, $data['pos_discount_label']);
+                $totals['pos_discount'] += (float)$data['pos_discount_amount'];
+            } else {
+                $this->setCellValueSafe($sheet, 'H' . $row, '');
+            }
+            
+            // Column I: Shipping (Tax incl) - order level
+            if ($showOrderData && $data['total_shipping_tax_incl']) {
+                $this->setNumericValue($sheet, 'I' . $row, $data['total_shipping_tax_incl']);
+                $totals['shipping_incl'] += (float)$data['total_shipping_tax_incl'];
+            } else {
+                $this->setCellValueSafe($sheet, 'I' . $row, '');
+            }
+            
+            // Column J: Shipping GST - order level
+            if ($showOrderData && $data['shipping_gst_amount']) {
+                $this->setNumericValue($sheet, 'J' . $row, $data['shipping_gst_amount']);
+                $totals['shipping_gst'] += (float)$data['shipping_gst_amount'];
+            } else {
+                $this->setCellValueSafe($sheet, 'J' . $row, '');
+            }
+            
+            // Column K: Shipping QST - order level
+            if ($showOrderData && $data['shipping_qst_amount']) {
+                $this->setNumericValue($sheet, 'K' . $row, $data['shipping_qst_amount']);
+                $totals['shipping_qst'] += (float)$data['shipping_qst_amount'];
+            } else {
+                $this->setCellValueSafe($sheet, 'K' . $row, '');
+            }
+            
+            // Column L: Refunded Products - product level (sum all)
+            $this->setNumericValue($sheet, 'L' . $row, $data['total_refunded_tax_incl']);
+            $totals['refunded_products'] += (float)$data['total_refunded_tax_incl'];
+            
+            // Column M: Refund Amount - order level (displayed per product but count once)
+            $this->setNumericValue($sheet, 'M' . $row, $data['total_refund_tax_incl']);
+            
+            // Column N: Total Refunds ROCK - order level
+            if ($showOrderData && $data['total_refund_tax_incl']) {
+                $this->setNumericValue($sheet, 'N' . $row, $data['total_refund_tax_incl']);
+                $totals['refund_amount'] += (float)$data['total_refund_tax_incl'];
+            } else {
+                $this->setCellValueSafe($sheet, 'N' . $row, '');
+            }
+            
+            // Column O: Payment Breakdown - always shows payment method(s) with amounts (just before Total Products With Tax)
+            $this->setCellValueSafe($sheet, 'O' . $row, $showOrderData ? $data['payment_breakdown'] : '');
+            
+            // Track payment method totals (parse from breakdown, once per order)
+            if ($showOrderData && !empty($data['payment_breakdown'])) {
+                $parts = explode(' - ', $data['payment_breakdown']);
+                foreach ($parts as $part) {
+                    if (preg_match('/^(.+?)\(\$([0-9.]+)\)$/', trim($part), $matches)) {
+                        $methodName = trim($matches[1]);
+                        $methodAmount = (float)$matches[2];
+                        if (!isset($paymentMethodTotals[$methodName])) {
+                            $paymentMethodTotals[$methodName] = 0;
+                        }
+                        $paymentMethodTotals[$methodName] += $methodAmount;
+                    }
+                }
+            }
+            
+            // Column P: Total Products With Tax - show product level detail
+            $this->setNumericValue($sheet, 'P' . $row, $data['total_price_tax_incl']);
+            
+            // For TOTALS, use order-level values (orders.total_products_wt) - only count each order once
+            if ($showOrderData) {
+                $totals['products_incl'] += (float)$data['total_products_tax_incl'];  // order-level (from orders.total_products_wt)
+                $totals['products_excl'] += (float)$data['total_products_tax_excl'];  // order-level (from orders.total_products)
+            }
+            
+            $this->setCellValueSafe($sheet, 'Q' . $row, $showOrderData ? $data['payment'] : '');
+            $this->setCellValueSafe($sheet, 'R' . $row, $data['product_name']);
+            
+            // Column S: Total Price (Tax incl) - show product level detail
+            $this->setNumericValue($sheet, 'S' . $row, $data['total_price_tax_incl']);
+            
+            // Column T: Total Price (Tax excl) - show product level detail
+            $this->setNumericValue($sheet, 'T' . $row, $data['total_price_tax_excl']);
+            
+            // Column U: Product GST - product level (full precision, sum all)
+            $this->setRawNumericValue($sheet, 'U' . $row, $data['gst_total_amount']);
+            $totals['product_gst'] += (float)$data['gst_total_amount'];
+
+            // Column V: Product QST - product level (full precision, sum all)
+            $this->setRawNumericValue($sheet, 'V' . $row, $data['qst_total_amount']);
+            $totals['product_qst'] += (float)$data['qst_total_amount'];
+            
+            // Column W: Shipping (Tax excl) - order level
+            if ($showOrderData && $data['total_shipping_tax_excl']) {
+                $this->setNumericValue($sheet, 'W' . $row, $data['total_shipping_tax_excl']);
+                $totals['shipping_excl'] += (float)$data['total_shipping_tax_excl'];
+            } else {
+                $this->setCellValueSafe($sheet, 'W' . $row, '');
+            }
+            
+            $this->setCellValueSafe($sheet, 'X' . $row, $showOrderData ? $data['delivery_country'] : '');
+            $this->setCellValueSafe($sheet, 'Y' . $row, $showOrderData ? $data['delivery_state'] : '');
+            
+            $lastOrderId = $data['id_order'];
+            $row++;
+        }
+
+        // Add partial refund orders (possible_refund_date) to Sales refund total
+        // Partial refund orders are excluded from getSalesData, so they are not in the loop above
+        $totals['refund_amount'] += (float)$dataFetcher->getPartialRefundTotal();
+
+        // Add totals row - using calculated sums from loop (not separate query)
+        $lastDataRow = $row - 1;
+        if ($lastDataRow >= 3) {
+            $row++;
+            $this->setCellValueSafe($sheet, 'A' . $row, 'TOTALS');
+            
+            // Column O: Payment Breakdown - show total per payment method, one per line
+            if (!empty($paymentMethodTotals)) {
+                arsort($paymentMethodTotals);
+                $breakdownParts = array();
+                foreach ($paymentMethodTotals as $method => $amount) {
+                    $breakdownParts[] = $method . ' ' . number_format($amount, 2, '.', '');
+                }
+                $breakdownText = implode("\n", $breakdownParts);
+                $this->setCellValueSafe($sheet, 'O' . $row, $breakdownText);
+                $sheet->getStyle('O' . $row)->getAlignment()->setWrapText(true);
+                $lineCount = count($breakdownParts);
+                $rowHeight = max(30, min(400, 18 * $lineCount));
+                $sheet->getRowDimension($row)->setRowHeight($rowHeight);
+            }
+            
+            $this->setNumericValue($sheet, 'E' . $row, $totals['gift_card']);
+            $this->setNumericValue($sheet, 'F' . $row, $totals['credit_slip']);
+            $this->setNumericValue($sheet, 'G' . $row, $totals['voucher']);
+            $this->setNumericValue($sheet, 'H' . $row, $totals['pos_discount']);
+            $this->setNumericValue($sheet, 'I' . $row, $totals['shipping_incl']);
+            $this->setNumericValue($sheet, 'J' . $row, $totals['shipping_gst']);
+            $this->setNumericValue($sheet, 'K' . $row, $totals['shipping_qst']);
+            $this->setNumericValue($sheet, 'L' . $row, $totals['refunded_products']);
+            $this->setNumericValue($sheet, 'M' . $row, $totals['refund_amount']);
+            $this->setNumericValue($sheet, 'N' . $row, $totals['refund_amount']);
+            $this->setNumericValue($sheet, 'P' . $row, $totals['products_incl']);
+            $this->setNumericValue($sheet, 'S' . $row, $totals['products_incl']);
+            $this->setNumericValue($sheet, 'T' . $row, $totals['products_excl']);
+            // TOTALS row: show the column totals rounded to 2 decimals (clean final figure).
+            // Per-row cells keep full precision; the total is computed from the raw values.
+            $this->setNumericValue($sheet, 'U' . $row, $totals['product_gst']);
+            $this->setNumericValue($sheet, 'V' . $row, $totals['product_qst']);
+            $this->setNumericValue($sheet, 'W' . $row, $totals['shipping_excl']);
+            $sheet->getStyle('A' . $row . ':X' . $row)->getFont()->setBold(true);
+            
+            // Add column headers again after totals row for reference when scrolling
+            $row++;
+            foreach ($headers as $column => $header) {
+                $this->setCellValueSafe($sheet, $column . $row, $header);
+            }
+            // Style header row (same as top header) - row height is set automatically by styleHeaderRow
+            $this->styleHeaderRow($sheet, 'A' . $row . ':X' . $row);
+        }
+        
+        // Style data rows and set column widths
+        $this->styleDataRows($sheet, 'A3:Y' . $row);
+        $this->setColumnWidths($sheet, array(
+            'A' => 12, 'B' => 10, 'C' => 14, 'D' => 22, 'E' => 12, 'F' => 10,
+            'G' => 10, 'H' => 30, 'I' => 16, 'J' => 14, 'K' => 16, 'L' => 18, 'M' => 14,
+            'N' => 18, 'O' => 35, 'P' => 16, 'Q' => 14, 'R' => 30, 'S' => 14,
+            'T' => 14, 'U' => 14, 'V' => 16, 'W' => 16, 'X' => 14, 'Y' => 14
+        ));
+        
+        // Apply number formatting to numeric columns (2 decimal places)
+        if ($row > 3) {
+            $this->applyNumberFormat($sheet, 'E3:E' . $row); // Gift Card
+            $this->applyNumberFormat($sheet, 'F3:F' . $row); // Credit Slip
+            $this->applyNumberFormat($sheet, 'G3:G' . $row); // Voucher
+            $this->applyNumberFormat($sheet, 'H' . $row . ':H' . $row); // Discounts TOTALS (data rows are text)
+            $this->applyNumberFormat($sheet, 'I3:K' . $row); // Shipping amounts
+            $this->applyNumberFormat($sheet, 'L3:N' . $row); // Refund amounts
+            $this->applyNumberFormat($sheet, 'P3:P' . $row); // Product price tax incl
+            // S, T only — U (GST) and V (QST) keep their full 6-decimal format set by
+            // setRawNumericValue so the displayed values are exact and sum correctly.
+            $this->applyNumberFormat($sheet, 'S3:T' . $row); // Product prices
+            $this->applyNumberFormat($sheet, 'W3:W' . $row); // Shipping tax excl
+        }
+        
+        // Set auto filter
+        $sheet->setAutoFilter('A2:Y' . $row);
+        
+        // Apply print settings - landscape for wide sheet with many columns
+        $this->applyPrintSettings($sheet, 'landscape');
+    }
+
+    /**
+     * Populate Refunds sheet with real data
+     */
+    protected function populateRefundsSheet($sheet, $dataFetcher, $date_from, $date_to)
+    {
+        // Add header row (width = top table columns A–R for print)
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Refunds Report (by Refund Date)', 'R');
+        
+        // Column headers (Row 2)
+        $headers = array(
+            'A' => 'Refund Date',
+            'B' => 'Order Date',
+            'C' => 'Order ID',
+            'D' => 'Invoice Number',
+            'E' => 'Credit Slip ID',
+            'F' => 'Partial Refund',
+            'G' => 'Payment Method',
+            'H' => 'Product Name',
+            'I' => 'Refunded Qty',
+            'J' => 'Product Refund (Tax incl)',
+            'K' => 'Product Refund (Tax excl)',
+            'L' => 'Refund GST (5%)',
+            'M' => 'Refund QST (9.976%)',
+            'N' => 'Total Refund (Tax incl)',
+            'O' => 'Total Refund (Tax excl)',
+            'P' => 'Shipping Refund (Tax incl)',
+            'Q' => 'Delivery Country',
+            'R' => 'Delivery State'
+        );
+        
+        foreach ($headers as $column => $header) {
+            $this->setCellValueSafe($sheet, $column . '2', $header);
+        }
+        
+        // Style header row
+        $this->styleHeaderRow($sheet, 'A2:R2');
+        
+        // Get refunds data
+        $refundsData = $dataFetcher->getRefundsData();
+        
+        // Populate data rows (starting from row 3)
+        // Initialize running totals - calculated from loop data
+        $row = 3;
+        $lastSlipId = null;
+        $totals = array(
+            'refund_count' => 0,
+            'refunded_qty' => 0,
+            'product_refund_incl' => 0,
+            'product_refund_excl' => 0,
+            'refund_gst' => 0,
+            'refund_qst' => 0,
+            'total_refund_incl' => 0,
+            'total_refund_excl' => 0,
+            'shipping_refund' => 0
+        );
+        
+        foreach ($refundsData as $data) {
+            // Show slip-level data only on first product row
+            $showSlipData = ($lastSlipId != $data['id_order_slip']);
+            
+            $this->setCellValueSafe($sheet, 'A' . $row, $showSlipData ? $data['refund_date'] : '');
+            $this->setCellValueSafe($sheet, 'B' . $row, $showSlipData ? $data['order_date'] : '');
+            $this->setCellValueSafe($sheet, 'C' . $row, $showSlipData ? $data['id_order'] : '');
+            $this->setCellValueSafe($sheet, 'D' . $row, $showSlipData ? '#ND' . $data['invoice_number'] : '');
+            $this->setCellValueSafe($sheet, 'E' . $row, $showSlipData ? $data['id_order_slip'] : '');
+            $this->setCellValueSafe($sheet, 'F' . $row, $showSlipData ? ($data['is_partial_refund'] ? 'Yes' : 'No') : '');
+            $this->setCellValueSafe($sheet, 'G' . $row, $showSlipData ? $data['payment'] : '');
+            $this->setCellValueSafe($sheet, 'H' . $row, $data['product_name']);
+            
+            // Column I: Refunded Qty - product level
+            $this->setNumericValue($sheet, 'I' . $row, $data['refunded_quantity']);
+            $totals['refunded_qty'] += (int)$data['refunded_quantity'];
+            
+            // Column J: Product Refund (Tax incl) - product level
+            $this->setNumericValue($sheet, 'J' . $row, $data['product_refund_tax_incl']);
+            $totals['product_refund_incl'] += (float)$data['product_refund_tax_incl'];
+            
+            // Column K: Product Refund (Tax excl) - product level
+            $this->setNumericValue($sheet, 'K' . $row, $data['product_refund_tax_excl']);
+            $totals['product_refund_excl'] += (float)$data['product_refund_tax_excl'];
+            
+            // Column L: Refund GST - product level
+            $this->setNumericValue($sheet, 'L' . $row, $data['refund_gst_amount']);
+            $totals['refund_gst'] += (float)$data['refund_gst_amount'];
+            
+            // Column M: Refund QST - product level
+            $this->setNumericValue($sheet, 'M' . $row, $data['refund_qst_amount']);
+            $totals['refund_qst'] += (float)$data['refund_qst_amount'];
+            
+            // Column N: Total Refund (Tax incl) - slip level
+            if ($showSlipData) {
+                $this->setNumericValue($sheet, 'N' . $row, $data['total_refund_tax_incl']);
+                $totals['total_refund_incl'] += (float)$data['total_refund_tax_incl'];
+                $totals['refund_count']++;
+            } else {
+                $this->setCellValueSafe($sheet, 'N' . $row, '');
+            }
+            
+            // Column O: Total Refund (Tax excl) - slip level
+            if ($showSlipData) {
+                $this->setNumericValue($sheet, 'O' . $row, $data['total_refund_tax_excl']);
+                $totals['total_refund_excl'] += (float)$data['total_refund_tax_excl'];
+            } else {
+                $this->setCellValueSafe($sheet, 'O' . $row, '');
+            }
+            
+            // Column P: Shipping Refund - slip level
+            if ($showSlipData) {
+                $this->setNumericValue($sheet, 'P' . $row, $data['refund_shipping_tax_incl']);
+                $totals['shipping_refund'] += (float)$data['refund_shipping_tax_incl'];
+            } else {
+                $this->setCellValueSafe($sheet, 'P' . $row, '');
+            }
+            
+            $this->setCellValueSafe($sheet, 'Q' . $row, $showSlipData ? $data['delivery_country'] : '');
+            $this->setCellValueSafe($sheet, 'R' . $row, $showSlipData ? $data['delivery_state'] : '');
+            
+            $lastSlipId = $data['id_order_slip'];
+            $row++;
+        }
+        
+
+
+        // Add totals row - using calculated sums from loop
+        $lastDataRow = $row - 1;
+        if ($lastDataRow >= 3) {
+            $row++;
+            $this->setCellValueSafe($sheet, 'A' . $row, 'TOTALS');
+            $this->setCellValueSafe($sheet, 'E' . $row, $totals['refund_count'] . ' refunds');
+            $this->setNumericValue($sheet, 'I' . $row, $totals['refunded_qty']);
+            $this->setNumericValue($sheet, 'J' . $row, $totals['product_refund_incl']);
+            $this->setNumericValue($sheet, 'K' . $row, $totals['product_refund_excl']);
+            $this->setNumericValue($sheet, 'L' . $row, $totals['refund_gst']);
+            $this->setNumericValue($sheet, 'M' . $row, $totals['refund_qst']);
+            $this->setNumericValue($sheet, 'N' . $row, $totals['total_refund_incl']);
+            $this->setNumericValue($sheet, 'O' . $row, $totals['total_refund_excl']);
+            $this->setNumericValue($sheet, 'P' . $row, $totals['shipping_refund']);
+            $sheet->getStyle('A' . $row . ':R' . $row)->getFont()->setBold(true);
+        }
+        
+        // Style data rows and set column widths
+        $this->styleDataRows($sheet, 'A3:R' . $row);
+        $this->setColumnWidths($sheet, array(
+            'A' => 12, 'B' => 12, 'C' => 10, 'D' => 14, 'E' => 12, 'F' => 12, 'G' => 14,
+            'H' => 30, 'I' => 12, 'J' => 16, 'K' => 16, 'L' => 12, 'M' => 14, 'N' => 16,
+            'O' => 16, 'P' => 16, 'Q' => 14, 'R' => 14
+        ));
+        
+        // Apply number formatting to numeric columns (2 decimal places)
+        if ($row > 3) {
+            $this->applyNumberFormat($sheet, 'I3:I' . $row); // Refunded quantity
+            $this->applyNumberFormat($sheet, 'J3:P' . $row); // All refund amounts
+        }
+        
+        // Set auto filter
+        $sheet->setAutoFilter('A2:R' . $row);
+        
+        // Apply print settings - landscape for better fit
+        $this->applyPrintSettings($sheet, 'landscape');
+    }
+
+
+
+
+    /**
+     * Populate SBPM (Sales By Payment Method) sheet
+     * Two parts: TOP summary table + BOTTOM Online/In-Store breakdown
+     */
+    protected function populateSBPMSheet($sheet, $dataFetcher, $date_from, $date_to)
+    {
+        // Get SBPM data
+        $sbpmData = $dataFetcher->getSBPMData();
+
+        // ==================== Build dynamic tax column map ====================
+        // Fixed columns: A=Combined Payment, B=Confirmed Orders, C=Products Excl, D=Products Incl,
+        //                E=Shipping, F=Total Sum (Tax Incl), G=Total Sum (Tax Excl),
+        //                H=Total Bill (Tax Incl), I=Total Bill (Tax Excl) → tax columns start at index 10 (J)
+        $taxColumns = isset($sbpmData['tax_columns']) ? $sbpmData['tax_columns'] : array();
+        $taxColMap = array(); // id_tax => column letter
+        foreach ($taxColumns as $i => $tax) {
+            $colIndex = 10 + $i; // J=10, K=11, ...
+            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+            $taxColMap[(int)$tax['id_tax']] = $colLetter;
+        }
+        $lastTaxColIndex = 9 + count($taxColumns);
+
+        // Optional gift-wrapping columns: only shown when at least one order in the
+        // range had gift wrapping. Placed immediately after the dynamic tax columns.
+        $hasWrapping = !empty($sbpmData['has_wrapping']);
+        $wrappingCostCol = null;
+        $wrappingTaxCol = null;
+        $lastDataColIndex = $lastTaxColIndex;
+        if ($hasWrapping) {
+            $wrappingCostCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastTaxColIndex + 1);
+            $wrappingTaxCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastTaxColIndex + 2);
+            $lastDataColIndex = $lastTaxColIndex + 2;
+        }
+        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(max(9, $lastDataColIndex));
+
+        // Add sheet header spanning full dynamic width
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Sales By Payment Method', $lastColLetter);
+
+        // ==================== TOP PART: Summary Table ====================
+        // Column headers (Row 2) — Module column removed; J/K Refund columns removed
+        $topHeaders = array(
+            'A' => 'Combined Payment',
+            'B' => 'Confirmed Orders',
+            'C' => 'Total Products (Tax Excl.)',
+            'D' => 'Total Products (Tax Incl.)',
+            'E' => 'Total Shipping (Tax Incl.)',
+            'F' => 'Total Sum (Tax Incl)',
+            'G' => 'Total Sum (Tax Excl.)',
+            'H' => 'Total Bill (Tax Incl.)',
+            'I' => 'Total Bill (Tax Excl.)',
+        );
+        // Add one column per active tax type
+        foreach ($taxColumns as $tax) {
+            $colLetter = $taxColMap[(int)$tax['id_tax']];
+            $topHeaders[$colLetter] = $tax['tax_name'] . ' (' . $tax['rate'] . '%)';
+        }
+        // Optional gift-wrapping columns (only when the range has wrapping)
+        if ($hasWrapping) {
+            $topHeaders[$wrappingCostCol] = 'Wrapping Cost (Tax Excl.)';
+            $topHeaders[$wrappingTaxCol] = 'Wrapping Tax';
+        }
+        // Commented out: J => 'Refund Online (Tax Incl.)', K => 'Refund Instore (Tax Incl.)'
+
+        foreach ($topHeaders as $column => $header) {
+            $this->setCellValueSafe($sheet, $column . '2', $header);
+        }
+        $this->styleHeaderRow($sheet, 'A2:' . $lastColLetter . '2');
+        $sheet->getRowDimension(2)->setRowHeight(30);
+
+        // Populate top summary rows (combined by payment method)
+        $row = 3;
+        $totalOrders = 0;
+        $totalProductsExcl = 0;
+        $totalProductsIncl = 0;
+        $totalShipping = 0;
+        $totalSumTaxIncl = 0;
+        $totalSumTaxExcl = 0;
+        $totalPaid = 0;
+        $totalPaidExcl = 0;
+        $totalTaxes = array(); // dynamic: id_tax => total
+        $totalWrappingCost = 0;
+        $totalWrappingTax = 0;
+
+        foreach ($sbpmData['combined'] as $data) {
+            $this->setCellValueSafe($sheet, 'A' . $row, $data['payment_method']);
+            // Column B: Confirmed Orders (Module column removed)
+            $this->setCellValueSafe($sheet, 'B' . $row, $data['order_count']);
+            $this->setNumericValue($sheet, 'C' . $row, (float)$data['total_products_tax_excl']);
+            $this->setNumericValue($sheet, 'D' . $row, (float)$data['total_products_tax_incl']);
+            $this->setNumericValue($sheet, 'E' . $row, (float)$data['total_shipping_tax_incl']);
+            $totalSum = (float)$data['total_products_tax_incl'] + (float)$data['total_shipping_tax_incl'];
+            $this->setNumericValue($sheet, 'F' . $row, $totalSum);
+            // Total Sum (Tax Excl.) — same formula as the tax-incl column, on tax-excl amounts.
+            $totalSumExcl = (float)$data['total_products_tax_excl'] + (isset($data['total_shipping_tax_excl']) ? (float)$data['total_shipping_tax_excl'] : 0);
+            $this->setNumericValue($sheet, 'G' . $row, $totalSumExcl);
+            // Total Bill = real cash actually tendered (gift cards / vouchers / etc. excluded).
+            $realPaid = isset($data['real_paid_tax_incl']) ? (float)$data['real_paid_tax_incl'] : (float)$data['total_paid_tax_incl'];
+            $this->setNumericValue($sheet, 'H' . $row, $realPaid);
+            // Total Bill (Tax Excl.) — same real-tender logic, tax stripped.
+            $realPaidExcl = isset($data['real_paid_tax_excl']) ? (float)$data['real_paid_tax_excl'] : 0;
+            $this->setNumericValue($sheet, 'I' . $row, $realPaidExcl);
+            // Dynamic tax columns
+            foreach ($taxColMap as $taxId => $colLetter) {
+                $taxAmount = isset($data['taxes'][$taxId]) ? (float)$data['taxes'][$taxId] : 0;
+                $this->setNumericValue($sheet, $colLetter . $row, $taxAmount);
+                if (!isset($totalTaxes[$taxId])) {
+                    $totalTaxes[$taxId] = 0;
+                }
+                $totalTaxes[$taxId] += $taxAmount;
+            }
+            // Optional wrapping columns
+            if ($hasWrapping) {
+                $wrapCost = isset($data['wrapping_cost']) ? (float)$data['wrapping_cost'] : 0;
+                $wrapTax = isset($data['wrapping_tax']) ? (float)$data['wrapping_tax'] : 0;
+                $this->setNumericValue($sheet, $wrappingCostCol . $row, $wrapCost);
+                $this->setNumericValue($sheet, $wrappingTaxCol . $row, $wrapTax);
+                $totalWrappingCost += $wrapCost;
+                $totalWrappingTax += $wrapTax;
+            }
+            // Removed: J refund_online, K refund_instore
+
+            $totalOrders += (int)$data['order_count'];
+            $totalProductsExcl += (float)$data['total_products_tax_excl'];
+            $totalProductsIncl += (float)$data['total_products_tax_incl'];
+            $totalShipping += (float)$data['total_shipping_tax_incl'];
+            $totalSumTaxIncl += $totalSum;
+            $totalSumTaxExcl += $totalSumExcl;
+            $totalPaid += $realPaid;
+            $totalPaidExcl += $realPaidExcl;
+            $row++;
+        }
+        // TOTALS row
+        $this->setCellValueSafe($sheet, 'A' . $row, 'TOTALS');
+        $this->setCellValueSafe($sheet, 'B' . $row, $totalOrders);
+        $this->setNumericValue($sheet, 'C' . $row, $totalProductsExcl);
+        $this->setNumericValue($sheet, 'D' . $row, $totalProductsIncl);
+        $this->setNumericValue($sheet, 'E' . $row, $totalShipping);
+        $this->setNumericValue($sheet, 'F' . $row, $totalSumTaxIncl);
+        $this->setNumericValue($sheet, 'G' . $row, $totalSumTaxExcl);
+        $this->setNumericValue($sheet, 'H' . $row, $totalPaid);
+        $this->setNumericValue($sheet, 'I' . $row, $totalPaidExcl);
+        foreach ($taxColMap as $taxId => $colLetter) {
+            // Use the round-once column total from getSBPMData (not the sum of per-bucket
+            // rounded values) so the TOTALS row matches the Taxes-tab Net Tax to the cent.
+            $colTotal = isset($sbpmData['tax_totals'][$taxId])
+                ? (float)$sbpmData['tax_totals'][$taxId]
+                : (isset($totalTaxes[$taxId]) ? $totalTaxes[$taxId] : 0);
+            $this->setNumericValue($sheet, $colLetter . $row, $colTotal);
+        }
+        if ($hasWrapping) {
+            $this->setNumericValue($sheet, $wrappingCostCol . $row, $totalWrappingCost);
+            $this->setNumericValue($sheet, $wrappingTaxCol . $row, $totalWrappingTax);
+        }
+        // Removed: J totalRefundOnline, K totalRefundInstore
+        $sheet->getStyle('A' . $row . ':' . $lastColLetter . $row)->getFont()->setBold(true);
+        $row++;
+
+        // Shipping Online row (between TOTALS and Refund Online)
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Shipping Online');
+        $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['online']['shipping_incl']);
+        foreach ($taxColMap as $taxId => $colLetter) {
+            $shippingTax = isset($sbpmData['online']['shipping_taxes'][$taxId]) ? (float)$sbpmData['online']['shipping_taxes'][$taxId] : 0;
+            $this->setNumericValue($sheet, $colLetter . $row, $shippingTax);
+        }
+        $row++;
+
+        // Refund Online breakdown row
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Refund Online');
+        $this->setNumericValue($sheet, 'C' . $row, (float)$sbpmData['online']['refund_products_excl']);
+        $this->setNumericValue($sheet, 'D' . $row, (float)$sbpmData['online']['refund_products_incl']);
+        $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['online']['refund_shipping_incl']);
+        $refundOnlineSum = round((float)$sbpmData['online']['refund_products_incl'] + (float)$sbpmData['online']['refund_shipping_incl'], 2);
+        // No tax-excl shipping figure is tracked for refunds; products-excl only.
+        $refundOnlineSumExcl = round((float)$sbpmData['online']['refund_products_excl'], 2);
+        $this->setNumericValue($sheet, 'F' . $row, $refundOnlineSum);
+        $this->setNumericValue($sheet, 'G' . $row, $refundOnlineSumExcl);
+        $this->setNumericValue($sheet, 'H' . $row, $refundOnlineSum);
+        $this->setNumericValue($sheet, 'I' . $row, $refundOnlineSumExcl);
+        foreach ($taxColMap as $taxId => $colLetter) {
+            $refundTax = isset($sbpmData['online']['refund_taxes'][$taxId]) ? (float)$sbpmData['online']['refund_taxes'][$taxId] : 0;
+            $this->setNumericValue($sheet, $colLetter . $row, $refundTax);
+        }
+        $row++;
+
+        // Refund Instore breakdown row
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Refund Instore');
+        $this->setNumericValue($sheet, 'C' . $row, (float)$sbpmData['instore']['refund_products_excl']);
+        $this->setNumericValue($sheet, 'D' . $row, (float)$sbpmData['instore']['refund_products_incl']);
+        $this->setNumericValue($sheet, 'E' . $row, (float)$sbpmData['instore']['refund_shipping_incl']);
+        $refundInstoreSum = round((float)$sbpmData['instore']['refund_products_incl'] + (float)$sbpmData['instore']['refund_shipping_incl'], 2);
+        $refundInstoreSumExcl = round((float)$sbpmData['instore']['refund_products_excl'], 2);
+        $this->setNumericValue($sheet, 'F' . $row, $refundInstoreSum);
+        $this->setNumericValue($sheet, 'G' . $row, $refundInstoreSumExcl);
+        $this->setNumericValue($sheet, 'H' . $row, $refundInstoreSum);
+        $this->setNumericValue($sheet, 'I' . $row, $refundInstoreSumExcl);
+        foreach ($taxColMap as $taxId => $colLetter) {
+            $refundTax = isset($sbpmData['instore']['refund_taxes'][$taxId]) ? (float)$sbpmData['instore']['refund_taxes'][$taxId] : 0;
+            $this->setNumericValue($sheet, $colLetter . $row, $refundTax);
+        }
+        $row++;
+
+        $topSectionEndRow = $row - 1; // Track where top section ends (includes refund rows)
+        
+        // ==================== BOTTOM PART: Specific Payment Breakdown ====================
+        // Column headers for bottom section
+        $bottomHeaders = array(
+            'A' => 'Specific Payment',
+            'B' => 'Payment Amount'
+        );
+
+
+        foreach ($bottomHeaders as $column => $header) {
+            $this->setCellValueSafe($sheet, $column . $row, $header);
+        }
+        $this->styleHeaderRow($sheet, 'A' . $row . ':B' . $row);
+        $row++;
+        
+        // ==================== ONLINE SECTION ====================
+        // Fixed Online rows (always show even if $0) - show rows first, then total
+        // Using dedicated payment amount fields for accuracy
+        
+        // Link via Stripe
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Link via Stripe');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['stripe_link']);
+        $row++;
+
+        // PayPal
+        $this->setCellValueSafe($sheet, 'A' . $row, 'PayPal');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['paypal']);
+        $row++;
+
+        // Card via Stripe
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Card via Stripe');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['stripe_card']);
+        $row++;
+
+        // Paid with Gift Card
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Gift Card');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['gift_card']);
+        $row++;
+
+        // Paid with Voucher
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Voucher');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['voucher']);
+        $row++;
+
+        // Paid with Credit Slip
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Credit Slip');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['credit_slip']);
+        $row++;
+
+        // Discount Online
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Discount Online');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['discount']);
+        $row++;
+
+        // Refund Online
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Refund Online');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['refund']);
+        $row++;
+
+        // TOTAL ONLINE - moved to bottom of online section
+        $this->setCellValueSafe($sheet, 'A' . $row, 'TOTAL ONLINE');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['online']['total']);
+        $sheet->getStyle('A' . $row . ':B' . $row)->getFont()->setBold(true);
+        $sheet->getStyle('A' . $row . ':B' . $row)->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('B8CCE4');
+        $row++;
+        
+        // Empty row separator
+        $row++;
+        
+
+        // ==================== IN-STORE SECTION ====================
+        // Fixed In-Store rows (always show even if $0) - show rows first, then total
+        // Paid with Voucher
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Voucher');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['voucher']);
+        $row++;
+
+        // Paid with Credit Card - using dedicated field for accuracy
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Credit Card');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['credit_card']);
+        $row++;
+
+        // Paid with Cash = total received in cash that day (gross; no deduction — refunds appear in Refund Instore and Cash in hand)
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Cash');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['cash']);
+        $row++;
+
+        // Paid with Interac - using dedicated field for accuracy
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Interac');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['interac']);
+        $row++;
+
+        // Paid with InStore Gift Card
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with InStore Gift Card');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['gift_card']);
+        $row++;
+
+        // Paid with Credit Slip
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Paid with Credit Slip');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['credit_slip']);
+        $row++;
+
+        // Refund Instore
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Refund Instore');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['refund']);
+        $row++;
+
+        // Discount InStore
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Discount InStore');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['discount']);
+        $row++;
+
+        // TOTAL IN-STORE - moved to bottom of in-store section
+        $this->setCellValueSafe($sheet, 'A' . $row, 'TOTAL IN-STORE');
+        $this->setNumericValue($sheet, 'B' . $row, $sbpmData['instore']['total']);
+        $sheet->getStyle('A' . $row . ':B' . $row)->getFont()->setBold(true);
+        $sheet->getStyle('A' . $row . ':B' . $row)->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('B8CCE4');
+        $row++;
+        
+        // Cash in hand (Cash − refunded in cash) — after TOTAL IN-STORE
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Cash in hand');
+        $this->setNumericValue($sheet, 'B' . $row, isset($sbpmData['instore']['cash_in_hand']) ? $sbpmData['instore']['cash_in_hand'] : 0);
+        $row++;
+
+        // End of the calculated bottom payment section (used to bound row styling/number
+        // formatting so the Old Gift Cards reference block below is styled separately).
+        $bottomSectionEndRow = $row - 1;
+
+        // ====================================================================
+        // OLD GIFT CARDS block — HIDDEN for now (kept for easy re-enable).
+        // The data method getOldGiftCards() is retained; set $showOldGiftCards = true
+        // to bring the reference block back.
+        // ====================================================================
+        $showOldGiftCards = false;
+        $oldGiftCards = $showOldGiftCards ? $dataFetcher->getOldGiftCards() : array();
+        if (!empty($oldGiftCards)) {
+            // 2-row gap after "Cash in hand"
+            $row += 2;
+
+            // Section header
+            $this->setCellValueSafe($sheet, 'A' . $row, 'Old Gift Cards used in this period (created before 2021)');
+            $sheet->getStyle('A' . $row . ':F' . $row)->getFont()->setBold(true);
+            $sheet->getStyle('A' . $row . ':F' . $row)->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('FF0000');
+            $sheet->getStyle('A' . $row . ':F' . $row)->getFont()->getColor()->setRGB('FFFFFF');
+            $row++;
+
+            // Column labels
+            $this->setCellValueSafe($sheet, 'A' . $row, 'Used On');
+            $this->setCellValueSafe($sheet, 'B' . $row, 'Code');
+            $this->setCellValueSafe($sheet, 'C' . $row, 'Amount');
+            $this->setCellValueSafe($sheet, 'D' . $row, 'Name');
+            $this->setCellValueSafe($sheet, 'E' . $row, 'Created');
+            $this->setCellValueSafe($sheet, 'F' . $row, 'Order #');
+            $sheet->getStyle('A' . $row . ':F' . $row)->getFont()->setBold(true);
+            $row++;
+
+            // One row per old gift-card usage, red background
+            foreach ($oldGiftCards as $gc) {
+                $usedOn = isset($gc['order_date']) ? substr((string)$gc['order_date'], 0, 10) : '';
+                $created = isset($gc['created']) ? substr((string)$gc['created'], 0, 10) : '';
+                $this->setCellValueSafe($sheet, 'A' . $row, $usedOn);
+                $this->setCellValueSafe($sheet, 'B' . $row, isset($gc['code']) ? (string)$gc['code'] : '');
+                $this->setNumericValue($sheet, 'C' . $row, isset($gc['amount']) ? (float)$gc['amount'] : 0);
+                $this->setCellValueSafe($sheet, 'D' . $row, isset($gc['name']) ? (string)$gc['name'] : '');
+                $this->setCellValueSafe($sheet, 'E' . $row, $created);
+                $this->setCellValueSafe($sheet, 'F' . $row, isset($gc['id_order']) ? (string)$gc['id_order'] : '');
+                $sheet->getStyle('A' . $row . ':F' . $row)->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('FFC7CE');
+                $row++;
+            }
+        }
+
+        // ====================================================================
+        // TAX-PROFILE PRODUCT TOTALS (amounts only) — after the current tables.
+        //   Total Tax Exempt : total amount of products with NO tax in the range
+        //   Total One Tax    : total amount of products with only the 5% GST
+        // Shown as single amounts in the "Payment Amount" column (B).
+        // ====================================================================
+        $taxProfile = $dataFetcher->getProductAmountsByTaxProfile();
+        // 2-row gap after the section above
+        $row += 2;
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Total Tax Exempt');
+        $this->setNumericValue($sheet, 'B' . $row, (float)$taxProfile['tax_exempt']);
+        $row++;
+        $this->setCellValueSafe($sheet, 'A' . $row, 'Total One Tax');
+        $this->setNumericValue($sheet, 'B' . $row, (float)$taxProfile['one_tax_gst']);
+        $row++;
+
+        // Style data rows and column widths
+        // Find the last data row (before we added styling)
+        $lastRow = $row - 1;
+        
+        // Style all data rows (top and bottom sections)
+        if ($lastRow > 2) {
+            // Style top section (rows 3 to end of refund rows)
+            $this->styleDataRows($sheet, 'A3:' . $lastColLetter . $topSectionEndRow);
+            // Apply number formatting: B=order count, C onwards=monetary
+            $this->applyNumberFormat($sheet, 'B3:B' . $topSectionEndRow);
+            $this->applyNumberFormat($sheet, 'C3:' . $lastColLetter . $topSectionEndRow);
+
+            // Style bottom section (after top section + bottom header row).
+            // Bound at the calculated section end so the Old Gift Cards reference block
+            // (which has its own red styling and a text Code column) is left untouched.
+            $bottomStartRow = $topSectionEndRow + 2;
+            $bottomStyleEndRow = isset($bottomSectionEndRow) ? $bottomSectionEndRow : $lastRow;
+            if ($bottomStartRow <= $bottomStyleEndRow) {
+                $this->styleDataRows($sheet, 'A' . $bottomStartRow . ':B' . $bottomStyleEndRow);
+                $this->applyNumberFormat($sheet, 'B' . $bottomStartRow . ':B' . $bottomStyleEndRow);
+            }
+        }
+
+        // Dynamic column widths
+        $colWidths = array('A' => 22, 'B' => 12, 'C' => 15, 'D' => 15, 'E' => 15, 'F' => 16, 'G' => 16, 'H' => 16, 'I' => 16);
+        foreach ($taxColMap as $taxId => $colLetter) {
+            $colWidths[$colLetter] = 14;
+        }
+        if ($hasWrapping) {
+            $colWidths[$wrappingCostCol] = 18;
+            $colWidths[$wrappingTaxCol] = 14;
+        }
+        $this->setColumnWidths($sheet, $colWidths);
+        
+        // Apply print settings - landscape for better fit
+        $this->applyPrintSettings($sheet, 'landscape');
+    }
+    
+    /**
+     * Helper to find payment amount by method name
+     * Searches for exact match first, then partial match
+     * Sums all matching entries to handle edge cases
+     */
+    protected function findPaymentAmount($payments, $methodName)
+    {
+        if (empty($payments)) {
+            return 0;
+        }
+        
+        $total = 0;
+        $methodLower = strtolower(trim($methodName));
+        
+        foreach ($payments as $payment) {
+            $paymentMethodLower = strtolower(trim($payment['payment_method']));
+            
+            // Exact match first
+            if ($paymentMethodLower === $methodLower) {
+                $total += (float)$payment['payment_amount'];
+            }
+            // Partial match (payment method contains the search term)
+            elseif (strpos($paymentMethodLower, $methodLower) !== false) {
+                $total += (float)$payment['payment_amount'];
+            }
+        }
+        
+        return $total;
+    }
+
+    
+    
+    /**
+     * Populate Taxes sheet - Tax name, collected, refunded, and net (collected - refunded).
+     */
+    protected function populateTaxesSheet($sheet, $dataFetcher, $date_from, $date_to)
+    {
+        // Add header row (width = top table columns A–D for print)
+        $this->addSheetHeader($sheet, $date_from, $date_to, 'Tax Summary', 'D');
+
+        // Column headers (Row 2)
+        $headers = array(
+            'A' => 'Tax Name',
+            'B' => 'Tax Collected',
+            'C' => 'Tax Refunded',
+            'D' => 'Net Tax'
+        );
+
+        foreach ($headers as $column => $header) {
+            $this->setCellValueSafe($sheet, $column . '2', $header);
+        }
+
+        // Style header row
+        $this->styleHeaderRow($sheet, 'A2:D2');
+
+        // Get tax data
+        $taxData = $dataFetcher->getTaxSummary();
+
+        // Populate data rows
+        $row = 3;
+        $totalCollected = 0;
+        $totalRefunded = 0;
+        $grandTotal = 0;
+
+        foreach ($taxData as $data) {
+            $collected = (float)$data['tax_collected'];
+            $refunded = (float)$data['tax_refunded'];
+            $net = (float)$data['tax_amount'];
+
+            $this->setCellValueSafe($sheet, 'A' . $row, $data['tax_name']);
+            $this->setNumericValue($sheet, 'B' . $row, $collected);
+            $this->setNumericValue($sheet, 'C' . $row, $refunded);
+            $this->setNumericValue($sheet, 'D' . $row, $net);
+
+            $totalCollected += $collected;
+            $totalRefunded += $refunded;
+            $grandTotal += $net;
+            $row++;
+        }
+
+        // Add totals row
+        $row++;
+        $this->setCellValueSafe($sheet, 'A' . $row, 'GRAND TOTAL');
+        $this->setNumericValue($sheet, 'B' . $row, $totalCollected);
+        $this->setNumericValue($sheet, 'C' . $row, $totalRefunded);
+        $this->setNumericValue($sheet, 'D' . $row, $grandTotal);
+        $sheet->getStyle('A' . $row . ':D' . $row)->getFont()->setBold(true);
+
+        // Style and column widths
+        $this->styleDataRows($sheet, 'A3:D' . $row);
+        $this->setColumnWidths($sheet, array(
+            'A' => 25, 'B' => 18, 'C' => 18, 'D' => 18
+        ));
+
+        // Apply print settings - portrait is fine for narrow sheet
+        $this->applyPrintSettings($sheet, 'portrait');
+    }
+
+    /**
+     * Add header row with date range and export info.
+     * Header width is fixed to match the top table columns so printing scales correctly:
+     * the top table (widest section) takes full page width and the header matches it.
+     *
+     * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet
+     * @param string $date_from
+     * @param string $date_to
+     * @param string $title
+     * @param string $topTableLastColumn Last column letter of the top table (e.g. 'K' for A–K). Header merges A1 to this column.
+     */
+    protected function addSheetHeader($sheet, $date_from, $date_to, $title = '', $topTableLastColumn = 'A')
+    {
+        $exportDate = date('Y-m-d H:i:s');
+        $headerText = $date_from . ' 00:00:00 - ' . $date_to . ' 23:59:59';
+        if ($title) {
+            $headerText = $title . ' | ' . $headerText;
+        }
+        $headerText .= ' | Exported: ' . $exportDate;
+        
+        // Merge header to match top table width (fixes print layout: header and table same width, scale to full page)
+        $headerRange = 'A1:' . $topTableLastColumn . '1';
+        $sheet->mergeCells($headerRange);
+        $sheet->setCellValue('A1', $headerText);
+        
+        // Style header
+        $sheet->getStyle('A1')->applyFromArray(array(
+            'font' => array(
+                'bold' => true,
+                'size' => 12,
+                'color' => array('rgb' => '1F4E79')
+            ),
+            'alignment' => array(
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ),
+            'fill' => array(
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => array('rgb' => 'D6DCE5')
+            )
+        ));
+        
+        $sheet->getRowDimension(1)->setRowHeight(35);
+    }
+
+    /**
+     * Style the header row (column headers)
+     */
+    protected function styleHeaderRow($sheet, $range)
+    {
+        $sheet->getStyle($range)->applyFromArray(array(
+            'font' => array(
+                'bold' => true,
+                'color' => array('rgb' => 'FFFFFF'),
+                'size' => 10
+            ),
+            'fill' => array(
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => array('rgb' => '2F5496')
+            ),
+            'alignment' => array(
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+                'indent' => 1
+            ),
+            'borders' => array(
+                'allBorders' => array(
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('rgb' => '000000')
+                )
+            )
+        ));
+        
+        // Extract row number from range (e.g., "A2:W2" -> 2, "A5:W5" -> 5)
+        if (preg_match('/^[A-Z]+(\d+):/', $range, $matches)) {
+            $rowNumber = (int)$matches[1];
+            $sheet->getRowDimension($rowNumber)->setRowHeight(30);
+        }
+    }
+
+    /**
+     * Style data rows with padding and number formatting
+     */
+    protected function styleDataRows($sheet, $range)
+    {
+        $sheet->getStyle($range)->applyFromArray(array(
+            'alignment' => array(
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'indent' => 1
+            ),
+            'borders' => array(
+                'allBorders' => array(
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('rgb' => 'D0D0D0')
+                )
+            )
+        ));
+    }
+    
+    /**
+     * Apply number formatting (up to 2 decimal places, no trailing zeros) to a range
+     */
+    protected function applyNumberFormat($sheet, $range)
+    {
+        $sheet->getStyle($range)->getNumberFormat()
+            ->setFormatCode(self::NUMBER_FORMAT);
+    }
+    
+    /**
+     * Apply padding and number formatting to a specific cell range
+     */
+    protected function styleCellRange($sheet, $range, $isNumeric = false)
+    {
+        $sheet->getStyle($range)->applyFromArray(array(
+            'alignment' => array(
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'indent' => 1
+            ),
+            'borders' => array(
+                'allBorders' => array(
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('rgb' => 'D0D0D0')
+                )
+            )
+        ));
+        
+        if ($isNumeric) {
+            $sheet->getStyle($range)->getNumberFormat()
+                ->setFormatCode('#,##0.00');
+        }
+    }
+
+    /**
+     * Set column widths
+     */
+    protected function setColumnWidths($sheet, $widths)
+    {
+        foreach ($widths as $column => $width) {
+            $sheet->getColumnDimension($column)->setWidth($width);
+        }
+    }
+    
+    /**
+     * Apply print settings to fit sheet to one page width
+     * This ensures the Excel prints properly without manual scaling
+     */
+    protected function applyPrintSettings($sheet, $orientation = 'landscape')
+    {
+        // Set fit to width - this is the key setting that scales content to fit page width
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(0); // Don't limit height - allow multiple pages vertically
+        
+        // Set orientation based on content
+        if ($orientation === 'landscape') {
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        } else {
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+        }
+        
+        // Set paper size to A4
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+        
+        // Set narrow margins for better fit
+        $sheet->getPageMargins()->setLeft(0.4);
+        $sheet->getPageMargins()->setRight(0.4);
+        $sheet->getPageMargins()->setTop(0.5);
+        $sheet->getPageMargins()->setBottom(0.5);
+        
+        // Set print area to include all used cells
+        $highestColumn = $sheet->getHighestColumn();
+        $highestRow = $sheet->getHighestRow();
+        $sheet->getPageSetup()->setPrintArea('A1:' . $highestColumn . $highestRow);
+    }
+}

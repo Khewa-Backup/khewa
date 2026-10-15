@@ -1,0 +1,1505 @@
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:12:29: Cart cannot be loaded or an order has already been placed using this cart
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:12:29: PosCart Object
+(
+    [id] => 139
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-05-21 14:16:49
+    [secure_key] => aafa6c94d0d9afa2bfd08cb956bb1fd8
+    [id_carrier] => 25
+    [date_upd] => 2021-06-10 17:12:13
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => 
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:50:32: Cart cannot be loaded or an order has already been placed using this cart
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:50:32: PosCart Object
+(
+    [id] => 139
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-05-21 14:16:49
+    [secure_key] => aafa6c94d0d9afa2bfd08cb956bb1fd8
+    [id_carrier] => 25
+    [date_upd] => 2021-06-10 17:12:13
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => 
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:51:20: Cart cannot be loaded or an order has already been placed using this cart
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:51:20: PosCart Object
+(
+    [id] => 139
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-05-21 14:16:49
+    [secure_key] => aafa6c94d0d9afa2bfd08cb956bb1fd8
+    [id_carrier] => 25
+    [date_upd] => 2021-06-10 17:51:12
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => 
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:52:50: Cart cannot be loaded or an order has already been placed using this cart
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:52:50: PosCart Object
+(
+    [id] => 139
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-05-21 14:16:49
+    [secure_key] => aafa6c94d0d9afa2bfd08cb956bb1fd8
+    [id_carrier] => 25
+    [date_upd] => 2021-06-10 17:52:37
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => 
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:58:22: Cart cannot be loaded or an order has already been placed using this cart
+*DEBUG* 	v1.7.7.2	2021/06/10 - 17:58:22: PosCart Object
+(
+    [id] => 139
+    [id_shop_group] => 1
+    [id_shop] => 1
+    [id_address_delivery] => 97
+    [id_address_invoice] => 97
+    [id_currency] => 3
+    [id_customer] => 186
+    [id_guest] => 0
+    [id_lang] => 1
+    [recyclable] => 0
+    [gift] => 0
+    [gift_message] => 
+    [mobile_theme] => 0
+    [date_add] => 2021-05-21 14:16:49
+    [secure_key] => aafa6c94d0d9afa2bfd08cb956bb1fd8
+    [id_carrier] => 25
+    [date_upd] => 2021-06-10 17:52:37
+    [checkedTos] => 
+    [pictures] => 
+    [textFields] => 
+    [delivery_option] => {"97":"25,"}
+    [allow_seperated_package] => 0
+    [_products:protected] => 
+    [_taxCalculationMethod:protected] => 1
+    [webserviceParameters:protected] => Array
+        (
+            [fields] => Array
+                (
+                    [id_address_delivery] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [xlink_resource] => addresses
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [xlink_resource] => currencies
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [xlink_resource] => customers
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [xlink_resource] => guests
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [xlink_resource] => languages
+                        )
+
+                )
+
+            [associations] => Array
+                (
+                    [cart_rows] => Array
+                        (
+                            [resource] => cart_row
+                            [virtual_entity] => 1
+                            [fields] => Array
+                                (
+                                    [id_product] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => products
+                                        )
+
+                                    [id_product_attribute] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => combinations
+                                        )
+
+                                    [id_address_delivery] => Array
+                                        (
+                                            [required] => 1
+                                            [xlink_resource] => addresses
+                                        )
+
+                                    [id_customization] => Array
+                                        (
+                                            [required] => 
+                                            [xlink_resource] => customizations
+                                        )
+
+                                    [quantity] => Array
+                                        (
+                                            [required] => 1
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [configuration:protected] => PrestaShop\PrestaShop\Adapter\Configuration Object
+        (
+            [shop:PrestaShop\PrestaShop\Adapter\Configuration:private] => 
+            [parameters:protected] => 
+        )
+
+    [addressFactory:protected] => PrestaShop\PrestaShop\Adapter\AddressFactory Object
+        (
+        )
+
+    [shouldSplitGiftProductsQuantity:protected] => 
+    [shouldExcludeGiftsDiscount:protected] => 
+    [id_shop_list] => Array
+        (
+        )
+
+    [get_shop_from_context:protected] => 1
+    [table:protected] => cart
+    [identifier:protected] => id_cart
+    [fieldsRequired:protected] => Array
+        (
+            [0] => id_currency
+            [1] => id_lang
+        )
+
+    [fieldsSize:protected] => Array
+        (
+            [secure_key] => 32
+        )
+
+    [fieldsValidate:protected] => Array
+        (
+            [id_shop_group] => isUnsignedId
+            [id_shop] => isUnsignedId
+            [id_address_delivery] => isUnsignedId
+            [id_address_invoice] => isUnsignedId
+            [id_carrier] => isUnsignedId
+            [id_currency] => isUnsignedId
+            [id_customer] => isUnsignedId
+            [id_guest] => isUnsignedId
+            [id_lang] => isUnsignedId
+            [recyclable] => isBool
+            [gift] => isBool
+            [gift_message] => isMessage
+            [mobile_theme] => isBool
+            [allow_seperated_package] => isBool
+            [date_add] => isDate
+            [date_upd] => isDate
+        )
+
+    [fieldsRequiredLang:protected] => Array
+        (
+        )
+
+    [fieldsSizeLang:protected] => Array
+        (
+        )
+
+    [fieldsValidateLang:protected] => Array
+        (
+        )
+
+    [tables:protected] => Array
+        (
+        )
+
+    [image_dir:protected] => 
+    [image_format:protected] => jpg
+    [translator:protected] => 
+    [def:protected] => Array
+        (
+            [table] => cart
+            [primary] => id_cart
+            [fields] => Array
+                (
+                    [id_shop_group] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_shop] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_delivery] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_address_invoice] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_carrier] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_currency] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [id_customer] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_guest] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                        )
+
+                    [id_lang] => Array
+                        (
+                            [type] => 1
+                            [validate] => isUnsignedId
+                            [required] => 1
+                        )
+
+                    [recyclable] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [gift_message] => Array
+                        (
+                            [type] => 3
+                            [validate] => isMessage
+                        )
+
+                    [mobile_theme] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [delivery_option] => Array
+                        (
+                            [type] => 3
+                        )
+
+                    [secure_key] => Array
+                        (
+                            [type] => 3
+                            [size] => 32
+                        )
+
+                    [allow_seperated_package] => Array
+                        (
+                            [type] => 2
+                            [validate] => isBool
+                        )
+
+                    [date_add] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                    [date_upd] => Array
+                        (
+                            [type] => 5
+                            [validate] => isDate
+                        )
+
+                )
+
+            [classname] => PosCart
+        )
+
+    [update_fields:protected] => 
+    [force_id] => 
+)
+

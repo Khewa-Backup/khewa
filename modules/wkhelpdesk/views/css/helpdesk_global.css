@@ -1,0 +1,145 @@
+/**
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License version 3.0
+* that is bundled with this package in the file LICENSE.txt
+* It is also available through the world-wide-web at this URL:
+* https://opensource.org/licenses/AFL-3.0
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade this module to a newer
+* versions in the future. If you wish to customize this module for your
+* needs please refer to CustomizationPolicy.txt file inside our module for more information.
+*
+* @author Webkul IN
+* @copyright Since 2010 Webkul
+* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+*/
+#left_column{
+	display: none !important;
+}
+#right_column{
+	display: none !important;
+}
+#center_column{
+	width: 100% !important;
+}
+.page-title {
+	float: left;
+	width:100%;
+	overflow:hidden;
+	padding: 20px;
+	text-transform: uppercase;
+}
+.page-title span{
+	font-size:18px;
+	font-weight:normal;
+}
+.padding_div{
+	padding: 10px;
+}
+.hd_main_div{
+    float: left;
+    width: 100%;
+    border: 1px solid #D5D5D5;
+    background: #fff;
+    margin-bottom: 15px;
+}
+#wk_ticket_list_filter .form-control{
+	width: auto !important;
+}
+#hd_other_files{
+  float: left;
+  width: 100%;
+  margin-top: 10px;
+}
+.hdChildDivClass{
+  float: left;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.view_ticket i{
+	margin-right: 0px !important;
+}
+.wk-form-group .control-label.required::before{
+	color: red;
+	content: "*";
+}
+#hd_btn_other_attachment{
+	color: #fff;
+}
+.submit{
+	text-align: right;
+}
+
+#wk_ticket_list_paginate .pagination{
+	width: auto !important;
+}
+
+#wk_ticket_list_paginate .pagination > li.paginate_button{
+	float: left;
+}
+#wk_ticket_list_paginate .pagination > li{
+	display: inline !important;
+}
+#wk_ticket_list_paginate .pagination > li > a, #wk_ticket_list_paginate .pagination > li > span{
+	background-color: #fff;
+	border: 1px solid #ddd;
+	float: left;
+	line-height: 1.42857;
+	margin-left: -1px;
+	padding: 6px 12px;
+	position: relative;
+	text-decoration: none;
+	font-weight: normal !important;
+}
+#wk_ticket_list_paginate .pagination > .active > a,
+#wk_ticket_list_paginate .pagination > .active > a:hover,
+#wk_ticket_list_paginate .pagination > .active > a:focus,
+#wk_ticket_list_paginate .pagination > .active > span,
+#wk_ticket_list_paginate .pagination > .active > span:hover,
+#wk_ticket_list_paginate .pagination > .active > span:focus {
+  background-color: #2fb5d2;
+  border-color: #2fb5d2;
+  color: #fff;
+  cursor: default;
+  z-index: 2;
+}
+#wk_ticket_list_paginate .pagination .disabled a{
+	cursor: not-allowed !important;
+}
+#wk_ticket_list_wrapper{
+	width: 98%;
+	float: left;
+	overflow-y: hidden;
+}
+.wk_hd_ticket_status {
+	color: white;
+	padding: 4px 12px;
+	background: lightseagreen;
+	border-radius: 16px;
+}
+.wk_hd_ticket_view_btn {
+	padding: 5px 0.75rem!important;
+}
+@media screen and (min-width: 1200px) {
+	.ticketMainAttachment{
+		width:25%;
+	}
+}
+@media screen and (max-width: 1199px) and (min-width: 960px) {
+	.ticketMainAttachment{
+		width:30%;
+	}
+}
+@media screen and (max-width: 959px) and (min-width: 520px) {
+	.ticketMainAttachment{
+		width:50%;
+	}
+}
+@media screen and (max-width: 519px) {
+	.ticketMainAttachment{
+		width:100%;
+	}
+}

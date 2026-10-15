@@ -1,0 +1,10 @@
+
+[{shop_url}]
+
+La copia de seguridad comienza el {date_start} a las {hours_start} y finaliza el {date_end} a las {hours_end}.
+
+Mensaje:
+{backup_result}
+
+{shop_name} [{shop_url}]
+

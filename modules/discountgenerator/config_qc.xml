@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>discountgenerator</name>
+    <displayName><![CDATA[Discount generator]]></displayName>
+    <version><![CDATA[1.4.1]]></version>
+    <description><![CDATA[This module gives you an ability to generate discount vouchers with unique promo-codes in great numbers.]]></description>
+    <author><![CDATA[iRessources]]></author>
+    <tab><![CDATA[pricing_promotion]]></tab>
+	<confirmUninstall><![CDATA[Are you sure to uninstall the module?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

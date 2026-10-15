@@ -1,0 +1,10 @@
+Welcome to Khewa!
+
+Dear {name},
+
+{content}
+
+Thank you for subscribing to our newsletter.
+
+Best regards,
+The Khewa Team

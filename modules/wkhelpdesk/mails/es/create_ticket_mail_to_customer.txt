@@ -1,0 +1,15 @@
+Hello {customer_name},
+
+Your ticket has been created succesfully. Your ticket id is #{ticket_id}
+
+Your ticket details as below:
+
+Ticket id: #{ticket_id
+
+Query type: {query_type}
+
+Subject: {subject}
+
+Message: {message}
+
+

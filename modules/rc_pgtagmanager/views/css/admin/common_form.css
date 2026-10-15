@@ -1,0 +1,150 @@
+/*
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to a trade license awarded by
+ * Garamo Online L.T.D.
+ *
+ * Any use, reproduction, modification or distribution
+ * of this source file without the written consent of
+ * Garamo Online L.T.D It Is prohibited.
+ *
+ * @author    ReactionCode <info@reactioncode.com>
+ * @copyright 2015-2021 Garamo Online L.T.D
+ * @license   Commercial license
+ */
+.form-tab-item {
+    cursor: pointer;
+}
+.list-group-item i {
+    margin-right: 8px;
+}
+
+input[type="range"] {
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    margin:0;
+    outline:none;
+    background-color:inherit;
+    background-size:0;
+    cursor:pointer;
+    padding:0;
+    width:100%;
+    vertical-align:middle;
+}
+
+input[type="range"]::-moz-range-track {
+    -moz-appearance:none;
+    appearance:none;
+    margin:10.5px 0;
+    border-radius:5px;
+    border-color:transparent;
+    background-color:#eee;
+    background-image:linear-gradient(#30aabc,#30aabc);
+    background-repeat:repeat-y;
+    background-size:0;
+    width:99.8%;
+    height:5px;
+    color:transparent;
+    box-sizing:border-box;
+}
+
+input[type="range"]::-ms-track {
+    appearance:none;
+    margin:10.5px 0;
+    border-radius:5px;
+    border-color:transparent;
+    background-color:#eee;
+    background-image:linear-gradient(#30aabc,#30aabc);
+    background-repeat:repeat-y;
+    background-size:0;
+    width:99.8%;
+    height:5px;
+    color:transparent;
+    box-sizing:border-box;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    -webkit-appearance:none;
+    appearance:none;
+    margin:10.5px 0;
+    border-radius:5px;
+    border-color:transparent;
+    background-color:#eee;
+    background-image:-webkit-gradient(linear,left top,left bottom,from(#30aabc),to(#30aabc));
+    background-image:linear-gradient(#30aabc,#30aabc);
+    background-repeat:repeat-y;
+    background-size:0;
+    width:99.8%;
+    height:5px;
+    color:transparent;
+    -webkit-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+input[type="range"]::-moz-range-thumb {
+    -moz-appearance:none;
+    appearance:none;
+    margin:-7.5px 0;
+    border:3px solid #30aabc;
+    border-radius:100%;
+    box-shadow:0 4px 8px 0 rgba(36,83,107,.15);
+    background-color:#30aabc;
+    width:20px;
+    height:20px;
+    box-sizing:border-box;
+}
+
+input[type="range"]::-ms-thumb {
+    appearance:none;
+    margin:-7.5px 0;
+    border:3px solid #30aabc;
+    border-radius:100%;
+    box-shadow:0 4px 8px 0 rgba(36,83,107,.15);
+    background-color:#30aabc;
+    width:20px;
+    height:20px;
+    box-sizing:border-box;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance:none;
+    appearance:none;
+    margin:-7.5px 0;
+    border:3px solid #30aabc;
+    border-radius:100%;
+    -webkit-box-shadow:0 4px 8px 0 rgba(36,83,107,.15);
+    box-shadow:0 4px 8px 0 rgba(36,83,107,.15);
+    background-color:#30aabc;
+    width:20px;
+    height:20px;
+    -webkit-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+input[type="range"]::-moz-range-progress {
+    border-top-left-radius:5px;
+    border-bottom-left-radius:5px;
+    background-color:#30aabc;
+    height:5px;
+}
+
+input[type="range"]::-ms-fill-lower {
+    border-top-left-radius:5px;
+    border-bottom-left-radius:5px;
+    background-color:#30aabc;
+    height:5px;
+}
+
+input[type="range"]::-moz-focus-outer {
+    border:0;
+}
+
+input[type="range"]::-ms-tooltip {
+    display:none;
+}
+
+input[type="range"]::-webkit-slider-container,
+input[type="range"]::-webkit-slider-runnable-track {
+    background-size:inherit;
+}

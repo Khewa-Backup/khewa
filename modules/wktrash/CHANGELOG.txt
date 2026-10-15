@@ -1,0 +1,27 @@
+----------------------------
+Change Log: V4.0.1 to V4.0.2
+----------------------------
+
+## Improvement:
+- Compatible with PS8
+- code improved
+
+## Bug Fixed:
+- Updated translation
+- Fixed grid search issue
+- Fixed text issues
+
+----------------------------
+Change Log: V4.0.0 to V4.0.1
+----------------------------
+Bug Fixed:
+- delete fileType from all directories
+- update file License headers
+
+--------------------
+Change Log V4.0.0
+--------------------
+Features:
+- [BO] : Feature to restore Products, categories, brands, suppliers, customers, attribute, attribute value, features.
+- [BO] : Bulk action is also provided to restore.
+- [BO] : Restore category with it's child categories.

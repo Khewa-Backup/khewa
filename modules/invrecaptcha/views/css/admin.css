@@ -1,0 +1,152 @@
+/**
+ * Spam Protection - Google reCAPTCHA, hCaptcha & GDPR Captcha
+ *
+ * @author    WebshopWorks
+ * @copyright 2018-2026 WebshopWorks.com
+ * @license   One Domain Licence
+ *
+ * Not allowed to resell or redistribute this software
+ */
+
+/* ─── Layout ─── */
+.irc-tabs-container {
+	padding: 12px 20px;
+}
+.irc-tabs-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.irc-tabs-left {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+.irc-logo {
+	max-height: 38px;
+	width: auto;
+}
+.btn-group .btn.btn-default i {
+	display: inline-block;
+}
+
+/* ─── Stats Filters ─── */
+.irc-stats-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: flex-end;
+	margin-bottom: 24px;
+	padding: 16px;
+	background: #f8f8f8;
+	border-radius: 4px;
+	border: 1px solid #eee;
+}
+.irc-filter-group {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.irc-filter-group label {
+	font-size: 12px;
+	font-weight: 600;
+	color: #666;
+	text-transform: uppercase;
+	letter-spacing: .5px;
+}
+.irc-filter-group .form-control {
+	min-width: 160px;
+}
+.irc-filter-actions {
+	justify-content: flex-end;
+}
+.irc-filter-actions .btn {
+	height: 34px;
+}
+
+/* ─── Stats Cards ─── */
+.irc-stats-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 16px;
+	margin-bottom: 24px;
+}
+.irc-card {
+	padding: 20px;
+	border-radius: 6px;
+	text-align: center;
+	border: 1px solid #e0e0e0;
+	background: #fff;
+	transition: transform .15s, box-shadow .15s;
+}
+.irc-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+.irc-card__value {
+	font-size: 32px;
+	font-weight: 700;
+	line-height: 1.2;
+	margin-bottom: 6px;
+}
+.irc-card__label {
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .5px;
+	color: #888;
+}
+.irc-card--total .irc-card__value { color: #363A41; }
+.irc-card--legit .irc-card__value { color: #72C279; }
+.irc-card--blocked .irc-card__value { color: #E08F95; }
+.irc-card--rate .irc-card__value { color: #5C9DCD; }
+
+/* ─── Chart ─── */
+.irc-chart-wrapper {
+	position: relative;
+	margin-bottom: 24px;
+	padding: 16px;
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+}
+
+/* ─── Stats Table ─── */
+#irc-stats-table {
+	margin-bottom: 0;
+}
+#irc-stats-table thead th {
+	background: #f8f8f8;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: .5px;
+	color: #666;
+	border-bottom: 2px solid #ddd;
+}
+#irc-stats-table tbody td {
+	vertical-align: middle;
+}
+#irc-stats-table .badge {
+	font-size: 12px;
+	padding: 4px 10px;
+	border-radius: 3px;
+}
+.irc-badge-legit {
+	background: #DFF0D8;
+	color: #3C763D;
+}
+.irc-badge-blocked {
+	background: #F2DEDE;
+	color: #A94442;
+}
+.irc-no-data {
+	text-align: center;
+	padding: 40px 20px;
+	color: #999;
+}
+.irc-no-data i {
+	display: block;
+	font-size: 48px;
+	margin-bottom: 12px;
+	opacity: .4;
+}

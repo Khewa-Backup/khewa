@@ -1,0 +1,729 @@
+Version 14.7.0 :
+    - Add Google Drive API configuration to adapt to Google Drive new rules
+Version 14.6.0 :
+    - Improve for PHP 8
+    - Improve some texts
+    - Check PHP OpenSSL for domain update in automation
+    - Fix issue with domain update in automation
+Version 14.5.10 :
+    - Fix download files issues with latest Prestashop
+    - Restore : Improve for PHP 8
+Version 14.5.9 :
+    - Prevent backup of backups at the root of the website
+Version 14.5.8 :
+    - Improve information and creation for Wasabi host
+    - Restore : Improve maintenance text change for html message
+Version 14.5.7 :
+    - Restore : Fix https detection
+Version 14.5.6 :
+    - Add GB email template
+Version 14.5.5 :
+    - Improve PHP cron to prevent issue with cached URLs
+Version 14.5.4 :
+    - Fix compatibility with PHP8 on DateTime call
+Version 14.5.3 :
+    - Fix CET dateTime issue
+    - Prevent refresh when called by php command line
+    - Do not stop script when ajax fails with unknown error (sometime it actually keeps going)
+Version 14.5.2 :
+    - Allow light version to see backups file not in database and put them back in it
+    - Restore : Fix issue with header size in some cases
+Version 14.5.1 :
+    - Fix multi bytes character cut handling during backup
+Version 14.5.0 :
+    - Improve OneDrive resilience in case OneDrive is temporarily unreachable or abnormally slow
+    - Improve code sturdiness
+    - Fix issue with curl error 503 and too many requests
+    - Fix some compatibility issues with PHP 8
+	- Fix updating automation shop domain after restoring on new domain
+    - Fix issue with maintenance mode during backup
+    - Fix temporary files when creating directly on more than one remote account
+    - Fix issue with OneDrive listing files order for deletion
+    - Display top saving button only on configuration page
+    - Restore : Add option to enable maintenance mode after restoring
+    - Restore : Add option to change maintenance text after restoring
+    - Restore : Improve compatibility with Prestashop 8 for getting Prestashop version
+    - Restore : Prevent replacing engine name in data content
+    - Restore : Fix issue with option to disable media servers
+    - Restore : Fix chosen engine if not available
+Version 14.4.3 :
+    - Fix possible issue on table line count
+Version 14.4.2 :
+    - Add compatibility with Prestashop 8.1
+Version 14.4.1 :
+    - Fix issue when restoring encrypted backup from module
+Version 14.4.0 :
+    - Add Vultr to S3 type available
+Version 14.3.1 :
+    - Restore : Add compatibility with Prestashop 1.7.4.2 for getting Prestashop version
+Version 14.3.0 :
+    - Add admin_filter to low interest tables
+    - Add Shadow Drive to distant accounts
+    - Fix issue with some curl result wrongly detected as XML
+    - Fix temp empty file not removed when backup created directly on distant account
+    - Improve reading info for Owncloud files
+    - Restore : Add new system to check Prestashop version and PHP version validity
+Version 14.2.1 :
+    - Improve Prestashop Edition adaptations
+    - Hide low interest tables from list of table to ignore
+    - Prevent using shop root as backup directory
+    - Do not try to backup tables with empty name
+    - Fix issue with uppercase database name
+Version 14.2.0 :
+    - Add Prestashop Edition adaptations
+    - Fix issue with list of files to ignore
+Version 14.1.4 :
+    - Fix compatibility with Prestashop 1.7
+Version 14.1.3 :
+    - Add php_errorlog to files to ignore
+    - Add layered_filter_block and etsy_audit_log to low interest tables
+    - Fix onedrive scope names
+Version 14.1.2 :
+    - Restore : Fix issue when origin domain contains www but not destination domain
+    - Restore : Fix issue with htaccess backup not being renamed when origin domain is the same destination domain
+Version 14.1.1 :
+    - Fix pCloud directories that may not be chosen in some cases
+Version 14.1.0 :
+    - Add remote sending to pCloud
+    - Add remote sending to Backblaze
+    - Add Spanish Language
+    - Add dhl_quote_cache table to the low interest tables
+    - Improve maintenance option when in multishop
+    - Improve ignore table management
+    - Improve explanation when sodium is not detected
+    - Update new onedrive scope names
+    - Remove Hubic (deprecated)
+Version 14.0.4 :
+    - Fix backup when created outside default path
+Version 14.0.3 :
+    - Restore : Improve explanation when sodium is not detected
+    - Restore : Add test on sodium function sodium_base642bin existence
+    - Restore : Do not restore if the backup is encrypted and sodium or sodium_base642bin are unavailable
+    - Restore : Fix issue with intermediate renewals during uncompress process
+    - Restore : Fix issue with double www in some cases when new url contain old url
+Version 14.0.2 :
+    - Restore : Fix PHP version warning for Prestashop 8
+Version 14.0.1 :
+    - Restore : Check that sodium extension is loaded if needed
+    - Restore : Auto fix table creation in innodb in case of autoincrement and multiple primary keys from myisam
+Version 14.0.0 :
+    - Compatibility with Prestashop 8.0.0
+    - Add option to crypt the backup
+    - Add remote sending to Google Cloud Storage
+    - Add option to only save products images source
+    - Add optimization compatibilities for module ultimatedatabaseoptimizer
+    - Add some FAQ questions/answers
+    - Improve icons
+    - Display log option only in default profile
+    - Restore : Add decryption of encrypted backup ability
+    - Restore : Add option to prevent the urls update
+    - Restore : Improve "Disable SSL" activation on localhost http/https
+    - Restore : Display a warning when using http on online domain
+    - Fix install and uninstall actions
+Version 13.3.0 :
+    - Add remote sending to Dropbox Business
+    - Restore : Fix shop url in case new domain contains old domain (ie: domain.com becomes newdomain.com)
+Version 13.2.0 :
+    - Add some tables to the low interest tables
+    - Add refresh during the dump process
+    - Fix issue with doubling ignored table creation
+    - Fix issue that can occured when getting files from AWS when directory path is the same as bucket
+    - Fix issue with some tables names when displaying list of table to not recreate
+    - Restore : Fix htaccess.ntbr name
+Version 13.1.3 :
+    - Restore : Fix database host if there is no port for Prestashop < 1.7
+Version 13.1.2 :
+    - Add Dropbox support for Short-Lived Token
+    - Restore : Fix missing database port if non standard port for Prestashop < 1.7
+    - Restore : Fix SSL enabling/disabling in some case
+Version 13.1.1 :
+    - Restore : Replace old url both with and without www
+Version 13.1.0 :
+    - Choosing database tables to ignore is much more easier now with listing and checkboxes
+    - If a backup is found at shop root, suggest to bring it back to the module with a button
+    - Fix automation domain change when restoring to a new domain
+    - Mulitipart is now 2000 for new installation in order to prevent server limitation
+    - Log are now saved to module folder if restoration from module fails
+    - Check that openssl extension is loaded
+    - Restore : Fix issue with collation replacement
+    - Restore : Fix new domain detection when moving from an old domain
+    - Restore : Fix issue with directories ending by "." in Windows
+Version 13.0.8 :
+    - Improve listing directories with existing products images
+    - Improve ftp file listing on some restricted servers
+    - Restore : If old Prestashop setting file does not display "deprecated" but is empty, use new Prestashop parameters file
+Version 13.0.7 :
+    - Add some log in automation saving process
+    - Fix issue with automation saving when there is no change
+    - Restore : Compatibility with the module Protect My Shop by librasoft
+Version 13.0.6 :
+    - Fix issue with wrong dump path in some case
+Version 13.0.5 :
+    - Fix issue with double dump file
+    - Fix issue with multipart dump files
+    - Fix issue with missing product images for light version
+Version 13.0.4 :
+    - Replace disable timeout by increase timeout
+Version 13.0.3 :
+    - Fix compatibility issue on update with old mysql
+    - Fix a possible issue with config file rights
+Version 13.0.2 :
+    - Fix some regex issue in restore script
+Version 13.0.1 :
+    - Add lggoogleanalytics_events to low interest data table
+Version 13.0.0 :
+    - In multipart, database dump is now sliced if it is too big for one part file
+    - Save current domain, so that if it changes and automation is enabled, a button allows to update it in the automation cron
+    - Handle intermediate renewals pause tweak for restoration from within the module
+    - Add some config infos in log
+    - Improve FTP connection with low performance FTP servers
+    - Improve simultaneous intermediate renewals handling
+    - Fix some translations
+    - Fix translations with more than one variable
+    - Fix CET hour in log
+    - Fix config file issue when uninstalling
+    - Fix issue when sending to two distant accounts of the same kind (ex: two Google Drive accounts)
+    - Move mapping option from advanced config to standard config
+    - Do not run cron if module is disabled
+    - Fix issue in AWS path when missing last slash
+    - Fix progress display issue for restoration from within the module
+    - The old products images directories without images are now ignored
+    - Restore : Fix old config file deprecation check
+    - Restore : Improve ability to restore a Linux backup on Windows by renaming forbidden files
+    - Restore : Display a warning if more than one backup file found
+    - Restore : Display backup file name to restore
+    - Restore : Ability to change collation and charset
+    - Restore : Ability to change storage engine
+    - Restore : Fix issue when htaccess already exists and should be replaced
+Version 12.2.0 :
+    - Do not display big file warning if the file is the dump
+    - For remote SFTP sending, create directory if necessary
+    - For remote SFTP sending, overwrite restore script if necessary
+    - Clean backups info if backups files are not there anymore
+    - Detect simultaneous intermediate renewals
+    - Do not backup mapping data
+    - Disabling compression option is now available in light version
+    - Ability to delete files and directories from the mapping
+    - Fix issue when OneDrive does not return size infos of a file
+    - Intermediate renewals time is now found and set automatically during the module installation
+    - Add FAQ link in disclaimer
+    - Restore : Display warnings if necessary
+    - Restore : Handle intermediate renewals pause tweak
+    - Restore : Stop if more than one backup file found
+    - Restore : Add selected options in logs
+    - Restore : If no htaccess file, a warning is issued instead of being stopped
+Version 12.1.1 :
+    - Improve cleaning after restoration from module
+    - Do not save some temporary restoration files
+    - Fix issue in file tree
+Version 12.1.0 :
+    - Add option to not use curl to get files size
+    - Fix temporary file ntbr.tmp access
+    - Ignore .well-known folder
+    - Detect when server stops script without error and display an error message
+    - Fix issue with S3 host
+    - Add Scaleway to S3 remote services
+    - Fix ability to add other standard S3 remote services
+Version 12.0.10 :
+    - Fix backup file error if date of file to backup is far in the future
+    - Fix ignored directories/files that where not ignored in a specific case
+Version 12.0.9 :
+    - Fix option "tables to not recreate" after a renewal is done
+Version 12.0.8 :
+    - Restore : Fix team session handling when restoring from within the module
+Version 12.0.7 :
+    - Improve complex mysql stored procedure management
+Version 12.0.6 :
+    - Improve version cache for very old Prestashop
+Version 12.0.5 :
+    - Fix root certificate automatic upgrade
+    - Fix compatibility issue with Prestashop 1.7.7 when an error happen on install
+Version 12.0.4 :
+    - Fix current_timestamp compatibility issue on upgrade
+Version 12.0.3 :
+    - Fix issue with email translation
+Version 12.0.2 :
+    - Fix current_timestamp compatibility issue with old mysql server
+Version 12.0.1 :
+    - Fix connection issue to Onedrive Business
+Version 12.0.0 :
+    - Add remote sending to Minio S3
+    - Add remote sending to Wasabi S3
+    - Add remote sending to Yandex
+    - Add remote sending to Box
+    - Add remote sending to Onedrive Business
+    - Add files and folders mapping to display a interactive map of files size
+    - Add backup option to not recreate selected database tables during restoration
+    - Add ability to disable a configuration profile
+    - Add german translation thanks to Hans Rudolf Zimmermann
+    - Improve user interaction with Addons (contact, rate and comment link and 2N modules access)
+    - Improve general UI
+    - Cron link do not contain variables anymore
+    - Fix issue with old AWS files not being deleted if in sub directory
+    - Fix long time error detection of intermediate renewals
+Version 11.6.8 :
+    - Fix issue with Dropbox API
+Version 11.6.7 :
+    - Fix compatibility issue with Prestashop 1.7.7.0
+Version 11.6.6 :
+    - Restore : Fix issue when intermediate renewal occurs during uncompressing a big gz file
+Version 11.6.5 :
+    - Restore : Improve some text
+Version 11.6.4 :
+    - Add try catch on chmod in case changing permission is not allowed
+Version 11.6.3 :
+    - Fix an issue when sending to SFTP
+Version 11.6.2 :
+    - Add persian translations thanks to Siavash Kamalpour
+Version 11.6.1 :
+    - Put back some missing translations
+Version 11.6.0 :
+    - Major speed improvement of the backup. About 20% faster for big shops, 40% faster for small shops.
+    - Automation time is now random at install (by minute)
+    - Add performance logs
+    - Add new 2N Tech server IP for the automation cron (if enabled)
+    - Fix ignored folders not selected in some case when updating directories to ignore in configuration
+    - Restore : Add PHP version to the message diplayed when PHP version is not compatible with Prestashop version
+    - Restore : Fix some translations
+    - Restore : Fix issue on uncompressing big backup file on Windows with intermediate renewals enabled
+    - Restore : Fix update links on tables not existing in old backups
+Version 11.5.0 :
+    - Restore : Add option to ignore SQL errors (essentially duplicate issues)
+Version 11.4.2 :
+    - Request ajax management is now distinct from view management
+    - Use version number as cache avoidance for JS and CSS
+Version 11.4.1 :
+    - Fix dump issue with not null empty blob value
+Version 11.4.0 :
+    - Automatically upgrade root certificates
+    - Restore : Display an information message after restoration if PHP version is not compatible with Prestashop version
+    - Restore : Display an information message after restoration if the .htaccess file is different from Prestashop original file
+    - Restore : Automatically enable "Disable SSL" option if localhost
+    - Add debug log
+Version 11.3.0 :
+    - Restore : Large performance improvement for big backup files (>2 GB) on 64 bits Linux or Mac
+    - Restore : Add intermediate renewals for files and database cleaning before restoration
+Version 11.2.10 :
+    - Add Ntbr to the name of the classes of distant accounts, to prevent issue if other modules have the same class name
+Version 11.2.9 :
+    - Add italian translation thanks to Alessia Faenza
+    - The product ID now depends on the type of the module (full or light)
+    - Add a test on PHP_INT_MAX to the tests to see if a file is bigger than 2GB, so that those with PHP 64bits are not limited
+    - Add site_defender to low interest tables
+    - Add test on curl version to detect if there is a compatibility issue with HTTP/2
+Version 11.2.8 :
+    - The faillure of the ajax for backup refresh is ignore if the return has a code 200 and lastlog is refresh (to prevent error with json parsing that sometime occurs)
+Version 11.2.7 :
+    - Rename classes "Config" to "ConfigNtbr" to prevent incompatibility issue with other modules
+Version 11.2.6 :
+    - Ignore unreachable symbolic links
+    - Restore : Fix database tables prefix not found in Prestashop 1.7
+Version 11.2.5 :
+    - Prevent issue when checking presence of a file outside the allowed path
+    - Restore : Fix issue when the config file is not write exactly as expected (use preg_match to get prefix)
+Version 11.2.4 :
+    - Add option to choose storage class in AWS remote account
+    - Display a warning if multipart option is needed because of server limitation
+    - Add pagenotfound table to low interest tables list
+    - Better handling of special "." and ".." files
+    - The backup interruption is now more reactive
+Version 11.2.3 :
+    - Report can now be sent to more than one email (by separating them with ";")
+Version 11.2.2 :
+    - Fix issue that may occur when listing files for direct remote backup
+Version 11.2.1 :
+    - Fix missing hidden directories in directories tree
+Version 11.2.0 :
+    - Fix compatibility issue with hex2bin on old PHP 5 version
+    - Fix compatibility issue with hash_equals on old PHP 5 version
+    - Fix compatibility issue with Tools::getAllValues on old PHP 5 version
+    - If the configured backup directory does not exists, use default
+    - Disable compression option when direct distant backup is enabled
+    - Fix issue with erroneous SQL functions in user database
+    - Fix issue with ignored directories tree on non default profile
+    - Fix possible memory limit exceeding during direct distant backup
+    - Fix light and full version simultaneous compatibility issue
+    - Fix uninstall procedure that may cause a reinstallation problem if done instead of direct upgrade
+    - Fix compatibility with some ftp servers
+    - Fix listing Dropbox files issue in some case
+    - Update simplified chinese translation (thanks to Bai Shijun) and add russian translation (thanks to Svetlana Gaillard)
+Version 11.1.8 :
+    - Do not log anymore ignored images
+    - Convert file name to binary to prevent encoding issue
+    - Fix download of restore script and log file on some servers
+    - Fix issue with date for backups created on distant account
+    - Fix issue with ordering list of backups created on Google Drive account
+    - Fix refresh message in some case
+Version 11.1.7 :
+    - Fix dump create statement for bugged table name
+Version 11.1.6 :
+    - Add a log to know what space is available for local backup
+    - Fix issue with the creation of backup on Google Drive
+Version 11.1.5 :
+    - Fix cleaning views during restoration
+    - Fix restoration of cascaded views
+Version 11.1.4 :
+    - Fix issue with automation saving in light version
+    - Allow to stop backup in light version
+Version 11.1.3 :
+    - Fix issue with some functions name in the light version
+Version 11.1.2 :
+    - In the restoration: Update links on tables only, not views
+Version 11.1.1 :
+    - Fix issue with upgrade 11.0.2
+    - Ignore files .md5sums
+Version 11.1.0 :
+    - Add option to choose the backup directory
+    - Add option to create tar directly on distant account
+    - The upload directory can be added to the backup if necessary
+    - The ignored directories are still created, but without content (except .htaccess and index.php) to prevent issue if it is a native Prestashop directory
+    - Upgrade Phpseclib to 2.0.23
+Version 11.0.2 :
+    - In tarThisFile, use while to get content instead of do...while
+Version 11.0.1 :
+    - Improve the ending with error when a backup go wrong
+Version 11.0.0 :
+    - Add warning message for all distant account when php openssl is not activated
+    - Add safe attribute to the backup to indicate that it is safe and should not be deleted automatically
+    - Add option to use JS to download the backup (for low memory limit)
+    - Try to detect probable timeout using JS
+    - Add warning when a file is really big
+    - Add refresh during tar of files
+    - Remember last log before refresh and log it again after resume (in case it was not read in time by the JS)
+    - Make sure that the backup was successfully sent to at least one distant account before deleting it in local (if the option is activated)
+    - Try to detect if there will be enough size on distant accounts once old files have been deleted before doing it (if not enough size, keep old backup)
+    - Display directories that are never backuped in the option to ignore backup (readonly)
+    - After restoring from the module, the backup used is put back in the module and database
+    - Check for stop script more often
+    - Improve the function getting the backup total size getBackupTotalSize()
+    - Make sure to have the total size of the backup before sending away (to check available quota correctly)
+    - Use function goToPositionInFile everywhere we need to go to a specific position in a file
+    - Add option in the function goToPositionInFile to know if errors in it should be considered as errors or warning
+    - Make sur backups marked as safe are not automatically deleted
+    - Allow to list and add backups that does not exist in database (in the restoration tab)
+    - Improve the list of backups from the function cleanListBackup() (more infos, more checks)
+    - Check all files have been added to the tar after tar is finished
+    - Test connection to distant account before trying to send backup on it
+    - Allow to access files on some distant accounts
+    - Add the option CURLOPT_FOLLOWLOCATION to curl type GET in webdav
+    - Improve getting quota in webdav
+    - Improve checking existance of folder in webdav
+    - Improve checking existance of file in webdav
+    - Improve getting files in webdav
+    - Fix issue with views in database when creating the dump.sql
+    - Fix issue with foreign key, when restoring with refresh
+    - Add link to changelog in version tab
+Version 10.1.9 :
+    - Fix issue with regex listing backup part when there is a lot of parts
+    - Do not backup the directory /modules/bridgeconnector/tmp/
+    - Fix glob sorting so that it works better on linux
+Version 10.1.8 :
+    - Fix secure key check
+    - Rename the upgrade files
+Version 10.1.7 :
+    - Fix url regression for ntcron
+    - Add infos using tooltip
+    - Fix issue with unlink in deleteCronFiles()
+    - Check if there is already some config when installing the module and add default config only if there isn't
+    - Remove all die in cron and ajax files and replace them by echo and return
+    - Delete cron files and recreate them if the url inside is not up to date
+Version 10.1.6 :
+    - Add server timezone in automation
+    - Url encode timezone before sending it to 2NT automation
+    - Add log when finished sending away to a distant account
+    - Add a quick and easy view of the distant accounts that exists and their status
+Version 10.1.5 :
+    - Add translation in module restoration
+    - Add option to ignore automation IPV6 or IPV4 in maintenance
+Version 10.1.4 :
+    - Save backup in database before sending away
+Version 10.1.3 :
+    - Remove config file if exist when starting new backup
+Version 10.1.2 :
+    - Move all HTML in PHP to smarty files
+    - Fix issue with translation
+    - Improve deletion of failed backups
+    - Test distant accounts connection only when active
+    - Do not test file size of dump (should no be ignore even if bigger than the limit put in the config)
+Version 10.1.1 :
+    - Fix issue with intermediate renewals on restoration
+Version 10.1.0 :
+    - Update phpseclib to 2.0.15
+    - Easier way to choose directories to ignore
+    - Images product can now be the only thing saved
+    - Fix issue with translation
+    - Fix issue with server time display
+Version 10.0.0 :
+    - Fix issue for Prestashop 1.6.0.0 to 1.6.0.11
+    - Fix issue with Tools::copy for Prestashop before 1.5.5.0
+    - Add a multi configurations option
+    - Display current server time in automation
+    - Add more security for send away account
+    - Display last saved send away account by default, instead of an empty form
+    - Display current backup progress if there is one still running (even if it is done from a cron)
+    - Move the button to stop current backup to the backup block (replace the button to launch backup)
+    - Improve method of preventing simultaneous backups
+    - Update phpseclib to 2.0.14
+    - Add FAQ
+    - Fix issue with Google Drive upload and case sensitivity
+    - Add urlencode on automatic restoration parametres
+    - Move creation of maintenance file and lock file after test database in the restore script
+    - Add option to limit the number of selected lines from database while creating the dump
+Version 9.1.2 :
+    - Add option to limit lines in dump
+Version 9.1.1 :
+    - Provide default names for send away accounts
+    - Ignore theme cache folder
+Version 9.1.0 :
+    - Fix rare multiple simultaneous renewals
+Version 9.0.5 :
+    - Ignore files with extension that start with .nfs
+Version 9.0.4 :
+    - Add option to ignore files equal or larger than max size
+Version 9.0.3 :
+    - Add option to pause between intermediate renewal. Help with limited server
+Version 9.0.2 :
+    - Fix issue with tables to ignore
+    - Add intermediate renewal in the dump of database values
+Version 9.0.1 :
+    - Add option to ignore unwanted tables
+    - Add option to choose time between progress refresh
+    - Add option to choose new memory limit if attempt to increase it is enable
+Version 9.0.0 :
+    - Simple automation is now based on user timezone and not CET
+    - Possibility to add a comment to backup
+    - Possibility to choose the number of backup by type (complete, just database or just files)
+    - Possibility to send backup to hubiC, Amazon AWS S3 and WebDAV
+    - UI improvements for send options
+    - Add restoration menu into the module, restoration script is still available
+    - Possibility to send backup again by clicking a button
+    - Possibility to send backup to more than one same type server
+    - Sending backup is now using intermediate renewals
+    - Update phpseclib to 2.0.10
+    - Gz compression is now preferred over bz
+Version 8.0.7 :
+    - Check ftp connection aliveness before sending restoration script
+    - Fix ftp error detection
+    - Fix corrupt tar in a particular case
+Version 8.0.6 :
+    - Fix security bug
+Version 8.0.5 :
+    - Display warning if an empty directory has not enough rights
+Version 8.0.4 :
+    - Fix writing multipart backup
+Version 8.0.3 :
+    - Fix for Google G Suite
+Version 8.0.2 :
+    - Fix upgrade from previous version
+Version 8.0.1 :
+    - Display a warning if PHP < 5.6 detected for security functions
+    - Change the way backups dates are found
+    - Fix intermediate renewal for database only backup
+Version 8.0.0 :
+    - Display last version available if an update is available
+    - Update PHPSecLib to 2.0
+    - Better way to get external server IP
+    - Fix bz compression
+    - Disable bz compression when intermediate renewal is active
+    - Random cron time between 2h and 5h at install
+    - Add option to send the restoration script with backup on remote location
+    - Add option SSL FTP connection
+    - Add option Passive FTP connection
+    - Fix possible issues while login on some ftp servers
+    - Check files and directories rights and update them if needed
+    - Replace mcrypt (deprecated in PHP 7.1) by openssl
+    - Ignore smarty compile cache
+    - Add 2N IPv6 to maintenance allowed IP
+    - Check the server IPs are in the maintenance IP list
+Version 7.1.1 :
+    - Add option to received email only if there was an error or warning
+    - Do not save smarty cache
+Version 7.1.0 :
+    - Add security option to manually stop running backup
+    - Add option to display progress of a running backup (useful to see an automated backup progress)
+    - Add option to customize security duration between backups
+    - Improve big files (> 2GB) handling
+    - Fix progress return for some servers
+    - Fix compress multipart backup regression
+Version 7.0.0 :
+    - Improve advanced option Intermediate Renewal to works in cron mode
+    - Intermediate Renewal is now enabled by default
+    - Disk usage optimisation. The module now uses much less I/O
+    - Memory optimisation. The module now needs less than 96 MB RAM in most cases
+    - In advanced cron, display usual examples of self automation usage : URL, WGet, cURL, PHP Script
+    - Add Simplified Chinese internationalization thanks to Bai Shijun
+Version 6.1.4 :
+    - Add Traditional Chinese internationalization thanks to Bryant Kang
+Version 6.1.3 :
+    - Optimize listing file progress log
+Version 6.1.2 :
+    - Do not backup previous restore script log files
+Version 6.1.1 :
+    - Fix configuration values encoding
+    - Prevent problem with SFTP ending connection
+    - Fix part list gz compression
+Version 6.1.0 :
+    - Various bugs fixing
+Version 6.0.4 :
+    - Change listing files
+Version 6.0.3 :
+    - Prevent simultaneous backup
+    - Change ip check method
+    - Disable tab install on Prestashop 1.7.1
+Version 6.0.2 :
+    - Display a warning if the script was stopped because of a server timeout
+    - Fix js cache problem on new version
+Version 6.0.1 :
+    - Disabling set_time_limit which can be forbidden on some servers
+    - Use a variable array instead of a const array which is not available on very old php version
+Version 6.0.0 :
+    - Add an option to do intermediate renewal on manual backup. Useful on limited server with a small timeout.
+    - Remove the count files option (useless with the intermediate renewal option)
+Version 5.0.1 :
+    - Change the way FTP/SFTP old files' are found
+    - Change the way the mail language is chosen
+Version 5.0.0 :
+    - Add option to split de backup in parts
+    - Scroll to the top of the page after saving the configuration
+    - Fix sometimes false local server detection
+Version 4.1.5 :
+    - Fix delete backup file option if compression disabled
+    - Fix distant drive upload if compression disabled
+Version 4.1.4 :
+    - Simple automation time is CET time
+    - Add a warning when mcrypt is not enabled
+    - Display some errors as warning to not stop the backup
+Version 4.1.3 :
+    - Fix mysql blob dump
+Version 4.1.2 :
+    - Add a warning when the config domain on the shop is not the one used
+Version 4.1.1 :
+    - Fix issue with Google Drive
+Version 4.1.0 :
+    - Add option to ignore unwanted directories
+    - Add option to ignore unwanted types of file
+    - Add option to choose how many backup to keep for each location
+    - When backup is sent elsewhere, the number of local backup is not forced to 1 anymore
+    - Add option to delete the local file when the backup is sent elsewhere
+    - Add information about simple automation
+    - Update Google Drive API
+Version 4.0.5 :
+    - Add percentage count display for SFTP and FTP
+    - Change chunk size sent to Dropbox and OneDrive for better percentage count display
+    - Fix issue with large SFTP files
+Version 4.0.4 :
+    - Fix special names for dump of mysql procedures and functions
+    - Fix issue with OneDrive
+    - Fix issue with SFTP
+Version 4.0.3 :
+    - Fix setting automation return value
+Version 4.0.2 :
+    - Fix missing last character in 100 bytes length file name
+    - Compatibility with Prestashop 1.7.0.0
+Version 4.0.1 :
+    - Fix getting file info on some system
+Version 4.0.0 :
+    - Add a "Request feature" button
+    - Add an "Advanced" part in the config
+    - Add an option to prevent counting files (small performance server optimisation)
+    - Add an option to prevent compressing the files (small performance server optimisation)
+    - Delete old tar files (if compression active)
+    - Add an option to put the shop in maintenance while creating the backup
+    - Fix empty folders not being recreated during restoration
+    - Cron menu become the advanced option of the new Automation menu
+    - Add an "Advanced" part in the automation
+    - Compatibility with SFTP server
+    - Add extra simple automation to run daily backup
+    - Fix dump with reserved keyword tables name
+Version 3.0.12 :
+    - Download optimization
+    - Ignore upload folder
+Version 3.0.11 :
+    - Compatibility with Prestashop 1.7.0.0-rc0
+    - Update to Dropbox api v2
+    - Fix issue with OneDrive listing children from the root folder
+    - Fix issue with OneDrive refresh token
+    - Fix issue with ownCloud deleting files
+    - Fix issue with ownCloud when trying to list children from an empty folder
+    - Css fix for Prestashop 1.5
+Version 3.0.10 :
+    - Fix issue with Google Drive backup
+    - Clean the code field after it's been save, so it is not register twice
+Version 3.0.9 :
+    - Fix dump of mysql procedures and functions
+Version 3.0.8 :
+    - Log the error of Dropbox, OneDrive, ownCloud and Google Drive in the log file of the module
+Version 3.0.7 :
+    - Log an error if not enough space available during backup
+Version 3.0.6 :
+    - Do not backup temporary thumbnails
+Version 3.0.5 :
+    - Update Swedish mail
+Version 3.0.4 :
+    - Better CRON compatibility with no parameter in url
+Version 3.0.3 :
+    - Update Swedish and Danish translations
+Version 3.0.2 :
+    - Small fixes
+Version 3.0.1 :
+    - Swedish translation by Roy Sohlander
+Version 3.0.0 :
+    - Allow to send the backup to Dropbox, OneDrive, ownCloud and Google Drive
+Version 2.1.0 :
+    - Enable changing the email receiving the notification result of the backup
+    - New way to call cron so the variable don't cause any issues
+Version 2.0.2 :
+    - Fix Undefined backup_exist
+    - Danish translation by Nick Andersen (dinprestashop.dk)
+Version 2.0.1 :
+    - Fix generate secure URL not working
+Version 2.0.0 :
+    - Better UI
+    - Enable keeping more than one backup file
+    - Automatically remove old backups
+    - Can automatically remove old backups on FTP server
+   - Fix percentage count display for database dump
+    - Fix ignore low interest table if not using default db prefix
+    - Can backup only files
+    - Can backup only database
+    - Fix wrong file name length with long link in tar file
+    - Add support of Cache Manager module
+    - Add support of Page Cache module
+Version 1.2.9 :
+    - Ignore cachefs folder
+Version 1.2.8 :
+    - Maintain FTP connexion for slow sending
+Version 1.2.7 :
+    - Fix forein key order issue
+Version 1.2.6 :
+    - Fix missing stats tables
+Version 1.2.5 :
+    - Fix FTP dir
+Version 1.2.4 :
+    - Memory optimisation for big shop
+    - Fix file discovering if bad rights
+Version 1.2.3 :
+    - Dump optimizations for big databases
+Version 1.2.2 :
+    - Fix dump values error
+Version 1.2.1 :
+    - Memory optimization during database dump
+    - Smaller dump file
+Version 1.2.0 :
+    - Fix ajax path
+    - Add option to send backup result by mail
+    - Add option to send the backup on a FTP server
+    - Rewrite tar and compress algorythms
+    - Memory managment greatly improved
+    - File access number greatly reduced
+Version 1.1.0 :
+    - Fix backup filesize for big file
+    - Add option to not backup product images
+Version 1.0.2 :
+    - Ignore some files due to forbidden character in their name
+    - Ignore some files due to bad rights or bad owner
+Version 1.0.1 :
+    - Exclude this module file if demo
+Version 1.0.0 :
+    - First version for prestashop 1.5 and 1.6
+    - PHP 5.3 minimum

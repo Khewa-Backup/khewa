@@ -1,0 +1,45 @@
+<?php
+/**
+ * @author    ELEGANTAL <info@elegantal.com>
+ * @copyright (c) 2023, ELEGANTAL <www.elegantal.com>
+ * @license   Proprietary License - It is forbidden to resell or redistribute copies of the module or modified copies of the module.
+ */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+function upgrade_module_1_4_2($module)
+{
+    unset($module);
+    $sql = array();
+    $sql[] = "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "elegantalseoessentials_canonicals` ( 
+        `id_elegantalseoessentials_canonicals` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+        `is_active` tinyint(1) unsigned NOT NULL DEFAULT '1', 
+        `created_at` DATETIME, 
+        PRIMARY KEY  (`id_elegantalseoessentials_canonicals`) 
+    ) ENGINE=" . _MYSQL_ENGINE_ . " DEFAULT CHARSET=UTF8;";
+    $sql[] = "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "elegantalseoessentials_canonicals_lang` ( 
+        `id_elegantalseoessentials_canonicals` int(11) unsigned NOT NULL,
+        `id_lang` int(11) unsigned NOT NULL,
+        `old_url` text NOT NULL, 
+        `new_url` text NOT NULL, 
+        PRIMARY KEY (`id_elegantalseoessentials_canonicals`, `id_lang`),
+        FOREIGN KEY (`id_elegantalseoessentials_canonicals`) REFERENCES `" . _DB_PREFIX_ . "elegantalseoessentials_canonicals` (`id_elegantalseoessentials_canonicals`) ON DELETE CASCADE 
+    ) ENGINE=" . _MYSQL_ENGINE_ . " DEFAULT CHARSET=UTF8;";
+    $sql[] = "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "elegantalseoessentials_canonicals_shop` ( 
+        `id_elegantalseoessentials_canonicals` int(11) unsigned NOT NULL, 
+        `id_shop` int(11) unsigned NOT NULL, 
+        PRIMARY KEY (`id_elegantalseoessentials_canonicals`, `id_shop`), 
+        FOREIGN KEY (`id_elegantalseoessentials_canonicals`) REFERENCES `" . _DB_PREFIX_ . "elegantalseoessentials_canonicals` (`id_elegantalseoessentials_canonicals`) ON DELETE CASCADE 
+    ) ENGINE=" . _MYSQL_ENGINE_ . " DEFAULT CHARSET=UTF8;";
+
+    foreach ($sql as $query) {
+        if (Db::getInstance()->execute($query) == false) {
+            //throw new Exception(Db::getInstance()->getMsgError());
+            return false;
+        }
+    }
+
+    return true;
+}

@@ -1,0 +1,6 @@
+-----------------------------------------
+Change history for Related Products Pro
+-----------------------------------------
+
+VERSION 1.0.0
+ * Original release

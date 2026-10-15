@@ -1,0 +1,316 @@
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ *  @author    IntelliPresta <tehran.alishov@gmail.com>
+ *  @copyright 2020 IntelliPresta
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+.bootstrap .nav-tabs{
+    border-bottom: 1px solid #ddd;
+}
+#data_export i.icon-square-o, #data_export i.icon-minus-square-o{
+    width: 13px;
+}
+#data_export_form .form-wrapper>.tab-content>.tab-pane {
+    padding-top: 20px;
+}
+
+.data_export_filter_fields .data_export_columns>li{
+    cursor: pointer;
+}
+
+.data_export_filter_fields .active>.badge{
+    background-color: #FFFFFF;
+    color:#00AFF0;
+}
+.data_export_filter_fields fieldset{
+    padding:7px;
+    border: 1px solid rgb(192, 192, 192);
+}
+.data_export_filter_fields fieldset>legend{
+    font-size: 12px;
+    border: 0;
+    margin: 0;
+    width: auto;
+}
+.tab-content h3{
+    margin-top: 0 !important;
+    padding-left: 15px !important;
+    height: 34px !important;
+    line-height: 34px !important;
+}
+#data_export_orders_filter_data h3 {
+    /*color:white;*/
+    cursor: pointer;
+    background-color: /*#00AFF0*/ #e8e8e8;
+    box-shadow: 2px 3px 10px -6px rgb(21, 21, 21);
+    /*font-size: 15px !important;*/
+}
+#data_export_orders_filter_data h3 i {
+    /*font-size: 15px !important;*/
+}
+#data_export_orders_filter_data h3 i.pull-right {
+    padding-right: 20px;
+    padding-top: 9px;
+}
+.tab-content hr{
+    border-top-color: #8d8e90;
+    margin-bottom: 7px;
+}
+#data_export_orders_select_all_columns{
+    text-decoration: none;
+    /*color: #000;*/
+}
+.vomiting{
+    padding-top: 20px;
+    padding-bottom: 10px;
+    /*max-height: 440px;*/
+    /*    overflow-x: hidden;
+        overflow-y: auto; */
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+    box-shadow: 0px 0px 13px -10px rgba(0,0,0,0.75);
+}
+
+#data_export_orders_save .scrollable {
+    padding: 10px;
+    /*padding-right: 8px;*/
+}
+
+.scrollable h4 {
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+@media only screen and (max-width: 1199px) {
+    .scrollable{
+        padding-left: 10px;
+    }
+    .scrollable h4 {
+        margin-left: 0;
+    }
+}
+
+/*#data_export_scroll_columns>ul{
+    overflow-y: auto;
+}*/
+/*#data_export_orders_scroll_columns>ul>li:not(.hidden){
+    margin-bottom: 0;
+}*/
+#data_export_orders_show_all{
+    /*width: 95px;*/
+    text-align: right;
+}
+@media only screen and (min-width: 1400px) {
+    .data_export_sort_radio{
+        margin-left: 0 !important;
+    }
+}
+#data_export_orders_sort optgroup,
+#data_export_form_submit_btn{
+    text-transform: capitalize;
+}
+#fader {
+    opacity: .1;
+    background: black;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: none;
+    z-index: 999;
+}
+#spinner{
+    position: fixed; 
+    left: 50%; 
+    top: 50%;
+    margin-left: -100px;
+    margin-top: -140px;
+    display: none;
+    z-index: 998;
+}
+.data_export_form_save_btn i{
+    font-size: 14px;
+    display: inline-block;
+    width: auto;
+    height: auto;
+}
+@media (max-width: 1199px){
+    .data_export_form_save_btn{
+        margin: 4px 0;
+    }
+}
+.icon-trash, .icon-edit{
+    cursor: pointer;
+}
+#configs span.pull-right{
+    margin-top: -7px;
+}
+#configs button{
+    height: 28px;
+    line-height: 0;
+}
+/*#data_export_orders_documentation p,
+#data_export_orders_documentation a {
+    font-size: 13px;
+}*/
+
+.dt-checkboxes-cell .dt-checkboxes, .dt-checkboxes-select-all .dt-checkboxes {
+    float: none !important;
+    margin-left: 0 !important;
+    width: 15px;
+    height: 15px;
+}
+.dt-checkboxes-cell .checkbox, .dt-checkboxes-select-all .checkbox {
+    height: 30px;
+    /*padding-top: 8px !important;*/
+}
+thead th:not(:first-child) {
+    padding-top: 14px !important;
+    font-weight: bold !important;
+}
+
+/*tfoot th {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+}*/
+.dataTables_length select {
+    width: 75px !important;
+    display: inline-block !important;
+    font-weight: normal;
+}
+.dataTables_filter input {
+    display: inline-block !important;
+    width: auto !important;;
+    margin-bottom: 7px !important;
+    font-weight: normal;
+}
+.dataTables_length label, .dataTables_filter label{
+    font-weight: normal;
+}
+.select_info {
+    padding-left: 15px;
+}
+.show_selected{
+    width: auto !important;
+    margin-right: 15px;
+}
+.bootstrap .input-group.corrected_width input[type="text"] {
+    width: auto !important;
+}
+
+#columns_search {
+    height: 28px;
+    margin-top: -2px;
+    margin-bottom: 12px;
+}
+#columns_header {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#orders_columns_group > a {
+    padding-right: 7px;
+}
+.orders.icon-check {
+    color:#72c279;
+}
+.orders.icon-remove {
+    color:#e08f95;
+}
+.orders.icon-check.change,.orders.icon-remove.change {
+    cursor: pointer;
+}
+#autoexport_selection {
+    padding: 0;
+    border: 0;
+}
+#autoexport_select {
+    border-left: 0;
+} 
+.date_collapser + .form-group.collapse {
+    margin-bottom: 30px;
+}
+.multiselect-container.dropdown-menu {
+    width: 250px;
+}
+p.condensed {
+    font-size:16px;
+    font-family: 'Ubuntu Condensed';
+}
+#autoexportFTPs_table tr,
+#scheduleFTPs_table tr,
+#autoexportEmails_table tr,
+#scheduleEmails_table tr {
+    height: 37px;
+}
+#data_export_orders_autoexport_reset {
+    margin-top: -32px;
+    margin-right: 25px;
+}
+#data_export_orders_autoexport_reset > i {
+    float: left;
+    font-size: 14px;
+    width: auto;
+    height: auto;
+}
+.take-long.vomiting {
+    padding: 0;
+}
+.scrollable {
+    padding-top: 10px;
+    max-height: 440px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+}
+
+#data_export_orders_scroll_columns {
+    padding: 1px 5px;
+    margin-bottom: 5px;
+}
+.overflowable {
+    max-height: 440px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.column_button {
+    padding: 4px 8px !important;
+    margin-top: -2px;
+}
+.data_export_columns {
+   margin-bottom: 0 !important;
+}
+.refresh_button {
+    margin-bottom: 15px !important;
+}
+.clearable {
+    width: 26%;
+    height: 28px;
+    margin-top: -2px;
+    margin-bottom: 12px;
+    position: relative;
+}
+.clearable_clear {
+    display: none;
+    position: absolute;
+    top: -5px;
+    right: 8px;
+    font-weight: bold;
+    font-style: normal;
+    font-size: 2em;
+    cursor: pointer;
+    color: red;
+}
+#data_export_orders_support {
+    margin-left: 15px;
+}
+
+p.error {
+    font-size: 14px;
+}
+hr.open_hr {
+    border-top-color: #cacaca;
+}

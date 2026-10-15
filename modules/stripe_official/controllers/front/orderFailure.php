@@ -1,0 +1,121 @@
+<?php
+
+/**
+ * Copyright (c) since 2010 Stripe, Inc. (https://stripe.com)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    Stripe <https://support.stripe.com/contact/email>
+ * @copyright Since 2010 Stripe, Inc.
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+class stripe_officialOrderFailureModuleFrontController extends ModuleFrontController
+{
+    /**
+     * @see FrontController::initContent()
+     */
+    public function initContent()
+    {
+        parent::initContent();
+
+        $cartId = Tools::getValue('cartId');
+        $key = Tools::getValue('key');
+
+        StripeOfficial\Classes\StripeProcessLogger::logInfo('Order failure page accessed with cartId: ' . $cartId, 'OrderFailureController', $cartId);
+
+        if (empty($key) || !PrestashopCartService::validateCartUniqueKey($cartId, $key)) {
+            StripeOfficial\Classes\StripeProcessLogger::logError('Invalid or missing cart key for cartId: ' . $cartId, 'OrderFailureController', $cartId);
+
+            return Tools::redirect(
+                $this->context->link->getPageLink('history', true)
+            );
+        }
+
+        $returnUrl = $this->context->link->getPageLink('order');
+        $retryOrderId = 0;
+        $retryToken = '';
+        $retryService = new StripePaymentRetryService();
+        $newOrderFlow = !(int) Configuration::get(Stripe_official::ORDER_FLOW);
+        if ($newOrderFlow) {
+            $order = null;
+            if ($cartId) {
+                $orderId = Order::getIdByCartId((int) $cartId);
+                $order = new Order($orderId);
+            }
+
+            if ($order && $order->id) {
+                $returnUrl = $this->context->link->getPageLink(
+                    'order',
+                    true,
+                    null,
+                    ['submitReorder' => '1', 'id_order' => $order->id]
+                );
+                $payment = new StripePayment();
+                $payment->getStripePaymentByCart((int) $order->id_cart);
+                $paymentContextId = (string) $payment->id_payment_intent;
+                $intent = new StripePaymentIntent();
+                $intent->findByIdPaymentIntent($paymentContextId);
+                if (!in_array($order->getCurrentState(), [(int) Configuration::get('PS_OS_ERROR'), (int) Configuration::get('PS_OS_PAYMENT')])) {
+                    StripeOfficial\Classes\StripeProcessLogger::logInfo('Setting order status to FAILED for order: ' . $order->id . ' Current status: ' . $order->getCurrentState(), 'OrderFailureController', $cartId);
+                    $order->setCurrentState((int) Configuration::get('PS_OS_ERROR'));
+                    $order->save();
+                }
+                $orderCustomer = new Customer((int) $order->id_customer);
+                $isGuestOrder = Validate::isLoadedObject($orderCustomer) && (bool) $orderCustomer->is_guest;
+                if ($isGuestOrder && $order->module === $this->module->name
+                    && Validate::isLoadedObject($intent)
+                    && in_array((string) $intent->status, [
+                        StripePaymentIntent::STATUS_FAIL,
+                        StripePaymentIntent::STATUS_UNCONFIRMED,
+                        StripePaymentIntent::STATUS_IN_PROGRESS,
+                        StripePaymentIntent::STATUS_CANCEL,
+                    ], true)
+                    && (int) $order->getCurrentState() === (int) Configuration::get('PS_OS_ERROR')
+                ) {
+                    $retryOrderId = (int) $order->id;
+                    $retryToken = $retryService->createToken($order, $paymentContextId);
+                }
+            }
+        }
+
+        $this->context->smarty->assign([
+            'stripe_order_url' => $returnUrl,
+            'payment_retry_action' => $this->context->link->getModuleLink('stripe_official', 'retryPayment', [], true),
+            'payment_retry_order_id' => $retryOrderId,
+            'payment_retry_token' => $retryToken,
+            'translations' => $this->module->getTranslationService()->getTemplateTranslationMap(),
+        ]);
+
+        $this->setTemplate('module:stripe_official/views/templates/front/order-confirmation-failed.tpl');
+    }
+}

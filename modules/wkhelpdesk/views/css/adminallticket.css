@@ -1,0 +1,81 @@
+/**
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License version 3.0
+* that is bundled with this package in the file LICENSE.txt
+* It is also available through the world-wide-web at this URL:
+* https://opensource.org/licenses/AFL-3.0
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade this module to a newer
+* versions in the future. If you wish to customize this module for your
+* needs please refer to CustomizationPolicy.txt file inside our module for more information.
+*
+* @author Webkul IN
+* @copyright Since 2010 Webkul
+* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+*/
+#hd_other_files{
+  float: left;
+  width: 100%;
+  margin-top: 10px;
+}
+.hdChildDivClass{
+  float: left;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.msg_div{
+    padding: 20px;
+    word-wrap: break-word;
+}
+.msg_div .row{
+	padding: 5px 0px !important;
+}
+.agent_msg_div {
+	background-color: #F2F2F2 !important;
+}
+#conv_heading{
+	margin:20px !important;
+}
+#ticket_actions{
+	padding-bottom: 10px !important;
+	margin-bottom: 10px !important;
+}
+.alert-info::before, .alert-warning::before, .status_upd .alert-success::before{
+	content: "" !important;
+}
+#status_error_msg{
+	display: none;
+	color: red;
+	padding-right: 5px;
+}
+#tickets_ul{
+	position:absolute;
+	width:70%;
+	max-height:200px;
+	overflow-x:auto;
+	z-index:1000;
+	background-color:#fff;
+	padding-left: 0px !important;
+	border-bottom: 1px solid;
+	border-left: 1px solid;
+	border-right: 1px solid;
+	display: none;
+}
+#tickets_ul li{
+	list-style: outside none none;
+}
+.bootstrap .btn-primary .badge{
+	color: #fff;
+	background-color: #00aff0;
+}
+
+.chosen-container-single-nosearch .chosen-search input {
+    position: static;
+}
+
+.well > p > img {
+    max-width: 100%;
+}

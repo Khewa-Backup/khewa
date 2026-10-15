@@ -1,0 +1,5 @@
+Hello {first_name} {last_name},
+
+New message appended to ticket #{ticket_id}
+
+Message: {message}

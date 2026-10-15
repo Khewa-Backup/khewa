@@ -1,0 +1,10 @@
+
+[{shop_url}]
+
+La sauvegarde a commencé le {date_start} à {hours_start} et a fini le {date_end} à {hours_end}.
+
+Message :
+{backup_result}
+
+{shop_name} [{shop_url}]
+

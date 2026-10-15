@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>psgiftcards</name>
+	<displayName><![CDATA[Premium Gift card]]></displayName>
+	<version><![CDATA[2.1.0]]></version>
+	<description><![CDATA[This module allows you to create and sell gift cards to your clients on your website]]></description>
+	<author><![CDATA[PrestaShop]]></author>
+	<tab><![CDATA[]]></tab>
+	<confirmUninstall><![CDATA[Are you sure you want to uninstall this module?]]></confirmUninstall>
+	<is_configurable>1</is_configurable>
+	<need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>

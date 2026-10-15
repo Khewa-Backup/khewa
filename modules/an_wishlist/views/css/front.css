@@ -1,0 +1,186 @@
+
+.an_wishlist-nav {
+  margin-top: .9375rem;
+  margin-left: .625rem;
+}
+
+.an_wishlist-in svg path {
+    fill: #e63344;
+}
+.an_wishlist-container {
+    text-align: left;
+    display: flex;
+}
+.an_wishlist-container .btn-secondary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.an_wishlist-container .btn-secondary svg {
+    margin-right: 5px;
+}
+.an_wishlist-mini {
+ position: absolute;
+  top: -238px;
+  right: 10px;
+}
+
+.an_wishlist-mini span {
+  cursor: pointer;
+}
+
+.an_wishlist-list-cart h1 {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+.an_wishlist-list-cart #products .thumbnail-container,
+.an_wishlist-list-cart #products .product-description,
+.an_wishlist-list-cart #products .highlighted-informations {
+  width: 233px;
+}
+.an_wishlist-list-cart #products .thumbnail-container img {
+  max-width: 100%;
+}
+.an_wishlist-list-cart #products .product-miniature img {
+  margin-left: 0px;
+}
+
+.an_wishlist-mini-count {
+  position: absolute;
+  font-size: 12px;
+  left: -47px;
+  height: 35px;
+  line-height: 35px;
+  top: -5px;
+  text-align: center;
+  padding-right: 6px;
+  min-width: 45px;
+  background: url(../img/count.svg) no-repeat center center;
+}
+
+
+
+.an_wishlist-message-popup {
+  position: relative;
+  width: 70%;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+.an_wishlist-message-popuporspan {
+  margin: 0 16px;
+}
+@media (max-width: 680px) {
+    .an_wishlist-message-popup .btn,
+    .an_wishlist-message-popuporspan    {
+      display: block;
+    }
+    .an_wishlist-message-popuporspan {
+      padding: 10px;
+    }
+}
+
+
+.an_wishlist-social {
+    margin-bottom: 30px;
+}
+
+.an_wishlist-social .social-share {
+    background: #f1f1f1;
+    padding: 26px 30px 21px;
+    margin-bottom: 56px;
+}
+.an_wishlist-social .an_wishlist-social-list {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+.an_wishlist-social .social-heading {
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+.an_wishlist-social .itemFacebookButton a {
+    background-color: #5373be;
+}
+.an_wishlist-social .itemFacebookButton a:hover {
+    background-color: #3e5ea9;
+}
+.an_wishlist-social .itemTwitterButton a {
+    background-color: #0084b4;
+}
+.an_wishlist-social .itemTwitterButton a:hover {
+    background-color: #1195c5;
+}
+.an_wishlist-social .itemPinterestButton a {
+    background-color: #cb2027;
+}
+.an_wishlist-social .itemPinterestButton a:hover {
+    background: rgba(203,30,39,0.8);
+}
+.an_wishlist-social .itemLinkedinButton a {
+    background-color: #0077b5;
+}
+.an_wishlist-social .itemLinkedinButton a:hover {
+    background-color: #1289c7;
+}
+.an_wishlist-social .itemTumblrButton a {
+    background-color: #405167;
+}
+.an_wishlist-social .itemTumblrButton a:hover {
+    background-color: #516278;
+}
+
+#module-an_wishlist-list #products {
+    padding-left: 0;
+}
+
+.an_wishlist-social .itemSocialButton a {
+    font-size: 12px;
+    display: flex;
+    height: 34px;
+    border-radius: 3px;
+    line-height: 18px;
+    margin: 0 7px 10px 0;
+    width: 120px;
+    text-align: left;
+    overflow: hidden;
+    color: #fff!important;
+    min-width: 100px;
+    cursor: pointer;
+    float: left;
+    font-family: inherit;
+    padding: 8px 10px 8px 10px;
+}
+.an_wishlist-social .itemSocialButton a:before {
+    display: none!important;
+}
+.an_wishlist-social .itemSocialButton a svg {
+    display: inline-block;
+    margin-left: -10px;
+    margin-top: -7px;
+    margin-bottom: -7px;
+    font-size: 14px;
+    line-height: 34px;
+    width: 34px;
+    text-align: center;
+    margin-right: 7px;
+    background-color: rgba(0,0,0,.1);
+    padding: 9px;
+}
+.an_wishlist-social .itemSocialButton a svg path {
+    fill: #fff;
+}
+.page-my-account #content .links a span.link-item.an_wishlist-link-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.page-my-account .link-item.an_wishlist-link-item svg {
+    width: 40px;
+    height: auto;
+    margin-bottom: 15px;
+}

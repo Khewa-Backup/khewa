@@ -1,0 +1,185 @@
+/* --- cover_page --- */
+.cover_page {
+	width: 794px;
+	height: 1124px;
+	background: url('../modules/wkinventory/libraries/templates/Blue_lines/img/cover_page.jpg');
+}
+.cover_store_name {
+	padding-top: 50px;
+	padding-bottom: 250px;
+	font-family: ZonaPro;
+}
+.cover_store_name td {
+	color: #000;
+	font-size: 30px;
+	font-weight: bold;
+	text-align: center;
+}
+.cover_title {
+	text-align: center;
+	color: #ffffff;
+	font-size: 55px;
+	font-weight: bold;
+	font-family: ZonaPro;
+	padding-bottom: 5px;
+	text-transform: uppercase;
+}
+.cover_board {
+	text-align: center;
+	padding-bottom: 360px;
+}
+.cover_board table {
+	border:1px solid #FFF;
+}
+.cover_board table td {
+	color: #FFFFFF;
+}
+.cover_inventory_name {
+	font-size: 35px;
+	font-weight:bold;
+	text-transform: uppercase;
+}
+.cover_url {
+	font-family: ZonaPro;
+	padding-left: 30px;
+	font-weight: bold;
+	color: #0188cc;
+	font-size: 18px;
+}
+/* --- header template products ---*/
+.header {
+	width: 100%;
+	text-align: right;
+	padding-top: 10px;
+	padding-right: 2px;
+}
+.header_circle {
+	width: 35px;
+	height: 35px;
+	border-radius: 100%;
+	background: #ffffff;
+	float: right;
+}
+.header_pageno {
+	padding: -26px -5px 0 0;
+	width: 35px;
+	height:35px;
+	color: #0188cc;
+	font-family: ZonaPro;
+	font-size: 13px;
+	font-weight: normal;
+	float:right;
+}
+/* --- template --- */
+body {
+	background-image: url('../modules/wkinventory/libraries/templates/Blue_lines/img/page_background.jpg');
+}
+.body_contents {
+	width: 690px;
+	padding-left:26px;
+}
+.body_contents table thead td {
+	background-color: #4D4D4D;
+	font-weight: bold;
+	color: #FFF;
+	font-size: 10px;
+	font-family: dejavuserifcondensed;
+	padding:3px
+}
+.body_contents table thead tr {
+	line-height:6px;
+	border: none;
+}
+.body_contents table tbody td {
+	font-family: dejavuserifcondensed;
+	border-bottom: 0.5pt solid #8E8E8E;
+	font-size: 11px;
+}
+.name {
+	color: #0188cc;
+	width: 670px;
+	height: 45px;
+	margin-bottom: 15px;
+	font-family: ZonaPro;
+	font-weight: bold;
+	font-size: 16px;
+}
+.product_details {
+	width: 670px;
+}
+.column_description {
+	width: 410px;
+	height: 240px;
+	float: left;
+}
+.left {
+	float: left;
+}
+.offset {
+	width: 15px;
+	height: 240px;
+}
+.description {
+	width: 410px;
+	height: 200px;
+	font-family: ZonaPro;
+	font-size: 11pt;
+	color: #4a4a4a;
+}
+.price {
+	margin-top: 1px;
+	height: 40px;
+}
+.pricebg {
+	height: 40px;
+}
+.pricetext {
+	z-index: 99;
+	margin-top: -30px;
+	margin-left: 5px;
+	font-family: ZonaPro;
+	font-size: 14pt;
+	color: #f6f6f6;
+}
+.column_image {
+	width: 240px;
+	height: 240px;
+}
+.image {
+	background: white;
+	margin-left: 1px;
+	height: 235px;
+	width: 235px;
+	border: 2px solid #0188cc;
+}
+.image_name_table {
+	height: 235px;
+	width: 235px;
+}
+/* --- back_page --- */
+.back_page {
+	z-index: 999;
+	width: 794px;
+	height: 1124px;
+	background: url('../modules/wkinventory/libraries/templates/Blue_lines/img/back_page.jpg');
+	text-align: center;
+}
+.back_table {
+	padding-top:450px;
+	padding-bottom: 500px;
+}
+.back_table table td {
+	padding:5px
+}
+.back_table table td.label {
+	background-color: #4D4D4D; color: #FFF; text-align: right; padding-right: 4px;
+}
+.back_table table td.result {
+	background-color: #F2F2F2;
+}
+.back_page_url {
+	color: #ffffff;
+	font-size: 18px;
+	text-align:left;
+	padding-left:45px
+}

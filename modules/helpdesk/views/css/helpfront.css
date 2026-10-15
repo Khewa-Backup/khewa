@@ -1,0 +1,19 @@
+.fmm_helpdesk_dates { font-size: 12px; padding-bottom: 8px;}
+
+.fmm_help_singular_reply { padding: 10px 0}
+
+.fmm_helpdesk_dates .material-icons {font-size: 18px;}
+
+.fmm_helpdesk_thumb_holder_101 { display: inline-block; padding-right: 1%; border-radius: 48px; text-align: center; overflow: hidden; width: 49px;
+height: 46px;}
+
+.fmm_helpdesk_messagebody_wrapper { display: inline-block; vertical-align: top;}
+
+
+.fmm_helpdesk_admin_reply_badge { padding-left: 5%}
+
+.fmm_helpdesk_messagebody_wrapper .message-product a {font-size: 12px;}
+
+.fmm_helpdesk_messagebody_wrapper .message-product i { font-size: 18px}
+
+.fmm_helpdesk_reply_txts { margin-left: 8px; padding-left: 4px; border-left: 2px solid #ccc; padding-right: 10px;}

@@ -1,0 +1,15 @@
+#For Label Files
+<ifModule mod_headers.c>
+<Files MyText_sample.label>
+Header set Content-Type application/octet-stream
+Header set Content-Type application/force-download
+Header set Content-Type application/download
+Header set Content-Disposition attachment
+</Files>
+<Files MyText.label>
+Header set Content-Type application/octet-stream
+Header set Content-Type application/force-download
+Header set Content-Type application/download
+Header set Content-Disposition attachment
+</Files>
+</ifModule>

@@ -1,0 +1,259 @@
+/************************************************************************
+* Main block
+*************************************************************************/
+.mpm-featuredproducts-product-miniature {
+  margin: 0 5px;
+  padding: 15px;
+  outline: 0;
+}
+
+.mpm-featuredproducts-default-miniature-design .slick-slide {
+  margin: 0 5px;
+  padding: 0;
+  outline: 0;
+}
+
+.mpm-featuredproducts-product-miniature a, .mpm-featuredproducts-product-miniature button , .mpm-featuredproducts-default-miniature-design a {
+  text-decoration: none !important;
+  outline: 0 !important;
+}
+
+.mpm-featuredproducts-product-miniature:hover {
+  background-color: #fff;
+  box-shadow: 0 1px 6px 1px rgba(0,0,0,.2);
+}
+
+.mpm-featuredproducts-default-miniature-design .product-miniature .thumbnail-container {
+  margin: 0 auto;
+}
+
+/************************************************************************
+* Product Image block
+*************************************************************************/
+
+.mpm-featuredproducts-img-container .product-flags {
+  position: absolute;
+  margin-top: 10px;
+  margin-left: 5px;
+}
+
+.mpm-featuredproducts-img-container .product-flag {
+  width: 45px;
+  height: 45px;
+  border-radius: 100%;
+  padding: 0;
+  margin-bottom: 5px;
+  text-transform: lowercase;
+  text-align: center;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 2.5;
+}
+
+.mpm-featuredproducts-img-container .product-flags .discount-percentage, .mpm-featuredproducts-img-container .product-flags .flag-price-reduction{
+  background: #f39d72;
+}
+
+.mpm-featuredproducts-img-container .product-flags .flag-new {
+  background-color: #3e81cb;
+}
+
+.mpm-featuredproducts-img-container .product-flags .flag-onsale {
+  background-color: #e62538;
+}
+
+.mpm-featuredproducts-img-container {
+  text-align: center;
+}
+
+.mpm-featuredproducts-img {
+  max-width: 100%;
+  display: initial !important;
+  margin: 0 auto !important;
+}
+
+/************************************************************************
+* Block with product variants and availability status
+*************************************************************************/
+.mpm-featuredproducts-product-variants-block {
+  height: 36px;
+  margin-top: 7px;
+  display: none;
+}
+
+.mpm-featuredproducts-product-variants-block .color-list-container ul {
+  margin: 0;
+}
+
+.mpm-featuredproducts-product-variants-block .color-list-container ul li {
+  display: inline-block;
+  border: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 100%;
+  margin: 0;
+}
+
+.mpm-featuredproducts-product-variants-block .color-list-container ul li a {
+  display: block;
+  height: 12px;
+  width: 12px;
+  border-radius: 100%;
+  margin: 0;
+}
+
+.mpm-featuredproducts-product-variants-block .color-list-container ul li a:hover {
+  height: 14px;
+  width: 14px;
+  border: 2px solid black;
+}
+
+.mpm-featuredproducts-product-variants-block hr {
+  margin-top: 7px;
+  margin-bottom: 0;
+}
+
+.mpm-featuredproducts-product-variants-block .variant-links,
+.mpm-featuredproducts-product-variants-block .color-list-container {
+  top: 0;
+  padding: 0;
+  width: auto;
+  display: inline-block;
+  background: transparent !important;
+  min-height: 18px;
+}
+
+.mpm-featuredproducts-product-variants-block .variant-links a {
+  height: 12px;
+  width: 12px;
+  border-radius: 100%;
+  margin: 0;
+}
+
+.mpm-featuredproducts-product-availability-status {
+  float: right;
+  font-size: 14px;
+  font-weight: 600;
+  /*color: #ff9a52;*/
+}
+
+.mpm-featuredproducts-product-availability-status i {
+  color: #ff9a52;
+  font-weight: 600;
+}
+
+/************************************************************************
+* Product Title block
+*************************************************************************/
+.mpm-featuredproducts-product-title-block {
+  text-align: center;
+}
+
+.mpm-featuredproducts-product-title {
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.mpm-featuredproducts-product-title a {
+  font-size: 16px;
+  font-weight: 600;
+  color: #323232;
+}
+
+/************************************************************************
+* Price block
+*************************************************************************/
+.mpm-featuredproducts-product-price-block {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.mpm-featuredproducts-product-price-block .regular-price,
+.mpm-featuredproducts-product-price-block.old-price .old-price.product-price {
+  color: #7a7a7a;
+  text-decoration: line-through;
+  font-size: .875rem;
+}
+
+/************************************************************************
+* Block with Add To Cart button, quickview and link to product page icons
+*************************************************************************/
+
+.mpm-featuredproducts-product-actions-block {
+  /*display: none;*/
+  margin-top: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.mpm-featuredproducts-product-actions-block div {
+  display: inline-block;
+}
+
+.mpm-featuredproducts-product-actions-block i {
+  font-weight: 600;
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.mpm-featuredproducts-product-actions-block i.m-eye {
+  font-size: 23px;
+}
+
+.mpm-featuredproducts-product-actions-block .mpm-featuredproducts-link-to-product-page-block i:hover,
+.mpm-featuredproducts-product-actions-block .mpm-featuredproducts-quickview-block i:hover{
+  color: #1e788c;
+}
+
+.mpm-featuredproducts-product-actions-block .mpm-featuredproducts-link-to-product-page-block {
+  padding: 15px 15px 15px 0;
+}
+
+.mpm-featuredproducts-product-actions-block .mpm-featuredproducts-link-to-product-page-block,
+.mpm-featuredproducts-product-actions-block .mpm-featuredproducts-add-to-cart-btn-block {
+  width: auto;
+}
+
+.mpm-featuredproducts-add-to-cart-btn {
+  width: 150px;
+  height: 35px;
+  display: inline-block;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 0;
+}
+
+.mpm-featuredproducts-product-actions-block .mpm-featuredproducts-quickview-block {
+  font-weight: bold;
+  width: auto;
+  padding: 15px 0 15px 15px;
+}
+
+.mpm-featuredproducts-product-actions-block .mpm-featuredproducts-quickview-block .quick-view {
+  width: auto;
+  position: static;
+  text-align: center;
+  padding: 0;
+  border: none !important;
+}
+
+/************************************************************************
+* Product Description block
+*************************************************************************/
+.mpm-featuredproducts-product-description-block {
+  text-align: center;
+  margin-top: 15px;
+}

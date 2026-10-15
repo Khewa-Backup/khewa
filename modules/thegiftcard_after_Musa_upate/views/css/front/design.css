@@ -1,0 +1,393 @@
+#module-thegiftcard-page .fancybox-overlay {
+    z-index: 10000;
+}
+
+/******************************************************************************
+Responsivity
+******************************************************************************/
+#giftcard_product .row {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+#giftcard_product .row:before, #giftcard_product .row:after {
+    content: " ";
+    display: table;
+}
+#giftcard_product .row:after {
+    clear: both;
+}
+#giftcard_product *, #giftcard_product *:before, #giftcard_product *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#giftcard_product .col-xs-4, #giftcard_product .col-md-3, #giftcard_product .col-lg-12 {
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+#giftcard_product .col-xs-4 {
+    width: 33.33333%;
+    float: left;
+}
+#giftcard_product {
+    margin: auto;
+}
+@media (min-width: 992px) {
+    #giftcard_product {
+        max-width: 970px;
+    }
+    #giftcard_product .col-md-3 {
+        float: left;
+        width: 25%;
+    }
+}
+@media (min-width: 1200px) {
+    #giftcard_product {
+        max-width: 1170px;
+    }
+    #giftcard_product .col-lg-12 {
+        width: 100%;
+    }
+}
+#giftcard_product .content {
+    display:block !important;
+}
+#giftcard_product ol, #giftcard_product ul {
+    list-style: none;
+    margin-top: 0;
+    margin-bottom: 9px;
+}
+#giftcard_product .img-responsive {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+#giftcard_product img {
+    vertical-align: middle;
+    border: 0;
+}
+
+/* nav-tabs */
+#giftcard_product .nav {
+    padding-left: 0;
+}
+#giftcard_product .nav:before, #giftcard_product .nav:after {
+    content: " ";
+    display: table;
+}
+#giftcard_product .nav:after {
+    clear: both;
+}
+#giftcard_product .nav > li {
+    position: relative;
+    display: block;
+}
+#giftcard_product .nav > li > a:hover,
+#giftcard_product .nav > li > a:focus {
+    text-decoration: none;
+    background-color: #eeeeee;
+}
+#giftcard_product .nav > li > a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+}
+#giftcard_product .nav-tabs {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+#giftcard_product .nav-tabs > li {
+    float: left;
+    margin-bottom: -1px;
+}
+#giftcard_product .nav-tabs > li.active > a,
+#giftcard_product .nav-tabs > li.active > a:hover,
+#giftcard_product .nav-tabs > li.active > a:focus {
+    color: #555555;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    cursor: default;
+}
+#giftcard_product .nav-tabs > li > a {
+    margin-right: 2px;
+    line-height: 1.42857;
+    border: 1px solid transparent;
+    border-radius: 0px 0px 0 0;
+}
+#giftcard_product .tab-content {
+    margin-top: 0 !important;
+}
+#giftcard_product .tab-content > .active {
+    display: block !important;
+}
+#giftcard_product .tab-content > .tab-pane {
+    display: none;
+}
+#giftcard_product .badge {
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    line-height: 1;
+    vertical-align: baseline;
+    white-space: nowrap;
+    text-align: center;
+    background-color: #999999;
+    border-radius: 10px;
+}
+#giftcard_product .full-width {
+    width: 100%;
+}
+
+/******************************************************************************
+Banner image
+******************************************************************************/
+#giftcard_product .content_scene_cat {
+    position: relative;
+    line-height: 19px;
+    margin: 0 !important;
+}
+#giftcard_product .content_scene_cat .content_scene_cat_bg {
+    padding: 18px 10px 10px 42px;
+    background-color: #464646 !important;
+    width: 100%;
+}
+@media (max-width: 1199px) {
+    #giftcard_product .content_scene_cat .content_scene_cat_bg {
+        padding: 10px 10px 10px 15px;
+    }
+}
+#giftcard_product .content_scene_cat span.category-name {
+    font: 600 42px/51px "Open Sans", sans-serif;
+    margin-bottom: 12px;
+    color: #fff;
+}
+@media (max-width: 1199px) {
+    #giftcard_product .content_scene_cat span.category-name {
+        font-size: 25px;
+        line-height: 30px;
+    }
+}
+#giftcard_product .content_scene_cat p {
+    margin-bottom: 0;
+}
+#giftcard_product .content_scene_cat a {
+    color: white;
+}
+#giftcard_product .content_scene_cat a:hover {
+    text-decoration: underline;
+}
+#giftcard_product .content_scene_cat .content_scene {
+    color: #777777;
+}
+#giftcard_product .content_scene_cat .content_scene .cat_desc {
+    padding-top: 20px;
+}
+#giftcard_product .content_scene_cat .content_scene .cat_desc a {
+    color: #777777;
+}
+#giftcard_product .content_scene_cat .content_scene .cat_desc a:hover {
+    color: #515151;
+}
+#giftcard_product .form-inline {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+/******************************************************************************
+Fields
+******************************************************************************/
+#giftcard_product select, #giftcard_product input{
+    height: 40px;
+    border: 1px solid #d6d4d4;
+    text-align: center;
+    margin: 0
+}
+#giftcard_product input[type="radio"] {
+    margin-right: 3px;
+    position: relative;
+    vertical-align: middle;
+    width: 13px;
+    height: 13px;
+}
+
+#giftcard_product .mr-30 {
+    margin-right: 30px;
+}
+
+#giftcard_product textarea {
+    resize: none;
+    margin: 0;
+    overflow: auto;
+    font-family: inherit;
+    background-image: none;
+}
+#giftcard_product textarea.form-control {
+    height: auto;
+}
+#giftcard_product .form-control {
+    display: block;
+    width: 100%;
+    height: 32px;
+    padding: 6px 12px;
+    font-size: 13px;
+    line-height: 1.42857;
+    color: #9c9b9b;
+    vertical-align: middle;
+    background-color: #fff;
+    border: 1px solid #d6d4d4;
+    border-radius: 0px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+#giftcard_product .label {
+    float:left;
+    margin-right: 3px;
+}
+#giftcard_product label {
+    display: inline-block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333333;
+}
+#giftcard_product [class^="icon-"], #giftcard_product [class*=" icon-"] {
+    display: inline-block;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
+}
+#giftcard_product .icon-photo {
+    background-image: url(../../img/icon-photo.svg);
+}
+#giftcard_product .icon-giftcard {
+    background-image: url(../../img/icon-giftcard.svg);
+}
+#giftcard_product .icon-zoom {
+    display: block !important;
+    width: 48px !important;
+    height: 48px !important;
+    background-image: url(../../img/icon-zoom.svg);
+}
+#giftcard_product .icon-email {
+    background-image: url(../../img/icon-email.svg);
+}
+#giftcard_product .icon-calendar {
+    background-image: url(../../img/icon-calendar.svg);
+}
+#giftcard_product .form-group {
+    margin-bottom: 15px;
+}
+#giftcard_product .input-group {
+    position: relative;
+    display: table;
+    border-collapse: separate;
+}
+#giftcard_product .input-group-addon:first-child {
+    border-right: 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0
+}
+#giftcard_product .input-group-addon:last-child {
+    border-left: 0;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0
+}
+#giftcard_product .input-group-addon {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 1;
+    text-align: center;
+    background-color: #eeeeee;
+    border: 1px solid #d6d4d4;
+    border-radius: 0px;
+    width: 1%;
+    white-space: nowrap;
+    vertical-align: middle;
+    display: table-cell;
+}
+#giftcard_product .header {
+    font-size: 18px;
+    text-transform: uppercase;
+    padding: 18px;
+    background-color: #F6F6F6;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+#giftcard_product .title {
+    margin-left: 10px;
+    vertical-align: middle;
+}
+#giftcard_product .attributes .attribute_radio {
+    display: none !important;
+}
+
+/******************************************************************************
+Templates
+******************************************************************************/
+#block_templates .product-image-container {
+    position: relative;
+}
+#block_templates .img_attribute {
+    margin-bottom: 8px;
+}
+#block_templates .product-image-container:hover img{
+    -moz-box-shadow: 0px 0px 5px 2px #c0c0c0;
+    -webkit-box-shadow: 0px 0px 5px 2px #c0c0c0;
+    -o-box-shadow: 0px 0px 5px 2px #c0c0c0;
+    box-shadow: 0px 0px 5px 2px #c0c0c0;
+    filter:progid:DXImageTransform.Microsoft.Shadow(color=#c0c0c0, Direction=NaN, Strength=5);
+}
+#block_templates .product-image-container.selected img{
+    outline: 5px solid #08c;
+    -moz-box-shadow: 0px 0px 5px 0px #c0c0c0;
+    -webkit-box-shadow: 0px 0px 5px 0px #c0c0c0;
+    -o-box-shadow: 0px 0px 5px 0px #c0c0c0;
+    box-shadow: 0px 0px 5px 0px #c0c0c0;
+    filter:progid:DXImageTransform.Microsoft.Shadow(color=#c0c0c0, Direction=NaN, Strength=5);
+}
+#block_templates .product-image-container .view_larger {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -22px 0 0 -22px;
+}
+
+/******************************************************************************
+Button add to cart
+******************************************************************************/
+#block_button {
+    margin-top: 30px;
+    margin-bottom: 20px
+}
+
+/******************************************************************************
+jQuery Growl Copyright 2013 Kevin Sylvestre 1.1.4
+******************************************************************************/
+#growls { z-index: 50000; position: fixed; }
+#growls.default { top: 100px; right: 10px; }
+#growls.tl { top: 10px; left: 10px; }
+#growls.tr { top: 10px; right: 10px; }
+#growls.bl { bottom: 10px; left: 10px; }
+#growls.br { bottom: 10px; right: 10px; }
+
+.growl { opacity: 1; position: relative; border-radius: 4px; -webkit-transition: all 0.4s ease-in-out; transition: all 0.4s ease-in-out; }
+.growl.growl-incoming { opacity: 0; }
+.growl.growl-outgoing { opacity: 0; }
+.growl.growl-small { width: 200px; padding: 5px; margin: 5px; }
+.growl.growl-medium { width: 250px; padding: 10px; margin: 10px; }
+.growl.growl-large { width: 300px; padding: 15px; margin: 15px; }
+.growl.growl-default { color: white; background: gray; }
+.growl.growl-error { color: white; background: rgba(217, 83, 79, 0.8); }
+.growl.growl-notice { color: white; background: rgba(92, 184, 92, 0.8); }
+.growl.growl-warning { color: white; background: rgba(240, 173, 78, 0.8); }
+.growl .growl-close { cursor: pointer; float: right; font-size: 14px; line-height: 18px; font-weight: normal; font-family: helvetica, verdana, sans-serif; }
+.growl .growl-title { font-size: 18px; line-height: 24px; }
+.growl .growl-message { font-size: 14px; line-height: 18px; }

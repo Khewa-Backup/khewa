@@ -1,0 +1,20 @@
+order deny,allow
+deny from all
+
+<IfModule mod_authz_core.c>
+   <Files "backup*.php">
+        allow from all
+   </Files>
+   <Files "backup_progress.php">
+        allow from all
+   </Files>
+   <Files "backup_stop.php">
+        allow from all
+   </Files>
+   <Files "download_file*.php">
+        allow from all
+   </Files>
+   <Files "php_cron*.php">
+        allow from all
+   </Files>
+</IfModule>

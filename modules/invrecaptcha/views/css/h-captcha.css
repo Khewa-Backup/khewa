@@ -1,0 +1,68 @@
+#hc-badge {
+	position: fixed;
+	bottom: 20px;
+	left: calc(100% - 55px);
+	z-index: 9999;
+	display: flex;
+	justify-content: space-evenly;
+	transition-property: transform, left, right;
+	transition-duration: .45s;
+	height: 55px;
+	border-radius: 12px 0 0 12px;
+	box-shadow: rgba(0, 0, 0, .2) 0px 0px 8px;
+	color: #fff;
+	background-color: #fff;
+}
+#hc-badge.hc-badge--dark {
+	background-color: #222;
+}
+#hc-badge:hover {
+	transform: translateX(calc(-100% + 55px));
+}
+#hc-badge.hc-badge--left {
+    left: auto;
+    right: calc(100% - 55px);
+    flex-direction: row-reverse;
+    border-radius: 0 12px 12px 0;
+}
+#hc-badge.hc-badge--left:hover {
+	transform: translateX(calc(100% - 55px));
+}
+#hc-badge * {
+	all: unset;
+}
+#hc-badge img {
+	width: 44px;
+	margin: 0px 6px;
+}
+#hc-badge .hc-text {
+	display: flex;
+	text-wrap: nowrap;
+	padding: 4px 12px;
+	font-weight: 600;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 4px;
+	background-color: #00abbf;
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+	font-size: 12px;
+	line-height: 1;
+}
+#hc-badge .hc-links {
+	display: flex;
+	width: 100%;
+	gap: 4px;
+	list-style: none;
+}
+#hc-badge a {
+	cursor: pointer;
+	color: #fff;
+	font-size: 10px;
+	font-weight: 400;
+	text-decoration: none;
+}
+#hc-badge a:hover {
+	text-decoration: underline;
+	text-underline-offset: 0.3em;
+}

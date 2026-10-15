@@ -1,0 +1,1 @@
+<input class="support_url" type="hidden" value="https://addons.prestashop.com/en/contact-us?id_product=17611#contact-form">

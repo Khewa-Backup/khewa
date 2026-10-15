@@ -1,0 +1,62 @@
+# ===== OS / editor junk =====
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ===== Local-only backups & DB dumps (never commit) =====
+*.tar.gz
+*.tgz
+*.sql
+*.sql.gz
+backup-*.tar.gz
+kbklzsah_*.sql*
+# Module-generated backup archives (can exceed GitHub's 100MB limit)
+/modules/ntbackupandrestore/backup/
+*.tar
+
+# ===== PrestaShop generated / runtime (not version controlled) =====
+/var/
+/cache/
+/log/
+/logs/
+/download/
+/upload/
+/img/
+/translations/
+/localization/
+/themes/*/cache/
+
+# Composer dependencies
+/vendor/
+
+# Admin folder (obfuscated: admin556cvt7923) — ignored entirely
+/admin556cvt7923/
+
+# Admin-side generated dirs
+/admin*/autoupgrade/
+/admin*/backups/
+/admin*/export/
+/admin*/import/
+
+# ===== Sensitive config =====
+/app/config/parameters.php
+/app/config/parameters.yml
+/config/settings.inc.php
+
+# ===== Server / hosting cruft pulled in from the cPanel backup =====
+*.log
+error_log
+php_errorlog
+.ftpquota
+.user.ini_
+.well-known/
+.htaccess_*
+.htaccess__
+403.shtml
+cgi-bin/
+Sales_Reports/
+
+# Regenerated sitemaps
+*_sitemap.xml
