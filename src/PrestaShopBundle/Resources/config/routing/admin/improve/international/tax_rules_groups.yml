@@ -1,36 +1,40 @@
 admin_tax_rules_groups_index:
   path: /
-  methods: [GET]
+  methods: [ GET ]
   defaults:
-    _controller: PrestaShopBundle:Admin\Improve\International\TaxRulesGroup:index
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::indexAction
     _legacy_controller: AdminTaxRulesGroup
-#    _legacy_link: AdminTaxRulesGroup
+    _legacy_link: AdminTaxRulesGroup
+    _legacy_feature_flag: tax_rules_group
 
 admin_tax_rules_groups_search:
   path: /
-  methods: [POST]
+  methods: [ POST ]
   defaults:
-    _controller: PrestaShopBundle:Admin\Common:searchGrid
-    _legacy_controller: AdminTaxRulesGroup
+    _controller: PrestaShopBundle\Controller\Admin\CommonController::searchGridAction
     gridDefinitionFactoryServiceId: prestashop.core.grid.definition.factory.tax_rules_group
     redirectRoute: admin_tax_rules_groups_index
-#    _legacy_link: AdminTaxRulesGroup:submitFiltertax_rules_group
+    _legacy_controller: AdminTaxRulesGroup
+    _legacy_link: AdminTaxRulesGroup:submitFiltertax_rules_group
+    _legacy_feature_flag: tax_rules_group
 
 admin_tax_rules_groups_create:
   path: /new
-  methods: [GET, POST]
+  methods: [ GET, POST ]
   defaults:
-    _controller: PrestaShopBundle:Admin\Improve\International\TaxRulesGroup:create
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::createAction
     _legacy_controller: AdminTaxRulesGroup
-#    _legacy_link: AdminTaxRulesGroup:addtax_rules_group
+    _legacy_link: AdminTaxRulesGroup:addtax_rules_group
+    _legacy_feature_flag: tax_rules_group
 
 admin_tax_rules_groups_edit:
   path: /{taxRulesGroupId}/edit
-  methods: [GET, POST]
+  methods: [ GET, POST ]
   defaults:
-    _controller: PrestaShopBundle:Admin\Improve\International\TaxRulesGroup:edit
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::editAction
     _legacy_controller: AdminTaxRulesGroup
-#    _legacy_link: AdminTaxRulesGroup:updatetax_rules_group
+    _legacy_link: AdminTaxRulesGroup:updatetax_rules_group
+    _legacy_feature_flag: tax_rules_group
     _legacy_parameters:
       id_tax_rules_group: taxRulesGroupId
   requirements:
@@ -38,11 +42,12 @@ admin_tax_rules_groups_edit:
 
 admin_tax_rules_groups_delete:
   path: /{taxRulesGroupId}/delete
-  methods: POST
+  methods: [ POST, DELETE ]
   defaults:
-    _controller: PrestaShopBundle:Admin\Improve\International\TaxRulesGroup:delete
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::deleteAction
     _legacy_controller: AdminTaxRulesGroup
-#    _legacy_link: AdminTaxRulesGroup:deletetax_rules_group
+    _legacy_link: AdminTaxRulesGroup:deletetax_rules_group
+    _legacy_feature_flag: tax_rules_group
     _legacy_parameters:
       id_tax_rules_group: taxRulesGroupId
   requirements:
@@ -52,9 +57,10 @@ admin_tax_rules_groups_toggle_status:
   path: /{taxRulesGroupId}/toggle-status
   methods: POST
   defaults:
-    _controller: PrestaShopBundle:Admin\Improve\International\TaxRulesGroup:toggleStatus
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::toggleStatusAction
     _legacy_controller: AdminTaxRulesGroup
-#    _legacy_link: AdminTaxRulesGroup:statustax_rules_group
+    _legacy_link: AdminTaxRulesGroup:statustax_rules_group
+    _legacy_feature_flag: tax_rules_group
     _legacy_parameters:
       id_tax_rules_group: taxRulesGroupId
   requirements:
@@ -62,24 +68,108 @@ admin_tax_rules_groups_toggle_status:
 
 admin_tax_rules_groups_bulk_enable_status:
   path: /bulk-enable-status
-  methods: [POST]
+  methods: [ POST ]
   defaults:
-    _controller: PrestaShopBundle:Admin\Improve\International\TaxRulesGroup:bulkEnableStatus
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::bulkEnableStatusAction
     _legacy_controller: AdminTaxRulesGroup
-#    _legacy_link: AdminTaxRulesGroup:submitBulkenableSelectiontax_rules_group
+    _legacy_link: AdminTaxRulesGroup:submitBulkenableSelectiontax_rules_group
+    _legacy_feature_flag: tax_rules_group
 
 admin_tax_rules_groups_bulk_disable_status:
   path: /bulk-disable-status
-  methods: [POST]
+  methods: [ POST ]
   defaults:
-    _controller: PrestaShopBundle:Admin\Improve\International\TaxRulesGroup:bulkDisableStatus
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::bulkDisableStatusAction
     _legacy_controller: AdminTaxRulesGroup
-#    _legacy_link: AdminTaxRulesGroup:submitBulkdisableSelectiontax_rules_group
+    _legacy_link: AdminTaxRulesGroup:submitBulkdisableSelectiontax_rules_group
+    _legacy_feature_flag: tax_rules_group
 
 admin_tax_rules_groups_bulk_delete:
   path: /bulk-delete
-  methods: [POST]
+  methods: [ POST ]
   defaults:
-    _controller: PrestaShopBundle:Admin\Improve\International\TaxRulesGroup:bulkDelete
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::bulkDeleteAction
     _legacy_controller: AdminTaxRulesGroup
-#    _legacy_link: AdminTaxRulesGroup:submitBulkdeletetax_rules_group
+    _legacy_link: AdminTaxRulesGroup:submitBulkdeletetax_rules_group
+    _legacy_feature_flag: tax_rules_group
+
+# Tax Rule routes (individual rules within a group)
+
+admin_tax_rules_states_for_country:
+  path: /tax-rules/states/{countryId}
+  methods: [ GET ]
+  defaults:
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::getStatesForCountryAction
+    _legacy_controller: AdminTaxRulesGroup
+    _legacy_link: AdminTaxRulesGroup
+    _legacy_feature_flag: tax_rules_group
+  requirements:
+    countryId: \d+
+
+admin_tax_rules_search:
+  path: /{taxRulesGroupId}/tax-rules
+  methods: [ POST ]
+  defaults:
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::searchTaxRulesAction
+    _legacy_controller: AdminTaxRulesGroup
+    _legacy_link: AdminTaxRulesGroup
+    _legacy_feature_flag: tax_rules_group
+  requirements:
+    taxRulesGroupId: \d+
+
+admin_tax_rules_list:
+  path: /{taxRulesGroupId}/tax-rules/list
+  methods: [ GET ]
+  defaults:
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::listTaxRulesAction
+    _legacy_controller: AdminTaxRulesGroup
+    _legacy_link: AdminTaxRulesGroup
+    _legacy_feature_flag: tax_rules_group
+  requirements:
+    taxRulesGroupId: \d+
+
+admin_tax_rules_create:
+  path: /{taxRulesGroupId}/tax-rules/new
+  methods: [ GET, POST ]
+  defaults:
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::createTaxRuleAction
+    _legacy_controller: AdminTaxRulesGroup
+    _legacy_link: AdminTaxRulesGroup
+    _legacy_feature_flag: tax_rules_group
+  requirements:
+    taxRulesGroupId: \d+
+
+admin_tax_rules_edit:
+  path: /{taxRulesGroupId}/tax-rules/{taxRuleId}/edit
+  methods: [ GET, POST ]
+  defaults:
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::editTaxRuleAction
+    _legacy_controller: AdminTaxRulesGroup
+    _legacy_link: AdminTaxRulesGroup
+    _legacy_feature_flag: tax_rules_group
+  requirements:
+    taxRulesGroupId: \d+
+    taxRuleId: \d+
+
+admin_tax_rules_delete:
+  path: /{taxRulesGroupId}/tax-rules/{taxRuleId}/delete
+  methods: [ POST, DELETE ]
+  defaults:
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::deleteTaxRuleAction
+    _legacy_controller: AdminTaxRulesGroup
+    _legacy_link: AdminTaxRulesGroup:deletetax_rule
+    _legacy_feature_flag: tax_rules_group
+    _legacy_parameters:
+      id_tax_rule: taxRuleId
+  requirements:
+    taxRulesGroupId: \d+
+    taxRuleId: \d+
+
+admin_tax_rules_bulk_delete:
+  path: /tax-rules/bulk-delete
+  methods: [ POST ]
+  defaults:
+    _controller: PrestaShopBundle\Controller\Admin\Improve\International\TaxRulesGroupController::bulkDeleteTaxRulesAction
+    _legacy_controller: AdminTaxRulesGroup
+    _legacy_link: AdminTaxRulesGroup:submitBulkdeletetax_rule
+    _legacy_feature_flag: tax_rules_group

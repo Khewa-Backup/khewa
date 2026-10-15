@@ -1,33 +1,11 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
  * Class DbMySQLiCore.
- *
- * @since 1.5.0,1
  */
 class DbMySQLiCore extends Db
 {
@@ -48,8 +26,8 @@ class DbMySQLiCore extends Db
      */
     public function connect()
     {
-        $socket = false;
-        $port = false;
+        $socket = $port = false;
+        $server = '';
         if (Tools::strpos($this->server, ':') !== false) {
             list($server, $port) = explode(':', $this->server);
             if (is_numeric($port) === false) {
@@ -61,24 +39,37 @@ class DbMySQLiCore extends Db
         }
 
         if ($socket) {
-            $this->link = @new mysqli(null, $this->user, $this->password, $this->database, null, $socket);
+            /* @phpstan-ignore-next-line */
+            $this->link = @new mysqli(null, $this->user, $this->password, $this->database, 0, $socket);
         } elseif ($port) {
-            $this->link = @new mysqli($server, $this->user, $this->password, $this->database, $port);
+            $this->link = @new mysqli($server, $this->user, $this->password, $this->database, (int) $port);
         } else {
             $this->link = @new mysqli($this->server, $this->user, $this->password, $this->database);
         }
 
         // Do not use object way for error because this work bad before PHP 5.2.9
         if (mysqli_connect_error()) {
-            throw new PrestaShopDatabaseException(sprintf(Tools::displayError('Link to database cannot be established: %s'), mysqli_connect_error()));
+            throw new PrestaShopDatabaseException(sprintf(
+                Context::getContext()->getTranslator()->trans(
+                    'Link to database cannot be established: %s',
+                    [],
+                    'Admin.Notifications.Error'
+                ),
+                mysqli_connect_error()
+            ));
         }
 
         // UTF-8 support
         if (!$this->link->query('SET NAMES utf8mb4')) {
-            throw new PrestaShopDatabaseException(Tools::displayError('PrestaShop Fatal error: no utf-8 support. Please check your server configuration.'));
+            throw new PrestaShopDatabaseException(Context::getContext()->getTranslator()->trans(
+                'PrestaShop Fatal error: no utf-8 support. Please check your server configuration.',
+                [],
+                'Admin.Notifications.Error'
+            ));
         }
 
         $this->link->query('SET SESSION sql_mode = \'\'');
+        $this->setTimeZone();
 
         return $this->link;
     }
@@ -98,7 +89,7 @@ class DbMySQLiCore extends Db
     {
         if (strpos($host, ':') !== false) {
             list($host, $port) = explode(':', $host);
-            $link = @new mysqli($host, $user, $password, null, $port);
+            $link = @new mysqli($host, $user, $password, '', (int) $port);
         } else {
             $link = @new mysqli($host, $user, $password);
         }
@@ -327,7 +318,7 @@ class DbMySQLiCore extends Db
      * @param string $user Login for database connection
      * @param string $pwd Password for database connection
      * @param string $db Database name
-     * @param bool $newDbLink
+     * @param bool $new_db_link
      * @param string|bool $engine
      * @param int $timeout
      *
@@ -448,27 +439,26 @@ class DbMySQLiCore extends Db
             return false;
         }
 
-        if ($engine === null) {
-            $engine = 'MyISAM';
+        $enginesToTest = ['InnoDB', 'MyISAM'];
+        if ($engine !== null) {
+            $enginesToTest = [$engine];
         }
 
-        // Create a table
-        $link->query('
-		CREATE TABLE `' . $prefix . 'test` (
-			`test` tinyint(1) unsigned NOT NULL
-		) ENGINE=' . $engine);
+        foreach ($enginesToTest as $engineToTest) {
+            $link->query('CREATE TABLE `' . $prefix . 'test` (
+                `test` tinyint(1) unsigned NOT NULL
+            ) ENGINE=' . $engineToTest);
 
-        // Select content
-        $result = $link->query('SELECT * FROM `' . $prefix . 'test`');
+            $result = $link->query('SELECT * FROM `' . $prefix . 'test`');
 
-        // Drop the table
-        $link->query('DROP TABLE `' . $prefix . 'test`');
+            $link->query('DROP TABLE `' . $prefix . 'test`');
 
-        if (!$result) {
-            return $link->error;
+            if ($result) {
+                return true;
+            }
         }
 
-        return true;
+        return $link->error;
     }
 
     /**

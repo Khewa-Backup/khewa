@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -36,9 +16,34 @@ use PrestaShop\PrestaShop\Core\Domain\Product\Exception\ProductConstraintExcepti
 class RedirectType
 {
     /**
+     * Represents default configuration.
+     */
+    public const TYPE_DEFAULT = 'default';
+
+    /**
+     * Represents value of no redirection. Product page with "Discontinued" message will be displayed, along with HTTP 200 response.
+     */
+    public const TYPE_SUCCESS_DISPLAYED = '200-displayed';
+
+    /**
      * Represents value of no redirection. Page not found (404) will be displayed.
      */
     public const TYPE_NOT_FOUND = '404';
+
+    /**
+     * Represents value of no redirection. Product page with "Discontinued" message will be displayed, along with HTTP 404 response.
+     */
+    public const TYPE_NOT_FOUND_DISPLAYED = '404-displayed';
+
+    /**
+     * Represents value of no redirection. Page gone (410) will be displayed.
+     */
+    public const TYPE_GONE = '410';
+
+    /**
+     * Represents value of no redirection. Product page with "Discontinued" message will be displayed, along with HTTP 410 response.
+     */
+    public const TYPE_GONE_DISPLAYED = '410-displayed';
 
     /**
      * Represents value of permanent redirection to a category
@@ -64,11 +69,16 @@ class RedirectType
      * Available redirection types
      */
     public const AVAILABLE_REDIRECT_TYPES = [
+        self::TYPE_DEFAULT => self::TYPE_DEFAULT,
         self::TYPE_NOT_FOUND => self::TYPE_NOT_FOUND,
+        self::TYPE_GONE => self::TYPE_GONE,
         self::TYPE_CATEGORY_PERMANENT => self::TYPE_CATEGORY_PERMANENT,
         self::TYPE_CATEGORY_TEMPORARY => self::TYPE_CATEGORY_TEMPORARY,
         self::TYPE_PRODUCT_PERMANENT => self::TYPE_PRODUCT_PERMANENT,
         self::TYPE_PRODUCT_TEMPORARY => self::TYPE_PRODUCT_TEMPORARY,
+        self::TYPE_SUCCESS_DISPLAYED => self::TYPE_SUCCESS_DISPLAYED,
+        self::TYPE_NOT_FOUND_DISPLAYED => self::TYPE_NOT_FOUND_DISPLAYED,
+        self::TYPE_GONE_DISPLAYED => self::TYPE_GONE_DISPLAYED,
     ];
 
     /**
@@ -117,6 +127,14 @@ class RedirectType
     public function isTypeNotFound(): bool
     {
         return $this->getValue() === static::TYPE_NOT_FOUND;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeGone(): bool
+    {
+        return $this->getValue() === static::TYPE_GONE;
     }
 
     /**

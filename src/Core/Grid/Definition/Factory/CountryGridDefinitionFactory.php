@@ -1,0 +1,284 @@
+<?php
+/**
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+namespace PrestaShop\PrestaShop\Core\Grid\Definition\Factory;
+
+use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollectionInterface;
+use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\Type\ModalFormSubmitBulkAction;
+use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\Type\SubmitBulkAction;
+use PrestaShop\PrestaShop\Core\Grid\Action\GridActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Action\GridActionCollectionInterface;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\LinkRowAction;
+use PrestaShop\PrestaShop\Core\Grid\Action\Type\SimpleGridAction;
+use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
+use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollectionInterface;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\BulkActionColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\DataColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
+use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
+use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
+use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollectionInterface;
+use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
+use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+
+final class CountryGridDefinitionFactory extends AbstractGridDefinitionFactory
+{
+    use BulkDeleteActionTrait;
+    use DeleteActionTrait;
+
+    public const GRID_ID = 'country';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getId(): string
+    {
+        return self::GRID_ID;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getName(): string
+    {
+        return $this->trans('Countries', [], 'Admin.Global');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getColumns(): ColumnCollectionInterface
+    {
+        return (new ColumnCollection())
+            ->add(
+                (new BulkActionColumn('bulk'))
+                    ->setOptions([
+                        'bulk_field' => 'id_country',
+                    ])
+            )
+            ->add(
+                (new DataColumn('id_country'))
+                    ->setName($this->trans('ID', [], 'Admin.Global'))
+                    ->setOptions([
+                        'field' => 'id_country',
+                    ])
+            )
+            ->add(
+                (new DataColumn('name'))
+                    ->setName($this->trans('Country', [], 'Admin.Global'))
+                    ->setOptions([
+                        'field' => 'name',
+                    ])
+            )
+            ->add(
+                (new DataColumn('iso_code'))
+                    ->setName($this->trans('ISO code', [], 'Admin.International.Feature'))
+                    ->setOptions([
+                        'field' => 'iso_code',
+                    ])
+            )
+            ->add(
+                (new DataColumn('call_prefix'))
+                    ->setName($this->trans('Call prefix', [], 'Admin.International.Feature'))
+                    ->setOptions([
+                        'field' => 'call_prefix',
+                    ])
+            )
+            ->add(
+                (new DataColumn('zone_name'))
+                    ->setName($this->trans('Zone', [], 'Admin.Global'))
+                    ->setOptions([
+                        'field' => 'zone_name',
+                    ])
+            )
+            ->add(
+                (new ToggleColumn('active'))
+                    ->setName($this->trans('Enabled', [], 'Admin.Global'))
+                    ->setOptions([
+                        'field' => 'active',
+                        'primary_field' => 'id_country',
+                        'route' => 'admin_countries_toggle_status',
+                        'route_param_name' => 'countryId',
+                        'sortable' => false,
+                    ])
+            )
+            ->add(
+                (new ActionColumn('actions'))
+                    ->setName($this->trans('Actions', [], 'Admin.Global'))
+                    ->setOptions([
+                        'actions' => $this->getRowActions(),
+                    ])
+            );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFilters(): FilterCollectionInterface
+    {
+        return (new FilterCollection())
+            ->add(
+                (new Filter('id_country', TextType::class))
+                    ->setAssociatedColumn('id_country')
+                    ->setTypeOptions([
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $this->trans('Search ID', [], 'Admin.Actions'),
+                        ],
+                    ])
+            )
+            ->add(
+                (new Filter('name', TextType::class))
+                    ->setAssociatedColumn('name')
+                    ->setTypeOptions([
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $this->trans('Search country', [], 'Admin.Actions'),
+                        ],
+                    ])
+            )
+            ->add(
+                (new Filter('iso_code', TextType::class))
+                    ->setAssociatedColumn('iso_code')
+                    ->setTypeOptions([
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $this->trans('Search ISO code', [], 'Admin.Actions'),
+                        ],
+                    ])
+            )
+            ->add(
+                (new Filter('call_prefix', TextType::class))
+                    ->setAssociatedColumn('call_prefix')
+                    ->setTypeOptions([
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $this->trans('Search call prefix', [], 'Admin.Actions'),
+                        ],
+                    ])
+            )
+            ->add(
+                (new Filter('zone_name', TextType::class))
+                    ->setAssociatedColumn('zone_name')
+                    ->setTypeOptions([
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $this->trans('Search zones', [], 'Admin.Actions'),
+                        ],
+                    ])
+            )
+            ->add(
+                (new Filter('active', YesAndNoChoiceType::class))
+                    ->setAssociatedColumn('active')
+                    ->setTypeOptions([
+                        'required' => false,
+                        'choice_translation_domain' => false,
+                    ])
+            )
+            ->add(
+                (new Filter('actions', SearchAndResetType::class))
+                    ->setAssociatedColumn('actions')
+                    ->setTypeOptions([
+                        'reset_route' => 'admin_common_reset_search_by_filter_id',
+                        'reset_route_params' => [
+                            'filterId' => self::GRID_ID,
+                        ],
+                        'redirect_route' => 'admin_countries_index',
+                    ])
+            );
+    }
+
+    /**
+     * @return RowActionCollection
+     */
+    protected function getRowActions(): RowActionCollection
+    {
+        $rowActionCollection = new RowActionCollection();
+        $rowActionCollection
+            ->add(
+                (new LinkRowAction('edit'))
+                    ->setName($this->trans('Edit', [], 'Admin.Actions'))
+                    ->setIcon('edit')
+                    ->setOptions([
+                        'route' => 'admin_countries_edit',
+                        'route_param_name' => 'countryId',
+                        'route_param_field' => 'id_country',
+                        'clickable_row' => true,
+                    ])
+            )
+            ->add(
+                $this->buildDeleteAction(
+                    'admin_countries_delete',
+                    'countryId',
+                    'id_country'
+                )
+            );
+
+        return $rowActionCollection;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getGridActions(): GridActionCollectionInterface
+    {
+        return (new GridActionCollection())
+            ->add(
+                (new SimpleGridAction('common_refresh_list'))
+                    ->setName($this->trans('Refresh list', [], 'Admin.Advparameters.Feature'))
+                    ->setIcon('refresh')
+            )
+            ->add(
+                (new SimpleGridAction('common_show_query'))
+                    ->setName($this->trans('Show SQL query', [], 'Admin.Actions'))
+                    ->setIcon('code')
+            )
+            ->add(
+                (new SimpleGridAction('common_export_sql_manager'))
+                    ->setName($this->trans('Export to SQL manager', [], 'Admin.Actions'))
+                    ->setIcon('storage')
+            );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getBulkActions(): BulkActionCollectionInterface
+    {
+        return (new BulkActionCollection())
+            ->add(
+                (new SubmitBulkAction('enable_selection'))
+                    ->setName($this->trans('Enable selection', [], 'Admin.Actions'))
+                    ->setOptions([
+                        'submit_route' => 'admin_countries_bulk_enable_status',
+                    ])
+            )
+            ->add(
+                (new SubmitBulkAction('disable_selection'))
+                    ->setName($this->trans('Disable selection', [], 'Admin.Actions'))
+                    ->setOptions([
+                        'submit_route' => 'admin_countries_bulk_disable_status',
+                    ])
+            )
+            ->add(
+                (new ModalFormSubmitBulkAction('assign_zone'))
+                    ->setName($this->trans('Assign to a new zone', [], 'Admin.International.Feature'))
+                    ->setOptions([
+                        'submit_route' => 'admin_countries_bulk_update_zone',
+                        'modal_id' => 'changeCountriesZoneModal',
+                    ])
+            )
+            ->add(
+                $this->buildBulkDeleteAction('admin_countries_bulk_delete')
+            );
+    }
+}

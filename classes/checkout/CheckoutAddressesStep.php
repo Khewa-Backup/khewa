@@ -1,29 +1,9 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CheckoutAddressesStepCore extends AbstractCheckoutStep
 {
@@ -35,6 +15,11 @@ class CheckoutAddressesStepCore extends AbstractCheckoutStep
     private $show_invoice_address_form = false;
     private $form_has_continue_button = false;
 
+    /**
+     * @param Context $context
+     * @param TranslatorInterface $translator
+     * @param CustomerAddressForm $addressForm
+     */
     public function __construct(
         Context $context,
         TranslatorInterface $translator,
@@ -141,7 +126,7 @@ class CheckoutAddressesStepCore extends AbstractCheckoutStep
             );
             if ($deletionResult) {
                 $this->context->controller->success[] = $this->getTranslator()->trans(
-                    'Address successfully deleted!',
+                    'Address successfully deleted.',
                     [],
                     'Shop.Notifications.Success'
                 );
@@ -189,8 +174,8 @@ class CheckoutAddressesStepCore extends AbstractCheckoutStep
             if (!$this->getCheckoutProcess()->hasErrors()) {
                 $this->setNextStepAsCurrent();
                 $this->setComplete(
-                    $this->getCheckoutSession()->getIdAddressInvoice() &&
-                    $this->getCheckoutSession()->getIdAddressDelivery()
+                    $this->getCheckoutSession()->getIdAddressInvoice()
+                    && $this->getCheckoutSession()->getIdAddressDelivery()
                 );
 
                 // if we just pushed the invoice address form, we are using another address for invoice
@@ -235,19 +220,19 @@ class CheckoutAddressesStepCore extends AbstractCheckoutStep
             'use_same_address' => $this->use_same_address,
             'use_different_address_url' => $this->context->link->getPageLink(
                 'order',
-                true,
+                null,
                 null,
                 ['use_same_address' => 0]
             ),
             'new_address_delivery_url' => $this->context->link->getPageLink(
                 'order',
-                true,
+                null,
                 null,
                 ['newAddress' => 'delivery']
             ),
             'new_address_invoice_url' => $this->context->link->getPageLink(
                 'order',
-                true,
+                null,
                 null,
                 ['newAddress' => 'invoice']
             ),
@@ -261,14 +246,10 @@ class CheckoutAddressesStepCore extends AbstractCheckoutStep
 
         /** @var OrderControllerCore $controller */
         $controller = $this->context->controller;
-        if (isset($controller)) {
+        if ($controller instanceof OrderController) {
             $warnings = $controller->checkoutWarning;
-            $addressWarning = isset($warnings['address'])
-                ? $warnings['address']
-                : false;
-            $invalidAddresses = isset($warnings['invalid_addresses'])
-                ? $warnings['invalid_addresses']
-                : [];
+            $addressWarning = $warnings['address'] ?? false;
+            $invalidAddresses = $warnings['invalid_addresses'] ?? [];
 
             $errors = [];
             if (in_array($idAddressDelivery, $invalidAddresses)) {

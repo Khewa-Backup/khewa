@@ -1,34 +1,16 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Form\Admin\Configure\ShopParameters\CustomerPreferences;
 
+use PrestaShopBundle\Form\Admin\Type\MultistoreConfigurationType;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
-use PrestaShopBundle\Form\Admin\Type\TextWithUnitType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
+use PrestaShopBundle\Form\Extension\MultistoreConfigurationTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
@@ -49,9 +31,10 @@ class GeneralType extends TranslatorAwareType
                     'Admin.Shopparameters.Feature'
                 ),
                 'help' => $this->trans(
-                    'After a customer logs in, you can recall and display the content of his/her last shopping cart.',
+                    'If this option is enabled, the customer\'s last cart will be restored when they log back in. Otherwise, a new, empty cart will be created.',
                     'Admin.Shopparameters.Help'
                 ),
+                'multistore_configuration_key' => 'PS_CART_FOLLOWING',
             ])
             ->add('send_email_after_registration', SwitchType::class, [
                 'label' => $this->trans(
@@ -62,8 +45,9 @@ class GeneralType extends TranslatorAwareType
                     'Send an email with a summary of the account information after registration.',
                     'Admin.Shopparameters.Help'
                 ),
+                'multistore_configuration_key' => 'PS_CUSTOMER_CREATION_EMAIL',
             ])
-            ->add('password_reset_delay', TextWithUnitType::class, [
+            ->add('password_reset_delay', IntegerType::class, [
                 'label' => $this->trans(
                     'Password reset delay',
                     'Admin.Shopparameters.Feature'
@@ -87,6 +71,7 @@ class GeneralType extends TranslatorAwareType
                     'Admin.Shopparameters.Help'
                 ),
                 'unit' => $this->trans('minutes', 'Admin.Shopparameters.Feature'),
+                'multistore_configuration_key' => 'PS_PASSWD_TIME_FRONT',
             ])
             ->add('enable_b2b_mode', SwitchType::class, [
                 'label' => $this->trans(
@@ -97,6 +82,7 @@ class GeneralType extends TranslatorAwareType
                     'Activate or deactivate B2B mode. When this option is enabled, B2B features will be made available.',
                     'Admin.Shopparameters.Help'
                 ),
+                'multistore_configuration_key' => 'PS_B2B_ENABLE',
             ])
             ->add('ask_for_birthday', SwitchType::class, [
                 'label' => $this->trans(
@@ -107,6 +93,7 @@ class GeneralType extends TranslatorAwareType
                     'Display or not the birth date field.',
                     'Admin.Shopparameters.Help'
                 ),
+                'multistore_configuration_key' => 'PS_CUSTOMER_BIRTHDATE',
             ])
             ->add('enable_offers', SwitchType::class, [
                 'label' => $this->trans(
@@ -117,6 +104,7 @@ class GeneralType extends TranslatorAwareType
                     'Display or not the partner offers tick box, to receive offers from the store\'s partners.',
                     'Admin.Shopparameters.Help'
                 ),
+                'multistore_configuration_key' => 'PS_CUSTOMER_OPTIN',
             ]);
     }
 
@@ -136,5 +124,15 @@ class GeneralType extends TranslatorAwareType
     public function getBlockPrefix()
     {
         return 'customer_preferences_general_block';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see MultistoreConfigurationTypeExtension
+     */
+    public function getParent(): string
+    {
+        return MultistoreConfigurationType::class;
     }
 }

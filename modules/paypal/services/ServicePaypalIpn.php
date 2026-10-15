@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,23 +16,30 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\services;
 
 require_once dirname(__FILE__) . '/../classes/PaypalIpn.php';
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ServicePaypalIpn
 {
     /**
      * @param $idTransaction string
      * @param $status string
+     *
      * @return bool
      */
     public function exists($idTransaction, $status)
@@ -40,11 +48,12 @@ class ServicePaypalIpn
         $collection->where('id_transaction', '=', pSQL($idTransaction));
         $collection->where('status', '=', pSQL($status));
 
-        return (bool)$collection->count();
+        return (bool) $collection->count();
     }
 
     /**
      * @param $idTransaction string
+     *
      * @return array of the Prestashop Order objects
      */
     public function getOrdersPsByTransaction($idTransaction)
@@ -52,23 +61,24 @@ class ServicePaypalIpn
         $cart = $this->getCartByTransaction($idTransaction);
 
         if (\Validate::isLoadedObject($cart) == false) {
-            return array();
+            return [];
         }
 
         $orderCollection = new \PrestaShopCollection(\Order::class);
-        $orderCollection->where('id_cart', '=', (int)$cart->id);
+        $orderCollection->where('id_cart', '=', (int) $cart->id);
 
         return $orderCollection->getResults();
     }
 
     /**
      * @param $idTransaction string
+     *
      * @return \Cart
      */
     public function getCartByTransaction($idTransaction)
     {
         if ($idCart = $this->getIdCartByTransaction($idTransaction)) {
-            $cart = new \Cart((int)$idCart);
+            $cart = new \Cart((int) $idCart);
             if (\Validate::isLoadedObject($cart)) {
                 return $cart;
             }
@@ -79,6 +89,7 @@ class ServicePaypalIpn
 
     /**
      * @param $idTransaction string
+     *
      * @return int
      */
     public function getIdCartByTransaction($idTransaction)

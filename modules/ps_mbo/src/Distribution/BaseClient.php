@@ -17,23 +17,39 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+declare(strict_types=1);
 
 namespace PrestaShop\Module\Mbo\Distribution;
 
 use Doctrine\Common\Cache\CacheProvider;
-use GuzzleHttp\Client as HttpClient;
+use PrestaShop\Module\Mbo\Exception\ClientRequestException;
 use PrestaShop\Module\Mbo\Helpers\Config;
+use PrestaShop\PrestaShop\Core\Context\CountryContext;
+use PrestaShop\PrestaShop\Core\Context\LanguageContext;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class BaseClient
 {
-    const HTTP_METHOD_GET = 'GET';
-    const HTTP_METHOD_POST = 'POST';
-    const HTTP_METHOD_PUT = 'PUT';
-    const HTTP_METHOD_DELETE = 'DELETE';
+    public const HTTP_METHOD_GET = 'GET';
+    public const HTTP_METHOD_POST = 'POST';
+
+    protected string $apiUrl;
+
     /**
-     * @var HttpClient
+     * @var ClientInterface
      */
     protected $httpClient;
+
+    /**
+     * @var RequestFactoryInterface
+     */
+    protected RequestFactoryInterface $requestFactory;
     /**
      * @var CacheProvider
      */
@@ -56,28 +72,34 @@ class BaseClient
         'ps_version',
         'iso_lang',
         'iso_code',
+        'accounts_token',
         'addons_username',
         'addons_pwd',
+        'catalogUrl',
     ];
     /**
      * @var array<string, string>
      */
     protected $headers = [];
 
-    /**
-     * @param HttpClient $httpClient
-     * @param \Doctrine\Common\Cache\CacheProvider $cacheProvider
-     */
-    public function __construct(HttpClient $httpClient, CacheProvider $cacheProvider)
-    {
+    public function __construct(
+        string $apiUrl,
+        ClientInterface $httpClient,
+        RequestFactoryInterface $requestFactory,
+        CacheProvider $cacheProvider,
+        protected readonly LanguageContext $languageContext,
+        protected readonly CountryContext $countryContext,
+    ) {
+        $this->apiUrl = $apiUrl;
         $this->httpClient = $httpClient;
+        $this->requestFactory = $requestFactory;
         $this->cacheProvider = $cacheProvider;
     }
 
     /**
      * In case you reuse the Client, you may want to clean the previous parameters.
      */
-    public function reset()
+    public function reset(): void
     {
         $this->queryParameters = [];
         $this->headers = [];
@@ -88,7 +110,7 @@ class BaseClient
      *
      * @return $this
      */
-    public function setQueryParams(array $params)
+    public function setQueryParams(array $params): self
     {
         $filteredParams = array_intersect_key($params, array_flip($this->possibleQueryParameters));
         $this->queryParameters = array_merge($this->queryParameters, $filteredParams);
@@ -101,7 +123,7 @@ class BaseClient
      *
      * @return $this
      */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): self
     {
         $this->headers = array_merge($this->headers, $headers);
 
@@ -113,34 +135,19 @@ class BaseClient
      *
      * @return $this
      */
-    public function setBearer(string $jwt)
+    public function setBearer(string $jwt): self
     {
         return $this->setHeaders(['Authorization' => 'Bearer ' . $jwt]);
     }
 
-    /**
-     * @param array $params
-     *
-     * @return array
-     */
-    protected function mergeShopDataWithParams(array $params)
+    protected function mergeShopDataWithParams(array $params): array
     {
-        $psMbo = \Module::getInstanceByName('ps_mbo');
-
-        $psMboVersion = false;
-        if (\Validate::isLoadedObject($psMbo)) {
-            $psMboVersion = $psMbo->version;
-        }
-
-        $shopUuid = Config::getShopMboUuid();
-
         return array_merge([
-            'uuid' => $shopUuid,
+            'uuid' => Config::getShopMboUuid(),
             'shop_url' => Config::getShopUrl(),
             'admin_path' => sprintf('/%s/', trim(str_replace(_PS_ROOT_DIR_, '', _PS_ADMIN_DIR_), '/')),
-            'mbo_version' => $psMboVersion,
+            'mbo_version' => \ps_mbo::VERSION,
             'ps_version' => _PS_VERSION_,
-            'mbo_api_user_token' => md5($shopUuid),
         ], $params);
     }
 
@@ -154,17 +161,19 @@ class BaseClient
      * @param mixed $default
      *
      * @return mixed
+     *
+     * @throws ClientExceptionInterface
      */
     protected function processRequestAndDecode(
         string $uri,
         string $method = self::HTTP_METHOD_GET,
         array $options = [],
-        $default = []
+        $default = [],
     ) {
         $response = json_decode($this->processRequest($uri, $method, $options));
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            return $default;
+            return (object) $default;
         }
 
         return $response;
@@ -178,36 +187,45 @@ class BaseClient
      * @param array $options
      *
      * @return string
+     *
+     * @throws ClientExceptionInterface
+     * @throws ClientRequestException
      */
     protected function processRequest(
-        string $uri,
-        string $method,
-        array $options
-    ) {
-        $options = array_merge($options, [
-            'query' => $this->queryParameters,
-            'headers' => $this->headers,
-        ]);
-
-        switch ($method) {
-            case self::HTTP_METHOD_GET:
-                return (string) $this->httpClient
-                    ->get('/api/' . ltrim($uri, '/'), $options)
-                    ->getBody();
-            case self::HTTP_METHOD_POST:
-                return (string) $this->httpClient
-                    ->post('/api/' . ltrim($uri, '/'), $options)
-                    ->getBody();
-            case self::HTTP_METHOD_PUT:
-                return (string) $this->httpClient
-                    ->put('/api/' . ltrim($uri, '/'), $options)
-                    ->getBody();
-            case self::HTTP_METHOD_DELETE:
-                return (string) $this->httpClient
-                    ->delete('/api/' . ltrim($uri, '/'), $options)
-                    ->getBody();
-            default:
-                throw new \Exception('Unhandled method in BaseClient::processRequest');
+        string $uri = '',
+        string $method = self::HTTP_METHOD_GET,
+        array $options = [],
+    ): string {
+        $queryString = !empty($this->queryParameters) ? '?' . http_build_query($this->queryParameters) : '';
+        $request = $this->requestFactory->createRequest($method, $this->apiUrl . '/api/' . ltrim($uri, '/') . $queryString);
+        if (empty($this->headers['Content-Type'])) {
+            $this->headers['Accept'] = 'application/json';
+            $this->headers['Content-Type'] = 'application/json';
         }
+        foreach ($this->headers as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
+
+        if (!empty($options['form_params'])) {
+            if ($this->headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+                $request = $request->withBody($this->createStream(urlencode(serialize($options['form_params']))));
+            } else {
+                $request = $request->withBody($this->createStream(json_encode($options['form_params'])));
+            }
+        }
+
+        $response = $this->httpClient->sendRequest($request);
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+            throw new ClientRequestException($response->getReasonPhrase(), $response->getStatusCode());
+        }
+
+        return $response->getBody()->getContents();
+    }
+
+    private function createStream(string $content): \Psr\Http\Message\StreamInterface
+    {
+        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+
+        return $psr17Factory->createStream($content);
     }
 }

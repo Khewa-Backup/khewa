@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Localization\Number;
@@ -115,7 +95,7 @@ class Formatter
         $isNegative = $decimalNumber->isNegative();
         $decimalNumber = $decimalNumber->toPositive();
 
-        list($majorDigits, $minorDigits) = $this->extractMajorMinorDigits($decimalNumber);
+        [$majorDigits, $minorDigits] = $this->extractMajorMinorDigits($decimalNumber);
         $majorDigits = $this->splitMajorGroups($majorDigits);
         $minorDigits = $this->adjustMinorDigitsZeroes($minorDigits);
 
@@ -146,13 +126,12 @@ class Formatter
     {
         $decimalNumber = new DecimalNumber((string) $number);
         $precision = $this->numberSpecification->getMaxFractionDigits();
-        $roundedNumber = (new Rounding())->compute(
+
+        return (new Rounding())->compute(
             $decimalNumber,
             $precision,
             $this->roundingMode
         );
-
-        return $roundedNumber;
     }
 
     /**
@@ -194,18 +173,18 @@ class Formatter
             // Reverse the major digits, since they are grouped from the right.
             $majorDigits = array_reverse(str_split($majorDigits));
             // Group the major digits.
-            $groups = [];
+            $groups = $groupsDigits = [];
             $groups[] = array_splice($majorDigits, 0, $this->numberSpecification->getPrimaryGroupSize());
             while (!empty($majorDigits)) {
                 $groups[] = array_splice($majorDigits, 0, $this->numberSpecification->getSecondaryGroupSize());
             }
             // Reverse back the digits and the groups
             $groups = array_reverse($groups);
-            foreach ($groups as &$group) {
-                $group = implode('', array_reverse($group));
+            foreach ($groups as $group) {
+                $groupsDigits[] = implode('', array_reverse($group));
             }
             // Reconstruct the major digits.
-            $majorDigits = implode(self::GROUP_SEPARATOR_PLACEHOLDER, $groups);
+            $majorDigits = implode(self::GROUP_SEPARATOR_PLACEHOLDER, $groupsDigits);
         }
 
         return $majorDigits;

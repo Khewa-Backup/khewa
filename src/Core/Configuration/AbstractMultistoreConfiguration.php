@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -33,6 +13,7 @@ use PrestaShop\PrestaShop\Adapter\Shop\Context;
 use PrestaShop\PrestaShop\Core\Domain\Shop\ValueObject\ShopConstraint;
 use PrestaShop\PrestaShop\Core\Feature\FeatureInterface;
 use PrestaShopBundle\Service\Form\MultistoreCheckboxEnabler;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractMultistoreConfiguration implements DataConfigurationInterface
 {
@@ -65,6 +46,8 @@ abstract class AbstractMultistoreConfiguration implements DataConfigurationInter
         $this->multistoreFeature = $multistoreFeature;
     }
 
+    abstract protected function buildResolver(): OptionsResolver;
+
     /**
      * @return ShopConstraint|null
      */
@@ -84,7 +67,7 @@ abstract class AbstractMultistoreConfiguration implements DataConfigurationInter
      * @param ShopConstraint|null $shopConstraint
      * @param array $options<int, string> Options @deprecated Will be removed in next major
      */
-    public function updateConfigurationValue(string $configurationKey, string $fieldName, array $input, ?ShopConstraint $shopConstraint, array $options = []): void
+    protected function updateConfigurationValue(string $configurationKey, string $fieldName, array $input, ?ShopConstraint $shopConstraint, array $options = []): void
     {
         if (!array_key_exists($fieldName, $input)) {
             return;
@@ -99,5 +82,38 @@ abstract class AbstractMultistoreConfiguration implements DataConfigurationInter
         } else {
             $this->configuration->set($configurationKey, $input[$fieldName], $shopConstraint, $options);
         }
+    }
+
+    /**
+     * This method checks that:
+     * - Only defined configuration fields exist
+     * - In single or group shop context, multistore fields are added to the list of defined fields, so that no error
+     * is triggered because of additional checkboxes
+     * - In all shop context, all fields are required
+     *
+     * @param array $configurationInputValues
+     *
+     * @return bool
+     */
+    public function validateConfiguration(array $configurationInputValues): bool
+    {
+        $resolver = $this->buildResolver();
+        $definedOptions = $fields = $resolver->getDefinedOptions();
+
+        if ($this->multistoreFeature->isUsed() && !$this->shopContext->isAllShopContext()) {
+            // add multistore fields in list of defined fields
+            foreach ($definedOptions as $value) {
+                $fields[] = MultistoreCheckboxEnabler::MULTISTORE_FIELD_PREFIX . $value;
+            }
+            $resolver->setDefined($fields);
+        } else {
+            // all fields are mandatory in all shop context. (not in single or group shop context because fields
+            // can be disabled with checkboxes)
+            $resolver->setRequired($definedOptions);
+        }
+
+        $resolver->resolve($configurationInputValues);
+
+        return true;
     }
 }

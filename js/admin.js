@@ -1,26 +1,6 @@
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 var ajax_running_timeout = null;
@@ -228,53 +208,6 @@ function changeFormLanguage(id_language_new, iso_code, employee_cookie)
   updateCurrentText();
 }
 
-function displayFlags(languages, defaultLanguageID, employee_cookie)
-{
-  if ($('.translatable'))
-  {
-    $('.translatable').each(function() {
-      if (!$(this).find('.displayed_flag').length > 0) {
-        $.each(languages, function(key, language) {
-          if (language['id_lang'] == defaultLanguageID)
-          {
-            defaultLanguage = language;
-            return false;
-          }
-        });
-        var displayFlags = $('<div></div>')
-          .addClass('displayed_flag')
-          .append($('<img>')
-            .addClass('language_current')
-            .addClass('pointer')
-            .attr('src', '../img/l/' + defaultLanguage['id_lang'] + '.jpg')
-            .attr('alt', defaultLanguage['name'])
-            .click(function() {
-              toggleLanguageFlags(this);
-            })
-          );
-        var languagesFlags = $('<div></div>')
-          .addClass('language_flags')
-          .html(choose_language_translate+':<br /><br />');
-        $.each(languages, function(key, language) {
-          var img = $('<img>')
-            .addClass('pointer')
-            .css('margin', '2px 2px')
-            .attr('src', '../img/l/' + language['id_lang'] + '.jpg')
-            .attr('alt', language['name'])
-            .click(function() {
-              changeFormLanguage(language['id_lang'], language['iso_code'], employee_cookie);
-            });
-          languagesFlags.append(img);
-        });
-        if ($(this).find('p:last-child').hasClass('clear'))
-          $(this).find('p:last-child').before(displayFlags).before(languagesFlags);
-        else
-          $(this).append(displayFlags).append(languagesFlags);
-      }
-    });
-  }
-}
-
 function checkAll(pForm)
 {
   for (i = 0, n = pForm.elements.length; i < n; i++)
@@ -362,24 +295,9 @@ function gencode(size)
   getE('code').value = '';
   /* There are no O/0 in the codes in order to avoid confusion */
   var chars = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
+  var randomNumbers = crypto.getRandomValues(new Uint32Array(size));
   for (var i = 1; i <= size; ++i) {
-    getE('code').value += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-
-  getE('cart-rules-highlight').style.display = '';
-}
-
-var tpl_viewing_window = null;
-function viewTemplates(id_select, lang, ext)
-{
-  var loc = $(id_select).val();
-  if (loc != 0)
-  {
-    if (tpl_viewing_window != null && !tpl_viewing_window.closed)
-      tpl_viewing_window.close();
-    var url_preview = $("option[value="+loc+"]", id_select).data('preview');
-    tpl_viewing_window = window.open(url_preview + lang + loc + ext, 'tpl_viewing', 'toolbar=0,location=0,directories=0,statfr=no,menubar=0,scrollbars=yes,resizable=yes,width=520,height=400,top=50,left=300');
-    tpl_viewing_window.focus();
+    getE('code').value += chars.charAt(Math.floor(randomNumbers[i]/2**32 * chars.length));
   }
 }
 
@@ -459,7 +377,6 @@ function stockManagementActivationAuthorization()
     getE('PS_ORDER_OUT_OF_STOCK_on').checked = true;
     getE('PS_ORDER_OUT_OF_STOCK_on').disabled = 'disabled';
     getE('PS_ORDER_OUT_OF_STOCK_off').disabled = 'disabled';
-    getE('PS_DEFAULT_WAREHOUSE_NEW_PRODUCT').disabled = 'disabled';
   }
 }
 
@@ -534,7 +451,13 @@ function showRedirectProductOptions(show)
 
 function redirectSelectChange()
 {
-  if ($('#redirect_type :selected').val() == '404')
+  redirectTypeValue = $('#redirect_type :selected').val();
+  if (redirectTypeValue == '404' ||
+      redirectTypeValue == '410' ||
+      redirectTypeValue == 'default' ||
+      redirectTypeValue == '200-displayed' ||
+      redirectTypeValue == '404-displayed' ||
+      redirectTypeValue == '410-displayed')
     showRedirectProductSelectOptions(false);
   else
     showRedirectProductSelectOptions(true);
@@ -680,7 +603,7 @@ function showNoticeMessage(msg) {
   $.growl.notice({ title: "", message:msg});
 }
 
-$(document).ready(function()
+$(function()
 {
   if (typeof helper_tabs != 'undefined' && typeof unique_field_id != 'undefined')
   {
@@ -772,12 +695,13 @@ $(document).ready(function()
       clearTimeout(ajax_running_timeout);
     });
 
-  bindTabModuleListAction();
-
-  bindAddonsButtons();
+  // Ensure the spinner is hidden if no AJAX requests are running when the page loads
+  if ($.active === 0) {
+    $('#ajax_running').hide();
+  }
 
   //Check filters value on submit filter
-  $("[name='submitFilter']").click(function(event) {
+  $("[name='submitFilter']").on('click', function(event) {
     var list_id = $(this).data('list-id');
     var empty_filters = true;
 
@@ -799,76 +723,6 @@ $(document).ready(function()
       event.preventDefault();
       $('#'+list_id+'-empty-filters-alert').show();
     }
-  });
-
-  var message = $('.toolbarHead');
-  var view = $(window);
-
-  // bind only if message exists. placeholder will be its parent
-  view.bind("scroll resize", function(e)
-  {
-    message.each(function(el){
-      if (message.length)
-      {
-        placeholder = $(this).parent();
-        if (e.type == 'resize')
-          $(this).css('width', $(this).parent().width());
-
-        placeholderTop = placeholder.offset().top;
-        var viewTop = view.scrollTop() + 15;
-        // here we force the toolbar to be "not fixed" when
-        // the height of the window is really small (toolbar hiding the page is not cool)
-        window_is_more_than_twice_the_toolbar  = view.height() > message.parent().height() * 2;
-        if (!$(this).hasClass("fix-toolbar") && (window_is_more_than_twice_the_toolbar && (viewTop > placeholderTop)))
-        {
-          $(this).css('width', $(this).width());
-          // fixing parent height will prevent that annoying "pagequake" thing
-          // the order is important : this has to be set before adding class fix-toolbar
-          $(this).parent().css('height', $(this).parent().height());
-          $(this).addClass("fix-toolbar");
-        }
-        else if ($(this).hasClass("fix-toolbar") && (!window_is_more_than_twice_the_toolbar || (viewTop <= placeholderTop)) )
-        {
-          $(this).removeClass("fix-toolbar");
-          $(this).removeAttr('style');
-          $(this).parent().removeAttr('style');
-        }
-      }
-    });
-  }); // end bind
-
-  $(document).on('click', '.untrustedaddon', function(e){
-    e.preventDefault();
-    var moduleName = $(this).data('module-name');
-    var moduleDisplayName = $(this).data('module-display-name');
-    var moduleImage = $(this).data('module-image');
-    var authorName = $(this).data('author-name');
-    var moduleLink = $(this).data('link');
-    var authorUri = $(this).data('author-uri');
-    var isValidUri = /(https?):\/\/([a-z0-9\.]*)?(prestashop.com).*/gi;
-    var addonsSearchLink = 'https://addons.prestashop.com/en/search?search_query='+encodeURIComponent(moduleDisplayName)+'&utm_source=back-office&utm_medium=addons-certified&utm_campaign=back-office-'+iso_user.toUpperCase();
-
-    $('.modal #untrusted-module-logo').attr('src', moduleImage);
-    $('.modal .module-display-name-placeholder').text(moduleDisplayName);
-    $('.modal .author-name-placeholder').text(authorName);
-
-    if (isValidUri.test(authorUri))
-      $('.modal .author-name-placeholder').wrap('<a href="'+authorUri+'" onclick="window.open(this.href);return false;"></a>');
-
-    $('.modal #proceed-install-anyway').attr('href', moduleLink);
-    $('.modal .catalog-link').attr('href', addonsSearchLink);
-    $('.modal .catalog-link').attr('onclick', 'window.open(this.href);return false;');
-  });
-
-  $(document).on('click', '#untrusted-show-risk', function(e){
-    e.preventDefault();
-    $('.untrusted-content-action').hide();
-    $('.untrusted-content-more-info').show();
-  });
-  $(document).on('click', '#untrusted-show-action', function(e){
-    e.preventDefault();
-    $('.untrusted-content-more-info').hide();
-    $('.untrusted-content-action').show();
   });
 
   // if count errors
@@ -913,32 +767,12 @@ $(document).ready(function()
       bindSwapButton('add', 'available', 'selected', this);
       bindSwapButton('remove', 'selected', 'available', this);
 
-      $('button:submit').click(function() {
+      $('button:submit').on('click', function() {
         bindSwapSave(swap_container);
       });
     }
   });
 
-  if (typeof host_mode !== 'undefined' && host_mode)
-  {
-        // http://status.prestashop.com/
-        var status_map = {
-            operational: status_operational,
-            degraded_performance: status_degraded_performance,
-            partial_outage: status_partial_outage,
-            major_outage: status_major_outage,
-        };
-
-        var components_map = {'ca1': 0, 'fr1': 1};
-
-        var sp = new StatusPage.page({page: 'rmfc0cm3rk9y'});
-        sp.components({
-            success: function (data) {
-                $('.status-page-description').text(status_map[data.components[components_map[host_cluster]].status]);
-                $('.status-page-dot').addClass(data.components[components_map[host_cluster]].status);
-            }
-        });
-    }
     if ($('.kpi-container').length) {
         refresh_kpis();
     }
@@ -968,23 +802,6 @@ function bindSwapButton(prefix_button, prefix_select_remove, prefix_select_add, 
   });
 }
 
-function bindTabModuleListAction()
-{
-  $('.action_tab_module').each( function (){
-    $(this).click(function () {
-      option = $('#'+$(this).data('option')+' :selected');
-      if ($(option).data('onclick') != '')
-      {
-        var f = eval("(function(){ "+$(option).data('onclick')+"})");
-        if (f.call())
-          window.location.href = $(option).data('href');
-      }
-      else
-        window.location.href = $(option).data('href');
-      return false;
-    });
-  });
-}
 
 // Delete all tags HTML
 function stripHTML(oldString)
@@ -1229,187 +1046,44 @@ function getControllerActionMap(force_action) {
   return new Array('back-office',controller, action);
 }
 
-function openModulesList()
-{
-
-  if (!modules_list_loaded)
-  {
-    header = $('#modules_list_container .modal-header').html();
-
-    $.ajax({
-      type: "GET",
-      url : admin_modules_link,
-      async: true,
-      data : {
-        ajax : "1",
-        controller : "AdminModules",
-        action : "getTabModulesList",
-        tab_modules_list : tab_modules_list,
-        back_tab_modules_list : window.location.href,
-        admin_list_from_source : getControllerActionMap().join()
-      },
-      success : function(data)
-      {
-        $('#modules_list_container_tab_modal').html(data).slideDown();
-        $('#modules_list_loader').hide();
-        modules_list_loaded = data;
-        $('.help-tooltip').tooltip();
-        controllerQuickView();
-      }
-    });
-  }
-  else
-  {
-    $('#modules_list_container_tab_modal').html(modules_list_loaded).slideDown();
-    $('#modules_list_loader').hide();
-    $('#modules_list_container .modal-header').html(header);
-    controllerQuickView();
-  }
-  return false;
-}
-
-function controllerQuickView()
-{
-  $('.controller-quick-view').click(function()
-  {
-    $.ajax({
-      type: "POST",
-      url : admin_modules_link,
-      dataType: 'json',
-      async: true,
-      data : {
-        ajax : "1",
-        controller : "AdminModules",
-        action : "GetModuleReadMoreView",
-        module: $(this).data("name"),
-      },
-      success : function(data)
-      {
-        $('#modules_list_container_tab_modal').html(data.body);
-        $('#modules_list_container .modal-header').html(data.header);
-      }
-    });
-  });
-}
-
-function bindAddonsButtons()
-{
-  // Method to log on PrestaShop Addons WebServices
-  $('#addons_login_button').click(function()
-  {
-    var username_addons = $("#username_addons").val();
-    var password_addons = $("#password_addons").val();
-    try
-    {
-      resAjax = $.ajax({
-        type:"POST",
-        url : admin_modules_link,
-        async: true,
-        data : {
-          ajax : "1",
-          controller : "AdminModules",
-          action : "logOnAddonsWebservices",
-          username_addons : username_addons,
-          password_addons : password_addons
-        },
-        beforeSend: function(xhr){
-          $('#addons_loading').html('<img src="../img/loader.gif" alt="" border="0" />');
-        },
-        success : function(data){
-          if (data == 'OK')
-          {
-            $('#addons_loading').html('');
-            $('#addons_login_div').fadeOut();
-            window.location.href = currentIndex + '&token=' + token + '&conf=32';
-          }
-          else
-            $('#addons_loading').html('<br><div class="alert alert-danger">'+errorLogin+'</div>');
-        }
-      });
-    }
-    catch(e){}
-    return false;
-  });
-
-  // Method to log out PrestaShop Addons WebServices
-  $('#addons_logout_button').click(function()
-  {
-    try
-    {
-      resAjax = $.ajax({
-        type:"POST",
-        url : admin_modules_link,
-        async: true,
-        data : {
-          ajax : "1",
-          controller : "AdminModules",
-          action : "logOutAddonsWebservices"
-        },
-        beforeSend: function(xhr){
-          $('#addons_loading').html('<img src="../img/loader.gif" alt="" border="0" />');
-        },
-        success: function(data) {
-          if (data == 'OK')
-          {
-            $('#addons_loading').html('');
-            $('#addons_login_div').fadeOut();
-            window.location.reload();
-          }
-          else
-            $('#addons_loading').html(errorLogin);
-        }
-      });
-    }
-    catch(e){}
-    return false;
-  });
-
-}
-
 function ajaxStates(id_state_selected)
 {
   $.ajax({
-    url: "index.php",
+    url: `${$('#contains_states').data('statesUrl')}&id_country=${$('#id_country').val()}`,
     cache: false,
-    data: "token="+state_token+"&ajax=1&action=states&tab=AdminStates&no_empty=0&id_country="+$('#id_country').val() + "&id_state=" + $('#id_state').val(),
-    success: function(html)
+    success: function(response)
     {
-      if (html == 'false')
-      {
-        $("#contains_states").fadeOut();
+      var $stateIdSelect = $("#id_state");
+      var $stateSelectorRow = $("#contains_states");
+
+      if (!response.states || response.states.length === 0) {
+        $stateSelectorRow.fadeOut();
+        // append initial empty value which is selected (and hidden) when there are no states
+        $stateIdSelect.append(`<option value="0">-</option>`);
         $('#id_state option[value=0]').attr("selected", "selected");
-      }
-      else
-      {
-        $("#id_state").html(html);
-        $("#contains_states").fadeIn();
+      } else {
+        $stateIdSelect.empty();
+        for (const [name, id] of Object.entries(response.states)) {
+          $stateIdSelect.append(`<option value="${id}">${name}</option>`)
+        }
+        $stateSelectorRow.fadeIn();
         $('#id_state option[value=' + id_state_selected + ']').attr("selected", "selected");
       }
     }
   });
-
-  if (module_dir && vat_number)
-  {
-    $.ajax({
-      type: "GET",
-      url: window.location.origin + module_dir + "vatnumber/ajax.php?id_country=" + $('#id_country').val(),
-      success: function(isApplicable)
-      {
-        if(isApplicable == 1)
-          $('#vat_area').show();
-        else
-          $('#vat_area').hide();
-      }
-    });
-  }
 }
 
 function dniRequired() {
+  var countryId = $('#id_country').val();
+  if (!countryId) {
+    return;
+  }
+
   $.ajax({
     url: 'index.php',
     dataType: 'json',
     cache: false,
-    data: 'token=' + address_token + '&ajax=1&dni_required=1&tab=AdminAddresses&id_country=' + $('#id_country').val(),
+    data: 'token=' + address_token + '&ajax=1&dni_required=1&controller=AdminAddresses&id_country=' + countryId,
     success: function(resp) {
       if (resp && resp.dni_required) {
         $("#dni_required").fadeIn();
@@ -1509,7 +1183,7 @@ function verifyMail(testMsg, testSubject)
         "testSubject" : textSubject,
         "token"     : token_mail,
         "ajax"      : 1,
-        "tab"       : 'AdminEmails',
+        "controller"       : 'AdminEmails',
         "action"      : 'sendMailTest'
       },
        success: function(ret)
@@ -1572,17 +1246,23 @@ function isCleanHtml(content)
   var events = 'onmousedown|onmousemove|onmmouseup|onmouseover|onmouseout|onload|onunload|onfocus|onblur|onchange';
   events += '|onsubmit|ondblclick|onclick|onkeydown|onkeyup|onkeypress|onmouseenter|onmouseleave|onerror|onselect|onreset|onabort|ondragdrop|onresize|onactivate|onafterprint|onmoveend';
   events += '|onafterupdate|onbeforeactivate|onbeforecopy|onbeforecut|onbeforedeactivate|onbeforeeditfocus|onbeforepaste|onbeforeprint|onbeforeunload|onbeforeupdate|onmove';
-  events += '|onbounce|oncellchange|oncontextmenu|oncontrolselect|oncopy|oncut|ondataavailable|ondatasetchanged|ondatasetcomplete|ondeactivate|ondrag|ondragend|ondragenter|onmousewheel';
+  events += '|onbounce|oncellchange|oncontextmenu|oncontrolselect|oncopy|oncut|ondataavailable|ondatasetchanged|ondatasetcomplete|ondeactivate|ondrag|ondragend|ondragenter|ondragexit|onmousewheel';
   events += '|ondragleave|ondragover|ondragstart|ondrop|onerrorupdate|onfilterchange|onfinish|onfocusin|onfocusout|onhashchange|onhelp|oninput|onlosecapture|onmessage|onmouseup|onmovestart';
   events += '|onoffline|ononline|onpaste|onpropertychange|onreadystatechange|onresizeend|onresizestart|onrowenter|onrowexit|onrowsdelete|onrowsinserted|onscroll|onsearch|onselectionchange';
-  events += '|onselectstart|onstart|onstop';
+  events += '|onselectstart|onstart|onstop|onanimationcancel|onanimationend|onanimationiteration|onanimationstart';
+  events += '|onpointerover|onpointerenter|onpointerdown|onpointermove|onpointerup|onpointerout|onpointerleave|onpointercancel|ongotpointercapture|onlostpointercapture';
+  events += '|onpagehide|onpageshow|onautocomplete|onautocompleteerror|oncanplay|oncanplaythrough|onclose|oncuechange|ondurationchange|onemptied|onended|oninvalid|onloadeddata';
+  events += '|onloadedmetadata|onloadstart|onpause|onplay|onplaying|onpopstate|onprogress|onratechange|onreset|onseeked|onseeking|onshow|onsort|onstalled|onstorage|onsuspend|ontimeupdate';
+  events += '|ontoggle|onvolumechange|onwaiting';
 
   var script1 = /<[\s]*script/im;
   var script2 = new RegExp('('+events+')[\s]*=', 'im');
   var script3 = /.*script\:/im;
   var script4 = /<[\s]*(i?frame|embed|object)/im;
+  var script5 = /<\s*\w+[^>]*\s(on\w+)=["'][^"']*["']/ims;
+  var rloCharacter = "\xE2\x80\xAE";
 
-  if (script1.test(content) || script2.test(content) || script3.test(content) || script4.test(content))
+  if (script1.test(content) || script2.test(content) || script3.test(content) || script4.test(content) || script5.test(content) || content.indexOf(rloCharacter) !== -1)
     return false;
 
   return true;
@@ -1662,7 +1342,7 @@ function countDown($source, $target) {
   var max = $source.attr("data-maxchar");
   $target.html(max-$source.val().length);
 
-  $source.keyup(function(){
+  $source.on('keyup', function(){
     $target.html(max-$source.val().length);
   });
 }

@@ -1,30 +1,11 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
-use PrestaShopBundle\Translation\Translator;
+use PrestaShop\PrestaShop\Core\Domain\Combination\CombinationSettings;
+use PrestaShop\PrestaShop\Core\Domain\Product\Stock\ValueObject\OutOfStockType;
 
 /**
  * Class CombinationCore.
@@ -36,16 +17,12 @@ class CombinationCore extends ObjectModel
 
     public $reference;
 
-    /** @var string */
-    public $supplier_reference;
-
     /**
-     * @deprecated since 1.7.8
-     * @see StockAvailable::$location instead
+     * @deprecated since 8.1.0
      *
      * @var string
      */
-    public $location = '';
+    public $supplier_reference;
 
     public $ean13;
 
@@ -71,19 +48,18 @@ class CombinationCore extends ObjectModel
     /** @var bool Low stock mail alert activated */
     public $low_stock_alert = false;
 
-    /**
-     * @deprecated since 1.7.8
-     * @see StockAvailable::$quantity instead
-     *
-     * @var int
-     */
-    public $quantity;
-
     public $weight;
 
+    /** @var bool|null */
     public $default_on;
 
     public $available_date = '0000-00-00';
+
+    /** @var string|array Text when in stock or array of text by id_lang */
+    public $available_now;
+
+    /** @var string|array Text when not in stock but available to order or array of text by id_lang */
+    public $available_later;
 
     /**
      * @see ObjectModel::$definition
@@ -91,14 +67,13 @@ class CombinationCore extends ObjectModel
     public static $definition = [
         'table' => 'product_attribute',
         'primary' => 'id_product_attribute',
+        'multilang' => true,
         'fields' => [
             'id_product' => ['type' => self::TYPE_INT, 'shop' => 'both', 'validate' => 'isUnsignedId', 'required' => true],
-            'location' => ['type' => self::TYPE_STRING, 'validate' => 'isString', 'size' => 255],
             'ean13' => ['type' => self::TYPE_STRING, 'validate' => 'isEan13', 'size' => 13],
             'isbn' => ['type' => self::TYPE_STRING, 'validate' => 'isIsbn', 'size' => 32],
             'upc' => ['type' => self::TYPE_STRING, 'validate' => 'isUpc', 'size' => 12],
             'mpn' => ['type' => self::TYPE_STRING, 'validate' => 'isMpn', 'size' => 40],
-            'quantity' => ['type' => self::TYPE_INT, 'validate' => 'isInt', 'size' => 10],
             'reference' => ['type' => self::TYPE_STRING, 'size' => 64],
             'supplier_reference' => ['type' => self::TYPE_STRING, 'size' => 64],
 
@@ -108,11 +83,15 @@ class CombinationCore extends ObjectModel
             'ecotax' => ['type' => self::TYPE_FLOAT, 'shop' => true, 'validate' => 'isPrice', 'size' => 20],
             'weight' => ['type' => self::TYPE_FLOAT, 'shop' => true, 'validate' => 'isFloat'],
             'unit_price_impact' => ['type' => self::TYPE_FLOAT, 'shop' => true, 'validate' => 'isNegativePrice', 'size' => 20],
-            'minimal_quantity' => ['type' => self::TYPE_INT, 'shop' => true, 'validate' => 'isUnsignedId', 'required' => true],
+            'minimal_quantity' => ['type' => self::TYPE_INT, 'shop' => true, 'validate' => 'isPositiveInt', 'required' => true],
             'low_stock_threshold' => ['type' => self::TYPE_INT, 'shop' => true, 'allow_null' => true, 'validate' => 'isInt'],
             'low_stock_alert' => ['type' => self::TYPE_BOOL, 'shop' => true, 'validate' => 'isBool'],
             'default_on' => ['type' => self::TYPE_BOOL, 'allow_null' => true, 'shop' => true, 'validate' => 'isBool'],
             'available_date' => ['type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDateFormat'],
+
+            /* Lang fields */
+            'available_now' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => CombinationSettings::MAX_AVAILABLE_NOW_LABEL_LENGTH],
+            'available_later' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'IsGenericName', 'size' => CombinationSettings::MAX_AVAILABLE_LATER_LABEL_LENGTH],
         ],
     ];
 
@@ -129,31 +108,6 @@ class CombinationCore extends ObjectModel
     ];
 
     /**
-     * @param int|null $id
-     * @param int|null $id_lang
-     * @param int|null $id_shop
-     * @param Translator|null $translator
-     */
-    public function __construct(?int $id = null, ?int $id_lang = null, ?int $id_shop = null, ?Translator $translator = null)
-    {
-        parent::__construct($id, $id_lang, $id_shop, $translator);
-        $this->loadStockData();
-    }
-
-    /**
-     * Fill the variables used for stock management.
-     */
-    public function loadStockData(): void
-    {
-        if (false === Validate::isLoadedObject($this)) {
-            return;
-        }
-
-        $this->quantity = StockAvailable::getQuantityAvailableByProduct($this->id_product, $this->id);
-        $this->location = StockAvailable::getLocation($this->id_product, $this->id);
-    }
-
-    /**
      * Deletes current Combination from the database.
      *
      * @return bool True if delete was successful
@@ -166,8 +120,16 @@ class CombinationCore extends ObjectModel
             return false;
         }
 
-        // Removes the product from StockAvailable, for the current shop
-        StockAvailable::removeProductFromStockAvailable((int) $this->id_product, (int) $this->id);
+        $shopIdsList = $this->getShopIdsList();
+
+        // Removes the product from StockAvailable for the related shops
+        if (!empty($shopIdsList)) {
+            foreach ($shopIdsList as $shopId) {
+                StockAvailable::removeProductFromStockAvailable((int) $this->id_product, (int) $this->id, $shopId);
+            }
+        } else {
+            StockAvailable::removeProductFromStockAvailable((int) $this->id_product, (int) $this->id);
+        }
 
         if ($specificPrices = SpecificPrice::getByProductId((int) $this->id_product, (int) $this->id)) {
             foreach ($specificPrices as $specificPrice) {
@@ -185,8 +147,8 @@ class CombinationCore extends ObjectModel
         }
 
         $this->deleteFromSupplier($this->id_product);
+        $this->deleteFromPack();
         Product::updateDefaultAttribute($this->id_product);
-        Tools::clearColorListCache((int) $this->id_product);
 
         return true;
     }
@@ -200,8 +162,27 @@ class CombinationCore extends ObjectModel
      */
     public function deleteFromSupplier($idProduct)
     {
+        if ($this->hasMultishopEntries()) {
+            return true;
+        }
+
         return Db::getInstance()->delete('product_supplier', 'id_product = ' . (int) $idProduct
             . ' AND id_product_attribute = ' . (int) $this->id);
+    }
+
+    /**
+     * Delete association with Pack.
+     *
+     * @return bool
+     */
+    protected function deleteFromPack(): bool
+    {
+        if ($this->hasMultishopEntries()) {
+            return true;
+        }
+
+        return Db::getInstance()->delete('pack', 'id_product_item = ' . (int) $this->id_product
+            . ' AND id_product_attribute_item = ' . (int) $this->id);
     }
 
     /**
@@ -218,7 +199,7 @@ class CombinationCore extends ObjectModel
     public function add($autoDate = true, $nullValues = false)
     {
         if ($this->default_on) {
-            $this->default_on = 1;
+            $this->default_on = true;
         } else {
             $this->default_on = null;
         }
@@ -228,10 +209,21 @@ class CombinationCore extends ObjectModel
         }
 
         $product = new Product((int) $this->id_product);
+        $shopIdsList = $this->getShopIdsList();
+
         if ($product->getType() == Product::PTYPE_VIRTUAL) {
-            StockAvailable::setProductOutOfStock((int) $this->id_product, 1, null, (int) $this->id);
+            $outOfStock = OutOfStockType::OUT_OF_STOCK_AVAILABLE;
         } else {
-            StockAvailable::setProductOutOfStock((int) $this->id_product, StockAvailable::outOfStock((int) $this->id_product), null, $this->id);
+            $outOfStock = StockAvailable::outOfStock((int) $this->id_product);
+        }
+
+        if (!empty($shopIdsList)) {
+            foreach ($shopIdsList as $shopId) {
+                StockAvailable::setProductOutOfStock((int) $this->id_product, $outOfStock, $shopId, (int) $this->id);
+            }
+        } else {
+            // This creates stock_available for combination as a side effect
+            StockAvailable::setProductOutOfStock((int) $this->id_product, $outOfStock, $this->id_shop, $this->id);
         }
 
         SpecificPriceRule::applyAllRules([(int) $this->id_product]);
@@ -254,7 +246,7 @@ class CombinationCore extends ObjectModel
     public function update($nullValues = false)
     {
         if ($this->default_on) {
-            $this->default_on = 1;
+            $this->default_on = true;
         } else {
             $this->default_on = null;
         }
@@ -275,8 +267,14 @@ class CombinationCore extends ObjectModel
         if ((int) $this->id === 0) {
             return false;
         }
-        $result = Db::getInstance()->delete('product_attribute_combination', '`id_product_attribute` = ' . (int) $this->id);
-        $result &= Db::getInstance()->delete('product_attribute_image', '`id_product_attribute` = ' . (int) $this->id);
+        $result = Db::getInstance()->delete(
+            'product_attribute_combination',
+            '`id_product_attribute` = ' . (int) $this->id
+        );
+        $result = $result && Db::getInstance()->delete(
+            'product_attribute_image',
+            '`id_product_attribute` = ' . (int) $this->id
+        );
 
         if ($result) {
             Hook::exec('actionAttributeCombinationDelete', ['id_product_attribute' => (int) $this->id]);
@@ -294,6 +292,12 @@ class CombinationCore extends ObjectModel
     {
         if ((int) $this->id === 0) {
             return false;
+        }
+
+        if ($this->hasMultishopEntries()) {
+            $shopIdList = $this->getShopIdsList();
+
+            return Db::getInstance()->delete('cart_product', 'id_product_attribute = ' . (int) $this->id . ' AND id_shop IN (' . implode(',', $shopIdList) . ')');
         }
 
         return Db::getInstance()->delete('cart_product', 'id_product_attribute = ' . (int) $this->id);
@@ -369,7 +373,7 @@ class CombinationCore extends ObjectModel
     }
 
     /**
-     * @param $idsImage
+     * @param array<int> $idsImage
      *
      * @return bool
      */
@@ -388,20 +392,17 @@ class CombinationCore extends ObjectModel
                 $sqlValues[] = '(' . (int) $this->id . ', ' . (int) $value . ')';
             }
 
-            if (is_array($sqlValues) && count($sqlValues)) {
-                Db::getInstance()->execute(
-                    '
-					INSERT INTO `' . _DB_PREFIX_ . 'product_attribute_image` (`id_product_attribute`, `id_image`)
+            Db::getInstance()->execute(
+                'INSERT INTO `' . _DB_PREFIX_ . 'product_attribute_image` (`id_product_attribute`, `id_image`)
 					VALUES ' . implode(',', $sqlValues)
-                );
-            }
+            );
         }
 
         return true;
     }
 
     /**
-     * @param $values
+     * @param array<array{id: int}> $values
      *
      * @return bool
      */
@@ -416,7 +417,7 @@ class CombinationCore extends ObjectModel
     }
 
     /**
-     * @param $idLang
+     * @param int $idLang
      *
      * @return array|false|mysqli_result|PDOStatement|resource|null
      */
@@ -431,8 +432,6 @@ class CombinationCore extends ObjectModel
 
     /**
      * This method is allow to know if a feature is active.
-     *
-     * @since 1.5.0.1
      *
      * @return bool
      */
@@ -450,10 +449,8 @@ class CombinationCore extends ObjectModel
     /**
      * This method is allow to know if a Combination entity is currently used.
      *
-     * @since 1.5.0.1
-     *
-     * @param $table
-     * @param $hasActiveColumn
+     * @param string|null $table Name of table linked to entity
+     * @param bool $hasActiveColumn True if the table has an active column
      *
      * @return bool
      */
@@ -462,27 +459,32 @@ class CombinationCore extends ObjectModel
         return parent::isCurrentlyUsed('product_attribute');
     }
 
+    public static function getIdByEan13($ean13)
+    {
+        return self::getIdByGtin($ean13);
+    }
+
     /**
-     * For a given ean13 reference, returns the corresponding id.
+     * For a given gtin reference, returns the corresponding id.
      *
-     * @param string $ean13
+     * @param string $gtin
      *
      * @return int|string Product attribute identifier
      */
-    public static function getIdByEan13($ean13)
+    public static function getIdByGtin($gtin)
     {
-        if (empty($ean13)) {
+        if (empty($gtin)) {
             return 0;
         }
 
-        if (!Validate::isEan13($ean13)) {
+        if (!Validate::isGtin($gtin)) {
             return 0;
         }
 
         $query = new DbQuery();
         $query->select('pa.id_product_attribute');
         $query->from('product_attribute', 'pa');
-        $query->where('pa.ean13 = \'' . pSQL($ean13) . '\'');
+        $query->where('pa.ean13 = \'' . pSQL($gtin) . '\'');
 
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
     }
@@ -493,7 +495,7 @@ class CombinationCore extends ObjectModel
      * @param int $idProduct
      * @param string $reference
      *
-     * @return int id
+     * @return int ID
      */
     public static function getIdByReference($idProduct, $reference)
     {
@@ -504,10 +506,10 @@ class CombinationCore extends ObjectModel
         $query = new DbQuery();
         $query->select('pa.id_product_attribute');
         $query->from('product_attribute', 'pa');
-        $query->where('pa.reference LIKE \'%' . pSQL($reference) . '%\'');
+        $query->where('pa.reference = \'' . pSQL($reference) . '\'');
         $query->where('pa.id_product = ' . (int) $idProduct);
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -529,15 +531,12 @@ class CombinationCore extends ObjectModel
      *
      * @param int $idProductAttribute
      *
-     * @return float mixed
-     *
-     * @since 1.5.0
+     * @return string
      */
     public static function getPrice($idProductAttribute)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
-            '
-			SELECT product_attribute_shop.`price`
+        return (string) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            'SELECT product_attribute_shop.`price`
 			FROM `' . _DB_PREFIX_ . 'product_attribute` pa
 			' . Shop::addSqlAssociation('product_attribute', 'pa') . '
 			WHERE pa.`id_product_attribute` = ' . (int) $idProductAttribute

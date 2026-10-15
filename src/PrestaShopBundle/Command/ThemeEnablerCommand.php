@@ -1,40 +1,19 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Command;
 
-use Context;
-use Employee;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use PrestaShop\PrestaShop\Core\Addon\Theme\ThemeManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-final class ThemeEnablerCommand extends ContainerAwareCommand
+final class ThemeEnablerCommand extends Command
 {
     /**
      * @var bool using CLI, the user must be allowed to enable themes
@@ -47,11 +26,14 @@ final class ThemeEnablerCommand extends ContainerAwareCommand
     public const RETURN_CODE_FAILED = 1;
 
     /**
-     * {@inheritdoc}
+     * @var ThemeManager
      */
-    protected function init(InputInterface $input, OutputInterface $output)
+    private $themeManager;
+
+    public function __construct(ThemeManager $themeManager)
     {
-        Context::getContext()->employee = new Employee();
+        parent::__construct();
+        $this->themeManager = $themeManager;
     }
 
     /**
@@ -62,21 +44,19 @@ final class ThemeEnablerCommand extends ContainerAwareCommand
         $this
             ->setName('prestashop:theme:enable')
             ->setDescription('Manage your themes via command line')
-            ->addArgument('theme', InputArgument::REQUIRED, 'Module on which the action will be executed')
+            ->addArgument('theme', InputArgument::REQUIRED, 'Theme on which the action will be executed')
         ;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $theme = $input->getArgument('theme');
-        $this->init($input, $output);
 
-        $activationSuccess = $this->getContainer()
-            ->get('prestashop.core.addon.theme.theme_manager')
+        $activationSuccess = $this->themeManager
             ->enable(
                 $theme,
                 self::USER_ALLOWED_TO_ENABLE

@@ -17,11 +17,16 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+declare(strict_types=1);
 
 namespace PrestaShop\Module\Mbo\Helpers;
 
 use Configuration;
 use Shop;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class Config
 {
@@ -52,21 +57,24 @@ class Config
      * @var string|null
      */
     private static $SHOP_MBO_UUID;
+
+    /**
+     * @var string|null
+     */
+    private static $SHOP_URL_WITHOUT_PHYSICAL_URI;
+
     /**
      * @var string|null
      */
     private static $SHOP_URL;
 
-    public static function resetConfigValues()
+    public static function resetConfigValues(): void
     {
         self::$SHOP_MBO_UUID = null;
         self::$SHOP_URL = null;
     }
 
-    /**
-     * @return false|string|null
-     */
-    public static function getShopMboUuid()
+    public static function getShopMboUuid(): ?string
     {
         if (null === self::$SHOP_MBO_UUID) {
             // PS_MBO_SHOP_ADMIN_UUID have the same value for all shops
@@ -74,7 +82,7 @@ class Config
             // we request the shops list and get the config value for the 1st one
             $singleShop = self::getDefaultShop();
 
-            self::$SHOP_MBO_UUID = Configuration::get(
+            self::$SHOP_MBO_UUID = \Configuration::get(
                 'PS_MBO_SHOP_ADMIN_UUID',
                 null,
                 $singleShop->id_shop_group,
@@ -92,8 +100,12 @@ class Config
      *
      * @return string|null
      */
-    public static function getShopUrl()
+    public static function getShopUrl(bool $withPhysicalUri = true): ?string
     {
+        if (!$withPhysicalUri && null !== self::$SHOP_URL_WITHOUT_PHYSICAL_URI) {
+            return self::$SHOP_URL_WITHOUT_PHYSICAL_URI;
+        }
+
         if (null === self::$SHOP_URL) {
             $singleShop = self::getDefaultShop();
             $domains = \Tools::getDomains();
@@ -109,10 +121,10 @@ class Config
             );
 
             $useSecureProtocol = self::isUsingSecureProtocol();
-            if (empty($shopDomain)) {
+            if (empty($shopDomain)) { // If somehow we failed getting the shop_url from ps_shop_url, do it the old way, with configuration values
                 $domainConfigKey = $useSecureProtocol ? 'PS_SHOP_DOMAIN_SSL' : 'PS_SHOP_DOMAIN';
 
-                $domain = Configuration::get(
+                $domain = \Configuration::get(
                     $domainConfigKey,
                     null,
                     $singleShop->id_shop_group,
@@ -121,11 +133,13 @@ class Config
 
                 if ($domain) {
                     $domain = preg_replace('#(https?://)#', '', $domain);
-                    self::$SHOP_URL = ($useSecureProtocol ? 'https://' : 'http://') . $domain;
+                    self::$SHOP_URL = self::$SHOP_URL_WITHOUT_PHYSICAL_URI = ($useSecureProtocol ? 'https://' : 'http://') . $domain;
                 }
             } else {
                 $domain = array_keys($shopDomain)[0];
                 $domain = preg_replace('#(https?://)#', '', $domain);
+
+                self::$SHOP_URL_WITHOUT_PHYSICAL_URI = ($useSecureProtocol ? 'https://' : 'http://') . $domain;
 
                 // concatenate the physical_uri
                 $domainDef = reset($shopDomain[$domain]);
@@ -137,17 +151,17 @@ class Config
             }
         }
 
-        return self::$SHOP_URL;
+        return $withPhysicalUri ? self::$SHOP_URL : self::$SHOP_URL_WITHOUT_PHYSICAL_URI;
     }
 
     /**
      * @return bool
      */
-    public static function isUsingSecureProtocol()
+    public static function isUsingSecureProtocol(): bool
     {
         $singleShop = self::getDefaultShop();
 
-        return (bool) Configuration::get(
+        return (bool) \Configuration::get(
             'PS_SSL_ENABLED',
             null,
             $singleShop->id_shop_group,
@@ -155,8 +169,16 @@ class Config
         );
     }
 
+    public static function getDefaultShop(): \Shop
+    {
+        return new \Shop((int) \Configuration::get('PS_SHOP_DEFAULT'));
+    }
+
     /**
-     * @return array
+     * @return array{
+     *     "id": int|null,
+     *     "name": string|null
+     * }
      */
     public static function getShopActivity(): array
     {
@@ -166,7 +188,7 @@ class Config
             'name' => null,
         ];
 
-        $activityId = (int) Configuration::get(
+        $activityId = (int) \Configuration::get(
             'PS_SHOP_ACTIVITY',
             null,
             $singleShop->id_shop_group,
@@ -182,13 +204,5 @@ class Config
         $activity['name'] = self::AVAILABLE_SHOP_ACTIVITIES[$activityId] ?? 'Unknown';
 
         return $activity;
-    }
-
-    /**
-     * @return Shop
-     */
-    private static function getDefaultShop()
-    {
-        return new Shop((int) Configuration::get('PS_SHOP_DEFAULT'));
     }
 }

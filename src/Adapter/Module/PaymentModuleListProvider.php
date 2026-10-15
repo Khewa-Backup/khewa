@@ -1,37 +1,14 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Adapter\Module;
 
-use PrestaShop\PrestaShop\Core\Addon\AddonListFilter;
-use PrestaShop\PrestaShop\Core\Addon\AddonListFilterStatus;
-use PrestaShop\PrestaShop\Core\Addon\AddonListFilterType;
-use PrestaShop\PrestaShop\Core\Addon\AddonRepositoryInterface;
 use PrestaShop\PrestaShop\Core\Module\DataProvider\PaymentModuleListProviderInterface;
-use PrestaShopBundle\Entity\Repository\ModuleRepository;
+use PrestaShop\PrestaShop\Core\Module\ModuleRepositoryInterface;
+use PrestaShopBundle\Entity\Repository\ModuleRepository as ModuleEntityRepository;
 
 /**
  * Class PaymentModuleListProvider is responsible for providing payment module list.
@@ -39,14 +16,14 @@ use PrestaShopBundle\Entity\Repository\ModuleRepository;
 final class PaymentModuleListProvider implements PaymentModuleListProviderInterface
 {
     /**
-     * @var AddonRepositoryInterface
-     */
-    private $addonRepository;
-
-    /**
-     * @var ModuleRepository
+     * @var ModuleRepositoryInterface
      */
     private $moduleRepository;
+
+    /**
+     * @var ModuleEntityRepository
+     */
+    private $moduleEntityRepository;
 
     /**
      * @var int
@@ -54,17 +31,17 @@ final class PaymentModuleListProvider implements PaymentModuleListProviderInterf
     private $shopId;
 
     /**
-     * @param AddonRepositoryInterface $addonRepository
-     * @param ModuleRepository $moduleRepository
+     * @param ModuleRepositoryInterface $moduleRepository
+     * @param ModuleEntityRepository $moduleEntityRepository
      * @param int $shopId
      */
     public function __construct(
-        AddonRepositoryInterface $addonRepository,
-        ModuleRepository $moduleRepository,
-        $shopId
+        ModuleRepositoryInterface $moduleRepository,
+        ModuleEntityRepository $moduleEntityRepository,
+        int $shopId
     ) {
-        $this->addonRepository = $addonRepository;
         $this->moduleRepository = $moduleRepository;
+        $this->moduleEntityRepository = $moduleEntityRepository;
         $this->shopId = $shopId;
     }
 
@@ -73,29 +50,25 @@ final class PaymentModuleListProvider implements PaymentModuleListProviderInterf
      */
     public function getPaymentModuleList()
     {
-        $filters = (new AddonListFilter())
-            ->setType(AddonListFilterType::MODULE)
-            ->setStatus(AddonListFilterStatus::INSTALLED);
-
-        $modules = $this->addonRepository->getFilteredList($filters);
+        $modules = $this->moduleRepository->getInstalledModules();
         $paymentModules = [];
 
         /** @var Module $module */
         foreach ($modules as $module) {
             if ($module->attributes->get('is_paymentModule')) {
-                $restrictedCountries = $this->moduleRepository->findRestrictedCountryIds(
+                $restrictedCountries = $this->moduleEntityRepository->findRestrictedCountryIds(
                     $module->database->get('id'),
                     $this->shopId
                 );
-                $restrictedCurrencies = $this->moduleRepository->findRestrictedCurrencyIds(
+                $restrictedCurrencies = $this->moduleEntityRepository->findRestrictedCurrencyIds(
                     $module->database->get('id'),
                     $this->shopId
                 );
-                $restrictedGroups = $this->moduleRepository->findRestrictedGroupIds(
+                $restrictedGroups = $this->moduleEntityRepository->findRestrictedGroupIds(
                     $module->database->get('id'),
                     $this->shopId
                 );
-                $restrictedCarriers = $this->moduleRepository->findRestrictedCarrierReferenceIds(
+                $restrictedCarriers = $this->moduleEntityRepository->findRestrictedCarrierReferenceIds(
                     $module->database->get('id'),
                     $this->shopId
                 );

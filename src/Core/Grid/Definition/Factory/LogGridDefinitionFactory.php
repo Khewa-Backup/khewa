@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Grid\Definition\Factory;
@@ -31,12 +11,13 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Type\SimpleGridAction;
 use PrestaShop\PrestaShop\Core\Grid\Action\Type\SubmitGridAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\DateTimeColumn;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Employee\EmployeeNameWithAvatarColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Status\SeverityLevelColumn;
 use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
 use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
+use PrestaShop\PrestaShop\Core\Hook\HookDispatcherInterface;
 use PrestaShopBundle\Form\Admin\Type\DateRangeType;
 use PrestaShopBundle\Form\Admin\Type\LogSeverityChoiceType;
 use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
@@ -48,6 +29,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 final class LogGridDefinitionFactory extends AbstractGridDefinitionFactory
 {
     public const GRID_ID = 'logs';
+
+    /**
+     * @var string Date format for the current user
+     */
+    private $contextDateFormat;
+
+    public function __construct(
+        HookDispatcherInterface $hookDispatcher,
+        string $contextDateFormat
+    ) {
+        parent::__construct($hookDispatcher);
+        $this->contextDateFormat = $contextDateFormat;
+    }
 
     /**
      * {@inheritdoc}
@@ -87,7 +81,7 @@ final class LogGridDefinitionFactory extends AbstractGridDefinitionFactory
             )
             ->add(
                 (new SeverityLevelColumn('severity'))
-                    ->setName($this->trans('Severity (1-4)', [], 'Admin.Advparameters.Feature'))
+                    ->setName($this->trans('Severity (0-4)', [], 'Admin.Advparameters.Feature'))
                     ->setOptions([
                         'with_message' => true,
                         'field' => 'severity',
@@ -139,7 +133,7 @@ final class LogGridDefinitionFactory extends AbstractGridDefinitionFactory
                 (new DateTimeColumn('date_add'))
                     ->setName($this->trans('Date', [], 'Admin.Global'))
                     ->setOptions([
-                        'format' => 'Y-m-d H:i',
+                        'format' => $this->contextDateFormat,
                         'field' => 'date_add',
                     ])
             )

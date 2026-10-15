@@ -1,38 +1,25 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use PrestaShopBundle\Translation\TranslatorComponent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @TODO Move undeclared variables and methods to this (base) class: $errors, $layout, checkLiveEditAccess, etc.
- *
- * @since 1.5.0
  */
 abstract class ControllerCore
 {
-    const SERVICE_LOCALE_REPOSITORY = 'prestashop.core.localization.locale.repository';
+    public const SERVICE_LOCALE_REPOSITORY = 'prestashop.core.localization.locale.repository';
+    public const SERVICE_MULTISTORE_FEATURE = 'prestashop.adapter.multistore_feature';
+
+    /**
+     * @var string|null
+     */
+    public $className;
 
     /**
      * @var Context
@@ -140,16 +127,21 @@ abstract class ControllerCore
     public $php_self;
 
     /**
-     * @var PrestaShopBundle\Translation\Translator
+     * @var TranslatorComponent
      */
     protected $translator;
 
     /**
      * Dependency container.
      *
-     * @var ContainerBuilder
+     * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var Module|null
+     */
+    public $module;
 
     /**
      * Check if the controller is available for the current user/visitor.
@@ -160,6 +152,16 @@ abstract class ControllerCore
      * Check if the current user/visitor has valid view permissions.
      */
     abstract public function viewAccess();
+
+    /**
+     * Errors displayed after post processing
+     *
+     * @var array<string|int, string|bool>
+     */
+    public $errors = [];
+
+    /** @var string */
+    public $layout;
 
     /**
      * Initialize the page.
@@ -250,10 +252,10 @@ abstract class ControllerCore
         $this->ajax = $this->isAjax();
 
         if (
-            !headers_sent() &&
-            isset($_SERVER['HTTP_USER_AGENT']) &&
-            (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false ||
-            strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== false)
+            !headers_sent()
+            && isset($_SERVER['HTTP_USER_AGENT'])
+            && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false
+            || strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== false)
         ) {
             header('X-UA-Compatible: IE=edge,chrome=1');
         }
@@ -333,8 +335,6 @@ abstract class ControllerCore
 
     protected function trans($id, array $parameters = [], $domain = null, $locale = null)
     {
-        $parameters['legacy'] = 'htmlspecialchars';
-
         return $this->translator->trans($id, $parameters, $domain, $locale);
     }
 
@@ -359,7 +359,7 @@ abstract class ControllerCore
     }
 
     /**
-     * Sets page header display.
+     * Sets page footer display.
      *
      * @param bool $display
      */
@@ -411,6 +411,11 @@ abstract class ControllerCore
         $this->redirect_after = $url;
     }
 
+    public function getRedirectAfter(): ?string
+    {
+        return $this->redirect_after;
+    }
+
     /**
      * Adds a new stylesheet(s) to the page header.
      *
@@ -419,7 +424,7 @@ abstract class ControllerCore
      * @param int|null $offset
      * @param bool $check_path
      *
-     * @return true
+     * @return void
      */
     public function addCSS($css_uri, $css_media_type = 'all', $offset = null, $check_path = true)
     {
@@ -545,23 +550,6 @@ abstract class ControllerCore
     }
 
     /**
-     * Adds jQuery library file to queued JS file list.
-     *
-     * @param string|null $version jQuery library version
-     * @param string|null $folder jQuery file folder
-     * @param bool $minifier if set tot true, a minified version will be included
-     *
-     * @deprecated 1.7.7 jQuery is always included, this method should no longer be used
-     */
-    public function addJquery($version = null, $folder = null, $minifier = true)
-    {
-        @trigger_error(
-            'Controller->addJquery() is deprecated since version 1.7.7.0, jQuery is always included',
-            E_USER_DEPRECATED
-        );
-    }
-
-    /**
      * Adds jQuery UI component(s) to queued JS file list.
      *
      * @param string|array $component
@@ -576,7 +564,7 @@ abstract class ControllerCore
 
         foreach ($component as $ui) {
             $ui_path = Media::getJqueryUIPath($ui, $theme, $check_dependencies);
-            $this->addCSS($ui_path['css'], 'all', false);
+            $this->addCSS($ui_path['css'], 'all');
             $this->addJS($ui_path['js'], false);
         }
     }
@@ -585,7 +573,7 @@ abstract class ControllerCore
      * Adds jQuery plugin(s) to queued JS file list.
      *
      * @param string|array $name
-     * @param string null $folder
+     * @param string|null $folder
      * @param bool $css
      */
     public function addJqueryPlugin($name, $folder = null, $css = true)
@@ -608,8 +596,6 @@ abstract class ControllerCore
 
     /**
      * Checks if the controller has been called from XmlHttpRequest (AJAX).
-     *
-     * @since 1.5
      *
      * @return bool
      */
@@ -640,7 +626,7 @@ abstract class ControllerCore
         $this->context->cookie->write();
 
         $js_tag = 'js_def';
-        $this->context->smarty->assign($js_tag, $js_tag);
+        $this->context->smarty->assign($js_tag, Media::getJsDef());
 
         if (!is_array($templates)) {
             $templates = [$templates];
@@ -675,7 +661,7 @@ abstract class ControllerCore
     /**
      * Custom error handler.
      *
-     * @param string $errno
+     * @param int $errno
      * @param string $errstr
      * @param string $errfile
      * @param int $errline
@@ -684,7 +670,13 @@ abstract class ControllerCore
      */
     public static function myErrorHandler($errno, $errstr, $errfile, $errline)
     {
-        if (error_reporting() === 0) {
+        /**
+         * Prior to PHP 8.0.0, the $errno value was always 0 if the expression which caused the diagnostic was prepended by the @ error-control operator.
+         *
+         * @see https://www.php.net/manual/fr/function.set-error-handler.php
+         * @see https://www.php.net/manual/en/language.operators.errorcontrol.php
+         */
+        if (!(error_reporting() & $errno)) {
             return false;
         }
 
@@ -692,8 +684,6 @@ abstract class ControllerCore
             case E_USER_ERROR:
             case E_ERROR:
                 die('Fatal error: ' . $errstr . ' in ' . $errfile . ' on line ' . $errline);
-
-                break;
             case E_USER_WARNING:
             case E_WARNING:
                 $type = 'Warning';
@@ -723,22 +713,6 @@ abstract class ControllerCore
     }
 
     /**
-     * @deprecated deprecated since 1.7.5.0, use ajaxRender instead
-     * Dies and echoes output value
-     *
-     * @param string|null $value
-     * @param string|null $controller
-     * @param string|null $method
-     *
-     * @throws PrestaShopException
-     */
-    protected function ajaxDie($value = null, $controller = null, $method = null)
-    {
-        $this->ajaxRender($value, $controller, $method);
-        exit;
-    }
-
-    /**
      * @param string|null $value
      * @param string|null $controller
      * @param string|null $method
@@ -756,16 +730,9 @@ abstract class ControllerCore
             $method = $bt[1]['function'];
         }
 
-        /* @deprecated deprecated since 1.6.1.1 */
-        Hook::exec('actionAjaxDieBefore', ['controller' => $controller, 'method' => $method, 'value' => $value]);
-
-        /*
-         * @deprecated deprecated since 1.6.1.1
-         * use 'actionAjaxDie'.$controller.$method.'Before' instead
-         */
-        Hook::exec('actionBeforeAjaxDie' . $controller . $method, ['value' => $value]);
-        Hook::exec('actionAjaxDie' . $controller . $method . 'Before', ['value' => $value]);
+        Hook::exec('actionAjaxDie' . $controller . $method . 'Before', ['value' => &$value]);
         header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        header('X-Robots-Tag: noindex, nofollow', true);
 
         echo $value;
     }
@@ -773,9 +740,12 @@ abstract class ControllerCore
     /**
      * Construct the dependency container.
      *
-     * @return ContainerBuilder
+     * @return ContainerInterface
      */
-    abstract protected function buildContainer();
+    protected function buildContainer(): ContainerInterface
+    {
+        return SymfonyContainer::getInstance();
+    }
 
     /**
      * Gets a service from the service container.
@@ -808,10 +778,25 @@ abstract class ControllerCore
     /**
      * Gets the dependency container.
      *
-     * @return ContainerBuilder|null
+     * @return ContainerInterface|null
      */
     public function getContainer()
     {
         return $this->container;
+    }
+
+    /**
+     * Check if multistore feature is enabled.
+     *
+     * @return bool
+     */
+    public function isMultistoreEnabled(): bool
+    {
+        return $this->get(static::SERVICE_MULTISTORE_FEATURE)->isUsed();
+    }
+
+    public function getControllerName(): string
+    {
+        return get_class($this);
     }
 }

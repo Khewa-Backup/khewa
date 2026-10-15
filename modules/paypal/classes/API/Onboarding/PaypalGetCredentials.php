@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,36 +16,45 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Onboarding;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\RequestOptions;
+use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalAddons\classes\API\ExtensionSDK\GetCredentialsRequest;
+use PaypalAddons\classes\API\HttpAdoptedResponse;
+use PaypalAddons\classes\API\PaypalClient;
 use PaypalAddons\classes\API\Response\Error;
 use PaypalAddons\classes\API\Response\ResponseGetCredentials;
-use Symfony\Component\VarDumper\VarDumper;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaypalGetCredentials
 {
-    /** @var */
-    protected $httpClient;
+    /** @var PaypalClient */
+    protected $client;
 
-    /** @var string*/
+    /** @var string */
     protected $authToken;
 
-    /** @var string*/
+    /** @var string */
     protected $partnerId;
 
     public function __construct($authToken, $partnerId, $sandbox)
     {
-        $this->httpClient = new Client(['base_url' => $sandbox ? 'https://api.sandbox.paypal.com' : 'https://api.paypal.com']);
+        $method = AbstractMethodPaypal::load();
+        $method->setSandbox($sandbox);
+        $this->client = PaypalClient::get($method);
         $this->authToken = $authToken;
         $this->partnerId = $partnerId;
     }
@@ -52,29 +62,27 @@ class PaypalGetCredentials
     public function execute()
     {
         $returnResponse = new ResponseGetCredentials();
-        $uri = sprintf('/v1/customer/partners/%s/merchant-integrations/credentials', $this->partnerId);
+        $request = new GetCredentialsRequest($this->partnerId);
+        $request->setHeaders([
+            'Authorization' => 'Bearer ' . $this->authToken,
+        ]);
 
         try {
-            $response = $this->httpClient->get(
-                $uri,
-                [
-                    RequestOptions::HEADERS => [
-                        'Authorization' => 'Bearer ' . $this->authToken
-                    ],
-                ]
-            );
-
-            $responseDecode = json_decode($response->getBody()->getContents());
+            /** @var HttpAdoptedResponse $response */
+            $response = $this->client->execute($request);
+            $responseDecode = $response->getAdoptedResponse();
             $returnResponse->setSuccess(true)
-                ->setClientId($responseDecode->client_id)
-                ->setSecret($responseDecode->client_secret)
-                ->setData($returnResponse);
-        } catch (\Exception $e) {
+                ->setClientId($responseDecode->result->client_id)
+                ->setSecret($responseDecode->result->client_secret)
+                ->setMerchantId($responseDecode->result->payer_id)
+                ->setData($response);
+        } catch (\Throwable $e) {
             $error = new Error();
-            $error->setMessage($e->getMessage())->setErrorCode($e->getCode());
+            $error
+                ->setMessage($e->getMessage())
+                ->setErrorCode($e->getCode());
             $returnResponse->setError($error)->setSuccess(false);
         }
-
 
         return $returnResponse;
     }

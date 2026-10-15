@@ -1,39 +1,19 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Adapter\Module;
 
 use Db;
 use Doctrine\ORM\EntityManager;
+use Exception;
 use Module as LegacyModule;
 use PhpParser;
 use PrestaShop\PrestaShop\Adapter\Shop\Context;
-use PrestaShop\PrestaShop\Core\Addon\Module\AddonListFilterDeviceStatus;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Tools;
 use Validate;
 
@@ -52,7 +32,7 @@ class ModuleDataProvider
     /**
      * Translator.
      *
-     * @var \Symfony\Component\Translation\TranslatorInterface
+     * @var TranslatorInterface
      */
     private $translator;
 
@@ -68,7 +48,7 @@ class ModuleDataProvider
      */
     private $employeeID;
 
-    public function __construct(LoggerInterface $logger, TranslatorInterface $translator, EntityManager $entityManager = null)
+    public function __construct(LoggerInterface $logger, TranslatorInterface $translator, ?EntityManager $entityManager = null)
     {
         $this->logger = $logger;
         $this->translator = $translator;
@@ -93,15 +73,21 @@ class ModuleDataProvider
      */
     public function findByName($name)
     {
-        $result = Db::getInstance()->getRow('SELECT `id_module` as `id`, `active`, `version` FROM `' . _DB_PREFIX_ . 'module` WHERE `name` = "' . pSQL($name) . '"');
+        $result = Db::getInstance()->getRow(
+            sprintf(
+                'SELECT `id_module` as `id`, `active`, `version` FROM `%smodule` WHERE `name` = "%s"',
+                _DB_PREFIX_,
+                pSQL($name)
+            )
+        );
+        /** @var array{id: string, active: string, version: string}|false|null $result */
         if ($result) {
             $result['installed'] = 1;
             $result['active'] = $this->isEnabled($name);
-            $result['active_on_mobile'] = (bool) ($this->getDeviceStatus($name) & AddonListFilterDeviceStatus::DEVICE_MOBILE);
             $lastAccessDate = '0000-00-00 00:00:00';
 
             if (!Tools::isPHPCLI() && null !== $this->entityManager && $this->employeeID) {
-                $moduleID = isset($result['id']) ? (int) $result['id'] : 0;
+                $moduleID = (int) $result['id'];
 
                 $qb = $this->entityManager->createQueryBuilder();
                 $qb->select('mh')
@@ -121,7 +107,39 @@ class ModuleDataProvider
             return $result;
         }
 
-        return ['installed' => 0];
+        return [
+            'installed' => 0,
+        ];
+    }
+
+    /**
+     * Return installed modules along with their id, name and version
+     * If a specific shop is selected, active keys are added
+     *
+     * @return array
+     */
+    public function getInstalled(): array
+    {
+        $select = 'SELECT m.`id_module` as id, m.`name`, m.`version`, 1 as installed';
+        $from = ' FROM `' . _DB_PREFIX_ . 'module` m';
+
+        $id_shops = (new Context())->getContextListShopID();
+        if (count($id_shops) > 0) {
+            $from .= ' LEFT JOIN `' . _DB_PREFIX_ . 'module_shop` ms ON ms.`id_module` = m.`id_module`';
+            $from .= ' AND ms.`id_shop` IN (' . implode(',', array_map('intval', $id_shops)) . ')';
+        }
+
+        $results = Db::getInstance()->executeS($select . $from);
+        $modules = [];
+
+        /** @var array{id: int, name:string, version: string, installed: int}|array{id: int, name:string, version: string, installed: int, active:int} $module */
+        foreach ($results as $module) {
+            $module['installed'] = (bool) $module['installed'];
+            $module['active'] = $this->isModuleActive($module['id'], $id_shops);
+            $modules[$module['name']] = $module;
+        }
+
+        return $modules;
     }
 
     /**
@@ -158,7 +176,7 @@ class ModuleDataProvider
     /**
      * Check if a module is enabled in the current shop context.
      *
-     * @param bool $name The technical module name
+     * @param string $name The technical module name
      *
      * @return bool True if enable
      */
@@ -186,16 +204,32 @@ class ModuleDataProvider
     }
 
     /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function isInstalledAndActive(string $name): bool
+    {
+        return (bool) $this->getModuleIdByName($name, true);
+    }
+
+    /**
      * Returns the Module Id
      *
      * @param string $name The technical module name
+     * @param bool $activeModulesOnly Should we return the module only if it's active ?
      *
      * @return int the Module Id, or 0 if not found
      */
-    public function getModuleIdByName($name)
+    public function getModuleIdByName($name, bool $activeModulesOnly = false)
     {
+        $sqlQuery = 'SELECT `id_module` FROM `' . _DB_PREFIX_ . 'module` WHERE `name` = "' . pSQL($name) . '"';
+        if ($activeModulesOnly) {
+            $sqlQuery .= ' AND `active` = 1';
+        }
+
         return (int) Db::getInstance()->getValue(
-            'SELECT `id_module` FROM `' . _DB_PREFIX_ . 'module` WHERE `name` = "' . pSQL($name) . '"'
+            $sqlQuery
         );
     }
 
@@ -251,7 +285,7 @@ class ModuleDataProvider
         $require_correct = function ($name) use ($file_path, $logger, $log_context_data) {
             try {
                 require_once $file_path;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $logger->error(
                     $this->translator->trans(
                         'Error while loading file of module %module%. %error_message%',
@@ -287,26 +321,16 @@ class ModuleDataProvider
     }
 
     /**
-     * Check if the module has been enabled on mobile.
-     *
-     * @param string $name The technical module name to check
-     *
-     * @return int|false The devices enabled for this module
+     * Checks if the module is active on at least one shop of the context.
      */
-    private function getDeviceStatus($name)
+    private function isModuleActive(int $id, array $id_shops): bool
     {
-        $id_shops = (new Context())->getContextListShopID();
-        // ToDo: Load list of all installed modules ?
-
-        $result = Db::getInstance()->getRow('SELECT m.`id_module` as `active`, ms.`id_module` as `shop_active`, ms.`enable_device` as `enable_device`
+        $result = Db::getInstance()->getRow('SELECT m.`active`, ms.`id_module` as `shop_active`
             FROM `' . _DB_PREFIX_ . 'module` m
             LEFT JOIN `' . _DB_PREFIX_ . 'module_shop` ms ON m.`id_module` = ms.`id_module`
-            WHERE `name` = "' . pSQL($name) . '"
-            AND ms.`id_shop` IN (' . implode(',', array_map('intval', $id_shops)) . ')');
-        if ($result) {
-            return (int) $result['enable_device'];
-        }
+            WHERE m.`id_module` = ' . $id . '
+            AND ms.`id_shop` IN (' . implode(',', $id_shops) . ')');
 
-        return false;
+        return !empty($result);
     }
 }

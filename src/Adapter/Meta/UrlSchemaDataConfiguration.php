@@ -1,39 +1,23 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Adapter\Meta;
 
-use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
-use PrestaShop\PrestaShop\Core\ConfigurationInterface;
+use PrestaShop\PrestaShop\Adapter\Configuration;
+use PrestaShop\PrestaShop\Adapter\Shop\Context;
+use PrestaShop\PrestaShop\Core\Configuration\AbstractMultistoreConfiguration;
+use PrestaShop\PrestaShop\Core\Feature\FeatureInterface;
+use PrestaShop\PrestaShop\Core\Language\LanguageInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class UrlSchemaDataConfiguration is responsible for validating, updating and retrieving data used in
- * Shop parameters -> Traffix & Seo -> Seo & Urls -> Set Shop URL form field.
+ * Shop parameters -> Traffic & Seo -> Seo & Urls -> Set Shop URL form field.
  */
-final class UrlSchemaDataConfiguration implements DataConfigurationInterface
+final class UrlSchemaDataConfiguration extends AbstractMultistoreConfiguration
 {
     /**
      * @var array
@@ -41,20 +25,25 @@ final class UrlSchemaDataConfiguration implements DataConfigurationInterface
     private $rules;
 
     /**
-     * @var ConfigurationInterface
+     * @var LanguageInterface[]
      */
-    private $configuration;
+    private $languages;
 
     /**
      * UrlSchemaDataConfiguration constructor.
      *
-     * @param ConfigurationInterface $configuration
+     * @param Configuration $configuration
+     * @param Context $shopContext
+     * @param FeatureInterface $multistoreFeature
      * @param array $rules
+     * @param array $languages
      */
-    public function __construct(ConfigurationInterface $configuration, array $rules)
+    public function __construct(Configuration $configuration, Context $shopContext, FeatureInterface $multistoreFeature, array $rules, array $languages)
     {
+        parent::__construct($configuration, $shopContext, $multistoreFeature);
+
         $this->rules = $rules;
-        $this->configuration = $configuration;
+        $this->languages = $languages;
     }
 
     /**
@@ -63,9 +52,38 @@ final class UrlSchemaDataConfiguration implements DataConfigurationInterface
     public function getConfiguration()
     {
         $configResult = [];
+        $shopConstraint = $this->getShopConstraint();
+
+        // The languages arrive as LanguageInterface objects, so array_column() cannot reach their id:
+        // it reads public properties and Lang exposes the id through getId() only. It answered an empty
+        // list for every route, which made both fallbacks below produce an empty value - so a route with
+        // no stored configuration, and a route still holding the pre-translation string, both rendered
+        // as an empty field instead of the default.
+        $languageIds = array_map(
+            static function (LanguageInterface $language): int {
+                return $language->getId();
+            },
+            $this->languages
+        );
+
         foreach ($this->rules as $routeId => $defaultRule) {
-            $result = $this->getConfigurationValue($routeId) ?: $defaultRule;
-            $configResult[$routeId] = $result;
+            // Get value from configuration
+            $currentValue = $this->configuration->get($this->getConfigurationKey($routeId), null, $shopConstraint);
+            // A value stored before a language was added holds no entry for it, and one stored
+            // before a language was removed still holds its key. Starting from the default for
+            // every current language and overlaying only the keys that are still languages covers
+            // both: a missing entry falls back instead of rendering empty, a stale one is dropped.
+            if (is_string($currentValue)) {
+                $currentValue = array_fill_keys($languageIds, $currentValue);
+            }
+            if (!is_array($currentValue)) {
+                $currentValue = [];
+            }
+
+            $configResult[$routeId] = array_replace(
+                array_fill_keys($languageIds, $defaultRule),
+                array_intersect_key($currentValue, array_flip($languageIds))
+            );
         }
 
         return $configResult;
@@ -77,8 +95,10 @@ final class UrlSchemaDataConfiguration implements DataConfigurationInterface
     public function updateConfiguration(array $configuration)
     {
         if ($this->validateConfiguration($configuration)) {
+            $shopConstraint = $this->getShopConstraint();
+
             foreach ($configuration as $routeId => $value) {
-                $this->updateConfigurationValue($routeId, $value);
+                $this->updateConfigurationValue($this->getConfigurationKey($routeId), $routeId, $configuration, $shopConstraint);
             }
         }
 
@@ -86,41 +106,19 @@ final class UrlSchemaDataConfiguration implements DataConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return OptionsResolver
      */
-    public function validateConfiguration(array $configuration)
+    protected function buildResolver(): OptionsResolver
     {
-        $configurationExists = true;
-        foreach (array_keys($configuration) as $routeId) {
-            $configurationExists &= isset($this->rules[$routeId]);
+        $rulesIds = array_keys($this->rules);
+
+        $resolver = new OptionsResolver();
+        $resolver->setDefined($rulesIds);
+        foreach ($rulesIds as $ruleId) {
+            $resolver->setAllowedTypes($ruleId, 'array');
         }
 
-        return $configurationExists;
-    }
-
-    /**
-     * Gets configuration from configuration table.
-     *
-     * @param string $routeId
-     *
-     * @return string
-     */
-    private function getConfigurationValue($routeId)
-    {
-        return $this->configuration->get($this->getConfigurationKey($routeId));
-    }
-
-    /**
-     * Updates configuration data.
-     *
-     * @param string $routeId
-     * @param string $rule
-     *
-     * @return mixed
-     */
-    private function updateConfigurationValue($routeId, $rule)
-    {
-        return $this->configuration->set($this->getConfigurationKey($routeId), $rule);
+        return $resolver;
     }
 
     /**

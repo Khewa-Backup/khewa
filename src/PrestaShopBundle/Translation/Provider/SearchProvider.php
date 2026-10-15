@@ -1,32 +1,14 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Translation\Provider;
 
+use Exception;
 use PrestaShop\PrestaShop\Core\Exception\FileNotFoundException;
+use PrestaShop\PrestaShop\Core\Translation\Exception\TranslationFilesNotFoundException;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
@@ -37,11 +19,6 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 class SearchProvider extends AbstractProvider implements UseDefaultCatalogueInterface, UseModuleInterface
 {
     /**
-     * @var string the "modules" directory path
-     */
-    private $modulesDirectory;
-
-    /**
      * @var ExternalModuleLegacySystemProvider
      */
     private $externalModuleLegacySystemProvider;
@@ -49,30 +26,11 @@ class SearchProvider extends AbstractProvider implements UseDefaultCatalogueInte
     public function __construct(
         LoaderInterface $databaseLoader,
         ExternalModuleLegacySystemProvider $externalModuleLegacySystemProvider,
-        $resourceDirectory,
-        $modulesDirectory
+        $resourceDirectory
     ) {
-        $this->modulesDirectory = $modulesDirectory;
         $this->externalModuleLegacySystemProvider = $externalModuleLegacySystemProvider;
 
         parent::__construct($databaseLoader, $resourceDirectory);
-    }
-
-    /**
-     * Get domain.
-     *
-     * @deprecated since 1.7.6, to be removed in the next major
-     *
-     * @return mixed
-     */
-    public function getDomain()
-    {
-        @trigger_error(
-            __METHOD__ . ' function is deprecated and will be removed in the next major',
-            E_USER_DEPRECATED
-        );
-
-        return $this->domain;
     }
 
     /**
@@ -111,7 +69,7 @@ class SearchProvider extends AbstractProvider implements UseDefaultCatalogueInte
     {
         try {
             $defaultCatalogue = parent::getDefaultCatalogue($empty);
-        } catch (FileNotFoundException $e) {
+        } catch (TranslationFilesNotFoundException) {
             $defaultCatalogue = $this->externalModuleLegacySystemProvider->getDefaultCatalogue($empty);
             $defaultCatalogue = $this->filterCatalogue($defaultCatalogue);
         }
@@ -128,27 +86,12 @@ class SearchProvider extends AbstractProvider implements UseDefaultCatalogueInte
     {
         try {
             $xliffCatalogue = parent::getXliffCatalogue();
-        } catch (\Exception $e) {
+        } catch (Exception) {
             $xliffCatalogue = $this->externalModuleLegacySystemProvider->getXliffCatalogue();
             $xliffCatalogue = $this->filterCatalogue($xliffCatalogue);
         }
 
         return $xliffCatalogue;
-    }
-
-    /**
-     * @deprecated since 1.7.6, to be removed in the next major
-     *
-     * @return string
-     */
-    public function getModuleDirectory()
-    {
-        @trigger_error(
-            __METHOD__ . ' function is deprecated and will be removed in the next major',
-            E_USER_DEPRECATED
-        );
-
-        return $this->modulesDirectory;
     }
 
     /**

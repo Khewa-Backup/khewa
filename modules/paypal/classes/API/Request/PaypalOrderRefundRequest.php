@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,33 +16,39 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Request;
 
 use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalAddons\classes\API\Client\HttpClient;
+use PaypalAddons\classes\API\ExtensionSDK\Order\CapturesRefundRequest;
+use PaypalAddons\classes\API\HttpAdoptedResponse;
 use PaypalAddons\classes\API\Response\Error;
 use PaypalAddons\classes\API\Response\ResponseOrderRefund;
 use PaypalAddons\classes\Exception\OrderFullyRefundedException;
 use PaypalAddons\classes\Exception\RefundCalculationException;
+use PaypalAddons\classes\PaypalException;
+use PaypalAddons\services\PaymentTotalAmount;
 use PaypalAddons\services\ServicePaypalOrder;
-use PayPalCheckoutSdk\Core\PayPalHttpClient;
-use PayPalCheckoutSdk\Payments\CapturesRefundRequest;
-use PayPalHttp\HttpException;
-use Validate;
-use Symfony\Component\VarDumper\VarDumper;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaypalOrderRefundRequest extends RequestAbstract
 {
     protected $paypalOrder;
 
-    public function __construct(PayPalHttpClient $client, AbstractMethodPaypal $method, \PaypalOrder $paypalOrder)
+    public function __construct(HttpClient $client, AbstractMethodPaypal $method, \PaypalOrder $paypalOrder)
     {
         parent::__construct($client, $method);
         $this->paypalOrder = $paypalOrder;
@@ -51,14 +58,17 @@ class PaypalOrderRefundRequest extends RequestAbstract
     {
         $response = new ResponseOrderRefund();
         $captureRefund = new CapturesRefundRequest($this->getResourceId());
-        $captureRefund->prefer('return=representation');
 
         try {
             if ($body = $this->buildRequestBody()) {
-                $captureRefund->body = $body;
+                $captureRefund->setBody(json_encode($body));
             }
 
             $exec = $this->client->execute($captureRefund);
+
+            if ($exec instanceof HttpAdoptedResponse) {
+                $exec = $exec->getAdoptedResponse();
+            }
 
             if (in_array($exec->statusCode, [200, 201, 202])) {
                 $response->setSuccess(true)
@@ -67,12 +77,9 @@ class PaypalOrderRefundRequest extends RequestAbstract
                     ->setAmount($exec->result->amount->value)
                     ->setDateTransaction($this->getDateTransaction($exec));
             } else {
-                $error = new Error();
-                $resultDecoded = json_decode($exec->message);
-                $error->setMessage($resultDecoded->message);
-                $response->setSuccess(false)->setError($error);
+                $response->setSuccess(false)->setData($exec);
             }
-        } catch (HttpException $e) {
+        } catch (PaypalException $e) {
             $error = new Error();
             $resultDecoded = json_decode($e->getMessage());
 
@@ -85,7 +92,7 @@ class PaypalOrderRefundRequest extends RequestAbstract
             }
         } catch (OrderFullyRefundedException $e) {
             $response->setSuccess(false)->setAlreadyRefunded(true);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $error = new Error();
             $error->setErrorCode($e->getCode())->setMessage($e->getMessage());
             $response->setError($error)->setSuccess(false);
@@ -97,6 +104,11 @@ class PaypalOrderRefundRequest extends RequestAbstract
     protected function getDateTransaction($exec)
     {
         $date = \DateTime::createFromFormat(\DateTime::ATOM, $exec->result->create_time);
+
+        if (!$date instanceof \DateTime) {
+            $date = new \DateTime();
+        }
+
         return $date->format('Y-m-d H:i:s');
     }
 
@@ -107,12 +119,12 @@ class PaypalOrderRefundRequest extends RequestAbstract
     {
         $amount = $this->getAmount();
 
-        if ((float)$amount['value'] == (float)$this->paypalOrder->total_paid) {
+        if ((float) $amount['value'] == (float) $this->paypalOrder->total_paid) {
             return [];
         }
 
         $body = [
-            'amount' => $this->getAmount()
+            'amount' => $this->getAmount(),
         ];
 
         return $body;
@@ -120,42 +132,23 @@ class PaypalOrderRefundRequest extends RequestAbstract
 
     /**
      * @return array
+     *
      * @throws OrderFullyRefundedException
      * @throws RefundCalculationException
      */
     protected function getAmount()
     {
-        $total = 0;
-        $totalRefund = 0;
+        $amount = $this->getPaymentTotalAmountService()->get($this->paypalOrder);
 
-        try {
-            $order = $this->method->getInfo($this->paypalOrder->id_payment);
-            $payments = $order->getData()->result->purchase_units[0]->payments;
-
-            if (isset($payments->captures)) {
-                foreach ($payments->captures as $capture) {
-                    $total += $capture->amount->value;
-                }
-            }
-
-            if (isset($payments->refunds)) {
-                foreach ($payments->refunds as $refund) {
-                    $totalRefund += $refund->amount->value;
-                }
-            }
-        } catch (\Exception $e) {
-            throw new RefundCalculationException($e->getMessage());
-        }
-
-        if ($total == $totalRefund) {
+        if ($amount == 0) {
             throw new OrderFullyRefundedException();
         }
 
-        $refundValue = $this->method->formatPrice(($total - $totalRefund), $this->paypalOrder->currency);
+        $refundValue = $this->method->formatPrice($amount, $this->paypalOrder->currency, false);
 
         $amount = [
             'currency_code' => $this->paypalOrder->currency,
-            'value' => $refundValue
+            'value' => $refundValue,
         ];
 
         return $amount;
@@ -166,12 +159,20 @@ class PaypalOrderRefundRequest extends RequestAbstract
         $paypalOrderService = new ServicePaypalOrder();
         $capture = $paypalOrderService->getCapture($this->paypalOrder);
 
-        if (Validate::isLoadedObject($capture)) {
+        if (\Validate::isLoadedObject($capture)) {
             $idResource = $capture->id_capture;
         } else {
             $idResource = $this->paypalOrder->id_transaction;
         }
 
         return $idResource;
+    }
+
+    /**
+     * @return PaymentTotalAmount
+     */
+    protected function getPaymentTotalAmountService()
+    {
+        return new PaymentTotalAmount();
     }
 }

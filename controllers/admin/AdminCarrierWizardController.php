@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
@@ -30,6 +10,21 @@
 class AdminCarrierWizardControllerCore extends AdminController
 {
     protected $wizard_access;
+
+    /**
+     * @var Context
+     */
+    public $old_context;
+
+    /**
+     * @var int
+     */
+    public $type_context;
+
+    /**
+     * @var array<string, string|array<array<string, string>>>
+     */
+    public $wizard_steps;
 
     public function __construct()
     {
@@ -40,7 +35,6 @@ class AdminCarrierWizardControllerCore extends AdminController
         $this->className = 'Carrier';
         $this->lang = false;
         $this->deleted = true;
-        $this->step_number = 0;
         $this->type_context = Shop::getContext();
         $this->old_context = Context::getContext();
         $this->multishop_context = Shop::CONTEXT_ALL;
@@ -93,17 +87,27 @@ class AdminCarrierWizardControllerCore extends AdminController
         }
     }
 
+    /**
+     * @return string|void
+     *
+     * @throws SmartyException
+     */
     public function renderView()
     {
         $this->initWizard();
 
         if (Tools::getValue('id_carrier') && $this->access('edit')) {
+            /** @var Carrier $carrier */
             $carrier = $this->loadObject();
         } elseif ($this->access('add')) {
             $carrier = new Carrier();
         }
 
-        if ((!$this->access('edit') && Tools::getValue('id_carrier')) || (!$this->access('add') && !Tools::getValue('id_carrier'))) {
+        if (
+            (!$this->access('edit') && Tools::getValue('id_carrier'))
+            || (!$this->access('add') && !Tools::getValue('id_carrier'))
+            || !isset($carrier)
+        ) {
             $this->errors[] = $this->trans('You do not have permission to use this wizard.', [], 'Admin.Shipping.Notification');
 
             return;
@@ -238,7 +242,7 @@ class AdminCarrierWizardControllerCore extends AdminController
                 'input' => [
                     [
                         'type' => 'shop',
-                        'label' => $this->trans('Shop association', [], 'Admin.Global'),
+                        'label' => $this->trans('Store association', [], 'Admin.Global'),
                         'name' => 'checkBoxShopAsso',
                     ],
                 ],
@@ -439,7 +443,7 @@ class AdminCarrierWizardControllerCore extends AdminController
         $groups = Group::getGroups($this->context->language->id);
 
         foreach ($groups as $group) {
-            $fields_value['groupBox_' . $group['id_group']] = Tools::getValue('groupBox_' . $group['id_group'], (in_array($group['id_group'], $carrier_groups_ids) || empty($carrier_groups_ids) && !$carrier->id));
+            $fields_value['groupBox_' . $group['id_group']] = Tools::getValue('groupBox_' . $group['id_group'], in_array($group['id_group'], $carrier_groups_ids) || empty($carrier_groups_ids) && !$carrier->id);
         }
 
         return $this->renderGenericForm(['form' => $this->fields_form], $fields_value);
@@ -487,7 +491,7 @@ class AdminCarrierWizardControllerCore extends AdminController
      * @param array $tpl_vars
      * @param array $fields_value
      */
-    protected function getTplRangesVarsAndValues($carrier, &$tpl_vars, &$fields_value)
+    protected function getTplRangesVarsAndValues(Carrier $carrier, array &$tpl_vars, array &$fields_value)
     {
         $tpl_vars['zones'] = Zone::getZones(false, true);
         $carrier_zones = $carrier->getZones();
@@ -498,12 +502,16 @@ class AdminCarrierWizardControllerCore extends AdminController
             }
         }
 
+        if ($fields_value['zones'] === false) {
+            $fields_value['zones'] = [];
+        }
+
         $range_table = $carrier->getRangeTable();
         $shipping_method = $carrier->getShippingMethod();
 
         $zones = Zone::getZones(false);
         foreach ($zones as $zone) {
-            $fields_value['zones'][$zone['id_zone']] = Tools::getValue('zone_' . $zone['id_zone'], (in_array($zone['id_zone'], $carrier_zones_ids)));
+            $fields_value['zones'][$zone['id_zone']] = Tools::getValue('zone_' . $zone['id_zone'], in_array($zone['id_zone'], $carrier_zones_ids));
         }
 
         if ($shipping_method == Carrier::SHIPPING_METHOD_FREE) {
@@ -614,6 +622,7 @@ class AdminCarrierWizardControllerCore extends AdminController
             return;
         }
 
+        /** @var Carrier $carrier */
         $carrier = $this->loadObject(true);
         $carrier->shipping_method = $shipping_method;
 
@@ -635,7 +644,7 @@ class AdminCarrierWizardControllerCore extends AdminController
         die($template->fetch());
     }
 
-    protected function validateForm($die = true)
+    protected function validateForm(bool $die = true)
     {
         $step_number = (int) Tools::getValue('step_number');
         $return = ['has_error' => false];
@@ -729,14 +738,15 @@ class AdminCarrierWizardControllerCore extends AdminController
             die('<return result="error" message="' . $this->trans('You do not have permission to use this wizard.', [], 'Admin.Shipping.Notification') . '" />');
         }
 
-        $allowedExtensions = ['jpeg', 'gif', 'png', 'jpg'];
-
-        $logo = (isset($_FILES['carrier_logo_input']) ? $_FILES['carrier_logo_input'] : false);
-        if ($logo && !empty($logo['tmp_name']) && $logo['tmp_name'] != 'none'
+        $logo = ($_FILES['carrier_logo_input'] ?? false);
+        if ($logo
+            && !empty($logo['tmp_name'])
+            && $logo['tmp_name'] != 'none'
             && (!isset($logo['error']) || !$logo['error'])
-            && preg_match('/\.(jpe?g|gif|png)$/', $logo['name'])
+            && ImageManager::isCorrectImageFileExt($logo['name'])
             && is_uploaded_file($logo['tmp_name'])
-            && ImageManager::isRealImage($logo['tmp_name'], $logo['type'])) {
+            && ImageManager::isRealImage($logo['tmp_name'], $logo['type'])
+        ) {
             $file = $logo['tmp_name'];
             do {
                 $tmp_name = uniqid() . '.jpg';
@@ -746,9 +756,9 @@ class AdminCarrierWizardControllerCore extends AdminController
             }
             @unlink($file);
             die('<return result="success" message="' . Tools::safeOutput(_PS_TMP_IMG_ . $tmp_name) . '" />');
-        } else {
-            die('<return result="error" message="Cannot upload file" />');
         }
+
+        die('<return result="error" message="Cannot upload file" />');
     }
 
     public function ajaxProcessFinishStep()
@@ -782,7 +792,7 @@ class AdminCarrierWizardControllerCore extends AdminController
                     $this->duplicateLogo((int) $new_carrier->id, (int) $current_carrier->id);
                     $this->changeGroups((int) $new_carrier->id);
 
-                    //Copy default carrier
+                    // Copy default carrier
                     if (Configuration::get('PS_CARRIER_DEFAULT') == $current_carrier->id) {
                         Configuration::updateValue('PS_CARRIER_DEFAULT', (int) $new_carrier->id);
                     }
@@ -806,58 +816,60 @@ class AdminCarrierWizardControllerCore extends AdminController
                 }
             }
 
-            if ($carrier->is_free) {
-                //if carrier is free delete shipping cost
-                $carrier->deleteDeliveryPrice('range_weight');
-                $carrier->deleteDeliveryPrice('range_price');
-            }
-
-            if (Validate::isLoadedObject($carrier)) {
-                if (!$this->changeGroups((int) $carrier->id)) {
-                    $return['has_error'] = true;
-                    $return['errors'][] = $this->trans('An error occurred while saving carrier groups.', [], 'Admin.Shipping.Notification');
+            if (isset($carrier)) {
+                if ($carrier->is_free) {
+                    // if carrier is free delete shipping cost
+                    $carrier->deleteDeliveryPrice('range_weight');
+                    $carrier->deleteDeliveryPrice('range_price');
                 }
 
-                if (!$this->changeZones((int) $carrier->id)) {
-                    $return['has_error'] = true;
-                    $return['errors'][] = $this->trans('An error occurred while saving carrier zones.', [], 'Admin.Shipping.Notification');
-                }
-
-                if (!$carrier->is_free) {
-                    if (!$this->processRanges((int) $carrier->id)) {
+                if (Validate::isLoadedObject($carrier)) {
+                    if (!$this->changeGroups((int) $carrier->id)) {
                         $return['has_error'] = true;
-                        $return['errors'][] = $this->trans('An error occurred while saving carrier ranges.', [], 'Admin.Shipping.Notification');
+                        $return['errors'][] = $this->trans('An error occurred while saving carrier groups.', [], 'Admin.Shipping.Notification');
                     }
-                }
 
-                if (Shop::isFeatureActive() && !$this->updateAssoShop((int) $carrier->id)) {
-                    $return['has_error'] = true;
-                    $return['errors'][] = $this->trans('An error occurred while saving associations of shops.', [], 'Admin.Shipping.Notification');
-                }
+                    if (!$this->changeZones((int) $carrier->id)) {
+                        $return['has_error'] = true;
+                        $return['errors'][] = $this->trans('An error occurred while saving carrier zones.', [], 'Admin.Shipping.Notification');
+                    }
 
-                if (!$carrier->setTaxRulesGroup((int) Tools::getValue('id_tax_rules_group'))) {
-                    $return['has_error'] = true;
-                    $return['errors'][] = $this->trans('An error occurred while saving the tax rules group.', [], 'Admin.Shipping.Notification');
-                }
-
-                if (Tools::getValue('logo')) {
-                    if (Tools::getValue('logo') == 'null' && file_exists(_PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg')) {
-                        unlink(_PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg');
-                    } else {
-                        $logo = basename(Tools::getValue('logo'));
-                        if (!file_exists(_PS_TMP_IMG_DIR_ . $logo) || !copy(_PS_TMP_IMG_DIR_ . $logo, _PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg')) {
+                    if (!$carrier->is_free) {
+                        if (!$this->processRanges((int) $carrier->id)) {
                             $return['has_error'] = true;
-                            $return['errors'][] = $this->trans('An error occurred while saving carrier logo.', [], 'Admin.Shipping.Notification');
+                            $return['errors'][] = $this->trans('An error occurred while saving carrier ranges.', [], 'Admin.Shipping.Notification');
                         }
                     }
+
+                    if (Shop::isFeatureActive() && !$this->updateAssoShop((int) $carrier->id)) {
+                        $return['has_error'] = true;
+                        $return['errors'][] = $this->trans('An error occurred while saving associations of shops.', [], 'Admin.Shipping.Notification');
+                    }
+
+                    if (!$carrier->setTaxRulesGroup((int) Tools::getValue('id_tax_rules_group'))) {
+                        $return['has_error'] = true;
+                        $return['errors'][] = $this->trans('An error occurred while saving the tax rules group.', [], 'Admin.Shipping.Notification');
+                    }
+
+                    if (Tools::getValue('logo')) {
+                        if (Tools::getValue('logo') == 'null' && file_exists(_PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg')) {
+                            unlink(_PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg');
+                        } else {
+                            $logo = basename(Tools::getValue('logo'));
+                            if (!file_exists(_PS_TMP_IMG_DIR_ . $logo) || !copy(_PS_TMP_IMG_DIR_ . $logo, _PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg')) {
+                                $return['has_error'] = true;
+                                $return['errors'][] = $this->trans('An error occurred while saving carrier logo.', [], 'Admin.Shipping.Notification');
+                            }
+                        }
+                    }
+                    $return['id_carrier'] = $carrier->id;
                 }
-                $return['id_carrier'] = $carrier->id;
             }
         }
         die(json_encode($return));
     }
 
-    protected function changeGroups($id_carrier, $delete = true)
+    protected function changeGroups(int $id_carrier, bool $delete = true)
     {
         $carrier = new Carrier((int) $id_carrier);
         if (!Validate::isLoadedObject($carrier)) {
@@ -922,11 +934,6 @@ class AdminCarrierWizardControllerCore extends AdminController
         return $definition;
     }
 
-    public static function displayFieldName($field)
-    {
-        return $field;
-    }
-
     public function duplicateLogo($new_id, $old_id)
     {
         $old_logo = _PS_SHIP_IMG_DIR_ . '/' . (int) $old_id . '.jpg';
@@ -951,7 +958,7 @@ class AdminCarrierWizardControllerCore extends AdminController
             Shop::setContext($this->type_context, $this->old_context->shop->id_shop_group);
         }
 
-        $currency = new Currency(Configuration::get('PS_CURRENCY_DEFAULT'));
+        $currency = Currency::getDefaultCurrency();
 
         Shop::setContext(Shop::CONTEXT_ALL);
 

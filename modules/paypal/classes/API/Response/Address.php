@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,40 +16,46 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Response;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Address
 {
-    /** @var string*/
+    /** @var string */
     protected $city;
 
-    /** @var string*/
+    /** @var string */
     protected $countryCode;
 
-    /** @var string*/
+    /** @var string */
     protected $address1;
 
-    /** @var string*/
+    /** @var string */
     protected $address2;
 
-    /** @var string*/
+    /** @var string */
     protected $stateCode;
 
-    /** @var string*/
+    /** @var string */
     protected $phone;
 
-    /** @var string*/
+    /** @var string */
     protected $postCode;
 
-    /** @var string*/
+    /** @var string */
     protected $fullName;
 
     /**
@@ -65,6 +72,7 @@ class Address
     public function setFullName($fullName)
     {
         $this->fullName = $fullName;
+
         return $this;
     }
 
@@ -82,6 +90,7 @@ class Address
     public function setCity($city)
     {
         $this->city = $city;
+
         return $this;
     }
 
@@ -99,6 +108,7 @@ class Address
     public function setCountryCode($countryCode)
     {
         $this->countryCode = $countryCode;
+
         return $this;
     }
 
@@ -116,6 +126,7 @@ class Address
     public function setStateCode($stateCode)
     {
         $this->stateCode = $stateCode;
+
         return $this;
     }
 
@@ -133,6 +144,7 @@ class Address
     public function setPhone($phone)
     {
         $this->phone = $phone;
+
         return $this;
     }
 
@@ -150,6 +162,7 @@ class Address
     public function setPostCode($postCode)
     {
         $this->postCode = $postCode;
+
         return $this;
     }
 
@@ -167,6 +180,7 @@ class Address
     public function setAddress1($address1)
     {
         $this->address1 = $address1;
+
         return $this;
     }
 
@@ -184,6 +198,7 @@ class Address
     public function setAddress2($address2)
     {
         $this->address2 = $address2;
+
         return $this;
     }
 }

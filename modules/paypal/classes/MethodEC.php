@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,55 +16,80 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
-use PaypalAddons\classes\API\PaypalApiManager;
 use PaypalAddons\classes\AbstractMethodPaypal;
-use PaypalPPBTlib\Extensions\ProcessLogger\ProcessLoggerHandler;
+use PaypalAddons\classes\API\PaypalApiManager;
+use PaypalAddons\classes\API\Response\ResponseGetSellerStatus;
+use PaypalAddons\classes\WhiteList\WhiteListService;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Class MethodEC.
+ *
  * @see https://developer.paypal.com/docs/classic/api/ NVP SOAP SDK
  * @see https://developer.paypal.com/docs/classic/api/nvpsoap-sdks/
  */
 class MethodEC extends AbstractMethodPaypal
 {
-    /** @var boolean pay with card without pp account */
+    /** @var bool pay with card without pp account */
     public $credit_card;
 
-    /** @var boolean shortcut payment from product or cart page*/
+    /** @var bool shortcut payment from product or cart page */
     public $short_cut;
 
     protected $payment_method = 'PayPal';
 
     protected $transaction_detail;
 
-    public $errors = array();
-
-    public $advancedFormParametres = array(
-        'paypal_os_accepted_two',
-        'paypal_os_waiting_validation'
-    );
+    public $errors = [];
 
     /** payment Object IDl*/
     protected $paymentId;
 
-    /** @var bool*/
+    /** @var bool */
     protected $isSandbox;
+
+    /** @var WhiteListService */
+    protected $whiteListService;
 
     public function __construct()
     {
+        parent::__construct();
+
+        $this->whiteListService = new WhiteListService();
+        $this->initApiManager();
+    }
+
+    protected function initApiManager()
+    {
         $this->paypalApiManager = new PaypalApiManager($this);
+
+        return $this;
+    }
+
+    public function setSandbox($isSandbox)
+    {
+        parent::setSandbox($isSandbox);
+        $this->initApiManager();
+        $this->checkCredentials();
+
+        return $this;
     }
 
     /**
-     * @param $values array replace for tools::getValues()
+     * @param array $values replace for tools::getValues()
      */
     public function setParameters($values)
     {
@@ -91,6 +117,7 @@ class MethodEC extends AbstractMethodPaypal
     public function setShortCut($shortCut)
     {
         $this->short_cut = (bool) $shortCut;
+
         return $this;
     }
 
@@ -102,20 +129,23 @@ class MethodEC extends AbstractMethodPaypal
     /**
      * @see AbstractMethodPaypal::getConfig()
      */
-    public function getConfig(\PayPal $module)
+    public function getConfig(PayPal $module)
     {
     }
 
     public function logOut($sandbox = null)
     {
         if ($sandbox == null) {
-            $mode = Configuration::get('PAYPAL_SANDBOX') ? 'SANDBOX' : 'LIVE';
-        } else {
-            $mode = (int)$sandbox ? 'SANDBOX' : 'LIVE';
+            $sandbox = $this->isSandbox();
         }
 
-        Configuration::updateValue('PAYPAL_EC_CLIENTID_' . $mode, '');
-        Configuration::updateValue('PAYPAL_EC_SECRET_' . $mode, '');
+        if ($sandbox) {
+            Configuration::updateValue(PayPal::PAYPAL_EC_CLIENTID_SANDBOX, '');
+            Configuration::updateValue(PayPal::PAYPAL_EC_SECRET_SANDBOX, '');
+        } else {
+            Configuration::updateValue(PayPal::PAYPAL_EC_CLIENTID_LIVE, '');
+            Configuration::updateValue(PayPal::PAYPAL_EC_SECRET_LIVE, '');
+        }
         Configuration::updateValue('PAYPAL_CONNECTION_EC_CONFIGURED', 0);
     }
 
@@ -124,12 +154,26 @@ class MethodEC extends AbstractMethodPaypal
      */
     public function setConfig($params)
     {
-        if ($this->isSandbox()) {
-            Configuration::updateValue('PAYPAL_EC_CLIENTID_SANDBOX', $params['clientId']);
-            Configuration::updateValue('PAYPAL_EC_SECRET_SANDBOX', $params['secret']);
+        if (isset($params['isSandbox'])) {
+            $isSandbox = $params['isSandbox'];
         } else {
-            Configuration::updateValue('PAYPAL_EC_CLIENTID_LIVE', $params['clientId']);
-            Configuration::updateValue('PAYPAL_EC_SECRET_LIVE', $params['secret']);
+            $isSandbox = $this->isSandbox();
+        }
+
+        if ($isSandbox) {
+            Configuration::updateValue(PayPal::PAYPAL_EC_CLIENTID_SANDBOX, $params['clientId']);
+            Configuration::updateValue(
+                PayPal::PAYPAL_EC_SECRET_SANDBOX,
+                $this->module->getToolKit()->encrypt($params['secret'])
+            );
+            Configuration::updateValue(PayPal::PAYPAL_EC_MERCHANT_ID_SANDBOX, $params['merchantId']);
+        } else {
+            Configuration::updateValue(PayPal::PAYPAL_EC_CLIENTID_LIVE, $params['clientId']);
+            Configuration::updateValue(
+                PayPal::PAYPAL_EC_SECRET_LIVE,
+                $this->module->getToolKit()->encrypt($params['secret'])
+            );
+            Configuration::updateValue(PayPal::PAYPAL_EC_MERCHANT_ID_LIVE, $params['merchantId']);
         }
     }
 
@@ -146,33 +190,12 @@ class MethodEC extends AbstractMethodPaypal
         return false;
     }
 
-    /**
-     * @return int id of the order status
-     **/
-    public function getOrderStatus()
-    {
-        if ((int)Configuration::get('PAYPAL_CUSTOMIZE_ORDER_STATUS')) {
-            if (Configuration::get('PAYPAL_API_INTENT') == "sale") {
-                $orderStatus = (int)Configuration::get('PAYPAL_OS_ACCEPTED_TWO');
-            } else {
-                $orderStatus = (int)Configuration::get('PAYPAL_OS_WAITING_VALIDATION');
-            }
-        } else {
-            if (Configuration::get('PAYPAL_API_INTENT') == "sale") {
-                $orderStatus = (int)Configuration::get('PS_OS_PAYMENT');
-            } else {
-                $orderStatus = (int)Configuration::get('PAYPAL_OS_WAITING');
-            }
-        }
-
-        return $orderStatus;
-    }
-
     public function getDateTransaction()
     {
         $dateServer = new DateTime();
         $timeZonePayPal = new DateTimeZone('PST');
         $dateServer->setTimezone($timeZonePayPal);
+
         return $dateServer->format('Y-m-d H:i:s');
     }
 
@@ -190,6 +213,7 @@ class MethodEC extends AbstractMethodPaypal
     public function void($orderPayPal)
     {
         $response = $this->paypalApiManager->getAuthorizationVoidRequest($orderPayPal)->execute();
+
         return $response;
     }
 
@@ -198,16 +222,21 @@ class MethodEC extends AbstractMethodPaypal
      */
     public function isConfigured()
     {
+        if (false == $this->whiteListService->isEligibleContext()) {
+            return false;
+        }
+
         if ($this->isCredentialsSetted() === false) {
             return false;
         }
 
-        if ((bool)Configuration::get('PAYPAL_CONNECTION_EC_CONFIGURED')) {
+        if ((bool) Configuration::get('PAYPAL_CONNECTION_EC_CONFIGURED')) {
             return true;
         }
 
         $this->checkCredentials();
-        return (bool)Configuration::get('PAYPAL_CONNECTION_EC_CONFIGURED');
+
+        return (bool) Configuration::get('PAYPAL_CONNECTION_EC_CONFIGURED');
     }
 
     public function checkCredentials()
@@ -219,7 +248,8 @@ class MethodEC extends AbstractMethodPaypal
         } else {
             $this->setConfig([
                 'clientId' => '',
-                'secret' => ''
+                'secret' => '',
+                'merchantId' => '',
             ]);
             Configuration::updateValue('PAYPAL_CONNECTION_EC_CONFIGURED', 0);
 
@@ -229,65 +259,9 @@ class MethodEC extends AbstractMethodPaypal
         }
     }
 
-    public function getTplVars()
-    {
-        $tplVars = array();
-        $countryDefault = new Country((int)\Configuration::get('PS_COUNTRY_DEFAULT'), Context::getContext()->language->id);
-
-        $tplVars['accountConfigured'] = $this->isConfigured();
-        $tplVars['urlOnboarding'] = $this->getUrlOnboarding();
-        $tplVars['country_iso'] = $countryDefault->iso_code;
-        $tplVars['idShop'] = Context::getContext()->shop->id;
-        $tplVars['mode'] = $this->isSandbox() ? 'SANDBOX' : 'LIVE';
-        $tplVars['paypal_ec_clientid'] = $this->getClientId();
-        $tplVars['paypal_ec_secret'] = $this->getSecret();
-        $tplVars['paypalOnboardingLib'] = $this->isSandbox() ?
-            'https://www.sandbox.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js' :
-            'https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js';
-
-        return $tplVars;
-    }
-
-    public function getAdvancedFormInputs()
-    {
-        $inputs = array();
-        $module = Module::getInstanceByName($this->name);
-        $orderStatuses = $module->getOrderStatuses();
-
-        if ($this->getIntent() == 'AUTHORIZE') {
-            $inputs[] = array(
-                'type' => 'select',
-                'label' => $module->l('Payment authorized and waiting for validation by admin', get_class($this)),
-                'name' => 'paypal_os_waiting_validation',
-                'hint' => $module->l('You are currently using the Authorize mode. It means that you separate the payment authorization from the capture of the authorized payment. By default the orders will be created in the "Waiting for PayPal payment" but you can customize it if needed.', get_class($this)),
-                'desc' => $module->l('Default status : Waiting for PayPal payment', get_class($this)),
-                'options' => array(
-                    'query' => $orderStatuses,
-                    'id' => 'id',
-                    'name' => 'name'
-                )
-            );
-        } else {
-            $inputs[] = array(
-                'type' => 'select',
-                'label' => $module->l('Payment accepted and transaction completed', get_class($this)),
-                'name' => 'paypal_os_accepted_two',
-                'hint' => $module->l('You are currently using the Sale mode (the authorization and capture occur at the same time as the sale). So the payement is accepted instantly and the new order is created in the "Payment accepted" status. You can customize the status for orders with completed transactions. Ex : you can create an additional status "Payment accepted via PayPal" and set it as the default status.', get_class($this)),
-                'desc' => $module->l('Default status : Payment accepted', get_class($this)),
-                'options' => array(
-                    'query' => $orderStatuses,
-                    'id' => 'id',
-                    'name' => 'name'
-                )
-            );
-        }
-
-        return $inputs;
-    }
-
     public function getIntent()
     {
-        return Configuration::get('PAYPAL_API_INTENT') == 'sale' ? 'CAPTURE' : 'AUTHORIZE';
+        return Configuration::get('PAYPAL_API_INTENT') == 'sale' ? self::SALE : self::AUTHORIZE;
     }
 
     public function getClientId($sandbox = null)
@@ -297,9 +271,9 @@ class MethodEC extends AbstractMethodPaypal
         }
 
         if ($sandbox) {
-            $clientId = Configuration::get('PAYPAL_EC_CLIENTID_SANDBOX');
+            $clientId = Configuration::get(PayPal::PAYPAL_EC_CLIENTID_SANDBOX);
         } else {
-            $clientId = Configuration::get('PAYPAL_EC_CLIENTID_LIVE');
+            $clientId = Configuration::get(PayPal::PAYPAL_EC_CLIENTID_LIVE);
         }
 
         return $clientId;
@@ -312,16 +286,19 @@ class MethodEC extends AbstractMethodPaypal
         }
 
         if ($sandbox) {
-            $secret = Configuration::get('PAYPAL_EC_SECRET_SANDBOX');
+            $secret = Configuration::get(PayPal::PAYPAL_EC_SECRET_SANDBOX);
         } else {
-            $secret = Configuration::get('PAYPAL_EC_SECRET_LIVE');
+            $secret = Configuration::get(PayPal::PAYPAL_EC_SECRET_LIVE);
         }
+
+        $secret = $this->module->getToolKit()->decrypt($secret);
 
         return (string) $secret;
     }
 
     public function getReturnUrl()
     {
+        /* @phpstan-ignore-next-line */
         return Context::getContext()->link->getModuleLink($this->name, 'ecValidation', [], true);
     }
 
@@ -338,10 +315,31 @@ class MethodEC extends AbstractMethodPaypal
     /** @return  string*/
     public function getLandingPage()
     {
-        if ((int)$this->credit_card) {
+        if ((int) $this->credit_card) {
             return 'BILLING';
         }
 
         return 'LOGIN';
+    }
+
+    public function getMerchantId()
+    {
+        if ($this->isSandbox()) {
+            return Configuration::get(PayPal::PAYPAL_EC_MERCHANT_ID_SANDBOX);
+        }
+
+        return Configuration::get(PayPal::PAYPAL_EC_MERCHANT_ID_LIVE);
+    }
+
+    public function getSellerStatus()
+    {
+        if (empty($this->getMerchantId())) {
+            $response = new ResponseGetSellerStatus();
+            $response->setSuccess(false);
+
+            return $response;
+        }
+
+        return $this->paypalApiManager->getSellerStatusRequest()->execute();
     }
 }

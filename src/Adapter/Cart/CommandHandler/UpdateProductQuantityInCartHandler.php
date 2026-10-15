@@ -1,38 +1,18 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Adapter\Cart\CommandHandler;
 
-use Attribute;
 use Cart;
 use Context;
 use Customer;
 use Pack;
 use PrestaShop\PrestaShop\Adapter\Cart\AbstractCartHandler;
 use PrestaShop\PrestaShop\Adapter\ContextStateManager;
+use PrestaShop\PrestaShop\Core\CommandBus\Attributes\AsCommandHandler;
 use PrestaShop\PrestaShop\Core\Domain\Cart\Command\UpdateProductQuantityInCartCommand;
 use PrestaShop\PrestaShop\Core\Domain\Cart\CommandHandler\UpdateProductQuantityInCartHandlerInterface;
 use PrestaShop\PrestaShop\Core\Domain\Cart\Exception\CartConstraintException;
@@ -45,11 +25,13 @@ use PrestaShop\PrestaShop\Core\Domain\Product\Exception\ProductNotFoundException
 use PrestaShop\PrestaShop\Core\Domain\Product\Exception\ProductOutOfStockException;
 use PrestaShop\PrestaShop\Core\Domain\Product\ValueObject\ProductId;
 use Product;
+use ProductAttribute;
 use Shop;
 
 /**
  * @internal
  */
+#[AsCommandHandler]
 final class UpdateProductQuantityInCartHandler extends AbstractCartHandler implements UpdateProductQuantityInCartHandlerInterface
 {
     /**
@@ -137,7 +119,7 @@ final class UpdateProductQuantityInCartHandler extends AbstractCartHandler imple
         // when adding product with less quantity than minimum required.
         if ($updateResult < 0) {
             $minQuantity = $combinationIdValue ?
-                Attribute::getAttributeMinimalQty($combinationIdValue) :
+                ProductAttribute::getAttributeMinimalQty($combinationIdValue) :
                 $product->minimal_quantity;
 
             throw new MinimalQuantityException('Minimum quantity of %d must be added to cart.', $minQuantity);
@@ -185,7 +167,7 @@ final class UpdateProductQuantityInCartHandler extends AbstractCartHandler imple
     {
         $isAvailableWhenOutOfStock = Product::isAvailableWhenOutOfStock($product->out_of_stock);
         if (null !== $command->getCombinationId()) {
-            $isEnoughQuantity = Attribute::checkAttributeQty(
+            $isEnoughQuantity = ProductAttribute::checkAttributeQty(
                 $command->getCombinationId()->getValue(),
                 $command->getNewQuantity()
             );

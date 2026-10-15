@@ -1,32 +1,11 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
-/**
- * @since 1.5
- */
+use PrestaShop\PrestaShop\Core\Util\Sorter;
+
 class HTMLTemplateDeliverySlipCore extends HTMLTemplate
 {
     /**
@@ -53,7 +32,7 @@ class HTMLTemplateDeliverySlipCore extends HTMLTemplate
         // If shop_address is null, then update it with current one.
         // But no DB save required here to avoid massive updates for bulk PDF generation case.
         // (DB: bug fixed in 1.6.1.1 with upgrade SQL script to avoid null shop_address in old orderInvoices)
-        if (!isset($this->order_invoice->shop_address) || !$this->order_invoice->shop_address) {
+        if (empty($this->order_invoice->shop_address)) {
             $this->order_invoice->shop_address = OrderInvoice::getCurrentFormattedShopAddress((int) $this->order->id_shop);
             if (!$bulk_mode) {
                 OrderInvoice::fixAllShopAddresses();
@@ -61,7 +40,9 @@ class HTMLTemplateDeliverySlipCore extends HTMLTemplate
         }
 
         // header informations
-        $this->date = Tools::displayDate($order_invoice->date_add);
+        // The date MUST be the delivery slip date and not the invoice date …
+        // In case of empty date, use the old one …
+        $this->date = Tools::displayDate($order_invoice->delivery_date) ?: Tools::displayDate($order_invoice->date_add);
         $prefix = Configuration::get('PS_DELIVERY_PREFIX', Context::getContext()->language->id);
         $this->title = sprintf(HTMLTemplateDeliverySlip::l('%1$s%2$06d'), $prefix, $this->order_invoice->delivery_number);
 
@@ -106,7 +87,7 @@ class HTMLTemplateDeliverySlipCore extends HTMLTemplate
             foreach ($order_details as &$order_detail) {
                 if ($order_detail['image'] != null) {
                     $name = 'product_mini_' . (int) $order_detail['product_id'] . (isset($order_detail['product_attribute_id']) ? '_' . (int) $order_detail['product_attribute_id'] : '') . '.jpg';
-                    $path = _PS_PROD_IMG_DIR_ . $order_detail['image']->getExistingImgPath() . '.jpg';
+                    $path = _PS_PRODUCT_IMG_DIR_ . $order_detail['image']->getExistingImgPath() . '.jpg';
 
                     $order_detail['image_tag'] = preg_replace(
                         '/\.*' . preg_quote(__PS_BASE_URI__, '/') . '/',
@@ -123,6 +104,10 @@ class HTMLTemplateDeliverySlipCore extends HTMLTemplate
                 }
             }
         }
+
+        // Sort products by Reference ID (and if equals (like combination) by Supplier Reference)
+        $sorter = new Sorter();
+        $order_details = $sorter->natural($order_details, Sorter::ORDER_DESC, 'product_reference', 'product_supplier_reference');
 
         $this->smarty->assign([
             'order' => $this->order,

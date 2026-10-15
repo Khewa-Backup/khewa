@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,27 +16,33 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Request;
 
 use PaypalAddons\classes\AbstractMethodPaypal;
-use PayPalCheckoutSdk\Core\PayPalHttpClient;
+use PaypalAddons\classes\API\Client\HttpClient;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaypalOrderPartialRefundRequest extends PaypalOrderRefundRequest
 {
     protected $amount;
 
-    public function __construct(PayPalHttpClient $client, AbstractMethodPaypal $method, \PaypalOrder $paypalOrder, $amount)
+    public function __construct(HttpClient $client, AbstractMethodPaypal $method, \PaypalOrder $paypalOrder, $amount)
     {
         parent::__construct($client, $method, $paypalOrder);
-        $this->amount = $this->method->formatPrice($amount, $this->paypalOrder->currency);
+        $this->amount = $this->method->formatPrice($amount, $this->paypalOrder->currency, false);
     }
 
     /**
@@ -44,7 +51,7 @@ class PaypalOrderPartialRefundRequest extends PaypalOrderRefundRequest
     protected function buildRequestBody()
     {
         $body = [
-            'amount' => $this->getAmount()
+            'amount' => $this->getAmount(),
         ];
 
         return $body;
@@ -57,7 +64,7 @@ class PaypalOrderPartialRefundRequest extends PaypalOrderRefundRequest
     {
         $amount = [
             'currency_code' => $this->paypalOrder->currency,
-            'value' => $this->amount
+            'value' => $this->amount,
         ];
 
         return $amount;

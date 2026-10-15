@@ -1,30 +1,11 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 use PrestaShop\PrestaShop\Adapter\CoreException;
 use PrestaShop\PrestaShop\Adapter\ServiceLocator;
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 use PrestaShop\PrestaShop\Core\Crypto\Hashing;
 
 /**
@@ -32,7 +13,7 @@ use PrestaShop\PrestaShop\Core\Crypto\Hashing;
  */
 class EmployeeCore extends ObjectModel
 {
-    /** @var int Employee ID */
+    /** @var int|null Employee ID */
     public $id;
 
     /** @var int Employee profile */
@@ -80,13 +61,10 @@ class EmployeeCore extends ObjectModel
     public $bo_width;
 
     /** @var bool */
-    public $bo_menu = 1;
-
-    /* Deprecated */
-    public $bo_show_screencast = false;
+    public $bo_menu = true;
 
     /** @var bool Status */
-    public $active = 1;
+    public $active = true;
 
     public $remote_addr;
 
@@ -95,10 +73,10 @@ class EmployeeCore extends ObjectModel
     public $id_last_customer_message;
     public $id_last_customer;
 
-    /** @var string Unique token for forgot password feature */
+    /** @var string|null Unique token for forgot password feature */
     public $reset_password_token;
 
-    /** @var string token validity date for forgot password feature */
+    /** @var string|null token validity date for forgot password feature */
     public $reset_password_validity;
 
     /**
@@ -117,7 +95,7 @@ class EmployeeCore extends ObjectModel
             'firstname' => ['type' => self::TYPE_STRING, 'validate' => 'isName', 'required' => true, 'size' => 255],
             'email' => ['type' => self::TYPE_STRING, 'validate' => 'isEmail', 'required' => true, 'size' => 255],
             'id_lang' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true],
-            'passwd' => ['type' => self::TYPE_STRING, 'validate' => 'isPasswd', 'required' => true, 'size' => 255],
+            'passwd' => ['type' => self::TYPE_STRING, 'validate' => 'isHashedPassword', 'required' => true, 'size' => 255],
             'last_passwd_gen' => ['type' => self::TYPE_STRING],
             'active' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'id_profile' => ['type' => self::TYPE_INT, 'validate' => 'isInt', 'required' => true],
@@ -145,11 +123,11 @@ class EmployeeCore extends ObjectModel
     protected $webserviceParameters = [
         'fields' => [
             'id_lang' => ['xlink_resource' => 'languages'],
-            'last_passwd_gen' => ['setter' => null],
-            'stats_date_from' => ['setter' => null],
-            'stats_date_to' => ['setter' => null],
-            'stats_compare_from' => ['setter' => null],
-            'stats_compare_to' => ['setter' => null],
+            'last_passwd_gen' => ['setter' => false],
+            'stats_date_from' => ['setter' => false],
+            'stats_date_to' => ['setter' => false],
+            'stats_compare_from' => ['setter' => false],
+            'stats_compare_to' => ['setter' => false],
             'passwd' => ['setter' => 'setWsPasswd'],
         ],
     ];
@@ -306,8 +284,8 @@ class EmployeeCore extends ObjectModel
      */
     public function getByEmail($email, $plaintextPassword = null, $activeOnly = true)
     {
-        if (!Validate::isEmail($email) || ($plaintextPassword != null && !Validate::isPlaintextPassword($plaintextPassword))) {
-            die(Tools::displayError());
+        if (!Validate::isEmail($email)) {
+            throw new PrestaShopException('Email address is invalid.');
         }
 
         $sql = new DbQuery();
@@ -320,7 +298,8 @@ class EmployeeCore extends ObjectModel
 
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
         if (!$result) {
-            return false;
+            // Create fake result to make sure computing time does not allow password enumeration
+            $result = ['passwd' => '123456'];
         }
 
         /** @var Hashing $crypto */
@@ -332,8 +311,8 @@ class EmployeeCore extends ObjectModel
             return false;
         }
 
-        $this->id = $result['id_employee'];
-        $this->id_profile = $result['id_profile'];
+        $this->id = (int) $result['id_employee'];
+        $this->id_profile = (int) $result['id_profile'];
         foreach ($result as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $value;
@@ -359,7 +338,7 @@ class EmployeeCore extends ObjectModel
     public static function employeeExists($email)
     {
         if (!Validate::isEmail($email)) {
-            die(Tools::displayError());
+            throw new PrestaShopException('Email address is invalid.');
         }
 
         return (bool) Db::getInstance()->getValue('
@@ -379,7 +358,7 @@ class EmployeeCore extends ObjectModel
     public static function checkPassword($idEmployee, $passwordHash)
     {
         if (!Validate::isUnsignedId($idEmployee)) {
-            die(Tools::displayError());
+            throw new PrestaShopException('Employee ID is invalid.');
         }
 
         $sql = new DbQuery();
@@ -435,7 +414,7 @@ class EmployeeCore extends ObjectModel
     public function setWsPasswd($passwd)
     {
         try {
-            /** @var \PrestaShop\PrestaShop\Core\Crypto\Hashing $crypto */
+            /** @var Hashing $crypto */
             $crypto = ServiceLocator::get('\\PrestaShop\\PrestaShop\\Core\\Crypto\\Hashing');
         } catch (CoreException $e) {
             return false;
@@ -459,26 +438,13 @@ class EmployeeCore extends ObjectModel
      */
     public function isLoggedBack()
     {
-        if (!Cache::isStored('isLoggedBack' . $this->id)) {
-            /* Employee is valid only if it can be load and if cookie password is the same as database one */
-            $result = (
-                $this->id
-                && Validate::isUnsignedId($this->id)
-                && Context::getContext()->cookie
-                && Context::getContext()->cookie->isSessionAlive()
-                && Employee::checkPassword($this->id, Context::getContext()->cookie->passwd)
-                && (
-                    !isset(Context::getContext()->cookie->remote_addr)
-                    || Context::getContext()->cookie->remote_addr == ip2long(Tools::getRemoteAddr())
-                    || !Configuration::get('PS_COOKIE_CHECKIP')
-                )
-            );
-            Cache::store('isLoggedBack' . $this->id, $result);
-
-            return $result;
+        $container = SymfonyContainer::getInstance();
+        if (!$container) {
+            return false;
         }
+        $userProvider = $container->get('prestashop.user_provider');
 
-        return Cache::retrieve('isLoggedBack' . $this->id);
+        return $userProvider->getUser() !== null;
     }
 
     /**
@@ -489,6 +455,11 @@ class EmployeeCore extends ObjectModel
         if (isset(Context::getContext()->cookie)) {
             Context::getContext()->cookie->logout();
             Context::getContext()->cookie->write();
+        }
+
+        $sfContainer = SymfonyContainer::getInstance();
+        if ($sfContainer !== null) {
+            $sfContainer->get('prestashop.user_provider')->logout();
         }
 
         $this->id = null;
@@ -515,8 +486,6 @@ class EmployeeCore extends ObjectModel
      * @param int $idShop
      *
      * @return bool
-     *
-     * @since 1.5.0
      */
     public function hasAuthOnShop($idShop)
     {
@@ -526,11 +495,9 @@ class EmployeeCore extends ObjectModel
     /**
      * Check if the employee is associated to a specific shop group.
      *
-     * @param int $id_shop_group ShopGroup ID
+     * @param int $idShopGroup ShopGroup ID
      *
      * @return bool
-     *
-     * @since 1.5.0
      */
     public function hasAuthOnShopGroup($idShopGroup)
     {
@@ -539,7 +506,9 @@ class EmployeeCore extends ObjectModel
         }
 
         foreach ($this->associated_shops as $idShop) {
-            if ($idShopGroup == Shop::getGroupFromShop($idShop, true)) {
+            /** @var int $groupFromShop */
+            $groupFromShop = Shop::getGroupFromShop($idShop, true);
+            if ($idShopGroup == $groupFromShop) {
                 return true;
             }
         }
@@ -551,13 +520,11 @@ class EmployeeCore extends ObjectModel
      * Get default id_shop with auth for current employee.
      *
      * @return int
-     *
-     * @since 1.5.0
      */
     public function getDefaultShopID()
     {
         if ($this->isSuperAdmin() || in_array(Configuration::get('PS_SHOP_DEFAULT'), $this->associated_shops)) {
-            return Configuration::get('PS_SHOP_DEFAULT');
+            return (int) Configuration::get('PS_SHOP_DEFAULT');
         }
 
         return $this->associated_shops[0];
@@ -600,12 +567,10 @@ class EmployeeCore extends ObjectModel
     public function getImage()
     {
         $defaultSystem = Tools::getAdminImageUrl('pr/default.jpg');
-        $imageUrl = null;
 
         // Default from Profile
         $profile = new Profile($this->id_profile);
-        $defaultProfile = (int) $profile->id === (int) $this->id_profile ? $profile->getProfileImage() : null;
-        $imageUrl = $imageUrl ?? $defaultProfile;
+        $imageUrl = (int) $profile->id === (int) $this->id_profile ? $profile->getProfileImage() : null;
 
         // Gravatar
         if ($this->has_enabled_gravatar) {
@@ -638,7 +603,7 @@ class EmployeeCore extends ObjectModel
     /**
      * Get last elements for notify.
      *
-     * @param $element
+     * @param string $element
      *
      * @return int
      */
@@ -680,7 +645,7 @@ class EmployeeCore extends ObjectModel
      */
     public function stampResetPasswordToken()
     {
-        $salt = $this->id . '+' . uniqid(mt_rand(0, mt_getrandmax()), true);
+        $salt = $this->id . '+' . uniqid((string) mt_rand(0, mt_getrandmax()), true);
         $this->reset_password_token = sha1(time() . $salt);
         $validity = (int) Configuration::get('PS_PASSWD_RESET_VALIDITY') ?: 1440;
         $this->reset_password_validity = date('Y-m-d H:i:s', strtotime('+' . $validity . ' minutes'));
@@ -691,7 +656,7 @@ class EmployeeCore extends ObjectModel
      */
     public function hasRecentResetPasswordToken()
     {
-        if (!$this->reset_password_token || $this->reset_password_token == '') {
+        if (!$this->reset_password_token) {
             return false;
         }
 
@@ -708,7 +673,7 @@ class EmployeeCore extends ObjectModel
      */
     public function getValidResetPasswordToken()
     {
-        if (!$this->reset_password_token || $this->reset_password_token == '') {
+        if (!$this->reset_password_token) {
             return false;
         }
 
@@ -731,8 +696,8 @@ class EmployeeCore extends ObjectModel
     /**
      * Is the Employee allowed to do the given action.
      *
-     * @param $action
-     * @param $tab
+     * @param string $action
+     * @param string $tab
      *
      * @return bool
      */
@@ -755,5 +720,29 @@ class EmployeeCore extends ObjectModel
         }
 
         return null;
+    }
+
+    public function getAssociatedShopIds(): array
+    {
+        return $this->associated_shops;
+    }
+
+    public function getAssociatedShopGroupIds(): array
+    {
+        $associatedShopGroupIds = [];
+        foreach ($this->associated_shops as $shopId) {
+            /** @var int $groupFromShop */
+            $groupFromShop = Shop::getGroupFromShop($shopId, true);
+            if (!empty($groupFromShop) && !in_array($groupFromShop, $associatedShopGroupIds)) {
+                $associatedShopGroupIds[] = (int) $groupFromShop;
+            }
+        }
+
+        return $associatedShopGroupIds;
+    }
+
+    public function getImageUrl(): string
+    {
+        return $this->getImage();
     }
 }

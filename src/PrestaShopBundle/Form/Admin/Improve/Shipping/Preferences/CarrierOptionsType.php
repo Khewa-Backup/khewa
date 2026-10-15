@@ -1,36 +1,18 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Form\Admin\Improve\Shipping\Preferences;
 
+use PrestaShopBundle\Form\Admin\Type\MultistoreConfigurationType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
+use PrestaShopBundle\Form\Extension\MultistoreConfigurationTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class generates "Handling" form
@@ -73,8 +55,8 @@ class CarrierOptionsType extends TranslatorAwareType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $carrierChoices = array_merge([
-            'Best price' => -1,
-            'Best grade' => -2,
+            'Best price' => (int) -1,
+            'Best grade' => (int) -2,
         ], $this->carriers);
 
         $builder
@@ -85,9 +67,11 @@ class CarrierOptionsType extends TranslatorAwareType
                     'Admin.Shipping.Feature'
                 ),
                 'help' => $this->trans(
-                    'Your shop\'s default carrier.',
+                    'Default carrier that will be pre-selected for customers in the checkout process.',
                     'Admin.Shipping.Help'
                 ),
+                'multistore_configuration_key' => 'PS_CARRIER_DEFAULT',
+                'autocomplete' => true,
             ])
             ->add('carrier_default_order_by', ChoiceType::class, [
                 'choices' => $this->orderByChoices,
@@ -97,9 +81,10 @@ class CarrierOptionsType extends TranslatorAwareType
                     'Admin.Actions'
                 ),
                 'help' => $this->trans(
-                    'This will only be visible in the front office.',
+                    'Determines how carriers are sorted in the checkout.',
                     'Admin.Shipping.Help'
                 ),
+                'multistore_configuration_key' => 'PS_CARRIER_DEFAULT_SORT',
             ])
             ->add('carrier_default_order_way', ChoiceType::class, [
                 'choices' => $this->orderWayChoices,
@@ -109,9 +94,10 @@ class CarrierOptionsType extends TranslatorAwareType
                     'Admin.Actions'
                 ),
                 'help' => $this->trans(
-                    'This will only be visible in the front office.',
+                    'Sets the sorting direction of carriers in the checkout.',
                     'Admin.Shipping.Help'
                 ),
+                'multistore_configuration_key' => 'PS_CARRIER_DEFAULT_ORDER',
             ]);
     }
 
@@ -131,5 +117,15 @@ class CarrierOptionsType extends TranslatorAwareType
     public function getBlockPrefix()
     {
         return 'shipping_preferences_carrier_options_block';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see MultistoreConfigurationTypeExtension
+     */
+    public function getParent(): string
+    {
+        return MultistoreConfigurationType::class;
     }
 }

@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 declare(strict_types=1);
 
@@ -35,6 +15,7 @@ class Profiler
 
     /** @var array */
     protected $profiler = [];
+
     /** @var array */
     protected $globalVarSize = [];
 
@@ -72,7 +53,14 @@ class Profiler
 
     private function __construct()
     {
-        $this->startTime = microtime(true);
+        global $start_time;
+        if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
+            $this->startTime = (float) $_SERVER['REQUEST_TIME_FLOAT'];
+        } elseif (!empty($start_time)) {
+            $this->startTime = $start_time;
+        } else {
+            $this->startTime = microtime(true);
+        }
     }
 
     /**
@@ -146,11 +134,15 @@ class Profiler
      *
      * @param mixed $var
      *
-     * @return string|object
+     * @return string|object|array
      */
     private function getVarData($var)
     {
         if (is_object($var)) {
+            return $var;
+        }
+
+        if (is_array($var)) {
             return $var;
         }
 
@@ -201,7 +193,9 @@ class Profiler
     {
         // Including a lot of files uses memory
         foreach (get_included_files() as $file) {
-            $this->totalFilesize += filesize($file);
+            if (file_exists($file)) {
+                $this->totalFilesize += filesize($file);
+            }
         }
 
         foreach ($GLOBALS as $key => $value) {
@@ -221,9 +215,10 @@ class Profiler
         $this->totalCacheSize = $this->getVarSize($cache);
 
         // Sum querying time
+        /* @phpstan-ignore-next-line */
         $queries = Db::getInstance()->queries;
         uasort($queries, [$this, 'sortByQueryTime']);
-        foreach ($queries as $data) {
+        foreach ($queries as $id => $data) {
             $this->totalQueryTime += $data['time'];
 
             $queryRow = [
@@ -234,6 +229,7 @@ class Profiler
                 'rows' => 1,
                 'group_by' => false,
                 'stack' => [],
+                'id' => $id,
             ];
 
             if (preg_match('/^\s*select\s+/i', $data['query'])) {
@@ -242,8 +238,12 @@ class Profiler
                     $queryRow['filesort'] = true;
                 }
 
-                foreach ($explain as $row) {
-                    $queryRow['rows'] *= (int) $row['rows'];
+                if (is_array($explain)) {
+                    foreach ($explain as $row) {
+                        $queryRow['rows'] *= (int) $row['rows'];
+                    }
+                } else {
+                    $queryRow['rows'] = 'N/A';
                 }
 
                 if (stristr($data['query'], 'group by') && !preg_match('/(avg|count|min|max|group_concat|sum)\s*\(/i', $data['query'])) {
@@ -253,14 +253,17 @@ class Profiler
 
             array_shift($data['stack']);
             foreach ($data['stack'] as $call) {
-                $queryRow['stack'][] = str_replace('\\', '/', substr($call['file'], strlen(_PS_ROOT_DIR_))) . ':' . $call['line'];
+                $queryRow['stack'][] = str_replace('\\', '/', substr($call['file'], strlen(_PS_ROOT_DIR_))) . ':' . $call['line'] . ' (' . $call['function'] . ')';
             }
 
             $this->queries[] = $queryRow;
         }
 
+        /* @phpstan-ignore-next-line */
         uasort(ObjectModel::$debug_list, function ($a, $b) { return (count($a) < count($b)) ? 1 : -1; });
+        /* @phpstan-ignore-next-line */
         arsort(Db::getInstance()->tables);
+        /* @phpstan-ignore-next-line */
         arsort(Db::getInstance()->uniqQueries);
         uasort($this->hooksPerfs, [$this, 'sortByQueryTime']);
     }
@@ -277,14 +280,14 @@ class Profiler
             $formattedOutput[$moduleName] = [
                 'total_time' => array_reduce(
                     $perfs,
-                    function (&$res, $item) {
+                    function ($res, $item) {
                         return $res + $item['time'];
                     },
                     0
                 ),
                 'total_memory' => array_reduce(
                     $perfs,
-                    function (&$res, $item) {
+                    function ($res, $item) {
                         return $res + $item['memory'];
                     },
                     0
@@ -303,12 +306,17 @@ class Profiler
      */
     public function getSmartyVariables(): array
     {
+        /* @phpstan-ignore-next-line */
+        $doublesQueries = Db::getInstance()->uniqQueries;
+        /* @phpstan-ignore-next-line */
+        $tableStress = Db::getInstance()->tables;
+
         return [
             'summary' => [
-                'loadTime' => $this->profiler[count($this->profiler) - 1]['time'] - $this->startTime,
+                'loadTime' => empty($this->profiler) ? null : $this->profiler[count($this->profiler) - 1]['time'] - $this->startTime,
                 'queryTime' => round(1000 * $this->totalQueryTime),
                 'nbQueries' => count($this->queries),
-                'peakMemoryUsage' => $this->profiler[count($this->profiler) - 1]['peak_memory_usage'],
+                'peakMemoryUsage' => empty($this->profiler) ? null : $this->profiler[count($this->profiler) - 1]['peak_memory_usage'],
                 'globalVarSize' => $this->globalVarSize,
                 'includedFiles' => count(get_included_files()),
                 'totalFileSize' => $this->totalFilesize,
@@ -339,8 +347,8 @@ class Profiler
                 'totalHooksMemory' => $this->totalModulesMemory,
             ],
             'stopwatchQueries' => $this->queries,
-            'doublesQueries' => Db::getInstance()->uniqQueries,
-            'tableStress' => Db::getInstance()->tables,
+            'doublesQueries' => $doublesQueries,
+            'tableStress' => $tableStress,
             'objectmodel' => ObjectModel::$debug_list,
             'files' => get_included_files(),
         ];

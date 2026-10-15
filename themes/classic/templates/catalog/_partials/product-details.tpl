@@ -4,16 +4,26 @@
      role="tabpanel"
   >
   {block name='product_reference'}
-    {if isset($product_manufacturer->id)}
+    {if !empty($product_manufacturer.id)}
       <div class="product-manufacturer">
-        {if isset($manufacturer_image_url)}
-          <a href="{$product_brand_url}">
-            <img src="{$manufacturer_image_url}" class="img img-fluid manufacturer-logo" alt="{$product_manufacturer->name}" loading="lazy">
+        {assign var="product_manufacturer_image_key" value="`$product_manufacturer.id`-"}
+        {if !empty($product_manufacturer.image.small.url) && strpos($product_manufacturer.image.small.url, $product_manufacturer_image_key)}
+          <a href="{$product_manufacturer.url}">
+            <picture>
+              {if !empty($product_manufacturer.image.small.sources.avif)}<source srcset="{$product_manufacturer.image.small.sources.avif}" type="image/avif">{/if}
+              {if !empty($product_manufacturer.image.small.sources.webp)}<source srcset="{$product_manufacturer.image.small.sources.webp}" type="image/webp">{/if}
+              <img
+                src="{$product_manufacturer.image.small.url}"
+                alt="{if !empty($product_manufacturer.image.legend)}{$product_manufacturer.image.legend}{else}{$product_manufacturer.name}{/if}"
+                class="img img-fluid manufacturer-logo"
+                loading="lazy"
+              >
+            </picture>
           </a>
         {else}
           <label class="label">{l s='Brand' d='Shop.Theme.Catalog'}</label>
           <span>
-            <a href="{$product_brand_url}">{$product_manufacturer->name}</a>
+            <a href="{$product_manufacturer.url}">{$product_manufacturer.name}</a>
           </span>
         {/if}
       </div>
@@ -67,15 +77,15 @@
   {* if product have specific references, a table will be added to product details section *}
   {block name='product_specific_references'}
     {if !empty($product.specific_references)}
-{*      <section class="product-features">*}
-{*        <p class="h6">{l s='Specific References' d='Shop.Theme.Catalog'}</p>*}
-{*          <dl class="data-sheet">*}
-{*            {foreach from=$product.specific_references item=reference key=key}*}
-{*              <dt class="name">{$key}</dt>*}
-{*              <dd class="value">{$reference}</dd>*}
-{*            {/foreach}*}
-{*          </dl>*}
-{*      </section>*}
+      <section class="product-features">
+        <p class="h6">{l s='Specific References' d='Shop.Theme.Catalog'}</p>
+          <dl class="data-sheet">
+            {foreach from=$product.specific_references item=reference key=key}
+              <dt class="name">{$key}</dt>
+              <dd class="value">{$reference}</dd>
+            {/foreach}
+          </dl>
+      </section>
     {/if}
   {/block}
 

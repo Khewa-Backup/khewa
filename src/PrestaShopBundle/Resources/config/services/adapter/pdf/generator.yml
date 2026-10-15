@@ -18,6 +18,12 @@ services:
     arguments:
       - '@translator'
 
+  prestashop.adapter.pdf.shipment_delivery_slip_pdf_generator:
+    class: PrestaShop\PrestaShop\Adapter\PDF\ShipmentDeliverySlipPdfGenerator
+    arguments:
+      - '@translator'
+      - '@PrestaShopBundle\Entity\Repository\ShipmentRepository'
+
   prestashop.adapter.pdf.generator.credit_slip:
     class: PrestaShop\PrestaShop\Adapter\PDF\PDFGenerator
     arguments:
@@ -27,7 +33,6 @@ services:
   prestashop.adapter.pdf.credit_slip_pdf_generator:
     class: PrestaShop\PrestaShop\Adapter\PDF\CreditSlipPdfGenerator
     arguments:
-      - '@translator'
       - '%database_prefix%'
       - '@doctrine.dbal.default_connection'
 

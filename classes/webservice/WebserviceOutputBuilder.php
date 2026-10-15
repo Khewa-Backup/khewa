@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
@@ -32,13 +12,13 @@ class WebserviceOutputBuilderCore
     /**
      * @var int constant
      */
-    const VIEW_LIST = 1;
-    const VIEW_DETAILS = 2;
+    public const VIEW_LIST = 1;
+    public const VIEW_DETAILS = 2;
 
     protected $wsUrl;
     protected $output;
 
-    /** @var WebserviceOutputInterface|WebserviceOutputXML|WebserviceOutputJSON */
+    /** @var WebserviceOutputInterface|WebserviceOutputXML|WebserviceOutputJSON|null */
     public $objectRender;
     protected $wsResource;
     protected $depth = 0;
@@ -77,9 +57,10 @@ class WebserviceOutputBuilderCore
      * Set the Content-type for the http header.
      *
      * @param WebserviceOutputInterface $obj_render
+     *
      * @throw WebserviceException if the object render is not an instance of WebserviceOutputInterface
      *
-     * @return WebserviceOutputBuilder
+     * @return $this
      *
      * @throws WebserviceException
      */
@@ -114,7 +95,7 @@ class WebserviceOutputBuilderCore
      *
      * @param array $resources
      *
-     * @return WebserviceOutputBuilder
+     * @return $this
      */
     public function setWsResources($resources)
     {
@@ -146,7 +127,7 @@ class WebserviceOutputBuilderCore
      * @param string $key The normalized key expected for an http response
      * @param string $value
      *
-     * @return WebserviceOutputBuilder
+     * @return $this
      *
      * @throws WebserviceException If the key or the value are corrupted (use Validate::isCleanHtml method)
      */
@@ -162,15 +143,14 @@ class WebserviceOutputBuilderCore
 
     /**
      * @param string|null $key if null get all header params otherwise the params specified by the key
+     *
      * @throw WebserviceException if the key is corrupted (use Validate::isCleanHtml method)
      * @throw WebserviceException if the asked key does'nt exists.
      *
-     * @return array|string
+     * @return array|int
      */
     public function getHeaderParams($key = null)
     {
-        $return = '';
-
         if (null !== $key) {
             if (!Validate::isCleanHtml($key)) {
                 throw new WebserviceException('the key you write is a corrupted text.', [95, 500]);
@@ -189,7 +169,7 @@ class WebserviceOutputBuilderCore
     /**
      * Delete all Header parameters previously set.
      *
-     * @return WebserviceOutputBuilder
+     * @return $this
      */
     public function resetHeaderParams()
     {
@@ -280,6 +260,7 @@ class WebserviceOutputBuilderCore
      */
     public function getErrors($errors)
     {
+        $str_output = '';
         if (!empty($errors)) {
             if (isset($this->objectRender)) {
                 $str_output = $this->objectRender->renderErrorsHeader();
@@ -303,7 +284,7 @@ class WebserviceOutputBuilderCore
     /**
      * Build the resource list in the output format specified by WebserviceOutputBuilder::objectRender.
      *
-     * @param $key_permissions
+     * @param array $key_permissions
      *
      * @return string
      */
@@ -322,6 +303,7 @@ class WebserviceOutputBuilderCore
                     'get' => (in_array('GET', $key_permissions[$resourceName]) ? 'true' : 'false'),
                     'put' => (in_array('PUT', $key_permissions[$resourceName]) ? 'true' : 'false'),
                     'post' => (in_array('POST', $key_permissions[$resourceName]) ? 'true' : 'false'),
+                    'patch' => (in_array('PATCH', $key_permissions[$resourceName]) ? 'true' : 'false'),
                     'delete' => (in_array('DELETE', $key_permissions[$resourceName]) ? 'true' : 'false'),
                     'head' => (in_array('HEAD', $key_permissions[$resourceName]) ? 'true' : 'false'),
                 ];
@@ -501,7 +483,7 @@ class WebserviceOutputBuilderCore
         }
         $output .= $this->setIndent($depth) . $this->objectRender->renderNodeHeader($ws_params['objectNodeName'], $ws_params);
 
-        if ($object->id != 0) {
+        if (!empty($object->id)) {
             // This to add virtual Fields for a particular entity.
             $virtual_fields = $this->addVirtualFields($ws_params['objectsNodeName'], $object);
             if (!empty($virtual_fields)) {
@@ -554,7 +536,7 @@ class WebserviceOutputBuilderCore
         $show_field = true;
 
         if (isset($ws_params['hidden_fields']) && in_array($field_name, $ws_params['hidden_fields'])) {
-            return;
+            return '';
         }
 
         if ($this->schemaToDisplay === 'synopsis') {
@@ -608,10 +590,10 @@ class WebserviceOutputBuilderCore
     }
 
     /**
-     * @param $object
-     * @param $depth
-     * @param $associations
-     * @param $ws_params
+     * @param ObjectModel $object
+     * @param int $depth
+     * @param array $associations
+     * @param array $ws_params
      *
      * @return string
      */
@@ -666,14 +648,14 @@ class WebserviceOutputBuilderCore
                             $value = $object_assoc;
                         }
                         if (empty($fields_assoc)) {
-                            $fields_assoc = [['id' => $value['id']]];
+                            $fields_assoc = [['id' => ($value['id'] ?? null)]];
                         }
                         $output_details .= $this->renderFlatAssociation($object, $depth, $assoc_name, $association['resource'], $fields_assoc, $value, $parent_details);
                     } else {
                         foreach ($object_assoc as $id) {
                             if ($class_name !== null) {
                                 $child_object = new $class_name($id);
-                                $output_details .= $this->renderEntity($child_object, ($depth - 2 ? 0 : $depth - 2));
+                                $output_details .= $this->renderEntity($child_object, $depth - 2 ? 0 : $depth - 2);
                             }
                         }
                     }
@@ -711,12 +693,12 @@ class WebserviceOutputBuilderCore
 
         foreach ($fields_assoc as $field_name => $field) {
             if (!is_array($this->fieldsToDisplay) || in_array($field_name, $this->fieldsToDisplay[$assoc_name])) {
-                if ($field_name == 'id' && !isset($field['sqlId'])) {
+                if (isset($field['id']) && !isset($field['sqlId'])) {
                     $field['sqlId'] = 'id';
-                    $field['value'] = $object_assoc['id'];
+                    $field['value'] = isset($object_assoc['id']) ? $object_assoc['id'] : null;
                 } elseif (!isset($field['sqlId'])) {
-                    $field['sqlId'] = $field_name;
-                    $field['value'] = $object_assoc[$field_name];
+                    $field['sqlId'] = $field_name ?: 'id';
+                    $field['value'] = isset($object_assoc[$field_name]) ? $object_assoc[$field_name] : null;
                 }
                 $field['entities_name'] = $assoc_name;
                 $field['entity_name'] = $resource_name;
@@ -766,10 +748,10 @@ class WebserviceOutputBuilderCore
     /**
      * @param string|object $object
      * @param string $method
-     * @param $field_name
-     * @param $entity_name
+     * @param string $field_name
+     * @param string $entity_name
      *
-     * @return WebserviceOutputBuilder
+     * @return $this
      *
      * @throws Exception
      * @throws WebserviceException
@@ -811,7 +793,9 @@ class WebserviceOutputBuilderCore
                 $object = $this->specificFields[$field_name]['object'];
             }
 
-            $field = $object->{$this->specificFields[$field_name]['method']}($field, $entity_object, $ws_params);
+            if (isset($object) && is_object($object)) {
+                $field = $object->{$this->specificFields[$field_name]['method']}($field, $entity_object, $ws_params);
+            }
         }
 
         return $field;
@@ -845,12 +829,14 @@ class WebserviceOutputBuilderCore
                     $object = $function_infos['object'];
                 }
 
-                $return_fields = $object->{$function_infos['method']}($entity_object, $function_infos['parameters']);
-                foreach ($return_fields as $field_name => $value) {
-                    if (Validate::isConfigName($field_name)) {
-                        $arr_return[$field_name] = $value;
-                    } else {
-                        throw new WebserviceException('Name for the virtual field is not allow', [128, 400]);
+                if (isset($object) && is_object($object)) {
+                    $return_fields = $object->{$function_infos['method']}($entity_object, $function_infos['parameters']);
+                    foreach ($return_fields as $field_name => $value) {
+                        if (Validate::isConfigName($field_name)) {
+                            $arr_return[$field_name] = $value;
+                        } else {
+                            throw new WebserviceException('Name for the virtual field is not allow', [128, 400]);
+                        }
                     }
                 }
             }

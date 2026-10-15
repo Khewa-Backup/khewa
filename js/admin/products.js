@@ -1,26 +1,6 @@
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
@@ -30,7 +10,6 @@ function ProductTabsManager(){
 	var self = this;
 	this.product_tabs = [];
 	this.tabs_to_preload = [];
-	this.current_request;
 	this.stack_done = [];
 	this.page_reloading = false;
 	this.has_error_loading_tabs = false;
@@ -83,7 +62,7 @@ function ProductTabsManager(){
 
 		// onReady() is always called after the dom has been created for the tab (similar to $(document).ready())
 		if (container.hasClass('not-loaded'))
-			container.bind('loaded', callback);
+			container.on('loaded', callback);
 		else
 			callback();
 	}
@@ -213,7 +192,6 @@ function ProductTabsManager(){
 }
 
 function loadPack() {
-	var container = $('#product-pack-container');
 	var id_product = $('input[name=id_product]').first().val();
 	var data;
 	$.ajax({
@@ -279,7 +257,7 @@ product_tabs['Combinations'] = new function(){
 					var quantity = data[0]['quantity'];
 					var image = false;
 					var product_att_list = new Array();
-					for(i=0;i<data.length;i++)
+					for(var i=0;i<data.length;i++)
 					{
 						product_att_list.push(data[i]['group_name']+' : '+data[i]['attribute_name']);
 						product_att_list.push(data[i]['id_attribute']);
@@ -421,7 +399,7 @@ product_tabs['Combinations'] = new function(){
 	};
 
 	this.bindToggleAddCombination = function (){
-		$('#desc-product-newCombination').click(function(e) {
+		$('#desc-product-newCombination').on('click', function(e) {
 			e.preventDefault();
 
 			if ($(this).children('i').first().hasClass('process-icon-new'))
@@ -437,7 +415,6 @@ product_tabs['Combinations'] = new function(){
 	this.fillCombination = function(wholesale_price, price_impact, weight_impact, unit_impact, reference,
 	ean, quantity, image, old_attr, id_product_attribute, default_attribute, eco_tax, upc, mpn, minimal_quantity, available_date, low_stock_threshold, low_stock_alert)
 	{
-		var link = '';
 		self.init_elems();
 		$('#stock_mvt_attribute').show();
 		$('#initial_stock_attribute').hide();
@@ -516,14 +493,13 @@ product_tabs['Combinations'] = new function(){
 		$("#add_new_combination").show();
 
 		/* Reset all combination images */
-		combinationImages = $('#id_image_attr').find("input[id^=id_image_attr_]");
-		combinationImages.each(function() {
+		$('#id_image_attr').find("input[id^=id_image_attr_]").each(function() {
 			this.checked = false;
 		});
 
 		/* Check combination images */
 		if (typeof(combination_images[id_product_attribute]) != 'undefined')
-			for (i = 0; i < combination_images[id_product_attribute].length; i++)
+			for (var i = 0; i < combination_images[id_product_attribute].length; i++)
 				$('#id_image_attr_' + combination_images[id_product_attribute][i]).attr('checked', true);
 		check_impact();
 		check_weight_impact();
@@ -555,7 +531,7 @@ product_tabs['Combinations'] = new function(){
 		var elem = getE('product_att_list');
 
 		if (elem.length)
-			for (i = elem.length - 1; i >= 0; i--)
+			for (var i = elem.length - 1; i >= 0; i--)
 				if (elem[i])
 					elem.remove(i);
 
@@ -626,12 +602,12 @@ function enableSave()
 
 function handleSaveButtons(e)
 {
-	msg = [];
+	var msg = [];
 	var i = 0;
 	// relative to type of product
 	if (product_type == product_type_pack)
 		msg[i++] = handleSaveButtonsForPack();
-	else if (product_type == product_type_pack)
+	else if (product_type == product_type_virtual)
 		msg[i++] = handleSaveButtonsForVirtual();
 	else
 		msg[i++] = handleSaveButtonsForSimple();
@@ -654,7 +630,7 @@ function handleSaveButtons(e)
 	else
 	{
 		$("#disableSaveMessage").remove();
-		do_not_save = false;
+		var do_not_save = false;
 		for (var key in msg)
 		{
 			if (msg != "")
@@ -687,8 +663,6 @@ function handleSaveButtonsForPack()
 }
 
 product_tabs['Seo'] = new function(){
-	var self = this;
-
 	this.onReady = function() {
 		if ($('#link_rewrite_'+id_lang_default).length)
 			if ($('#link_rewrite_'+id_lang_default).val().replace(/^\s+|\s+$/gm,'') == '') {
@@ -697,8 +671,6 @@ product_tabs['Seo'] = new function(){
 
 		// Enable writing of the product name when the friendly url field in tab SEO is loaded
 		$('.copy2friendlyUrl').removeAttr('disabled');
-
-		displayFlags(languages, id_language, allowEmployeeFormLang);
 
 		if (display_multishop_checkboxes)
 			ProductMultishop.checkAllSeo();
@@ -709,7 +681,7 @@ product_tabs['Prices'] = new function(){
 	var self = this;
 	// Bind to show/hide new specific price form
 	this.toggleSpecificPrice = function (){
-		$('#show_specific_price').click(function()
+		$('#show_specific_price').on('click', function()
 		{
 			$('#add_specific_price').slideToggle();
 
@@ -720,7 +692,7 @@ product_tabs['Prices'] = new function(){
 			return false;
 		});
 
-		$('#hide_specific_price').click(function()
+		$('#hide_specific_price').on('click', function()
 		{
 			$('#add_specific_price').slideToggle();
 			$('#add_specific_price').find('input[name=submitPriceAddition]').remove();
@@ -773,7 +745,7 @@ product_tabs['Prices'] = new function(){
 
 	this.loadInformations = function(select_id, action)
 	{
-		id_shop = $('#sp_id_shop').val();
+		var id_shop = $('#sp_id_shop').val();
 		$.ajax({
 			url: product_url + '&action='+action+'&ajax=true&id_shop='+id_shop,
 			success: function(data) {
@@ -788,7 +760,7 @@ product_tabs['Prices'] = new function(){
 		self.deleteSpecificPrice();
 		self.bindDelete();
 
-		$('#sp_id_shop').change(function() {
+		$('#sp_id_shop').on('change', function() {
 			self.loadInformations('#sp_id_group','getGroupsOptions');
 			self.loadInformations('#spm_currency_0', 'getCurrenciesOptions');
 			self.loadInformations('#sp_id_country', 'getCountriesOptions');
@@ -802,7 +774,7 @@ product_tabs['Associations'] = new function(){
 	var self = this;
 	this.initAccessoriesAutocomplete = function (){
 		$('#product_autocomplete_input')
-			.autocomplete('ajax_products_list.php?exclude_packs=0&excludeVirtuals=0', {
+			.autocomplete('index.php?controller=AdminProducts&ajax=1&action=productsList&exclude_packs=0&excludeVirtuals=0', {
 				minChars: 1,
 				autoFill: true,
 				max:20,
@@ -874,7 +846,7 @@ product_tabs['Associations'] = new function(){
 		input.value = '';
 		name.value = '';
 		div.innerHTML = '';
-		for (i in inputCut)
+		for (var i in inputCut)
 		{
 			// If empty, error, next
 			if (!inputCut[i] || !nameCut[i])
@@ -901,7 +873,7 @@ product_tabs['Associations'] = new function(){
 	 */
 	this.getManufacturers = function(){
 		$.ajax({
-				url: 'ajax-tab.php',
+				url: 'index.php',
 				cache: false,
 				dataType: 'json',
 				data: {
@@ -966,7 +938,7 @@ product_tabs['Attachments'] = new function(){
 			});
 			return !$("#selectAttachment1 option:selected").remove().appendTo("#selectAttachment2");
 		});
-		$("#product").submit(function() {
+		$("#product").on('submit', function() {
 			$("#selectAttachment1 option").each(function(i) {
 				$(this).attr("selected", "selected");
 			});
@@ -1017,7 +989,7 @@ product_tabs['Shipping'] = new function(){
 product_tabs['Informations'] = new function(){
 	var self = this;
 	this.bindAvailableForOrder = function (){
-		$("#available_for_order").click(function()
+		$("#available_for_order").on('click', function()
 		{
 			if ($(this).is(':checked') || ($('input[name=\'multishop_check[show_price]\']').length && !$('input[name=\'multishop_check[show_price]\']').prop('checked')))
 			{
@@ -1038,12 +1010,12 @@ product_tabs['Informations'] = new function(){
 		else
 			showRedirectProductOptions(true);
 
-		$('#redirect_type').change(function () {
+		$('#redirect_type').on('change', function () {
 			redirectSelectChange();
 		});
 
 		$('#related_product_autocomplete_input')
-			.autocomplete('ajax_products_list.php?exclude_packs=0&excludeVirtuals=0&excludeIds='+id_product, {
+			.autocomplete('index.php?controller=AdminProducts&ajax=1&action=productsList&exclude_packs=0&excludeVirtuals=0&excludeIds='+id_product, {
 				minChars: 1,
 				autoFill: true,
 				max:20,
@@ -1071,12 +1043,12 @@ product_tabs['Informations'] = new function(){
 			$('#resultImage').val(tag);
 		}
 		changeTagImage();
-		$('#createImageDescription input').change(function(){
+		$('#createImageDescription input').on('change', function(){
 			changeTagImage();
 		});
 
 		var i = 0;
-		$('.addImageDescription').click(function(){
+		$('.addImageDescription').on('click', function(){
 			if (i == 0){
 				$('#createImageDescription').animate({
 					opacity: 1, height: 'toggle'
@@ -1120,7 +1092,7 @@ product_tabs['Informations'] = new function(){
 				$('#is_virtual_good').removeAttr('checked');
 			});
 
-			product_type = $(this).val();
+			window.product_type = $(this).val();
 			$('#warn_virtual_combinations').hide();
 			$('#warn_pack_combinations').hide();
 			// until a product is added in the pack
@@ -1136,10 +1108,10 @@ product_tabs['Informations'] = new function(){
 				{
 					$('#product-pack-container').show();
 					// If the pack tab has not finished loaded the changes will be made when the loading event is triggered
-					$("#product-tab-content-Pack").bind('loaded', function(){
+					$("#product-tab-content-Pack").on('loaded', function(){
 						$('#ppack').val(1).attr('checked', true).attr('disabled', true);
 					});
-					$("#product-tab-content-Quantities").bind('loaded', function(){
+					$("#product-tab-content-Quantities").on('loaded', function(){
 						$('.stockForVirtualProduct').show();
 					});
 
@@ -1219,7 +1191,7 @@ product_tabs['Informations'] = new function(){
 					showOptions(checked);
 				}
 			};
-			$('input[name=\'multishop_check[active]\']').click(active_click);
+			$('input[name=\'multishop_check[active]\']').on('click', active_click);
 			active_click();
 		}
 	};
@@ -1235,7 +1207,7 @@ product_tabs['Pack'] = new function() {
 		});
 
 		function productFormatResult(item) {
-			itemTemplate = "<div class='media'>";
+			var itemTemplate = "<div class='media'>";
 			itemTemplate += "<div class='pull-left'>";
 			itemTemplate += "<img class='media-object' width='40' src='" + item.image + "' alt='" + item.name + "'>";
 			itemTemplate += "</div>";
@@ -1258,7 +1230,7 @@ product_tabs['Pack'] = new function() {
 			width: '100%',
 			dropdownCssClass: "bootstrap",
 			ajax: {
-				url: "ajax_products_list.php",
+				url: "index.php?controller=AdminProducts&ajax=1&action=productsList",
 				dataType: 'json',
 				data: function (term) {
 					return {
@@ -1336,7 +1308,7 @@ product_tabs['Pack'] = new function() {
 					e.preventDefault();
 					e.stopPropagation();
 					delPackItem($(this).data('delete'), $(this).data('delete-attr'));
-				})
+				});
 				selectedProduct = null;
 				$('#curPackItemName').select2("val", "");
 				$('.pack-empty-warning').hide();
@@ -1411,15 +1383,9 @@ product_tabs['Pack'] = new function() {
 }
 
 product_tabs['Images'] = new function(){
-	this.onReady = function(){
-		displayFlags(languages, id_language, allowEmployeeFormLang);
-	}
 }
 
 product_tabs['Features'] = new function(){
-	this.onReady = function(){
-		displayFlags(languages, id_language, allowEmployeeFormLang);
-	}
 }
 
 product_tabs['Quantities'] = new function(){
@@ -1434,7 +1400,7 @@ product_tabs['Quantities'] = new function(){
 
 		$.ajax({
 			type: "POST",
-			url: "ajax-tab.php",
+			url: "index.php",
 			data: data,
 			dataType: 'json',
 			async : true,
@@ -1465,16 +1431,8 @@ product_tabs['Quantities'] = new function(){
 
 	this.refreshQtyAvailabilityForm = function()
 	{
-		if ($('#depends_on_stock_0').prop('checked'))
-		{
-			$('.available_quantity').find('input').show();
-			$('.available_quantity').find('span').hide();
-		}
-		else
-		{
-			$('.available_quantity').find('input').hide();
-			$('.available_quantity').find('span').show();
-		}
+		$('.available_quantity').find('input').show();
+		$('.available_quantity').find('span').hide();
 	};
 
 	this.onReady = function(){
@@ -1484,43 +1442,12 @@ product_tabs['Quantities'] = new function(){
 			dateFormat: 'yy-mm-dd'
 		});
 
-		$('.depends_on_stock').click(function(e)
-		{
-			self.refreshQtyAvailabilityForm();
-			self.ajaxCall( { actionQty: 'depends_on_stock', value: $(this).val() } );
-			if($(this).val() == 0)
-				$('.available_quantity input').trigger('change');
-		});
-
-		$('.advanced_stock_management').click(function(e)
-		{
-			var val = 0;
-			if ($(this).prop('checked'))
-				val = 1;
-
-			self.ajaxCall({actionQty: 'advanced_stock_management', value: val});
-			if (val == 1)
-			{
-				$(this).val(1);
-				$('#depends_on_stock_1').attr('disabled', false);
-			}
-			else
-			{
-				$(this).val(0);
-				$('#depends_on_stock_1').attr('disabled', true);
-				$('#depends_on_stock_0').attr('checked', true);
-				self.ajaxCall({actionQty: 'depends_on_stock', value: 0});
-				self.refreshQtyAvailabilityForm();
-			}
-			self.refreshQtyAvailabilityForm();
-		});
-
-		$('.available_quantity').find('input').change(function(e, init_val)
+		$('.available_quantity').find('input').on('change', function(e, init_val)
 		{
 			self.ajaxCall({actionQty: 'set_qty', id_product_attribute: $(this).parent().attr('id').split('_')[1], value: $(this).val()});
 		});
 
-		$('.out_of_stock').click(function(e)
+		$('.out_of_stock').on('click', function(e)
 		{
 			self.refreshQtyAvailabilityForm();
 			self.ajaxCall({actionQty: 'out_of_stock', value: $(this).val()});
@@ -1528,7 +1455,7 @@ product_tabs['Quantities'] = new function(){
 		if (display_multishop_checkboxes)
 			ProductMultishop.checkAllQuantities();
 
-		$('.pack_stock_type').click(function(e)
+		$('.pack_stock_type').on('click', function(e)
 		{
 			self.refreshQtyAvailabilityForm();
 			self.ajaxCall({actionQty: 'pack_stock_type', value: $(this).val()});
@@ -1543,10 +1470,9 @@ product_tabs['Suppliers'] = new function(){
 
 	this.manageDefaultSupplier = function() {
 		var default_is_set = false;
-		var availables_radio_buttons = [];
 		var radio_buttons = $('input[name="default_supplier"]');
 
-		for (i=0; i<radio_buttons.length; i++)
+		for (var i=0; i<radio_buttons.length; i++)
 		{
 			var item = $(radio_buttons[i]);
 
@@ -1601,8 +1527,6 @@ product_tabs['Suppliers'] = new function(){
 }
 
 product_tabs['VirtualProduct'] = new function(){
-	var self = this;
-
 	this.onReady = function(){
 		$(".datepicker").datepicker({
 			prevText: '',
@@ -1658,38 +1582,6 @@ product_tabs['VirtualProduct'] = new function(){
 	}
 }
 
-product_tabs['Warehouses'] = new function(){
-	var self = this;
-
-	this.onReady = function(){
-		$('.check_all_warehouse').click(function() {
-			//get all checkboxes of current warehouse
-			var checkboxes = $('input[name*="'+$(this).val()+'"]');
-			var checked = false;
-
-			for (i=0; i<checkboxes.length; i++)
-			{
-				var item = $(checkboxes[i]);
-
-				if (item.is(':checked'))
-				{
-					item.removeAttr("checked");
-				}
-				else
-				{
-					item.attr("checked", true);
-					checked = true;
-				}
-			}
-
-			if (checked)
-				$(this).find('i').removeClass('icon-check-sign').addClass('icon-check-empty');
-			else
-				$(this).find('i').removeClass('icon-check-empty').addClass('icon-check-sign');
-		});
-	};
-}
-
 /**
  * Update the product image list position buttons
  *
@@ -1697,9 +1589,6 @@ product_tabs['Warehouses'] = new function(){
  */
 function refreshImagePositions(imageTable)
 {
-	var reg = /_[0-9]$/g;
-	var up_reg  = new RegExp("imgPosition=[0-9]+&");
-
 	imageTable.find("tbody tr").each(function(i,el) {
 		$(el).find("td.positionImage").html(i + 1);
 	});
@@ -1858,7 +1747,6 @@ var ProductMultishop = new function()
 		{
 			ProductMultishop.checkField($('input[name=\'multishop_check[meta_title]['+v.id_lang+']\']').prop('checked'), 'meta_title_'+v.id_lang);
 			ProductMultishop.checkField($('input[name=\'multishop_check[meta_description]['+v.id_lang+']\']').prop('checked'), 'meta_description_'+v.id_lang);
-			ProductMultishop.checkField($('input[name=\'multishop_check[meta_keywords]['+v.id_lang+']\']').prop('checked'), 'meta_keywords_'+v.id_lang);
 			ProductMultishop.checkField($('input[name=\'multishop_check[link_rewrite]['+v.id_lang+']\']').prop('checked'), 'link_rewrite_'+v.id_lang, 'seo_friendly_url');
 		});
 	};
@@ -1906,7 +1794,7 @@ var ProductMultishop = new function()
 var tabs_manager = new ProductTabsManager();
 tabs_manager.setTabs(product_tabs);
 
-$(document).ready(function() {
+$(function() {
 	// The manager schedules the onReady() methods of each tab to be called when the tab is loaded
 	tabs_manager.init();
 	updateCurrentText();
@@ -1927,7 +1815,7 @@ $(document).ready(function() {
 		return (code == 13) ? false : true;
 	});
 
-	$('#product_form').submit(function(e) {
+	$('#product_form').on('submit', function(e) {
 		$('#selectedCarriers option').attr('selected', 'selected');
 		$('#selectAttachment1 option').attr('selected', 'selected');
 		return true;

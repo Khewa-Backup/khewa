@@ -1,21 +1,21 @@
 <?php
 /**
- * 2007-2020 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
 use PrestaShop\Module\BlockWishList\Access\CustomerAccess;
@@ -125,6 +125,18 @@ class BlockWishListActionModuleFrontController extends ModuleFrontController
     private function createNewWishListAction($params)
     {
         if (isset($params['name'])) {
+            if (!Validate::isGenericName($params['name'])) {
+                return $this->ajaxRender(
+                    json_encode([
+                        'success' => false,
+                        'message' => $this->trans('The list name is invalid.', [], 'Modules.Blockwishlist.Shop'),
+                        'datas' => [
+                            'name' => $params['name'],
+                        ],
+                    ])
+                );
+            }
+
             $wishlist = new WishList();
             $wishlist->name = $params['name'];
             $wishlist->id_shop_group = $this->context->shop->id_shop_group;
@@ -164,6 +176,19 @@ class BlockWishListActionModuleFrontController extends ModuleFrontController
     private function renameWishListAction($params)
     {
         if (isset($params['idWishList'], $params['name'])) {
+            if (!Validate::isGenericName($params['name'])) {
+                return $this->ajaxRender(
+                    json_encode([
+                        'success' => false,
+                        'message' => $this->trans('The list name is invalid', [], 'Modules.Blockwishlist.Shop'),
+                        'datas' => [
+                            'name' => $params['name'],
+                            'id_whishlist' => $params['idWishList'],
+                        ],
+                    ])
+                );
+            }
+
             $wishlist = new WishList($params['idWishList']);
             // Exit if not owner of the wishlist
             $this->assertWriteAccess($wishlist);

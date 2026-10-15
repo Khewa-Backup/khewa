@@ -1,31 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- */
-
-/**
- * @since 1.5
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 class PDFCore
 {
@@ -59,11 +35,14 @@ class PDFCore
      */
     protected $smarty;
 
-    const TEMPLATE_INVOICE = 'Invoice';
-    const TEMPLATE_ORDER_RETURN = 'OrderReturn';
-    const TEMPLATE_ORDER_SLIP = 'OrderSlip';
-    const TEMPLATE_DELIVERY_SLIP = 'DeliverySlip';
-    const TEMPLATE_SUPPLY_ORDER_FORM = 'SupplyOrderForm';
+    public const TEMPLATE_INVOICE = 'Invoice';
+    public const TEMPLATE_ORDER_RETURN = 'OrderReturn';
+    public const TEMPLATE_ORDER_SLIP = 'OrderSlip';
+    public const TEMPLATE_DELIVERY_SLIP = 'DeliverySlip';
+    public const TEMPLATE_SHIPMENT_DELIVERY_SLIP = 'ShipmentDeliverySlip';
+
+    /** @deprecated since 9.0 and will be removed in 10.0 **/
+    public const TEMPLATE_SUPPLY_ORDER_FORM = 'SupplyOrderForm';
 
     /**
      * @param PrestaShopCollection|ObjectModel|array $objects
@@ -73,7 +52,15 @@ class PDFCore
      */
     public function __construct($objects, $template, $smarty, $orientation = 'P')
     {
-        $this->pdf_renderer = new PDFGenerator((bool) Configuration::get('PS_PDF_USE_CACHE'), $orientation);
+        $pdfRendererFromModules = $this->getPdfRendererFromModules($template, $orientation);
+
+        // if no module wants to provide a pdf renderer, then the core feature is used
+        if (null === $pdfRendererFromModules) {
+            $this->pdf_renderer = new PDFGenerator((bool) Configuration::get('PS_PDF_USE_CACHE'), $orientation);
+        } else {
+            $this->pdf_renderer = $pdfRendererFromModules;
+        }
+
         $this->template = $template;
 
         /*
@@ -115,6 +102,8 @@ class PDFCore
         if (count($this->objects) > 1) { // when bulk mode only
             $this->send_bulk_flag = true;
         }
+
+        $this->setFilename();
     }
 
     /**
@@ -137,20 +126,16 @@ class PDFCore
                 continue;
             }
 
-            if (empty($this->filename)) {
-                $this->filename = $template->getFilename();
-                if (count($this->objects) > 1) {
-                    $this->filename = $template->getBulkFilename();
-                }
-            }
-
             $template->assignHookData($object);
 
             $this->pdf_renderer->createHeader($template->getHeader());
-            $this->pdf_renderer->createFooter($template->getFooter());
             $this->pdf_renderer->createPagination($template->getPagination());
             $this->pdf_renderer->createContent($template->getContent());
             $this->pdf_renderer->writePage();
+            // The footer must be added after adding the page, or TCPDF will
+            // add the footer for the next page from on the last page of this
+            // page group, which could mean the wrong store info is rendered.
+            $this->pdf_renderer->createFooter($template->getFooter());
             $render = true;
 
             unset($template);
@@ -162,7 +147,7 @@ class PDFCore
                 ob_clean();
             }
 
-            return $this->pdf_renderer->render($this->filename, $display);
+            return $this->pdf_renderer->render($this->getFilename(), $display);
         }
     }
 
@@ -180,16 +165,131 @@ class PDFCore
         $class = false;
         $class_name = 'HTMLTemplate' . $this->template;
 
-        if (class_exists($class_name)) {
+        $templateObjectFromModule = $this->getTemplateObjectFromModules($object, $this->smarty, $this->send_bulk_flag, $this->template);
+
+        if (false === $templateObjectFromModule && class_exists($class_name)) {
             // Some HTMLTemplateXYZ implementations won't use the third param but this is not a problem (no warning in PHP),
             // the third param is then ignored if not added to the method signature.
             $class = new $class_name($object, $this->smarty, $this->send_bulk_flag);
+        }
 
-            if (!($class instanceof HTMLTemplate)) {
-                throw new PrestaShopException('Invalid class. It should be an instance of HTMLTemplate');
-            }
+        if (!($class instanceof HTMLTemplate)) {
+            throw new PrestaShopException('Invalid class. It should be an instance of HTMLTemplate');
         }
 
         return $class;
+    }
+
+    /**
+     * Get the PDF filename based on the objects.
+     *
+     * @return string
+     */
+    public function getFilename(): string
+    {
+        if (empty($this->filename)) {
+            $this->setFilename();
+        }
+
+        return $this->filename;
+    }
+
+    /**
+     * Set the PDF filename based on the objects.
+     *
+     * @return bool
+     */
+    public function setFilename(): bool
+    {
+        $bulk = (1 < count($this->objects));
+
+        foreach ($this->objects as $object) {
+            $template = $this->getTemplateObject($object);
+            if (!$template) {
+                continue;
+            }
+
+            if ($bulk) {
+                $this->filename = $template->getBulkFilename();
+            } else {
+                $this->filename = $template->getFilename();
+            }
+
+            if (!empty($this->filename)) {
+                break;
+            }
+        }
+
+        return !empty($this->filename);
+    }
+
+    /**
+     * Get the template object from modules.
+     *
+     * @param mixed $object
+     * @param Smarty $smarty
+     * @param bool $send_bulk_flag
+     * @param string $template
+     *
+     * @return HTMLTemplate|false
+     */
+    private function getTemplateObjectFromModules($object, $smarty, $send_bulk_flag, $template)
+    {
+        $templateObjects = Hook::exec(
+            'actionGetPdfTemplateObject',
+            [
+                'object' => $object,
+                'smarty' => $smarty,
+                'send_bulk_flag' => $send_bulk_flag,
+                'template' => $template,
+            ],
+            null,
+            true
+        );
+
+        if (!is_array($templateObjects)) {
+            $templateObjects = [];
+        }
+
+        foreach ($templateObjects as $templateObject) {
+            if ($templateObject instanceof HTMLTemplate) {
+                return $templateObject;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the PDF renderer from modules.
+     *
+     * @param string $template
+     * @param string $orientation
+     *
+     * @return PDFGenerator|null
+     */
+    private function getPdfRendererFromModules($template, $orientation)
+    {
+        $renderers = Hook::exec(
+            'actionGetPdfRenderer',
+            [
+                'template' => $template,
+                'orientation' => $orientation,
+            ],
+            null,
+            true
+        );
+
+        if (!is_array($renderers)) {
+            $renderers = [];
+        }
+
+        foreach ($renderers as $renderer) {
+            if ($renderer instanceof PDFGenerator) {
+                return $renderer;
+            }
+        }
+
+        return null;
     }
 }

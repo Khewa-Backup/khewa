@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Localization\Specification;
@@ -37,25 +17,87 @@ use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 class Number implements NumberInterface
 {
     /**
+     * Positive number pattern.
+     *
+     * Unicode's CLDR specific syntax. Describes how to format a positive number.
+     * eg: #,##0.###     (decimal)
+     * eg: #,##0.##0 %   (percentage)
+     * eg: #,##0.00 ¤    (price)
+     *
+     * @var string|null
+     */
+    protected $positivePattern;
+
+    /**
+     * Negative number pattern.
+     *
+     * Unicode's CLDR specific syntax. Describes how to format a negative number.
+     * eg: -#,##0.###     (decimal)
+     * eg: -#,##0.##0 %   (percentage)
+     * eg: -#,##0.00 ¤    (price)
+     *
+     * @var string|null
+     */
+    protected $negativePattern;
+
+    /**
+     * List of available number symbols lists (NumberSymbolList objects)
+     * Each list is indexed by numbering system.
+     *
+     * @var NumberSymbolList[]|null
+     */
+    protected $symbols;
+
+    /**
+     * Maximum number of digits after decimal separator (rounding if needed).
+     *
+     * @var int|null
+     */
+    protected $maxFractionDigits;
+
+    /**
+     * Minimum number of digits after decimal separator (fill with "0" if needed).
+     *
+     * @var int|null
+     */
+    protected $minFractionDigits;
+
+    /**
+     * Is digits grouping used ?
+     * eg: if yes -> "9 999 999". If no => "9999999".
+     *
+     * @var bool|null
+     */
+    protected $groupingUsed;
+
+    /**
+     * Size of primary digits group in the number
+     * e.g.: 999 is the primary group in this number: 1 234 999.567.
+     *
+     * @var int|null
+     */
+    protected $primaryGroupSize;
+
+    /**
+     * Size of secondary digits groups in the number
+     * eg: 999 is a secondary group in this number: 123 999 456.789
+     * eg: another secondary group (still 999): 999 123 456.789.
+     *
+     * @var int|null
+     */
+    protected $secondaryGroupSize;
+
+    /**
      * Number specification constructor.
      *
-     * @param string $positivePattern
-     *                                CLDR formatting pattern for positive amounts
-     * @param string $negativePattern
-     *                                CLDR formatting pattern for negative amounts
-     * @param NumberSymbolList[] $symbols
-     *                                    List of available number symbols lists (NumberSymbolList objects)
-     *                                    Each list is indexed by numbering system
-     * @param int $maxFractionDigits
-     *                               Maximum number of digits after decimal separator
-     * @param int $minFractionDigits
-     *                               Minimum number of digits after decimal separator
-     * @param bool $groupingUsed
-     *                           Is digits grouping used ?
-     * @param int $primaryGroupSize
-     *                              Size of primary digits group in the number
-     * @param int $secondaryGroupSize
-     *                                Size of secondary digits group in the number
+     * @param string $positivePattern CLDR formatting pattern for positive amounts
+     * @param string $negativePattern CLDR formatting pattern for negative amounts
+     * @param NumberSymbolList[] $symbols List of available number symbols lists (NumberSymbolList objects). Each list is indexed by numbering system
+     * @param int $maxFractionDigits Maximum number of digits after decimal separator
+     * @param int $minFractionDigits Minimum number of digits after decimal separator
+     * @param bool $groupingUsed Is digits grouping used ?
+     * @param int $primaryGroupSize Size of primary digits group in the number
+     * @param int $secondaryGroupSize Size of secondary digits group in the number
      *
      * @throws LocalizationException
      */
@@ -85,77 +127,6 @@ class Number implements NumberInterface
 
         $this->validateData();
     }
-
-    /**
-     * Positive number pattern.
-     *
-     * Unicode's CLDR specific syntax. Describes how to format a positive number.
-     * eg: #,##0.###     (decimal)
-     * eg: #,##0.##0 %   (percentage)
-     * eg: #,##0.00 ¤    (price)
-     *
-     * @var string
-     */
-    protected $positivePattern;
-
-    /**
-     * Negative number pattern.
-     *
-     * Unicode's CLDR specific syntax. Describes how to format a negative number.
-     * eg: -#,##0.###     (decimal)
-     * eg: -#,##0.##0 %   (percentage)
-     * eg: -#,##0.00 ¤    (price)
-     *
-     * @var string
-     */
-    protected $negativePattern;
-
-    /**
-     * List of available number symbols lists (NumberSymbolList objects)
-     * Each list is indexed by numbering system.
-     *
-     * @var NumberSymbolList[]
-     */
-    protected $symbols;
-
-    /**
-     * Maximum number of digits after decimal separator (rounding if needed).
-     *
-     * @var int
-     */
-    protected $maxFractionDigits;
-
-    /**
-     * Minimum number of digits after decimal separator (fill with "0" if needed).
-     *
-     * @var int
-     */
-    protected $minFractionDigits;
-
-    /**
-     * Is digits grouping used ?
-     * eg: if yes -> "9 999 999". If no => "9999999".
-     *
-     * @var bool
-     */
-    protected $groupingUsed;
-
-    /**
-     * Size of primary digits group in the number
-     * e.g.: 999 is the primary group in this number: 1 234 999.567.
-     *
-     * @var int
-     */
-    protected $primaryGroupSize;
-
-    /**
-     * Size of secondary digits groups in the number
-     * eg: 999 is a secondary group in this number: 123 999 456.789
-     * eg: another secondary group (still 999): 999 123 456.789.
-     *
-     * @var int
-     */
-    protected $secondaryGroupSize;
 
     /**
      * Get all specified symbols lists, indexed by available numbering system.
@@ -282,7 +253,7 @@ class Number implements NumberInterface
         }
 
         if (!isset($this->symbols)
-            || !(is_array($this->symbols))
+            || !is_array($this->symbols)
         ) {
             throw new LocalizationException('Invalid symbols');
         }

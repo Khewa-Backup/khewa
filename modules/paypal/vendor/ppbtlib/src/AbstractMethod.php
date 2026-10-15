@@ -1,30 +1,34 @@
 <?php
-/**
- * 2007-2021 PayPal
+/*
+ * Since 2007 PayPal
  *
- *  NOTICE OF LICENSE
+ * NOTICE OF LICENSE
  *
- *  This source file is subject to the Academic Free License (AFL 3.0)
- *  that is bundled with this package in the file LICENSE.txt.
- *  It is also available through the world-wide-web at this URL:
- *  http://opensource.org/licenses/afl-3.0.php
- *  If you did not receive a copy of the license and are unable to
- *  obtain it through the world-wide-web, please send an email
- *  to license@prestashop.com so we can send you a copy immediately.
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
  *
- *  DISCLAIMER
+ * DISCLAIMER
  *
- *  Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  *  versions in the future. If you wish to customize PrestaShop for your
  *  needs please refer to http://www.prestashop.com for more information.
  *
- *  @author 2007-2021 PayPal
+ *  @author Since 2007 PayPal
  *  @author 202 ecommerce <tech@202-ecommerce.com>
- *  @copyright PayPal
  *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalPPBTlib;
+
+use Exception;
+use PaypalOrder;
 
 abstract class AbstractMethod
 {
@@ -49,63 +53,22 @@ abstract class AbstractMethod
         }
     }
 
-    /**
-     * Init payment method
-     * @return string|array
-     */
     abstract public function init();
 
-    /**
-     * Validate payment
-     * @return Exception
-     */
     abstract public function validation();
 
-    /**
-     * Capture authorized transaction
-     * @param $orderPayPal PaypalOrder object
-     * @return array|Exception
-     */
     abstract public function confirmCapture($orderPayPal);
 
-    /**
-     * Refund settled transaction
-     * @param $orderPaypal PaypalOrder object
-     * @return mixed
-     */
     abstract public function refund($orderPaypal);
 
-    /**
-     * Update configuration (postProcess)
-     * @param $params array
-     * @return mixed
-     */
     abstract public function setConfig($params);
 
-    /**
-     * Generate getContent
-     * @param Paypal $module
-     * @return mixed
-     */
-    abstract public function getConfig(\Paypal $module);
+    abstract public function getConfig(\PayPal $module);
 
-    /**
-     * Void authorized transaction (cancel payment)
-     * @param $orderPaypal PaypalOrder object
-     * @return mixed
-     */
     abstract public function void($orderPaypal);
 
-    /**
-     * @param $params array hookActionOrderSlipAdd parameters
-     * @return mixed
-     */
     abstract public function partialRefund($params);
 
-    /**
-     * @param string $method method alias like BT, EC, PPP
-     * @return stdClass Method class
-     */
     public static function load($method)
     {
         if (preg_match('/^[a-zA-Z0-9_-]+$/', $method) && file_exists(_PS_MODULE_DIR_.'paypal/classes/Method'.$method.'.php')) {
@@ -124,17 +87,7 @@ abstract class AbstractMethod
         return $this->transaction_detail;
     }
 
-    /**
-     * Get Transaction details for order
-     * @param object $transaction
-     * @return array
-     */
     abstract function setDetailsTransaction($transaction);
 
-    /**
-     * Get link to transaction
-     * @param \PaypalLog $log
-     * @return string
-     */
     abstract public function getLinkToTransaction($log);
 }

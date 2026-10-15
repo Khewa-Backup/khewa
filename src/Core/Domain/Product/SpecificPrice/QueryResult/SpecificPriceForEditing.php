@@ -1,35 +1,16 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 declare(strict_types=1);
 
 namespace PrestaShop\PrestaShop\Core\Domain\Product\SpecificPrice\QueryResult;
 
-use DateTime;
+use DateTimeInterface;
 use PrestaShop\Decimal\DecimalNumber;
+use PrestaShop\PrestaShop\Core\Domain\Product\SpecificPrice\ValueObject\FixedPriceInterface;
 
 class SpecificPriceForEditing
 {
@@ -54,9 +35,9 @@ class SpecificPriceForEditing
     private $includesTax;
 
     /**
-     * @var DecimalNumber
+     * @var FixedPriceInterface
      */
-    private $price;
+    private $fixedPrice;
 
     /**
      * @var int
@@ -64,9 +45,29 @@ class SpecificPriceForEditing
     private $fromQuantity;
 
     /**
+     * @var DateTimeInterface
+     */
+    private $dateTimeFrom;
+
+    /**
+     * @var DateTimeInterface
+     */
+    private $dateTimeTo;
+
+    /**
+     * @var int
+     */
+    private $productId;
+
+    /**
+     * @var CustomerInfo|null
+     */
+    private $customerInfo;
+
+    /**
      * @var int|null
      */
-    private $shopGroupId;
+    private $combinationId;
 
     /**
      * @var int|null
@@ -89,66 +90,54 @@ class SpecificPriceForEditing
     private $groupId;
 
     /**
-     * @var int|null
-     */
-    private $customerId;
-
-    /**
-     * @var DateTime|null
-     */
-    private $dateTimeFrom;
-
-    /**
-     * @var DateTime|null
-     */
-    private $dateTimeTo;
-
-    /**
      * @param int $specificPriceId
      * @param string $reductionType
      * @param DecimalNumber $reductionAmount
      * @param bool $includesTax
-     * @param DecimalNumber $price
+     * @param FixedPriceInterface $fixedPrice
      * @param int $fromQuantity
-     * @param int|null $shopGroupId
+     * @param DateTimeInterface $dateTimeFrom
+     * @param DateTimeInterface $dateTimeTo
+     * @param int $productId
+     * @param CustomerInfo|null $customerInfo
+     * @param int|null $combinationId
      * @param int|null $shopId
      * @param int|null $currencyId
      * @param int|null $countryId
      * @param int|null $groupId
-     * @param int|null $customerId
-     * @param DateTime|null $dateTimeFrom
-     * @param DateTime|null $dateTimeTo
      */
     public function __construct(
         int $specificPriceId,
         string $reductionType,
         DecimalNumber $reductionAmount,
         bool $includesTax,
-        DecimalNumber $price,
+        FixedPriceInterface $fixedPrice,
         int $fromQuantity,
-        ?DateTime $dateTimeFrom,
-        ?DateTime $dateTimeTo,
-        ?int $shopGroupId,
+        DateTimeInterface $dateTimeFrom,
+        DateTimeInterface $dateTimeTo,
+        int $productId,
+        ?CustomerInfo $customerInfo,
+        ?int $combinationId,
         ?int $shopId,
         ?int $currencyId,
         ?int $countryId,
-        ?int $groupId,
-        ?int $customerId
+        ?int $groupId
     ) {
         $this->specificPriceId = $specificPriceId;
         $this->reductionType = $reductionType;
         $this->reductionAmount = $reductionAmount;
         $this->includesTax = $includesTax;
-        $this->price = $price;
+        $this->fixedPrice = $fixedPrice;
         $this->fromQuantity = $fromQuantity;
-        $this->shopGroupId = $shopGroupId;
+        $this->dateTimeFrom = $dateTimeFrom;
+        $this->dateTimeTo = $dateTimeTo;
+        $this->productId = $productId;
+        $this->customerInfo = $customerInfo;
+        $this->combinationId = $combinationId;
         $this->shopId = $shopId;
         $this->currencyId = $currencyId;
         $this->countryId = $countryId;
         $this->groupId = $groupId;
-        $this->customerId = $customerId;
-        $this->dateTimeFrom = $dateTimeFrom;
-        $this->dateTimeTo = $dateTimeTo;
     }
 
     /**
@@ -184,11 +173,11 @@ class SpecificPriceForEditing
     }
 
     /**
-     * @return DecimalNumber
+     * @return FixedPriceInterface
      */
-    public function getPrice(): DecimalNumber
+    public function getFixedPrice(): FixedPriceInterface
     {
-        return $this->price;
+        return $this->fixedPrice;
     }
 
     /**
@@ -197,14 +186,6 @@ class SpecificPriceForEditing
     public function getFromQuantity(): int
     {
         return $this->fromQuantity;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getShopGroupId(): ?int
-    {
-        return $this->shopGroupId;
     }
 
     /**
@@ -240,26 +221,42 @@ class SpecificPriceForEditing
     }
 
     /**
-     * @return int|null
+     * @return CustomerInfo|null
      */
-    public function getCustomerId(): ?int
+    public function getCustomerInfo(): ?CustomerInfo
     {
-        return $this->customerId;
+        return $this->customerInfo;
     }
 
     /**
-     * @return DateTime|null
+     * @return DateTimeInterface
      */
-    public function getDateTimeFrom(): ?DateTime
+    public function getDateTimeFrom(): DateTimeInterface
     {
         return $this->dateTimeFrom;
     }
 
     /**
-     * @return DateTime|null
+     * @return DateTimeInterface
      */
-    public function getDateTimeTo(): ?DateTime
+    public function getDateTimeTo(): DateTimeInterface
     {
         return $this->dateTimeTo;
+    }
+
+    /**
+     * @return int
+     */
+    public function getProductId(): int
+    {
+        return $this->productId;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCombinationId(): ?int
+    {
+        return $this->combinationId;
     }
 }

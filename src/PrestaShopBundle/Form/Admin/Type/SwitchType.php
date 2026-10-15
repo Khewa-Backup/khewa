@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Form\Admin\Type;
@@ -49,6 +29,9 @@ class SwitchType extends AbstractType
                 'No' => false,
                 'Yes' => true,
             ],
+            'show_choices' => true,
+            // Force label and switch to be displayed on the same line (mainly useful for base ui kit)
+            'inline_switch' => false,
             'multiple' => false,
             'expanded' => false,
             'disabled' => false,
@@ -68,6 +51,18 @@ class SwitchType extends AbstractType
         $view->vars['attr']['class'] = 'ps-switch';
         if (isset($options['attr']['class'])) {
             $view->vars['attr']['class'] .= ' ' . $options['attr']['class'];
+        }
+        $view->vars['show_choices'] = $options['show_choices'];
+
+        // Add a class when inline mode is enabled
+        if ($options['inline_switch']) {
+            $rowAttributes = $options['row_attr'] ?? [];
+            if (!empty($rowAttributes['class'])) {
+                $rowAttributes['class'] .= ' inline-switch-widget';
+            } else {
+                $rowAttributes['class'] = 'inline-switch-widget';
+            }
+            $view->vars['row_attr'] = $rowAttributes;
         }
     }
 

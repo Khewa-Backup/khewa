@@ -22,11 +22,11 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-<section class="featured-products clearfix mt-3">
+<section class="featured-products clearfix mt-3" data-type="bestsellers">
   <h2 class="h2 products-section-title text-uppercase">
     {l s='Best Sellers' d='Shop.Theme.Catalog'}
   </h2>
-  {include file="catalog/_partials/productlist.tpl" products=$products productClass="col-xs-6 col-lg-4 col-xl-3"}
+  {include file="catalog/_partials/productlist.tpl" products=$products productClass="col-xs-12 col-sm-6 col-lg-4 col-xl-3"}
   <a class="all-product-link float-xs-left float-md-right h4" href="{$allBestSellers}">
     {l s='All best sellers' d='Shop.Theme.Catalog'}<i class="material-icons">&#xE315;</i>
   </a>

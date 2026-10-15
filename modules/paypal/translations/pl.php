@@ -1,33 +1,38 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
- *  NOTICE OF LICENSE
+ * NOTICE OF LICENSE
  *
- *  This source file is subject to the Academic Free License (AFL 3.0)
- *  that is bundled with this package in the file LICENSE.txt.
- *  It is also available through the world-wide-web at this URL:
- *  http://opensource.org/licenses/afl-3.0.php
- *  If you did not receive a copy of the license and are unable to
- *  obtain it through the world-wide-web, please send an email
- *  to license@prestashop.com so we can send you a copy immediately.
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
  *
- *  DISCLAIMER
+ * DISCLAIMER
  *
- *  Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  *  versions in the future. If you wish to customize PrestaShop for your
  *  needs please refer to http://www.prestashop.com for more information.
  *
- *  @author 2007-2021 PayPal
+ *  @author Since 2007 PayPal
  *  @author 202 ecommerce <tech@202-ecommerce.com>
- *  @copyright PayPal
  *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{paypal}prestashop>paypal_ad69e733ebae8d264bccaa38d68830e8'] = 'PayPal';
-$_MODULE['<{paypal}prestashop>paypal_3ba4f49f76f54e9305261bc742a24d9b'] = 'Korzystaj z usługi PayPal Complete Payments i rozwijaj swoją działalność w Internecie, na urządzeniach mobilnych i za granicą. Akceptuj karty kredytowe, karty debetowe i płatności PayPal.';
+$_MODULE['<{paypal}prestashop>paypal_c4aae7949c5aee2f84ab4652972e7ffe'] = 'Bezpłatny moduł PayPal może pomóc w zwiększeniu sprzedaży, zapewniając sklepom opcę płatności poprzez PayPal.';
 $_MODULE['<{paypal}prestashop>paypal_69a1a3ad8dd5da6db3c4da838a0cf9c7'] = 'Czy na pewno chcesz usunąć swoje dane?';
 $_MODULE['<{paypal}prestashop>paypal_48aec79eb01dc1fa6eecea2f768e9c03'] = 'PayPal Express ';
 $_MODULE['<{paypal}prestashop>paypal_b209ab078c273a14a042f9efc005979d'] = 'Zapłać z PayPal';
@@ -39,7 +44,7 @@ $_MODULE['<{paypal}prestashop>paypal_8f5d16bffc9dc4d54c301c82782916b1'] = 'Zapł
 $_MODULE['<{paypal}prestashop>paypal_a1547872d7311425dfeefcd1983c5add'] = 'Zamierzasz zapłacić za pomocą konta PayPal ';
 $_MODULE['<{paypal}prestashop>paypal_907bfea30d3ce7ffec31c04a4b0110c0'] = 'Nie możemy dokonać weryfikacji, jeśli płatność została zrealizowana. Sprawdź, czy masz na koncie potwierdzenie od firmy PayPal.';
 $_MODULE['<{paypal}prestashop>paypal_a94e9e59a8274948ecadafc8180dbadf'] = 'Błąd weryfikacji zamówienia: ';
-$_MODULE['<{paypal}prestashop>paypal_993e08bfbc05df0d2c64d09426a541db'] = 'Uwaga, Twoja płatność została dokonana. Skontaktuj się z obsługą klienta. Twój numer transakcji: ';
+$_MODULE['<{paypal}prestashop>paypal_993e08bfbc05df0d2c64d09426a541db'] = 'Uwaga, Twoja płatność została dokonana. Skontaktuj się z obsługą klienta. Twój numer transakcji: ';
 $_MODULE['<{paypal}prestashop>paypal_b43a85a981c07a998c6677d4f60d4fd7'] = 'Zwróć pieniądze w systemie PayPal';
 $_MODULE['<{paypal}prestashop>paypal_8756c9664336622be99fa31786816349'] = 'To zamówienie zostało opłacone za pośrednictwem rozwiązania płatniczego Braintree udostępnionego w ramach modułu PayPal w wersji starszej niż v5.0. ';
 $_MODULE['<{paypal}prestashop>paypal_7e5aba00822dba7e7b5a9bf3b5735b4e'] = 'Począwszy od modułu PayPal w wersji v5.0.0, rozwiązanie płatnicze Braintree nie będzie już dostępne w ramach modułu PayPal. Możesz nadal korzystać z Braintree, instalując nowy moduł Braintree dostępny na stronie ';
@@ -237,6 +242,7 @@ $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_b8b3fb00541
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_f6d4c204b4375f370ae346ac19af224a'] = 'Użyj prawidłowego formatu pliku (.gif, .jpg lub .png).';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_30e94012b686df7279f6a1db3c8a0684'] = 'Ogranicz rozmiar obrazu do 190 na 60 pikseli.';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_06b778accab7c14a499bc6e7a68138ec'] = 'Wystąpił błąd podczas kopiowania obrazu.';
+$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_1981089a58ccc371526094328e8f3b0a'] = 'Umieść przycisk PayPal na końcu strony zamówienia';
 $_MODULE['<{paypal}prestashop>adminpaypalsetupcontroller_8af703b2bf59cc9742883ae7f4cb0e5b'] = 'Ustawienia konta';
 $_MODULE['<{paypal}prestashop>adminpaypalsetupcontroller_f1a9672d88ab0cae23402867e2def274'] = 'Ustawienia płatności';
 $_MODULE['<{paypal}prestashop>adminpaypalsetupcontroller_93b06f54e738e1a36e44bafcb2ba9d56'] = 'Płatność';
@@ -309,8 +315,8 @@ $_MODULE['<{paypal}prestashop>blockpreviewbuttoncontext_b401397858880fcfe0c8da19
 $_MODULE['<{paypal}prestashop>blockpreviewbuttoncontext_0fcaf0531dd6d6a53f7bde67adafd035'] = 'Strony produktowe';
 $_MODULE['<{paypal}prestashop>paypal_112cee51bc7d0712033e013bf5154d97'] = 'Zapłać kartą kredytową lub debetową';
 $_MODULE['<{paypal}prestashop>paypal_9b9cf9f8778f69b4c6cf37e66f886be8'] = 'Wybierz status';
-$_MODULE['<{paypal}prestashop>abstractmethodpaypal_01c6e0e36101786cfcfa6dd13cfbb099'] = 'Identyfikator koszyka: ';
-$_MODULE['<{paypal}prestashop>abstractmethodpaypal_194c2a3181dd5484df19ff3548b4a019'] = 'Nazwa sklepu: ';
+$_MODULE['<{paypal}prestashop>abstractmethodpaypal_01c6e0e36101786cfcfa6dd13cfbb099'] = 'Identyfikator koszyka: ';
+$_MODULE['<{paypal}prestashop>abstractmethodpaypal_194c2a3181dd5484df19ff3548b4a019'] = 'Nazwa sklepu: ';
 $_MODULE['<{paypal}prestashop>methodec_b98521e63d9c5a52990b450965ab2878'] = 'Płatność została autoryzowana i oczekuje na zatwierdzenie przez administratora';
 $_MODULE['<{paypal}prestashop>methodec_915901b766a8e732f41c87693184fa89'] = 'Obecnie używasz trybu autoryzacji. Oznacza to, że autoryzacja płatności przebiega oddzielnie od pobrania środków z autoryzowanej płatności. Domyślnie utworzone zamówienia będą miały status „Oczekuje na płatność PayPal”, ale w razie potrzeby możesz go dostosować.';
 $_MODULE['<{paypal}prestashop>methodec_658c65a11f676a58088cdb35e0c2c3ab'] = 'Status domyślny: oczekuje na płatność PayPal';
@@ -353,7 +359,7 @@ $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_8abcd7b8009
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_0f9907c62d585faaab3efaf95a3406ac'] = 'Status domyślny: zwrócono';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_c158783b379b395205a91a6270a52ff4'] = 'Status zamówienia aktywujący anulowanie w systemie PayPal';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_da78fd8363ff268d8d8694cdb2dd62c4'] = 'Zamówienia opłacone za pośrednictwem systemu PayPal można anulować bezpośrednio przez system zaplecza platformy PrestaShop. W tym miejscu możesz wybrać status zamówienia, który ma wywoływać anulowanie przez PayPal autoryzowanej transakcji w systemie PayPal. Jeśli chcesz zmienić status zamówienia bez wywoływania automatycznego anulowania w systemie PayPal, wybierz opcję „Brak działań”.';
-$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_87ad1179406b568d2f8fd6f8ddb44d15'] = ' Status domyślny: anulowano';
+$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_87ad1179406b568d2f8fd6f8ddb44d15'] = ' Status domyślny: anulowano';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_41a81fcc63d6a78a0d22630b2e4b1e6c'] = 'Płatność zaakceptowana przez system zaplecza (zadzwoń do firmy PayPal, aby otrzymać płatność)';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_36500501ab89967d20b1beb686880d44'] = 'Obecnie używasz trybu autoryzacji. Oznacza to, że autoryzacja płatności przebiega oddzielnie od pobrania środków z autoryzowanej płatności. Aby pobrać środki z autoryzowanej płatności, musisz zmienić status zamówienia na „płatność zaakceptowana” (lub na status niestandardowy o tym samym znaczeniu). W tym miejscu możesz wybrać niestandardowy status zamówienia w celu zaakceptowania zamówienia i zatwierdzenia transakcji w trybie autoryzowania.';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_c6a9094c053f62817cf82c904082378e'] = 'Status domyślny: płatność zaakceptowana';
@@ -409,9 +415,9 @@ $_MODULE['<{paypal}prestashop>formadvancedhelptwo_06393d7bb6f3fb29efee8938c7cd2f
 $_MODULE['<{paypal}prestashop>formadvancedhelptwo_5a5a6c0531d6207c84a2ce8d0f99b74f'] = 'Statusami zamówienia możesz zarządzać poniżej:';
 $_MODULE['<{paypal}prestashop>unregisteredhooksmessage_8855bfb68164e4dfb070572ac3bf62d5'] = 'Moduł nie został zarejestrowany za pomocą następujących elementów „hook”:';
 $_MODULE['<{paypal}prestashop>unregisteredhooksmessage_84bb5767918a71a8d7451f116c681857'] = 'Zainstaluj wymagane elementy „hook” automatycznie';
-$_MODULE['<{paypal}prestashop>messageforcustomerone_952f622b6cbe191f3d9abb6d6f34b71d'] = '[b]Sfinalizuj płatność[/b] za pomocą konta PayPal, ';
+$_MODULE['<{paypal}prestashop>messageforcustomerone_952f622b6cbe191f3d9abb6d6f34b71d'] = '[b]Sfinalizuj płatność[/b] za pomocą konta PayPal, ';
 $_MODULE['<{paypal}prestashop>messageforcustomerone_b3e985da8b5a176abfb74c4c1ca960f9'] = 'akceptując warunki usługi i klikając przycisk zatwierdzenia zamówienia poniżej.';
-$_MODULE['<{paypal}prestashop>messageforcustomertwo_952f622b6cbe191f3d9abb6d6f34b71d'] = '[b]Sfinalizuj płatność[/b] za pomocą konta PayPal, ';
+$_MODULE['<{paypal}prestashop>messageforcustomertwo_952f622b6cbe191f3d9abb6d6f34b71d'] = '[b]Sfinalizuj płatność[/b] za pomocą konta PayPal, ';
 $_MODULE['<{paypal}prestashop>messageforcustomertwo_b3e985da8b5a176abfb74c4c1ca960f9'] = 'akceptując warunki usługi i klikając przycisk zatwierdzenia zamówienia poniżej.';
 $_MODULE['<{paypal}prestashop>messageforcustomertwo_768073dd22a31e3489fad6543b7301b1'] = 'Zwracamy uwagę, że zastosowano dodatkowe opłaty za dostawę (%1s). Aby uzyskać więcej informacji, zapoznaj się z podsumowaniem zamówienia.';
 $_MODULE['<{paypal}prestashop>adminpaypalhelpcontroller_8c2c1e868f50c5b477d3f6d985aeaa2f'] = 'Skonfiguruj PrestaShop Checkout';
@@ -423,7 +429,7 @@ $_MODULE['<{paypal}prestashop>adminpaypalhelpcontroller_ca89e348869638cc70a08547
 $_MODULE['<{paypal}prestashop>paypal_6b33c16e6353bb8c9e31464179231237'] = 'Wystąpił nieoczekiwany problem podczas zwrotu pieniędzy. Aby uzyskać więcej informacji, przejdź do zakładki PayPal w szczegółach zamówienia.';
 $_MODULE['<{paypal}prestashop>paypal_c3a5c8884cf21ed048acf66a9039a150'] = 'Status zamówienia został zmieniony, ale transakcja ta została już w pełni zwrócona.';
 $_MODULE['<{paypal}prestashop>paypalordercreaterequest_484f5a79672cebe198ebdde45a1d672f'] = 'Zawijanie prezentów';
-$_MODULE['<{paypal}prestashop>adminpaypalsetupcontroller_20beb534b185ef0f27602cde37c17da4'] = 'Podczas zapisywania konfiguracji \"Akcja płatności\" wystąpił błąd. Proszę zapisać tę konfigurację ponownie, aby uniknąć błędów płatności.';
+$_MODULE['<{paypal}prestashop>adminpaypalsetupcontroller_20beb534b185ef0f27602cde37c17da4'] = 'Podczas zapisywania konfiguracji \'Akcja płatności\' wystąpił błąd. Proszę zapisać tę konfigurację ponownie, aby uniknąć błędów płatności.';
 $_MODULE['<{paypal}prestashop>scorder_8f4603ba5094ec0d3fca1eeda5d0aab8'] = 'Błąd podłączenia do ';
 $_MODULE['<{paypal}prestashop>scorder_7ff5bcd1a7dd3e2dc15e69b90babcfde'] = 'Państwo jest zobowiązane do realizacji płatności. Proszę wypełnić pole Stan.';
 $_MODULE['<{paypal}prestashop>scorder_7afff0211446b3c00496c44b41bd634b'] = 'Kraj nie jest aktywny';
@@ -448,8 +454,8 @@ $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_4b0ee07fb8b
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_f805acea71150b20993841dcac7fc78e'] = 'Aktualny styl skrótów';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_eb763a2e313718f33f55e1f0d84df6ee'] = 'Strona produktu';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_b29281296165d65c9c816c2ed17e5109'] = 'Zarejestruj się w kasie';
-$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_4e2a0d995f8d01fe70eed9333b626ef6'] = 'Próbujesz zapisać nieprawidłowe ustawienia. Rozmiar przycisku PayPal został automatycznie zmieniony na wartości domyślne (wymagana jest wartość od 25 do 55). Proszę kliknąć na \" Dostosuj \", aby w razie potrzeby zmienić rozmiar.';
-$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_becd2698a4b81e5a2b98c0b61cddecf5'] = 'Próbujesz zapisać nieprawidłowe ustawienia. Rozmiar przycisku PayPal został automatycznie zmieniony na wartości domyślne (wymagane minimum 150 px). Proszę kliknąć na \" Dostosuj \", aby w razie potrzeby zmienić rozmiar.';
+$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_4e2a0d995f8d01fe70eed9333b626ef6'] = 'Próbujesz zapisać nieprawidłowe ustawienia. Rozmiar przycisku PayPal został automatycznie zmieniony na wartości domyślne (wymagana jest wartość od 25 do 55). Proszę kliknąć na \' Dostosuj \', aby w razie potrzeby zmienić rozmiar.';
+$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_becd2698a4b81e5a2b98c0b61cddecf5'] = 'Próbujesz zapisać nieprawidłowe ustawienia. Rozmiar przycisku PayPal został automatycznie zmieniony na wartości domyślne (wymagane minimum 150 px). Proszę kliknąć na \' Dostosuj \', aby w razie potrzeby zmienić rozmiar.';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_e1582a4122fba78020505ab31c376497'] = 'PrestaShop krajowy hak (zalecany)';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_b1148f26f08479333d3b705f94acba58'] = 'Widżet PrestaShop';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_29c83bad90fad0785f4878c30a44ffdd'] = 'displayProductActions (zalecane) - Ten hak umożliwia uruchamianie dodatkowych akcji w pobliżu przycisku dodawania do koszyka.';
@@ -478,15 +484,15 @@ $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_6f6cb72d544
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_a35b038d22299190745f47cce5a13fa4'] = 'Przycisk PayPal Buy Now (zalecane)';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_02c9e59f25e23268857c1d6da0559bc3'] = 'Przycisk PayPal Buy Now';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_f8c4dd3bddd4e9ac7725c0faece5e5c1'] = 'Logo PayPal';
-$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_42420612952208ce750cc546adefb634'] = 'Przycisk \"Checkout';
-$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_889cde7b5565eb585e83bc4e2af3744c'] = 'Przycisk \"Checkout\" (zalecany)';
+$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_42420612952208ce750cc546adefb634'] = 'Przycisk \'Checkout';
+$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_889cde7b5565eb585e83bc4e2af3744c'] = 'Przycisk \'Checkout\' (zalecany)';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_f82f6e09a9e203576f21207fc3efe2cf'] = 'Płać za pomocą przycisku PayPal';
 $_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_b021df6aac4654c454f46c77646e745f'] = 'Etykieta';
-$_MODULE['<{paypal}prestashop>blockpreviewbuttoncontext_4f927595c36cb935133b3315e35c7cf8'] = 'Skrót Express Checkout na etapie \"Sign up\" w kasie jest zalecany, aby umożliwić klientowi pominięcie formularza \"Sign up\" na Twojej stronie internetowej. Wszystkie informacje, w tym adres dostawy, zostaną dostarczone przez PayPal.';
+$_MODULE['<{paypal}prestashop>blockpreviewbuttoncontext_4f927595c36cb935133b3315e35c7cf8'] = 'Skrót Express Checkout na etapie \'Sign up\' w kasie jest zalecany, aby umożliwić klientowi pominięcie formularza \'Sign up\' na Twojej stronie internetowej. Wszystkie informacje, w tym adres dostawy, zostaną dostarczone przez PayPal.';
 $_MODULE['<{paypal}prestashop>blockpreviewbuttoncontext_b29281296165d65c9c816c2ed17e5109'] = 'Zarejestruj się w kasie';
 $_MODULE['<{paypal}prestashop>blockpreviewbuttoncontext_e028b0667d313a0f1f687ca774141c4e'] = 'Skróty PayPal pozwalają na szybsze dokonywanie zakupów. PayPal automatycznie dostarcza Ci informacje o wysyłce i rozliczeniu klienta.';
-$_MODULE['<{paypal}prestashop>roundingsettings_e287d4ed564774c343fdaf3bd1494ad6'] = 'Tryb okrągły: \"Zaokrąglij się od zera, gdy jest w połowie drogi (zalecane)\"';
-$_MODULE['<{paypal}prestashop>roundingsettings_27a3066cd34cd1e683f1c2d04483163a'] = 'Okrągły typ: \"Okrągła na każdej pozycji\"';
+$_MODULE['<{paypal}prestashop>roundingsettings_e287d4ed564774c343fdaf3bd1494ad6'] = 'Tryb okrągły: \'Zaokrąglij się od zera, gdy jest w połowie drogi (zalecane)\'';
+$_MODULE['<{paypal}prestashop>roundingsettings_27a3066cd34cd1e683f1c2d04483163a'] = 'Okrągły typ: \'Okrągła na każdej pozycji\'';
 $_MODULE['<{paypal}prestashop>roundingsettings_432d66b8d9f1c4c595ab6089c5603f8a'] = 'Wymagania dotyczące kontroli';
 $_MODULE['<{paypal}prestashop>roundingsettings_f1aea93e3ab1791e7f651b86c1448797'] = 'Automatyczna zmiana ustawień zaokrąglania';
 $_MODULE['<{paypal}prestashop>statusblock_56de52ac342393f8962d97e59e358f3c'] = 'Rozszerzenie PHP cURL musi być włączone na Twoim serwerze. Aby uzyskać więcej informacji, prosimy o kontakt z dostawcą usług hostingowych.';
@@ -510,3 +516,156 @@ $_MODULE['<{paypal}prestashop>paypal_e8fdd95502f3d9eef321833fe60aed0c'] = 'Tryb 
 $_MODULE['<{paypal}prestashop>adminpaypalcontroller_b38308023e216ac4faf73789566556c2'] = 'Tryb Sandbox: jest środowiskiem testowym, w którym nie można przyjąć prawdziwych płatności';
 $_MODULE['<{paypal}prestashop>messageforcustomerone_e8fdd95502f3d9eef321833fe60aed0c'] = 'Tryb Sandbox: wszystkie transakcje będą fikcyjne';
 $_MODULE['<{paypal}prestashop>messageforcustomertwo_e8fdd95502f3d9eef321833fe60aed0c'] = 'Tryb Sandbox: wszystkie transakcje będą fikcyjne';
+$_MODULE['<{paypal}prestashop>paypal_fa46ea6f6f6623fdd7039b5f1a8f3940'] = 'Brak akcji';
+$_MODULE['<{paypal}prestashop>adminpaypalcontroller_7e4ed5efc0f056eb2b36609af35177d3'] = 'Tryb testowy';
+$_MODULE['<{paypal}prestashop>paypalordercreaterequest_2605fbb693837be42d0cd0e701cb5aa3'] = 'Obsługa strony';
+$_MODULE['<{paypal}prestashop>forminstallment_f4f70727dc34561dfde1a3c529b6205c'] = 'Ustawienia';
+$_MODULE['<{paypal}prestashop>forminstallment_638e1f70e3be66cd373e5b7e98b80bec'] = 'Włącz wyświetlanie banerów 4x';
+$_MODULE['<{paypal}prestashop>forminstallment_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Włączone';
+$_MODULE['<{paypal}prestashop>forminstallment_b9f5c797ebbf55adccdd8539a65a0241'] = 'Wyłączone';
+$_MODULE['<{paypal}prestashop>forminstallment_ee2d3754b6e7f57898d9d8670f78ae71'] = 'Opcje zaawansowane';
+$_MODULE['<{paypal}prestashop>forminstallment_0ac5d1e498869629d077c3ba700af4d0'] = 'Kod widgetu';
+$_MODULE['<{paypal}prestashop>forminstallment_7cfaf5cca3b31a24504dcfb68b800034'] = 'Domyślnie, baner PayPal 4x jest wyświetlany na Twojej stronie internetowej poprzez natywny hak PrestaShop. Jeśli zdecydujesz się na użycie widgetów, będziesz mógł skopiować kod widgetu i wstawić go gdziekolwiek chcesz w szablonie strony internetowej.';
+$_MODULE['<{paypal}prestashop>forminstallment_2b3d1ce56f63667547fcc4f06c31bc46'] = 'Style strony głównej i strony kategorii';
+$_MODULE['<{paypal}prestashop>forminstallment_c9cc8cce247e49bae79f15173ce97354'] = 'Zapisz';
+$_MODULE['<{paypal}prestashop>forminstallment_cda7a650c5856cf2f6738072447d7825'] = 'szary';
+$_MODULE['<{paypal}prestashop>forminstallment_48d6215903dff56238e52e8891380c8f'] = 'niebieski';
+$_MODULE['<{paypal}prestashop>forminstallment_1ffd9e753c8054cc61456ac7fac1ac89'] = 'czarny';
+$_MODULE['<{paypal}prestashop>forminstallment_d508fe45cecaf653904a0e774084bb5c'] = 'biały';
+$_MODULE['<{paypal}prestashop>forminstallment_4e680f2c69e04d0cb666ae4a1a69d078'] = 'monochromatyczny';
+$_MODULE['<{paypal}prestashop>forminstallment_276be00a5232f6cd17555f7d2af1418d'] = 'skala szarości';
+$_MODULE['<{paypal}prestashop>adminpaypalcustomizecheckoutcontroller_d47ecccb10d0e6f0acbecd1042774f47'] = 'Domyślnie, skrót PayPal jest wyświetlany bezpośrednio na stronie koszyka. Aby poprawić doświadczenia klientów, możesz włączyć skróty PayPal na innych stronach Twojego sklepu: strony produktów lub/i formularz rejestracji na stronie zamówienia (na pierwszym kroku kasy). Koszty wysyłki zostaną oszacowane na podstawie sumy koszyka i domyślnych opłat przewoźnika.';
+$_MODULE['<{paypal}prestashop>adminpaypallogscontroller_b2d37ae1cedf42ff874289b721860af2'] = 'Logi';
+$_MODULE['<{paypal}prestashop>adminpaypallogscontroller_7e4ed5efc0f056eb2b36609af35177d3'] = 'Tryb Sandbox';
+$_MODULE['<{paypal}prestashop>adminpaypallogscontroller_b38308023e216ac4faf73789566556c2'] = 'Tryb Sandbox to środowisko testowe, w którym nie będziesz w stanie zbierać żadnych prawdziwych płatności.';
+$_MODULE['<{paypal}prestashop>installmentdisclaimer_e2f76b189f6997a121158a522c8f7f99'] = 'Wyświetl płatność 4X PayPal na swojej stronie';
+$_MODULE['<{paypal}prestashop>installmentdisclaimer_4345eb9cc04bd88722f32189e111111e'] = 'Płatność w 4X PayPal pozwala francuskim konsumentom płacić w 4 równych ratach. Możesz promować 4X PayPal Payment tylko wtedy, gdy jesteś handlowcem z siedzibą we Francji, z francuską stroną internetową i standardową integracją PayPal.';
+$_MODULE['<{paypal}prestashop>installmentdisclaimer_790768678d15ea5e6b855639ec2e1def'] = 'Sprzedawcy z narzędziem Vaulting (cyfrowy sejf) lub integracją płatności cyklicznych / subskrypcji, a także ci, którzy prowadzą określoną działalność (sprzedaż dóbr cyfrowych / towarów niefizycznych) nie kwalifikują się do promowania 4X PayPal Payment . W Twojej witrynie zamieścimy wiadomości promujące 4X PayPal Payment. Nie możesz promować 4X PayPal Payment za pomocą żadnych innych treści.';
+$_MODULE['<{paypal}prestashop>installmentdisclaimer_891ad007e2e9f2d55be6669cd9abc7a0'] = 'Zobacz więcej';
+$_MODULE['<{paypal}prestashop>installmentdisclaimer_1b139287ea9bd54f5252e7868dae1f40'] = 'Wyświetl w swojej witrynie informacje o 3X Płatności PayPal';
+$_MODULE['<{paypal}prestashop>installmentdisclaimer_b0a144a9a1cbd31bbc841d2656e20e51'] = 'Wyświetlaj w swojej witrynie komunikaty dotyczące płacenia później dla ofert takich jak Zapłać za 3, która pozwala klientom płacić za pomocą 3 nieoprocentowanych miesięcznych płatności.';
+$_MODULE['<{paypal}prestashop>installmentdisclaimer_fbbbfb2dd1598fbc34d42a4d662bdb52'] = 'W Twojej witrynie wyświetlimy komunikaty promujące tę funkcję. Nie możesz promować ofert płatności po terminie za pomocą innych treści, materiałów marketingowych lub materiałów.';
+$_MODULE['<{paypal}prestashop>installmentpagedisplayingsetting_cfe6e34a4c7f24aad32aa4299562f5b1'] = 'Strona główna';
+$_MODULE['<{paypal}prestashop>installmentpagedisplayingsetting_175103bab005a71c49c7ef675c1304cd'] = 'Strona kategorii';
+$_MODULE['<{paypal}prestashop>installmentpagedisplayingsetting_235e8d1a54ecddcf1d3ff533331ed416'] = 'Strona produktu';
+$_MODULE['<{paypal}prestashop>installmentpagedisplayingsetting_a85eba4c6c699122b2bb1387ea4813ad'] = 'Koszyk';
+$_MODULE['<{paypal}prestashop>installmentpagedisplayingsetting_6ff063fbc860a79759a7369ac32cee22'] = 'Kasa';
+$_MODULE['<{paypal}prestashop>installmentpopup_9e091c37835dd133ef649311ba561408'] = 'Oferuj swoim klientom płatność w 4X';
+$_MODULE['<{paypal}prestashop>installmentpopup_611c3c7ed877fc3071ab177ed36acbb6'] = 'Teraz Twoi klienci mogą płacić w 4 ratach za pomocą PayPal!';
+$_MODULE['<{paypal}prestashop>installmentpopup_119879090c04004d26811acd3c1379c1'] = 'Popraw swój współczynnik konwersji, pokazując swoim klientom 4x informacje o płatności.';
+$_MODULE['<{paypal}prestashop>installmentpopup_4d263aae337221a257777dd3e4efec32'] = 'Włącz teraz';
+$_MODULE['<{paypal}prestashop>bnplpagedisplayingsetting_468a21d1076328f1b4cd946b72e2d5cd'] = 'Strona koszyka';
+$_MODULE['<{paypal}prestashop>bnplpagedisplayingsetting_0fcaf0531dd6d6a53f7bde67adafd035'] = 'Strony produktowe';
+$_MODULE['<{paypal}prestashop>bnplpagedisplayingsetting_b29281296165d65c9c816c2ed17e5109'] = 'Zarejestruj się w kasie';
+$_MODULE['<{paypal}prestashop>forminstallment_e78a577e6891286e36f49c540c757d06'] = 'Włącz \'Płać w 4x\' w swojej kasie';
+$_MODULE['<{paypal}prestashop>forminstallment_9871fad8feec04bf651c960e6538814b'] = 'Płać w 4x\' jest aktywne na';
+$_MODULE['<{paypal}prestashop>paypal_90e2bf03385212f0e792524dfb935188'] = 'P_a_ przez PayPal w X';
+$_MODULE['<{paypal}prestashop>paypal_d9477f0fb4bf73e4e174c1b8591cc9ef'] = 'U_yj przycisku \'Płatności ratalne\'.';
+$_MODULE['<{paypal}prestashop>forminstallment_381805411dac8b454d0de986ef0eaf3d'] = 'Aktywuj opcj_ \'Zap_a_ za X razy\' w swojej kasie.';
+$_MODULE['<{paypal}prestashop>forminstallment_4d312c672b84eeb1b903e5cda7c65fb9'] = 'Opcja \'Zap_a_ za X razy\' jest aktywna na';
+$_MODULE['<{paypal}prestashop>forminstallment_9176dcc49f1dd25a41f0e96adebf91f8'] = 'Aktywuj wy_wietlanie banerów';
+$_MODULE['<{paypal}prestashop>bnplpagedisplayingsetting_d53f3fd73815da5fd604769249c6968c'] = 'P_atno__ krok po kroku w kasie';
+$_MODULE['<{paypal}prestashop>bnpl-payment-step_6842756c67a29c72c89e0a019e0fbc6f'] = 'Prosz_ klikn__ na przycisk \'Płatności ratalne\'.';
+$_MODULE['<{paypal}prestashop>bnpl-payment-step_f9952e95d55801d9b0742431aefc1d3e'] = 'Prosz_ klikn__ na przycisk \'Zapłać z PayPal\'.';
+$_MODULE['<{paypal}prestashop>trackingparametersform_c9cc8cce247e49bae79f15173ce97354'] = 'Zapisz';
+$_MODULE['<{paypal}prestashop>whitelistform_3d4176b5773ebb35988eab171f78be02'] = 'Lista adresów IP';
+$_MODULE['<{paypal}prestashop>whitelistform_c9cc8cce247e49bae79f15173ce97354'] = 'Zapisz';
+$_MODULE['<{paypal}prestashop>statusblock_32d5facdc889dd6e687606994a04bce9'] = 'Rozszerzenie PHP cURL jest włączone na twoim serwerze';
+$_MODULE['<{paypal}prestashop>paypal_81b73a9f2538ea8aa926110fd35feabb'] = 'Twoje ustawienia zaokrąglania nie są w pełni zgodne z wymaganiami PayPal. Aby uniknąć niepowodzenia niektórych transakcji, proszę zmienić tryb zaokrąglania PrestaShop.';
+$_MODULE['<{paypal}prestashop>accountform_c9cc8cce247e49bae79f15173ce97354'] = 'Zapisz';
+$_MODULE['<{paypal}prestashop>checkoutform_59b37f9326ef153c40b3ef20295016af'] = 'Akceptuj płatności PayPal';
+$_MODULE['<{paypal}prestashop>checkoutform_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Włączono';
+$_MODULE['<{paypal}prestashop>checkoutform_b9f5c797ebbf55adccdd8539a65a0241'] = 'Wyłączono';
+$_MODULE['<{paypal}prestashop>checkoutform_93b06f54e738e1a36e44bafcb2ba9d56'] = 'Płatność';
+$_MODULE['<{paypal}prestashop>checkoutform_f2cd171bd42220283b7a595c3ff2aaaf'] = 'Sprzedaż';
+$_MODULE['<{paypal}prestashop>checkoutform_7f83df9cd29577d544efd9ff66d7118a'] = 'Autoryzacja';
+$_MODULE['<{paypal}prestashop>checkoutform_ceac84408a31a0038e3a738f44bbdce1'] = 'Działanie płatnicze (dotyczy tylko PayPal Express)';
+$_MODULE['<{paypal}prestashop>checkoutform_a3aa05d13c917745d24cec7e6cdbc97b'] = 'Realizacja transakcji w systemie PayPal';
+$_MODULE['<{paypal}prestashop>checkoutform_c2f211609052c27619c1253baaa0e603'] = 'System PayPal otwiera się w wyskakującym oknie, umożliwiając kupującym sfinalizowanie płatności bez opuszczania Twojej witryny. Zoptymalizowane, nowoczesne i dające poczucie pewności środowisko, w którym obowiązują te same standardy bezpieczeństwa co w witrynie PayPal.';
+$_MODULE['<{paypal}prestashop>checkoutform_6bacf7b82fa0a6b9c5b0afb266523082'] = 'W KONTEKŚCIE';
+$_MODULE['<{paypal}prestashop>checkoutform_2890d54eabb244a83c4a3c85c0c60246'] = 'PRZEKIERUJ';
+$_MODULE['<{paypal}prestashop>checkoutform_935b666b914a3da3e0b1be2758b82a72'] = 'Pozostaw to pole puste, aby użyć nazwy sklepu skonfigurowanej na Twoim koncie PayPal';
+$_MODULE['<{paypal}prestashop>checkoutform_10a0bd9b814341d997541f060a338975'] = 'Etykieta, która zastępuje nazwę firmy na koncie PayPal na stronach PayPal. Jeśli logo zostało ustawione, nazwa marki nie będzie wyświetlana.';
+$_MODULE['<{paypal}prestashop>checkoutform_f4735eca0c2be308ee5b625e3d074926'] = 'Pokaż klientom zalety systemu PayPal';
+$_MODULE['<{paypal}prestashop>checkoutform_8690095ec5ecadfedb879b1a0f544770'] = 'Aby zwiększyć współczynnik konwersji, przedstaw klientom zalety systemu PayPal na stronie wyboru formy płatności.';
+$_MODULE['<{paypal}prestashop>checkoutform_235e8d1a54ecddcf1d3ff533331ed416'] = 'Strona produktu';
+$_MODULE['<{paypal}prestashop>checkoutform_468a21d1076328f1b4cd946b72e2d5cd'] = 'Koszyk';
+$_MODULE['<{paypal}prestashop>checkoutform_b29281296165d65c9c816c2ed17e5109'] = 'Zarejestruj się w kasie';
+$_MODULE['<{paypal}prestashop>checkoutform_1981089a58ccc371526094328e8f3b0a'] = 'Umieść przycisk PayPal na końcu strony zamówienia';
+$_MODULE['<{paypal}prestashop>checkoutform_6ee1cc1d3eaf785b045b990369403ecb'] = 'Akceptuj płatności kartami kredytowymi i debetowymi';
+$_MODULE['<{paypal}prestashop>checkoutform_6ff063fbc860a79759a7369ac32cee22'] = 'Kasa';
+$_MODULE['<{paypal}prestashop>checkoutform_c9cc8cce247e49bae79f15173ce97354'] = 'Zapisz';
+$_MODULE['<{paypal}prestashop>forminstallment_235e8d1a54ecddcf1d3ff533331ed416'] = 'Strona produktu';
+$_MODULE['<{paypal}prestashop>forminstallment_d53f3fd73815da5fd604769249c6968c'] = 'P_atno__ krok po kroku w kasie';
+$_MODULE['<{paypal}prestashop>forminstallment_468a21d1076328f1b4cd946b72e2d5cd'] = 'Koszyk';
+$_MODULE['<{paypal}prestashop>forminstallment_b29281296165d65c9c816c2ed17e5109'] = 'Zarejestruj się w kasie';
+$_MODULE['<{paypal}prestashop>forminstallment_18948e45d304d6cb8d278875db337b5e'] = 'Ative \'Pagamentos com parcelamento \' em seu checkout.';
+$_MODULE['<{paypal}prestashop>forminstallment_cfe6e34a4c7f24aad32aa4299562f5b1'] = 'Strona główna';
+$_MODULE['<{paypal}prestashop>forminstallment_175103bab005a71c49c7ef675c1304cd'] = 'Strona kategorii';
+$_MODULE['<{paypal}prestashop>forminstallment_a85eba4c6c699122b2bb1387ea4813ad'] = 'Strona produktu';
+$_MODULE['<{paypal}prestashop>forminstallment_6ff063fbc860a79759a7369ac32cee22'] = 'Koszyk';
+$_MODULE['<{paypal}prestashop>forminstallment_fe4c6a5e7bd6793b37370e4e46daf998'] = 'Kasa';
+$_MODULE['<{paypal}prestashop>orderstatusform_18eaca809be3d20e366fbdf5c0d7be8d'] = 'Dostosuj status zamówienia';
+$_MODULE['<{paypal}prestashop>orderstatusform_8417b6fea6615cf19f2f72edb5ff48a2'] = 'Użyj tej opcji wyłącznie wtedy, gdy chcesz zmienić przypisany domyślny status PayPal w statusach zamówień PrestaShop.';
+$_MODULE['<{paypal}prestashop>orderstatusform_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Włączono';
+$_MODULE['<{paypal}prestashop>orderstatusform_b9f5c797ebbf55adccdd8539a65a0241'] = 'Wyłączono';
+$_MODULE['<{paypal}prestashop>orderstatusform_523a79c01414547cd932d9dc6ca76efe'] = 'Status zamówienia aktywujący zwrot pieniędzy w systemie PayPal';
+$_MODULE['<{paypal}prestashop>orderstatusform_8abcd7b800911823cddfba75ef2c8275'] = 'Koszty zamówienia opłaconego za pośrednictwem systemu PayPal można zwrócić bezpośrednio przez system zaplecza platformy PrestaShop. W tym miejscu możesz wybrać status zamówienia, który ma wywoływać zwrot pieniędzy w systemie PayPal. Jeśli chcesz zmienić status zamówienia bez wywoływania automatycznego zwrotu pieniędzy w systemie PayPal, wybierz opcję „Brak działań”.';
+$_MODULE['<{paypal}prestashop>orderstatusform_0f9907c62d585faaab3efaf95a3406ac'] = 'Status domyślny: zwrócono';
+$_MODULE['<{paypal}prestashop>orderstatusform_c158783b379b395205a91a6270a52ff4'] = 'Status zamówienia aktywujący anulowanie w systemie PayPal';
+$_MODULE['<{paypal}prestashop>orderstatusform_da78fd8363ff268d8d8694cdb2dd62c4'] = 'Zamówienia opłacone za pośrednictwem systemu PayPal można anulować bezpośrednio przez system zaplecza platformy PrestaShop. W tym miejscu możesz wybrać status zamówienia, który ma wywoływać anulowanie przez PayPal autoryzowanej transakcji w systemie PayPal. Jeśli chcesz zmienić status zamówienia bez wywoływania automatycznego anulowania w systemie PayPal, wybierz opcję „Brak działań”.';
+$_MODULE['<{paypal}prestashop>orderstatusform_87ad1179406b568d2f8fd6f8ddb44d15'] = ' Status domyślny: anulowano';
+$_MODULE['<{paypal}prestashop>orderstatusform_41a81fcc63d6a78a0d22630b2e4b1e6c'] = 'Płatność zaakceptowana przez system zaplecza (zadzwoń do firmy PayPal, aby otrzymać płatność)';
+$_MODULE['<{paypal}prestashop>orderstatusform_36500501ab89967d20b1beb686880d44'] = 'Obecnie używasz trybu autoryzacji. Oznacza to, że autoryzacja płatności przebiega oddzielnie od pobrania środków z autoryzowanej płatności. Aby pobrać środki z autoryzowanej płatności, musisz zmienić status zamówienia na „płatność zaakceptowana” (lub na status niestandardowy o tym samym znaczeniu). W tym miejscu możesz wybrać niestandardowy status zamówienia w celu zaakceptowania zamówienia i zatwierdzenia transakcji w trybie autoryzowania.';
+$_MODULE['<{paypal}prestashop>orderstatusform_c6a9094c053f62817cf82c904082378e'] = 'Status domyślny: płatność zaakceptowana';
+$_MODULE['<{paypal}prestashop>orderstatusform_a34058defd3c3f1e3ace8ee85bd97b03'] = 'Płatność anulowana przez system zaplecza (zadzwoń do PayPal, aby anulować pobranie środków)';
+$_MODULE['<{paypal}prestashop>orderstatusform_06a4ae63012b5b989e7a3f0fd114633f'] = 'Obecnie używasz trybu autoryzacji. Oznacza to, że autoryzacja płatności przebiega oddzielnie od pobrania środków z autoryzowanej płatności. Aby anulować autoryzowaną płatność, musisz zmienić status zamówienia na „anulowano” (lub na status niestandardowy o tym samym znaczeniu). W tym miejscu możesz wybrać status zamówienia w celu anulowania zamówienia i transakcji w trybie autoryzowania.';
+$_MODULE['<{paypal}prestashop>orderstatusform_afe70387e87a03e074c3181a5b7ecb36'] = 'Status domyślny: anulowano';
+$_MODULE['<{paypal}prestashop>orderstatusform_5981855556d6acfd044f87984094e280'] = 'Zaakceptowano płatność i zrealizowano transakcję';
+$_MODULE['<{paypal}prestashop>orderstatusform_b69e8c2820a1da7041f7e6c34f4c417d'] = 'Você está atualmente utilizando o modo de autorização. Isto significa que separou a autorização do pagamento da sua captura. Por padrão os pedidos vão ser criados como \'Aguardando pagamento\' mas você pode customizar se necessário.';
+$_MODULE['<{paypal}prestashop>orderstatusform_b9f86a9136cce57a5fbfa7daf8e28c04'] = 'Płatność została autoryzowana i oczekuje na zatwierdzenie przez administratora (zapłacono za pośrednictwem usługi PayPal Express)';
+$_MODULE['<{paypal}prestashop>orderstatusform_915901b766a8e732f41c87693184fa89'] = 'Obecnie używasz trybu autoryzacji. Oznacza to, że autoryzacja płatności przebiega oddzielnie od pobrania środków z autoryzowanej płatności. Domyślnie utworzone zamówienia będą miały status „Oczekuje na płatność PayPal”, ale w razie potrzeby możesz go dostosować.';
+$_MODULE['<{paypal}prestashop>orderstatusform_c9cc8cce247e49bae79f15173ce97354'] = 'Zapisz';
+$_MODULE['<{paypal}prestashop>orderstatusform_fa46ea6f6f6623fdd7039b5f1a8f3940'] = 'Brak akcji';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_3abe067b44b854aa9c724e36f304c7b3'] = 'Dostosuj przyciski skrótów do płatności PayPal Express Checkout';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_9497e00bcfa5de156a98fd8439e645e8'] = 'Możesz dostosować opcje wyświetlania i style skrótów PayPal. Style i opcje wyświetlania mogą być zmieniane dla każdego przycisku oddzielnie w zależności od jego lokalizacji (Strona koszyka / Strony produktu / Zapisz się do kasy).';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Włączono';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_b9f5c797ebbf55adccdd8539a65a0241'] = 'Wyłączono';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_a81ab539b2f408008ed6bf764d37a8f5'] = 'Domyślnie, skrót PayPal jest wyświetlany na twojej stronie internetowej poprzez natywny hak PrestaShop. Jeśli zdecydujesz się na użycie widgetów PrestaShop, będziesz mógł skopiować kod widżetu i wstawić go gdziekolwiek chcesz w szablonie produktu.';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_e17addeaaa46cfe3a3392ed50dbb68c2'] = 'displayExpressCheckout (zalecane) - Ten hak dodaje zawartość do widoku koszyka, w prawym pasku bocznym, po zsumowaniu koszyka.';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_80c9693f7fc8214e4b783ab2dba3d765'] = 'displayShoppingCartFooter - Ten hak wyświetla pewne specyficzne informacje po liście produktów w koszyku.';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_14fb98910a62c6d9dc2acfea2189e8d2'] = 'displayReassurance - Ten hak wyświetla zawartość w prawym pasku bocznym, w bloku poniżej sumy koszyka.';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_6f6cb72d544962fa333e2e34ce64f719'] = 'Rozmiar';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_e6972436117056f6d5e9ed8099fcd0af'] = 'Wysokość (wartość od 25 do 55)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_a35df1d0d4ac674f6e390ae2b33298d3'] = 'Wartość od 25 do 55 jest wymagana';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_075d76f6dd8c6beb74c5e4d3427439d4'] = 'Szerokość (min. 150)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_9a3bb735e1426b03382b1b5e1c7b36b9'] = 'Wartość od 25 do 55 jest wymagana';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_29c83bad90fad0785f4878c30a44ffdd'] = 'displayProductActions (zalecane) - Ten hak umożliwia uruchamianie dodatkowych akcji w pobliżu przycisku dodawania do koszyka.';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_c4793ec93f782f74f73ba6f254b797b4'] = 'displayReassurance - Ten hak dodaje nowe elementy tuż obok bloku uspokajającego.';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_5bd08bd4927d2940410eb37dfa14a284'] = 'displayProductAdditionalInfo - Ten hak dodaje dodatkowe informacje przed blokiem zabezpieczającym i opisem produktu.';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_e73a044f2ebcb1275cbdb398884c7cc0'] = 'displayAfterProductThumbs - Ten hak wyświetla nowe elementy pod zdjęciami produktów.';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_d0fbd9dc1afb26f9ecb576722a015aeb'] = 'displayFooterProduct - Ten hak dodaje nowe bloki na stronie produktu tuż przed stopką globalnego serwisu.';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_96fb691af25d2fbcfe265881d5c60247'] = 'Skrót PayPal Express jest włączony';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_c9cc8cce247e49bae79f15173ce97354'] = 'Zapisz';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_b9f575d4e3451c42a4500e04da59cda1'] = 'Modo de exibição';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_e1582a4122fba78020505ab31c376497'] = 'PrestaShop gancho nativo (recomendado)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_b1148f26f08479333d3b705f94acba58'] = 'Widżet PrestaShop';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_cb5feb1b7314637725a2e73bdc9f7295'] = 'Kolor';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_9c9f69db98badc5227b9900ab971c0ac'] = 'Złoto (zalecane)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_b568ad009b6a940587314ee1dc80ca3b'] = 'Niebieski (pierwsza możliwość)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_2351cd37e692be8e30c01c152f529f21'] = 'Srebro (druga możliwość)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_5c736e61d9d132aebbd52dfea520a01c'] = 'Biały (druga możliwość)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_d4153b8d061e42074ab34d5aad266dca'] = 'Czarny (druga możliwość)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_880c1273b27d27cfc82004c3a4b205c9'] = 'Kształt';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_b58e6a157c26cfa66ae3b5023433feda'] = 'Prostokątny (zalecany) - domyślny kształt przycisku';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_58524da88e1b8fd6e51265adf278a6ae'] = 'Pill - opcja kształtu drugiego przycisku';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_a35b038d22299190745f47cce5a13fa4'] = 'Przycisk PayPal Buy Now (zalecane)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_02c9e59f25e23268857c1d6da0559bc3'] = 'Przycisk PayPal Buy Now';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_f8c4dd3bddd4e9ac7725c0faece5e5c1'] = 'Logo PayPal';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_42420612952208ce750cc546adefb634'] = 'Przycisk \'Checkout';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_889cde7b5565eb585e83bc4e2af3744c'] = 'Przycisk \'Checkout\' (zalecany)';
+$_MODULE['<{paypal}prestashop>shortcutconfigurationform_f82f6e09a9e203576f21207fc3efe2cf'] = 'Płać za pomocą przycisku PayPal';
+$_MODULE['<{paypal}prestashop>checker_8096bc20cc46f95026c5d42d8ff4406b'] = '401 Unauthorised. Zwróć uwagę, że weryfikacja TLS nie może być przeprowadzona, jeśli masz włączoną ochronę hasłem htaccess, tryb debugowania lub konserwacji na swojej stronie internetowej.';
+$_MODULE['<{paypal}prestashop>form-fields_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Włączono';
+$_MODULE['<{paypal}prestashop>pp_shortcut_configuration_form_bb54cce5a0fb4e80d1b2dce5a28d6efb'] = 'Strona koszyka';
+$_MODULE['<{paypal}prestashop>pp_shortcut_configuration_form_eb763a2e313718f33f55e1f0d84df6ee'] = 'Strony produktowe';

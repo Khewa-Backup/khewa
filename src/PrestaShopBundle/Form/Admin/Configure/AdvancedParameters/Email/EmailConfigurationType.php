@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Form\Admin\Configure\AdvancedParameters\Email;
@@ -32,7 +12,7 @@ use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class EmailConfigurationType defines email sending configuration.
@@ -88,6 +68,9 @@ class EmailConfigurationType extends TranslatorAwareType
                 'multiple' => false,
                 'choices' => $this->mailMethodChoiceProvider->getChoices(),
             ])
+            ->add('subject_prefix', SwitchType::class, [
+                'label' => $this->trans('Enable the store name as a prefix in the email\'s subject', 'Admin.Advparameters.Feature'),
+            ])
             ->add('mail_type', ChoiceType::class, [
                 'expanded' => true,
                 'multiple' => false,
@@ -95,11 +78,22 @@ class EmailConfigurationType extends TranslatorAwareType
                     $this->trans('Send email in HTML format', 'Admin.Advparameters.Feature') => MailOption::TYPE_HTML,
                     $this->trans('Send email in text format', 'Admin.Advparameters.Feature') => MailOption::TYPE_TXT,
                     $this->trans('Both', 'Admin.Advparameters.Feature') => MailOption::TYPE_BOTH,
+                    $this->trans('Both, with text format automatically generated', 'Admin.Advparameters.Feature') => MailOption::TYPE_BOTH_AUTOMATIC_TEXT,
                 ],
             ])
             ->add('log_emails', SwitchType::class, [
                 'label' => $this->trans('Log Emails', 'Admin.Advparameters.Feature'),
             ])
-            ->add('smtp_config', SmtpConfigurationType::class);
+            ->add('dkim_enable', SwitchType::class, [
+                'attr' => ['class' => 'js-dkim-enable'],
+                'choices' => [
+                    'Disabled' => false,
+                    'Enabled' => true,
+                ],
+                'label' => $this->trans('DKIM signing', 'Admin.Advparameters.Feature'),
+                'help' => $this->trans('Enable DKIM, fill in the fields and give it a try. If no email is sent, check logs.', 'Admin.Advparameters.Help'),
+            ])
+            ->add('smtp_config', SmtpConfigurationType::class)
+            ->add('dkim_config', DkimConfigurationType::class);
     }
 }

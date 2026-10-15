@@ -1,28 +1,10 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
+
+use PrestaShopBundle\Form\Admin\Type\FormattedTextareaType;
 
 /**
  * Class ConfigurationCore.
@@ -37,7 +19,7 @@ class ConfigurationCore extends ObjectModel
     public $id_shop_group;
     public $id_shop;
 
-    /** @var string Value */
+    /** @var string|array<string> Value */
     public $value;
 
     /** @var string Object creation date */
@@ -57,16 +39,16 @@ class ConfigurationCore extends ObjectModel
             'name' => ['type' => self::TYPE_STRING, 'validate' => 'isConfigName', 'required' => true, 'size' => 254],
             'id_shop_group' => ['type' => self::TYPE_NOTHING, 'validate' => 'isUnsignedId'],
             'id_shop' => ['type' => self::TYPE_NOTHING, 'validate' => 'isUnsignedId'],
-            'value' => ['type' => self::TYPE_STRING],
+            'value' => ['type' => self::TYPE_STRING, 'size' => FormattedTextareaType::LIMIT_MEDIUMTEXT_UTF8_MB4],
             'date_add' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
             'date_upd' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
         ],
     ];
 
-    /** @var array Configuration cache (kept for backward compat) */
+    /** @var array|null Configuration cache (kept for backward compat) */
     protected static $_cache = null;
 
-    /** @var array Configuration cache with optimised key order */
+    /** @var array|null Configuration cache with optimised key order */
     protected static $_new_cache_shop = null;
     protected static $_new_cache_group = null;
     protected static $_new_cache_global = null;
@@ -113,6 +95,18 @@ class ConfigurationCore extends ObjectModel
             $idShopGroup = Shop::getContextShopGroupID(true);
         }
 
+        return self::getIdByNameFromGivenContext($key, $idShopGroup, $idShop);
+    }
+
+    /**
+     * @param string $key
+     * @param int|null $idShopGroup
+     * @param int|null $idShop
+     *
+     * @return int Configuration key ID
+     */
+    public static function getIdByNameFromGivenContext(string $key, ?int $idShopGroup, ?int $idShop): int
+    {
         $sql = 'SELECT `' . bqSQL(self::$definition['primary']) . '`
                 FROM `' . _DB_PREFIX_ . bqSQL(self::$definition['table']) . '`
                 WHERE name = \'' . pSQL($key) . '\'
@@ -132,12 +126,20 @@ class ConfigurationCore extends ObjectModel
     }
 
     /**
+     * @deprecated 8.0.0 Use resetStaticCache method instead.
+     */
+    public static function clearConfigurationCacheForTesting()
+    {
+        self::resetStaticCache();
+    }
+
+    /**
      * WARNING: For testing only. Do NOT rely on this method, it may be removed at any time.
      *
      * @todo Delegate static calls from Configuration to an instance
      * of a class to be created.
      */
-    public static function clearConfigurationCacheForTesting()
+    public static function resetStaticCache()
     {
         self::$_cache = null;
         self::$_new_cache_shop = null;
@@ -154,8 +156,8 @@ class ConfigurationCore extends ObjectModel
         $sql = 'SELECT c.`name`, cl.`id_lang`, IF(cl.`id_lang` IS NULL, c.`value`, cl.`value`) AS value, c.id_shop_group, c.id_shop
                FROM `' . _DB_PREFIX_ . bqSQL(self::$definition['table']) . '` c
                LEFT JOIN `' . _DB_PREFIX_ . bqSQL(self::$definition['table']) . '_lang` cl ON (c.`' . bqSQL(
-               self::$definition['primary']
-            ) . '` = cl.`' . bqSQL(self::$definition['primary']) . '`)';
+            self::$definition['primary']
+        ) . '` = cl.`' . bqSQL(self::$definition['primary']) . '`)';
         $db = Db::getInstance();
         $results = $db->executeS($sql);
         if ($results) {
@@ -195,39 +197,31 @@ class ConfigurationCore extends ObjectModel
      *
      * @param string $key Key wanted
      * @param int $idLang Language ID
+     * @param int $idShopGroup Shop Group ID
+     * @param int $idShop Shop ID
+     * @param mixed $default Default value
      *
      * @return string|false Value
      */
     public static function get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)
     {
-        if (defined('_PS_DO_NOT_LOAD_CONFIGURATION_') && _PS_DO_NOT_LOAD_CONFIGURATION_) {
-            return false;
-        }
-
         // Init the cache on demand
         if (!self::$_initialized) {
             Configuration::loadConfiguration();
         }
-        $idLang = (int) $idLang;
 
-        if (!self::isLangKey($key)) {
-            $idLang = 0;
-        }
+        $idLang = self::isLangKey($key) ? (int) $idLang : 0;
 
         if (self::$_new_cache_shop === null) {
             $idShop = 0;
-        } else {
-            if ($idShop === null || !Shop::isFeatureActive()) {
-                $idShop = Shop::getContextShopID(true);
-            }
+        } elseif ($idShop === null || !Shop::isFeatureActive()) {
+            $idShop = Shop::getContextShopID(true);
         }
 
         if (self::$_new_cache_group === null) {
             $idShopGroup = 0;
-        } else {
-            if ($idShopGroup === null || !Shop::isFeatureActive()) {
-                $idShopGroup = Shop::getContextShopGroupID(true);
-            }
+        } elseif ($idShopGroup === null || !Shop::isFeatureActive()) {
+            $idShopGroup = Shop::getContextShopGroupID(true);
         }
 
         if ($idShop && Configuration::hasKey($key, $idLang, null, $idShop)) {
@@ -252,14 +246,6 @@ class ConfigurationCore extends ObjectModel
     public static function getGlobalValue($key, $idLang = null)
     {
         return Configuration::get($key, $idLang, 0, 0);
-    }
-
-    /**
-     * @deprecated use Configuration::getConfigInMultipleLangs() instead
-     */
-    public static function getInt($key, $idShopGroup = null, $idShop = null)
-    {
-        return self::getConfigInMultipleLangs($key, $idShopGroup, $idShop);
     }
 
     /**
@@ -303,14 +289,14 @@ class ConfigurationCore extends ObjectModel
     /**
      * Get several configuration values (in one language only).
      *
-     * @throws PrestaShopException
-     *
      * @param array $keys Keys wanted
      * @param int $idLang Language ID
      * @param int $idShopGroup
      * @param int $idShop
      *
      * @return array Values
+     *
+     * @throws PrestaShopException
      */
     public static function getMultiple($keys, $idLang = null, $idShopGroup = null, $idShop = null)
     {
@@ -337,10 +323,10 @@ class ConfigurationCore extends ObjectModel
     /**
      * Check if key exists in configuration.
      *
-     * @param string $key
-     * @param int $idLang
-     * @param int $idShopGroup
-     * @param int $idShop
+     * @param mixed $key
+     * @param mixed|null $idLang
+     * @param int|null $idShopGroup
+     * @param int|null $idShop
      *
      * @return bool
      */
@@ -372,7 +358,7 @@ class ConfigurationCore extends ObjectModel
     public static function set($key, $values, $idShopGroup = null, $idShop = null)
     {
         if (!Validate::isConfigName($key)) {
-            die(Tools::displayError(Context::getContext()->getTranslator()->trans('[%s] is not a valid configuration key', [Tools::htmlentitiesUTF8($key)], 'Admin.Notifications.Error')));
+            throw new PrestaShopException(Context::getContext()->getTranslator()->trans('[%s] is not a valid configuration key', [Tools::htmlentitiesUTF8($key)], 'Admin.Notifications.Error'));
         }
 
         if ($idShop === null) {
@@ -432,8 +418,16 @@ class ConfigurationCore extends ObjectModel
      */
     public static function updateValue($key, $values, $html = false, $idShopGroup = null, $idShop = null)
     {
+        Hook::exec('actionConfigurationUpdateValueBefore', [
+            'key' => $key,
+            'values' => $values,
+            'html' => $html,
+            'idShopGroup' => $idShopGroup,
+            'idShop' => $idShop,
+        ]);
+
         if (!Validate::isConfigName($key)) {
-            die(Tools::displayError(Context::getContext()->getTranslator()->trans('[%s] is not a valid configuration key', [Tools::htmlentitiesUTF8($key)], 'Admin.Notifications.Error')));
+            throw new PrestaShopException(Context::getContext()->getTranslator()->trans('[%s] is not a valid configuration key', [Tools::htmlentitiesUTF8($key)], 'Admin.Notifications.Error'));
         }
 
         if ($idShop === null || !Shop::isFeatureActive()) {
@@ -457,7 +451,10 @@ class ConfigurationCore extends ObjectModel
         foreach ($values as $lang => $value) {
             $storedValue = Configuration::get($key, $lang, $idShopGroup, $idShop);
             // if there isn't a $stored_value, we must insert $value
-            if ((!is_numeric($value) && $value === $storedValue) || (is_numeric($value) && $value == $storedValue && Configuration::hasKey($key, $lang))) {
+            if (
+                ((!is_numeric($value) && $value === $storedValue) || (is_numeric($value) && $value == $storedValue))
+                 && Configuration::hasKey($key, $lang, $idShopGroup, $idShop)
+            ) {
                 continue;
             }
 
@@ -590,7 +587,7 @@ class ConfigurationCore extends ObjectModel
      * @param int $idShopGroup
      * @param int $idShop
      */
-    public static function deleteFromContext($key, int $idShopGroup = null, int $idShop = null)
+    public static function deleteFromContext($key, ?int $idShopGroup = null, ?int $idShop = null)
     {
         if (Shop::getContext() == Shop::CONTEXT_ALL) {
             return;
@@ -601,13 +598,30 @@ class ConfigurationCore extends ObjectModel
             $idShop = Shop::getContextShopID(true);
         }
 
-        $id = Configuration::getIdByName($key, $idShopGroup, $idShop);
+        $configurationId = Configuration::getIdByName($key, $idShopGroup, $idShop);
+
+        self::deleteById($configurationId);
+    }
+
+    /**
+     * @param string $key
+     * @param int|null $idShopGroup
+     * @param int|null $idShop
+     */
+    public static function deleteFromGivenContext(string $key, ?int $idShopGroup, ?int $idShop): void
+    {
+        $configurationId = Configuration::getIdByNameFromGivenContext($key, $idShopGroup, $idShop);
+        self::deleteById($configurationId);
+    }
+
+    public static function deleteById(int $configurationId): void
+    {
         Db::getInstance()->execute('
         DELETE FROM `' . _DB_PREFIX_ . bqSQL(self::$definition['table']) . '`
-        WHERE `' . bqSQL(self::$definition['primary']) . '` = ' . (int) $id);
+        WHERE `' . bqSQL(self::$definition['primary']) . '` = ' . $configurationId);
         Db::getInstance()->execute('
         DELETE FROM `' . _DB_PREFIX_ . bqSQL(self::$definition['table']) . '_lang`
-        WHERE `' . bqSQL(self::$definition['primary']) . '` = ' . (int) $id);
+        WHERE `' . bqSQL(self::$definition['primary']) . '` = ' . $configurationId);
 
         self::$_cache = null;
         self::$_new_cache_shop = null;
@@ -620,30 +634,15 @@ class ConfigurationCore extends ObjectModel
      * Check if configuration var is defined in given context.
      *
      * @param string $key
-     * @param int $idLang
+     * @param int|null $idLang
      * @param int $context
      */
     public static function hasContext($key, $idLang, $context)
     {
-        if (Shop::getContext() == Shop::CONTEXT_ALL) {
-            $idShop = $idShopGroup = null;
-        } elseif (Shop::getContext() == Shop::CONTEXT_GROUP) {
-            $idShopGroup = Shop::getContextShopGroupID(true);
-            $idShop = null;
-        } else {
-            $idShopGroup = Shop::getContextShopGroupID(true);
-            $idShop = Shop::getContextShopID(true);
-        }
+        $idShopGroup = $context == Shop::CONTEXT_GROUP && Shop::getContext() != Shop::CONTEXT_ALL ? Shop::getContextShopGroupID(true) : null;
+        $idShop = $context == Shop::CONTEXT_SHOP && Shop::getContext() == Shop::CONTEXT_SHOP ? Shop::getContextShopID(true) : null;
 
-        if ($context == Shop::CONTEXT_SHOP && Configuration::hasKey($key, $idLang, null, $idShop)) {
-            return true;
-        } elseif ($context == Shop::CONTEXT_GROUP && Configuration::hasKey($key, $idLang, $idShopGroup)) {
-            return true;
-        } elseif ($context == Shop::CONTEXT_ALL && Configuration::hasKey($key, $idLang)) {
-            return true;
-        }
-
-        return false;
+        return Configuration::hasKey($key, $idLang, $idShopGroup, $idShop);
     }
 
     /**
@@ -686,18 +685,12 @@ class ConfigurationCore extends ObjectModel
      */
     public static function isCatalogMode()
     {
-        if (is_a(Context::getContext()->controller, 'FrontController')) {
-            $isCatalogMode =
-                Configuration::get('PS_CATALOG_MODE') ||
-                !Configuration::showPrices() ||
-                (Context::getContext()->controller->getRestrictedCountry() == Country::GEOLOC_CATALOG_MODE);
-        } else {
-            $isCatalogMode =
-                Configuration::get('PS_CATALOG_MODE') ||
-                !Configuration::showPrices();
-        }
-
-        return $isCatalogMode;
+        return Configuration::get('PS_CATALOG_MODE')
+            || !Configuration::showPrices()
+            || (
+                is_a(Context::getContext()->controller, 'FrontController')
+                && Context::getContext()->controller->getRestrictedCountry() == Country::GEOLOC_CATALOG_MODE
+            );
     }
 
     /**

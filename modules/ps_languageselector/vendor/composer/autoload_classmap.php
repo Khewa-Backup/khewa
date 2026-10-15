@@ -6,4 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Ps_Languageselector' => $baseDir . '/ps_languageselector.php',
 );

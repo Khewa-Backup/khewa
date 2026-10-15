@@ -1,28 +1,10 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
+
+use PrestaShopBundle\Form\Admin\Type\FormattedTextareaType;
 
 /**
  * Class SupplierCore.
@@ -37,7 +19,7 @@ class SupplierCore extends ObjectModel
     /** @var string Name */
     public $name;
 
-    /** @var array<string> A short description for the discount */
+    /** @var string|array<int, string> A short description for the discount */
     public $description;
 
     /** @var string Object creation date */
@@ -49,13 +31,10 @@ class SupplierCore extends ObjectModel
     /** @var string Friendly URL */
     public $link_rewrite;
 
-    /** @var array<string> Meta title */
+    /** @var string|array<int, string> Meta title */
     public $meta_title;
 
-    /** @var array<string> Meta keywords */
-    public $meta_keywords;
-
-    /** @var array<string> Meta description */
+    /** @var string|array<int, string> Meta description */
     public $meta_description;
 
     /** @var bool active */
@@ -75,10 +54,9 @@ class SupplierCore extends ObjectModel
             'date_upd' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
 
             /* Lang fields */
-            'description' => ['type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isCleanHtml'],
+            'description' => ['type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isCleanHtml', 'size' => FormattedTextareaType::LIMIT_MEDIUMTEXT_UTF8_MB4],
             'meta_title' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => 255],
             'meta_description' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => 512],
-            'meta_keywords' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => 255],
         ],
     ];
 
@@ -91,8 +69,8 @@ class SupplierCore extends ObjectModel
     /**
      * SupplierCore constructor.
      *
-     * @param null $id
-     * @param null $idLang
+     * @param int|null $id
+     * @param int|null $idLang
      */
     public function __construct($id = null, $idLang = null)
     {
@@ -104,13 +82,13 @@ class SupplierCore extends ObjectModel
 
     public function getLink()
     {
-        return Tools::link_rewrite($this->name);
+        return Tools::str2url($this->name);
     }
 
     /**
      * Return suppliers.
      *
-     * @return array Suppliers
+     * @return bool|array Suppliers
      */
     public static function getSuppliers($getNbProducts = false, $idLang = 0, $active = true, $p = false, $n = false, $allGroups = false, $withProduct = false)
     {
@@ -154,9 +132,8 @@ class SupplierCore extends ObjectModel
 					JOIN `' . _DB_PREFIX_ . 'product` p ON (ps.`id_product`= p.`id_product`)
 					' . Shop::addSqlAssociation('product', 'p') . '
 					LEFT JOIN `' . _DB_PREFIX_ . 'supplier` as m ON (m.`id_supplier`= p.`id_supplier`)
-					WHERE ps.id_product_attribute = 0' .
+					WHERE product_shop.`visibility` NOT IN ("none")' .
                     ($active ? ' AND product_shop.`active` = 1' : '') .
-                    ' AND product_shop.`visibility` NOT IN ("none")' .
                     ($allGroups ? '' : '
 					AND ps.`id_product` IN (
 						SELECT cp.`id_product`
@@ -165,7 +142,7 @@ class SupplierCore extends ObjectModel
 						WHERE cg.`id_group` ' . $sqlGroups . '
 					)') . '
 					GROUP BY ps.`id_supplier`'
-                );
+            );
 
             $counts = [];
             foreach ($results as $result) {
@@ -184,7 +161,7 @@ class SupplierCore extends ObjectModel
         $nbSuppliers = count($suppliers);
         $rewriteSettings = (int) Configuration::get('PS_REWRITING_SETTINGS');
         for ($i = 0; $i < $nbSuppliers; ++$i) {
-            $suppliers[$i]['link_rewrite'] = ($rewriteSettings ? Tools::link_rewrite($suppliers[$i]['name']) : 0);
+            $suppliers[$i]['link_rewrite'] = ($rewriteSettings ? Tools::str2url($suppliers[$i]['name']) : 0);
         }
 
         return $suppliers;
@@ -262,17 +239,17 @@ class SupplierCore extends ObjectModel
     }
 
     /**
-     * @param $idSupplier
-     * @param $idLang
-     * @param $p
-     * @param $n
-     * @param null $orderBy
-     * @param null $orderWay
+     * @param int $idSupplier
+     * @param int $idLang
+     * @param int $p
+     * @param int $n
+     * @param string|null $orderBy
+     * @param string|null $orderWay
      * @param bool $getTotal
      * @param bool $active
      * @param bool $activeCategory
      *
-     * @return array|bool
+     * @return int|array|bool
      */
     public static function getProducts(
         $idSupplier,
@@ -302,10 +279,11 @@ class SupplierCore extends ObjectModel
         }
 
         if (!Validate::isOrderBy($orderBy) || !Validate::isOrderWay($orderWay)) {
-            die(Tools::displayError());
+            throw new PrestaShopException('Invalid sorting parameters provided.');
         }
 
         $sqlGroups = '';
+        $groups = [];
         if (Group::isFeatureActive()) {
             $groups = FrontController::getCurrentCustomerGroups();
             $sqlGroups = 'WHERE cg.`id_group` ' . (count($groups) ? 'IN (' . implode(',', $groups) . ')' : '=' . (int) Group::getCurrent()->id);
@@ -319,7 +297,6 @@ class SupplierCore extends ObjectModel
 			JOIN `' . _DB_PREFIX_ . 'product` p ON (ps.`id_product`= p.`id_product`)
 			' . Shop::addSqlAssociation('product', 'p') . '
 			WHERE ps.`id_supplier` = ' . (int) $idSupplier . '
-			AND ps.id_product_attribute = 0
 			' . ($active ? ' AND product_shop.`active` = 1' : '') . '
 			' . ($front ? ' AND product_shop.`visibility` IN ("both", "catalog")' : '') . '
 			AND p.`id_product` IN (
@@ -353,18 +330,16 @@ class SupplierCore extends ObjectModel
 					pl.`description_short`,
 					pl.`link_rewrite`,
 					pl.`meta_description`,
-					pl.`meta_keywords`,
 					pl.`meta_title`,
 					pl.`name`,
 					image_shop.`id_image` id_image,
 					il.`legend`,
 					s.`name` AS supplier_name,
-					DATEDIFF(p.`date_add`, DATE_SUB("' . date('Y-m-d') . ' 00:00:00", INTERVAL ' . ($nbDaysNewProduct) . ' DAY)) > 0 AS new,
+					DATEDIFF(p.`date_add`, DATE_SUB("' . date('Y-m-d') . ' 00:00:00", INTERVAL ' . $nbDaysNewProduct . ' DAY)) > 0 AS new,
 					m.`name` AS manufacturer_name' . (Combination::isFeatureActive() ? ', product_attribute_shop.minimal_quantity AS product_attribute_minimal_quantity, IFNULL(product_attribute_shop.id_product_attribute,0) id_product_attribute' : '') . '
 				 FROM `' . _DB_PREFIX_ . 'product` p
 				' . Shop::addSqlAssociation('product', 'p') . '
-				JOIN `' . _DB_PREFIX_ . 'product_supplier` ps ON (ps.id_product = p.id_product
-					AND ps.id_product_attribute = 0) ' .
+				JOIN `' . _DB_PREFIX_ . 'product_supplier` ps ON (ps.id_product = p.id_product) ' .
                 (Combination::isFeatureActive() ? 'LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute_shop` product_attribute_shop
 				ON (p.`id_product` = product_attribute_shop.`id_product` AND product_attribute_shop.`default_on` = 1 AND product_attribute_shop.id_shop=' . (int) $context->shop->id . ')' : '') . '
 				LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (p.`id_product` = pl.`id_product`
@@ -410,7 +385,7 @@ class SupplierCore extends ObjectModel
             $result = array_slice($result, (int) (($p - 1) * $n), (int) $n);
         }
 
-        return Product::getProductsProperties($idLang, $result);
+        return $result;
     }
 
     /**
@@ -472,11 +447,14 @@ class SupplierCore extends ObjectModel
      */
     public function delete()
     {
-        if (parent::delete()) {
+        $res = parent::delete();
+        if ($res) {
             CartRule::cleanProductRuleIntegrity('suppliers', $this->id);
 
             return $this->deleteImage();
         }
+
+        return $res;
     }
 
     /**
@@ -487,8 +465,6 @@ class SupplierCore extends ObjectModel
      * @param int $idProductAttribute
      *
      * @return array
-     *
-     * @since 1.5.0
      */
     public static function getProductInformationsBySupplier($idSupplier, $idProduct, $idProductAttribute = 0)
     {
@@ -500,8 +476,6 @@ class SupplierCore extends ObjectModel
         $query->where('id_product_attribute = ' . (int) $idProductAttribute);
         $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
 
-        if (count($res)) {
-            return $res[0];
-        }
+        return count($res) ? $res[0] : [];
     }
 }

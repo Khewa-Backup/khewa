@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
@@ -29,18 +9,17 @@
  */
 class CMSCore extends ObjectModel
 {
-    /** @var string Name */
+    /** @var int|null */
     public $id;
     public $id_cms;
     public $head_seo_title;
     public $meta_title;
     public $meta_description;
-    public $meta_keywords;
     public $content;
     public $link_rewrite;
     public $id_cms_category;
     public $position;
-    public $indexation;
+    public $indexation = true;
     public $active;
 
     /**
@@ -59,11 +38,10 @@ class CMSCore extends ObjectModel
 
             /* Lang fields */
             'meta_description' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => 512],
-            'meta_keywords' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => 255],
             'meta_title' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'required' => true, 'size' => 255],
             'head_seo_title' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => 255],
             'link_rewrite' => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isLinkRewrite', 'required' => true, 'size' => 128],
-            'content' => ['type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isCleanHtml', 'size' => 3999999999999],
+            'content' => ['type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isCleanHtml', 'size' => 1073741823],
         ],
     ];
 
@@ -129,13 +107,13 @@ class CMSCore extends ObjectModel
      * Get links.
      *
      * @param int $idLang Language ID
-     * @param null $selection
+     * @param array|null $selection
      * @param bool $active
      * @param Link|null $link
      *
      * @return array
      */
-    public static function getLinks($idLang, $selection = null, $active = true, Link $link = null)
+    public static function getLinks($idLang, $selection = null, $active = true, ?Link $link = null)
     {
         if (!$link) {
             $link = Context::getContext()->link;
@@ -163,7 +141,7 @@ class CMSCore extends ObjectModel
     }
 
     /**
-     * @param null $idLang
+     * @param int|null $idLang
      * @param bool $idBlock
      * @param bool $active
      *
@@ -187,8 +165,8 @@ class CMSCore extends ObjectModel
     }
 
     /**
-     * @param $way
-     * @param $position
+     * @param int|null $way
+     * @param int|null $position
      *
      * @return bool
      */
@@ -232,7 +210,7 @@ class CMSCore extends ObjectModel
     }
 
     /**
-     * @param $idCategory
+     * @param int $idCategory
      *
      * @return bool
      */
@@ -258,25 +236,27 @@ class CMSCore extends ObjectModel
     }
 
     /**
-     * @param $idCategory
+     * Returns the next position to use for a new CMS page.
+     * CMS page positions start with 0.
+     * Returns position of the last CMS page within that category + 1,
+     * 0 if no CMS pages exist in the category.
      *
-     * @return false|string|null
+     * @param int $idCmsCategory ID of the CMS category the page will belong to
+     *
+     * @return int Position to use
      */
-    public static function getLastPosition($idCategory)
+    public static function getLastPosition($idCmsCategory)
     {
-        $sql = '
-		SELECT MAX(position) + 1
-		FROM `' . _DB_PREFIX_ . 'cms`
-		WHERE `id_cms_category` = ' . (int) $idCategory;
-
-        return Db::getInstance()->getValue($sql);
+        return (int) Db::getInstance()->getValue('SELECT MAX(position) + 1
+            FROM `' . _DB_PREFIX_ . 'cms`
+            WHERE `id_cms_category` = ' . (int) $idCmsCategory);
     }
 
     /**
-     * @param null $idLang
-     * @param null $idCmsCategory
+     * @param int|null $idLang
+     * @param int|null $idCmsCategory
      * @param bool $active
-     * @param null $idShop
+     * @param int|null $idShop
      *
      * @return array|false|mysqli_result|PDOStatement|resource|null
      */
@@ -312,22 +292,6 @@ class CMSCore extends ObjectModel
     }
 
     /**
-     * @param $idCms
-     *
-     * @return array|false|mysqli_result|PDOStatement|resource|null
-     */
-    public static function getUrlRewriteInformations($idCms)
-    {
-        $sql = 'SELECT l.`id_lang`, c.`link_rewrite`
-				FROM `' . _DB_PREFIX_ . 'cms_lang` AS c
-				LEFT JOIN  `' . _DB_PREFIX_ . 'lang` AS l ON c.`id_lang` = l.`id_lang`
-				WHERE c.`id_cms` = ' . (int) $idCms . '
-				AND l.`active` = 1';
-
-        return Db::getInstance()->executeS($sql);
-    }
-
-    /**
      * @param int $idCms
      * @param int|null $idLang
      * @param int|null $idShop
@@ -355,8 +319,6 @@ class CMSCore extends ObjectModel
      * Method required for new PrestaShop Core.
      *
      * @return string
-     *
-     * @since 1.7.0
      */
     public static function getRepositoryClassName()
     {

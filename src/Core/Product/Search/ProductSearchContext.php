@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Product\Search;
@@ -50,10 +30,24 @@ class ProductSearchContext
      */
     private $idCustomer;
 
-    public function __construct(Context $context = null)
+    /**
+     * @var int the Shop Group id
+     */
+    private $idShopGroup;
+
+    /**
+     * @var bool if the sharing stock is enable
+     */
+    private $stockSharingBetweenShopGroupEnabled = false;
+
+    public function __construct(?Context $context = null)
     {
         if ($context) {
+            $shopGroup = $context->shop->getGroup();
+
             $this->idShop = $context->shop->id;
+            $this->idShopGroup = $shopGroup->id;
+            $this->stockSharingBetweenShopGroupEnabled = (bool) $shopGroup->share_stock;
             $this->idLang = $context->language->id;
             $this->idCurrency = $context->currency->id;
             $this->idCustomer = $context->customer->id;
@@ -63,7 +57,7 @@ class ProductSearchContext
     /**
      * @param int $idShop
      *
-     * @return $this
+     * @return self
      */
     public function setIdShop($idShop)
     {
@@ -83,7 +77,7 @@ class ProductSearchContext
     /**
      * @param int $idLang
      *
-     * @return $this
+     * @return self
      */
     public function setIdLang($idLang)
     {
@@ -103,7 +97,7 @@ class ProductSearchContext
     /**
      * @param int $idCurrency
      *
-     * @return $this
+     * @return self
      */
     public function setIdCurrency($idCurrency)
     {
@@ -123,7 +117,7 @@ class ProductSearchContext
     /**
      * @param int $idCustomer
      *
-     * @return $this
+     * @return self
      */
     public function setIdCustomer($idCustomer)
     {
@@ -138,5 +132,45 @@ class ProductSearchContext
     public function getIdCustomer()
     {
         return $this->idCustomer;
+    }
+
+    /**
+     * @return int the Shop Group Iid
+     */
+    public function getIdShopGroup(): int
+    {
+        return $this->idShopGroup;
+    }
+
+    /**
+     * @param int $idShopGroup
+     *
+     * @return self
+     */
+    public function setIdShopGroup(int $idShopGroup): self
+    {
+        $this->idShopGroup = $idShopGroup;
+
+        return $this;
+    }
+
+    /**
+     * @return bool if sharing stock is enable
+     */
+    public function isStockSharingBetweenShopGroupEnabled(): bool
+    {
+        return $this->stockSharingBetweenShopGroupEnabled;
+    }
+
+    /**
+     * @param bool $stockSharingBetweenShopGroupEnabled
+     *
+     * @return self
+     */
+    public function setStockSharingBetweenShopGroupEnabled(bool $stockSharingBetweenShopGroupEnabled): self
+    {
+        $this->stockSharingBetweenShopGroupEnabled = $stockSharingBetweenShopGroupEnabled;
+
+        return $this;
     }
 }

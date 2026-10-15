@@ -1,33 +1,13 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Translation\Provider;
 
-use PrestaShop\PrestaShop\Core\Exception\FileNotFoundException;
-use PrestaShop\PrestaShop\Core\Translation\Locale\Converter;
+use PrestaShop\PrestaShop\Core\Translation\Exception\TranslationFilesNotFoundException;
+use PrestaShop\PrestaShop\Core\Translation\Storage\Finder\TranslationFinder;
 use PrestaShopBundle\Translation\Loader\DatabaseTranslationLoader;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -117,23 +97,6 @@ abstract class AbstractProvider implements ProviderInterface, XliffCatalogueInte
     }
 
     /**
-     * Get the PrestaShop locale from real locale.
-     *
-     * @return string The PrestaShop locale
-     *
-     * @deprecated since 1.7.6, to be removed in the next major
-     */
-    public function getPrestaShopLocale()
-    {
-        @trigger_error(
-            '`AbstractProvider::getPrestaShopLocale` function is deprecated and will be removed in the next major',
-            E_USER_DEPRECATED
-        );
-
-        return Converter::toPrestaShopLocale($this->locale);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getMessageCatalogue()
@@ -154,7 +117,7 @@ abstract class AbstractProvider implements ProviderInterface, XliffCatalogueInte
     /**
      * {@inheritdoc}
      *
-     * @throws FileNotFoundException
+     * @throws TranslationFilesNotFoundException
      */
     public function getDefaultCatalogue($empty = true)
     {
@@ -179,7 +142,7 @@ abstract class AbstractProvider implements ProviderInterface, XliffCatalogueInte
     /**
      * {@inheritdoc}
      *
-     * @throws FileNotFoundException
+     * @throws TranslationFilesNotFoundException
      */
     public function getXliffCatalogue()
     {
@@ -200,7 +163,7 @@ abstract class AbstractProvider implements ProviderInterface, XliffCatalogueInte
     /**
      * Get the Catalogue from database only.
      *
-     * @param null $theme
+     * @param string|null $theme
      *
      * @return MessageCatalogue A MessageCatalogue instance
      */
@@ -257,13 +220,13 @@ abstract class AbstractProvider implements ProviderInterface, XliffCatalogueInte
     }
 
     /**
-     * @param array $paths a list of paths when we can look for translations
+     * @param string|array<string> $paths a list of paths when we can look for translations
      * @param string $locale the Symfony (not the PrestaShop one) locale
      * @param string|null $pattern a regular expression
      *
      * @return MessageCatalogue
      *
-     * @throws FileNotFoundException
+     * @throws TranslationFilesNotFoundException
      */
     public function getCatalogueFromPaths($paths, $locale, $pattern = null)
     {

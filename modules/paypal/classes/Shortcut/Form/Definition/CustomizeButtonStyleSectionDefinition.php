@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,50 +16,56 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\Shortcut\Form\Definition;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CustomizeButtonStyleSectionDefinition
 {
-    /** @var string*/
+    /** @var string */
     protected $nameColor;
 
-    /** @var int*/
+    /** @var int */
     protected $typeColor;
 
-    /** @var string*/
+    /** @var string */
     protected $nameShape;
 
-    /** @var int*/
+    /** @var int */
     protected $typeShape;
 
-    /** @var string*/
+    /** @var string */
     protected $nameLabel;
 
-    /** @var int*/
+    /** @var int */
     protected $typeLabel;
 
-    /** @var string*/
+    /** @var string */
     protected $nameWidth;
 
-    /** @var int*/
+    /** @var int */
     protected $typeWidth;
 
-    /** @var string*/
+    /** @var string */
     protected $nameHeight;
 
-    /** @var int*/
+    /** @var int */
     protected $typeHeight;
 
-    /** @var array*/
-    protected $errors;
+    /** @var array */
+    protected $errors = [];
 
     /**
      * @return string
@@ -70,11 +77,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param string $nameColor
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setNameColor($nameColor)
     {
         $this->nameColor = $nameColor;
+
         return $this;
     }
 
@@ -88,11 +97,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param int $typeColor
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setTypeColor($typeColor)
     {
         $this->typeColor = $typeColor;
+
         return $this;
     }
 
@@ -106,11 +117,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param string $nameShape
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setNameShape($nameShape)
     {
         $this->nameShape = $nameShape;
+
         return $this;
     }
 
@@ -124,11 +137,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param int $typeShape
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setTypeShape($typeShape)
     {
         $this->typeShape = $typeShape;
+
         return $this;
     }
 
@@ -142,11 +157,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param string $nameLabel
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setNameLabel($nameLabel)
     {
         $this->nameLabel = $nameLabel;
+
         return $this;
     }
 
@@ -160,11 +177,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param int $typeLabel
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setTypeLabel($typeLabel)
     {
         $this->typeLabel = $typeLabel;
+
         return $this;
     }
 
@@ -178,11 +197,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param string $nameWidth
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setNameWidth($nameWidth)
     {
         $this->nameWidth = $nameWidth;
+
         return $this;
     }
 
@@ -196,11 +217,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param int $typeWidth
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setTypeWidth($typeWidth)
     {
         $this->typeWidth = $typeWidth;
+
         return $this;
     }
 
@@ -214,11 +237,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param string $nameHeight
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setNameHeight($nameHeight)
     {
         $this->nameHeight = $nameHeight;
+
         return $this;
     }
 
@@ -232,11 +257,13 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param int $typeHeight
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setTypeHeight($typeHeight)
     {
         $this->typeHeight = $typeHeight;
+
         return $this;
     }
 
@@ -245,21 +272,19 @@ class CustomizeButtonStyleSectionDefinition
      */
     public function getErrors()
     {
-        if (false === is_array($this->errors)) {
-            return [];
-        }
-
         return $this->errors;
     }
 
     /**
      * @param array $errors
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function setErrors($errors)
     {
         if (false === is_array($errors) || empty($errors)) {
             $this->errors = [];
+
             return $this;
         }
 
@@ -272,6 +297,7 @@ class CustomizeButtonStyleSectionDefinition
 
     /**
      * @param string $error
+     *
      * @return CustomizeButtonStyleSectionDefinition
      */
     public function addError($error)
@@ -281,6 +307,7 @@ class CustomizeButtonStyleSectionDefinition
         }
 
         $this->errors[] = $error;
+
         return $this;
     }
 }

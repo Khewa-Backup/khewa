@@ -1,12 +1,15 @@
 # Circuit Breaker, an implementation for resilient PHP applications
 
-[![codecov](https://codecov.io/gh/PrestaShop/circuit-breaker/branch/master/graph/badge.svg)](https://codecov.io/gh/PrestaShop/circuit-breaker) [![PHPStan](https://img.shields.io/badge/PHPStan-Level%207-brightgreen.svg?style=flat&logo=php)](https://shields.io/#/) [![Psalm](https://img.shields.io/badge/Psalm-Level%20Max-brightgreen.svg?style=flat&logo=php)](https://shields.io/#/) [![Build Status](https://travis-ci.com/PrestaShop/circuit-breaker.svg?branch=master)](https://travis-ci.com/PrestaShop/circuit-breaker) 
+[![codecov](https://codecov.io/gh/PrestaShop/circuit-breaker/branch/master/graph/badge.svg)](https://codecov.io/gh/PrestaShop/circuit-breaker)
+[![PHPStan](https://img.shields.io/badge/PHPStan-Level%207-brightgreen.svg?style=flat&logo=php)](https://shields.io/#/)
+[![Psalm](https://img.shields.io/badge/Psalm-Level%20Max-brightgreen.svg?style=flat&logo=php)](https://shields.io/#/)
+[![Build](https://github.com/PrestaShop/circuit-breaker/actions/workflows/php.yml/badge.svg)](https://github.com/PrestaShop/circuit-breaker/actions/workflows/php.yml)
 
 ## Main principles
 
 ![circuit breaker](https://user-images.githubusercontent.com/1247388/49721725-438bd700-fc63-11e8-8498-82ca681b15fb.png)
 
-This library is compatible with PHP 5.6+.
+This library is compatible with PHP 7.2.5+.
 
 ## Installation
 
@@ -99,33 +102,6 @@ $settings->setStorage($storage);
 
 $circuitBreaker = $circuitBreakerFactory->create($settings);
 $response = $circuitBreaker->call('https://unreachable.api.domain.com/create/user', []);
-```
-
-### Guzzle Cache
-
-Besides caching the circuit breaker state, it may be interesting to cache the successful responses. The circuit breaker library doesn't manage the cache itself,
-however you can use [Guzzle Subscriber](https://github.com/guzzle/cache-subscriber) to manage it.
-
-```php
-use Doctrine\Common\Cache\FilesystemCache;
-use GuzzleHttp\Subscriber\Cache\CacheStorage;
-use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
-use PrestaShop\CircuitBreaker\FactorySettings;
-use PrestaShop\CircuitBreaker\SimpleCircuitBreakerFactory;
-
-$circuitBreakerFactory = new SimpleCircuitBreakerFactory();
-$settings = new FactorySettings(2, 0.1, 60); //60 seconds threshold
-
-//Guzzle subsriber is also compatible with doctrine cache, which is why we proposed a storage based on it, this allows you to use for storage and cache
-$doctrineCache = new FilesystemCache(_PS_CACHE_DIR_ . '/addons_category');
-//By default the ttl is defined by the response headers but you can set a default one
-$cacheStorage = new CacheStorage($doctrineCache, null, 60);
-$cacheSubscriber = new CacheSubscriber($cacheStorage, function (Request $request) { return true; });
-
-$settings->setClientOptions(['subscribers' => [$cacheSubscriber]]);
-
-$circuitBreaker = $circuitBreakerFactory->create($settings);
-$response = $circuitBreaker->call('https://api.domain.com/create/user', []);
 ```
 
 ## Tests

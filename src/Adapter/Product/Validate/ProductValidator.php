@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -29,6 +9,7 @@ declare(strict_types=1);
 namespace PrestaShop\PrestaShop\Adapter\Product\Validate;
 
 use PrestaShop\PrestaShop\Adapter\AbstractObjectModelValidator;
+use PrestaShop\PrestaShop\Core\Domain\Configuration\ShopConfigurationInterface;
 use PrestaShop\PrestaShop\Core\Domain\Product\Exception\ProductConstraintException;
 use PrestaShop\PrestaShop\Core\Domain\Product\Exception\ProductException;
 use PrestaShop\PrestaShop\Core\Domain\Product\Pack\Exception\ProductPackConstraintException;
@@ -41,6 +22,16 @@ use Product;
  */
 class ProductValidator extends AbstractObjectModelValidator
 {
+    /**
+     * @var ShopConfigurationInterface
+     */
+    private $configuration;
+
+    public function __construct(ShopConfigurationInterface $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
     /**
      * This method is specific for product creation only.
      *
@@ -81,6 +72,7 @@ class ProductValidator extends AbstractObjectModelValidator
         $this->validateStock($product);
         $this->validateSeo($product);
         $this->validatePrices($product);
+        $this->validateOnlineRequirement($product);
     }
 
     /**
@@ -113,8 +105,43 @@ class ProductValidator extends AbstractObjectModelValidator
     private function validateBasicInfo(Product $product): void
     {
         $this->validateProductLocalizedProperty($product, 'name', ProductConstraintException::INVALID_NAME);
+        $this->validateDescriptionForEmbeddedHtml($product, 'description', ProductConstraintException::INVALID_DESCRIPTION_CONTAINS_EMBEDDED_HTML);
         $this->validateProductLocalizedProperty($product, 'description', ProductConstraintException::INVALID_DESCRIPTION);
+        $this->validateDescriptionForEmbeddedHtml($product, 'description_short', ProductConstraintException::INVALID_DESCRIPTION_CONTAINS_EMBEDDED_HTML);
         $this->validateProductLocalizedProperty($product, 'description_short', ProductConstraintException::INVALID_SHORT_DESCRIPTION);
+    }
+
+    /**
+     * Checks if any localized value of the given description field contains embedded HTML elements
+     * (iframe, frame, form, input, embed, object) while the "Allow iframes on HTML fields" option is disabled.
+     * If so, throws a ProductConstraintException with a dedicated error code before the generic
+     * CleanHtml validation runs, so the caller can display a more specific error message.
+     *
+     * @param Product $product
+     * @param string $fieldName
+     * @param int $errorCode
+     *
+     * @throws ProductConstraintException
+     */
+    private function validateDescriptionForEmbeddedHtml(Product $product, string $fieldName, int $errorCode): void
+    {
+        if ((bool) $this->configuration->get('PS_ALLOW_HTML_IFRAME')) {
+            return;
+        }
+
+        $values = $product->{$fieldName};
+        if (!is_array($values)) {
+            return;
+        }
+
+        foreach ($values as $value) {
+            if (is_string($value) && preg_match('/<[\s]*(i?frame|form|input|embed|object)/ims', $value)) {
+                throw new ProductConstraintException(
+                    sprintf('Product %s contains embedded HTML elements while iframes are disabled.', $fieldName),
+                    $errorCode
+                );
+            }
+        }
     }
 
     /**
@@ -141,7 +168,7 @@ class ProductValidator extends AbstractObjectModelValidator
      */
     private function validateDetails(Product $product): void
     {
-        $this->validateProductProperty($product, 'ean13', ProductConstraintException::INVALID_EAN_13);
+        $this->validateProductProperty($product, 'ean13', ProductConstraintException::INVALID_GTIN);
         $this->validateProductProperty($product, 'isbn', ProductConstraintException::INVALID_ISBN);
         $this->validateProductProperty($product, 'mpn', ProductConstraintException::INVALID_MPN);
         $this->validateProductProperty($product, 'reference', ProductConstraintException::INVALID_REFERENCE);
@@ -172,14 +199,8 @@ class ProductValidator extends AbstractObjectModelValidator
      */
     private function validatePrices(Product $product): void
     {
-        if ($product->unit_price < 0) {
-            throw new ProductConstraintException(
-                sprintf('Invalid product unit_price. Got "%s"', $product->unit_price),
-                ProductConstraintException::INVALID_UNIT_PRICE
-            );
-        }
-
         $this->validateProductProperty($product, 'price', ProductConstraintException::INVALID_PRICE);
+        $this->validateProductProperty($product, 'unit_price', ProductConstraintException::INVALID_UNIT_PRICE);
         $this->validateProductProperty($product, 'unity', ProductConstraintException::INVALID_UNITY);
         $this->validateProductProperty($product, 'ecotax', ProductConstraintException::INVALID_ECOTAX);
         $this->validateProductProperty($product, 'wholesale_price', ProductConstraintException::INVALID_WHOLESALE_PRICE);
@@ -252,5 +273,21 @@ class ProductValidator extends AbstractObjectModelValidator
             ProductConstraintException::class,
             $errorCode
         );
+    }
+
+    /**
+     * To be online a product has some minimum data to be set
+     *
+     * @param Product $product
+     */
+    private function validateOnlineRequirement(Product $product): void
+    {
+        if (!$product->active) {
+            return;
+        }
+
+        if (empty($product->name) || empty($product->name[$this->configuration->get('PS_LANG_DEFAULT')])) {
+            throw new ProductConstraintException('Missing name to be online.', ProductConstraintException::INVALID_ONLINE_DATA);
+        }
     }
 }

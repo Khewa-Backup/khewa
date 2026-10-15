@@ -1,46 +1,67 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Addon\Theme;
 
 use AbstractAssetManager;
-use Configuration;
+use Composer\Semver\Semver;
+use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Core\Addon\AddonInterface;
+use PrestaShop\PrestaShop\Core\Util\ArrayFinder;
 use PrestaShop\PrestaShop\Core\Util\File\YamlParser;
-use Shudrum\Component\ArrayFinder\ArrayFinder;
 
 class Theme implements AddonInterface
 {
+    /**
+     * If you change this value, you should probably also update the PS_FF_DEFAULT_THEME in .env file
+     *
+     * Priority (from most important to less important) is defined as (when present):
+     *  - Env variable PS_FF_DEFAULT_THEME from environment (system, shell, apache, ...)
+     *  - .env.local PS_FF_DEFAULT_THEME variable (if file is present)
+     *  - .env PS_FF_DEFAULT_THEME variable (if file is present, by default it should be)
+     *  - .env.dist PS_FF_DEFAULT_THEME variable (if file is present)
+     *  - Theme::DEFAULT_THEME private const (last fallback when no env variable is defined)
+     */
+    private const DEFAULT_THEME = 'hummingbird';
+
+    /**
+     * List of core native themes.
+     */
+    public const CORE_THEMES = [
+        'classic',
+        'hummingbird',
+    ];
+
+    /**
+     * @var ArrayFinder
+     */
     private $attributes;
 
-    public function __construct(array $attributes)
+    public static function getDefaultTheme(): string
     {
+        return $_ENV['PS_FF_DEFAULT_THEME'] ?? Theme::DEFAULT_THEME;
+    }
+
+    /**
+     * @param array $attributes Theme attributes
+     * @param string|null $configurationCacheDirectory Default _PS_CACHE_DIR_
+     * @param string $themesDirectory Default _PS_ALL_THEMES_DIR_
+     */
+    public function __construct(
+        array $attributes,
+        ?string $configurationCacheDirectory = null,
+        string $themesDirectory = _PS_ALL_THEMES_DIR_
+    ) {
         if (isset($attributes['parent'])) {
-            $yamlParser = new YamlParser((new Configuration())->get('_PS_CACHE_DIR_'));
-            $parentAttributes = $yamlParser->parse(_PS_ALL_THEMES_DIR_ . '/' . $attributes['parent'] . '/config/theme.yml');
+            if (null === $configurationCacheDirectory) {
+                $configurationCacheDirectory = (new Configuration())->get('_PS_CACHE_DIR_');
+            }
+
+            $yamlParser = new YamlParser($configurationCacheDirectory);
+            $parentAttributes = $yamlParser->parse($themesDirectory . '/' . $attributes['parent'] . '/config/theme.yml');
             $parentAttributes['preview'] = 'themes/' . $attributes['parent'] . '/preview.png';
             $parentAttributes['parent_directory'] = rtrim($attributes['directory'], '/') . '/';
             $attributes = array_merge($parentAttributes, $attributes);
@@ -48,7 +69,7 @@ class Theme implements AddonInterface
 
         $attributes['directory'] = rtrim($attributes['directory'], '/') . '/';
 
-        if (file_exists(_PS_ALL_THEMES_DIR_ . $attributes['name'] . '/preview.png')) {
+        if (file_exists($themesDirectory . $attributes['name'] . '/preview.png')) {
             $attributes['preview'] = 'themes/' . $attributes['name'] . '/preview.png';
         }
 
@@ -80,7 +101,7 @@ class Theme implements AddonInterface
         $modulesToEnable = $this->get('global_settings.modules.to_enable', []);
         $modulesToHook = $this->get('global_settings.hooks.modules_to_hook', []);
 
-        foreach ($modulesToHook as $hookName => $modules) {
+        foreach ($modulesToHook as $modules) {
             if (is_array($modules)) {
                 foreach (array_values($modules) as $module) {
                     if (is_array($module)) {
@@ -184,6 +205,13 @@ class Theme implements AddonInterface
         return $this->attributes->get('meta.available_layouts');
     }
 
+    /**
+     * Returns layout name for page from theme configuration
+     *
+     * @param string $page page identifier
+     *
+     * @return string layout name
+     */
     public function getLayoutNameForPage($page)
     {
         $layout_name = $this->get('theme_settings.default_layout');
@@ -195,9 +223,28 @@ class Theme implements AddonInterface
         return $layout_name;
     }
 
+    /**
+     * Returns layout relative path for provided page identifier
+     *
+     * @param string $page page identifier
+     *
+     * @return string layout relative path
+     */
     public function getLayoutRelativePathForPage($page)
     {
-        return 'layouts/' . $this->getLayoutNameForPage($page) . '.tpl';
+        return $this->getLayoutPath($this->getLayoutNameForPage($page));
+    }
+
+    /**
+     * Returns relative path for provided layout name
+     *
+     * @param string $layoutName layout name
+     *
+     * @return string layout relative path
+     */
+    public function getLayoutPath($layoutName)
+    {
+        return 'layouts/' . $layoutName . '.tpl';
     }
 
     private function getPageSpecificCss($pageId)
@@ -255,5 +302,40 @@ class Theme implements AddonInterface
         }
 
         return $js;
+    }
+
+    /**
+     * Defines if the theme requires core.js scripts or it provides it's own implementation.
+     *
+     * @return bool
+     */
+    public function requiresCoreScripts(): bool
+    {
+        return $this->attributes->get('theme_settings.core_scripts', true);
+    }
+
+    /**
+     * Checks if the theme is compatible with a given framework and version.
+     *
+     * @param string $name Framework name (e.g., 'bootstrap')
+     * @param string $version Version constraint (e.g., '^5.0')
+     *
+     * @return bool
+     */
+    public function isCompatibleWithFramework(string $name, string $version): bool
+    {
+        $framework = $this->attributes->get('meta.compatibility.framework', null);
+
+        if (empty($framework) || !is_string($framework)) {
+            return false;
+        }
+
+        $themeVersion = explode($name . '-', $framework)[1] ?? null;
+
+        if (null === $themeVersion) {
+            return false;
+        }
+
+        return Semver::satisfies($themeVersion, $version);
     }
 }

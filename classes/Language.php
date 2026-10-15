@@ -1,33 +1,15 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
+
 use PrestaShop\PrestaShop\Adapter\EntityTranslation\DataLangFactory;
 use PrestaShop\PrestaShop\Adapter\EntityTranslation\EntityTranslatorFactory;
 use PrestaShop\PrestaShop\Adapter\EntityTranslation\Exception\DataLangClassNameNotFoundException;
 use PrestaShop\PrestaShop\Adapter\Language\LanguageImageManager;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use PrestaShop\PrestaShop\Core\Addon\Theme\Theme;
 use PrestaShop\PrestaShop\Core\Addon\Theme\ThemeManagerBuilder;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Domain\MailTemplate\Command\GenerateThemeMailTemplatesCommand;
@@ -35,20 +17,21 @@ use PrestaShop\PrestaShop\Core\Exception\CoreException;
 use PrestaShop\PrestaShop\Core\Language\LanguageInterface;
 use PrestaShop\PrestaShop\Core\Localization\CLDR\LocaleRepository;
 use PrestaShop\PrestaShop\Core\Localization\RTL\Processor as RtlStylesheetProcessor;
-use Symfony\Component\Intl\Intl;
+use PrestaShopBundle\Translation\TranslatorInterface;
+use Symfony\Component\Intl\Countries;
 
 class LanguageCore extends ObjectModel implements LanguageInterface
 {
-    const ALL_LANGUAGES_FILE = '/app/Resources/all_languages.json';
-    const SF_LANGUAGE_PACK_URL = 'https://i18n.prestashop.com/translations/%version%/%locale%/%locale%.zip';
-    const EMAILS_LANGUAGE_PACK_URL = 'https://i18n.prestashop.com/mails/%version%/%locale%/%locale%.zip';
+    public const ALL_LANGUAGES_FILE = '/app/Resources/all_languages.json';
+    public const SF_LANGUAGE_PACK_URL = 'https://i18n.prestashop-project.org/translations/%version%/%locale%/%locale%.zip';
+    public const EMAILS_LANGUAGE_PACK_URL = 'https://i18n.prestashop-project.org/mails/%version%/%locale%/%locale%.zip';
     public const PACK_TYPE_EMAILS = 'emails';
     public const PACK_TYPE_SYMFONY = 'sf';
 
     /**
      * Timeout for downloading a translation pack, in seconds
      */
-    const PACK_DOWNLOAD_TIMEOUT = 20;
+    public const PACK_DOWNLOAD_TIMEOUT = 20;
 
     /**
      * Path to the local translation pack cache directory.
@@ -57,7 +40,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     private const TRANSLATION_PACK_CACHE_DIR = _PS_TRANSLATIONS_DIR_;
 
     /** Path to the symfony translations directory */
-    private const SF_TRANSLATIONS_DIR = _PS_ROOT_DIR_ . '/app/Resources/translations';
+    private const SF_TRANSLATIONS_DIR = _PS_ROOT_DIR_ . '/translations';
 
     /** @var int */
     public $id;
@@ -75,10 +58,10 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     public $language_code;
 
     /** @var string date format http://http://php.net/manual/en/function.date.php with the date only */
-    public $date_format_lite = 'Y-m-d';
+    public $date_format_lite = 'Y‑m‑d'; // note the use of non-breaking hyphens (U+2011)
 
     /** @var string date format http://http://php.net/manual/en/function.date.php with hours and minutes */
-    public $date_format_full = 'Y-m-d H:i:s';
+    public $date_format_full = 'Y‑m‑d H:i:s'; // note the use of non-breaking hyphens (U+2011)
 
     /** @var bool true if this language is right to left language */
     public $is_rtl = false;
@@ -90,10 +73,10 @@ class LanguageCore extends ObjectModel implements LanguageInterface
 
     protected static $_cache_language_installation_by_locale = null;
 
-    /** @var array Contains data from all languages, indexed by locale */
+    /** @var array|null Contains data from all languages, indexed by locale */
     protected static $_cache_all_language_json = null;
 
-    /** @var array Contains data from all languages, indexed by iso code */
+    /** @var array|null Contains data from all languages, indexed by iso code */
     protected static $_cache_all_languages_iso;
 
     public static $locale_crowdin_lang = 'en-UD';
@@ -116,10 +99,10 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         ],
     ];
 
-    /** @var array Languages cache */
+    /** @var array|null Languages cache */
     protected static $_checkedLangs;
     /**
-     * @var array[] language information, indexed by id_language
+     * @var array[]|null language information, indexed by id_language
      *
      * @see loadLanguages()
      */
@@ -131,13 +114,12 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         'objectsNodeName' => 'languages',
     ];
 
-    protected $translationsFilesAndVars = [
-        'fields' => '_FIELDS',
-        'errors' => '_ERRORS',
-        'admin' => '_LANGADM',
-        'pdf' => '_LANGPDF',
-        'tabs' => 'tabs',
-    ];
+    public static function resetStaticCache()
+    {
+        parent::resetStaticCache();
+        static::$loaded_classes = [];
+        static::resetCache();
+    }
 
     public static function resetCache()
     {
@@ -148,6 +130,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         static::$_cache_language_installation_by_locale = null;
         static::$_cache_all_language_json = null;
         static::$_cache_all_languages_iso = null;
+        Cache::clean('Language::*');
     }
 
     /**
@@ -247,7 +230,6 @@ class LanguageCore extends ObjectModel implements LanguageInterface
 
         if ($this->is_rtl) {
             static::getRtlStylesheetProcessor()
-                ->setIsInstall(defined('PS_INSTALLATION_IN_PROGRESS'))
                 ->setProcessBOTheme(true)
                 ->setProcessDefaultModules(true)
                 ->process();
@@ -323,9 +305,9 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     /**
      * @param string $iso_from
      * @param string $theme_from
-     * @param bool $iso_to
-     * @param bool $theme_to
-     * @param bool $select
+     * @param string|bool $iso_to
+     * @param string|bool $theme_to
+     * @param bool|string $select
      * @param bool $check
      * @param bool $modules
      *
@@ -346,6 +328,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         $pPath_from = _PS_ROOT_DIR_ . '/themes/' . (string) $theme_from . '/pdf/';
         $mPath_from = _PS_MAIL_DIR_ . (string) $iso_from . '/';
 
+        $lPath_to = $tPath_to = $pPath_to = $mPath_to = '';
         if ($copy) {
             $lPath_to = _PS_TRANSLATIONS_DIR_ . (string) $iso_to . '/';
             $tPath_to = _PS_ROOT_DIR_ . '/themes/' . (string) $theme_to . '/';
@@ -353,7 +336,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
             $mPath_to = _PS_MAIL_DIR_ . (string) $iso_to . '/';
         }
 
-        $lFiles = ['admin.php', 'errors.php', 'fields.php', 'pdf.php', 'tabs.php'];
+        $lFiles = ['admin.php', 'errors.php', 'pdf.php', 'tabs.php'];
 
         // Added natives mails files
         $mFiles = [
@@ -406,7 +389,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         // and modules files which are not override by theme.
         if (!$copy || $iso_from != $iso_to) {
             // Translations files
-            if (!$check || ($check && (string) $iso_from != 'en')) {
+            if (!$check || ((string) $iso_from) != 'en') {
                 foreach ($lFiles as $file) {
                     $files_tr[$lPath_from . $file] = ($copy ? $lPath_to . $file : ++$number);
                 }
@@ -417,7 +400,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
             $files = array_merge($files, $files_tr);
 
             // Mail files
-            if (!$check || ($check && (string) $iso_from != 'en')) {
+            if (!$check || ((string) $iso_from) != 'en') {
                 $files_mail[$mPath_from . 'lang.php'] = ($copy ? $mPath_to . 'lang.php' : ++$number);
             }
             foreach ($mFiles as $file) {
@@ -461,7 +444,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         }
 
         // Theme files
-        if (!$check || ($check && (string) $iso_from != 'en')) {
+        if (!$check || ((string) $iso_from) != 'en') {
             $files_theme[$tPath_from . 'lang/' . (string) $iso_from . '.php'] = ($copy ? $tPath_to . 'lang/' . (string) $iso_to . '.php' : ++$number);
 
             // Override for pdf files in the theme
@@ -494,7 +477,6 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     {
         $tables = Db::getInstance()->executeS('SHOW TABLES LIKE \'' . str_replace('_', '\\_', _DB_PREFIX_) . '%\_lang\' ');
         $langTables = [];
-
         foreach ($tables as $table) {
             foreach ($table as $t) {
                 $langTables[] = $t;
@@ -508,7 +490,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         foreach ($shops as $shop) {
             // retrieve default language to duplicate database rows
             // this language is used later to untranslate/retranslate rows
-            $shopDefaultLangId = Configuration::get('PS_LANG_DEFAULT', null, $shop->id_shop_group, $shop->id);
+            $shopDefaultLangId = (int) Configuration::get('PS_LANG_DEFAULT', null, $shop->id_shop_group, $shop->id);
 
             foreach ($langTables as $name) {
                 $return &= $this->duplicateRowsFromDefaultShopLang($name, $shopDefaultLangId, $shop->id);
@@ -519,77 +501,81 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     }
 
     /**
-     * duplicate translated rows from xxx_lang tables
-     * from the shop default language.
+     * Creates new entries in _lang tables using the data from default language.
+     * If data already exist in that language, they won't be overwritten.
      *
-     * @param $tableName
-     * @param $shopDefaultLangId
-     * @param $shopId
+     * @param string $tableName
+     * @param int $shopDefaultLangId
+     * @param int $shopId
      *
      * @return bool
      *
-     * @throws \PrestaShopDatabaseException
+     * @throws PrestaShopDatabaseException
      */
     private function duplicateRowsFromDefaultShopLang($tableName, $shopDefaultLangId, $shopId)
     {
-        preg_match('#^' . preg_quote(_DB_PREFIX_) . '(.+)_lang$#i', $tableName, $m);
-        $identifier = 'id_' . $m[1];
-
-        $fields = [];
-        // We will check if the table contains a column "id_shop"
-        // If yes, we will add "id_shop" as a WHERE condition in queries copying data from default language
-        $shop_field_exists = $primary_key_exists = false;
+        // We load all columns from the table
         $columns = Db::getInstance()->executeS('SHOW COLUMNS FROM `' . $tableName . '`');
+
+        // We check if the table contains a column "id_shop".
+        // If yes, we will add "id_shop" as a WHERE condition in queries copying data from default language.
+        $idShopColumnExists = false;
+        $idLangColumnExists = false;
+
+        // We extract the column names from the table
+        $columnNames = [];
         foreach ($columns as $column) {
-            $fields[] = '`' . $column['Field'] . '`';
+            // Build field to our list
+            $columnNames[] = $column['Field'];
+
+            // Save info that we will need to use id_shop
             if ($column['Field'] == 'id_shop') {
-                $shop_field_exists = true;
+                $idShopColumnExists = true;
             }
-            if ($column['Field'] == $identifier) {
-                $primary_key_exists = true;
+
+            // Check if the table actually has id_lang column, so we don't crash for some custom tables
+            if ($column['Field'] == 'id_lang') {
+                $idLangColumnExists = true;
             }
         }
-        $fields = implode(',', $fields);
 
-        if (!$primary_key_exists) {
+        // If the table does not contain id_lang, nothing to do here
+        if ($idLangColumnExists === false) {
             return true;
         }
 
-        $sql = 'INSERT IGNORE INTO `' . $tableName . '` (' . $fields . ') (SELECT ';
+        // Format insert fields, they are just normal column names without any prefix.
+        $insertFields = [];
+        foreach ($columnNames as $columnName) {
+            $insertFields[] = '`' . $columnName . '`';
+        }
 
-        // For each column, copy data from default language
-        reset($columns);
-        $selectQueries = [];
-        foreach ($columns as $column) {
-            if ($identifier != $column['Field'] && $column['Field'] != 'id_lang') {
-                $selectQueries[] = '(
-							SELECT `' . bqSQL($column['Field']) . '`
-							FROM `' . bqSQL($tableName) . '` tl
-							WHERE tl.`id_lang` = ' . (int) $shopDefaultLangId . '
-							' . ($shop_field_exists ? ' AND tl.`id_shop` = ' . (int) $shopId : '') . '
-							AND tl.`' . bqSQL($identifier) . '` = `' . bqSQL(str_replace('_lang', '', $tableName)) . '`.`' . bqSQL($identifier) . '`
-						)';
+        /*
+         * Now let's format select fields. We will prefix every column with our table prefix, with one exception.
+         *
+         * For language field, we will use the unique language ID from lang table we cross join. Otherwise we would
+         * be inserting the ID of default language for every row.
+         */
+        $selectFields = [];
+        foreach ($columnNames as $columnName) {
+            if ($columnName == 'id_lang') {
+                $selectFields[] = 'l.`id_lang`';
             } else {
-                $selectQueries[] = '`' . bqSQL($column['Field']) . '`';
+                $selectFields[] = 'tl.`' . $columnName . '`';
             }
         }
-        $sql .= implode(',', $selectQueries);
-        $sql .= ' FROM `' . _DB_PREFIX_ . 'lang` CROSS JOIN `' . bqSQL(str_replace('_lang', '', $tableName)) . '` ';
 
-        // prevent insert with where initial data exists
-        $sql .= ' WHERE `' . bqSQL($identifier) . '` IN (SELECT `' . bqSQL($identifier) . '` FROM `' . bqSQL($tableName) . '`) )';
+        // Format the SQL query and run it
+        // Entries which already exist are ignored, only new ones are added.
+        $sql = '
+        INSERT IGNORE INTO `' . $tableName . '` (' . implode(', ', $insertFields) . ')
+        SELECT ' . implode(', ', $selectFields) . '
+        FROM `' . $tableName . '` tl
+        CROSS JOIN `' . _DB_PREFIX_ . 'lang` l
+        WHERE tl.id_lang = ' . (int) $shopDefaultLangId .
+        ($idShopColumnExists ? ' AND tl.`id_shop` = ' . (int) $shopId : '');
 
         return Db::getInstance()->execute($sql);
-    }
-
-    /**
-     * @deprecated 1.6.1.1 Use Tools::deleteDirectory($dir) instead
-     *
-     * @param string $dir is the path of the directory to delete
-     */
-    public static function recurseDeleteDir($dir)
-    {
-        return Tools::deleteDirectory($dir);
     }
 
     /**
@@ -602,16 +588,34 @@ class LanguageCore extends ObjectModel implements LanguageInterface
                 $this->iso_code = Language::getIsoById($this->id);
             }
 
-            // Database translations deletion
+            // Now let's delete all entries in _lang tables for given languages
             $result = Db::getInstance()->executeS('SHOW TABLES FROM `' . _DB_NAME_ . '`');
+
+            // A key we will be searching for, database returns it in this weird format
             $tableNameKey = 'Tables_in_' . _DB_NAME_;
 
             foreach ($result as $row) {
-                if (isset($row[$tableNameKey]) && !empty($row[$tableNameKey]) && preg_match('/_lang$/', $row[$tableNameKey])) {
-                    if (!Db::getInstance()->execute('DELETE FROM `' . $row[$tableNameKey] . '` WHERE `id_lang` = ' . (int) $this->id)) {
-                        return false;
+                // If we received empty table name for some reason or the language name does not end with _lang
+                if (empty($row[$tableNameKey]) || !preg_match('/_lang$/', $row[$tableNameKey])) {
+                    continue;
+                }
+
+                // We check if this table contains id_lang column
+                $columns = Db::getInstance()->executeS('SHOW COLUMNS FROM `' . $row[$tableNameKey] . '`');
+                $idLangColumnExists = false;
+                foreach ($columns as $column) {
+                    if ($column['Field'] == 'id_lang') {
+                        $idLangColumnExists = true;
                     }
                 }
+
+                // If it doesn't, nothing to delete
+                if ($idLangColumnExists === false) {
+                    continue;
+                }
+
+                // Delete all entries for this language ID
+                Db::getInstance()->execute('DELETE FROM `' . $row[$tableNameKey] . '` WHERE `id_lang` = ' . (int) $this->id);
             }
 
             // Delete tags
@@ -667,12 +671,8 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteSelection($selection)
+    public function deleteSelection(array $selection)
     {
-        if (!is_array($selection)) {
-            die(Tools::displayError());
-        }
-
         $result = true;
         foreach ($selection as $id) {
             $language = new Language($id);
@@ -688,7 +688,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
      * @see loadLanguages()
      *
      * @param bool $active Select only active languages
-     * @param int|false $id_shop Shop ID
+     * @param int|bool $id_shop Shop ID
      * @param bool $ids_only If true, returns an array of language IDs
      *
      * @return array<int|array> Language information
@@ -740,7 +740,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
             return false;
         }
 
-        return static::$_LANGUAGES[(int) ($id_lang)];
+        return static::$_LANGUAGES[(int) $id_lang];
     }
 
     /**
@@ -748,7 +748,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
      *
      * @param int $id_lang Language ID
      *
-     * @return string 2-letter ISO code
+     * @return string|bool 2-letter ISO code
      */
     public static function getIsoById($id_lang)
     {
@@ -795,7 +795,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     {
         if (static::$_cache_all_language_json === null) {
             static::$_cache_all_language_json = [];
-            $allLanguages = static::loadAllLanguagesDetails();
+            $allLanguages = self::loadAllLanguagesDetails();
 
             foreach ($allLanguages as $isoCode => $langDetails) {
                 static::$_cache_all_language_json[$langDetails['locale']] = $langDetails;
@@ -828,7 +828,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
 
             Cache::store($key, $id_lang);
 
-            return (int) $id_lang ?: null;
+            return (int) $id_lang;
         }
 
         return (int) Cache::retrieve($key);
@@ -874,7 +874,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     {
         $iso = (string) $iso; // $iso often comes from xml and is a SimpleXMLElement
 
-        $allLanguages = static::loadAllLanguagesDetails();
+        $allLanguages = self::loadAllLanguagesDetails();
 
         return isset($allLanguages[$iso]) ? $allLanguages[$iso] : false;
     }
@@ -980,7 +980,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
             return false;
         }
 
-        return new Language($id_lang);
+        return new Language((int) $id_lang);
     }
 
     /**
@@ -1019,6 +1019,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
                 }
                 Db::getInstance()->execute('DELETE FROM `' . $row['Tables_in_' . _DB_NAME_] . '` WHERE `id_lang` = ' . (int) $to);
                 $query = 'INSERT INTO `' . $row['Tables_in_' . _DB_NAME_] . '` VALUES ';
+                /** @var array<string, int|string|null> $row2 */
                 foreach ($result2 as $row2) {
                     $query .= '(';
                     $row2['id_lang'] = $to;
@@ -1147,19 +1148,6 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         return true;
     }
 
-    /**
-     * @deprecated Since 1.7.7, use LanguageImageManager
-     */
-    protected static function _copyNoneFlag($id)
-    {
-        @trigger_error(
-            __FUNCTION__ . 'is deprecated since version 1.7.7. Use ' . LanguageImageManager::class . ' instead.',
-            E_USER_DEPRECATED
-        );
-
-        return true;
-    }
-
     public static function isInstalled($iso_code)
     {
         if (static::$_cache_language_installation === null) {
@@ -1247,7 +1235,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
      */
     public static function downloadXLFLanguagePack($locale, &$errors = [], $type = self::PACK_TYPE_SYMFONY)
     {
-        $file = static::getPathToCachedTranslationPack($locale, $type);
+        $file = self::getPathToCachedTranslationPack($locale, $type);
         $url = (self::PACK_TYPE_EMAILS === $type) ? self::EMAILS_LANGUAGE_PACK_URL : self::SF_LANGUAGE_PACK_URL;
         $url = str_replace(
             [
@@ -1268,12 +1256,21 @@ class LanguageCore extends ObjectModel implements LanguageInterface
             return false;
         }
 
-        $content = Tools::file_get_contents($url, false, null, static::PACK_DOWNLOAD_TIMEOUT);
+        // 3 attempts to download the language pack
+        for ($i = 1; $i <= 3; ++$i) {
+            $content = Tools::file_get_contents($url, false, null, static::PACK_DOWNLOAD_TIMEOUT);
 
-        if (empty($content)) {
-            $errors[] = Context::getContext()->getTranslator()->trans('Language pack unavailable.', [], 'Admin.International.Notification') . ' ' . $url;
+            // If we managed to download the pack successfully and it's a valid zip file, we stop
+            if (!empty($content) && strpos($content, "\x50\x4b\x03\x04") !== false) {
+                break;
+            }
 
-            return false;
+            // If not, we will give it another try, unless we are on our last attempt
+            if ($i == 3) {
+                $errors[] = Context::getContext()->getTranslator()->trans('Language pack unavailable.', [], 'Admin.International.Notification') . ' ' . $url;
+
+                return false;
+            }
         }
 
         return false !== file_put_contents($file, $content);
@@ -1297,9 +1294,16 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         }
 
         $zipArchive = new ZipArchive();
-        $zipArchive->open(static::getPathToCachedTranslationPack($locale));
+        $zipArchive->open(self::getPathToCachedTranslationPack($locale));
         $zipArchive->extractTo(self::SF_TRANSLATIONS_DIR);
         $zipArchive->close();
+
+        // As soon as new XLF catalogue is installed the translator catalogues are not up to date
+        // anymore, so we force them to reload
+        self::loadAdminTranslatorLocale($locale, true);
+
+        // Symfony cache must be cleared after new language is installed
+        Tools::clearSf2Cache();
 
         return true;
     }
@@ -1348,22 +1352,6 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     }
 
     /**
-     * @param array $lang_pack
-     * @param array $errors
-     *
-     * @deprecated This method is deprecated since 1.7.6.0 use GenerateThemeMailsCommand instead
-     */
-    public static function installEmailsLanguagePack($lang_pack, &$errors = [])
-    {
-        @trigger_error(
-            'Language::installEmailsLanguagePack() is deprecated since version 1.7.6.0 Use GenerateThemeMailsCommand instead.',
-            E_USER_DEPRECATED
-        );
-
-        static::generateEmailsLanguagePack($lang_pack, $errors, true);
-    }
-
-    /**
      * Installs a language pack and updates language sensitive information
      *
      * @param string $iso Language ISO code
@@ -1399,10 +1387,10 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         static::updateMultilangTable($iso);
 
         // update localized information in currencies
-        static::updateCurrenciesCldr(new static($langId));
+        self::updateCurrenciesCldr(new static($langId));
 
         // generate mail templates in the installed language
-        static::generateEmailsLanguagePack($lang_pack, $errors, true);
+        self::generateEmailsLanguagePack($lang_pack, $errors, true);
 
         return true;
     }
@@ -1435,7 +1423,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
         }
 
         // generate mail templates in the installed language
-        static::generateEmailsLanguagePack($lang_pack, $errors, true);
+        self::generateEmailsLanguagePack($lang_pack, $errors, true);
 
         return true;
     }
@@ -1472,7 +1460,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     {
         $lang_pack = static::getLangDetails($iso);
         if (!empty($lang_pack['locale'])) {
-            //Update locale field if empty (manually created, or imported without it)
+            // Update locale field if empty (manually created, or imported without it)
             $language = new Language(Language::getIdByIso($iso));
             if ($language->id && empty($language->locale)) {
                 $language->locale = $lang_pack['locale'];
@@ -1484,7 +1472,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
             }
 
             Language::updateMultilangTable($iso);
-            static::generateEmailsLanguagePack($lang_pack, $errors, false);
+            self::generateEmailsLanguagePack($lang_pack, $errors, false);
         }
 
         return true;
@@ -1493,29 +1481,11 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     /**
      * Check if more on than one language is activated.
      *
-     * @since 1.5.0
-     *
      * @return bool
      */
     public static function isMultiLanguageActivated($id_shop = null)
     {
         return Language::countActiveLanguages($id_shop) > 1;
-    }
-
-    public static function getLanguagePackListContent($iso, $tar)
-    {
-        $key = 'Language::getLanguagePackListContent_' . $iso;
-        if (!Cache::isStored($key)) {
-            if (!$tar instanceof \Archive_Tar) {
-                return false;
-            }
-            $result = $tar->listContent();
-            Cache::store($key, $result);
-
-            return $result;
-        }
-
-        return Cache::retrieve($key);
     }
 
     /**
@@ -1544,11 +1514,14 @@ class LanguageCore extends ObjectModel implements LanguageInterface
 
         if (!empty($langId)) {
             $lang = new static($langId);
-
+            /** @var Language $lang */
             $rows = Db::getInstance()->executeS('SHOW TABLES LIKE \'' . str_replace('_', '\\_', _DB_PREFIX_) . '%\_lang\' ');
             if (!empty($rows)) {
                 // get all values
-                $tableNames = array_map('reset', $rows);
+                $tableNames = [];
+                foreach ($rows as $row) {
+                    $tableNames[] = reset($row);
+                }
                 static::updateMultilangTables($lang, $tableNames);
             }
         }
@@ -1566,7 +1539,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
      */
     public static function updateMultilangTables(Language $language, array $tablesToUpdate)
     {
-        $translator = SymfonyContainer::getInstance()->get('translator');
+        $translator = SymfonyContainer::getInstance()->get(TranslatorInterface::class);
 
         foreach ($tablesToUpdate as $tableName) {
             $className = (new DataLangFactory(_DB_PREFIX_, $translator))
@@ -1620,13 +1593,13 @@ class LanguageCore extends ObjectModel implements LanguageInterface
      *
      * @param string $table
      * @param string $className
-     * @param static $lang
+     * @param LanguageCore $lang
      *
      * @throws PrestaShopDatabaseException
      */
     public static function updateMultilangFromClass($table, $className, $lang)
     {
-        $translator = SymfonyContainer::getInstance()->get('translator');
+        $translator = SymfonyContainer::getInstance()->get(TranslatorInterface::class);
 
         try {
             $classObject = (new DataLangFactory(_DB_PREFIX_, $translator))
@@ -1640,8 +1613,9 @@ class LanguageCore extends ObjectModel implements LanguageInterface
 
         if (!empty($keys) && !empty($fieldsToUpdate)) {
             $shops = Shop::getShopsCollection(false);
+            /** @var array<Shop> $shops */
             foreach ($shops as $shop) {
-                static::updateMultilangFromClassForShop($classObject, $lang, $shop);
+                self::updateMultilangFromClassForShop($classObject, $lang, $shop);
             }
         }
     }
@@ -1650,28 +1624,44 @@ class LanguageCore extends ObjectModel implements LanguageInterface
      * untranslate then re-translate duplicated rows in tables with pattern xxx_lang.
      *
      * @param DataLangCore $classObject
-     * @param static $lang
+     * @param LanguageCore $lang
      * @param Shop $shop
      *
-     * @throws \PrestaShopDatabaseException
+     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     private static function updateMultilangFromClassForShop(DataLangCore $classObject, self $lang, Shop $shop)
     {
-        $shopDefaultLangId = Configuration::get('PS_LANG_DEFAULT', null, $shop->id_shop_group, $shop->id);
-        $shopDefaultLanguage = new Language($shopDefaultLangId);
-
-        $sfContainer = SymfonyContainer::getInstance();
-        $translator = $sfContainer->get('translator');
-        if (!$translator->isLanguageLoaded($shopDefaultLanguage->locale)) {
-            $sfContainer->get('prestashop.translation.translator_language_loader')
-                ->setIsAdminContext(true)
-                ->loadLanguage($translator, $shopDefaultLanguage->locale);
+        $shopDefaultLangId = (int) Configuration::get('PS_LANG_DEFAULT', null, $shop->id_shop_group, $shop->id);
+        // During install process the default language may not be available yet
+        if (!empty($shopDefaultLangId)) {
+            $shopDefaultLanguage = new Language($shopDefaultLangId);
+            self::loadAdminTranslatorLocale($shopDefaultLanguage->locale, false);
         }
 
+        // The provided locale should always be loaded though
+        self::loadAdminTranslatorLocale($lang->locale, false);
+
+        $sfContainer = SymfonyContainer::getInstance();
+        /** @var TranslatorInterface $translator */
+        $translator = $sfContainer->get(TranslatorInterface::class);
         (new EntityTranslatorFactory($translator))
             ->build($classObject)
             ->translate($lang->id, $shop->id);
+    }
+
+    private static function loadAdminTranslatorLocale(string $locale, bool $clearCatalogue): void
+    {
+        $sfContainer = SymfonyContainer::getInstance();
+        if ($sfContainer === null) {
+            return;
+        }
+        $translator = $sfContainer->get(TranslatorInterface::class);
+        if (!$translator->isLanguageLoaded($locale) || $clearCatalogue) {
+            $languageLoader = $sfContainer->get('prestashop.translation.translator_language_loader');
+            $languageLoader->setIsAdminContext(true);
+            $languageLoader->loadLanguage($translator, $locale, true, null, $clearCatalogue);
+        }
     }
 
     /**
@@ -1690,17 +1680,11 @@ class LanguageCore extends ObjectModel implements LanguageInterface
 
         $themesDir = _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'themes';
 
-        $processor = new RtlStylesheetProcessor(
+        return new RtlStylesheetProcessor(
             $adminDir,
             $themesDir,
-            [
-                _PS_MODULE_DIR_ . 'gamification',
-                _PS_MODULE_DIR_ . 'welcome',
-                _PS_MODULE_DIR_ . 'cronjobs',
-            ]
+            []
         );
-
-        return $processor;
     }
 
     /**
@@ -1713,7 +1697,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
      */
     public static function translationPackIsInCache(string $locale, string $type = self::PACK_TYPE_SYMFONY): bool
     {
-        return file_exists(static::getPathToCachedTranslationPack($locale, $type));
+        return file_exists(self::getPathToCachedTranslationPack($locale, $type));
     }
 
     /**
@@ -1732,7 +1716,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     /**
      * @return string return the language locale, or its code by default
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return !empty($this->locale) ?
             $this->locale :
@@ -1742,7 +1726,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     /**
      * {@inheritdoc}
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -1750,7 +1734,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -1758,7 +1742,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     /**
      * {@inheritdoc}
      */
-    public function getIsoCode()
+    public function getIsoCode(): string
     {
         return $this->iso_code;
     }
@@ -1766,7 +1750,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     /**
      * {@inheritdoc}
      */
-    public function getLanguageCode()
+    public function getLanguageCode(): string
     {
         return $this->language_code;
     }
@@ -1774,9 +1758,25 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     /**
      * {@inheritdoc}
      */
-    public function isRTL()
+    public function isRTL(): bool
     {
         return $this->is_rtl;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDateFormat(): string
+    {
+        return $this->date_format_lite;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDateTimeFormat(): string
+    {
+        return $this->date_format_full;
     }
 
     /**
@@ -1787,7 +1787,7 @@ class LanguageCore extends ObjectModel implements LanguageInterface
     private function getCountries(string $locale): array
     {
         Locale::setDefault($locale);
-        $countries = Intl::getRegionBundle()->getCountryNames();
+        $countries = Countries::getNames();
         $countries = array_change_key_case($countries, CASE_LOWER);
 
         return $countries;

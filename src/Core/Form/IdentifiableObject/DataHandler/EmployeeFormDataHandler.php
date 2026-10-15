@@ -1,33 +1,14 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler;
 
-use PrestaShop\PrestaShop\Adapter\Image\Uploader\EmployeeImageUploader;
+use Cookie;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
+use PrestaShop\PrestaShop\Core\Context\EmployeeContext;
 use PrestaShop\PrestaShop\Core\Crypto\Hashing;
 use PrestaShop\PrestaShop\Core\Domain\Employee\Command\AddEmployeeCommand;
 use PrestaShop\PrestaShop\Core\Domain\Employee\Command\EditEmployeeCommand;
@@ -36,7 +17,12 @@ use PrestaShop\PrestaShop\Core\Domain\Employee\ValueObject\EmployeeId;
 use PrestaShop\PrestaShop\Core\Employee\Access\EmployeeFormAccessCheckerInterface;
 use PrestaShop\PrestaShop\Core\Employee\EmployeeDataProviderInterface;
 use PrestaShop\PrestaShop\Core\Image\Uploader\ImageUploaderInterface;
+use PrestaShopBundle\Entity\Repository\EmployeeRepository;
+use PrestaShopBundle\Security\Admin\UserTokenManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
  * Handles submitted employee form's data.
@@ -79,14 +65,24 @@ final class EmployeeFormDataHandler implements FormDataHandlerInterface
     private $imageUploader;
 
     /**
-     * @param CommandBusInterface $bus
-     * @param array $defaultShopAssociation
-     * @param int $superAdminProfileId
-     * @param EmployeeFormAccessCheckerInterface $employeeFormAccessChecker
-     * @param EmployeeDataProviderInterface $employeeDataProvider
-     * @param Hashing $hashing
-     * @param ImageUploaderInterface|null $imageUploader
+     * @var int
      */
+    private $minScore;
+
+    /**
+     * @var int
+     */
+    private $minLength;
+
+    /**
+     * @var int
+     */
+    private $maxLength;
+
+    private bool $boAllowEmployeeFormLang;
+
+    private Cookie $legacyContextCookie;
+
     public function __construct(
         CommandBusInterface $bus,
         array $defaultShopAssociation,
@@ -94,7 +90,17 @@ final class EmployeeFormDataHandler implements FormDataHandlerInterface
         EmployeeFormAccessCheckerInterface $employeeFormAccessChecker,
         EmployeeDataProviderInterface $employeeDataProvider,
         Hashing $hashing,
-        ImageUploaderInterface $imageUploader = null
+        ImageUploaderInterface $imageUploader,
+        int $minLength,
+        int $maxLength,
+        int $minScore,
+        bool $boAllowEmployeeFormLang,
+        Cookie $legacyContextCookie,
+        private readonly EmployeeContext $employeeContext,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly EmployeeRepository $employeeRepository,
+        private readonly UserTokenManager $userTokenManager,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
         $this->bus = $bus;
         $this->defaultShopAssociation = $defaultShopAssociation;
@@ -102,7 +108,12 @@ final class EmployeeFormDataHandler implements FormDataHandlerInterface
         $this->employeeFormAccessChecker = $employeeFormAccessChecker;
         $this->employeeDataProvider = $employeeDataProvider;
         $this->hashing = $hashing;
-        $this->imageUploader = $imageUploader ?? new EmployeeImageUploader();
+        $this->imageUploader = $imageUploader;
+        $this->minLength = $minLength;
+        $this->maxLength = $maxLength;
+        $this->minScore = $minScore;
+        $this->boAllowEmployeeFormLang = $boAllowEmployeeFormLang;
+        $this->legacyContextCookie = $legacyContextCookie;
     }
 
     /**
@@ -126,10 +137,13 @@ final class EmployeeFormDataHandler implements FormDataHandlerInterface
             $data['active'],
             $data['profile'],
             isset($data['shop_association']) ? $data['shop_association'] : $this->defaultShopAssociation,
-            $data['has_enabled_gravatar'] ?? false
+            $data['has_enabled_gravatar'] ?? false,
+            $this->minLength,
+            $this->maxLength,
+            $this->minScore
         ));
 
-        /** @var UploadedFile $uploadedAvatar */
+        /** @var UploadedFile|null $uploadedAvatar */
         $uploadedAvatar = $data['avatarUrl'] ?? null;
         if (!empty($uploadedAvatar) && $uploadedAvatar instanceof UploadedFile) {
             $this->imageUploader->upload($employeeId->getValue(), $uploadedAvatar);
@@ -143,12 +157,6 @@ final class EmployeeFormDataHandler implements FormDataHandlerInterface
      */
     public function update($id, array $data)
     {
-        /** @var UploadedFile $uploadedAvatar */
-        $uploadedAvatar = $data['avatarUrl'];
-        if ($uploadedAvatar instanceof UploadedFile) {
-            $this->imageUploader->upload($id, $uploadedAvatar);
-        }
-
         $command = (new EditEmployeeCommand($id))
             ->setFirstName($data['firstname'])
             ->setLastName($data['lastname'])
@@ -167,10 +175,10 @@ final class EmployeeFormDataHandler implements FormDataHandlerInterface
                     $id
                 );
 
-                $command->setPlainPassword($data['change_password']['new_password']);
+                $command->setPlainPassword($data['change_password']['new_password'], $this->minLength, $this->maxLength, $this->minScore);
             }
         } elseif (isset($data['password'])) {
-            $command->setPlainPassword($data['password']);
+            $command->setPlainPassword($data['password'], $this->minLength, $this->maxLength, $this->minScore);
         }
 
         if (isset($data['shop_association'])) {
@@ -181,6 +189,36 @@ final class EmployeeFormDataHandler implements FormDataHandlerInterface
         }
 
         $this->bus->handle($command);
+
+        // When the employee updates themselves we need to update the token storage to avoid being disconnected on the next request
+        if ($this->employeeContext->getEmployee()?->getId() === $command->getEmployeeId()->getValue()) {
+            // Get the new update employee data
+            $freshEmployee = $this->employeeRepository->loadEmployeeByIdentifier($command->getEmail()->getValue(), true);
+
+            // Update the token user so that it is serialized and its data match the updated DB employee
+            $token = $this->tokenStorage->getToken();
+            $tokenUser = $token->getUser();
+            if ($tokenUser instanceof EquatableInterface && !$tokenUser->isEqualTo($freshEmployee)) {
+                $token->setUser($freshEmployee);
+                $this->tokenStorage->setToken($token);
+
+                // Generate new CSRF token and clear UserTokenManager cache so that generated URLs use a valid new token
+                $this->csrfTokenManager->refreshToken($command->getEmail()->getValue());
+                $this->userTokenManager->clear();
+            }
+        }
+
+        // If Config, Save in cookie the language for Employee
+        if ($this->boAllowEmployeeFormLang) {
+            $this->legacyContextCookie->employee_form_lang = $command->getLanguageId();
+            $this->legacyContextCookie->write();
+        }
+
+        /** @var UploadedFile $uploadedAvatar */
+        $uploadedAvatar = $data['avatarUrl'];
+        if ($uploadedAvatar instanceof UploadedFile) {
+            $this->imageUploader->upload($id, $uploadedAvatar);
+        }
     }
 
     /**
@@ -214,8 +252,8 @@ final class EmployeeFormDataHandler implements FormDataHandlerInterface
         }
 
         return
-            null !== $formData['change_password']['old_password'] &&
-            null !== $formData['change_password']['new_password']
+            null !== $formData['change_password']['old_password']
+            && null !== $formData['change_password']['new_password']
         ;
     }
 }

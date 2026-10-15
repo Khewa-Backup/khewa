@@ -1,39 +1,18 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 use PrestaShop\PrestaShop\Core\Session\SessionHandler;
+use PrestaShop\PrestaShop\Core\Addon\Theme\Theme;
 
-$currentDir = dirname(__FILE__);
-
-/* Custom defines made by users */
-if (is_file($currentDir . '/defines_custom.inc.php')) {
-    include_once $currentDir . '/defines_custom.inc.php';
+// Custom defines made by users
+if (is_file(__DIR__ . '/defines_custom.inc.php')) {
+    include_once __DIR__ . '/defines_custom.inc.php';
 }
 
-require_once $currentDir . '/defines.inc.php';
+require_once __DIR__ . '/defines.inc.php';
 
 require_once _PS_CONFIG_DIR_ . 'autoload.php';
 
@@ -48,7 +27,7 @@ ini_set('default_charset', 'utf-8');
 /* in dev mode - check if composer was executed */
 if (is_dir(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'admin-dev') && (!is_dir(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'vendor') ||
         !file_exists(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php'))) {
-    die('Error : please install <a href="https://getcomposer.org/">composer</a>. Then run "php composer.phar install"');
+    die('Config check Error : please install <a href="https://getcomposer.org/">composer</a>. Then run "php composer.phar install"');
 }
 
 /* No settings file? goto installer... */
@@ -56,15 +35,11 @@ if (!file_exists(_PS_ROOT_DIR_ . '/app/config/parameters.yml') && !file_exists(_
     Tools::redirectToInstall();
 }
 
-require_once $currentDir . DIRECTORY_SEPARATOR . 'bootstrap.php';
-
-/*
- * Improve PHP configuration on Windows
- *
- * @deprecated since 1.7.8.0
- */
-if ('WIN' === strtoupper(substr(PHP_OS, 0, 3))) {
-    Windows::improveFilesytemPerformances();
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
+// If this const is not defined others are likely to be absent but this one is the most likely to cause a fatal error,
+// the following initialization is going to fail, so we throw an exception early
+if (!defined('_DB_PREFIX_')) {
+    throw new PrestaShopException('Constant _DB_PREFIX_ not defined');
 }
 
 if (defined('_PS_CREATION_DATE_')) {
@@ -127,38 +102,48 @@ $context = Context::getContext();
 try {
     $context->shop = Shop::initialize();
 } catch (PrestaShopException $e) {
-    $e->displayMessage();
+    // In CLI command the Shop initialization is bound to fail when the shop is not installed, but we don't want to stop
+    // the process or this will break any Symfony command even a simple ./bin/console)
+    $e->displayMessage(!ToolsCore::isPHPCLI());
 }
-define('_THEME_NAME_', $context->shop->theme->getName());
-define('_PARENT_THEME_NAME_', $context->shop->theme->get('parent') ?: '');
 
-define('__PS_BASE_URI__', $context->shop->getBaseURI());
+if ($context->shop) {
+    define('__PS_BASE_URI__', $context->shop->getBaseURI());
+} else {
+    define('__PS_BASE_URI__', '/');
+}
+
+if ($context->shop && $context->shop->theme) {
+    define('_THEME_NAME_', $context->shop->theme->getName());
+    define('_PARENT_THEME_NAME_', $context->shop->theme->get('parent') ?: '');
+} else {
+    // Not ideal fallback but on install when nothing else is available it does the job, better than not having these const at all
+    define('_THEME_NAME_', Theme::getDefaultTheme());
+    define('_PARENT_THEME_NAME_', '');
+}
 
 /* Include all defines related to base uri and theme name */
-require_once $currentDir . '/defines_uri.inc.php';
+require_once __DIR__ . '/defines_uri.inc.php';
 
 global $_MODULES;
 $_MODULES = array();
-
-/**
- * @deprecated since 1.7.7
- */
-define('_PS_PRICE_DISPLAY_PRECISION_', 2);
-
-/**
- * @deprecated since 1.7.7
- */
-define('_PS_PRICE_COMPUTE_PRECISION_', 2);
 
 /* Load all languages */
 Language::loadLanguages();
 
 /* Loading default country */
-$default_country = new Country(Configuration::get('PS_COUNTRY_DEFAULT'), Configuration::get('PS_LANG_DEFAULT'));
+$default_country = new Country((int) Configuration::get('PS_COUNTRY_DEFAULT'), (int) Configuration::get('PS_LANG_DEFAULT'));
 $context->country = $default_country;
 
 /* It is not safe to rely on the system's timezone settings, and this would generate a PHP Strict Standards notice. */
 @date_default_timezone_set(Configuration::get('PS_TIMEZONE'));
+
+/*
+ * The first DB connection was opened (during Shop::initialize() above) before the shop
+ * timezone was known, so its MySQL session is still on the default offset. Re-align it now
+ * that PHP's timezone is set, so NOW()/CURRENT_TIMESTAMP match PHP date() (see issue #30828).
+ */
+Db::getInstance()->setTimeZone();
 
 /* Set locales */
 $locale = strtolower(Configuration::get('PS_LOCALE_LANGUAGE')) . '_' . strtoupper(Configuration::get('PS_LOCALE_COUNTRY'));
@@ -174,7 +159,7 @@ if ($cookie_lifetime > 0) {
     $cookie_lifetime = time() + (max($cookie_lifetime, 1) * 3600);
 }
 
-$force_ssl = Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE');
+$force_ssl = Configuration::get('PS_SSL_ENABLED');
 if (defined('_PS_ADMIN_DIR_')) {
     $cookie = new Cookie('psAdmin', '', $cookie_lifetime, null, false, $force_ssl);
 } else {
@@ -206,7 +191,7 @@ $context->cookie = $cookie;
 
 /* Create employee if in BO, customer else */
 if (defined('_PS_ADMIN_DIR_')) {
-    $employee = new Employee($cookie->id_employee);
+    $employee = new Employee((int) $cookie->id_employee);
     $context->employee = $employee;
 
     /* Auth on shops are recached after employee assignation */
@@ -219,21 +204,47 @@ if (defined('_PS_ADMIN_DIR_')) {
 
 /* if the language stored in the cookie is not available language, use default language */
 if (isset($cookie->id_lang) && $cookie->id_lang) {
-    $language = new Language($cookie->id_lang);
+    $language = new Language((int) $cookie->id_lang);
 }
-if (!isset($language) || !Validate::isLoadedObject($language) || !$language->isAssociatedToShop()) {
-    $language = new Language(Configuration::get('PS_LANG_DEFAULT'));
+
+$isNotValidLanguage = !isset($language) || !Validate::isLoadedObject($language);
+// `true` if language is defined from multishop or backoffice (`$employee` variable defined) session
+$isLanguageDefinedFromSession = (isset($language) && $language->isAssociatedToShop()) || defined('_PS_ADMIN_DIR_');
+
+$useDefaultLanguage = $isNotValidLanguage || !$isLanguageDefinedFromSession;
+if ($useDefaultLanguage) {
+    // Default value for most cases
+    $language = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
+
+    // if `PS_LANG_DEFAULT` not a valid language for current shop then
+    // use first valid language of the shop as default language.
+    if($language->isMultishop() && !$language->isAssociatedToShop()) {
+        $shopLanguages = $language->getLanguages(true, Context::getContext()->shop->id, false);
+
+        if(isset($shopLanguages[0]['id_lang'])) {
+            $shopDefaultLanguage = new Language($shopLanguages[0]['id_lang']);
+
+            if(Validate::isLoadedObject($language)) {
+                $language = $shopDefaultLanguage;
+            }
+        }
+    }
+}
+if (!isset($language)) {
+    // Default value for most cases
+    $language = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
 }
 
 $context->language = $language;
 
 /* Get smarty */
-require_once $currentDir . '/smarty.config.inc.php';
+require_once __DIR__ . '/smarty.config.inc.php';
+/* @phpstan-ignore-next-line */
 $context->smarty = $smarty;
 
 if (!defined('_PS_ADMIN_DIR_')) {
     if (isset($cookie->id_customer) && (int) $cookie->id_customer) {
-        $customer = new Customer($cookie->id_customer);
+        $customer = new Customer((int) $cookie->id_customer);
         if (!Validate::isLoadedObject($customer)) {
             $context->cookie->logout();
         } else {

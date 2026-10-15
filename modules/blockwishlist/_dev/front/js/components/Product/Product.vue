@@ -1,20 +1,20 @@
 <!--**
- * 2007-2020 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *-->
 <template>
   <div class="wishlist-product">
@@ -116,23 +116,23 @@
       <button
         class="btn wishlist-product-addtocart"
         :class="{
-          'btn-secondary': product.customizable === '1',
-          'btn-primary': product.customizable === '0'
+          'btn-secondary': product.customizable,
+          'btn-primary': !product.customizable
         }"
         :disabled="isDisabled || forceDisable"
         @click="
-          product.add_to_cart_url || product.customizable === '1'
+          product.add_to_cart_url || product.customizable
             ? addToCartAction()
             : null
         "
       >
         <i
           class="material-icons shopping-cart"
-          v-if="product.customizable === '0'"
+          v-if="!product.customizable"
         >
           shopping_cart
         </i>
-        {{ product.customizable === '1' ? customizeText : addToCart }}
+        {{ product.customizable ? customizeText : addToCart }}
       </button>
 
       <button
@@ -235,7 +235,7 @@
           return false;
         }
 
-        if (this.product.customizable === '1') {
+        if (this.product.customizable) {
           return false;
         }
 
@@ -271,7 +271,7 @@
         });
       },
       async addToCartAction() {
-        if (this.product.add_to_cart_url && this.product.customizable !== '1') {
+        if (this.product.add_to_cart_url && !this.product.customizable) {
           try {
             this.forceDisable = true;
             const datas = new FormData();
@@ -474,20 +474,6 @@
       &-addtocart {
         width: 100%;
         text-transform: inherit;
-        padding-left: 0.625rem;
-
-        &.btn-secondary {
-          background-color: #dddddd;
-
-          &:hover {
-            background-color: #dddddd;
-            opacity: 0.7;
-          }
-        }
-
-        i {
-          margin-top: -0.1875rem;
-        }
       }
     }
 

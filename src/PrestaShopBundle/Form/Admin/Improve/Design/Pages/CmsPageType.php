@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Form\Admin\Improve\Design\Pages;
@@ -35,14 +15,14 @@ use PrestaShopBundle\Form\Admin\Type\FormattedTextareaType;
 use PrestaShopBundle\Form\Admin\Type\Material\MaterialChoiceTreeType;
 use PrestaShopBundle\Form\Admin\Type\ShopChoiceTreeType;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
+use PrestaShopBundle\Form\Admin\Type\TextWithRecommendedLengthType;
 use PrestaShopBundle\Form\Admin\Type\TranslatableType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Defines Improve > Design > Pages cms page form
@@ -51,8 +31,9 @@ class CmsPageType extends TranslatorAwareType
 {
     public const TITLE_MAX_CHARS = 255;
     public const META_DESCRIPTION_MAX_CHARS = 512;
-    public const META_KEYWORD_MAX_CHARS = 512;
     public const FRIENDLY_URL_MAX_CHARS = 128;
+    public const RECOMMENDED_TITLE_LENGTH = 70;
+    public const RECOMMENDED_DESCRIPTION_LENGTH = 160;
 
     /**
      * @var array
@@ -87,7 +68,7 @@ class CmsPageType extends TranslatorAwareType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $invalidCharsText = sprintf('%s <>={}', $this->trans('Invalid characters:', 'Admin.Notifications.Info'));
+        $invalidCharsText = sprintf('%s <>{}', $this->trans('Invalid characters:', 'Admin.Notifications.Info'));
 
         $builder
             ->add('page_category_id', MaterialChoiceTreeType::class, [
@@ -143,15 +124,23 @@ class CmsPageType extends TranslatorAwareType
                 'data' => [
                     'cms_url' => $options['cms_preview_url'],
                 ],
+                'row_attr' => [
+                    'class' => 'seo_preview',
+                ],
             ])
             ->add('meta_title', TranslatableType::class, [
                 'label' => $this->trans('Meta title', 'Admin.Global'),
+                'type' => TextWithRecommendedLengthType::class,
                 'help' => sprintf('%s %s',
                     $this->trans('Used to override the title tag value. If left blank, the default title value is used.', 'Admin.Design.Help'),
                     $invalidCharsText
                 ),
                 'required' => false,
                 'options' => [
+                    'recommended_length' => self::RECOMMENDED_TITLE_LENGTH,
+                    'attr' => [
+                        'maxlength' => self::TITLE_MAX_CHARS,
+                    ],
                     'constraints' => [
                         new TypedRegex([
                             'type' => 'generic_name',
@@ -169,9 +158,14 @@ class CmsPageType extends TranslatorAwareType
             ])
             ->add('meta_description', TranslatableType::class, [
                 'label' => $this->trans('Meta description', 'Admin.Global'),
+                'type' => TextWithRecommendedLengthType::class,
                 'help' => $invalidCharsText,
                 'required' => false,
                 'options' => [
+                    'recommended_length' => self::RECOMMENDED_DESCRIPTION_LENGTH,
+                    'attr' => [
+                        'maxlength' => self::META_DESCRIPTION_MAX_CHARS,
+                    ],
                     'constraints' => [
                         new TypedRegex([
                             'type' => 'generic_name',
@@ -182,35 +176,6 @@ class CmsPageType extends TranslatorAwareType
                                 'This field cannot be longer than %limit% characters',
                                 'Admin.Notifications.Error',
                                 ['%limit%' => self::META_DESCRIPTION_MAX_CHARS]
-                            ),
-                        ]),
-                    ],
-                ],
-            ])
-            ->add('meta_keyword', TranslatableType::class, [
-                'label' => $this->trans('Meta keywords', 'Admin.Global'),
-                'help' => sprintf(
-                    '%s %s',
-                    $this->trans('To add tags, click in the field, write something, and then press the "Enter" key.', 'Admin.Shopparameters.Help'),
-                    $invalidCharsText
-                ),
-                'type' => TextType::class,
-                'required' => false,
-                'options' => [
-                    'attr' => [
-                        'class' => 'js-taggable-field',
-                        'placeholder' => $this->trans('Add tag', 'Admin.Actions'),
-                    ],
-                    'constraints' => [
-                        new TypedRegex([
-                            'type' => 'generic_name',
-                        ]),
-                        new Length([
-                            'max' => self::META_KEYWORD_MAX_CHARS,
-                            'maxMessage' => $this->trans(
-                                'This field cannot be longer than %limit% characters',
-                                'Admin.Notifications.Error',
-                                ['%limit%' => self::META_KEYWORD_MAX_CHARS]
                             ),
                         ]),
                     ],
@@ -255,6 +220,7 @@ class CmsPageType extends TranslatorAwareType
                 'type' => FormattedTextareaType::class,
                 'required' => false,
                 'options' => [
+                    'limit' => FormattedTextareaType::LIMIT_LONGTEXT_UTF8_MB4,
                     'constraints' => [
                         new CleanHtml([
                             'message' => $this->trans(
@@ -276,7 +242,7 @@ class CmsPageType extends TranslatorAwareType
 
         if ($this->isMultiShopEnabled) {
             $builder->add('shop_association', ShopChoiceTreeType::class, [
-                'label' => $this->trans('Shop association', 'Admin.Global'),
+                'label' => $this->trans('Store association', 'Admin.Global'),
                 'required' => false,
                 'attr' => [
                     'class' => 'js-shop-assoc-tree',
@@ -287,7 +253,7 @@ class CmsPageType extends TranslatorAwareType
                             'The %s field is required.',
                             'Admin.Notifications.Error',
                             [
-                                sprintf('"%s"', $this->trans('Shop association', 'Admin.Global')),
+                                sprintf('"%s"', $this->trans('Store association', 'Admin.Global')),
                             ]
                         ),
                     ]),

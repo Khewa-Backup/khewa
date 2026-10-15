@@ -17,7 +17,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * @param ps_mbo $module
  *
@@ -46,17 +48,22 @@ function upgrade_module_2_0_0($module)
     }
 
     // Some hooks are added, we register them.
-    if (false === $module->registerHook(ps_mbo::HOOKS)) {
+    if (
+        false === $module->registerHook([
+            'actionAdminControllerSetMedia',
+            'displayDashboardTop',
+        ])
+    ) {
         return false;
     }
 
     // We migrate Module Selections Tab to MBO
-    if (false === $module->installTab(ps_mbo::ADMIN_CONTROLLERS['AdminPsMboAddons'])) {
+    if (false === $module->installTab(ps_mbo::$ADMIN_CONTROLLERS['AdminPsMboSelection'])) {
         return false;
     }
 
     // We create Module Recommended Tab to MBO
-    if (false === $module->installTab(ps_mbo::ADMIN_CONTROLLERS['AdminPsMboRecommended'])) {
+    if (false === $module->installTab(ps_mbo::$ADMIN_CONTROLLERS['AdminPsMboRecommended'])) {
         return false;
     }
 

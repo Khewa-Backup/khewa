@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Form\Admin\AdvancedParameters\Performance;
@@ -118,7 +98,7 @@ class CachingType extends TranslatorAwareType
                     '(you must install the [a]Memcache PECL extension[/a])',
                     'Admin.Advparameters.Notification',
                     [
-                        '[a]' => '<a href="http://www.php.net/manual/en/memcache.installation.php" target="_blank">',
+                        '[a]' => '<a href="https://www.php.net/manual/en/memcache.installation.php" class="ml-1" target="_blank">',
                         '[/a]' => '</a>',
                     ]
                 ),
@@ -128,7 +108,7 @@ class CachingType extends TranslatorAwareType
                     '(you must install the [a]Memcached PECL extension[/a])',
                     'Admin.Advparameters.Notification',
                     [
-                        '[a]' => '<a href="http://www.php.net/manual/en/memcached.installation.php" target="_blank">',
+                        '[a]' => '<a href="https://www.php.net/manual/en/memcached.installation.php" class="ml-1" target="_blank">',
                         '[/a]' => '</a>',
                     ]
                 ),
@@ -138,7 +118,7 @@ class CachingType extends TranslatorAwareType
                     '(you must install the [a]APC PECL extension[/a])',
                     'Admin.Advparameters.Notification',
                     [
-                        '[a]' => '<a href="http://www.php.net/manual/en/apc.installation.php" target="_blank">',
+                        '[a]' => '<a href="https://www.php.net/manual/en/apcu.installation.php" class="ml-1" target="_blank">',
                         '[/a]' => '</a>',
                     ]
                 ),
@@ -148,7 +128,7 @@ class CachingType extends TranslatorAwareType
                     '(you must install the [a]Xcache extension[/a])',
                     'Admin.Advparameters.Notification',
                     [
-                        '[a]' => '<a href="http://xcache.lighttpd.net" target="_blank">',
+                        '[a]' => '<a href="https://github.com/lighttpd/xcache" class="ml-1" target="_blank">',
                         '[/a]' => '</a>',
                     ]
                 ),

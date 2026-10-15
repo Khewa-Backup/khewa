@@ -1,4 +1,4 @@
-	{*
+{*
 * Copyright (c) 2023 Smartarget
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,33 +30,33 @@
 <div id="ps-billing"></div>
 <div id="ps-modal"></div>
 
-<iframe id="frame" frameborder="0" style="width: 100%;"
-		></iframe>
+{* Built in SmartargetMessageBar::getSmartargetIframeUrl(), so the settings screen loads in one request and
+   the shop identity never has to be assembled in the browser. *}
+<iframe id="smartarget-frame" frameborder="0" style="width: 100%;"
+		src="{$smartargetIframeUrl|escape:'html':'UTF-8'}"></iframe>
 
 <style>
 	#main
 	{
 		padding-bottom: 0 !important;
-    }
-
+	}
 </style>
-<script>
-	const url = "https://integration-v2.smartarget.online/api/prestashop/message_bar/{$adminHash|escape}/iframe?url={$storefrontDomain|escape:'html':'UTF-8'|urlencode}&platformData=";
-	let accountData = [];
-	try
-	{
-		accountData = window?.contextPsAccounts;
-	}
-	catch (e)
-	{
-	}
 
-	document.getElementById('frame').setAttribute('src', url + encodeURIComponent(JSON.stringify(accountData)));
-	document.getElementById('frame').style.height = (document.documentElement.clientHeight - 145) + 'px';
+<script>
+	(function () {
+		var frame = document.getElementById('smartarget-frame');
+
+		function fitToViewport() {
+			frame.style.height = (document.documentElement.clientHeight - 145) + 'px';
+		}
+
+		fitToViewport();
+		window.addEventListener('resize', fitToViewport);
+	})();
 </script>
 
-<script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
-<script src="{$urlBilling|escape:'htmlall':'UTF-8'}" rel=preload></script>
+<script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel="preload"></script>
+<script src="{$urlBilling|escape:'htmlall':'UTF-8'}" rel="preload"></script>
 
 <script>
 	/*********************
@@ -64,13 +64,14 @@
 	 * *******************/
 	window?.psaccountsVue?.init();
 
-	if(window.psaccountsVue.isOnboardingCompleted() == true)
+	if (window?.psaccountsVue?.isOnboardingCompleted() === true)
 	{
 		/*********************
 		 * PrestaShop Billing *
 		 * *******************/
-		window.psBilling.initialize(window.psBillingContext.context, '#ps-billing', '#ps-modal', (type, data) => {
-			// Event hook listener
+		window.psBilling.initialize(window.psBillingContext.context, '#ps-billing', '#ps-modal', function (type, data) {
+			// Event hook listener. The subscription state Smartarget acts on arrives over the
+			// PrestaShop Billing webhook, so nothing here has to talk to Smartarget itself.
 			switch (type) {
 				// Hook triggered when PrestaShop Billing is initialized
 				case window.psBilling.EVENT_HOOK_TYPE.BILLING_INITIALIZED:
@@ -87,5 +88,4 @@
 			}
 		});
 	}
-
 </script>

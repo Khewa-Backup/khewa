@@ -4,17 +4,18 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit7f5bc1862cadb75797af0b80722265b4
+class ComposerStaticInit2a1537ad42941ad4b196ca2faf6aeacd
 {
     public static $classMap = array (
         'AdminDashgoalsController' => __DIR__ . '/../..' . '/controllers/admin/AdminDashgoalsController.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'dashgoals' => __DIR__ . '/../..' . '/dashgoals.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit7f5bc1862cadb75797af0b80722265b4::$classMap;
+            $loader->classMap = ComposerStaticInit2a1537ad42941ad4b196ca2faf6aeacd::$classMap;
 
         }, null, ClassLoader::class);
     }

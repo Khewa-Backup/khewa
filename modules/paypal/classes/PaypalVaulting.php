@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,23 +16,28 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Class PaypalOrder.
  */
 class PaypalVaulting extends ObjectModel
 {
-    /** @var integer id of the Prestashop Customer object*/
+    /** @var int id of the Prestashop Customer object */
     public $id_customer;
 
-    /** @var string hash of the remembered card ids*/
+    /** @var string hash of the remembered card ids */
     public $rememberedCards;
 
     /** @var bool mode of payment (sandbox or live) */
@@ -46,21 +52,33 @@ class PaypalVaulting extends ObjectModel
     /** @var string */
     public $profile_key;
 
+    /** @var string */
+    public $payment_source;
+
+    /** @var string */
+    public $vault_id;
+
+    /** @var string */
+    public $paypal_customer_id;
+
     /**
      * @see ObjectModel::$definition
      */
-    public static $definition = array(
+    public static $definition = [
         'table' => 'paypal_vaulting',
         'primary' => 'id_paypal_vaulting',
         'multilang' => false,
-        'fields' => array(
-            'id_customer' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
-            'rememberedCards' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
-            'profile_key' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
-            'sandbox' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
-            'date_add' => array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
-            'date_upd' => array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
-        ),
-        'collation' => 'utf8_general_ci'
-    );
+        'fields' => [
+            'id_customer' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
+            'rememberedCards' => ['type' => self::TYPE_STRING, 'validate' => 'isCleanHtml'],
+            'vault_id' => ['type' => self::TYPE_STRING, 'validate' => 'isCleanHtml'],
+            'paypal_customer_id' => ['type' => self::TYPE_STRING, 'validate' => 'isCleanHtml'],
+            'profile_key' => ['type' => self::TYPE_STRING, 'validate' => 'isCleanHtml'],
+            'sandbox' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
+            'payment_source' => ['type' => self::TYPE_STRING, 'validate' => 'isCleanHtml', 'size' => 50],
+            'date_add' => ['type' => self::TYPE_DATE, 'validate' => 'isDateFormat'],
+            'date_upd' => ['type' => self::TYPE_DATE, 'validate' => 'isDateFormat'],
+        ],
+        'collation' => 'utf8_general_ci',
+    ];
 }

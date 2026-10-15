@@ -1,31 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- */
-
-/**
- * @since 1.5.0
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 class ModuleFrontControllerCore extends FrontController
 {
@@ -35,8 +11,10 @@ class ModuleFrontControllerCore extends FrontController
     public function __construct()
     {
         $this->module = Module::getInstanceByName(Tools::getValue('module'));
-        if (!$this->module->active) {
+        if (!($this->module instanceof Module) || !$this->module->active) {
             Tools::redirect('index');
+
+            return;
         }
 
         $this->page_name = 'module-' . $this->module->name . '-' . Dispatcher::getInstance()->getController();
@@ -62,6 +40,11 @@ class ModuleFrontControllerCore extends FrontController
         }
     }
 
+    /**
+     * Assign template vars related to page content.
+     *
+     * @see FrontController::initContent()
+     */
     public function initContent()
     {
         if (Tools::isSubmit('module') && Tools::getValue('controller') == 'payment') {
@@ -71,7 +54,12 @@ class ModuleFrontControllerCore extends FrontController
                 'minimalPurchase' => &$minimalPurchase,
             ]);
             if ($this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS) < $minimalPurchase) {
-                Tools::redirect('index.php?controller=order&step=1');
+                Tools::redirect($this->context->link->getPageLink(
+                    'order',
+                    null,
+                    null,
+                    ['step' => 1]
+                ));
             }
         }
         parent::initContent();
@@ -92,10 +80,6 @@ class ModuleFrontControllerCore extends FrontController
      */
     protected function l($string, $specific = false, $class = null, $addslashes = false, $htmlentities = true)
     {
-        if (isset($this->module) && is_a($this->module, 'Module')) {
-            return $this->module->l($string, $specific);
-        } else {
-            return $string;
-        }
+        return $this->module->l($string, $specific);
     }
 }

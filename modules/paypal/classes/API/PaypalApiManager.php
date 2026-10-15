@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,34 +16,57 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API;
 
 use PaypalAddons\classes\AbstractMethodPaypal;
 use PaypalAddons\classes\API\Request\PaypalAccessTokenRequest;
+use PaypalAddons\classes\API\Request\PaypalAcdcGenerateTokenRequest;
+use PaypalAddons\classes\API\Request\PaypalAddTrackingInfoRequest;
 use PaypalAddons\classes\API\Request\PaypalAuthorizationVoidRequest;
 use PaypalAddons\classes\API\Request\PaypalCaptureAuthorizeRequest;
+use PaypalAddons\classes\API\Request\PaypalConfirmPaymentSourceRequest;
+use PaypalAddons\classes\API\Request\PaypalCreateWebhookRequest;
+use PaypalAddons\classes\API\Request\PaypalDeleteVaultPaymentTokenRequest;
+use PaypalAddons\classes\API\Request\PaypalDeleteWebhookRequest;
+use PaypalAddons\classes\API\Request\PaypalGenerateIdTokenRequest;
+use PaypalAddons\classes\API\Request\PaypalGenerateVaultPaymentTokenRequest;
+use PaypalAddons\classes\API\Request\PaypalGetSellerStatusRequest;
+use PaypalAddons\classes\API\Request\PaypalGetVaultPaymentTokenRequest;
+use PaypalAddons\classes\API\Request\PaypalGetWebhookEventRequest;
+use PaypalAddons\classes\API\Request\PaypalGetWebhookListRequest;
+use PaypalAddons\classes\API\Request\PaypalOrderAuthorizeRequest;
 use PaypalAddons\classes\API\Request\PaypalOrderCaptureRequest;
 use PaypalAddons\classes\API\Request\PaypalOrderCreateRequest;
-use PaypalAddons\classes\API\Request\PaypalOrderAuthorizeRequest;
 use PaypalAddons\classes\API\Request\PaypalOrderGetRequest;
 use PaypalAddons\classes\API\Request\PaypalOrderPartialRefundRequest;
 use PaypalAddons\classes\API\Request\PaypalOrderPatchRequest;
+use PaypalAddons\classes\API\Request\PaypalOrderPuiCreateRequest;
 use PaypalAddons\classes\API\Request\PaypalOrderRefundRequest;
+use PaypalAddons\classes\API\Request\PaypalPartnerReferralsRequest;
+use PaypalAddons\classes\API\Request\PaypalPatchWebhookRequest;
+use PaypalAddons\classes\API\Request\PaypalUpdateTrackingInfoRequest;
+use PaypalAddons\classes\API\Request\PaypalWebhookEventListRequest;
 
-class PaypalApiManager implements PaypalApiManagerInterface
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+class PaypalApiManager implements PaypalApiManagerInterface, PaypalVaultApiManagerInterface, PaypalWebhookApiManagerInterface
 {
-    /** @var AbstractMethodPaypal*/
+    /** @var AbstractMethodPaypal */
     protected $method;
 
-    /** @var PaypalClient*/
+    /** @var PaypalClient */
     protected $client;
 
     public function __construct(AbstractMethodPaypal $method)
@@ -99,5 +123,90 @@ class PaypalApiManager implements PaypalApiManagerInterface
     public function getOrderPatchRequest($idPayment)
     {
         return new PaypalOrderPatchRequest($this->client, $this->method, $idPayment);
+    }
+
+    public function getPartnerReferralsRequest()
+    {
+        return new PaypalPartnerReferralsRequest($this->client, $this->method);
+    }
+
+    public function getOrderPuiRequest()
+    {
+        return new PaypalOrderPuiCreateRequest($this->client, $this->method);
+    }
+
+    public function getSellerStatusRequest()
+    {
+        return new PaypalGetSellerStatusRequest($this->client, $this->method);
+    }
+
+    public function getAcdcGenerateTokenRequest()
+    {
+        return new PaypalAcdcGenerateTokenRequest($this->client, $this->method);
+    }
+
+    public function getUpdateTrackingInfoRequest(\PaypalOrder $paypalOrder)
+    {
+        return new PaypalUpdateTrackingInfoRequest($this->client, $this->method, $paypalOrder);
+    }
+
+    public function getAddTrackingInfoRequest(\PaypalOrder $paypalOrder)
+    {
+        return new PaypalAddTrackingInfoRequest($this->client, $this->method, $paypalOrder);
+    }
+
+    public function getConfirmPaymentSourceRequest($paypalOrderId, $apmMethod)
+    {
+        return new PaypalConfirmPaymentSourceRequest($this->client, $this->method, $paypalOrderId, $apmMethod);
+    }
+
+    public function getGenerateVaultPaymentTokenRequest($tokenId)
+    {
+        return new PaypalGenerateVaultPaymentTokenRequest($this->client, $this->method, $tokenId);
+    }
+
+    public function getVaultPaymentTokenRequest($vaultId)
+    {
+        return new PaypalGetVaultPaymentTokenRequest($this->client, $this->method, $vaultId);
+    }
+
+    public function getDeleteVaultPaymentTokenRequest($vaultId)
+    {
+        return new PaypalDeleteVaultPaymentTokenRequest($this->client, $this->method, $vaultId);
+    }
+
+    public function getGenerateIdTokenRequest($paypalCustomerId)
+    {
+        return new PaypalGenerateIdTokenRequest($this->client, $this->method, $paypalCustomerId);
+    }
+
+    public function getWebhookEventList($params)
+    {
+        return new PaypalWebhookEventListRequest($this->client, $this->method, $params);
+    }
+
+    public function getWebhookEventDetail($id)
+    {
+        return new PaypalGetWebhookEventRequest($this->client, $this->method, $id);
+    }
+
+    public function getWebhookList()
+    {
+        return new PaypalGetWebhookListRequest($this->client, $this->method);
+    }
+
+    public function createWebhook($webhook = null)
+    {
+        return new PaypalCreateWebhookRequest($this->client, $this->method, $webhook);
+    }
+
+    public function patchWebhook($patch)
+    {
+        return new PaypalPatchWebhookRequest($this->client, $this->method, $patch);
+    }
+
+    public function deleteWebhook($id)
+    {
+        return new PaypalDeleteWebhookRequest($this->client, $this->method, $id);
     }
 }

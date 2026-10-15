@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,25 +16,32 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\services;
 
-use PaypalPPBTlib\Extensions\ProcessLogger\Classes\ProcessLoggerObjectModel;
 use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalPPBTlib\Extensions\ProcessLogger\Classes\ProcessLoggerObjectModel;
 
 require_once dirname(__FILE__) . '/../classes/PaypalOrder.php';
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class ServicePaypalLog
 {
     /**
      * @param $log ProcessLoggerObjectModel
+     *
      * @return url
      */
     public function getLinkToTransaction($log)
@@ -42,13 +50,14 @@ class ServicePaypalLog
             return '';
         }
 
-        /** @var $paypalOrder \PaypalOrder object*/
+        /** @var \PaypalOrder $paypalOrder object */
         $paypalOrder = $this->getPaypalOrderByLog($log);
 
         if (\Validate::isLoadedObject($paypalOrder) == false || $paypalOrder->method == 'BT') {
             return '';
         }
         $method = AbstractMethodPaypal::load($paypalOrder->method);
+
         return $method->getLinkToTransaction($log);
     }
 

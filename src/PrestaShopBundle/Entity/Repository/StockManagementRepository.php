@@ -1,33 +1,14 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Entity\Repository;
 
-use Doctrine\DBAL\Driver\Connection;
-use Doctrine\DBAL\Driver\Statement;
+use Context;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Statement;
 use Doctrine\ORM\EntityManager;
 use Employee;
 use PDO;
@@ -78,21 +59,6 @@ abstract class StockManagementRepository
     /**
      * @var int
      */
-    protected $languageId;
-
-    /**
-     * @var int
-     */
-    protected $shopId;
-
-    /**
-     * @var \Context
-     */
-    protected $context;
-
-    /**
-     * @var int
-     */
     protected $foundRows = 0;
 
     /**
@@ -123,26 +89,65 @@ abstract class StockManagementRepository
         $this->contextAdapter = $contextAdapter;
         $this->imageManager = $imageManager;
         $this->tablePrefix = $tablePrefix;
+    }
 
-        $this->context = $contextAdapter->getContext();
+    /**
+     * Returns the current context
+     */
+    protected function getCurrentContext(): Context
+    {
+        return $this->contextAdapter->getContext();
+    }
 
-        if (!$this->context->employee instanceof Employee) {
+    /**
+     * Returns the employee set in current context
+     */
+    protected function getCurrentEmployee(): Employee
+    {
+        $employee = $this->getCurrentContext()->employee;
+
+        if (!$employee instanceof Employee) {
             throw new RuntimeException('Determining the active language requires a contextual employee instance.');
         }
 
-        $languageId = $this->context->employee->id_lang;
-        $this->languageId = (int) $languageId;
+        return $employee;
+    }
 
-        if (!$this->context->shop instanceof Shop) {
+    /**
+     * Returns the language ID of the employee in current context
+     */
+    protected function getCurrentLanguageId(): int
+    {
+        return (int) $this->getCurrentEmployee()->id_lang;
+    }
+
+    /**
+     * Returns the shop set in current context
+     *
+     * @throws NotImplementedException
+     */
+    protected function getCurrentShop(): Shop
+    {
+        $shop = $this->getCurrentContext()->shop;
+
+        if (!$shop instanceof Shop) {
             throw new RuntimeException('Determining the active shop requires a contextual shop instance.');
         }
-
-        $shop = $this->context->shop;
-        if ($shop->getContextType() !== $shop::CONTEXT_SHOP) {
+        if ($shop->getContextType() !== Shop::CONTEXT_SHOP) {
             throw new NotImplementedException('Shop context types other than "single shop" are not supported');
         }
 
-        $this->shopId = $shop->getContextualShopId();
+        return $shop;
+    }
+
+    /**
+     * Returns the contextual ID of the shop in current context
+     *
+     * @throws NotImplementedException
+     */
+    protected function getContextualShopId(): int
+    {
+        return $this->getCurrentShop()->getContextualShopId();
     }
 
     /**
@@ -154,6 +159,25 @@ abstract class StockManagementRepository
     {
         $rows = $this->addCombinationsAndFeatures($rows);
         $rows = $this->addImageThumbnailPaths($rows);
+        $rows = $this->addProductLink($rows);
+
+        return $rows;
+    }
+
+    /**
+     * @param array $rows
+     *
+     * @return array
+     */
+    protected function addProductLink(array $rows)
+    {
+        $router = $this->container->get('router');
+
+        foreach ($rows as &$row) {
+            $row['product_url'] = $router->generate('admin_products_edit', [
+                'productId' => $row['product_id'],
+            ]);
+        }
 
         return $rows;
     }
@@ -193,17 +217,17 @@ abstract class StockManagementRepository
     public function getData(QueryParamsCollection $queryParams)
     {
         $query = $this->selectSql(
-                $this->andWhere($queryParams),
-                $this->having($queryParams),
-                $this->orderBy($queryParams)
-            ) . $this->paginate();
+            $this->andWhere($queryParams),
+            $this->having($queryParams),
+            $this->orderBy($queryParams)
+        ) . $this->paginate();
 
         $statement = $this->connection->prepare($query);
         $this->bindStockManagementValues($statement, $queryParams);
 
-        $statement->execute();
-        $rows = $statement->fetchAll();
-        $statement->closeCursor();
+        $result = $statement->executeQuery();
+        $rows = $result->fetchAllAssociative();
+        $result->free();
         $this->foundRows = $this->getFoundRows();
 
         $rows = $this->addAdditionalData($rows);
@@ -214,7 +238,7 @@ abstract class StockManagementRepository
     /**
      * @param string $andWhereClause
      * @param string $having
-     * @param null $orderByClause
+     * @param string|null $orderByClause
      *
      * @return mixed
      */
@@ -242,10 +266,10 @@ abstract class StockManagementRepository
         $statement = $this->connection->prepare($query);
         $this->bindMaxResultsValue($statement, $queryParams);
 
-        $statement->execute();
+        $result = $statement->executeQuery();
 
-        $count = (int) $statement->fetchColumn();
-        $statement->closeCursor();
+        $count = (int) $result->fetchOne();
+        $result->free();
 
         return $count;
     }
@@ -286,6 +310,14 @@ abstract class StockManagementRepository
         return strtr($filters['having'], [
             '{combination_name}' => 'combination_name',
             '{product_reference}' => 'product_reference',
+            '{product_ean13}' => 'product_ean13',
+            '{product_isbn}' => 'product_isbn',
+            '{product_upc}' => 'product_upc',
+            '{product_mpn}' => 'product_mpn',
+            '{combination_ean13}' => 'combination_ean13',
+            '{combination_isbn}' => 'combination_isbn',
+            '{combination_upc}' => 'combination_upc',
+            '{combination_mpn}' => 'combination_mpn',
             '{supplier_name}' => 'supplier_name',
             '{product_name}' => 'product_name',
         ]);
@@ -300,7 +332,7 @@ abstract class StockManagementRepository
     {
         $orderByClause = $queryParams->getSqlOrder();
 
-        $descendingOrder = false !== strpos($orderByClause, ' DESC');
+        $descendingOrder = str_contains($orderByClause, ' DESC');
 
         $productColumns = 'product_id, combination_id';
         if ($descendingOrder) {
@@ -310,6 +342,9 @@ abstract class StockManagementRepository
         return strtr($orderByClause, [
             '{product} DESC' => $productColumns,
             '{product}' => $productColumns,
+            '{product_id}' => 'product_id',
+            '{product_name}' => 'product_name',
+            '{combination_id}' => 'combination_id',
             '{reference}' => 'product_reference',
             '{supplier}' => 'supplier_name',
             '{available_quantity}' => 'product_available_quantity',
@@ -339,21 +374,24 @@ abstract class StockManagementRepository
      */
     protected function bindStockManagementValues(
         Statement $statement,
-        QueryParamsCollection $queryParams = null,
-        ProductIdentity $productIdentity = null
+        ?QueryParamsCollection $queryParams = null,
+        ?ProductIdentity $productIdentity = null
     ) {
-        $statement->bindValue('shop_id', $this->shopId, PDO::PARAM_INT);
-        $statement->bindValue('language_id', $this->languageId, PDO::PARAM_INT);
+        $shop = $this->getCurrentShop();
+        $shopId = $shop->getContextualShopId();
+        $shopGroup = $shop->getGroup();
+        $languageId = $this->getCurrentLanguageId();
+
+        $statement->bindValue('shop_id', $shopId, PDO::PARAM_INT);
+        $statement->bindValue('language_id', $languageId, PDO::PARAM_INT);
         $statement->bindValue('state', Product::STATE_SAVED, PDO::PARAM_INT);
 
         // if quantities are shared between shops of the group
-        $shop = $this->context->shop;
-        $shopGroup = $shop->getGroup();
         if ($shopGroup->share_stock) {
             $stockShopId = 0;
             $stockGroupId = $shopGroup->id;
         } else {
-            $stockShopId = $shop->getContextualShopId();
+            $stockShopId = $shopId;
             $stockGroupId = 0;
         }
 
@@ -407,9 +445,9 @@ abstract class StockManagementRepository
     protected function getFoundRows()
     {
         $statement = $this->connection->prepare('SELECT FOUND_ROWS()');
-        $statement->execute();
-        $rowCount = (int) $statement->fetchColumn();
-        $statement->closeCursor();
+        $result = $statement->executeQuery();
+        $rowCount = (int) $result->fetchOne();
+        $result->free();
 
         return $rowCount;
     }
@@ -502,11 +540,11 @@ abstract class StockManagementRepository
                             )
                         WHERE fv.custom = 0 AND fp.id_product=:id_product';
             $statement = $this->connection->prepare($query);
-            $statement->bindValue('id_product', (int) $row['product_id'], \PDO::PARAM_INT);
-            $statement->bindValue('shop_id', $this->shopId, \PDO::PARAM_INT);
-            $statement->execute();
-            $this->productFeatures[$row['product_id']] = $statement->fetchColumn(0);
-            $statement->closeCursor();
+            $statement->bindValue('id_product', (int) $row['product_id'], PDO::PARAM_INT);
+            $statement->bindValue('shop_id', $this->getContextualShopId(), PDO::PARAM_INT);
+            $result = $statement->executeQuery();
+            $this->productFeatures[$row['product_id']] = $result->fetchOne();
+            $result->free();
         }
 
         return (string) $this->productFeatures[$row['product_id']];
@@ -524,10 +562,10 @@ abstract class StockManagementRepository
                   WHERE id_product_attribute=:id_product_attribute
                   LIMIT 1';
         $statement = $this->connection->prepare($query);
-        $statement->bindValue('id_product_attribute', (int) $row['combination_id'], \PDO::PARAM_INT);
-        $statement->execute();
-        $combinationCoverId = (int) $statement->fetchColumn(0);
-        $statement->closeCursor();
+        $statement->bindValue('id_product_attribute', (int) $row['combination_id'], PDO::PARAM_INT);
+        $result = $statement->executeQuery();
+        $combinationCoverId = (int) $result->fetchOne();
+        $result->free();
 
         return $combinationCoverId;
     }
@@ -552,10 +590,10 @@ abstract class StockManagementRepository
                         )
                     WHERE pac.id_product_attribute=:id_product_attribute';
         $statement = $this->connection->prepare($query);
-        $statement->bindValue('id_product_attribute', (int) $row['combination_id'], \PDO::PARAM_INT);
-        $statement->execute();
-        $productAttributes = $statement->fetchColumn(0);
-        $statement->closeCursor();
+        $statement->bindValue('id_product_attribute', (int) $row['combination_id'], PDO::PARAM_INT);
+        $result = $statement->executeQuery();
+        $productAttributes = $result->fetchOne();
+        $result->free();
 
         return (string) $productAttributes;
     }

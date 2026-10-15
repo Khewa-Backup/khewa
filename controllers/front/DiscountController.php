@@ -1,33 +1,17 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 class DiscountControllerCore extends FrontController
 {
+    /** @var bool */
     public $auth = true;
+    /** @var string */
     public $php_self = 'discount';
+    /** @var string */
     public $authRedirection = 'discount';
+    /** @var bool */
     public $ssl = true;
 
     /**
@@ -35,27 +19,21 @@ class DiscountControllerCore extends FrontController
      *
      * @see FrontController::initContent()
      */
-    public function initContent()
+    public function initContent(): void
     {
         if (Configuration::isCatalogMode()) {
             Tools::redirect('index.php');
         }
 
-        $cart_rules = $this->getTemplateVarCartRules();
-
-        if (count($cart_rules) <= 0) {
-            $this->warning[] = $this->trans('You do not have any vouchers.', [], 'Shop.Notifications.Warning');
-        }
-
         $this->context->smarty->assign([
-            'cart_rules' => $cart_rules,
+            'cart_rules' => $this->getTemplateVarCartRules(),
         ]);
 
         parent::initContent();
         $this->setTemplate('customer/discount');
     }
 
-    public function getTemplateVarCartRules()
+    public function getTemplateVarCartRules(): array
     {
         $cart_rules = [];
         $customerId = $this->context->customer->id;
@@ -76,6 +54,10 @@ class DiscountControllerCore extends FrontController
                 continue;
             }
 
+            if ($voucher['quantity'] === 0 || $voucher['quantity_for_user'] === 0) {
+                continue;
+            }
+
             $cart_rule = $this->buildCartRuleFromVoucher($voucher);
             $cart_rules[$key] = $cart_rule;
         }
@@ -83,14 +65,14 @@ class DiscountControllerCore extends FrontController
         return $cart_rules;
     }
 
-    public function getBreadcrumbLinks()
+    public function getBreadcrumbLinks(): array
     {
         $breadcrumb = parent::getBreadcrumbLinks();
 
         $breadcrumb['links'][] = $this->addMyAccountToBreadcrumb();
 
         $breadcrumb['links'][] = [
-            'title' => $this->trans('Your credit slip codes', [], 'Shop.Theme.Customeraccount'),
+            'title' => $this->trans('Your vouchers', [], 'Shop.Theme.Customeraccount'),
             'url' => $this->context->link->getPageLink('discount'),
         ];
 
@@ -98,11 +80,11 @@ class DiscountControllerCore extends FrontController
     }
 
     /**
-     * @param $voucher
+     * @param array $voucher
      *
      * @return mixed
      */
-    protected function getCombinableVoucherTranslation($voucher)
+    protected function getCombinableVoucherTranslation(array $voucher)
     {
         if ($voucher['cart_rule_restriction']) {
             $combinableVoucherTranslation = $this->trans('No', [], 'Shop.Theme.Global');
@@ -114,13 +96,15 @@ class DiscountControllerCore extends FrontController
     }
 
     /**
-     * @param $hasTaxIncluded
-     * @param $amount
-     * @param $currencyId
+     * Formats a value of a voucher with fixed reduction
+     *
+     * @param bool $hasTaxIncluded
+     * @param float $amount
+     * @param int $currencyId
      *
      * @return string
      */
-    protected function formatReductionAmount($hasTaxIncluded, $amount, $currencyId)
+    protected function formatReductionAmount(bool $hasTaxIncluded, float $amount, int $currencyId)
     {
         if ($hasTaxIncluded) {
             $taxTranslation = $this->trans('Tax included', [], 'Shop.Theme.Checkout');
@@ -135,32 +119,36 @@ class DiscountControllerCore extends FrontController
     }
 
     /**
-     * @param $percentage
+     * Formats a value of a voucher with percentage reduction
+     *
+     * @param float $percentage
      *
      * @return string
      */
-    protected function formatReductionInPercentage($percentage)
+    protected function formatReductionInPercentage(float $percentage)
     {
-        return sprintf('%s%%', $percentage);
+        return sprintf('%s%%', $this->context->getCurrentLocale()->formatNumber($percentage));
     }
 
     /**
+     * Formats all reductions and benefits of a voucher. (One voucher can provide a discount and gift at the same time.)
+     *
      * @param array $voucher
      *
      * @return array
      */
-    protected function accumulateCartRuleValue($voucher)
+    protected function accumulateCartRuleValue(array $voucher)
     {
         $cartRuleValue = [];
 
         if ($voucher['reduction_percent'] > 0) {
-            $cartRuleValue[] = $this->formatReductionInPercentage($voucher['reduction_percent']);
+            $cartRuleValue[] = $this->formatReductionInPercentage((float) $voucher['reduction_percent']);
         }
 
         if ($voucher['reduction_amount'] > 0) {
             $cartRuleValue[] = $this->formatReductionAmount(
-                $voucher['reduction_tax'],
-                $voucher['reduction_amount'],
+                (bool) $voucher['reduction_tax'],
+                (float) $voucher['reduction_amount'],
                 $voucher['reduction_currency']
             );
         }
@@ -180,13 +168,15 @@ class DiscountControllerCore extends FrontController
     }
 
     /**
+     * Prepares a single row of voucher table to show it to customer.
+     *
      * @param array $voucher
      *
      * @return array
      */
     protected function buildCartRuleFromVoucher(array $voucher): array
     {
-        $voucher['voucher_date'] = Tools::displayDate($voucher['date_to'], null, false);
+        $voucher['voucher_date'] = Tools::displayDate($voucher['date_to'], false);
 
         if ((int) $voucher['minimum_amount'] === 0) {
             $voucher['voucher_minimal'] = $this->trans('None', [], 'Shop.Theme.Global');
@@ -199,8 +189,11 @@ class DiscountControllerCore extends FrontController
 
         $voucher['voucher_cumulable'] = $this->getCombinableVoucherTranslation($voucher);
 
+        // Get all benefits of this voucher into array (discount, gift, free shipping etc.)
         $cartRuleValues = $this->accumulateCartRuleValue($voucher);
 
+        // And combine them into a string
+        // If for some magical reason the voucher has no benefit (should not be achievable in BO), we display a dash
         if (0 === count($cartRuleValues)) {
             $voucher['value'] = '-';
         } else {

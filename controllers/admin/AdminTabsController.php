@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
@@ -29,6 +9,7 @@
  */
 class AdminTabsControllerCore extends AdminController
 {
+    /** @var string */
     protected $position_identifier = 'id_tab';
 
     public function __construct()
@@ -111,6 +92,10 @@ class AdminTabsControllerCore extends AdminController
      * AdminController::renderForm() override.
      *
      * @see AdminController::renderForm()
+     *
+     * @return string
+     *
+     * @throws SmartyException
      */
     public function renderForm()
     {
@@ -148,7 +133,7 @@ class AdminTabsControllerCore extends AdminController
                     'name' => 'name',
                     'lang' => true,
                     'required' => true,
-                    'hint' => $this->trans('Invalid characters:', [], 'Admin.Notifications.Info') . ' &lt;&gt;;=#{}',
+                    'hint' => $this->trans('Invalid characters:', [], 'Admin.Notifications.Info') . ' &lt;&gt;{}',
                 ],
                 [
                     'type' => 'text',
@@ -240,9 +225,14 @@ class AdminTabsControllerCore extends AdminController
         return parent::initProcess();
     }
 
+    /**
+     * @return false|string|void
+     *
+     * @throws PrestaShopException
+     */
     public function renderDetails()
     {
-        if (($id = Tools::getValue('id_tab'))) {
+        if ($id = Tools::getValue('id_tab')) {
             $this->lang = false;
             $this->list_id = 'details';
             $this->addRowAction('edit');
@@ -275,20 +265,21 @@ class AdminTabsControllerCore extends AdminController
 
             return;
         }
-        /* PrestaShop demo mode*/
+        /* PrestaShop demo mode */
 
         if (($id_tab = (int) Tools::getValue('id_tab')) && ($direction = Tools::getValue('move')) && Validate::isLoadedObject($tab = new Tab($id_tab))) {
             if ($tab->move($direction)) {
                 Tools::redirectAdmin(self::$currentIndex . '&token=' . $this->token);
             }
         } elseif (Tools::getValue('position') && !Tools::isSubmit('submitAdd' . $this->table)) {
+            $object = new Tab((int) Tools::getValue($this->identifier));
             if ($this->access('edit') !== '1') {
                 $this->errors[] = $this->trans('You do not have permission to edit this.', [], 'Admin.Notifications.Error');
-            } elseif (!Validate::isLoadedObject($object = new Tab((int) Tools::getValue($this->identifier)))) {
+            } elseif (!Validate::isLoadedObject($object)) {
                 $this->errors[] = $this->trans('An error occurred while updating the status for an object.', [], 'Admin.Notifications.Error') .
                     ' <b>' . $this->table . '</b> ' . $this->trans('(cannot load object)', [], 'Admin.Notifications.Error');
             }
-            if (!$object->updatePosition((int) Tools::getValue('way'), (int) Tools::getValue('position'))) {
+            if (!$object->updatePosition((bool) Tools::getValue('way'), (int) Tools::getValue('position'))) {
                 $this->errors[] = $this->trans('Failed to update the position.', [], 'Admin.Notifications.Error');
             } else {
                 Tools::redirectAdmin(self::$currentIndex . '&conf=5&token=' . Tools::getAdminTokenLite('AdminTabs'));
@@ -341,19 +332,22 @@ class AdminTabsControllerCore extends AdminController
         }
     }
 
+    /**
+     * @return bool|void
+     */
     protected function afterImageUpload()
     {
-        /** @var Tab $obj */
         if (!($obj = $this->loadObject(true))) {
             return;
         }
+        /* @var Tab $obj */
         @rename(_PS_IMG_DIR_ . 't/' . $obj->id . '.gif', _PS_IMG_DIR_ . 't/' . $obj->class_name . '.gif');
     }
 
     public function ajaxProcessUpdatePositions()
     {
-        $way = (int) (Tools::getValue('way'));
-        $id_tab = (int) (Tools::getValue('id'));
+        $way = (bool) Tools::getValue('way');
+        $id_tab = (int) Tools::getValue('id');
         $positions = Tools::getValue('tab');
 
         // when changing positions in a tab sub-list, the first array value is empty and needs to be removed
@@ -367,7 +361,8 @@ class AdminTabsControllerCore extends AdminController
             $pos = explode('_', $value);
 
             if (isset($pos[2]) && (int) $pos[2] === $id_tab) {
-                if ($tab = new Tab((int) $pos[2])) {
+                $tab = new Tab((int) $pos[2]);
+                if (Validate::isLoadedObject($tab)) {
                     if (isset($position) && $tab->updatePosition($way, $position)) {
                         echo 'ok position ' . (int) $position . ' for tab ' . (int) $pos[1] . '\r\n';
                     } else {

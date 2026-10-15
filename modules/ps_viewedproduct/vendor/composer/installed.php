@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
+        'name' => 'prestashop/ps_viewedproduct',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
+        'reference' => 'e81347e3d71cd498a0420d4a43be4feccec5c387',
         'type' => 'prestashop-module',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '18328b54bcff8ed74c05b817046bf9eaddb862d0',
-        'name' => 'prestashop/ps_viewedproduct',
         'dev' => false,
     ),
     'versions' => array(
         'prestashop/ps_viewedproduct' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
+            'reference' => 'e81347e3d71cd498a0420d4a43be4feccec5c387',
             'type' => 'prestashop-module',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '18328b54bcff8ed74c05b817046bf9eaddb862d0',
             'dev_requirement' => false,
         ),
     ),

@@ -1,31 +1,12 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Localization\RTL;
 
+use Exception;
 use PrestaShop\PrestaShop\Adapter\Entity\Language;
 use PrestaShop\PrestaShop\Core\Localization\RTL\Exception\GenerationException;
 
@@ -53,16 +34,6 @@ class Processor
      * @var array Indicates additional paths to process
      */
     private $processPaths = [];
-
-    /**
-     * @var bool Indicates if this is performed during install
-     */
-    private $isInstall = false;
-
-    /**
-     * @var bool Indicates if the RTL files should be generated even if they already exist
-     */
-    private $regenerate = false;
 
     /**
      * @var string[] Path to the default modules to process
@@ -155,34 +126,6 @@ class Processor
     }
 
     /**
-     * Specifies if this is performed during install.
-     *
-     * @param bool $isInstall
-     *
-     * @return Processor
-     */
-    public function setIsInstall($isInstall)
-    {
-        $this->isInstall = $isInstall;
-
-        return $this;
-    }
-
-    /**
-     * Specifies if the RTL files should be generated even if they already exist.
-     *
-     * @param bool $regenerate
-     *
-     * @return Processor
-     */
-    public function setRegenerate($regenerate)
-    {
-        $this->regenerate = $regenerate;
-
-        return $this;
-    }
-
-    /**
      * Specifies if the default modules should be processed.
      *
      * @param bool $processDefaultModules
@@ -197,8 +140,8 @@ class Processor
     }
 
     /**
-     * @throws Exception\GenerationException
-     * @throws \Exception
+     * @throws GenerationException
+     * @throws Exception
      */
     public function process()
     {
@@ -231,11 +174,9 @@ class Processor
             $this->processPaths = array_merge($this->processPaths, $this->defaultModulesToProcess);
         }
 
-        if (!empty($this->processPaths)) {
-            foreach ($this->processPaths as $path) {
-                if (!empty($path) && is_dir($path)) {
-                    $generator->generateInDirectory($path);
-                }
+        foreach ($this->processPaths as $path) {
+            if (!empty($path) && is_dir($path)) {
+                $generator->generateInDirectory($path);
             }
         }
     }

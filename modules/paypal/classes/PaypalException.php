@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,31 +16,59 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes;
 
 use Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Class PaypalException
  * Custom exception with additional long message parameter
- * @package PaypalAddons\classes
  */
-class PaypalException extends Exception
+class PaypalException extends \Exception
 {
+    const CART_CHANGED = 1001;
+
+    const PRODUCT_UNAVAILABLE = 1002;
+
+    const INVALID_CUSTOMER = 1003;
+
+    const ARGUMENT_MISSING = 1004;
+
+    const PAYMENT_EXISTS = 1005;
+
+    const CAPTURE_FAIL = 1006;
+
+    const SCA_FAIL = 1007;
+
+    const PAYMENT_ID_INVALID = 1008;
+
+    const CAPTURE_PENDING = 1009;
+
+    const APPROVAL_LINK_INVALID = 1010;
+
+    const PAYER_ACTION_REQUIRED = 1011;
+
     /** @var string Long detailed error message */
     private $message_long;
 
     /**
      * PaypalException constructor.
      * Redefine the exception construct so add long message
+     *
      * @param int $code
      * @param string $message not required
      * @param string $message_long not required
@@ -59,7 +88,7 @@ class PaypalException extends Exception
         return $this->message_long;
     }
 
-    /**
+    /*
      * custom string representation of object
      */
     /*public function __toString() {

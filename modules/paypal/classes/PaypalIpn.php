@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,20 +16,25 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Class PaypalIpn.
  */
 class PaypalIpn extends ObjectModel
 {
-    /* @var string transaction_id*/
+    /* @var string */
     public $id_transaction;
 
     /* @var string */
@@ -37,22 +43,22 @@ class PaypalIpn extends ObjectModel
     /* @var string */
     public $response;
 
-    /* @var string creation date*/
+    /* @var string */
     public $date_add;
 
     /**
      * @see ObjectModel::$definition
      */
-    public static $definition = array(
+    public static $definition = [
         'table' => 'paypal_ipn',
         'primary' => 'id_paypal_ipn',
         'multilang' => false,
-        'fields' => array(
-            'id_transaction' => array('type' => self::TYPE_STRING, 'validate' => 'isGenericName'),
-            'status' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
-            'response' => array('type' => self::TYPE_HTML, 'validate' => 'isString'),
-            'date_add' => array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
-        ),
-        'collation' => 'utf8_general_ci'
-    );
+        'fields' => [
+            'id_transaction' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
+            'status' => ['type' => self::TYPE_STRING, 'validate' => 'isCleanHtml', 'size' => 50],
+            'response' => ['type' => self::TYPE_HTML, 'validate' => 'isCleanHtml'],
+            'date_add' => ['type' => self::TYPE_DATE, 'validate' => 'isDateFormat'],
+        ],
+        'collation' => 'utf8_general_ci',
+    ];
 }

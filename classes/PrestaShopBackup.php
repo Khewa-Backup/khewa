@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
@@ -29,7 +9,7 @@
  */
 class PrestaShopBackupCore
 {
-    /** @var int Object id */
+    /** @var string Object id */
     public $id;
 
     /** @var string Last error messages */
@@ -41,7 +21,9 @@ class PrestaShopBackupCore
     /** @var string custom backup directory. */
     public $customBackupDir = null;
 
+    /** @var bool|string */
     public $psBackupAll = true;
+    /** @var bool|string */
     public $psBackupDropTable = true;
 
     /**
@@ -68,18 +50,18 @@ class PrestaShopBackupCore
      *
      * @param string $dir
      *
-     * @return bool bo
+     * @return bool
      */
     public function setCustomBackupPath($dir)
     {
         $customDir = DIRECTORY_SEPARATOR . trim($dir, '/') . DIRECTORY_SEPARATOR;
-        if (is_dir((defined('_PS_HOST_MODE_') ? _PS_ROOT_DIR_ : _PS_ADMIN_DIR_) . $customDir)) {
+        if (is_dir(_PS_ADMIN_DIR_ . $customDir)) {
             $this->customBackupDir = $customDir;
-        } else {
-            return false;
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -94,8 +76,8 @@ class PrestaShopBackupCore
         $backupDir = PrestaShopBackup::getBackupPath($filename);
         if (!empty($this->customBackupDir)) {
             $backupDir = str_replace(
-                (defined('_PS_HOST_MODE_') ? _PS_ROOT_DIR_ : _PS_ADMIN_DIR_) . self::$backupDir,
-                (defined('_PS_HOST_MODE_') ? _PS_ROOT_DIR_ : _PS_ADMIN_DIR_) . $this->customBackupDir,
+                _PS_ADMIN_DIR_ . self::$backupDir,
+                _PS_ADMIN_DIR_ . $this->customBackupDir,
                 $backupDir
             );
 
@@ -116,10 +98,10 @@ class PrestaShopBackupCore
      */
     public static function getBackupPath($filename = '')
     {
-        $backupdir = realpath((defined('_PS_HOST_MODE_') ? _PS_ROOT_DIR_ : _PS_ADMIN_DIR_) . self::$backupDir);
+        $backupdir = realpath(_PS_ADMIN_DIR_ . self::$backupDir);
 
         if ($backupdir === false) {
-            die(Tools::displayError(Context::getContext()->getTranslator()->trans('"Backup" directory does not exist.', [], 'Admin.Advparameters.Notification')));
+            throw new PrestaShopException(Context::getContext()->getTranslator()->trans('"Backup" directory does not exist.', [], 'Admin.Advparameters.Notification'));
         }
 
         // Check the realpath so we can validate the backup file is under the backup directory
@@ -130,7 +112,7 @@ class PrestaShopBackupCore
         }
 
         if ($backupfile === false || strncmp($backupdir, $backupfile, strlen($backupdir)) != 0) {
-            die(Tools::displayError());
+            throw new PrestaShopException('Invalid backup file.');
         }
 
         return $backupfile;
@@ -145,10 +127,10 @@ class PrestaShopBackupCore
      */
     public static function backupExist($filename)
     {
-        $backupdir = realpath((defined('_PS_HOST_MODE_') ? _PS_ROOT_DIR_ : _PS_ADMIN_DIR_) . self::$backupDir);
+        $backupdir = realpath(_PS_ADMIN_DIR_ . self::$backupDir);
 
         if ($backupdir === false) {
-            die(Tools::displayError(Context::getContext()->getTranslator()->trans('"Backup" directory does not exist.', [], 'Admin.Advparameters.Notification')));
+            throw new PrestaShopException(Context::getContext()->getTranslator()->trans('"Backup" directory does not exist.', [], 'Admin.Advparameters.Notification'));
         }
 
         return @filemtime($backupdir . DIRECTORY_SEPARATOR . $filename);
@@ -165,18 +147,18 @@ class PrestaShopBackupCore
     {
         // Additionnal parameters (action, filename, ajax) are kept for backward compatibility, in case we disable the new controller
         return Context::getContext()->link->getAdminLink(
-                'AdminBackup',
-                true,
-                [
-                    'route' => 'admin_backup_download',
-                    'downloadFileName' => basename($this->id),
-                ],
-                [
-                    'action' => 'backupContent',
-                    'ajax' => 1,
-                    'filename' => basename($this->id),
-                ]
-            );
+            'AdminBackup',
+            true,
+            [
+                'route' => 'admin_backup_download',
+                'downloadFileName' => basename($this->id),
+            ],
+            [
+                'action' => 'backupContent',
+                'ajax' => 1,
+                'filename' => basename($this->id),
+            ]
+        );
     }
 
     /**
@@ -201,7 +183,7 @@ class PrestaShopBackupCore
      *
      * @return bool True on success
      */
-    public function deleteSelection($list)
+    public function deleteSelection(array $list)
     {
         foreach ($list as $file) {
             $backup = new PrestaShopBackup($file);
@@ -231,7 +213,7 @@ class PrestaShopBackupCore
         }
 
         // Generate some random number, to make it extra hard to guess backup file names
-        $rand = dechex(mt_rand(0, min(0xffffffff, mt_getrandmax())));
+        $rand = dechex(mt_rand(0, min(0xFFFFFFFF, mt_getrandmax())));
         $date = time();
         $backupfile = $this->getRealBackupPath() . $date . '-' . $rand . '.sql';
 
@@ -254,7 +236,7 @@ class PrestaShopBackupCore
 
         $this->id = realpath($backupfile);
 
-        fwrite($fp, '/* Backup for ' . Tools::getHttpHost(false, false) . __PS_BASE_URI__ . "\n *  at " . date($date) . "\n */\n");
+        fwrite($fp, '/* Backup for ' . Tools::getHttpHost(false, false) . __PS_BASE_URI__ . "\n *  at " . date('Y-m-d H:i:s', $date) . "\n */\n");
         fwrite($fp, "\n" . 'SET NAMES \'utf8mb4\';');
         fwrite($fp, "\n" . 'SET FOREIGN_KEY_CHECKS = 0;');
         fwrite($fp, "\n" . 'SET SESSION sql_mode = \'\';' . "\n\n");
@@ -290,33 +272,23 @@ class PrestaShopBackupCore
             fwrite($fp, $schema[0]['Create Table'] . ";\n\n");
 
             if (!in_array($schema[0]['Table'], $ignoreInsertTable)) {
-                $data = Db::getInstance()->query('SELECT * FROM `' . $schema[0]['Table'] . '`', false);
+                $data = Db::getInstance()->query('SELECT * FROM `' . $schema[0]['Table'] . '`');
                 $sizeof = Db::getInstance()->numRows();
-                $lines = explode("\n", $schema[0]['Create Table']);
 
                 if ($data && $sizeof > 0) {
-                    // Export the table data
+                    // First we write the beginning of an insert query
                     fwrite($fp, 'INSERT INTO `' . $schema[0]['Table'] . "` VALUES\n");
+
+                    // We start a counter, because we want to separate the queries by batches of 200 lines
                     $i = 1;
                     while ($row = Db::getInstance()->nextRow($data)) {
                         $s = '(';
 
-                        foreach ($row as $field => $value) {
-                            $tmp = "'" . pSQL($value, true) . "',";
-                            if ($tmp != "'',") {
-                                $s .= $tmp;
+                        foreach ($row as $value) {
+                            if ($value === null) {
+                                $s .= 'NULL,';
                             } else {
-                                foreach ($lines as $line) {
-                                    if (strpos($line, '`' . $field . '`') !== false) {
-                                        if (preg_match('/(.*NOT NULL.*)/Ui', $line)) {
-                                            $s .= "'',";
-                                        } else {
-                                            $s .= 'NULL,';
-                                        }
-
-                                        break;
-                                    }
-                                }
+                                $s .= "'" . pSQL($value, true) . "',";
                             }
                         }
                         $s = rtrim($s, ',');

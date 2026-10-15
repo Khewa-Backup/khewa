@@ -1,33 +1,13 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 class HelperTreeCategoriesCore extends TreeCore
 {
-    const DEFAULT_TEMPLATE = 'tree_categories.tpl';
-    const DEFAULT_NODE_FOLDER_TEMPLATE = 'tree_node_folder_radio.tpl';
-    const DEFAULT_NODE_ITEM_TEMPLATE = 'tree_node_item_radio.tpl';
+    public const DEFAULT_TEMPLATE = 'tree_categories.tpl';
+    public const DEFAULT_NODE_FOLDER_TEMPLATE = 'tree_node_folder_radio.tpl';
+    public const DEFAULT_NODE_ITEM_TEMPLATE = 'tree_node_item_radio.tpl';
 
     private $_disabled_categories;
     private $_input_name;
@@ -143,7 +123,7 @@ class HelperTreeCategoriesCore extends TreeCore
                     }
                 }
 
-                $tree = Category::getCategoryInformations([$root_category], $lang);
+                $tree = Category::getCategoryInformation([$root_category], $lang);
 
                 $children = $this->fillTree($categories, $root_category);
 
@@ -298,7 +278,7 @@ class HelperTreeCategoriesCore extends TreeCore
             } elseif ($this->getContext()->shop->id) {
                 $this->setShop(new Shop($this->getContext()->shop->id));
             } elseif (!Shop::isFeatureActive()) {
-                $this->setShop(new Shop(Configuration::get('PS_SHOP_DEFAULT')));
+                $this->setShop(new Shop((int) Configuration::get('PS_SHOP_DEFAULT')));
             } else {
                 $this->setShop(new Shop(0));
             }
@@ -368,7 +348,7 @@ class HelperTreeCategoriesCore extends TreeCore
             $this->_getSelectedChildNumbers($data, $this->getSelectedCategories());
         }
 
-        //Default bootstrap style of search is push-right, so we add this button first
+        // Default bootstrap style of search is push-right, so we add this button first
         if ($this->useSearch()) {
             $this->addAction(new TreeToolbarSearchCategories(
                 'Find a category:',

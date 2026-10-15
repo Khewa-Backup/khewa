@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -18,79 +17,44 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+declare(strict_types=1);
 
 namespace PrestaShop\Module\Mbo\Distribution;
 
-use PrestaShop\Module\Mbo\Helpers\Config;
 use PrestaShop\Module\Mbo\Helpers\ErrorHelper;
-use stdClass;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class Client extends BaseClient
 {
     /**
-     * Register new Shop on Distribution API.
+     * Get a new key from Distribution API.
      *
-     * @param array $params
-     *
-     * @return stdClass
-     *
-     * @usage \ps_mbo::registerShop
+     * @return \stdClass
      */
-    public function registerShop(array $params = [])
+    public function retrieveNewKey(): \stdClass
     {
-        return $this->processRequestAndDecode(
-            'shops',
-            self::HTTP_METHOD_POST,
-            ['body' => $this->mergeShopDataWithParams($params)]
-        );
+        return $this->processRequestAndDecode('shops/get-pub-key');
     }
 
     /**
-     * Unregister a Shop on Distribution API.
+     * Send a tracking to the API
+     * Send it asynchronously to avoid blocking process for this feature
      *
-     * @return stdClass
-     */
-    public function unregisterShop()
-    {
-        return $this->processRequestAndDecode(
-            'shops/' . Config::getShopMboUuid(),
-            self::HTTP_METHOD_DELETE
-        );
-    }
-
-    /**
-     * Update shop on Distribution API.
-     *
-     * @param array $params
-     *
-     * @return stdClass
-     *
-     * @usage \ps_mbo::updateShop
-     */
-    public function updateShop(array $params)
-    {
-        return $this->processRequestAndDecode(
-            'shops/' . Config::getShopMboUuid(),
-            self::HTTP_METHOD_PUT,
-            ['body' => $this->mergeShopDataWithParams($params)]
-        );
-    }
-
-    /**
      * @param array $eventData
-     *
-     * @return void
      */
-    public function trackEvent(array $eventData)
+    public function trackEvent(array $eventData): void
     {
         try {
             $this->processRequestAndDecode(
                 'shops/events',
                 self::HTTP_METHOD_POST,
-                ['body' => $eventData]
+                ['form_params' => $eventData]
             );
-        } catch (\Exception $e) {
-            // Do nothing, we don't want to block the module action
+        } catch (\Throwable $e) {
+            // Do nothing if the tracking fails
             ErrorHelper::reportError($e);
         }
     }

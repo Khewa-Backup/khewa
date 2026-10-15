@@ -1,32 +1,11 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Adapter\Image\Uploader;
 
-use Configuration;
 use ImageManager;
 use ImageType;
 use PrestaShop\PrestaShop\Core\Image\Exception\ImageOptimizationException;
@@ -49,7 +28,7 @@ abstract class AbstractImageUploader
      *
      * @throws UploadedImageConstraintException
      */
-    protected function checkImageIsAllowedForUpload(UploadedFile $image)
+    public function checkImageIsAllowedForUpload(UploadedFile $image)
     {
         $maxFileSize = Tools::getMaxUploadSize();
 
@@ -61,7 +40,14 @@ abstract class AbstractImageUploader
             || !ImageManager::isCorrectImageFileExt($image->getClientOriginalName())
             || preg_match('/\%00/', $image->getClientOriginalName()) // prevent null byte injection
         ) {
-            throw new UploadedImageConstraintException(sprintf('Image format "%s", not recognized, allowed formats are: .gif, .jpg, .png', $image->getClientOriginalExtension()), UploadedImageConstraintException::UNRECOGNIZED_FORMAT);
+            throw new UploadedImageConstraintException(
+                sprintf(
+                    'Image format "%s", not recognized, allowed formats are: %s',
+                    $image->getClientOriginalExtension(),
+                    join(', ', ImageManager::EXTENSIONS_SUPPORTED)
+                ),
+                UploadedImageConstraintException::UNRECOGNIZED_FORMAT
+            );
         }
     }
 
@@ -70,9 +56,9 @@ abstract class AbstractImageUploader
      *
      * @param UploadedFile $image
      *
-     * @throws ImageUploadException
-     *
      * @return string
+     *
+     * @throws ImageUploadException
      */
     protected function createTemporaryImage(UploadedFile $image)
     {
@@ -128,7 +114,7 @@ abstract class AbstractImageUploader
             foreach ($imageTypes as $imageType) {
                 $resized &= $this->resize($id, $imageDir, $imageType);
             }
-        } catch (PrestaShopException $e) {
+        } catch (PrestaShopException) {
             throw new ImageOptimizationException('Unable to resize one or more of your pictures.');
         }
         if (!$resized) {
@@ -152,18 +138,30 @@ abstract class AbstractImageUploader
         $ext = '.jpg';
         $width = $imageType['width'];
         $height = $imageType['height'];
+        $error = 0;
+        $targetWidth = null;
+        $targetHeight = null;
+        $sourceWidth = null;
+        $sourceHeight = null;
 
-        if (Configuration::get('PS_HIGHT_DPI')) {
-            $ext = '2x.jpg';
-            $width *= 2;
-            $height *= 2;
-        }
-
-        return ImageManager::resize(
+        if (!ImageManager::resize(
             $imageDir . $id . '.jpg',
             $imageDir . $id . '-' . stripslashes($imageType['name']) . $ext,
             (int) $width,
-            (int) $height
-        );
+            (int) $height,
+            'jpg',
+            false,
+            $error,
+            $targetWidth,
+            $targetHeight,
+            5,
+            $sourceWidth,
+            $sourceHeight,
+            $imageType['image_fitment']
+        )) {
+            return false;
+        }
+
+        return true;
     }
 }

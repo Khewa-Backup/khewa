@@ -6,18 +6,16 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Symfony\\Polyfill\\Php72\\' => array($vendorDir . '/symfony/polyfill-php72'),
-    'Symfony\\Polyfill\\Php70\\' => array($vendorDir . '/symfony/polyfill-php70'),
-    'Symfony\\Polyfill\\Intl\\Normalizer\\' => array($vendorDir . '/symfony/polyfill-intl-normalizer'),
-    'Symfony\\Polyfill\\Intl\\Idn\\' => array($vendorDir . '/symfony/polyfill-intl-idn'),
-    'Sample\\' => array($vendorDir . '/paypal/paypal-checkout-sdk/samples'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
-    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'PaypalPPBTlib\\' => array($vendorDir . '/ppbtlib/src'),
+    'PaypalAddons\\Psr\\Http\\Message\\' => array($vendorDir . '/prefixed/psr/http-message/src'),
+    'PaypalAddons\\Prestashop\\ModuleLibMboInstaller\\' => array($vendorDir . '/prefixed/prestashop/module-lib-mbo-installer/src'),
+    'PaypalAddons\\Prestashop\\ModuleLibGuzzleAdapter\\' => array($vendorDir . '/prefixed/prestashop/module-lib-guzzle-adapter/src'),
+    'PaypalAddons\\PrestaShop\\PsAccountsInstaller\\' => array($vendorDir . '/prefixed/prestashop/prestashop-accounts-installer/src'),
+    'PaypalAddons\\Http\\Promise\\' => array($vendorDir . '/prefixed/php-http/promise/src'),
+    'PaypalAddons\\Http\\Message\\' => array($vendorDir . '/prefixed/php-http/message/src'),
+    'PaypalAddons\\Http\\Client\\' => array($vendorDir . '/prefixed/php-http/httplug/src'),
+    'PaypalAddons\\GuzzleHttp\\Psr7\\' => array($vendorDir . '/prefixed/guzzlehttp/psr7/src'),
+    'PaypalAddons\\Defuse\\Crypto\\' => array($vendorDir . '/prefixed/defuse/php-encryption/src'),
+    'PaypalAddons\\Clue\\StreamFilter\\' => array($vendorDir . '/prefixed/clue/stream-filter/src'),
     'PaypalAddons\\' => array($baseDir . '/'),
-    'PayPalHttp\\' => array($vendorDir . '/paypal/paypalhttp/lib/PayPalHttp'),
-    'PayPalCheckoutSdk\\' => array($vendorDir . '/paypal/paypal-checkout-sdk/lib/PayPalCheckoutSdk'),
-    'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
-    'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
-    'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
 );

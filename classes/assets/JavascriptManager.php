@@ -1,28 +1,7 @@
 <?php
-
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 class JavascriptManagerCore extends AbstractAssetManager
 {
@@ -48,13 +27,14 @@ class JavascriptManagerCore extends AbstractAssetManager
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param string $relativePath
      * @param string $position
      * @param int $priority
      * @param bool $inline
-     * @param string $attribute
+     * @param string|null $attribute
      * @param string $server
+     * @param string|null $version
      */
     public function register(
         $id,
@@ -63,12 +43,13 @@ class JavascriptManagerCore extends AbstractAssetManager
         $priority = self::DEFAULT_PRIORITY,
         $inline = false,
         $attribute = null,
-        $server = 'local'
+        $server = 'local',
+        ?string $version = null
     ) {
         if ('remote' === $server) {
-            $this->add($id, $relativePath, $position, $priority, $inline, $attribute, $server);
+            $this->add($id, $relativePath, $position, $priority, $inline, $attribute, $server, $version);
         } elseif ($fullPath = $this->getFullPath($relativePath)) {
-            $this->add($id, $fullPath, $position, $priority, $inline, $attribute, $server);
+            $this->add($id, $fullPath, $position, $priority, $inline, $attribute, $server, $version);
         }
     }
 
@@ -86,19 +67,22 @@ class JavascriptManagerCore extends AbstractAssetManager
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param string $fullPath
      * @param string $position
      * @param int $priority
      * @param bool $inline
      * @param string $attribute
      * @param string $server
+     * @param string|null $version
      */
-    protected function add($id, $fullPath, $position, $priority, $inline, $attribute, $server)
+    protected function add($id, $fullPath, $position, $priority, $inline, $attribute, $server, ?string $version)
     {
-        $priority = is_int($priority) ? $priority : self::DEFAULT_PRIORITY;
         $position = $this->getSanitizedPosition($position);
         $attribute = $this->getSanitizedAttribute($attribute);
+
+        $srcPath = $fullPath;
+        $fullPath = $version ? $fullPath . '?' . $version : $fullPath;
 
         if ('remote' === $server) {
             $uri = $fullPath;
@@ -111,7 +95,7 @@ class JavascriptManagerCore extends AbstractAssetManager
         $this->list[$position][$type][$id] = [
             'id' => $id,
             'type' => $type,
-            'path' => $fullPath,
+            'path' => $srcPath,
             'uri' => $uri,
             'priority' => $priority,
             'attribute' => $attribute,
@@ -136,7 +120,7 @@ class JavascriptManagerCore extends AbstractAssetManager
             foreach ($this->list[$position]['inline'] as &$item) {
                 $item['content'] =
                     '/* ---- ' . $item['id'] . ' @ ' . $item['path'] . ' ---- */' . "\r\n" .
-                    file_get_contents($item['path']);
+                    file_get_contents($this->getPathFromUri($item['path']));
             }
         }
     }

@@ -1,33 +1,14 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 class WebserviceRequestCore
 {
-    const HTTP_GET = 1;
-    const HTTP_POST = 2;
-    const HTTP_PUT = 4;
+    public const HTTP_GET = 1;
+    public const HTTP_POST = 2;
+    public const HTTP_PUT = 4;
+    public const HTTP_PATCH = 8;
 
     protected $_available_languages = null;
     /**
@@ -57,13 +38,6 @@ class WebserviceRequestCore
      * @var string
      */
     public $wsUrl;
-
-    /**
-     * PrestaShop Webservice Documentation URL.
-     *
-     * @var string
-     */
-    protected $_docUrl = 'https://devdocs.prestashop.com/1.7/webservice';
 
     /**
      * Set if the authentication key was checked.
@@ -96,7 +70,7 @@ class WebserviceRequestCore
     /**
      * The time in microseconds of the start of the execution of the web service request.
      *
-     * @var int
+     * @var float
      */
     protected $_startTime = 0;
 
@@ -167,7 +141,7 @@ class WebserviceRequestCore
     /**
      * Object instance for singleton.
      *
-     * @var WebserviceRequest
+     * @var WebserviceRequest|null
      */
     protected static $_instance;
 
@@ -195,7 +169,7 @@ class WebserviceRequestCore
     /**
      * The object to build the output.
      *
-     * @var WebserviceOutputBuilder
+     * @var WebserviceOutputBuilder|null
      */
     protected $objOutput;
 
@@ -207,6 +181,11 @@ class WebserviceRequestCore
     public static $ws_current_classname;
 
     /**
+     * @var array
+     */
+    public $params;
+
+    /**
      * @var array the list of shop ids, can be empty
      */
     public static $shopIDs = [];
@@ -216,11 +195,9 @@ class WebserviceRequestCore
         return $this->_outputEnabled;
     }
 
-    public function setOutputEnabled($bool)
+    public function setOutputEnabled(bool $bool)
     {
-        if (Validate::isBool($bool)) {
-            $this->_outputEnabled = $bool;
-        }
+        $this->_outputEnabled = $bool;
 
         return $this;
     }
@@ -237,6 +214,11 @@ class WebserviceRequestCore
         }
 
         return self::$_instance;
+    }
+
+    public static function resetStaticCache(): void
+    {
+        static::$_instance = null;
     }
 
     protected function getOutputObject($type)
@@ -301,13 +283,14 @@ class WebserviceRequestCore
             'order_invoices' => ['description' => 'The Order invoices', 'class' => 'OrderInvoice'],
             'orders' => ['description' => 'The Customers orders', 'class' => 'Order'],
             'order_payments' => ['description' => 'The Order payments', 'class' => 'OrderPayment'],
+            'order_returns' => ['description' => 'The Customers orders returns', 'class' => 'OrderReturn'],
             'order_states' => ['description' => 'The Order statuses', 'class' => 'OrderState'],
             'order_slip' => ['description' => 'The Order slips', 'class' => 'OrderSlip'],
             'price_ranges' => ['description' => 'Price ranges', 'class' => 'RangePrice'],
             'product_features' => ['description' => 'The product features', 'class' => 'Feature'],
             'product_feature_values' => ['description' => 'The product feature values', 'class' => 'FeatureValue'],
             'product_options' => ['description' => 'The product options', 'class' => 'AttributeGroup'],
-            'product_option_values' => ['description' => 'The product options value', 'class' => 'Attribute'],
+            'product_option_values' => ['description' => 'The product options value', 'class' => 'ProductAttribute'],
             'products' => ['description' => 'The products', 'class' => 'Product'],
             'states' => ['description' => 'The available states of countries', 'class' => 'State'],
             'stores' => ['description' => 'The stores', 'class' => 'Store'],
@@ -317,22 +300,16 @@ class WebserviceRequestCore
             'weight_ranges' => ['description' => 'Weight ranges', 'class' => 'RangeWeight'],
             'zones' => ['description' => 'The Countries zones', 'class' => 'Zone'],
             'employees' => ['description' => 'The Employees', 'class' => 'Employee'],
-            'search' => ['description' => 'Search', 'specific_management' => true, 'forbidden_method' => ['PUT', 'POST', 'DELETE']],
+            'search' => ['description' => 'Search', 'specific_management' => true, 'forbidden_method' => ['PUT', 'POST', 'PATCH', 'DELETE']],
             'content_management_system' => ['description' => 'Content management system', 'class' => 'CMS'],
             'shops' => ['description' => 'Shops from multi-shop feature', 'class' => 'Shop'],
             'shop_groups' => ['description' => 'Shop groups from multi-shop feature', 'class' => 'ShopGroup'],
             'taxes' => ['description' => 'The tax rate', 'class' => 'Tax'],
-            'stock_movements' => ['description' => 'Stock movements', 'class' => 'StockMvtWS', 'forbidden_method' => ['PUT', 'POST', 'DELETE']],
+            'stock_movements' => ['description' => 'Stock movements', 'class' => 'StockMvtWS', 'forbidden_method' => ['PUT', 'POST', 'PATCH', 'DELETE']],
             'stock_movement_reasons' => ['description' => 'Stock movement reason', 'class' => 'StockMvtReason'],
             'warehouses' => ['description' => 'Warehouses', 'class' => 'Warehouse', 'forbidden_method' => ['DELETE']],
-            'stocks' => ['description' => 'Stocks', 'class' => 'Stock', 'forbidden_method' => ['PUT', 'POST', 'DELETE']],
+            'stocks' => ['description' => 'Stocks', 'class' => 'Stock', 'forbidden_method' => ['PUT', 'POST', 'PATCH', 'DELETE']],
             'stock_availables' => ['description' => 'Available quantities', 'class' => 'StockAvailable', 'forbidden_method' => ['POST', 'DELETE']],
-            'warehouse_product_locations' => ['description' => 'Location of products in warehouses', 'class' => 'WarehouseProductLocation', 'forbidden_method' => ['PUT', 'POST', 'DELETE']],
-            'supply_orders' => ['description' => 'Supply Orders', 'class' => 'SupplyOrder', 'forbidden_method' => ['PUT', 'POST', 'DELETE']],
-            'supply_order_details' => ['description' => 'Supply Order Details', 'class' => 'SupplyOrderDetail', 'forbidden_method' => ['PUT', 'POST', 'DELETE']],
-            'supply_order_states' => ['description' => 'Supply Order Statuses', 'class' => 'SupplyOrderState', 'forbidden_method' => ['PUT', 'POST', 'DELETE']],
-            'supply_order_histories' => ['description' => 'Supply Order Histories', 'class' => 'SupplyOrderHistory', 'forbidden_method' => ['PUT', 'POST', 'DELETE']],
-            'supply_order_receipt_histories' => ['description' => 'Supply Order Receipt Histories', 'class' => 'SupplyOrderReceiptHistory', 'forbidden_method' => ['PUT', 'POST', 'DELETE']],
             'product_suppliers' => ['description' => 'Product Suppliers', 'class' => 'ProductSupplier'],
             'tax_rules' => ['description' => 'Tax rules entity', 'class' => 'TaxRule'],
             'tax_rule_groups' => ['description' => 'Tax rule groups', 'class' => 'TaxRulesGroup'],
@@ -342,6 +319,9 @@ class WebserviceRequestCore
             'product_customization_fields' => ['description' => 'Customization Field', 'class' => 'CustomizationField'],
             'customizations' => ['description' => 'Customization values', 'class' => 'Customization'],
         ];
+
+        // An array [module_name => module_output] will be returned
+        // Hook call is ignoring exceptions set in the backoffice
         $extra_resources = Hook::exec('addWebserviceResources', ['resources' => $resources], null, true, false);
         if (is_countable($extra_resources) && count($extra_resources)) {
             foreach ($extra_resources as $new_resources) {
@@ -358,13 +338,12 @@ class WebserviceRequestCore
     /**
      * This method is used for calculate the price for products on the output details.
      *
-     * @param $field
-     * @param $entity_object
-     * @param $ws_params
+     * @param array $field
+     * @param ObjectModel $entity_object
      *
      * @return array field parameters
      */
-    public function getPriceForProduct($field, $entity_object, $ws_params)
+    public function getPriceForProduct($field, $entity_object)
     {
         if (is_int($entity_object->id)) {
             $arr_return = $this->specificPriceForProduct($entity_object, ['default_price' => '']);
@@ -377,7 +356,7 @@ class WebserviceRequestCore
     /**
      * This method is used for calculate the price for products on a virtual fields.
      *
-     * @param $entity_object
+     * @param ObjectModel $entity_object
      * @param array $parameters
      *
      * @return array
@@ -399,17 +378,17 @@ class WebserviceRequestCore
             $id_shop = (int) Context::getContext()->shop->id;
             $id_country = (int) (isset($value['country']) ? $value['country'] : (Configuration::get('PS_COUNTRY_DEFAULT')));
             $id_state = (int) (isset($value['state']) ? $value['state'] : 0);
-            $id_currency = (int) (isset($value['currency']) ? $value['currency'] : Configuration::get('PS_CURRENCY_DEFAULT'));
+            $id_currency = (int) (isset($value['currency']) ? $value['currency'] : Currency::getDefaultCurrencyId());
             $id_group = (int) (isset($value['group']) ? $value['group'] : (int) Configuration::get('PS_CUSTOMER_GROUP'));
             $quantity = (int) (isset($value['quantity']) ? $value['quantity'] : 1);
-            $use_tax = (int) (isset($value['use_tax']) ? $value['use_tax'] : Configuration::get('PS_TAX'));
+            $use_tax = (bool) (isset($value['use_tax']) ? $value['use_tax'] : Configuration::get('PS_TAX'));
             $decimals = (int) (isset($value['decimals']) ? $value['decimals'] : Configuration::get('PS_PRICE_ROUND_MODE'));
             $id_product_attribute = (int) (isset($value['product_attribute']) ? $value['product_attribute'] : null);
-            $only_reduc = (int) (isset($value['only_reduction']) ? $value['only_reduction'] : false);
-            $use_reduc = (int) (isset($value['use_reduction']) ? $value['use_reduction'] : true);
-            $use_ecotax = (int) (isset($value['use_ecotax']) ? $value['use_ecotax'] : Configuration::get('PS_USE_ECOTAX'));
+            $only_reduc = (bool) (isset($value['only_reduction']) ? $value['only_reduction'] : false);
+            $use_reduc = (bool) (isset($value['use_reduction']) ? $value['use_reduction'] : true);
+            $use_ecotax = (bool) (isset($value['use_ecotax']) ? $value['use_ecotax'] : Configuration::get('PS_USE_ECOTAX'));
             $specific_price_output = null;
-            $id_county = (int) (isset($value['county']) ? $value['county'] : 0);
+            $id_county = (string) (isset($value['county']) ? $value['county'] : 0);
             $return_value = Product::priceCalculation(
                 $id_shop,
                 $value['object_id'],
@@ -426,7 +405,7 @@ class WebserviceRequestCore
                 $use_reduc,
                 $use_ecotax,
                 $specific_price_output,
-                null
+                false
             );
             $arr_return[$name] = ['sqlId' => strtolower($name), 'value' => sprintf('%f', $return_value)];
         }
@@ -437,7 +416,7 @@ class WebserviceRequestCore
     /**
      * This method is used for calculate the price for products on a virtual fields.
      *
-     * @param $entity_object
+     * @param ObjectModel $entity_object
      * @param array $parameters
      *
      * @return array
@@ -465,7 +444,7 @@ class WebserviceRequestCore
      * @param string $key
      * @param string $method
      * @param string $url
-     * @param string $params
+     * @param array $params
      * @param string $bad_class_name
      * @param string $inputXml
      *
@@ -492,7 +471,9 @@ class WebserviceRequestCore
 
         $this->_key = trim($key);
 
-        $this->outputFormat = isset($params['output_format']) ? $params['output_format'] : $this->outputFormat;
+        if (isset($params['output_format'])) {
+            $this->outputFormat = $params['output_format'];
+        }
         // Set the render object to build the output on the asked format (XML, JSON, CSV, ...)
         $this->objOutput->setObjectRender($this->getOutputObject($this->outputFormat));
         $this->params = $params;
@@ -512,7 +493,7 @@ class WebserviceRequestCore
                 // Method below set a particular fonction to use on the price field for products entity
                 // @see WebserviceRequest::getPriceForProduct() method
                 // @see WebserviceOutputBuilder::setSpecificField() method
-                //$this->objOutput->setSpecificField($this, 'getPriceForProduct', 'price', 'products');
+                // $this->objOutput->setSpecificField($this, 'getPriceForProduct', 'price', 'products');
                 if (isset($this->urlFragments['price'])) {
                     $this->objOutput->setVirtualField($this, 'specificPriceForCombination', 'combinations', $this->urlFragments['price']);
                     $this->objOutput->setVirtualField($this, 'specificPriceForProduct', 'products', $this->urlFragments['price']);
@@ -575,6 +556,12 @@ class WebserviceRequestCore
                             }
 
                             break;
+                        case 'PATCH':
+                            if ($this->executeEntityPatch()) {
+                                $success = true;
+                            }
+
+                            break;
                         case 'DELETE':
                             $this->executeEntityDelete();
 
@@ -592,8 +579,10 @@ class WebserviceRequestCore
                         $this->setError(501, sprintf('The specific management class is not implemented for the "%s" entity.', $this->urlSegment[0]), 124);
                     } else {
                         $this->setObjectSpecificManagement(new $specificObjectName());
-                        $this->objectSpecificManagement->setObjectOutput($this->objOutput)
-                            ->setWsObject($this);
+                        $this->objectSpecificManagement->setObjectOutput($this->objOutput);
+                        if ($this instanceof WebserviceRequest) {
+                            $this->objectSpecificManagement->setWsObject($this);
+                        }
 
                         try {
                             $this->objectSpecificManagement->manage();
@@ -646,8 +635,8 @@ class WebserviceRequestCore
      *
      * @param int $num
      * @param string $label
-     * @param array $value
-     * @param array $values
+     * @param string $value
+     * @param array $available_values
      * @param int $code
      */
     public function setErrorDidYouMean($num, $label, $value, $available_values, $code)
@@ -666,6 +655,7 @@ class WebserviceRequestCore
     protected function getClosest($input, $words)
     {
         $shortest = -1;
+        $closest = '';
         foreach ($words as $word) {
             $lev = levenshtein($input, $word);
             if ($lev == 0) {
@@ -686,10 +676,10 @@ class WebserviceRequestCore
     /**
      * Used to replace the default PHP error handler, in order to display PHP errors in a XML format.
      *
-     * @param string $errno contains the level of the error raised, as an integer
-     * @param array $errstr contains the error message, as a string
-     * @param array $errfile errfile, which contains the filename that the error was raised in, as a string
-     * @param array $errline errline, which contains the line number the error was raised at, as an integer
+     * @param int $errno contains the level of the error raised, as an integer
+     * @param string $errstr contains the error message, as a string
+     * @param string $errfile errfile, which contains the filename that the error was raised in, as a string
+     * @param int $errline errline, which contains the line number the error was raised at, as an integer
      *
      * @return bool Always return true to avoid the default PHP error handler
      */
@@ -697,7 +687,7 @@ class WebserviceRequestCore
     {
         $display_errors = strtolower(ini_get('display_errors')) != 'off';
         if (!(error_reporting() & $errno) || $display_errors) {
-            return;
+            return true;
         }
 
         $errortype = [
@@ -712,11 +702,10 @@ class WebserviceRequestCore
             E_USER_ERROR => 'Error',
             E_USER_WARNING => 'User warning',
             E_USER_NOTICE => 'User notice',
-            E_STRICT => 'Runtime Notice',
             E_RECOVERABLE_ERROR => 'Recoverable error',
         ];
-        $type = (isset($errortype[$errno]) ? $errortype[$errno] : 'Unknown error');
-        Tools::error_log('[PHP ' . $type . ' #' . $errno . '] ' . $errstr . ' (' . $errfile . ', line ' . $errline . ')');
+        $type = $errortype[$errno] ?? 'Unknown error';
+        error_log('[PHP ' . $type . ' #' . $errno . '] ' . $errstr . ' (' . $errfile . ', line ' . $errline . ')');
 
         switch ($errno) {
             case E_ERROR:
@@ -795,37 +784,39 @@ class WebserviceRequestCore
      */
     protected function authenticate()
     {
-        if (!$this->hasErrors()) {
-            if (null === $this->_key) {
-                $this->setError(401, 'Please enter the authentication key as the login. No password required', 16);
-            } else {
-                if (empty($this->_key)) {
-                    $this->setError(401, 'Authentication key is empty', 17);
-                } elseif (strlen($this->_key) != '32') {
-                    $this->setError(401, 'Invalid authentication key format', 18);
-                } else {
-                    if (WebserviceKey::isKeyActive($this->_key)) {
-                        $this->keyPermissions = WebserviceKey::getPermissionForAccount($this->_key);
-                    } else {
-                        $this->setError(401, 'Authentification key is not active', 20);
-                    }
+        if ($this->hasErrors()) {
+            return false;
+        }
 
-                    if (!$this->keyPermissions) {
-                        $this->setError(401, 'No permission for this authentication key', 21);
-                    }
+        if (null === $this->_key) {
+            $this->setError(401, 'Please enter the authentication key as the login. No password required', 16);
+        } else {
+            if (empty($this->_key)) {
+                $this->setError(401, 'Authentication key is empty', 17);
+            } elseif (strlen($this->_key) != '32') {
+                $this->setError(401, 'Invalid authentication key format', 18);
+            } else {
+                if (WebserviceKey::isKeyActive($this->_key)) {
+                    $this->keyPermissions = WebserviceKey::getPermissionForAccount($this->_key);
+                } else {
+                    $this->setError(401, 'Authentification key is not active', 20);
+                }
+
+                if (!$this->keyPermissions) {
+                    $this->setError(401, 'No permission for this authentication key', 21);
                 }
             }
-            if ($this->hasErrors()) {
-                header('WWW-Authenticate: Basic realm="Welcome to PrestaShop Webservice, please enter the authentication key as the login. No password required."');
-                $this->objOutput->setStatus(401);
+        }
+        if ($this->hasErrors()) {
+            header('WWW-Authenticate: Basic realm="Welcome to PrestaShop Webservice, please enter the authentication key as the login. No password required."');
+            $this->objOutput->setStatus(401);
 
-                return false;
-            } else {
-                // only now we can say the access is authenticated
-                $this->_authenticated = true;
+            return false;
+        } else {
+            // only now we can say the access is authenticated
+            $this->_authenticated = true;
 
-                return true;
-            }
+            return true;
         }
     }
 
@@ -855,7 +846,7 @@ class WebserviceRequestCore
         $sql = 'SELECT 1
 				FROM ' . _DB_PREFIX_ . 'webservice_account wsa LEFT JOIN ' . _DB_PREFIX_ . 'webservice_account_shop wsas ON (wsa.id_webservice_account = wsas.id_webservice_account)
 				WHERE wsa.key = \'' . pSQL($key) . '\'';
-
+        $OR = [];
         foreach (self::$shopIDs as $id_shop) {
             $OR[] = ' wsas.id_shop = ' . (int) $id_shop . ' ';
         }
@@ -870,7 +861,7 @@ class WebserviceRequestCore
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
      * @return bool
      */
@@ -903,7 +894,7 @@ class WebserviceRequestCore
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
      * @return bool
      */
@@ -926,6 +917,7 @@ class WebserviceRequestCore
                 return false;
             }
         }
+
         // id_shop_group isn't mandatory
         return true;
     }
@@ -937,7 +929,7 @@ class WebserviceRequestCore
      */
     protected function checkHTTPMethod()
     {
-        if (!in_array($this->method, ['GET', 'POST', 'PUT', 'DELETE', 'HEAD'])) {
+        if (!in_array($this->method, ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD'])) {
             $this->setError(405, 'Method ' . $this->method . ' is not valid', 23);
         } elseif (isset($this->urlSegment[0], $this->resourceList[$this->urlSegment[0]]['forbidden_method']) && in_array($this->method, $this->resourceList[$this->urlSegment[0]]['forbidden_method'])) {
             $this->setError(405, 'Method ' . $this->method . ' is not allowed for the resource ' . $this->urlSegment[0], 101);
@@ -1031,7 +1023,7 @@ class WebserviceRequestCore
         }
         $fields = [];
         foreach ($part as $str) {
-            $field_name = trim(substr($str, 0, (strpos($str, '[') === false ? strlen($str) : strpos($str, '['))));
+            $field_name = trim(substr($str, 0, strpos($str, '[') === false ? strlen($str) : strpos($str, '[')));
             if (!isset($fields[$field_name])) {
                 $fields[$field_name] = null;
             }
@@ -1104,10 +1096,9 @@ class WebserviceRequestCore
         // filtered i18n fields which can use filters
         $i18n_available_filters = [];
         foreach ($this->resourceConfiguration['fields'] as $fieldName => $field) {
-            if ((!isset($this->resourceConfiguration['hidden_fields']) ||
-                (isset($this->resourceConfiguration['hidden_fields']) && !in_array($fieldName, $this->resourceConfiguration['hidden_fields'])))) {
-                if ((!isset($field['i18n']) ||
-                (isset($field['i18n']) && !$field['i18n']))) {
+            if (!isset($this->resourceConfiguration['hidden_fields'])
+                || (!in_array($fieldName, $this->resourceConfiguration['hidden_fields']))) {
+                if (!isset($field['i18n']) || (isset($field['i18n']) && !$field['i18n'])) {
                     $available_filters[] = $fieldName;
                 } else {
                     $i18n_available_filters[] = $fieldName;
@@ -1116,7 +1107,7 @@ class WebserviceRequestCore
         }
 
         // Date feature : date=1
-        if (!empty($this->urlFragments['date']) && $this->urlFragments['date']) {
+        if (!empty($this->urlFragments['date'])) {
             if (!in_array('date_add', $available_filters)) {
                 $available_filters[] = 'date_add';
             }
@@ -1137,7 +1128,7 @@ class WebserviceRequestCore
             }
         }
 
-        //construct SQL filter
+        // construct SQL filter
         $sql_filter = '';
         $sql_join = '';
         if ($this->urlFragments) {
@@ -1241,6 +1232,7 @@ class WebserviceRequestCore
 
             foreach ($sorts as $sort) {
                 $delimiterPosition = strrpos($sort, '_');
+                $fieldName = $direction = '';
                 if ($delimiterPosition !== false) {
                     $fieldName = substr($sort, 0, $delimiterPosition);
                     $direction = strtoupper(substr($sort, $delimiterPosition + 1));
@@ -1274,7 +1266,7 @@ class WebserviceRequestCore
             $sql_sort = rtrim($sql_sort, ', ') . "\n";
         }
 
-        //construct SQL Limit
+        // construct SQL Limit
         $sql_limit = '';
         if (isset($this->urlFragments['limit'])) {
             $limitArgs = explode(',', $this->urlFragments['limit']);
@@ -1283,7 +1275,7 @@ class WebserviceRequestCore
 
                 return false;
             } else {
-                $sql_limit .= ' LIMIT ' . (int) ($limitArgs[0]) . (isset($limitArgs[1]) ? ', ' . (int) ($limitArgs[1]) : '') . "\n"; // LIMIT X|X, Y
+                $sql_limit .= ' LIMIT ' . (int) $limitArgs[0] . (isset($limitArgs[1]) ? ', ' . (int) ($limitArgs[1]) : '') . "\n"; // LIMIT X|X, Y
             }
         }
         $filters['sql_join'] = $sql_join;
@@ -1308,7 +1300,7 @@ class WebserviceRequestCore
         $this->resourceConfiguration['retrieveData']['params'][] = $filters['sql_filter'];
         $this->resourceConfiguration['retrieveData']['params'][] = $filters['sql_sort'];
         $this->resourceConfiguration['retrieveData']['params'][] = $filters['sql_limit'];
-        //list entities
+        // list entities
 
         $tmp = new $this->resourceConfiguration['retrieveData']['className']();
         $sqlObjects = call_user_func_array([$tmp, $this->resourceConfiguration['retrieveData']['retrieveMethod']], $this->resourceConfiguration['retrieveData']['params']);
@@ -1338,7 +1330,7 @@ class WebserviceRequestCore
             $this->fieldsToDisplay = 'full';
         }
 
-        //get entity details
+        // get entity details
         $object = new $this->resourceConfiguration['retrieveData']['className']((int) $this->urlSegment[1]);
         if ($object->id) {
             $objects[] = $object;
@@ -1359,6 +1351,7 @@ class WebserviceRequestCore
                 }
                 $sql .= '`';
 
+                $OR = [];
                 foreach (self::$shopIDs as $id_shop) {
                     $OR[] = ' (id_shop = ' . (int) $id_shop . ($check_shop_group ? ' OR (id_shop = 0 AND id_shop_group=' . (int) Shop::getGroupFromShop((int) $id_shop) . ')' : '') . ') ';
                 }
@@ -1401,6 +1394,7 @@ class WebserviceRequestCore
             if (!$return) {
                 return false;
             } else {
+                $this->_outputEnabled = true;
                 $this->objects = $return;
             }
         }
@@ -1429,9 +1423,19 @@ class WebserviceRequestCore
     }
 
     /**
-     * Execute DELETE method on a PrestaShop entity.
+     * Execute PATCH method on a PrestaShop entity.
      *
      * @return bool
+     */
+    public function executeEntityPatch(): bool
+    {
+        return $this->saveEntityFromXml(200);
+    }
+
+    /**
+     * Execute DELETE method on a PrestaShop entity.
+     *
+     * @return void
      */
     public function executeEntityDelete()
     {
@@ -1507,10 +1511,9 @@ class WebserviceRequestCore
         } catch (Exception $error) {
             $this->setError(500, 'XML error : ' . $error->getMessage() . "\n" . 'XML length : ' . strlen($this->_inputXml) . "\n" . 'Original XML : ' . $this->_inputXml, 127);
 
-            return;
+            return false;
         }
 
-        /** @var SimpleXMLElement|Countable $xmlEntities */
         $xmlEntities = $xml->children();
         $object = null;
 
@@ -1521,8 +1524,7 @@ class WebserviceRequestCore
                 $ids[] = (int) $entity->id;
             }
         }
-        if ($this->method == 'PUT') {
-            $ids2 = [];
+        if ($this->method == 'PUT' || $this->method == 'PATCH') {
             $ids2 = array_unique($ids);
             if (count($ids2) != count($ids)) {
                 $this->setError(400, 'id is duplicate in request', 89);
@@ -1548,7 +1550,7 @@ class WebserviceRequestCore
             /* @var ObjectModel $object */
             if ($this->method == 'POST') {
                 $object = new $this->resourceConfiguration['retrieveData']['className']();
-            } elseif ($this->method == 'PUT') {
+            } elseif ($this->method == 'PUT' || $this->method == 'PATCH') {
                 $object = new $this->resourceConfiguration['retrieveData']['className']((int) $attributes->id);
                 if (!$object->id) {
                     $this->setError(404, 'Invalid ID', 92);
@@ -1566,8 +1568,11 @@ class WebserviceRequestCore
             $i18n = false;
             // attributes
             foreach ($this->resourceConfiguration['fields'] as $fieldName => $fieldProperties) {
+                // only process fields actually in the input XML
+                if ($this->method == 'PATCH' && !isset($attributes->$fieldName)) {
+                    continue;
+                }
                 $sqlId = $fieldProperties['sqlId'];
-
                 if ($fieldName == 'id') {
                     $sqlId = $fieldName;
                 }
@@ -1688,6 +1693,8 @@ class WebserviceRequestCore
 
             return true;
         }
+
+        return false;
     }
 
     /**
@@ -1767,11 +1774,12 @@ class WebserviceRequestCore
     {
         $return = [];
 
-        // write headers
-        $this->objOutput->setHeaderParams('Access-Time', time())
+        // Write headers
+        $this->objOutput
+            ->setHeaderParams('Access-Time', (string) time())
             ->setHeaderParams('X-Powered-By', 'PrestaShop Webservice')
-            ->setHeaderParams('PSWS-Version', _PS_VERSION_)
-            ->setHeaderParams('Execution-Time', round(microtime(true) - $this->_startTime, 3));
+            ->setHeaderParams('Execution-Time', (string) round(microtime(true) - $this->_startTime, 3))
+        ;
 
         $return['type'] = strtolower($this->outputFormat);
 
@@ -1813,7 +1821,7 @@ class WebserviceRequestCore
                         $type_of_view = WebserviceOutputBuilder::VIEW_LIST;
                     }
 
-                    if (in_array($this->method, ['PUT', 'POST'])) {
+                    if (in_array($this->method, ['PUT', 'POST', 'PATCH'])) {
                         $type_of_view = WebserviceOutputBuilder::VIEW_DETAILS;
                         $this->fieldsToDisplay = 'full';
                     }
@@ -1834,14 +1842,13 @@ class WebserviceRequestCore
         // if the output is not enable, delete the content
         // the type content too
         if (!$this->_outputEnabled) {
-            if (isset($return['type'])) {
-                unset($return['type']);
-            }
+            unset($return['type']);
             if (isset($return['content'])) {
                 unset($return['content']);
             }
         } elseif (isset($return['content'])) {
-            $this->objOutput->setHeaderParams('Content-Sha1', sha1($return['content']));
+            $return['content_sha1'] = sha1($return['content']);
+            $this->objOutput->setHeaderParams('Content-Sha1', $return['content_sha1']);
         }
 
         // if errors happens when creating returned xml,
@@ -1873,7 +1880,7 @@ class WebserviceRequestCore
         } else {
             $headers = array_merge($_ENV, $_SERVER);
             foreach ($headers as $key => $val) {
-                //we need this header
+                // we need this header
                 if (strpos(strtolower($key), 'content-type') !== false) {
                     continue;
                 }
@@ -1882,7 +1889,7 @@ class WebserviceRequestCore
                 }
             }
         }
-        //Normalize this array to Cased-Like-This structure.
+        // Normalize this array to Cased-Like-This structure.
         foreach ($headers as $key => $value) {
             $key = preg_replace('/^HTTP_/i', '', $key);
             $key = str_replace(' ', '-', ucwords(strtolower(str_replace(['-', '_'], ' ', $key))));

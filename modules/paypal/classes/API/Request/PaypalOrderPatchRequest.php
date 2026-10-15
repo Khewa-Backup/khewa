@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,30 +16,37 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Request;
 
 use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalAddons\classes\API\Client\HttpClient;
+use PaypalAddons\classes\API\ExtensionSDK\Order\OrdersPatchRequest;
+use PaypalAddons\classes\API\HttpAdoptedResponse;
 use PaypalAddons\classes\API\Response\Error;
 use PaypalAddons\classes\API\Response\Response;
-use PayPalCheckoutSdk\Core\PayPalHttpClient;
-use PayPalCheckoutSdk\Orders\OrdersPatchRequest;
-use PayPalHttp\HttpException;
-use Symfony\Component\VarDumper\VarDumper;
+use PaypalAddons\classes\PaypalException;
+use PaypalAddons\services\Builder\OrderPatchBody;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaypalOrderPatchRequest extends PaypalOrderCreateRequest
 {
-    /** @var string*/
+    /** @var string */
     protected $idPayment;
 
-    public function __construct(PayPalHttpClient $client, AbstractMethodPaypal $method, $idPayment)
+    public function __construct(HttpClient $client, AbstractMethodPaypal $method, $idPayment)
     {
         parent::__construct($client, $method);
         $this->idPayment = $idPayment;
@@ -47,11 +55,15 @@ class PaypalOrderPatchRequest extends PaypalOrderCreateRequest
     public function execute()
     {
         $response = new Response();
-        $orderPath = new OrdersPatchRequest($this->idPayment);
-        $orderPath->body = $this->buildRequestBody();
+        $orderPath = new OrdersPatchRequest($this->idPayment, $this->initBodyBuilder());
 
         try {
             $exec = $this->client->execute($orderPath);
+
+            if ($exec instanceof HttpAdoptedResponse) {
+                $exec = $exec->getAdoptedResponse();
+            }
+
             if ($exec->statusCode == 204) {
                 $response->setSuccess(true);
             } else {
@@ -59,13 +71,13 @@ class PaypalOrderPatchRequest extends PaypalOrderCreateRequest
                 $error->setMessage('Failed order update');
                 $response->setSuccess(false)->setError($error);
             }
-        } catch (HttpException $e) {
+        } catch (PaypalException $e) {
             $error = new Error();
             $resultDecoded = json_decode($e->getMessage());
             $error->setMessage($resultDecoded->details[0]->description)->setErrorCode($e->getCode());
             $response->setSuccess(false)
                 ->setError($error);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $error = new Error();
             $error->setErrorCode($e->getCode())->setMessage($e->getMessage());
             $response->setError($error)->setSuccess(false);
@@ -74,29 +86,8 @@ class PaypalOrderPatchRequest extends PaypalOrderCreateRequest
         return $response;
     }
 
-    protected function buildRequestBody()
+    protected function initBodyBuilder()
     {
-        $body = [];
-        $currency = $this->getCurrency();
-        $productItmes = $this->getProductItems($currency);
-        $wrappingItems = $this->getWrappingItems($currency);
-        $items = array_merge($productItmes, $wrappingItems);
-        $shippingInfo = $this->getShippingInfo();
-
-        $body[] = [
-            'op' => 'replace',
-            'path' => '/purchase_units/@reference_id==\'default\'',
-            'value' => [
-                'amount' => $this->getAmount($currency),
-                'items' => $items,
-                'custom_id' => $this->getCustomId()
-            ]
-        ];
-
-        if (false === empty($shippingInfo)) {
-            $body[0]['value']['shipping'] = $shippingInfo;
-        }
-
-        return $body;
+        return new OrderPatchBody($this->context, $this->method);
     }
 }

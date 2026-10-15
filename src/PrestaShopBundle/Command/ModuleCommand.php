@@ -1,64 +1,38 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Command;
 
 use Employee;
+use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManager;
-use PrestaShopBundle\Translation\Translator;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use PrestaShop\PrestaShop\Adapter\Module\AdminModuleDataProvider;
+use PrestaShop\PrestaShop\Adapter\Module\Configuration\ModuleSelfConfigurator;
+use PrestaShop\PrestaShop\Core\Context\ContextBuilderPreparer;
+use PrestaShop\PrestaShop\Core\Module\ModuleManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ModuleCommand extends ContainerAwareCommand
+class ModuleCommand extends Command
 {
     private $allowedActions = [
         'install',
         'uninstall',
         'enable',
         'disable',
-        'enable_mobile',
-        'disable_mobile',
         'reset',
         'upgrade',
         'configure',
+        'delete',
     ];
-
-    /**
-     * @var FormatterHelper
-     */
-    protected $formatter;
-
-    /**
-     * @var Translator
-     */
-    protected $translator;
 
     /**
      * @var InputInterface
@@ -70,6 +44,17 @@ class ModuleCommand extends ContainerAwareCommand
      */
     protected $output;
 
+    public function __construct(
+        protected readonly TranslatorInterface $translator,
+        protected readonly LegacyContext $context,
+        protected readonly ModuleSelfConfigurator $moduleSelfConfigurator,
+        protected readonly ModuleManager $moduleManager,
+        protected readonly ContextBuilderPreparer $contextBuilderPreparer,
+        protected readonly Configuration $configuration,
+    ) {
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -77,28 +62,30 @@ class ModuleCommand extends ContainerAwareCommand
             ->setDescription('Manage your modules via command line')
             ->addArgument('action', InputArgument::REQUIRED, sprintf('Action to execute (Allowed actions: %s).', implode(' / ', $this->allowedActions)))
             ->addArgument('module name', InputArgument::REQUIRED, 'Module on which the action will be executed')
-            ->addArgument('file path', InputArgument::OPTIONAL, 'YML file path for configuration');
+            ->addArgument('file path', InputArgument::OPTIONAL, 'YML file path for configuration')
+            ->addOption('skip-overrides', null, InputOption::VALUE_NONE, 'Skip installing/uninstalling module overrides');
     }
 
     protected function init(InputInterface $input, OutputInterface $output)
     {
-        $this->formatter = $this->getHelper('formatter');
-        $this->translator = $this->getContainer()->get('translator');
         $this->input = $input;
         $this->output = $output;
-        /** @var LegacyContext $legacyContext */
-        $legacyContext = $this->getContainer()->get('prestashop.adapter.legacy.context');
-        //We need to have an employee or the module hooks don't work
-        //see LegacyHookSubscriber
-        if (!$legacyContext->getContext()->employee) {
-            //Even a non existing employee is fine
-            $legacyContext->getContext()->employee = new Employee(42);
+        // We need to have an employee or the module hooks don't work
+        // see LegacyHookSubscriber
+        if (!$this->context->getContext()->employee) {
+            // Even a non existing employee is fine
+            $this->context->getContext()->employee = new Employee(42);
         }
+
+        // We must initialize the language context because ModuleRepository depends on it for its cache key
+        $this->contextBuilderPreparer->prepareLanguageId($this->configuration->get('PS_LANG_DEFAULT'));
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->init($input, $output);
+
+        $skipOverrides = (bool) $input->getOption('skip-overrides');
 
         $moduleName = $input->getArgument('module name');
         $action = $input->getArgument('action');
@@ -117,10 +104,21 @@ class ModuleCommand extends ContainerAwareCommand
             return 1;
         }
 
-        if ($action === 'configure') {
-            $this->executeConfigureModuleAction($moduleName, $file);
-        } else {
-            $this->executeGenericModuleAction($action, $moduleName);
+        if ($skipOverrides) {
+            $disableModuleOriginaleValue = $this->configuration->get('PS_DISABLE_MODULE_OVERRIDES');
+            $this->configuration->setTemporary('PS_DISABLE_MODULE_OVERRIDES', 1);
+        }
+
+        try {
+            if ($action === 'configure') {
+                $this->executeConfigureModuleAction($moduleName, $file);
+            } else {
+                $this->executeGenericModuleAction($action, $moduleName);
+            }
+        } finally {
+            if ($skipOverrides) {
+                $this->configuration->setTemporary('PS_DISABLE_MODULE_OVERRIDES', $disableModuleOriginaleValue);
+            }
         }
 
         return 0;
@@ -128,14 +126,13 @@ class ModuleCommand extends ContainerAwareCommand
 
     protected function executeConfigureModuleAction($moduleName, $file = null)
     {
-        $moduleSelfConfigurator = $this->getContainer()->get('prestashop.adapter.module.self_configurator');
-        $moduleSelfConfigurator->module($moduleName);
+        $this->moduleSelfConfigurator->module($moduleName);
         if ($file) {
-            $moduleSelfConfigurator->file($file);
+            $this->moduleSelfConfigurator->file($file);
         }
 
         // Check if validation passed and exit in case of errors
-        $errors = $moduleSelfConfigurator->validate();
+        $errors = $this->moduleSelfConfigurator->validate();
         if (!empty($errors)) {
             // Display errors as a list
             $errors = array_map(function ($val) { return '- ' . $val; }, $errors);
@@ -151,7 +148,7 @@ class ModuleCommand extends ContainerAwareCommand
         }
 
         // Actual configuration
-        $moduleSelfConfigurator->configure();
+        $this->moduleSelfConfigurator->configure();
         $this->displayMessage(
             $this->translator->trans('Configuration successfully applied.', [], 'Admin.Modules.Notification'),
             'info'
@@ -160,16 +157,12 @@ class ModuleCommand extends ContainerAwareCommand
 
     protected function executeGenericModuleAction($action, $moduleName)
     {
-        /**
-         * @var ModuleManager
-         */
-        $moduleManager = $this->getContainer()->get('prestashop.module.manager');
-        if ($moduleManager->{$action}($moduleName)) {
+        if ($this->moduleManager->{$action}($moduleName)) {
             $this->displayMessage(
                 $this->translator->trans(
                     '%action% action on module %module% succeeded.',
                     [
-                        '%action%' => ucfirst(str_replace('_', ' ', $action)),
+                        '%action%' => ucfirst(AdminModuleDataProvider::ACTIONS_TRANSLATION_LABELS[$action]),
                         '%module%' => $moduleName, ],
                     'Admin.Modules.Notification'
                 )
@@ -178,7 +171,7 @@ class ModuleCommand extends ContainerAwareCommand
             return;
         }
 
-        $error = $moduleManager->getError($moduleName);
+        $error = $this->moduleManager->getError($moduleName);
         $this->displayMessage(
             $this->translator->trans(
                 'Cannot %action% module %module%. %error_details%',
@@ -194,8 +187,11 @@ class ModuleCommand extends ContainerAwareCommand
 
     protected function displayMessage($message, $type = 'info')
     {
+        /** @var FormatterHelper $formatter */
+        $formatter = $this->getHelper('formatter');
+
         $this->output->writeln(
-            $this->formatter->formatBlock($message, $type, true)
+            $formatter->formatBlock($message, $type, true)
         );
     }
 }

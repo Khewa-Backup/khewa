@@ -16,42 +16,29 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
+<script async type="application/javascript" src="{$cdc_error_templating_url}"></script>
 
-<script>
-  if (undefined !== mbo) {
-    mbo.initialize({
-      translations: {
-        'Recommended Modules and Services': '{$recommendedModulesTitleTranslated|escape:'javascript'}',
-        'description': "{$recommendedModulesDescriptionTranslated|escape:'javascript'}",
-        'Close': '{$recommendedModulesCloseTranslated|escape:'javascript'}',
-      },
-      recommendedModulesUrl: '{$recommendedModulesUrl|escape:'javascript'}',
-      shouldAttachRecommendedModulesAfterContent: {$shouldAttachRecommendedModulesAfterContent|intval},
-      shouldAttachRecommendedModulesButton: {$shouldAttachRecommendedModulesButton|intval},
-      shouldUseLegacyTheme: {$shouldUseLegacyTheme|intval},
-    });
-  }
-</script>
-
-{if $shouldDisplayModuleManagerMessage}
-<script>
-$(document).ready( function () {
-  if (typeof window.mboCdc !== undefined && typeof window.mboCdc !== "undefined") {
-    const targetDiv = $('#main-div .content-div').first()
-
-    const divModuleManagerMessage = document.createElement("div");
-    divModuleManagerMessage.setAttribute("id", "module-manager-message-cdc-container");
-
-    divModuleManagerMessage.classList.add('module-manager-message-wrapper');
-    divModuleManagerMessage.classList.add('cdc-container');
-
-    targetDiv.prepend(divModuleManagerMessage)
-    const renderModulesManagerMessage = window.mboCdc.renderModulesManagerMessage
-
-    const context = {$shopContext};
-
-    renderModulesManagerMessage(context, '#module-manager-message-cdc-container')
-  }
-})
-</script>
+{if $cdc_script_not_found}
+  <script async type="application/javascript" src="{$cdc_error_url}"></script>
+{else}
+  <script async type="application/javascript" src="{$cdc_url}"></script>
 {/if}
+<script defer type="application/javascript" src="{$recommended_modules_js}"></script>
+<link rel="stylesheet" href="{$recommended_modules_css}" type="text/css" media="all">
+
+<script>
+  window.$(document).ready(function () {
+    if (undefined !== mbo) {
+      mbo.initialize({
+        translations: {
+          'Recommended Modules and Services': '{$recommendedModulesTitleTranslated|escape:'javascript':'UTF-8'}',
+          'Close': '{$recommendedModulesCloseTranslated|escape:'javascript':'UTF-8'}',
+        },
+        recommendedModulesUrl: '{$recommendedModulesUrl|escape:'javascript':'UTF-8'}',
+        shouldAttachRecommendedModulesAfterContent: {$shouldAttachRecommendedModulesAfterContent|intval},
+        shouldAttachRecommendedModulesButton: {$shouldAttachRecommendedModulesButton|intval},
+        shouldUseLegacyTheme: {$shouldUseLegacyTheme|intval},
+      });
+    }
+  });
+</script>

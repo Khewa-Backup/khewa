@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,15 +16,21 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 use PaypalAddons\classes\AbstractMethodPaypal;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Validate PPP payment
@@ -33,8 +40,17 @@ class PaypalPppValidationModuleFrontController extends PaypalAbstarctModuleFront
     public function init()
     {
         parent::init();
+
+        if (Tools::isSubmit('paymentData')) {
+            $paymentData = $this->parsePaymentData(Tools::getValue('paymentData'));
+            $this->values['paymentId'] = $paymentData->getOrderId();
+        }
+
         $this->values['short_cut'] = Tools::getvalue('short_cut');
-        $this->values['paymentId'] = Tools::getvalue('token');
+
+        if (empty($this->values['paymentId'])) {
+            $this->values['paymentId'] = Tools::getvalue('token');
+        }
     }
 
     /**
@@ -42,13 +58,14 @@ class PaypalPppValidationModuleFrontController extends PaypalAbstarctModuleFront
      */
     public function postProcess()
     {
+        /** @var MethodPPP $method_ppp */
         $method_ppp = AbstractMethodPaypal::load('PPP');
-        $paypal = Module::getInstanceByName($this->name);
+
         try {
             $method_ppp->setParameters($this->values);
 
             if ($method_ppp->getShortCut()) {
-                /** @var $resultPath \PaypalAddons\classes\API\Response\Response*/
+                /** @var PaypalAddons\classes\API\Response\Response $resultPath */
                 $resultPath = $method_ppp->doOrderPatch();
 
                 if ($resultPath->isSuccess() == false) {
@@ -58,28 +75,25 @@ class PaypalPppValidationModuleFrontController extends PaypalAbstarctModuleFront
 
             $method_ppp->validation();
             $cart = Context::getContext()->cart;
+            /* @phpstan-ignore-next-line */
             $customer = new Customer($cart->id_customer);
-            $this->redirectUrl = 'index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$paypal->id.'&id_order='.$paypal->currentOrder.'&key='.$customer->secure_key;
-        } catch (PayPal\Exception\PayPalConnectionException $e) {
-            $decoded_message = Tools::jsonDecode($e->getData());
-            $this->errors['error_code'] = $e->getCode();
-            $this->errors['error_msg'] = $decoded_message->message;
-            $this->errors['msg_long'] = $decoded_message->name.' - '.$decoded_message->details[0]->issue;
-        } catch (PayPal\Exception\PayPalInvalidCredentialException $e) {
-            $this->errors['error_msg'] = $e->errorMessage();
-        } catch (PayPal\Exception\PayPalMissingCredentialException $e) {
-            $this->errors['error_msg'] = $paypal->l('Invalid configuration. Please check your configuration file.', pathinfo(__FILE__)['filename']);
+            $this->redirectUrl = 'index.php?controller=order-confirmation&id_cart=' . $cart->id . '&id_module=' . $this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key;
+        } catch (PaypalAddons\classes\Exception\PayerActionRequired $e) {
+            $this->redirectUrl = $e->getPayerActionLink();
+
+            return;
         } catch (Exception $e) {
-            $this->errors['error_code'] = $e->getCode();
-            $this->errors['error_msg'] = $e->getMessage();
+            $this->_errors['error_code'] = $e->getCode();
+            $this->_errors['error_msg'] = $e->getMessage();
         } finally {
             $this->transaction_detail = $method_ppp->getDetailsTransaction();
         }
 
         Context::getContext()->cookie->__unset('paypal_pSc');
         Context::getContext()->cookie->__unset('paypal_pSc_email');
-        if (!empty($this->errors)) {
-            $this->redirectUrl = Context::getContext()->link->getModuleLink($this->name, 'error', $this->errors);
+        if (!empty($this->_errors)) {
+            $this->errors = $this->_errors;
+            $this->redirectUrl = Context::getContext()->link->getPageLink('order');
         }
     }
 }

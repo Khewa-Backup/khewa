@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Entity\Repository;
@@ -61,23 +41,20 @@ class OrderInvoiceRepository
      */
     public function countByOrderState(array $shopIds)
     {
-        $sql = <<<'SQL'
-SELECT COUNT(o.id_order) AS nbOrders, o.current_state as id_order_state
-FROM `{table_prefix}order_invoice` oi
-LEFT JOIN `{table_prefix}orders` o ON oi.id_order = o.id_order
-WHERE o.id_shop IN(:shopIds)
-AND oi.number > 0
-GROUP BY o.current_state
-SQL;
+        $sql = 'SELECT COUNT(o.id_order) AS nbOrders, o.current_state as id_order_state
+            FROM `{table_prefix}order_invoice` oi
+            INNER JOIN `{table_prefix}orders` o ON oi.id_order = o.id_order
+            WHERE o.id_shop IN(' . implode(',', array_map('intval', $shopIds)) . ')
+            AND oi.number > 0
+            GROUP BY o.current_state';
         $sql = str_replace('{table_prefix}', $this->tablePrefix, $sql);
 
         $statement = $this->connection->prepare($sql);
-        $statement->bindValue('shopIds', implode(',', array_map('intval', $shopIds)));
-        $statement->execute();
+        $statementResult = $statement->executeQuery();
 
         $result = [];
 
-        while ($row = $statement->fetch()) {
+        while ($row = $statementResult->fetchAssociative()) {
             $result[$row['id_order_state']] = $row['nbOrders'];
         }
 

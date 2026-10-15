@@ -2,7 +2,7 @@
 <module>
     <name>smartargetmessagebar</name>
     <displayName><![CDATA[Smartarget Message Bar]]></displayName>
-    <version><![CDATA[1.0.5]]></version>
+    <version><![CDATA[1.0.6]]></version>
     <description><![CDATA[Display a message bar on your website.]]></description>
     <author><![CDATA[Smartarget]]></author>
     <tab><![CDATA[front_office_features]]></tab>

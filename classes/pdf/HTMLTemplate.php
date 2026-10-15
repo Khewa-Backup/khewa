@@ -1,31 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- */
-
-/**
- * @since 1.5
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 abstract class HTMLTemplateCore
 {
@@ -53,6 +29,11 @@ abstract class HTMLTemplateCore
      * @var Shop
      */
     public $shop;
+
+    /**
+     * @var Order|null
+     */
+    public $order;
 
     /**
      * Returns the template's HTML header.
@@ -96,14 +77,7 @@ abstract class HTMLTemplateCore
      */
     protected function getShopAddress()
     {
-        $shop_address = '';
-
-        $shop_address_obj = $this->shop->getAddress();
-        if (isset($shop_address_obj) && $shop_address_obj instanceof Address) {
-            $shop_address = AddressFormat::generateAddress($shop_address_obj, [], ' - ', ' ');
-        }
-
-        return $shop_address;
+        return AddressFormat::generateAddress($this->shop->getAddress(), [], ' - ', ' ');
     }
 
     /**
@@ -213,7 +187,7 @@ abstract class HTMLTemplateCore
      * If the template is not present in the theme directory, it will return the default template
      * in _PS_PDF_DIR_ directory.
      *
-     * @param $template_name
+     * @param string $template_name
      *
      * @return string
      */

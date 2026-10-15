@@ -20,13 +20,15 @@
 
 namespace PrestaShop\Module\Mbo\Handler\ErrorHandler;
 
-use Exception;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 interface ErrorHandlerInterface
 {
     /**
-     * @param Exception $error
+     * @param \Throwable $error
      * @param array|null $data
      */
-    public function handle(Exception $error, ?array $data = null): void;
+    public function handle(\Throwable $error, ?array $data = null): void;
 }

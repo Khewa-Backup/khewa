@@ -1,38 +1,19 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 declare(strict_types=1);
 
 namespace PrestaShop\PrestaShop\Adapter\Module\Repository;
 
+use Db;
 use Exception;
-use PrestaShop\PrestaShop\Adapter\AbstractObjectModelRepository;
 use PrestaShop\PrestaShop\Core\Domain\Module\Exception\ModuleNotFoundException;
 use PrestaShop\PrestaShop\Core\Domain\Module\ValueObject\ModuleId;
 use PrestaShop\PrestaShop\Core\Exception\CoreException;
+use PrestaShop\PrestaShop\Core\Repository\AbstractObjectModelRepository;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -40,10 +21,47 @@ use Symfony\Component\Finder\Finder;
  */
 class ModuleRepository extends AbstractObjectModelRepository
 {
+    /** @var string[] */
+    public const ADDITIONAL_ALLOWED_MODULES = [
+        'autoupgrade',
+    ];
+
+    private const COMPOSER_PACKAGE_TYPE = 'prestashop-module';
+
     /**
      * @var array
      */
     private $activeModulesPaths;
+
+    /**
+     * @var array
+     */
+    private $installedModulesPaths;
+
+    /**
+     * @var array
+     */
+    private $presentModulesPaths;
+
+    /**
+     * @var string
+     */
+    protected $rootDir;
+
+    /**
+     * @var string
+     */
+    protected $moduleDir;
+
+    /**
+     * @param string $rootDir
+     * @param string $moduleDir
+     */
+    public function __construct(string $rootDir, string $moduleDir)
+    {
+        $this->rootDir = $rootDir;
+        $this->moduleDir = $moduleDir;
+    }
 
     /**
      * @param ModuleId $moduleId
@@ -57,7 +75,30 @@ class ModuleRepository extends AbstractObjectModelRepository
     }
 
     /**
-     * Return active modules.
+     * Shops one module is enabled on (a module_shop row means "enabled on that shop"),
+     * empty when it has no row at all. The module is identified by its technical name
+     * (the module's primary identity), resolved through the module table.
+     *
+     * @return list<int>
+     */
+    public function getEnabledShopIds(string $technicalName): array
+    {
+        $rows = Db::getInstance()->executeS(
+            'SELECT ms.`id_shop`
+            FROM `' . _DB_PREFIX_ . 'module_shop` ms
+            INNER JOIN `' . _DB_PREFIX_ . 'module` m ON m.`id_module` = ms.`id_module`
+            WHERE m.`name` = "' . pSQL($technicalName) . '"
+            ORDER BY ms.`id_shop` ASC'
+        );
+
+        return is_array($rows) ? array_map(static fn (array $row): int => (int) $row['id_shop'], $rows) : [];
+    }
+
+    /**
+     * Return active modules (active in DB and present on the disk).
+     *
+     * This method must not trigger any exception because it is called during install and/or on kernel initialisation,
+     * it must not block those steps in any occasion.
      *
      * @return array
      */
@@ -69,20 +110,101 @@ class ModuleRepository extends AbstractObjectModelRepository
 
         $activeModules = [];
         try {
-            $modulesData = \Db::getInstance()->executeS(
+            $modulesData = Db::getInstance()->executeS(
                 'SELECT m.* FROM `' . _DB_PREFIX_ . 'module` m WHERE m.`active` = 1'
             );
 
             if (is_array($modulesData)) {
-                $activeModules = array_map(function (array $module): string {
+                $activeModulesInDb = array_map(function (array $module): string {
                     return $module['name'];
                 }, $modulesData);
+
+                foreach ($this->getModulesFromFolder() as $moduleName => $modulePath) {
+                    if (in_array($moduleName, $activeModulesInDb)) {
+                        $activeModules[] = $moduleName;
+                    }
+                }
             }
-        } catch (Exception $exception) {
+        } catch (Exception) {
             // DO nothing. getActiveModules() can be called during install BEFORE the database configuration has been defined
+            return [];
         }
 
         return $activeModules;
+    }
+
+    /**
+     * Return present modules (even if those not installed in DB).
+     *
+     * @return array
+     */
+    public function getPresentModules(): array
+    {
+        $presentModules = [];
+        foreach ($this->getModulesFromFolder() as $moduleName => $modulePath) {
+            $presentModules[] = $moduleName;
+        }
+
+        return $presentModules;
+    }
+
+    /**
+     * Return installed modules (present in DB regardless of its state AND in the modules folder).
+     *
+     * This method must not trigger any exception because it is called during install and/or on kernel initialisation,
+     * it must not block those steps in any occasion.
+     *
+     * @return array
+     */
+    public function getInstalledModules(): array
+    {
+        if (!defined('_DB_PREFIX_')) {
+            return [];
+        }
+
+        $installedModules = [];
+        try {
+            $modulesData = Db::getInstance()->executeS(
+                'SELECT m.* FROM `' . _DB_PREFIX_ . 'module` m'
+            );
+
+            if (is_array($modulesData)) {
+                $installedModulesInDb = array_map(function (array $module): string {
+                    return $module['name'];
+                }, $modulesData);
+
+                foreach ($this->getModulesFromFolder() as $moduleName => $modulePath) {
+                    if (in_array($moduleName, $installedModulesInDb)) {
+                        $installedModules[] = $moduleName;
+                    }
+                }
+            }
+        } catch (Exception) {
+            return [];
+        }
+
+        return $installedModules;
+    }
+
+    /**
+     * Returns installed module file paths.
+     *
+     * @return array<string, string> File paths indexed by module name
+     */
+    public function getInstalledModulesPaths(): array
+    {
+        if (null === $this->installedModulesPaths) {
+            $this->installedModulesPaths = [];
+            $installedModules = $this->getInstalledModules();
+
+            foreach ($this->getModulesFromFolder() as $moduleName => $modulePath) {
+                if (in_array($moduleName, $installedModules)) {
+                    $this->installedModulesPaths[$moduleName] = $modulePath;
+                }
+            }
+        }
+
+        return $this->installedModulesPaths;
     }
 
     /**
@@ -94,17 +216,96 @@ class ModuleRepository extends AbstractObjectModelRepository
     {
         if (null === $this->activeModulesPaths) {
             $this->activeModulesPaths = [];
-            $modulesFiles = Finder::create()->directories()->in(_PS_MODULE_DIR_)->depth(0);
             $activeModules = $this->getActiveModules();
 
-            foreach ($modulesFiles as $moduleFile) {
-                $moduleName = $moduleFile->getFilename();
+            foreach ($this->getModulesFromFolder() as $moduleName => $modulePath) {
                 if (in_array($moduleName, $activeModules)) {
-                    $this->activeModulesPaths[$moduleName] = $moduleFile->getPathname();
+                    $this->activeModulesPaths[$moduleName] = $modulePath;
                 }
             }
         }
 
         return $this->activeModulesPaths;
+    }
+
+    /**
+     * Returns present module file paths.
+     *
+     * @return array<string, string> File paths indexed by module name
+     */
+    public function getPresentModulesPaths(): array
+    {
+        if (null === $this->presentModulesPaths) {
+            $this->presentModulesPaths = [];
+
+            foreach ($this->getModulesFromFolder() as $moduleName => $modulePath) {
+                $this->presentModulesPaths[$moduleName] = $modulePath;
+            }
+        }
+
+        return $this->presentModulesPaths;
+    }
+
+    /**
+     * Returns an array of native modules
+     *
+     * @return array<string>
+     */
+    public function getNativeModules(): array
+    {
+        // Native modules are the one integrated in PrestaShop release via composer
+        // so we use the lock files to generate the list
+        $content = file_get_contents($this->rootDir . '/composer.lock');
+        $content = json_decode($content, true);
+        if (empty($content['packages'])) {
+            return [];
+        }
+
+        $modules = array_filter($content['packages'], function (array $package) {
+            return self::COMPOSER_PACKAGE_TYPE === $package['type'] && !empty($package['name']);
+        });
+        $modules = array_map(function (array $package) {
+            $vendorName = explode('/', $package['name']);
+
+            return $vendorName[1];
+        }, $modules);
+
+        return array_merge(
+            $modules,
+            static::ADDITIONAL_ALLOWED_MODULES
+        );
+    }
+
+    /**
+     * Returns an array of non-native module names
+     *
+     * @return array<int, string>
+     */
+    public function getNonNativeModules(): array
+    {
+        $nativeModules = $this->getNativeModules();
+
+        $modules = [];
+
+        foreach ($this->getModulesFromFolder() as $moduleName => $modulePath) {
+            if (!in_array($moduleName, $nativeModules)) {
+                $modules[] = $moduleName;
+            }
+        }
+
+        return $modules;
+    }
+
+    /**
+     * Returns an iterable of module names
+     *
+     * @return iterable
+     */
+    private function getModulesFromFolder(): iterable
+    {
+        $modulesFiles = Finder::create()->directories()->in($this->moduleDir)->depth(0);
+        foreach ($modulesFiles as $moduleFile) {
+            yield $moduleFile->getFilename() => $moduleFile->getPathname();
+        }
     }
 }

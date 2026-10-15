@@ -1,42 +1,14 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 class AdminModulesPositionsControllerCore extends AdminController
 {
     protected $display_key = 0;
 
-    /**
-     * @deprecated since 1.7.6, to be removed in the next minor
-     */
     public function __construct()
     {
-        @trigger_error(
-            'The AdminModulesPositionsController is deprecated and will be removed in the next minor',
-            E_USER_DEPRECATED
-        );
-
         $this->bootstrap = true;
         parent::__construct();
     }
@@ -44,7 +16,7 @@ class AdminModulesPositionsControllerCore extends AdminController
     public function postProcess()
     {
         // Getting key value for display
-        if (Tools::getValue('show_modules') && (string) (Tools::getValue('show_modules')) != 'all') {
+        if (Tools::getValue('show_modules') && (string) Tools::getValue('show_modules') != 'all') {
             $this->display_key = (int) Tools::getValue('show_modules');
         }
 
@@ -69,7 +41,7 @@ class AdminModulesPositionsControllerCore extends AdminController
                 $id_hook = (int) Tools::getValue('id_hook');
                 $module = Module::getInstanceById($id_module);
                 if (Validate::isLoadedObject($module)) {
-                    $module->updatePosition($id_hook, (int) Tools::getValue('direction'));
+                    $module->updatePosition($id_hook, (bool) Tools::getValue('direction'));
                     Tools::redirectAdmin($baseUrl . ($this->display_key ? '&show_modules=' . $this->display_key : '') . '&token=' . $this->token);
                 } else {
                     $this->errors[] = $this->trans('This module cannot be loaded.', [], 'Admin.Modules.Notification');
@@ -107,7 +79,7 @@ class AdminModulesPositionsControllerCore extends AdminController
                         foreach ($exceptions as $key => $except) {
                             if (empty($except)) {
                                 unset($exceptions[$key]);
-                            } elseif (!empty($except) && !Validate::isFileName($except)) {
+                            } elseif (!Validate::isFileName($except)) {
                                 $this->errors[] = $this->trans('No valid value for field exceptions has been defined.', [], 'Admin.Notifications.Error');
                             }
                         }
@@ -184,7 +156,7 @@ class AdminModulesPositionsControllerCore extends AdminController
                         }
 
                         // Add files exceptions
-                        if (!$module->editExceptions($id_hook, $exceptions, Shop::getContextListShopID())) {
+                        if (!$module->editExceptions($id_hook, $exceptions)) {
                             $this->errors[] = $this->trans('An error occurred while transplanting the module to its hook.', [], 'Admin.Modules.Notification');
                         } else {
                             Tools::redirectAdmin($baseUrl . '&conf=16' . ($this->display_key ? '&show_modules=' . $this->display_key : '') . '&token=' . $this->token);
@@ -245,6 +217,11 @@ class AdminModulesPositionsControllerCore extends AdminController
         }
     }
 
+    /**
+     * AdminController::initContent() override.
+     *
+     * @see AdminController::initContent()
+     */
     public function initContent()
     {
         $this->addjqueryPlugin('sortable');
@@ -253,8 +230,6 @@ class AdminModulesPositionsControllerCore extends AdminController
             $this->display = 'edit';
 
             $this->content .= $this->renderForm();
-        } else {
-            $this->content .= $this->initMain();
         }
 
         $this->context->smarty->assign([
@@ -264,77 +239,7 @@ class AdminModulesPositionsControllerCore extends AdminController
 
     public function initPageHeaderToolbar()
     {
-        $this->page_header_toolbar_btn['save'] = [
-            'href' => self::$currentIndex . '&addToHook' . ($this->display_key ? '&show_modules=' . $this->display_key : '') . '&token=' . $this->token,
-            'desc' => $this->trans('Transplant a module', [], 'Admin.Design.Feature'),
-            'icon' => 'process-icon-anchor',
-        ];
-
         return parent::initPageHeaderToolbar();
-    }
-
-    public function initMain()
-    {
-        // Init toolbar
-        $this->initToolbarTitle();
-
-        $admin_dir = basename(_PS_ADMIN_DIR_);
-        $modules = Module::getModulesInstalled();
-
-        $assoc_modules_id = [];
-        foreach ($modules as $module) {
-            if ($tmp_instance = Module::getInstanceById((int) $module['id_module'])) {
-                // We want to be able to sort modules by display name
-                $module_instances[$tmp_instance->displayName] = $tmp_instance;
-                // But we also want to associate hooks to modules using the modules IDs
-                $assoc_modules_id[(int) $module['id_module']] = $tmp_instance->displayName;
-            }
-        }
-        ksort($module_instances);
-        $hooks = Hook::getHooks(false, false);
-        foreach ($hooks as $key => $hook) {
-            $hooks[$key]['position'] = Hook::isDisplayHookName($hook['name']);
-
-            // Get all modules for this hook or only the filtered module
-            $hooks[$key]['modules'] = Hook::getModulesFromHook($hook['id_hook'], $this->display_key);
-            $hooks[$key]['module_count'] = count($hooks[$key]['modules']);
-            if ($hooks[$key]['module_count']) {
-                // If modules were found, link to the previously created Module instances
-                if (is_array($hooks[$key]['modules']) && !empty($hooks[$key]['modules'])) {
-                    foreach ($hooks[$key]['modules'] as $module_key => $module) {
-                        if (isset($assoc_modules_id[$module['id_module']])) {
-                            $hooks[$key]['modules'][$module_key]['instance'] = $module_instances[$assoc_modules_id[$module['id_module']]];
-                        }
-                    }
-                }
-            } else {
-                unset($hooks[$key]);
-            }
-        }
-
-        $this->addJqueryPlugin('tablednd');
-
-        $this->toolbar_btn['save'] = [
-            'href' => self::$currentIndex . '&addToHook' . ($this->display_key ? '&show_modules=' . $this->display_key : '') . '&token=' . $this->token,
-            'desc' => $this->trans('Transplant a module', [], 'Admin.Design.Feature'),
-        ];
-
-        $this->context->smarty->assign([
-            'show_toolbar' => true,
-            'toolbar_btn' => $this->toolbar_btn,
-            'title' => $this->toolbar_title,
-            'toolbar_scroll' => 'false',
-            'token' => $this->token,
-            'url_show_modules' => self::$currentIndex . '&token=' . $this->token . '&show_modules=',
-            'modules' => $module_instances,
-            'url_show_invisible' => self::$currentIndex . '&token=' . $this->token . '&show_modules=' . (int) Tools::getValue('show_modules') . '&hook_position=',
-            'display_key' => $this->display_key,
-            'hooks' => $hooks,
-            'url_submit' => self::$currentIndex . '&token=' . $this->token,
-            'can_move' => (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP) ? false : true,
-        ]);
-
-        return $this->createTemplate('list_modules.tpl')->fetch();
     }
 
     public function renderForm()
@@ -414,7 +319,7 @@ class AdminModulesPositionsControllerCore extends AdminController
             'hooks' => $hooks,
             'exception_list' => $this->displayModuleExceptionList(array_shift($excepts_list), 0),
             'exception_list_diff' => $exception_list_diff,
-            'except_diff' => isset($excepts_diff) ? $excepts_diff : null,
+            'except_diff' => $excepts_diff,
             'display_key' => $this->display_key,
             'modules' => $modules,
             'show_toolbar' => true,
@@ -481,9 +386,9 @@ class AdminModulesPositionsControllerCore extends AdminController
     public function ajaxProcessUpdatePositions()
     {
         if ($this->access('edit')) {
-            $id_module = (int) (Tools::getValue('id_module'));
-            $id_hook = (int) (Tools::getValue('id_hook'));
-            $way = (int) (Tools::getValue('way'));
+            $id_module = (int) Tools::getValue('id_module');
+            $id_hook = (int) Tools::getValue('id_hook');
+            $way = (bool) Tools::getValue('way');
             $positions = Tools::getValue((string) $id_hook);
             $position = (is_array($positions)) ? array_search($id_hook . '_' . $id_module, $positions) : null;
             $module = Module::getInstanceById($id_module);
@@ -551,7 +456,7 @@ class AdminModulesPositionsControllerCore extends AdminController
             if (_PS_MODE_DEMO_) {
                 die('{"hasError" : true, "errors" : ["Live Edit: This functionality has been disabled."]}');
             }
-            /* PrestaShop demo mode*/
+            /* PrestaShop demo mode */
 
             $hook_name = Tools::getValue('hook');
             $hookableModulesList = [];
@@ -632,12 +537,14 @@ class AdminModulesPositionsControllerCore extends AdminController
      */
     public function ajaxProcessGetPossibleHookingListForModule()
     {
-        $module_id = (int) Tools::getValue('module_id');
-        if ($module_id == 0) {
-            die('{"hasError" : true, "errors" : ["Wrong module ID."]}');
-        }
+        if ($this->access('view')) {
+            $module_id = (int) Tools::getValue('module_id');
+            if ($module_id == 0) {
+                die('{"hasError" : true, "errors" : ["Wrong module ID."]}');
+            }
 
-        $module_instance = Module::getInstanceById($module_id);
-        die(json_encode($module_instance->getPossibleHooksList()));
+            $module_instance = Module::getInstanceById($module_id);
+            die(json_encode($module_instance->getPossibleHooksList()));
+        }
     }
 }

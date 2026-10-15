@@ -1,41 +1,35 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
+use PrestaShopBundle\Security\Admin\LegacyAdminTokenValidator;
+
 class CmsControllerCore extends FrontController
 {
+    public const CMS_CASE_PAGE = 1;
+    public const CMS_CASE_CATEGORY = 2;
+
+    /** @var string */
     public $php_self = 'cms';
     public $assignCase;
-    public $cms;
 
-    /** @var CMSCategory */
-    public $cms_category;
+    /**
+     * @var CMS|null
+     */
+    protected $cms;
+
+    /**
+     * @var CMSCategory|null
+     */
+    protected $cms_category;
+
+    /** @var bool */
     public $ssl = false;
 
-    public function canonicalRedirection($canonicalURL = '')
+    public function canonicalRedirection(string $canonicalURL = ''): void
     {
-        if (Validate::isLoadedObject($this->cms) && ($canonicalURL = $this->context->link->getCMSLink($this->cms, $this->cms->link_rewrite, $this->ssl))) {
+        if (Validate::isLoadedObject($this->cms) && ($canonicalURL = $this->context->link->getCMSLink($this->cms, $this->cms->link_rewrite))) {
             parent::canonicalRedirection($canonicalURL);
         } elseif (Validate::isLoadedObject($this->cms_category) && ($canonicalURL = $this->context->link->getCMSCategoryLink($this->cms_category))) {
             parent::canonicalRedirection($canonicalURL);
@@ -47,7 +41,7 @@ class CmsControllerCore extends FrontController
      *
      * @see FrontController::init()
      */
-    public function init()
+    public function init(): void
     {
         if ($id_cms = (int) Tools::getValue('id_cms')) {
             $this->cms = new CMS($id_cms, $this->context->language->id, $this->context->shop->id);
@@ -64,17 +58,22 @@ class CmsControllerCore extends FrontController
 
         $this->canonicalRedirection();
 
-        // assignCase (1 = CMS page, 2 = CMS category)
         if (Validate::isLoadedObject($this->cms)) {
-            $adtoken = Tools::getAdminToken('AdminCmsContent' . (int) Tab::getIdFromClassName('AdminCmsContent') . (int) Tools::getValue('id_employee'));
-            if (!$this->cms->isAssociatedToShop() || !$this->cms->active && Tools::getValue('adtoken') != $adtoken) {
+            if (!$this->cms->isAssociatedToShop()) {
                 $this->redirect_after = '404';
                 $this->redirect();
+            } elseif (!$this->cms->active) {
+                $adminTokenValidator = $this->getContainer()->get(LegacyAdminTokenValidator::class);
+                $isAdminTokenValid = $adminTokenValidator->isTokenValid((int) Tools::getValue('id_employee'), Tools::getValue('adtoken'));
+                if (!$isAdminTokenValid) {
+                    $this->redirect_after = '404';
+                    $this->redirect();
+                }
             } else {
-                $this->assignCase = 1;
+                $this->assignCase = self::CMS_CASE_PAGE;
             }
         } elseif (Validate::isLoadedObject($this->cms_category) && $this->cms_category->active) {
-            $this->assignCase = 2;
+            $this->assignCase = self::CMS_CASE_CATEGORY;
         } else {
             $this->redirect_after = '404';
             $this->redirect();
@@ -86,20 +85,21 @@ class CmsControllerCore extends FrontController
      *
      * @see FrontController::initContent()
      */
-    public function initContent()
+    public function initContent(): void
     {
-        if ($this->assignCase == 1) {
+        if ($this->assignCase == self::CMS_CASE_PAGE) {
             $cmsVar = $this->objectPresenter->present($this->cms);
 
+            // Chained hook call - if multiple modules are hooked here, they will receive the result of the previous one as a parameter
             $filteredCmsContent = Hook::exec(
                 'filterCmsContent',
                 ['object' => $cmsVar],
-                $id_module = null,
-                $array_return = false,
-                $check_exceptions = true,
-                $use_push = false,
-                $id_shop = null,
-                $chain = true
+                null,
+                false,
+                true,
+                false,
+                null,
+                true
             );
             if (!empty($filteredCmsContent['object'])) {
                 $cmsVar = $filteredCmsContent['object'];
@@ -117,25 +117,29 @@ class CmsControllerCore extends FrontController
                 'cms/page',
                 ['entity' => 'cms', 'id' => $this->cms->id]
             );
-        } elseif ($this->assignCase == 2) {
+        } elseif ($this->assignCase == self::CMS_CASE_CATEGORY) {
             $cmsCategoryVar = $this->getTemplateVarCategoryCms();
 
+            // Chained hook call - if multiple modules are hooked here, they will receive the result of the previous one as a parameter
             $filteredCmsCategoryContent = Hook::exec(
                 'filterCmsCategoryContent',
                 ['object' => $cmsCategoryVar],
-                $id_module = null,
-                $array_return = false,
-                $check_exceptions = true,
-                $use_push = false,
-                $id_shop = null,
-                $chain = true
+                null,
+                false,
+                true,
+                false,
+                null,
+                true
             );
             if (!empty($filteredCmsCategoryContent['object'])) {
                 $cmsCategoryVar = $filteredCmsCategoryContent['object'];
             }
 
             $this->context->smarty->assign($cmsCategoryVar);
-            $this->setTemplate('cms/category');
+            $this->setTemplate(
+                'cms/category',
+                ['entity' => 'cms_category', 'id' => $this->cms_category->id]
+            );
         }
         parent::initContent();
     }
@@ -144,16 +148,16 @@ class CmsControllerCore extends FrontController
      * Return an array of IDs of CMS pages, which shouldn't be forwared to their canonical URLs in SSL environment.
      * Required for pages which are shown in iframes.
      */
-    protected function getSSLCMSPageIds()
+    protected function getSSLCMSPageIds(): array
     {
         return [(int) Configuration::get('PS_CONDITIONS_CMS_ID'), (int) Configuration::get('LEGAL_CMS_ID_REVOCATION')];
     }
 
-    public function getBreadcrumbLinks()
+    public function getBreadcrumbLinks(): array
     {
         $breadcrumb = parent::getBreadcrumbLinks();
 
-        if ($this->assignCase == 2) {
+        if ($this->assignCase == self::CMS_CASE_CATEGORY) {
             $cmsCategory = new CMSCategory($this->cms_category->id_cms_category);
         } else {
             $cmsCategory = new CMSCategory($this->cms->id_cms_category);
@@ -161,15 +165,17 @@ class CmsControllerCore extends FrontController
 
         if ($cmsCategory->id_parent != 0) {
             foreach (array_reverse($cmsCategory->getParentsCategories()) as $category) {
-                $cmsSubCategory = new CMSCategory($category['id_cms_category']);
-                $breadcrumb['links'][] = [
-                    'title' => $cmsSubCategory->getName(),
-                    'url' => $this->context->link->getCMSCategoryLink($cmsSubCategory),
-                ];
+                if ($category['active']) {
+                    $cmsSubCategory = new CMSCategory($category['id_cms_category']);
+                    $breadcrumb['links'][] = [
+                        'title' => $cmsSubCategory->getName(),
+                        'url' => $this->context->link->getCMSCategoryLink($cmsSubCategory),
+                    ];
+                }
             }
         }
 
-        if ($this->assignCase == 1) {
+        if ($this->assignCase == self::CMS_CASE_PAGE && $this->context->controller instanceof CmsControllerCore) {
             $breadcrumb['links'][] = [
                 'title' => $this->context->controller->cms->meta_title,
                 'url' => $this->context->link->getCMSLink($this->context->controller->cms),
@@ -179,11 +185,17 @@ class CmsControllerCore extends FrontController
         return $breadcrumb;
     }
 
-    public function getTemplateVarPage()
+    /**
+     * Initializes a set of commonly used variables related to the current page, available for use
+     * in the template. @see FrontController::assignGeneralPurposeVariables for more information.
+     *
+     * @return array
+     */
+    public function getTemplateVarPage(): array
     {
         $page = parent::getTemplateVarPage();
 
-        if ($this->assignCase == 2) {
+        if ($this->assignCase == self::CMS_CASE_CATEGORY) {
             $page['body_classes']['cms-id-' . $this->cms_category->id] = true;
         } else {
             $page['body_classes']['cms-id-' . $this->cms->id] = true;
@@ -195,7 +207,7 @@ class CmsControllerCore extends FrontController
         return $page;
     }
 
-    public function getTemplateVarCategoryCms()
+    public function getTemplateVarCategoryCms(): array
     {
         $categoryCms = [];
 
@@ -208,11 +220,56 @@ class CmsControllerCore extends FrontController
             $categoryCms['sub_categories'][$subCategory['id_cms_category']]['link'] = $this->context->link->getCMSCategoryLink($subCategory['id_cms_category'], $subCategory['link_rewrite']);
         }
 
-        foreach (CMS::getCMSPages($this->context->language->id, (int) $this->cms_category->id, true, (int) $this->context->shop->id) as $cmsPages) {
-            $categoryCms['cms_pages'][$cmsPages['id_cms']] = $cmsPages;
-            $categoryCms['cms_pages'][$cmsPages['id_cms']]['link'] = $this->context->link->getCMSLink($cmsPages['id_cms'], $cmsPages['link_rewrite']);
+        foreach (CMS::getCMSPages($this->context->language->id, (int) $this->cms_category->id, true, (int) $this->context->shop->id) as $cmsPage) {
+            $cmsVar = $this->objectPresenter->present(new CMS((int) $cmsPage['id_cms'], (int) $this->context->language->id));
+            $filteredCmsContent = Hook::exec(
+                'filterCmsContent',
+                ['object' => $cmsVar],
+                null,
+                false,
+                true,
+                false,
+                null,
+                true
+            );
+            if (!empty($filteredCmsContent['object'])) {
+                $cmsVar = $filteredCmsContent['object'];
+            }
+
+            $categoryCms['cms_pages'][$cmsPage['id_cms']] = $cmsVar;
+            $categoryCms['cms_pages'][$cmsPage['id_cms']]['link'] = $this->context->link->getCMSLink($cmsPage['id_cms'], $cmsPage['link_rewrite']);
         }
 
         return $categoryCms;
+    }
+
+    /**
+     * @return CMS|null
+     */
+    public function getCms(): ?CMS
+    {
+        return $this->cms;
+    }
+
+    /**
+     * @return CMSCategory|null
+     */
+    public function getCmsCategory(): ?CMSCategory
+    {
+        return $this->cms_category;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCanonicalURL(): string
+    {
+        if (Validate::isLoadedObject($this->cms)) {
+            return $this->context->link->getCMSLink($this->cms, $this->cms->link_rewrite);
+        } elseif (Validate::isLoadedObject($this->cms_category)) {
+            return $this->context->link->getCMSCategoryLink($this->cms_category);
+        }
+
+        return '';
     }
 }

@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,35 +16,48 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
-use PaypalAddons\classes\API\PaypalApiManager;
-use PaypalPPBTlib\Extensions\ProcessLogger\ProcessLoggerHandler;
 use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalAddons\classes\API\PaypalApiManager;
+use PaypalAddons\classes\API\Response\ResponseGetSellerStatus;
+use PaypalAddons\classes\PUI\DataUserForm;
+use PaypalAddons\classes\PuiMethodInterface;
+use PaypalAddons\classes\WhiteList\WhiteListService;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Class MethodPPP
+ *
  * @see https://paypal.github.io/PayPal-PHP-SDK/ REST API sdk doc
  * @see https://developer.paypal.com/docs/api/payments/v1/ REST API references
  */
-class MethodPPP extends AbstractMethodPaypal
+class MethodPPP extends AbstractMethodPaypal implements PuiMethodInterface
 {
-    public $errors = array();
+    public $errors = [];
 
-    /** @var boolean shortcut payment from product or cart page*/
+    /** @var bool shortcut payment from product or cart page */
     public $short_cut;
 
-    /** @var string payment payer ID returned by paypal*/
+    /** @var string payment payer ID returned by paypal */
     private $payerId;
 
     /** payment Object IDl*/
     public $paymentId;
+
+    /** @var DataUserForm */
+    protected $puiDataUser;
 
     /**
      * @return mixed
@@ -67,17 +81,35 @@ class MethodPPP extends AbstractMethodPaypal
 
     protected $payment_method = 'PayPal';
 
-    public $advancedFormParametres = array(
-        'paypal_os_accepted_two'
-    );
+    /** @var WhiteListService */
+    protected $whiteListService;
 
     public function __construct()
     {
+        parent::__construct();
+
+        $this->whiteListService = new WhiteListService();
+        $this->initApiManager();
+    }
+
+    protected function initApiManager()
+    {
         $this->paypalApiManager = new PaypalApiManager($this);
+
+        return $this;
+    }
+
+    public function setSandbox($isSandbox)
+    {
+        parent::setSandbox($isSandbox);
+        $this->initApiManager();
+        $this->checkCredentials();
+
+        return $this;
     }
 
     /**
-     * @param $values array replace for tools::getValues()
+     * @param array $values replace for tools::getValues()
      */
     public function setParameters($values)
     {
@@ -91,13 +123,16 @@ class MethodPPP extends AbstractMethodPaypal
     public function logOut($sandbox = null)
     {
         if ($sandbox == null) {
-            $mode = Configuration::get('PAYPAL_SANDBOX') ? 'SANDBOX' : 'LIVE';
-        } else {
-            $mode = (int)$sandbox ? 'SANDBOX' : 'LIVE';
+            $sandbox = $this->isSandbox();
         }
 
-        Configuration::updateValue('PAYPAL_' . $mode . '_CLIENTID', '');
-        Configuration::updateValue('PAYPAL_' . $mode . '_SECRET', '');
+        if ($sandbox) {
+            Configuration::updateValue(PayPal::PAYPAL_PPP_CLIENTID_SANDBOX, '');
+            Configuration::updateValue(PayPal::PAYPAL_PPP_SECRET_SANDBOX, '');
+        } else {
+            Configuration::updateValue(PayPal::PAYPAL_PPP_CLIENTID_LIVE, '');
+            Configuration::updateValue(PayPal::PAYPAL_PPP_SECRET_LIVE, '');
+        }
         Configuration::updateValue('PAYPAL_CONNECTION_PPP_CONFIGURED', 0);
     }
 
@@ -106,42 +141,46 @@ class MethodPPP extends AbstractMethodPaypal
      */
     public function setConfig($params)
     {
-        if ($this->isSandbox()) {
-            Configuration::updateValue('PAYPAL_SANDBOX_CLIENTID', $params['clientId']);
-            Configuration::updateValue('PAYPAL_SANDBOX_SECRET', $params['secret']);
+        if (isset($params['isSandbox'])) {
+            $isSandbox = $params['isSandbox'];
         } else {
-            Configuration::updateValue('PAYPAL_LIVE_CLIENTID', $params['clientId']);
-            Configuration::updateValue('PAYPAL_LIVE_SECRET', $params['secret']);
+            $isSandbox = $this->isSandbox();
+        }
+
+        if ($isSandbox) {
+            Configuration::updateValue(PayPal::PAYPAL_PPP_CLIENTID_SANDBOX, $params['clientId']);
+            Configuration::updateValue(
+                PayPal::PAYPAL_PPP_SECRET_SANDBOX,
+                $this->module->getToolKit()->encrypt($params['secret'])
+            );
+            Configuration::updateValue(PayPal::PAYPAL_PPP_MERCHANT_ID_SANDBOX, $params['merchantId']);
+        } else {
+            Configuration::updateValue(PayPal::PAYPAL_PPP_CLIENTID_LIVE, $params['clientId']);
+            Configuration::updateValue(
+                PayPal::PAYPAL_PPP_SECRET_LIVE,
+                $this->module->getToolKit()->encrypt($params['secret'])
+            );
+            Configuration::updateValue(PayPal::PAYPAL_PPP_MERCHANT_ID_LIVE, $params['merchantId']);
         }
     }
 
-    public function getConfig(Paypal $paypal)
+    public function getConfig(PayPal $module)
     {
-    }
-
-    public function getOrderStatus()
-    {
-        if ((int)Configuration::get('PAYPAL_CUSTOMIZE_ORDER_STATUS')) {
-            $orderStatus = (int)Configuration::get('PAYPAL_OS_ACCEPTED_TWO');
-        } else {
-            $orderStatus = (int)Configuration::get('PS_OS_PAYMENT');
-        }
-
-        return $orderStatus;
     }
 
     /**
-     * @see AbstractMethodPaypal::confirmCapture()
+     * @param PaypalOrder $orderPayPal
+     *
+     * @return mixed
      */
     public function confirmCapture($orderPayPal)
     {
+        return $this->paypalApiManager->getCaptureAuthorizeRequest($orderPayPal)->execute();
     }
 
-    /**
-     * @see AbstractMethodPaypal::void()
-     */
     public function void($orderPayPal)
     {
+        return $this->paypalApiManager->getAuthorizationVoidRequest($orderPayPal)->execute();
     }
 
     /**
@@ -149,21 +188,27 @@ class MethodPPP extends AbstractMethodPaypal
      */
     public function isConfigured()
     {
+        if (false == $this->whiteListService->isEligibleContext()) {
+            return false;
+        }
+
         if ($this->isCredentialsSetted() === false) {
             return false;
         }
 
-        if ((bool)Configuration::get('PAYPAL_CONNECTION_PPP_CONFIGURED')) {
+        if ((bool) Configuration::get('PAYPAL_CONNECTION_PPP_CONFIGURED')) {
             return true;
         }
 
         $this->checkCredentials();
-        return (bool)Configuration::get('PAYPAL_CONNECTION_PPP_CONFIGURED');
+
+        return (bool) Configuration::get('PAYPAL_CONNECTION_PPP_CONFIGURED');
     }
 
     /**
      * Assign form data for Paypal Plus payment option
-     * @return boolean
+     *
+     * @return bool
      */
     public function assignJSvarsPaypalPlus()
     {
@@ -171,7 +216,7 @@ class MethodPPP extends AbstractMethodPaypal
         try {
             $approval_url = $this->init()->getApproveLink();
             $context->cookie->__set('paypal_plus_payment', $this->paymentId);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return false;
         }
 
@@ -179,52 +224,18 @@ class MethodPPP extends AbstractMethodPaypal
         $address_invoice = new Address($context->cart->id_address_invoice);
         $country_invoice = new Country($address_invoice->id_country);
 
-        Media::addJsDef(array(
+        Media::addJsDef([
             'approvalUrlPPP' => $approval_url,
             'idPaymentPPP' => $this->getPaymentId(),
-            'modePPP' => Configuration::get('PAYPAL_SANDBOX')  ? 'sandbox' : 'live',
+            'modePPP' => Configuration::get('PAYPAL_SANDBOX') ? 'sandbox' : 'live',
             'languageIsoCodePPP' => $context->language->iso_code,
             'countryIsoCodePPP' => $country_invoice->iso_code,
-            'ajaxPatchUrl' => $context->link->getModuleLink('paypal', 'pppPatch', array(), true),
-        ));
+            /* @phpstan-ignore-next-line */
+            'ajaxPatchUrl' => $context->link->getModuleLink('paypal', 'pppPatch', [], true),
+        ]);
         Media::addJsDefL('waitingRedirectionMsg', $paypal->l('In few seconds, you will be redirected to PayPal. Please wait.', get_class($this)));
 
         return true;
-    }
-
-    public function getTplVars()
-    {
-        $tplVars = array();
-
-        $tplVars['accountConfigured'] = $this->isConfigured();
-        $tplVars['urlOnboarding'] = $this->getUrlOnboarding();
-        $tplVars['paypalOnboardingLib'] = $this->isSandbox() ?
-            'https://www.sandbox.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js' :
-            'https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js';
-
-        return $tplVars;
-
-
-
-        $sandboxMode = (int)Configuration::get('PAYPAL_SANDBOX');
-
-        if ($sandboxMode) {
-            $tpl_vars = array(
-                'paypal_sandbox_clientid' => Configuration::get('PAYPAL_SANDBOX_CLIENTID'),
-                'paypal_sandbox_secret' => Configuration::get('PAYPAL_SANDBOX_SECRET'),
-            );
-        } else {
-            $tpl_vars = array(
-                'paypal_live_secret' => Configuration::get('PAYPAL_LIVE_SECRET'),
-                'paypal_live_clientid' => Configuration::get('PAYPAL_LIVE_CLIENTID')
-            );
-        }
-
-        $tpl_vars['accountConfigured'] = $this->isConfigured();
-        $tpl_vars['sandboxMode'] = $sandboxMode;
-
-
-        return $tpl_vars;
     }
 
     public function checkCredentials()
@@ -236,7 +247,8 @@ class MethodPPP extends AbstractMethodPaypal
         } else {
             $this->setConfig([
                 'clientId' => '',
-                'secret' => ''
+                'secret' => '',
+                'merchantId' => '',
             ]);
             Configuration::updateValue('PAYPAL_CONNECTION_PPP_CONFIGURED', 0);
 
@@ -246,28 +258,6 @@ class MethodPPP extends AbstractMethodPaypal
         }
     }
 
-    public function getAdvancedFormInputs()
-    {
-        $inputs = array();
-        $module = Module::getInstanceByName($this->name);
-        $orderStatuses = $module->getOrderStatuses();
-
-        $inputs[] = array(
-            'type' => 'select',
-            'label' => $module->l('Payment accepted and transaction completed', get_class($this)),
-            'name' => 'paypal_os_accepted_two',
-            'hint' => $module->l('You are currently using the Sale mode (the authorization and capture occur at the same time as the sale). So the payement is accepted instantly and the new order is created in the "Payment accepted" status. You can customize the status for orders with completed transactions. Ex : you can create an additional status "Payment accepted via PayPal" and set it as the default status.', get_class($this)),
-            'desc' => $module->l('Default status : Payment accepted', get_class($this)),
-            'options' => array(
-                'query' => $orderStatuses,
-                'id' => 'id',
-                'name' => 'name'
-            )
-        );
-
-        return $inputs;
-    }
-
     public function getClientId($sandbox = null)
     {
         if ($sandbox === null) {
@@ -275,9 +265,9 @@ class MethodPPP extends AbstractMethodPaypal
         }
 
         if ($sandbox) {
-            $clientId = Configuration::get('PAYPAL_SANDBOX_CLIENTID');
+            $clientId = Configuration::get(PayPal::PAYPAL_PPP_CLIENTID_SANDBOX);
         } else {
-            $clientId = Configuration::get('PAYPAL_LIVE_CLIENTID');
+            $clientId = Configuration::get(PayPal::PAYPAL_PPP_CLIENTID_LIVE);
         }
 
         return $clientId;
@@ -290,22 +280,25 @@ class MethodPPP extends AbstractMethodPaypal
         }
 
         if ($sandbox) {
-            $secret = Configuration::get('PAYPAL_SANDBOX_SECRET');
+            $secret = Configuration::get(PayPal::PAYPAL_PPP_SECRET_SANDBOX);
         } else {
-            $secret = Configuration::get('PAYPAL_LIVE_SECRET');
+            $secret = Configuration::get(PayPal::PAYPAL_PPP_SECRET_LIVE);
         }
+
+        $secret = $this->module->getToolKit()->decrypt($secret);
 
         return $secret;
     }
 
     public function getIntent()
     {
-        return 'CAPTURE';
+        return Configuration::get('PAYPAL_API_INTENT') == 'sale' ? self::SALE : self::AUTHORIZE;
     }
 
     public function getReturnUrl()
     {
-        return Context::getContext()->link->getModuleLink($this->name, 'pppValidation', array(), true);
+        /* @phpstan-ignore-next-line */
+        return Context::getContext()->link->getModuleLink($this->name, 'pppValidation', [], true);
     }
 
     public function getCancelUrl()
@@ -315,7 +308,7 @@ class MethodPPP extends AbstractMethodPaypal
 
     public function getPaypalPartnerId()
     {
-        return getenv('PLATEFORM') == 'PSREAD' ? 'PrestaShop_Cart_Ready_PPP' : 'PrestaShop_Cart_PPP';
+        return getenv('PLATEFORM') == 'PSREAD' ? 'PrestaShop_Cart_Ready_PPP' : 'PRESTASHOP_Cart_SPB';
     }
 
     public function getShortCut()
@@ -326,6 +319,90 @@ class MethodPPP extends AbstractMethodPaypal
     public function setShortCut($shortCut)
     {
         $this->short_cut = (bool) $shortCut;
+
         return $this;
+    }
+
+    public function createPartnerReferrals()
+    {
+        return $this->paypalApiManager->getPartnerReferralsRequest()->execute();
+    }
+
+    public function initPui()
+    {
+        if ($this->isConfigured() == false) {
+            throw new Exception('Module is not configured');
+        }
+
+        /** @var PaypalAddons\classes\API\Response\ResponseOrderCreate $response */
+        $response = $this->paypalApiManager->getOrderPuiRequest()->execute();
+
+        if ($response->isSuccess() == false) {
+            throw new Exception($response->getError()->getMessage());
+        }
+
+        $getOrderResponse = $this->paypalApiManager->getOrderGetRequest($response->getPaymentId())->execute();
+
+        if ($getOrderResponse->isSuccess() == false) {
+            throw new Exception($getOrderResponse->getError()->getMessage());
+        }
+
+        $transactionDetails = [
+            'method' => 'PPP',
+            'transaction_id' => null,
+            'id_payment' => $response->getPaymentId(),
+            'payment_method' => $this->getPaymentMethod(),
+            'currency' => $getOrderResponse->getPurchaseUnit()->getCurrency(),
+            'payment_status' => $getOrderResponse->getStatus(),
+            'payment_tool' => 'PAY_UPON_INVOICE',
+            'intent' => $this->getIntent(),
+            'capture' => false,
+        ];
+        /** @var PayPal $paypal */
+        $paypal = Module::getInstanceByName($this->name);
+        $paypal->validateOrder(
+            Context::getContext()->cart->id,
+            $this->getOrderStatus(),
+            $getOrderResponse->getPurchaseUnit()->getAmount(),
+            $this->getPaymentMethod(),
+            null,
+            $transactionDetails
+        );
+    }
+
+    public function getPuiDataUser()
+    {
+        return $this->puiDataUser;
+    }
+
+    public function setPuiDataUser(DataUserForm $data)
+    {
+        $this->puiDataUser = $data;
+    }
+
+    public function getSellerStatus()
+    {
+        if (empty($this->getMerchantId())) {
+            $response = new ResponseGetSellerStatus();
+            $response->setSuccess(false);
+
+            return $response;
+        }
+
+        return $this->paypalApiManager->getSellerStatusRequest()->execute();
+    }
+
+    public function acdcGenerateToken()
+    {
+        return $this->paypalApiManager->getAcdcGenerateTokenRequest()->execute();
+    }
+
+    public function getMerchantId()
+    {
+        if ($this->isSandbox()) {
+            return Configuration::get(PayPal::PAYPAL_PPP_MERCHANT_ID_SANDBOX);
+        }
+
+        return Configuration::get(PayPal::PAYPAL_PPP_MERCHANT_ID_LIVE);
     }
 }

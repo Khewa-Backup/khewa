@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
@@ -41,7 +21,7 @@ class AliasCore extends ObjectModel
         'primary' => 'id_alias',
         'fields' => [
             'search' => ['type' => self::TYPE_STRING, 'validate' => 'isValidSearch', 'required' => true, 'size' => 255],
-            'alias' => ['type' => self::TYPE_STRING, 'validate' => 'isValidSearch', 'required' => true, 'size' => 255],
+            'alias' => ['type' => self::TYPE_STRING, 'validate' => 'isValidSearch', 'required' => true, 'size' => 191],
             'active' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
         ],
     ];
@@ -52,12 +32,10 @@ class AliasCore extends ObjectModel
      * @param int|null $id Alias ID
      * @param string|null $alias Alias
      * @param string|null $search Search string
-     * @param int|null $idLang Language ID
      */
-    public function __construct($id = null, $alias = null, $search = null, $idLang = null)
+    public function __construct($id = null, $alias = null, $search = null)
     {
         $this->def = Alias::getDefinition($this);
-        $this->setDefinitionRetrocompatibility();
 
         if ($id) {
             parent::__construct($id);
@@ -138,9 +116,7 @@ class AliasCore extends ObjectModel
     }
 
     /**
-     * This method is allow to know if a feature is used or active.
-     *
-     * @since 1.5.0.1
+     * This method is allowed to know if a feature is used or active.
      *
      * @return bool
      */
@@ -150,13 +126,11 @@ class AliasCore extends ObjectModel
     }
 
     /**
-     * This method is allow to know if a alias exist for AdminImportController.
+     * This method is allowed to know if an alias exist for AdminImportController.
      *
      * @param int $idAlias Alias ID
      *
      * @return bool
-     *
-     * @since 1.5.6.0
      */
     public static function aliasExists($idAlias)
     {

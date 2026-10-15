@@ -1,32 +1,12 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Adapter;
 
-use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Doctrine\ORM\Tools\Setup;
 use Exception;
 use LegacyCompilerPass;
@@ -35,9 +15,17 @@ use PrestaShop\PrestaShop\Adapter\Container\ContainerParametersExtension;
 use PrestaShop\PrestaShop\Adapter\Container\DoctrineBuilderExtension;
 use PrestaShop\PrestaShop\Adapter\Container\LegacyContainer;
 use PrestaShop\PrestaShop\Adapter\Container\LegacyContainerBuilder;
+use PrestaShop\PrestaShop\Adapter\Container\ValidatorBuilderExtension;
+use PrestaShop\PrestaShop\Adapter\Doctrine\FrontDoctrineProxyWarmer;
+use PrestaShop\PrestaShop\Adapter\Module\Repository\CachedModuleRepository;
+use PrestaShop\PrestaShop\Adapter\Module\Repository\ModuleRepository;
 use PrestaShop\PrestaShop\Core\EnvironmentInterface;
 use PrestaShopBundle\DependencyInjection\Compiler\LoadServicesFromModulesPass;
 use PrestaShopBundle\Exception\ServiceContainerException;
+use PrestaShopBundle\PrestaShopBundle;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\NullAdapter;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
@@ -46,9 +34,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-/**
- * Build the Container for PrestaShop Legacy.
- */
 class ContainerBuilder
 {
     /**
@@ -97,7 +82,9 @@ class ContainerBuilder
             );
         }
         if (!isset(self::$containers[$containerName])) {
-            $builder = new ContainerBuilder(new Environment($isDebug));
+            // Container builder is only used for FO now, so we hard code the Environment to use the front appId so that
+            // it uses the cache dir from FrontKernel (in var/cache/{dev|prod}/front)
+            $builder = new ContainerBuilder(new Environment($isDebug, $isDebug ? 'dev' : 'prod', 'front'));
             self::$containers[$containerName] = $builder->buildContainer($containerName);
         }
 
@@ -123,12 +110,23 @@ class ContainerBuilder
     {
         $this->containerName = $containerName;
         $this->containerClassName = ucfirst($this->containerName) . 'Container';
-        $this->dumpFile = $this->environment->getCacheDir() . $this->containerClassName . '.php';
+        $this->dumpFile = $this->environment->getCacheDir() . DIRECTORY_SEPARATOR . $this->containerClassName . '.php';
         $this->containerConfigCache = new ConfigCache($this->dumpFile, $this->environment->isDebug());
 
-        //These methods load required files like autoload or annotation metadata so we need to load
-        //them at each container creation, this can't be compiled.
+        // These methods load required files like autoload or annotation metadata so we need to load
+        // them at each container creation, this can't be compiled.
         $this->loadDoctrineAnnotationMetadata();
+
+        if ($this->environment->getName() === 'test') {
+            $cache = new NullAdapter();
+        } else {
+            $cache = new FilesystemAdapter('modules', 0, _PS_CACHE_DIR_);
+        }
+        $moduleRepository = new CachedModuleRepository(
+            new ModuleRepository(_PS_ROOT_DIR_, _PS_MODULE_DIR_),
+            $cache
+        );
+        $this->loadModulesAutoloader($moduleRepository->getInstalledModules());
 
         $container = $this->loadDumpedContainer();
         if (null === $container) {
@@ -138,8 +136,6 @@ class ContainerBuilder
         // synthetic definitions can't be compiled
         $container->set('shop', $container->get('context')->shop);
         $container->set('employee', $container->get('context')->employee);
-
-        $this->loadModulesAutoloader($container);
 
         return $container;
     }
@@ -166,16 +162,18 @@ class ContainerBuilder
     private function compileContainer()
     {
         $container = new LegacyContainerBuilder();
-        //If the container builder is modified the container logically should be rebuilt
+        // If the container builder is modified the container logically should be rebuilt
         $container->addResource(new FileResource(__FILE__));
 
-        $container->addCompilerPass(new LoadServicesFromModulesPass($this->containerName), PassConfig::TYPE_BEFORE_OPTIMIZATION, 1);
+        $container->addCompilerPass(new LoadServicesFromModulesPass($this->containerName), PassConfig::TYPE_BEFORE_OPTIMIZATION, PrestaShopBundle::LOAD_MODULE_SERVICES_PASS_PRIORITY);
         $container->addCompilerPass(new LegacyCompilerPass());
 
-        //Build extensions
+        // Build extensions
         $builderExtensions = [
             new ContainerParametersExtension($this->environment),
             new DoctrineBuilderExtension($this->environment),
+            // The FO legacy container has no FrameworkBundle, so the Symfony `validator` is wired manually here.
+            new ValidatorBuilderExtension(),
         ];
         /** @var ContainerBuilderExtensionInterface $builderExtension */
         foreach ($builderExtensions as $builderExtension) {
@@ -183,9 +181,15 @@ class ContainerBuilder
         }
 
         $this->loadServicesFromConfig($container);
+        $this->loadModulesAutoloader($container->getParameter('prestashop.installed_modules'));
         $container->compile();
 
-        //Dump the container file
+        if ($this->environment->isDebug() === false) {
+            $proxyWarmer = new FrontDoctrineProxyWarmer($container);
+            $proxyWarmer->run();
+        }
+
+        // Dump the container file
         $dumper = new PhpDumper($container);
         $this->containerConfigCache->write(
             $dumper->dump([
@@ -206,8 +210,9 @@ class ContainerBuilder
      */
     private function loadDoctrineAnnotationMetadata()
     {
-        //IMPORTANT: we need to provide a cache because doctrine tries to init a connection on redis, memcached, ... on its own
-        Setup::createAnnotationMetadataConfiguration([], $this->environment->isDebug(), null, new ArrayCache());
+        // IMPORTANT: we need to provide a cache because doctrine tries to init a connection on redis, memcached, ... on its own
+        $cacheProvider = DoctrineProvider::wrap(new ArrayAdapter());
+        Setup::createAnnotationMetadataConfiguration([], $this->environment->isDebug(), null, $cacheProvider);
     }
 
     /**
@@ -233,18 +238,14 @@ class ContainerBuilder
      * be done in a compiler pass because they are only executed on compilation and this needs to
      * be done at each container instanciation.
      *
-     * @param ContainerInterface $container
+     * @param array $installedModules
      *
      * @throws Exception
      */
-    private function loadModulesAutoloader(ContainerInterface $container)
+    private function loadModulesAutoloader(array $installedModules)
     {
-        if (!$container->hasParameter('kernel.active_modules')) {
-            return;
-        }
-
-        $activeModules = $container->getParameter('kernel.active_modules');
-        foreach ($activeModules as $module) {
+        /** @var array<string> $installedModules */
+        foreach ($installedModules as $module) {
             $autoloader = _PS_MODULE_DIR_ . $module . '/vendor/autoload.php';
 
             if (file_exists($autoloader)) {

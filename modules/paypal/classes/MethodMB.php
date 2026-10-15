@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,65 +16,87 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
-use PaypalAddons\classes\API\PaypalApiManagerMB;
-use PaypalPPBTlib\Extensions\ProcessLogger\ProcessLoggerHandler;
-use PaypalAddons\services\ServicePaypalVaulting;
-use \PayPal\Api\ShippingAddress;
 use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalAddons\classes\API\PaypalApiManager;
+use PaypalAddons\classes\WhiteList\WhiteListService;
+use PaypalAddons\services\ServicePaypalVaulting;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Class MethodPPP
+ *
  * @see https://paypal.github.io/PayPal-PHP-SDK/ REST API sdk doc
  * @see https://developer.paypal.com/docs/api/payments/v1/ REST API references
  */
 class MethodMB extends AbstractMethodPaypal
 {
-    /* @var string type of the payer tax*/
+    /* @var string type of the payer tax */
     const BR_CPF = 'BR_CPF';
 
-    /* @var string type of the payer tax*/
+    /* @var string type of the payer tax */
     const BR_CNPJ = 'BR_CNPJ';
 
     protected $payment_method = 'PayPal';
 
-    public $errors = array();
+    public $errors = [];
 
     /** payment Object IDl*/
     public $paymentId;
 
-    /** @var $payerId string*/
+    /** @var string */
     protected $payerId;
 
-    /** @var string hash of the remembered card ids*/
+    /** @var string hash of the remembered card ids */
     protected $rememeberedCards;
+
+    /** @var bool shortcut payment from product or cart page */
+    public $short_cut;
 
     protected $servicePaypalVaulting;
 
-    public $advancedFormParametres = array(
-        'paypal_os_waiting_validation',
-        'paypal_os_accepted_two',
-        'paypal_os_processing',
-        'paypal_os_validation_error',
-        'paypal_os_refunded_paypal'
-
-    );
+    /** @var WhiteListService */
+    protected $whiteListService;
 
     public function __construct()
     {
-        $this->servicePaypalVaulting = new ServicePaypalVaulting();
-        $this->paypalApiManager = new PaypalApiManagerMB($this);
+        parent::__construct();
+
+        $this->servicePaypalVaulting = new ServicePaypalVaulting($this);
+        $this->whiteListService = new WhiteListService();
+        $this->initApiManager();
+    }
+
+    protected function initApiManager()
+    {
+        $this->paypalApiManager = new PaypalApiManager($this);
+
+        return $this;
+    }
+
+    public function setSandbox($isSandbox)
+    {
+        parent::setSandbox($isSandbox);
+        $this->initApiManager();
+        $this->checkCredentials();
+
+        return $this;
     }
 
     /**
-     * @param $values array replace for tools::getValues()
+     * @param array $values replace for tools::getValues()
      */
     public function setParameters($values)
     {
@@ -87,14 +110,17 @@ class MethodMB extends AbstractMethodPaypal
     public function logOut($sandbox = null)
     {
         if ($sandbox == null) {
-            $mode = Configuration::get('PAYPAL_SANDBOX') ? 'SANDBOX' : 'LIVE';
-        } else {
-            $mode = (int)$sandbox ? 'SANDBOX' : 'LIVE';
+            $sandbox = $this->isSandbox();
         }
 
-        Configuration::updateValue('PAYPAL_MB_' . $mode . '_CLIENTID', '');
-        Configuration::updateValue('PAYPAL_MB_' . $mode . '_SECRET', '');
-        Configuration::updateValue('PAYPAL_MB_EXPERIENCE', '');
+        if ($sandbox) {
+            Configuration::updateValue(PayPal::PAYPAL_MB_CLIENTID_SANDBOX, '');
+            Configuration::updateValue(PayPal::PAYPAL_MB_SECRET_SANDBOX, '');
+        } else {
+            Configuration::updateValue(PayPal::PAYPAL_MB_CLIENTID_LIVE, '');
+            Configuration::updateValue(PayPal::PAYPAL_MB_SECRET_LIVE, '');
+        }
+        Configuration::updateValue('PAYPAL_CONNECTION_MB_CONFIGURED', '');
     }
 
     /**
@@ -102,9 +128,30 @@ class MethodMB extends AbstractMethodPaypal
      */
     public function setConfig($params)
     {
+        if (isset($params['isSandbox'])) {
+            $isSandbox = $params['isSandbox'];
+        } else {
+            $isSandbox = $this->isSandbox();
+        }
+
+        if ($isSandbox) {
+            Configuration::updateValue(PayPal::PAYPAL_MB_CLIENTID_SANDBOX, $params['clientId']);
+            Configuration::updateValue(
+                PayPal::PAYPAL_MB_SECRET_SANDBOX,
+                $this->module->getToolKit()->encrypt($params['secret'])
+            );
+            Configuration::updateValue(PayPal::PAYPAL_MB_MERCHANT_ID_SANDBOX, $params['merchantId']);
+        } else {
+            Configuration::updateValue(PayPal::PAYPAL_MB_CLIENTID_LIVE, $params['clientId']);
+            Configuration::updateValue(
+                PayPal::PAYPAL_MB_SECRET_LIVE,
+                $this->module->getToolKit()->encrypt($params['secret'])
+            );
+            Configuration::updateValue(PayPal::PAYPAL_MB_MERCHANT_ID_LIVE, $params['merchantId']);
+        }
     }
 
-    public function getConfig(Paypal $paypal)
+    public function getConfig(PayPal $module)
     {
     }
 
@@ -115,24 +162,14 @@ class MethodMB extends AbstractMethodPaypal
     {
         $context = Context::getContext();
         $cart = $context->cart;
+        /* @phpstan-ignore-next-line */
         $customer = new Customer($cart->id_customer);
 
         if (Validate::isLoadedObject($customer) && $this->getRememberedCards()) {
-            $this->servicePaypalVaulting->createOrUpdatePaypalVaulting($customer->id, $this->getRememberedCards());
+            $this->servicePaypalVaulting->saveRememberedCards($customer->id, $this->getRememberedCards());
         }
 
         parent::validation();
-    }
-
-    public function getOrderStatus()
-    {
-        if ((int)Configuration::get('PAYPAL_CUSTOMIZE_ORDER_STATUS')) {
-            $orderStatus = (int)Configuration::get('PAYPAL_OS_PROCESSING');
-        } else {
-            $orderStatus = (int)Configuration::get('PAYPAL_OS_WAITING');
-        }
-
-        return $orderStatus;
     }
 
     /**
@@ -140,6 +177,7 @@ class MethodMB extends AbstractMethodPaypal
      */
     public function confirmCapture($orderPayPal)
     {
+        return $this->paypalApiManager->getCaptureAuthorizeRequest($orderPayPal)->execute();
     }
 
     /**
@@ -147,6 +185,7 @@ class MethodMB extends AbstractMethodPaypal
      */
     public function void($orderPayPal)
     {
+        return $this->paypalApiManager->getAuthorizationVoidRequest($orderPayPal)->execute();
     }
 
     /**
@@ -154,45 +193,19 @@ class MethodMB extends AbstractMethodPaypal
      */
     public function isConfigured($mode = null)
     {
-        $isMbConfigured = (bool)Configuration::get('PAYPAL_MB_EXPERIENCE');
-
-        // If a payment by PayPal account is enabled and the credentials for EC are not setted, so it should use MB credentials
-        if ($isMbConfigured && (bool)Configuration::get('PAYPAL_MB_EC_ENABLED')) {
-            $methodEC = self::load('EC');
-
-            if ($methodEC->isCredentialsSetted() === false) {
-                $methodEC->setConfig([
-                    'clientId' => $this->getClientId(),
-                    'secret' => $this->getSecret()
-                ]);
-            }
+        if (false == $this->whiteListService->isEligibleContext()) {
+            return false;
+        }
+        if ($this->isCredentialsSetted() === false) {
+            return false;
+        }
+        if ((bool) Configuration::get('PAYPAL_CONNECTION_MB_CONFIGURED')) {
+            return true;
         }
 
-        return $isMbConfigured;
-    }
+        $this->checkCredentials();
 
-    public function getTplVars()
-    {
-
-        if ($this->isSandbox()) {
-            $tpl_vars = array(
-                'paypal_mb_sandbox_clientid' => Configuration::get('PAYPAL_MB_SANDBOX_CLIENTID'),
-                'paypal_mb_sandbox_secret' => Configuration::get('PAYPAL_MB_SANDBOX_SECRET'),
-                'paypal_ec_clientid' => Configuration::get('PAYPAL_EC_CLIENTID_SANDBOX'),
-                'paypal_ec_secret' => Configuration::get('PAYPAL_EC_SECRET_SANDBOX'),
-                'mode' => 'SANDBOX'
-            );
-        } else {
-            $tpl_vars = array(
-                'paypal_mb_live_clientid' => Configuration::get('PAYPAL_MB_LIVE_CLIENTID'),
-                'paypal_mb_live_secret' => Configuration::get('PAYPAL_MB_LIVE_SECRET'),
-                'paypal_ec_clientid' => Configuration::get('PAYPAL_EC_CLIENTID_LIVE'),
-                'paypal_ec_secret' => Configuration::get('PAYPAL_EC_SECRET_LIVE'),
-                'mode' => 'LIVE'
-            );
-        }
-
-        return $tpl_vars;
+        return (bool) Configuration::get('PAYPAL_CONNECTION_MB_CONFIGURED');
     }
 
     public function checkCredentials()
@@ -200,9 +213,14 @@ class MethodMB extends AbstractMethodPaypal
         $response = $this->paypalApiManager->getAccessTokenRequest()->execute();
 
         if ($response->isSuccess()) {
-            Configuration::updateValue('PAYPAL_MB_EXPERIENCE', $response->getIdProfileExperience());
+            Configuration::updateValue('PAYPAL_CONNECTION_MB_CONFIGURED', 1);
         } else {
-            Configuration::updateValue('PAYPAL_MB_EXPERIENCE', '');
+            $this->setConfig([
+                'clientId' => '',
+                'secret' => '',
+                'merchantId' => '',
+            ]);
+            Configuration::updateValue('PAYPAL_CONNECTION_MB_CONFIGURED', 0);
 
             if ($response->getError()) {
                 $this->errors[] = $response->getError()->getMessage();
@@ -212,18 +230,20 @@ class MethodMB extends AbstractMethodPaypal
 
     /**
      * Assign form data for Paypal Plus payment option
-     * @return boolean
+     *
+     * @return void
      */
     public function assignJSvarsPaypalMB()
     {
         $context = Context::getContext();
         $module = Module::getInstanceByName($this->name);
-        Media::addJsDef(array(
-            'ajaxPatch' => $context->link->getModuleLink('paypal', 'mbValidation', array(), true),
+        Media::addJsDef([
+            /* @phpstan-ignore-next-line */
+            'ajaxPatch' => $context->link->getModuleLink('paypal', 'mbValidation', [], true),
             'EMPTY_TAX_ID' => $module->l('For processing you payment via PayPal it is required to add a VAT number to your address. Please fill it and complete your payment.', get_class($this)),
             'INVALID_PAYER_TAX_ID' => $module->l('For processing you payment via PayPal it is required to add a valid Tax ID to your address. Please verify if your Tax ID is correct, change it if needed and complete your payment.', get_class($this)),
             'PAYMENT_SUCCESS' => $module->l('Payment successful! You will be redirected to the payment confirmation page in a couple of seconds.', get_class($this)),
-        ));
+        ]);
     }
 
     protected function getPayerInfo()
@@ -258,7 +278,7 @@ class MethodMB extends AbstractMethodPaypal
             return $taxInfo;
         }
 
-        if ((int)Context::getContext()->cart->id_address_delivery == 0) {
+        if ((int) Context::getContext()->cart->id_address_delivery == 0) {
             return $taxInfo;
         }
 
@@ -269,9 +289,13 @@ class MethodMB extends AbstractMethodPaypal
             return $taxInfo;
         }
 
-        $taxId = str_replace(array('.', '-', '/'), '', $addressCustomer->vat_number);
-        $taxInfo['tax_id'] = $taxId;
-        $taxInfo['tax_id_type'] = $this->getTaxIdType($taxId);
+        $taxId = str_replace(['.', '-', '/'], '', $addressCustomer->vat_number);
+        $taxIdType = $this->getTaxIdType($taxId);
+
+        if (empty($taxIdType) === false) {
+            $taxInfo['tax_id'] = $taxId;
+            $taxInfo['tax_id_type'] = $this->getTaxIdType($taxId);
+        }
 
         return $taxInfo;
     }
@@ -283,24 +307,24 @@ class MethodMB extends AbstractMethodPaypal
         try {
             $response = $this->init();
             $context->cookie->__set('paypal_plus_mb_payment', $this->paymentId);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return false;
         }
 
         $addressCustomer = new Address(Context::getContext()->cart->id_address_delivery);
         $countryCustomer = new Country($addressCustomer->id_country);
 
-        $paymentInfo = array(
+        $paymentInfo = [
             'approvalUrlPPP' => $response->getApproveLink(),
             'paymentId' => $response->getPaymentId(),
-            'paypalMode' => $this->isSandbox()  ? 'sandbox' : 'live',
+            'paypalMode' => $this->isSandbox() ? 'sandbox' : 'live',
             'payerInfo' => $this->getPayerInfo(),
-            'language' => str_replace("-", "_", $context->language->locale),
+            'language' => str_replace('-', '_', $context->language->locale),
             'country' => $countryCustomer->iso_code,
-            'disallowRememberedCards' => (bool)Configuration::get('PAYPAL_VAULTING') == false,
+            'disallowRememberedCards' => (bool) Configuration::get('PAYPAL_VAULTING') == false,
             'rememberedCards' => $this->servicePaypalVaulting->getRememberedCardsByIdCustomer($context->customer->id),
-            'merchantInstallmentSelectionOptional' => (int)Configuration::get('PAYPAL_MERCHANT_INSTALLMENT')
-        );
+            'merchantInstallmentSelectionOptional' => (int) Configuration::get('PAYPAL_MERCHANT_INSTALLMENT'),
+        ];
 
         return $paymentInfo;
     }
@@ -348,7 +372,8 @@ class MethodMB extends AbstractMethodPaypal
     }
 
     /**
-     * @param $vatNumber string
+     * @param string $vatNumber
+     *
      * @return string
      */
     public function getTaxIdType($vatNumber)
@@ -372,82 +397,6 @@ class MethodMB extends AbstractMethodPaypal
         return self::BR_CPF;
     }
 
-    public function getAdvancedFormInputs()
-    {
-        $inputs = array();
-        $module = Module::getInstanceByName($this->name);
-        $orderStatuses = $module->getOrderStatuses();
-
-        $inputs[] = array(
-            'type' => 'select',
-            'label' => $module->l('Payment accepted and transaction completed', get_class($this)),
-            'name' => 'paypal_os_accepted_two',
-            'hint' => $module->l('You are currently using the Authorize mode. It means that you separate the payment authorization from the capture of the authorized payment. For capturing the authorized payement you have to change the order status to "payment accepted" (or to a custom status with the same meaning). Here you can choose a custom order status for accepting the order and validating transaction in Authorize mode.', get_class($this)),
-            'desc' => $module->l('Default status : Payment accepted', get_class($this)),
-            'options' => array(
-                'query' => $orderStatuses,
-                'id' => 'id',
-                'name' => 'name'
-            )
-        );
-
-        if ($this->getIntent() == 'AUTHORIZE') {
-            $inputs[] = array(
-                'type' => 'select',
-                'label' => $module->l('Payment authorized, waiting for validation by admin (paid via PayPal express checkout)', get_class($this)),
-                'name' => 'paypal_os_waiting_validation',
-                'hint' => $module->l('You are currently using the Authorize mode. It means that you separate the payment authorization from the capture of the authorized payment. By default the orders will be created in the "Waiting for PayPal payment" but you can customize it if needed.', get_class($this)),
-                'desc' => $module->l('Default status : Waiting for PayPal payment', get_class($this)),
-                'options' => array(
-                    'query' => $orderStatuses,
-                    'id' => 'id',
-                    'name' => 'name'
-                )
-            );
-        }
-
-        $inputs[] = array(
-            'type' => 'select',
-            'label' => $module->l('Payment processing (only for the payments by card)', get_class($this)),
-            'name' => 'paypal_os_processing',
-            'hint' => $module->l('The transaction paid by card can be in the pending status. If the payment is processing the order will be created in the temporary status.', get_class($this)),
-            'desc' => $module->l('Default status : Waiting for PayPal payment', get_class($this)),
-            'options' => array(
-                'query' => $orderStatuses,
-                'id' => 'id',
-                'name' => 'name'
-            )
-        );
-
-        $inputs[] = array(
-            'type' => 'select',
-            'label' => $module->l('Payment validation error or transaction rejected (only for payments by card)', get_class($this)),
-            'name' => 'paypal_os_validation_error',
-            'hint' => $module->l('For the rejected transactions the "Canceled" status is applied automatically. You can modify it and to set your status instead.', get_class($this)),
-            'desc' => $module->l('Default status : Canceled', get_class($this)),
-            'options' => array(
-                'query' => $orderStatuses,
-                'id' => 'id',
-                'name' => 'name'
-            )
-        );
-
-        $inputs[] = array(
-            'type' => 'select',
-            'label' => $module->l('Payment refunded via PayPal merchant account (only for payments by card)', get_class($this)),
-            'name' => 'paypal_os_refunded_paypal',
-            'hint' => $module->l('If the transaction was refunded via PayPal interface the corresponding order will pass to the "Refunded" status automatically. You can modify it and to set your status instead.', get_class($this)),
-            'desc' => $module->l('Default status : Refunded', get_class($this)),
-            'options' => array(
-                'query' => $orderStatuses,
-                'id' => 'id',
-                'name' => 'name'
-            )
-        );
-
-        return $inputs;
-    }
-
     public function getClientId($sandbox = null)
     {
         if ($sandbox === null) {
@@ -455,9 +404,9 @@ class MethodMB extends AbstractMethodPaypal
         }
 
         if ($sandbox) {
-            $clientId = Configuration::get('PAYPAL_MB_SANDBOX_CLIENTID');
+            $clientId = Configuration::get(PayPal::PAYPAL_MB_CLIENTID_SANDBOX);
         } else {
-            $clientId = Configuration::get('PAYPAL_MB_LIVE_CLIENTID');
+            $clientId = Configuration::get(PayPal::PAYPAL_MB_CLIENTID_LIVE);
         }
 
         return $clientId;
@@ -470,10 +419,12 @@ class MethodMB extends AbstractMethodPaypal
         }
 
         if ($sandbox) {
-            $secret = Configuration::get('PAYPAL_MB_SANDBOX_SECRET');
+            $secret = Configuration::get(PayPal::PAYPAL_MB_SECRET_SANDBOX);
         } else {
-            $secret = Configuration::get('PAYPAL_MB_LIVE_SECRET');
+            $secret = Configuration::get(PayPal::PAYPAL_MB_SECRET_LIVE);
         }
+
+        $secret = $this->module->getToolKit()->decrypt($secret);
 
         return $secret;
     }
@@ -483,6 +434,7 @@ class MethodMB extends AbstractMethodPaypal
      */
     public function getReturnUrl()
     {
+        /* @phpstan-ignore-next-line */
         return (string) Context::getContext()->link->getModuleLink($this->name, 'mbValidation', [], true);
     }
 
@@ -512,16 +464,38 @@ class MethodMB extends AbstractMethodPaypal
 
     public function getPaypalPartnerId()
     {
-        if (Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT')) == 'MX') {
+        if (Country::getIsoById((int) Configuration::get('PS_COUNTRY_DEFAULT')) == 'MX') {
             $bnCodeSuffix = 'Mexico';
         } else {
             $bnCodeSuffix = 'Brazil';
         }
-        return (getenv('PLATEFORM') == 'PSREAD')?'PrestaShop_Cart_Ready_'.$bnCodeSuffix:'PrestaShop_Cart_'.$bnCodeSuffix;
+
+        return (getenv('PLATEFORM') == 'PSREAD') ? 'PrestaShop_Cart_Ready_' . $bnCodeSuffix : 'PrestaShop_Cart_' . $bnCodeSuffix;
     }
 
     public function getIntent()
     {
-        return Configuration::get('PAYPAL_API_INTENT') == 'sale' ? 'CAPTURE' : 'AUTHORIZE';
+        return Configuration::get('PAYPAL_API_INTENT') == 'sale' ? self::SALE : self::AUTHORIZE;
+    }
+
+    public function getMerchantId()
+    {
+        if ($this->isSandbox()) {
+            return Configuration::get(PayPal::PAYPAL_MB_MERCHANT_ID_SANDBOX);
+        }
+
+        return Configuration::get(PayPal::PAYPAL_MB_MERCHANT_ID_LIVE);
+    }
+
+    public function getShortCut()
+    {
+        return (bool) $this->short_cut;
+    }
+
+    public function setShortCut($shortCut)
+    {
+        $this->short_cut = (bool) $shortCut;
+
+        return $this;
     }
 }

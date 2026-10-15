@@ -21,10 +21,13 @@ declare(strict_types=1);
 
 namespace PrestaShop\Module\Mbo\Exception;
 
-use Exception;
-use GuzzleHttp\Exception\ClientException;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 
-class AddonsDownloadModuleException extends Exception
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+class AddonsDownloadModuleException extends \Exception
 {
     private const UNKNOWN_ADDONS_CODE = '0030';
 
@@ -84,7 +87,7 @@ class AddonsDownloadModuleException extends Exception
      */
     private $technicalErrorMessage;
 
-    public function __construct(ClientException $previous, array $context = [])
+    public function __construct(ClientExceptionInterface $previous, array $context = [])
     {
         $addonsError = $this->getErrorSentByAddons($previous);
         parent::__construct(
@@ -110,9 +113,9 @@ class AddonsDownloadModuleException extends Exception
         return $this->technicalErrorMessage;
     }
 
-    private function getErrorSentByAddons(ClientException $exception): array
+    private function getErrorSentByAddons(ClientExceptionInterface $exception): array
     {
-        $rawContent = $exception->getResponse()->getBody()->getContents();
+        $rawContent = $exception->getResponse()->getContent();
         $jsonContent = json_decode($rawContent, true);
 
         $code = self::UNKNOWN_ADDONS_CODE;

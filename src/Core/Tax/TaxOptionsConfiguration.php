@@ -1,58 +1,40 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Tax;
 
-use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
-use PrestaShop\PrestaShop\Core\ConfigurationInterface;
+use PrestaShop\PrestaShop\Adapter\Configuration;
+use PrestaShop\PrestaShop\Adapter\Shop\Context;
+use PrestaShop\PrestaShop\Core\Configuration\AbstractMultistoreConfiguration;
+use PrestaShop\PrestaShop\Core\Feature\FeatureInterface;
 use PrestaShop\PrestaShop\Core\Tax\Ecotax\ProductEcotaxResetterInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Handles configuration data for tax options.
  */
-final class TaxOptionsConfiguration implements DataConfigurationInterface
+final class TaxOptionsConfiguration extends AbstractMultistoreConfiguration
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    private $configuration;
+    private const CONFIGURATION_FIELDS = ['enable_tax', 'display_tax_in_cart', 'tax_address_type', 'use_eco_tax', 'eco_tax_rule_group'];
+
     /**
      * @var ProductEcotaxResetterInterface
      */
     private $productEcotaxResetter;
 
     /**
-     * @param ConfigurationInterface $configuration
+     * @param Configuration $configuration
+     * @param Context $shopContext
+     * @param FeatureInterface $multistoreFeature
      * @param ProductEcotaxResetterInterface $productEcotaxResetter
      */
-    public function __construct(
-        ConfigurationInterface $configuration,
-        ProductEcotaxResetterInterface $productEcotaxResetter
-    ) {
-        $this->configuration = $configuration;
+    public function __construct(Configuration $configuration, Context $shopContext, FeatureInterface $multistoreFeature, ProductEcotaxResetterInterface $productEcotaxResetter)
+    {
+        parent::__construct($configuration, $shopContext, $multistoreFeature);
+
         $this->productEcotaxResetter = $productEcotaxResetter;
     }
 
@@ -61,12 +43,14 @@ final class TaxOptionsConfiguration implements DataConfigurationInterface
      */
     public function getConfiguration()
     {
+        $shopConstraint = $this->getShopConstraint();
+
         return [
-            'enable_tax' => (bool) $this->configuration->get('PS_TAX'),
-            'display_tax_in_cart' => (bool) $this->configuration->get('PS_TAX_DISPLAY'),
-            'tax_address_type' => $this->configuration->get('PS_TAX_ADDRESS_TYPE'),
-            'use_eco_tax' => (bool) $this->configuration->get('PS_USE_ECOTAX'),
-            'eco_tax_rule_group' => $this->configuration->get('PS_ECOTAX_TAX_RULES_GROUP_ID'),
+            'enable_tax' => (bool) $this->configuration->get('PS_TAX', false, $shopConstraint),
+            'display_tax_in_cart' => (bool) $this->configuration->get('PS_TAX_DISPLAY', false, $shopConstraint),
+            'tax_address_type' => $this->configuration->get('PS_TAX_ADDRESS_TYPE', null, $shopConstraint),
+            'use_eco_tax' => (bool) $this->configuration->get('PS_USE_ECOTAX', false, $shopConstraint),
+            'eco_tax_rule_group' => (int) $this->configuration->get('PS_ECOTAX_TAX_RULES_GROUP_ID', 0, $shopConstraint),
         ];
     }
 
@@ -76,17 +60,21 @@ final class TaxOptionsConfiguration implements DataConfigurationInterface
     public function updateConfiguration(array $configuration)
     {
         if ($this->validateConfiguration($configuration)) {
-            $this->configuration->set('PS_TAX', (bool) $configuration['enable_tax']);
-            $this->configuration->set('PS_TAX_DISPLAY', (bool) $configuration['display_tax_in_cart']);
-            $this->configuration->set('PS_TAX_ADDRESS_TYPE', $configuration['tax_address_type']);
-            $this->updateEcotax($configuration['use_eco_tax']);
+            $shopConstraint = $this->getShopConstraint();
+
+            $this->updateConfigurationValue('PS_TAX', 'enable_tax', $configuration, $shopConstraint);
+            $this->updateConfigurationValue('PS_TAX_DISPLAY', 'display_tax_in_cart', $configuration, $shopConstraint);
+            $this->updateConfigurationValue('PS_TAX_ADDRESS_TYPE', 'tax_address_type', $configuration, $shopConstraint);
+            $this->updateEcotax($configuration['use_eco_tax'], $configuration);
 
             if ($configuration['use_eco_tax'] && isset($configuration['eco_tax_rule_group'])) {
-                $this->configuration->set('PS_ECOTAX_TAX_RULES_GROUP_ID', $configuration['eco_tax_rule_group']);
+                $this->updateConfigurationValue('PS_ECOTAX_TAX_RULES_GROUP_ID', 'eco_tax_rule_group', $configuration, $shopConstraint);
             }
 
             if (false === $configuration['enable_tax']) {
-                $this->configuration->set('PS_TAX_DISPLAY', false);
+                $configuration['multistore_display_tax_in_cart'] = false;
+                $configuration['display_tax_in_cart'] = false;
+                $this->updateConfigurationValue('PS_TAX_DISPLAY', 'display_tax_in_cart', $configuration, $shopConstraint);
             }
         }
 
@@ -94,29 +82,35 @@ final class TaxOptionsConfiguration implements DataConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return OptionsResolver
      */
-    public function validateConfiguration(array $configuration)
+    protected function buildResolver(): OptionsResolver
     {
-        return isset(
-            $configuration['enable_tax'],
-            $configuration['tax_address_type'],
-            $configuration['use_eco_tax']
-        );
+        return (new OptionsResolver())
+            ->setDefined(self::CONFIGURATION_FIELDS)
+            ->setAllowedTypes('enable_tax', 'bool')
+            ->setAllowedTypes('display_tax_in_cart', 'bool')
+            ->setAllowedTypes('tax_address_type', ['string', 'null'])
+            ->setAllowedTypes('use_eco_tax', 'bool')
+            ->setAllowedTypes('eco_tax_rule_group', 'int');
     }
 
     /**
      * Responsible for ecotax update
      *
      * @param bool $isEnabled
+     * @param array $configuration
      */
-    private function updateEcotax($isEnabled)
+    private function updateEcotax($isEnabled, $configuration)
     {
-        $wasEnabled = (bool) $this->configuration->get('PS_USE_ECOTAX');
+        $shopConstraint = $this->getShopConstraint();
 
-        if (!$isEnabled && $wasEnabled !== $isEnabled) {
+        $wasEnabled = (bool) $this->configuration->get('PS_USE_ECOTAX', false, $shopConstraint);
+
+        if (!$isEnabled && $wasEnabled !== $isEnabled && !$this->shopContext->isAllShopContext()) {
             $this->productEcotaxResetter->reset();
         }
-        $this->configuration->set('PS_USE_ECOTAX', $isEnabled);
+
+        $this->updateConfigurationValue('PS_USE_ECOTAX', 'use_eco_tax', $configuration, $shopConstraint);
     }
 }

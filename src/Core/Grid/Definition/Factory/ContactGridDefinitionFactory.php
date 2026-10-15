@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Grid\Definition\Factory;
@@ -34,10 +14,9 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Type\SimpleGridAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\BulkActionColumn;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
 use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
-use PrestaShop\PrestaShop\Core\Hook\HookDispatcherInterface;
 use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -49,37 +28,14 @@ final class ContactGridDefinitionFactory extends AbstractGridDefinitionFactory
     use BulkDeleteActionTrait;
     use DeleteActionTrait;
 
-    /**
-     * @var string
-     */
-    private $resetSearchUrl;
-
-    /**
-     * @var string
-     */
-    private $redirectionUrl;
-
-    /**
-     * @param HookDispatcherInterface $hookDispatcher
-     * @param string $resetSearchUrl
-     * @param string $redirectionUrl
-     */
-    public function __construct(
-        HookDispatcherInterface $hookDispatcher,
-        $resetSearchUrl,
-        $redirectionUrl
-    ) {
-        parent::__construct($hookDispatcher);
-        $this->resetSearchUrl = $resetSearchUrl;
-        $this->redirectionUrl = $redirectionUrl;
-    }
+    public const GRID_ID = 'contact';
 
     /**
      * {@inheritdoc}
      */
     protected function getId()
     {
-        return 'contact';
+        return self::GRID_ID;
     }
 
     /**
@@ -195,10 +151,11 @@ final class ContactGridDefinitionFactory extends AbstractGridDefinitionFactory
             ->add(
                 (new Filter('actions', SearchAndResetType::class))
                     ->setTypeOptions([
-                        'attr' => [
-                            'data-url' => $this->resetSearchUrl,
-                            'data-redirect' => $this->redirectionUrl,
+                        'reset_route' => 'admin_common_reset_search_by_filter_id',
+                        'reset_route_params' => [
+                            'filterId' => self::GRID_ID,
                         ],
+                        'redirect_route' => 'admin_contacts_index',
                     ])
                     ->setAssociatedColumn('actions')
             );

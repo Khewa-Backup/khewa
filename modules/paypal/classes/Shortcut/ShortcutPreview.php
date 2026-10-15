@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,32 +16,38 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\Shortcut;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ShortcutPreview extends ShortcutAbstract
 {
-    /** @var string*/
-    protected $label = null;
+    /** @var string */
+    protected $label;
 
-    /** @var int*/
-    protected $height = null;
+    /** @var int */
+    protected $height;
 
-    /** @var int*/
-    protected $width = null;
+    /** @var int */
+    protected $width;
 
-    /** @var string*/
-    protected $color = null;
+    /** @var string */
+    protected $color;
 
-    /** @var string*/
-    protected $shape = null;
+    /** @var string */
+    protected $shape;
 
     public function __construct(
         $label,
@@ -59,19 +66,19 @@ class ShortcutPreview extends ShortcutAbstract
     }
 
     /**
-     * @return []
+     * @return array
      */
     protected function getTplVars()
     {
         return [
             'shortcutID' => $this->getId(),
-            'styleSetting' => $this->getStyleSetting()
+            'styleSetting' => $this->getStyleSetting(),
         ];
     }
 
     protected function getTemplatePath()
     {
-        return _PS_MODULE_DIR_ . 'paypal/views/templates/shortcut/shortcut-preview.tpl';
+        return 'extends:' . _PS_MODULE_DIR_ . 'paypal/views/templates/shortcut/shortcut-layout.tpl|' . _PS_MODULE_DIR_ . 'paypal/views/templates/shortcut/shortcut-preview.tpl';
     }
 
     protected function getJS()
@@ -79,7 +86,7 @@ class ShortcutPreview extends ShortcutAbstract
         $jsScripts = [];
         $jsScripts['tot-paypal-sdk'] = [
             'src' => $this->method->getUrlJsSdkLib(),
-            'data-namespace' => 'totPaypalSdkButtons'
+            'data-namespace' => 'totPaypalSdkButtons',
         ];
 
         return $jsScripts;
@@ -92,7 +99,7 @@ class ShortcutPreview extends ShortcutAbstract
             'height' => $this->getHeight(),
             'width' => $this->getWidth(),
             'color' => $this->getColor(),
-            'shape' => $this->getShape()
+            'shape' => $this->getShape(),
         ];
     }
 
@@ -106,11 +113,13 @@ class ShortcutPreview extends ShortcutAbstract
 
     /**
      * @param string $label
+     *
      * @return ShortcutPreview
      */
     public function setLabel($label)
     {
         $this->label = (string) $label;
+
         return $this;
     }
 
@@ -124,11 +133,13 @@ class ShortcutPreview extends ShortcutAbstract
 
     /**
      * @param int $height
+     *
      * @return ShortcutPreview
      */
     public function setHeight($height)
     {
         $this->height = (int) $height;
+
         return $this;
     }
 
@@ -142,11 +153,13 @@ class ShortcutPreview extends ShortcutAbstract
 
     /**
      * @param int $width
+     *
      * @return ShortcutPreview
      */
     public function setWidth($width)
     {
         $this->width = $width;
+
         return $this;
     }
 
@@ -160,11 +173,13 @@ class ShortcutPreview extends ShortcutAbstract
 
     /**
      * @param string $color
+     *
      * @return ShortcutPreview
      */
     public function setColor($color)
     {
         $this->color = $color;
+
         return $this;
     }
 
@@ -178,11 +193,22 @@ class ShortcutPreview extends ShortcutAbstract
 
     /**
      * @param string $shape
+     *
      * @return ShortcutPreview
      */
     public function setShape($shape)
     {
         $this->shape = $shape;
+
         return $this;
+    }
+
+    public function render()
+    {
+        if ($this->method->isConfigured() === false) {
+            return '';
+        }
+
+        return parent::render();
     }
 }

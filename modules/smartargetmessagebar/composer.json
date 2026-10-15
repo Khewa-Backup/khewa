@@ -1,6 +1,6 @@
 {
   "name": "prestashop/smartargetmessagebar",
-  "description": "",
+  "description": "Display a message bar on your website.",
   "config": {
     "preferred-install": "dist",
     "optimize-autoloader": true,
@@ -21,6 +21,11 @@
       "smartargetmessagebar.php"
     ]
   },
-  "author": "PrestaShop",
+  "authors": [
+    {
+      "name": "Smartarget",
+      "homepage": "https://smartarget.online"
+    }
+  ],
   "license": "MIT"
 }

@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,47 +16,64 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Response;
 
+use PaypalAddons\classes\API\Model\VaultInfo;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ResponseOrderCapture extends Response
 {
-    /** @var string*/
+    /** @var string */
     protected $paymentId;
 
-    /** @var string*/
+    /** @var string */
     protected $transactionId;
 
-    /** @var string*/
+    /** @var string */
     protected $currency;
 
-    /** @var string*/
+    /** @var string */
     protected $status;
 
-    /** @var \DateTime*/
+    /** @var \DateTime */
     protected $dateTransaction;
 
-    /** @var bool*/
+    /** @var bool */
     protected $capture;
 
-    /** @var string*/
+    /** @var string */
     protected $paymentMethod;
 
-    /** @var string*/
+    /** @var string */
     protected $paymentTool;
 
-    /** @var float*/
+    /** @var float */
     protected $totalPaid;
 
-    /** @var string*/
+    /** @var string */
     protected $method;
+
+    /** @var VaultInfo|null */
+    protected $vaultInfo;
+
+    /** @var int */
+    protected $scaState;
+
+    /** @var string */
+    protected $payerAction = '';
 
     /**
      * @return string
@@ -71,10 +89,9 @@ class ResponseOrderCapture extends Response
     public function setMethod($method)
     {
         $this->method = $method;
+
         return $this;
     }
-
-
 
     /**
      * @return float
@@ -90,6 +107,7 @@ class ResponseOrderCapture extends Response
     public function setTotalPaid($totalPaid)
     {
         $this->totalPaid = $totalPaid;
+
         return $this;
     }
 
@@ -107,6 +125,7 @@ class ResponseOrderCapture extends Response
     public function setPaymentMethod($paymentMethod)
     {
         $this->paymentMethod = $paymentMethod;
+
         return $this;
     }
 
@@ -124,6 +143,7 @@ class ResponseOrderCapture extends Response
     public function setPaymentTool($paymentTool)
     {
         $this->paymentTool = $paymentTool;
+
         return $this;
     }
 
@@ -141,6 +161,7 @@ class ResponseOrderCapture extends Response
     public function setPaymentId($paymentId)
     {
         $this->paymentId = $paymentId;
+
         return $this;
     }
 
@@ -158,6 +179,7 @@ class ResponseOrderCapture extends Response
     public function setTransactionId($transactionId)
     {
         $this->transactionId = $transactionId;
+
         return $this;
     }
 
@@ -175,6 +197,7 @@ class ResponseOrderCapture extends Response
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
         return $this;
     }
 
@@ -192,6 +215,7 @@ class ResponseOrderCapture extends Response
     public function setStatus($status)
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -209,6 +233,7 @@ class ResponseOrderCapture extends Response
     public function setDateTransaction($dateTransaction)
     {
         $this->dateTransaction = $dateTransaction;
+
         return $this;
     }
 
@@ -226,6 +251,46 @@ class ResponseOrderCapture extends Response
     public function setCapture($capture)
     {
         $this->capture = $capture;
+
+        return $this;
+    }
+
+    /**
+     * @return VaultInfo|null
+     */
+    public function getVaultInfo()
+    {
+        return $this->vaultInfo;
+    }
+
+    public function setVaultInfo(VaultInfo $vaultInfo)
+    {
+        $this->vaultInfo = $vaultInfo;
+
+        return $this;
+    }
+
+    public function getScaState()
+    {
+        return (int) $this->scaState;
+    }
+
+    public function setScaState($scaState)
+    {
+        $this->scaState = (int) $scaState;
+
+        return $this;
+    }
+
+    public function getPayerAction()
+    {
+        return $this->payerAction;
+    }
+
+    public function setPayerAction($payerAction)
+    {
+        $this->payerAction = (string) $payerAction;
+
         return $this;
     }
 }

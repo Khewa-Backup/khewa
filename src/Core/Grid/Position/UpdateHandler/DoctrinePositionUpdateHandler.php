@@ -1,34 +1,14 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\Grid\Position\UpdateHandler;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ConnectionException;
-use Doctrine\DBAL\Statement;
+use Exception;
 use PrestaShop\PrestaShop\Core\Grid\Position\Exception\PositionUpdateException;
 use PrestaShop\PrestaShop\Core\Grid\Position\PositionDefinitionInterface;
 
@@ -73,11 +53,11 @@ final class DoctrinePositionUpdateHandler implements PositionUpdateHandlerInterf
 
         if (null !== $parentId && null !== $positionDefinition->getParentIdField()) {
             $qb
-                ->andWhere('t.' . $positionDefinition->getParentIdField() . ' = :parentId')
+                ->andWhere('t.`' . $positionDefinition->getParentIdField() . '` = :parentId')
                 ->setParameter('parentId', $parentId);
         }
 
-        $positions = $qb->execute()->fetchAll();
+        $positions = $qb->executeQuery()->fetchAllAssociative();
         $currentPositions = [];
         foreach ($positions as $position) {
             $positionId = $position[$positionDefinition->getIdField()];
@@ -90,7 +70,7 @@ final class DoctrinePositionUpdateHandler implements PositionUpdateHandlerInterf
     /**
      * {@inheritdoc}
      */
-    public function updatePositions(PositionDefinitionInterface $positionDefinition, array $newPositions)
+    public function updatePositions(PositionDefinitionInterface $positionDefinition, array $newPositions, $parentId = null)
     {
         try {
             $this->connection->beginTransaction();
@@ -104,14 +84,21 @@ final class DoctrinePositionUpdateHandler implements PositionUpdateHandlerInterf
                     ->setParameter('rowId', $rowId)
                     ->setParameter('position', $positionIndex);
 
-                $statement = $qb->execute();
-                if ($statement instanceof Statement && $statement->errorCode()) {
+                if (null !== $parentId && null !== $positionDefinition->getParentIdField()) {
+                    $qb
+                        ->andWhere('`' . $positionDefinition->getParentIdField() . '` = :parentId')
+                        ->setParameter('parentId', $parentId);
+                }
+
+                try {
+                    $qb->executeStatement();
+                } catch (Exception) {
                     throw new PositionUpdateException('Could not update #%i', 'Admin.Catalog.Notification', [$rowId]);
                 }
                 ++$positionIndex;
             }
             $this->connection->commit();
-        } catch (ConnectionException $e) {
+        } catch (ConnectionException) {
             $this->connection->rollBack();
 
             throw new PositionUpdateException('Could not update.', 'Admin.Catalog.Notification');

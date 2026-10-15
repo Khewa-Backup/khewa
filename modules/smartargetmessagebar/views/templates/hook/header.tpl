@@ -25,5 +25,4 @@
 * Contact: support@smartarget.online
 * Website: https://smartarget.online
 *}
-
-<script type="text/javascript" src="https://smartarget.online/loader.js?u={$storefrontHash|escape}&source=prestashop_message_bar"></script>
+<script type="text/javascript" src="https://smartarget.online/loader.js?u={$storefrontHash|escape:'htmlall':'UTF-8'}&source=prestashop_message_bar"></script>

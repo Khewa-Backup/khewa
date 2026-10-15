@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 abstract class AdminStatsTabControllerCore extends AdminController
 {
@@ -33,6 +13,11 @@ abstract class AdminStatsTabControllerCore extends AdminController
         $this->display = 'view';
     }
 
+    /**
+     * AdminController::initContent() override.
+     *
+     * @see AdminController::initContent()
+     */
     public function initContent()
     {
         if ($this->ajax) {
@@ -167,17 +152,24 @@ abstract class AdminStatsTabControllerCore extends AdminController
         return $tpl->fetch();
     }
 
-    public function checkModulesNames($a, $b)
+    public function checkModulesNames($a, $b): int
     {
-        return (bool) ($a['displayName'] > $b['displayName']);
+        return strcasecmp($a['displayName'], $b['displayName']);
     }
 
     protected function getModules()
     {
-        return array_map(
-            function ($moduleArray) {return ['name' => $moduleArray['module']]; },
-            Hook::getHookModuleExecList('displayAdminStatsModules')
-        );
+        $moduleList = Hook::getHookModuleExecList('displayAdminStatsModules');
+        if (true === is_array($moduleList)) {
+            return array_map(
+                function ($moduleArray) {
+                    return ['name' => $moduleArray['module']];
+                },
+                $moduleList
+            );
+        }
+
+        return [];
     }
 
     public function displayStats()
@@ -196,7 +188,8 @@ abstract class AdminStatsTabControllerCore extends AdminController
             }
 
             if ($module_instance && $module_instance->active) {
-                $hook = Hook::exec('displayAdminStatsModules', null, $module_instance->id);
+                // Hook called only for the module concerned
+                $hook = Hook::exec('displayAdminStatsModules', [], $module_instance->id);
             }
         }
 
@@ -290,7 +283,7 @@ abstract class AdminStatsTabControllerCore extends AdminController
                         'has_errors' => false,
                         'date_from' => $this->context->employee->stats_date_from,
                         'date_to' => $this->context->employee->stats_date_to, ]
-                    ));
+                ));
             }
         }
     }

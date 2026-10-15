@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,38 +16,48 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Onboarding;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\RequestOptions;
+use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalAddons\classes\API\ExtensionSDK\AccessTokenRequest;
+use PaypalAddons\classes\API\HttpAdoptedResponse;
+use PaypalAddons\classes\API\PaypalClient;
 use PaypalAddons\classes\API\Response\Error;
 use PaypalAddons\classes\API\Response\ResponseGetAuthToken;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaypalGetAuthToken
 {
-    /** @var */
-    protected $httpClient;
+    /** @var PaypalClient */
+    protected $client;
 
-    /** @var string*/
+    /** @var string */
     protected $authCode;
 
-    /** @var string*/
+    /** @var string */
     protected $sharedId;
 
-    /** @var string*/
+    /** @var string */
     protected $sellerNonce;
 
     public function __construct($authCode, $sharedId, $sellerNonce, $sandbox)
     {
-        $this->httpClient = new Client(['base_url' => $sandbox ? 'https://api.sandbox.paypal.com' : 'https://api.paypal.com']);
+        $method = AbstractMethodPaypal::load();
+        $method->setSandbox($sandbox);
+        $this->client = PaypalClient::get($method);
         $this->authCode = $authCode;
         $this->sharedId = $sharedId;
         $this->sellerNonce = $sellerNonce;
@@ -58,33 +69,32 @@ class PaypalGetAuthToken
     public function execute()
     {
         $returnResponse = new ResponseGetAuthToken();
-        $body = sprintf('grant_type=authorization_code&code=%s&code_verifier=%s', $this->authCode, $this->sellerNonce);
+        $request = new AccessTokenRequest();
+        $request->setBody(
+            sprintf('grant_type=authorization_code&code=%s&code_verifier=%s', $this->authCode, $this->sellerNonce)
+        );
+        $request->setHeaders([
+            'Content-Type' => 'text/plain',
+            'Authorization' => 'Basic ' . base64_encode($this->sharedId),
+        ]);
 
         try {
-            $response = $this->httpClient->post(
-                '/v1/oauth2/token',
-                [
-                    RequestOptions::BODY => $body,
-                    RequestOptions::HEADERS => [
-                        'Content-Type' => 'text/plain',
-                        'Authorization' => 'Basic ' . base64_encode($this->sharedId)
-                    ],
-                ]
-            );
-
-            $responseDecode = json_decode($response->getBody()->getContents());
+            /** @var HttpAdoptedResponse $response */
+            $response = $this->client->execute($request);
+            $responseDecode = $response->getAdoptedResponse();
             $returnResponse->setSuccess(true)
-                ->setData($returnResponse)
-                ->setAuthToken($responseDecode->access_token)
-                ->setRefreshToken($responseDecode->refresh_token)
-                ->setTokenType($responseDecode->token_type)
-                ->setNonce($responseDecode->nonce);
-        } catch (\Exception $e) {
+                ->setData($response)
+                ->setAuthToken($responseDecode->result->access_token)
+                ->setRefreshToken($responseDecode->result->refresh_token)
+                ->setTokenType($responseDecode->result->token_type)
+                ->setNonce($responseDecode->result->nonce);
+        } catch (\Throwable $e) {
             $error = new Error();
-            $error->setMessage($e->getMessage())->setErrorCode($e->getCode());
+            $error
+                ->setMessage($e->getMessage())
+                ->setErrorCode($e->getCode());
             $returnResponse->setError($error)->setSuccess(false);
         }
-
 
         return $returnResponse;
     }

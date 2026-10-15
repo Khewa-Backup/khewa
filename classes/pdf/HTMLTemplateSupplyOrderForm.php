@@ -1,31 +1,11 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
- * @since 1.5
+ * @deprecated since 9.0 and will be removed in 10.0, stock is now managed by new logic
  */
 class HTMLTemplateSupplyOrderFormCore extends HTMLTemplate
 {
@@ -74,7 +54,7 @@ class HTMLTemplateSupplyOrderFormCore extends HTMLTemplate
 
         $this->title = Context::getContext()->getTranslator()->trans('Supply order form', [], 'Shop.Pdf');
 
-        $this->shop = new Shop((int) $this->order->id_shop);
+        $this->shop = Context::getContext()->shop;
     }
 
     /**
@@ -82,7 +62,7 @@ class HTMLTemplateSupplyOrderFormCore extends HTMLTemplate
      */
     public function getContent()
     {
-        $supply_order_details = $this->supply_order->getEntriesCollection((int) $this->supply_order->id_lang);
+        $supply_order_details = $this->supply_order->getEntriesCollection();
         $this->roundSupplyOrderDetails($supply_order_details);
 
         $this->roundSupplyOrder($this->supply_order);
@@ -167,6 +147,7 @@ class HTMLTemplateSupplyOrderFormCore extends HTMLTemplate
 
         $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
 
+        /** @var array{base_te: float, tax_rate: float, total_tax_value: float} $result */
         foreach ($results as &$result) {
             $result['base_te'] = Tools::ps_round($result['base_te'], 2);
             $result['tax_rate'] = Tools::ps_round($result['tax_rate'], 2);
@@ -210,7 +191,6 @@ class HTMLTemplateSupplyOrderFormCore extends HTMLTemplate
      */
     public function getFooter()
     {
-        $this->address = $this->address_warehouse;
         $free_text = [];
         $free_text[] = Context::getContext()->getTranslator()->trans('TE: Tax excluded', [], 'Shop.Pdf');
         $free_text[] = Context::getContext()->getTranslator()->trans('TI: Tax included', [], 'Shop.Pdf');

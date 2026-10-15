@@ -1,39 +1,19 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 abstract class CacheCore
 {
     /**
      * Name of keys index.
      */
-    const KEYS_NAME = '__keys__';
+    public const KEYS_NAME = '__keys__';
 
     /**
      * Name of SQL cache index.
      */
-    const SQL_TABLES_NAME = 'tablesCached';
+    public const SQL_TABLES_NAME = 'tablesCached';
 
     /**
      * Store the number of time a query is fetched from the cache.
@@ -43,7 +23,7 @@ abstract class CacheCore
     protected $queryCounter = [];
 
     /**
-     * @var Cache
+     * @var Cache|null
      */
     protected static $instance;
 
@@ -181,7 +161,11 @@ abstract class CacheCore
     {
         if (!self::$instance) {
             $caching_system = _PS_CACHING_SYSTEM_;
-            self::$instance = new $caching_system();
+            if (class_exists($caching_system)) {
+                /** @var Cache $cache */
+                $cache = new $caching_system();
+                self::$instance = $cache;
+            }
         }
 
         return self::$instance;
@@ -190,7 +174,7 @@ abstract class CacheCore
     /**
      * Unit testing purpose only.
      *
-     * @param $test_instance Cache
+     * @param Cache $test_instance
      */
     public static function setInstanceForTesting($test_instance)
     {
@@ -289,7 +273,7 @@ abstract class CacheCore
      *
      * @param string $key
      *
-     * @return array List of deleted keys
+     * @return bool
      */
     public function delete($key)
     {
@@ -321,7 +305,7 @@ abstract class CacheCore
 
         $this->_writeKeys();
 
-        return $keys;
+        return true;
     }
 
     /**
@@ -477,7 +461,7 @@ abstract class CacheCore
      * Remove the first less used query results from the cache.
      *
      * @param string $table
-     * @param string $keyToKeep the keep we want to keep inside the table cache
+     * @param string|null $keyToKeep the key we want to keep inside the table cache
      */
     protected function adjustTableCacheSize($table, $keyToKeep = null)
     {
@@ -501,7 +485,7 @@ abstract class CacheCore
             $tableBuffer = array_slice(
                 $this->sql_tables_cached[$table],
                 0,
-                ceil($this->maxCachedObjectsByTable / 3),
+                (int) ceil($this->maxCachedObjectsByTable / 3),
                 true
             );
             foreach (array_keys($tableBuffer) as $fs_key) {
@@ -512,7 +496,7 @@ abstract class CacheCore
             $this->_deleteMulti($invalidKeys);
 
             if ($keyToKeep) {
-                $this->sql_tables_cached[$table][$keyToKeep] = $toKeep;
+                $this->sql_tables_cached[$table][$keyToKeep] = $toKeep ?? null;
             }
         }
         $this->adjustTableCacheSize = false;

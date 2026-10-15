@@ -1,21 +1,21 @@
 <?php
 /**
- * 2007-2020 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
 use PrestaShop\Module\BlockWishList\Database\Install;
@@ -72,7 +72,7 @@ class BlockWishList extends Module
     {
         $this->name = 'blockwishlist';
         $this->tab = 'front_office_features';
-        $this->version = '2.1.0';
+        $this->version = '4.0.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
@@ -81,7 +81,7 @@ class BlockWishList extends Module
         $this->displayName = $this->trans('Wishlist', [], 'Modules.Blockwishlist.Admin');
         $this->description = $this->trans('Allow customers to create wishlists to save their favorite products for later.', [], 'Modules.Blockwishlist.Admin');
         $this->ps_versions_compliancy = [
-            'min' => '1.7.6.0',
+            'min' => '8.2.0',
             'max' => _PS_VERSION_,
         ];
     }
@@ -122,15 +122,22 @@ class BlockWishList extends Module
      */
     public function hookActionAdminControllerSetMedia(array $params)
     {
-        $this->context->controller->addCss($this->getPathUri() . 'public/backoffice.css');
+        $cssPath = $this->getPathUri() . 'public/backoffice.css';
+        $jsPath = $this->getPathUri() . 'public/vendors.js';
 
-        $this->context->controller->addJs($this->getPathUri() . 'public/vendors.js');
+        if (version_compare(_PS_VERSION_, '9.0.0', '>=')) {
+            $this->context->controller->addCSS($cssPath);
+            $this->context->controller->addJS($jsPath);
+        } else {
+            $this->context->controller->addCss($cssPath);
+            $this->context->controller->addJS($jsPath);
+        }
     }
 
     /**
      * Add asset for Shop Front Office
      *
-     * @see https://devdocs.prestashop.com/1.7/themes/getting-started/asset-management/#without-a-front-controller-module
+     * @see https://devdocs.prestashop.com/8/themes/getting-started/asset-management/#without-a-front-controller-module
      *
      * @param array $params
      */
@@ -151,38 +158,40 @@ class BlockWishList extends Module
             'productsAlreadyTagged' => $productsTagged ?: [],
         ]);
 
-        $this->context->controller->registerStylesheet(
-            'blockwishlistController',
-            'modules/' . $this->name . '/public/wishlist.css',
-            [
-              'media' => 'all',
-              'priority' => 100,
-            ]
-        );
+        if ($this->context->controller instanceof FrontController) {
+            $this->context->controller->registerStylesheet(
+                'blockwishlistController',
+                'modules/' . $this->name . '/public/wishlist.css',
+                [
+                'media' => 'all',
+                'priority' => 100,
+                ]
+            );
 
-        $this->context->controller->registerJavascript(
-            'blockwishlistController',
-            'modules/' . $this->name . '/public/product.bundle.js',
-            [
-              'priority' => 100,
-            ]
-        );
+            $this->context->controller->registerJavascript(
+                'blockwishlistController',
+                'modules/' . $this->name . '/public/product.bundle.js',
+                [
+                'priority' => 100,
+                ]
+            );
 
-        $this->context->controller->registerJavascript(
-            'blockwishlistGraphql',
-            'modules/' . $this->name . '/public/graphql.js',
-            [
-              'priority' => 190,
-            ]
-        );
+            $this->context->controller->registerJavascript(
+                'blockwishlistGraphql',
+                'modules/' . $this->name . '/public/graphql.js',
+                [
+                'priority' => 190,
+                ]
+            );
 
-        $this->context->controller->registerJavascript(
-            'blockwishlistVendors',
-            'modules/' . $this->name . '/public/vendors.js',
-            [
-              'priority' => 190,
-            ]
-        );
+            $this->context->controller->registerJavascript(
+                'blockwishlistVendors',
+                'modules/' . $this->name . '/public/vendors.js',
+                [
+                'priority' => 190,
+                ]
+            );
+        }
     }
 
     /**
@@ -235,8 +244,12 @@ class BlockWishList extends Module
             return;
         }
 
-        WishList::removeProductFromWishlist(null, $params['id_product_attribute']);
-        Statistics::removeProductFromStatistics(null, $params['id_product_attribute']);
+        /*
+         * Because we don't know which product attributes were related to deleted attribute
+         * since they are already gone from database, we just remove any leftovers.
+         */
+        WishList::removeNonExistingProductAttributesFromWishlist();
+        Statistics::removeNonExistingProductAttributesFromStatistics();
     }
 
     public function hookDeleteProductAttribute(array $params)
@@ -305,13 +318,14 @@ class BlockWishList extends Module
     public function hookDisplayFooter(array $params)
     {
         $this->smarty->assign([
-            'context' => $this->context->controller->php_self,
+            'context' => $this->context->controller instanceof Controller ? $this->context->controller->php_self : '',
             'url' => $this->context->link->getModuleLink('blockwishlist', 'action', ['action' => 'getAllWishlist']),
             'deleteListUrl' => $this->context->link->getModuleLink('blockwishlist', 'action', ['action' => 'deleteWishlist']),
             'createUrl' => $this->context->link->getModuleLink('blockwishlist', 'action', ['action' => 'createNewWishlist']),
             'deleteProductUrl' => $this->context->link->getModuleLink('blockwishlist', 'action', ['action' => 'deleteProductFromWishlist']),
             'addUrl' => $this->context->link->getModuleLink('blockwishlist', 'action', ['action' => 'addProductToWishlist']),
             'newWishlistCTA' => Configuration::get('blockwishlist_CreateButtonLabel', $this->context->language->id),
+            'wishlistsTitlePage' => Configuration::get('blockwishlist_WishlistPageName', $this->context->language->id),
         ]);
 
         return $this->fetch('module:blockwishlist/views/templates/hook/displayHeader.tpl');

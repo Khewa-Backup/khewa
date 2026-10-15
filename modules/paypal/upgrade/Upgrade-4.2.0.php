@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,21 +16,22 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 function upgrade_module_4_2_0($module)
 {
-    $sql = 'ALTER TABLE '._DB_PREFIX_.'paypal_order ADD method VARCHAR(255), ADD payment_tool VARCHAR(255)';
+    $sql = 'ALTER TABLE ' . _DB_PREFIX_ . 'paypal_order ADD method VARCHAR(255), ADD payment_tool VARCHAR(255)';
     if (!Db::getInstance()->execute($sql)) {
         return false;
     }
@@ -53,10 +55,10 @@ function upgrade_module_4_2_0($module)
         return false;
     }
 
-    if (Configuration::get('PAYPAL_METHOD') == "EXPRESS_CHECKOUT") {
+    if (Configuration::get('PAYPAL_METHOD') == 'EXPRESS_CHECKOUT') {
         if (Configuration::get('PAYPAL_LIVE_ACCESS') || Configuration::get('PAYPAL_SANDBOX_ACCESS')) {
             Configuration::updateValue('PAYPAL_METHOD', 'EC');
-            if (Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT')) == "FR" || Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT')) == "UK") {
+            if (Country::getIsoById((int) Configuration::get('PS_COUNTRY_DEFAULT')) == 'FR' || Country::getIsoById((int) Configuration::get('PS_COUNTRY_DEFAULT')) == 'UK') {
                 Configuration::updateValue('PAYPAL_API_CARD', 0);
             }
         } else {

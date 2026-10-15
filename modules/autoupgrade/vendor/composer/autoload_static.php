@@ -303,6 +303,8 @@ class ComposerStaticInit7251dc11afa1634c46ebd64736f51eeb
         'PrestaShop\\Module\\AutoUpgrade\\UpgradeContainer' => __DIR__ . '/../..' . '/classes/UpgradeContainer.php',
         'PrestaShop\\Module\\AutoUpgrade\\UpgradeSelfCheck' => __DIR__ . '/../..' . '/classes/UpgradeSelfCheck.php',
         'PrestaShop\\Module\\AutoUpgrade\\UpgradeTools\\CacheCleaner' => __DIR__ . '/../..' . '/classes/UpgradeTools/CacheCleaner.php',
+        'PrestaShop\\Module\\AutoUpgrade\\UpgradeTools\\CoreUpgrader\\CoreServiceStub\\CoreServiceStubRegistrar' => __DIR__ . '/../..' . '/classes/UpgradeTools/CoreUpgrader/CoreServiceStub/CoreServiceStubRegistrar.php',
+        'PrestaShop\\Module\\AutoUpgrade\\UpgradeTools\\CoreUpgrader\\CoreServiceStub\\Stubs\\FaultTolerantExtraPropertyDefinitionRepository' => __DIR__ . '/../..' . '/classes/UpgradeTools/CoreUpgrader/CoreServiceStub/Stubs/FaultTolerantExtraPropertyDefinitionRepository.php',
         'PrestaShop\\Module\\AutoUpgrade\\UpgradeTools\\CoreUpgrader\\CoreUpgrader' => __DIR__ . '/../..' . '/classes/UpgradeTools/CoreUpgrader/CoreUpgrader.php',
         'PrestaShop\\Module\\AutoUpgrade\\UpgradeTools\\CoreUpgrader\\CoreUpgrader17' => __DIR__ . '/../..' . '/classes/UpgradeTools/CoreUpgrader/CoreUpgrader17.php',
         'PrestaShop\\Module\\AutoUpgrade\\UpgradeTools\\CoreUpgrader\\CoreUpgrader80' => __DIR__ . '/../..' . '/classes/UpgradeTools/CoreUpgrader/CoreUpgrader80.php',

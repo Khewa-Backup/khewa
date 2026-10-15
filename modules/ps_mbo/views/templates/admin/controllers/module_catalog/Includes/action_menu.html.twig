@@ -23,43 +23,43 @@
   module.attributes.url_active,
   module.attributes.urls,
   module.attributes.name,
-  'AdminActions'
+  constant('PrestaShop\\Module\\Mbo\\Module\\ModuleBuilder::ACTIONS_TRANSLATION_DOMAINS')
 %}
- <div class="btn-group module-actions">
+<div class="btn-group module-actions">
   {% if url_active == 'buy' %}
-    <a class="btn btn-secondary-reverse btn-block btn-outlined-secondary btn-outline-secondary module_action_menu_go_to_addons" href="{{ url }}" target="_blank">
-      <i class="material-icons">launch</i> <p class="spacing-icone-p"> {{ 'Discover'|trans({}, 'Admin.Modules.Feature') }}</p>
+    <a class="btn btn-primary btn-primary-reverse btn-block btn-outline-primary module_action_menu_go_to_addons" href="{{ url }}" target="_blank">
+      {{ 'Discover'|trans({}, 'Modules.Mbo.Modulescatalog') }}
     </a>
   {% elseif urls|length %}
-    {% include '@Modules/ps_mbo/views/templates/admin/controllers/module_catalog/Includes/action_button.html.twig' with {
-        'name': name,
-        'classes_form': 'btn-group form-action-button',
-        'classes' : 'btn btn-secondary',
-        'url': urls[url_active],
-        'action': url_active,
-        'transDomain': transDomains}
+    {% include '@Modules/ps_mbo/views/templates/admin/controllers/module_catalog/includes/action_button.html.twig' with {
+      'name': name,
+      'classes_form': 'btn-group form-action-button',
+      'classes' : 'btn btn-primary-reverse btn-outline-primary',
+      'url': urls[url_active],
+      'action': url_active,
+      'transDomain': transDomains}
     %}
     {% if (urls|length > 1) %}
-        <input type="hidden" class="btn" /> 
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
-          <span class="caret"></span> 
-        </button>
-        <span class="sr-only">{{ 'Toggle Dropdown'|trans({}, 'Admin.Modules.Feature') }}</span> 
-        <div class="dropdown-menu">
-          {% for module_action, module_url in urls %}
-            {% if module_action != url_active %}
-                <li>
-                  {% include '@Modules/ps_mbo/views/templates/admin/controllers/module_catalog/Includes/action_button.html.twig' with {
-                      'name': name,
-                      'classes' : 'dropdown-item',
-                      'url': module_url,
-                      'action': module_action,
-                      'transDomain': transDomains}
-                  %}
-                </li>
-            {% endif %}
-          {% endfor %}
-        </div>
+      <input type="hidden" class="btn" />
+      <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+      </button>
+      <span class="sr-only">{{ 'Toggle Dropdown'|trans({}, 'Modules.Mbo.Modulescatalog') }}</span>
+      <div class="dropdown-menu">
+        {% for module_action, module_url in urls %}
+          {% if module_action != url_active %}
+            <li>
+              {% include '@Modules/ps_mbo/views/templates/admin/controllers/module_catalog/includes/action_button.html.twig' with {
+                'name': name,
+                'classes' : 'dropdown-item',
+                'url': module_url,
+                'action': module_action,
+                'transDomain': transDomains}
+              %}
+            </li>
+          {% endif %}
+        {% endfor %}
+      </div>
     {% endif %}
   {% endif %}
 </div>

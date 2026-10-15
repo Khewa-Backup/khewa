@@ -26,7 +26,7 @@ use Hook;
 use Language;
 use PrestaShop\Module\LinkList\Model\LinkBlock;
 use Shop;
-use Symfony\Component\Translation\TranslatorInterface as Translator;
+use Symfony\Contracts\Translation\TranslatorInterface as Translator;
 
 /**
  * Class LegacyLinkBlockRepository.
@@ -144,7 +144,7 @@ class LegacyLinkBlockRepository
     /**
      * @return bool
      */
-    public function installFixtures()
+    public function installFixtures(): bool
     {
         $success = true;
         $id_hook = (int) Hook::getIdByName('displayFooter');
@@ -168,7 +168,7 @@ class LegacyLinkBlockRepository
         }
 
         foreach ($queries as $query) {
-            $success &= $this->db->execute($query);
+            $success = $success && ((bool) $this->db->execute($query));
         }
 
         return $success;

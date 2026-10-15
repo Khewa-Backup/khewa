@@ -1,36 +1,15 @@
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 // This variables are defined in the dashboard view.tpl
 // dashboard_ajax_url
 // adminstats_ajax_url
 // no_results_translation
-// dashboard_use_push
 // read_more
 
-function refreshDashboard(module_name, use_push, extra) {
+function refreshDashboard(module_name, extra) {
 	var module_list = [];
 	this.getWidget = function(module_id) {
 		$.ajax({
@@ -39,7 +18,6 @@ function refreshDashboard(module_name, use_push, extra) {
 				ajax: true,
 				action:'refreshDashboard',
 				module: module_list[module_id],
-				dashboard_use_push: Number(use_push),
 				extra: extra
 			},
 			// Ensure to get fresh data
@@ -53,9 +31,6 @@ function refreshDashboard(module_name, use_push, extra) {
 						window[data_type](widget_name, widgets[widget_name][data_type]);
 					}
 				}
-				if (parseInt(dashboard_use_push) === 1) {
-					refreshDashboard(false, true);
-				}
 			},
 			contentType: 'application/json'
 		});
@@ -63,23 +38,15 @@ function refreshDashboard(module_name, use_push, extra) {
 	if (module_name === false) {
 		$('.widget').each( function () {
 			module_list.push($(this).attr('id'));
-			if (!use_push) {
-				$(this).addClass('loading');
-			}
+      $(this).addClass('loading');
 		});
-	}
-	else {
+	} else {
 		module_list.push(module_name);
-		if (!use_push) {
-			$('#'+module_name+' section').each( function (){
-				$(this).addClass('loading');
-			});
-		}
+    $('#'+module_name+' section').each( function (){
+      $(this).addClass('loading');
+    });
 	}
 	for (var module_id in module_list) {
-		if (use_push && !$('#'+module_list[module_id]).hasClass('allow_push')) {
-			continue;
-		}
 		this.getWidget(module_id);
 	}
 }
@@ -94,7 +61,7 @@ function setDashboardDateRange(action) {
 			type: 'POST',
 			success : function(jsonData){
 				if (!jsonData.has_errors) {
-					refreshDashboard(false, false);
+					refreshDashboard(false);
 					$('#datepickerFrom').val(jsonData.date_from);
 					$('#datepickerTo').val(jsonData.date_to);
 				}
@@ -190,28 +157,6 @@ function data_list_small(widget_name, data) {
 	}
 }
 
-function getBlogRss() {
-	$.ajax({
-		url : dashboard_ajax_url,
-		data : {
-			ajax:true,
-			action:'getBlogRss'
-		},
-		dataType: 'json',
-		success : function(jsonData) {
-			if (typeof jsonData !== 'undefined' && jsonData !== null && !jsonData.has_errors) {
-				for (var article in jsonData.rss) {
-					var article_html = '<article><h4><a href="'+jsonData.rss[article].link+'" target="_blank" rel="noopener noreferrer nofollow" onclick="return !window.open(this.href);">'+jsonData.rss[article].title+'</a></h4><span class="dash-news-date text-muted">'+jsonData.rss[article].date+'</span><p>'+jsonData.rss[article].short_desc+' <a href="'+jsonData.rss[article].link+'">'+read_more+'</a><p></article><hr/>';
-					$('.dash_news .dash_news_content').append(article_html);
-				}
-			}
-			else {
-				$('.dash_news').hide();
-			}
-		}
-	});
-}
-
 function toggleDashConfig(widget) {
 	var func_name = widget + '_toggleDashConfig';
 	if ($('#'+widget+' section.dash_config').hasClass('hide'))
@@ -293,18 +238,18 @@ function saveDashConfig(widget_name) {
 	});
 }
 
-$(document).ready( function () {
+$( function () {
 	$('#calendar_form input[type="submit"]').on('click', function(elt) {
 		elt.preventDefault();
 		setDashboardDateRange(elt.currentTarget.name);
 	});
 
-	refreshDashboard(false, false);
-	getBlogRss();
+	refreshDashboard(false);
 	bindSubmitDashConfig();
 	bindCancelDashConfig();
 
-	$('#page-header-desc-configuration-switch_demo').tooltip().click(function(e) {
+	$('#page-header-desc-configuration-switch_demo i').removeClass('btn-primary');
+	$('#page-header-desc-configuration-switch_demo').tooltip().on('click', function(e) {
 		$.ajax({
 			url : dashboard_ajax_url,
 			data : {
@@ -314,11 +259,11 @@ $(document).ready( function () {
 			},
 			success : function(result) {
 				if ($('#page-header-desc-configuration-switch_demo i').hasClass('process-icon-toggle-on')) {
-					$('#page-header-desc-configuration-switch_demo i').removeClass('process-icon-toggle-on').addClass('process-icon-toggle-off');
+					$('#page-header-desc-configuration-switch_demo i').attr('class', 'process-icon-toggle-off switch_demo');
 				} else {
-					$('#page-header-desc-configuration-switch_demo i').removeClass('process-icon-toggle-off').addClass('process-icon-toggle-on');
+					$('#page-header-desc-configuration-switch_demo i').attr('class', 'process-icon-toggle-on switch_demo');
 				}
-				refreshDashboard(false, false);
+				refreshDashboard(false);
 			}
 		});
 	});

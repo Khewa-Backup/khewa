@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,51 +16,56 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Request;
 
 use PaypalAddons\classes\AbstractMethodPaypal;
-use PayPalCheckoutSdk\Core\PayPalHttpClient;
+use PaypalAddons\classes\API\Client\HttpClient;
+use PaypalAddons\services\FormatterPaypal;
+use PaypalAddons\services\PaypalContext;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 abstract class RequestAbstract implements RequestInteface
 {
-    /** PayPalHttpClient*/
+    /** PaypalClient*/
     protected $client;
 
-    /** @var \Context*/
+    /** @var \Context */
     protected $context;
 
-    /** @var AbstractMethodPaypal*/
+    /** @var AbstractMethodPaypal */
     protected $method;
 
-    /** @var \Module*/
+    /** @var \Module */
     protected $module;
 
-    public function __construct(PayPalHttpClient $client, AbstractMethodPaypal $method)
+    /** @var FormatterPaypal */
+    protected $formatter;
+
+    /** @var PaypalContext */
+    protected $paypalContext;
+
+    public function __construct(HttpClient $client, AbstractMethodPaypal $method)
     {
         $this->client = $client;
         $this->method = $method;
         $this->context = \Context::getContext();
+        /* @phpstan-ignore-next-line */
         $this->module = \Module::getInstanceByName($method->name);
-    }
-
-    /**
-     * @return array
-     */
-    protected function getHeaders()
-    {
-        $headers = [
-            'PayPal-Partner-Attribution-Id' => $this->method->getPaypalPartnerId()
-        ];
-
-        return $headers;
+        $this->formatter = new FormatterPaypal();
+        $this->paypalContext = PaypalContext::getContext();
     }
 
     abstract public function execute();

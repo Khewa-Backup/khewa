@@ -1,33 +1,13 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 class TaxCore extends ObjectModel
 {
-    const TAX_DEFAULT_PRECISION = 3;
+    public const TAX_DEFAULT_PRECISION = 3;
 
-    /** @var array<int,string> Name */
+    /** @var array<int,string>|string Name */
     public $name;
 
     /** @var float Rate (%) */
@@ -37,7 +17,7 @@ class TaxCore extends ObjectModel
     public $active;
 
     /** @var bool true if the tax has been historized */
-    public $deleted = 0;
+    public $deleted = false;
 
     /**
      * @see ObjectModel::$definition
@@ -81,18 +61,7 @@ class TaxCore extends ObjectModel
      */
     public function historize()
     {
-        $this->deleted = true;
-
-        return parent::update();
-    }
-
-    public function toggleStatus()
-    {
-        if (parent::toggleStatus()) {
-            return $this->_onStatusChange();
-        }
-
-        return false;
+        return $this->softDelete();
     }
 
     public function update($null_values = false)
@@ -106,23 +75,14 @@ class TaxCore extends ObjectModel
             $res = $this->add();
 
             // change tax id in the tax rule table
-            $res &= TaxRule::swapTaxId($historized_tax->id, $this->id);
+            $res = $res && TaxRule::swapTaxId($historized_tax->id, $this->id);
 
             return $res;
         } elseif (parent::update($null_values)) {
-            return $this->_onStatusChange();
+            return true;
         }
 
         return false;
-    }
-
-    protected function _onStatusChange()
-    {
-        if (!$this->active) {
-            return TaxRule::deleteTaxRuleByIdTax($this->id);
-        }
-
-        return true;
     }
 
     /**
@@ -143,7 +103,7 @@ class TaxCore extends ObjectModel
     /**
      * Get all available taxes.
      *
-     * @param int $id_lang
+     * @param int|bool $id_lang
      * @param bool $active_only (true by default)
      *
      * @return array Taxes
@@ -168,6 +128,13 @@ class TaxCore extends ObjectModel
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
     }
 
+    /**
+     * Returns true if taxes are disabled in Prestashop.
+     *
+     * @return bool
+     *
+     * @deprecated since 9.0, please use Configuration::get('PS_TAX') directly
+     */
     public static function excludeTaxeOption()
     {
         return !Configuration::get('PS_TAX');
@@ -177,7 +144,7 @@ class TaxCore extends ObjectModel
      * Return the tax id associated to the specified name.
      *
      * @param string $tax_name
-     * @param bool $active (true by default)
+     * @param bool|int $active (true by default)
      */
     public static function getTaxIdByName($tax_name, $active = 1)
     {
@@ -228,30 +195,6 @@ class TaxCore extends ObjectModel
     }
 
     /**
-     * Return the product tax rate using the tax rules system.
-     *
-     * @param int $id_product
-     * @param int $id_country
-     * @param int $id_state
-     * @param string $zipcode
-     *
-     * @return Tax
-     *
-     * @deprecated since 1.5
-     */
-    public static function getProductTaxRateViaRules($id_product, $id_country, $id_state, $zipcode)
-    {
-        Tools::displayAsDeprecated();
-
-        if (!isset(self::$_product_tax_via_rules[$id_product . '-' . $id_country . '-' . $id_state . '-' . $zipcode])) {
-            $tax_rate = TaxRulesGroup::getTaxesRate((int) Product::getIdTaxRulesGroupByIdProduct((int) $id_product), (int) $id_country, (int) $id_state, $zipcode);
-            self::$_product_tax_via_rules[$id_product . '-' . $id_country . '-' . $zipcode] = $tax_rate;
-        }
-
-        return self::$_product_tax_via_rules[$id_product . '-' . $id_country . '-' . $zipcode];
-    }
-
-    /**
      * Returns the product tax rate.
      *
      * @param int $id_product
@@ -260,7 +203,7 @@ class TaxCore extends ObjectModel
      *
      * @return float
      */
-    public static function getProductTaxRate($id_product, $id_address = null, Context $context = null)
+    public static function getProductTaxRate($id_product, $id_address = null, ?Context $context = null)
     {
         if ($context == null) {
             $context = Context::getContext();

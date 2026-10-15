@@ -1,32 +1,12 @@
 <?php
-
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Translation;
 
+use Exception;
 use PrestaShop\PrestaShop\Adapter\Localization\LegacyTranslator;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 
@@ -47,34 +27,22 @@ trait PrestaShopTranslatorTrait
      *
      * @throws InvalidArgumentException If the locale contains invalid characters
      */
-    public function trans($id, array $parameters = [], $domain = null, $locale = null)
+    public function trans($id, array $parameters = [], $domain = null, $locale = null): string
     {
-        if (isset($parameters['legacy'])) {
-            $legacy = $parameters['legacy'];
-            unset($parameters['legacy']);
-        }
+        $isSprintf = !empty($parameters) && $this->isSprintfString($id);
 
         if (empty($locale)) {
             $locale = null;
         }
 
-        $translated = parent::trans($id, [], $this->normalizeDomain($domain), $locale);
-
-        // @todo to remove after the legacy translation system has ben phased out
-        if ($this->shouldFallbackToLegacyModuleTranslation($id, $domain, $translated)) {
+        if ($this->shouldFallbackToLegacyModuleTranslation($id, $domain, $locale)) {
             return $this->translateUsingLegacySystem($id, $parameters, $domain, $locale);
         }
 
-        if (isset($legacy) && 'htmlspecialchars' === $legacy) {
-            $translated = call_user_func($legacy, $translated, ENT_NOQUOTES);
-        } elseif (isset($legacy)) {
-            $translated = call_user_func($legacy, $translated);
-        }
+        $translated = parent::trans($id, $isSprintf ? [] : $parameters, $this->normalizeDomain($domain), $locale);
 
-        if (!empty($parameters) && $this->isSprintfString($id)) {
+        if ($isSprintf) {
             $translated = vsprintf($translated, $parameters);
-        } elseif (!empty($parameters)) {
-            $translated = strtr($translated, $parameters);
         }
 
         return $translated;
@@ -128,10 +96,10 @@ trait PrestaShopTranslatorTrait
         }
 
         if (!$this->isSprintfString($id)) {
-            return parent::transChoice($id, $number, $parameters, $domain, $locale);
+            return parent::trans($id, array_merge($parameters, ['%count%' => $number]), $domain, $locale);
         }
 
-        return vsprintf(parent::transChoice($id, $number, [], $domain, $locale), $parameters);
+        return vsprintf(parent::trans($id, ['%count%' => $number], $domain, $locale), $parameters);
     }
 
     /**
@@ -155,7 +123,8 @@ trait PrestaShopTranslatorTrait
      *
      * @return mixed|string
      *
-     * @throws \Exception
+     * @throws InvalidArgumentException If the locale contains invalid characters
+     * @throws Exception
      */
     private function translateUsingLegacySystem($message, array $parameters, $domain, $locale = null)
     {
@@ -175,21 +144,20 @@ trait PrestaShopTranslatorTrait
      * Indicates if we should try and translate the provided wording using the legacy system.
      *
      * @param string $message Message to translate
-     * @param string $domain Translation domain
-     * @param string $translated Message after first translation attempt
+     * @param ?string $domain Translation domain
+     * @param ?string $locale Translation locale
      *
      * @return bool
      */
-    private function shouldFallbackToLegacyModuleTranslation($message, $domain, $translated)
+    private function shouldFallbackToLegacyModuleTranslation(string $message, ?string $domain, ?string $locale): bool
     {
         return
-            $message === $translated
-            && 'Modules.' === substr($domain, 0, 8)
+            str_starts_with($domain ?? '', 'Modules.')
             && (
                 !method_exists($this, 'getCatalogue')
-                || !$this->getCatalogue()->has($message, $this->normalizeDomain($domain))
+                || !$this->getCatalogue($locale)->has($message, $this->normalizeDomain($domain))
             )
-            ;
+        ;
     }
 
     /**

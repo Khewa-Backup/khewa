@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Adapter\Presenter\Module;
@@ -30,10 +10,10 @@ use Currency;
 use Exception;
 use Hook;
 use Module as LegacyModule;
-use PrestaShop\PrestaShop\Adapter\Module\Module;
 use PrestaShop\PrestaShop\Adapter\Presenter\PresenterInterface;
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter;
-use PrestaShop\PrestaShop\Core\Addon\AddonsCollection;
+use PrestaShop\PrestaShop\Core\Module\ModuleCollection;
+use PrestaShop\PrestaShop\Core\Module\ModuleInterface;
 
 class ModulePresenter implements PresenterInterface
 {
@@ -52,20 +32,21 @@ class ModulePresenter implements PresenterInterface
     }
 
     /**
-     * @param Module $module
+     * @param ModuleInterface $module
      *
      * @return array
      */
     public function present($module)
     {
-        if (!($module instanceof Module)) {
+        if (!($module instanceof ModuleInterface)) {
             throw new Exception('ModulePresenter can only present instance of Module');
         }
 
         $attributes = $module->attributes->all();
-        $attributes['picos'] = $this->addPicos($attributes);
+        $attributes['id'] = $module->database->get('id', $attributes['id']);
         $attributes['price'] = $this->getModulePrice($attributes['price']);
-        $attributes['starsRate'] = str_replace('.', '', round($attributes['avgRate'] * 2) / 2); // Round to the nearest 0.5
+        // Round to the nearest 0.5
+        $attributes['starsRate'] = str_replace('.', '', (string) (round(floatval($attributes['avgRate']) * 2) / 2));
 
         $moduleInstance = $module->getInstance();
 
@@ -103,47 +84,18 @@ class ModulePresenter implements PresenterInterface
     /**
      * Transform a collection of addons as a simple array of data.
      *
-     * @param AddonsCollection|array $modules
+     * @param ModuleCollection|array $modules
      *
      * @return array
      */
     public function presentCollection($modules)
     {
-        $presentedProducts = [];
-        foreach ($modules as $name => $product) {
-            $presentedProducts[$name] = $this->present($product);
+        $presentedModules = [];
+
+        foreach ($modules as $name => $module) {
+            $presentedModules[$name] = $this->present($module);
         }
 
-        return $presentedProducts;
-    }
-
-    /**
-     * Generate the list of small icons to be displayed near the module name.
-     *
-     * @param array $attributes Attributes of presented module
-     *
-     * @return array
-     */
-    private function addPicos(array $attributes)
-    {
-        $picos = [];
-
-        // PrestaTrust display
-        if (!empty($attributes['prestatrust']) && !empty($attributes['prestatrust']->pico)) {
-            $text = '';
-            $class = '';
-            if (isset($attributes['prestatrust']->status)) {
-                $text = $attributes['prestatrust']->status ? 'OK' : 'KO';
-                $class = $attributes['prestatrust']->status ? 'text-success' : 'text-warning';
-            }
-            $picos['prestatrust'] = [
-                'img' => $attributes['prestatrust']->pico,
-                'label' => 'prestatrust',
-                'text' => $text,
-                'class' => $class,
-            ];
-        }
-
-        return $picos;
+        return $presentedModules;
     }
 }

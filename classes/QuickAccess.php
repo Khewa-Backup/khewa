@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
@@ -29,7 +9,7 @@
  */
 class QuickAccessCore extends ObjectModel
 {
-    /** @var string Name */
+    /** @var string|array<int, string> Name — string when loaded with a specific lang ID, array<langId, name> otherwise */
     public $name;
 
     /** @var string Link */
@@ -71,7 +51,7 @@ class QuickAccessCore extends ObjectModel
     /**
      * Get all available quick_accesses with token.
      *
-     * @return array QuickAccesses
+     * @return bool|array QuickAccesses
      */
     public static function getQuickAccessesWithToken($idLang, $idEmployee)
     {
@@ -81,39 +61,14 @@ class QuickAccessCore extends ObjectModel
             return false;
         }
 
-        foreach ($quickAccess as $index => $quick) {
-            // first, clean url to have a real quickLink
-            $quick['link'] = Context::getContext()->link->getQuickLink($quick['link']);
-            $tokenString = $idEmployee;
-
-            if ('../' === $quick['link'] && Shop::getContext() == Shop::CONTEXT_SHOP) {
-                $url = Context::getContext()->shop->getBaseURL();
-                if (!$url) {
-                    unset($quickAccess[$index]);
-
-                    continue;
-                }
-                $quickAccess[$index]['link'] = $url;
-            } else {
-                preg_match('/controller=(.+)(&.+)?$/', $quick['link'], $admin_tab);
-                if (isset($admin_tab[1])) {
-                    if (strpos($admin_tab[1], '&')) {
-                        $admin_tab[1] = substr($admin_tab[1], 0, strpos($admin_tab[1], '&'));
-                    }
-                    $quick_access[$index]['target'] = $admin_tab[1];
-
-                    $tokenString = $admin_tab[1] . (int) Tab::getIdFromClassName($admin_tab[1]) . $idEmployee;
-                }
-                $quickAccess[$index]['link'] = Context::getContext()->link->getBaseLink() . basename(_PS_ADMIN_DIR_) . '/' . $quick['link'];
-            }
-
-            if (false === strpos($quickAccess[$index]['link'], 'token')) {
-                $separator = strpos($quickAccess[$index]['link'], '?') ? '&' : '?';
-                $quickAccess[$index]['link'] .= $separator . 'token=' . Tools::getAdminToken($tokenString);
-            }
+        $container = PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance();
+        if (!$container) {
+            return false;
         }
 
-        return $quickAccess;
+        $quickAccessGenerator = $container->get(PrestaShop\PrestaShop\Core\QuickAccess\QuickAccessGenerator::class);
+
+        return $quickAccessGenerator->getTokenizedQuickAccesses();
     }
 
     /**

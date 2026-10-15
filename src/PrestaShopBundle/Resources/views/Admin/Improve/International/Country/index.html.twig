@@ -1,0 +1,22 @@
+{#
+ # For the full copyright and license information, please view the
+ # docs/licenses/LICENSE.txt file that was distributed with this source code.
+ #}
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+
+{% block content %}
+  {{ include('@PrestaShop/Admin/Improve/International/Country/Blocks/change_countries_zone_modal.html.twig') }}
+
+  {{ include('@PrestaShop/Admin/Common/Grid/grid_panel.html.twig', {grid: countryGrid}) }}
+
+  {{ form_start(countryOptionsForm, {attr: {class: 'form', id: 'configuration_country_options_form'}, action: path('admin_countries_save_options')}) }}
+    {{ include('@PrestaShop/Admin/Improve/International/Country/Blocks/options.html.twig') }}
+  {{ form_end(countryOptionsForm) }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+
+  <script src="{{ asset('themes/new-theme/public/country.bundle.js') }}"></script>
+  <script src="{{ asset('themes/default/js/bundle/pagination.js') }}"></script>
+{% endblock %}

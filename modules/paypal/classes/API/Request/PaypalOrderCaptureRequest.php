@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,29 +16,38 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Request;
 
 use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalAddons\classes\API\Client\HttpClient;
+use PaypalAddons\classes\API\ExtensionSDK\Order\OrdersCaptureRequest;
+use PaypalAddons\classes\API\HttpAdoptedResponse;
+use PaypalAddons\classes\API\Model\VaultInfo;
 use PaypalAddons\classes\API\Response\Error;
 use PaypalAddons\classes\API\Response\ResponseOrderCapture;
-use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
-use PayPalHttp\HttpException;
-use Symfony\Component\VarDumper\VarDumper;
+use PaypalAddons\classes\Constants\Vaulting;
+use PaypalAddons\classes\PaypalException;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaypalOrderCaptureRequest extends RequestAbstract
 {
-    /** @var string*/
+    /** @var string */
     protected $paymentId;
 
-    public function __construct($client, AbstractMethodPaypal $method, $paymentId)
+    public function __construct(HttpClient $client, AbstractMethodPaypal $method, $paymentId)
     {
         parent::__construct($client, $method);
         $this->paymentId = $paymentId;
@@ -47,10 +57,13 @@ class PaypalOrderCaptureRequest extends RequestAbstract
     {
         $response = new ResponseOrderCapture();
         $orderCapture = new OrdersCaptureRequest($this->paymentId);
-        $orderCapture->headers = array_merge($this->getHeaders(), $orderCapture->headers);
 
         try {
             $exec = $this->client->execute($orderCapture);
+
+            if ($exec instanceof HttpAdoptedResponse) {
+                $exec = $exec->getAdoptedResponse();
+            }
 
             if (in_array($exec->statusCode, [200, 201, 202])) {
                 $response->setSuccess(true)
@@ -65,21 +78,36 @@ class PaypalOrderCaptureRequest extends RequestAbstract
                     ->setPaymentTool($this->getPaymentTool())
                     ->setMethod($this->getMethodTransaction())
                     ->setDateTransaction($this->getDateTransaction($exec));
+
+                $vaultInfo = $this->getVaultInfo($exec);
+
+                if ($vaultInfo instanceof VaultInfo) {
+                    $response->setVaultInfo($vaultInfo);
+                }
             } elseif ($exec->statusCode == 204) {
                 $response->setSuccess(true);
             } else {
-                $error = new Error();
-                $resultDecoded = json_decode($exec->message);
-                $error->setMessage($resultDecoded->message);
-                $response->setSuccess(false)->setError($error);
+                $response->setSuccess(false)->setData($exec);
             }
-        } catch (HttpException $e) {
+        } catch (PaypalException $e) {
+            $response->setSuccess(false);
             $error = new Error();
             $resultDecoded = json_decode($e->getMessage());
-            $error->setMessage($resultDecoded->details[0]->description)->setErrorCode($e->getCode());
-            $response->setSuccess(false)
-                ->setError($error);
-        } catch (\Exception $e) {
+
+            if (!empty($resultDecoded->details[0]->description)) {
+                $error->setMessage($resultDecoded->details[0]->description);
+            }
+            if (!empty($resultDecoded->details[0]->issue)) {
+                if ($resultDecoded->details[0]->issue === \PayPal::PAYPAL_ISSUE_PAYER_ACTION_REQUIRED) {
+                    if (!empty($resultDecoded->links)) {
+                        $error->setErrorCode(PaypalException::PAYER_ACTION_REQUIRED);
+                        $response->setPayerAction($this->getLink('payer-action', $resultDecoded->links));
+                    }
+                }
+            }
+
+            $response->setError($error);
+        } catch (\Throwable $e) {
             $error = new Error();
             $error->setErrorCode($e->getCode())->setMessage($e->getMessage());
             $response->setError($error)->setSuccess(false);
@@ -124,6 +152,10 @@ class PaypalOrderCaptureRequest extends RequestAbstract
         $transaction = $payemnts->captures[0];
         $date = \DateTime::createFromFormat(\DateTime::ATOM, $transaction->create_time);
 
+        if (!$date) {
+            $date = new \DateTime();
+        }
+
         return $date;
     }
 
@@ -144,5 +176,41 @@ class PaypalOrderCaptureRequest extends RequestAbstract
         }
 
         return $method;
+    }
+
+    protected function getVaultInfo($response)
+    {
+        if (false === empty($response->result->payment_source->paypal->attributes->vault)) {
+            $vaultInfo = new VaultInfo();
+            $vaultInfo->setPaymentSource(Vaulting::PAYMENT_SOURCE_PAYPAL);
+
+            if (false === empty($response->result->payment_source->paypal->attributes->vault->id)) {
+                $vaultInfo->setVaultId((string) $response->result->payment_source->paypal->attributes->vault->id);
+            }
+            if (false === empty($response->result->payment_source->paypal->attributes->vault->customer->id)) {
+                $vaultInfo->setCustomerId((string) $response->result->payment_source->paypal->attributes->vault->customer->id);
+            }
+            if (false === empty($response->result->payment_source->paypal->attributes->vault->status)) {
+                $vaultInfo->setStatus((string) $response->result->payment_source->paypal->attributes->vault->status);
+            }
+            if (false === empty($response->result->payment_source->paypal->attributes->vault->setup_token)) {
+                $vaultInfo->setSetupToken((string) $response->result->payment_source->paypal->attributes->vault->setup_token);
+            }
+
+            return $vaultInfo;
+        }
+
+        return null;
+    }
+
+    protected function getLink($nameLink, $links)
+    {
+        foreach ($links as $link) {
+            if ($link->rel == $nameLink) {
+                return $link->href;
+            }
+        }
+
+        return '';
     }
 }

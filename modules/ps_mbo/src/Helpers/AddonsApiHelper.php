@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -22,18 +21,19 @@ declare(strict_types=1);
 
 namespace PrestaShop\Module\Mbo\Helpers;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AddonsApiHelper
 {
-    /**
-     * @return array
-     */
-    public static function addCustomHeaders()
+    public static function addCustomHeaders(): array
     {
         $defaultCustomHeaders = [
             'X-PrestaShop-MBO' => \ps_mbo::VERSION,
         ];
-        $customHeaderKey = getenv('ADDONS_API_HEADER_KEY');
-        $customHeaderValue = getenv('ADDONS_API_HEADER_VALUE');
+        $customHeaderKey = EnvHelper::getEnv('ADDONS_API_HEADER_KEY');
+        $customHeaderValue = EnvHelper::getEnv('ADDONS_API_HEADER_VALUE');
 
         if (empty($customHeaderKey) || empty($customHeaderValue)) {
             return $defaultCustomHeaders;

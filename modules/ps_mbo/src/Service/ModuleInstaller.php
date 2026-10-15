@@ -78,7 +78,6 @@ class ModuleInstaller
      */
     public function isShopVersion17()
     {
-        /* @SuppressWarnings("php:S1313") */
         return version_compare(_PS_VERSION_, '1.7.0.0', '>=');
     }
 

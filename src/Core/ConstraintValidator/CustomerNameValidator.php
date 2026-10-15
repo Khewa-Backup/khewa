@@ -1,57 +1,23 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShop\PrestaShop\Core\ConstraintValidator;
 
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\CustomerName;
-use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Class CustomerNameValidator is responsilbe for doing the actual validation under CustomerName constraint.
+ * Class CustomerNameValidator is responsible for doing the actual validation under the CustomerName constraint.
  */
 class CustomerNameValidator extends ConstraintValidator
 {
     public const PATTERN_NAME = '/^(?!\s*$)(?:[^0-9!<>,;?=+()\/\\\\@#"°*`{}_^$%:¤\[\]|\.。]|[。\.](?:\s|$))*$/u';
     public const PATTERN_DOT_SPACED = '/[\.。](\s{1}[^\ ]|$)/';
-
-    /**
-     * @var CharacterCleaner
-     */
-    private $characterCleaner;
-
-    /**
-     * @param CharacterCleaner $characterCleaner
-     */
-    public function __construct(CharacterCleaner $characterCleaner)
-    {
-        $this->characterCleaner = $characterCleaner;
-    }
 
     /**
      * {@inheritdoc}
@@ -60,6 +26,10 @@ class CustomerNameValidator extends ConstraintValidator
     {
         if (!$constraint instanceof CustomerName) {
             throw new UnexpectedTypeException($constraint, CustomerName::class);
+        }
+
+        if (null === $value || '' === $value) {
+            return;
         }
 
         if (!is_string($value)) {
@@ -82,9 +52,7 @@ class CustomerNameValidator extends ConstraintValidator
      */
     private function isNameValid($name)
     {
-        $pattern = $this->characterCleaner->cleanNonUnicodeSupport(self::PATTERN_NAME);
-
-        return (bool) preg_match($pattern, $name);
+        return (bool) preg_match(static::PATTERN_NAME, $name);
     }
 
     /**
@@ -99,8 +67,7 @@ class CustomerNameValidator extends ConstraintValidator
         if (mb_strpos($name, '.') === false && mb_strpos($name, '。') === false) {
             return true;
         }
-        $pattern = $this->characterCleaner->cleanNonUnicodeSupport(self::PATTERN_DOT_SPACED);
 
-        return (bool) preg_match($pattern, $name);
+        return (bool) preg_match(static::PATTERN_DOT_SPACED, $name);
     }
 }

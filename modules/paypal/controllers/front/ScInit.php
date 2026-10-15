@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,22 +16,29 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalAddons\services\PaypalContext;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Init payment for EC shortcut
  */
 class PaypalScInitModuleFrontController extends PaypalAbstarctModuleFrontController
 {
-    /* @var $method AbstractMethodPaypal*/
+    /* @var $method AbstractMethodPaypal */
     protected $method;
 
     public function init()
@@ -46,12 +54,7 @@ class PaypalScInitModuleFrontController extends PaypalAbstarctModuleFrontControl
         $this->values['getToken'] = Tools::getvalue('getToken');
         $this->values['credit_card'] = 0;
         $this->values['short_cut'] = 1;
-        if ($this->module->paypal_method == 'MB') {
-            $methodType = 'EC';
-        } else {
-            $methodType = $this->module->paypal_method;
-        }
-        $this->setMethod(AbstractMethodPaypal::load($methodType));
+        $this->setMethod(AbstractMethodPaypal::load());
     }
 
     public function displayAjaxCheckAvailability()
@@ -60,20 +63,25 @@ class PaypalScInitModuleFrontController extends PaypalAbstarctModuleFrontControl
 
         switch ($request->page) {
             case 'cart':
-                if ($this->context->cart->checkQuantities() && $this->context->cart->hasProducts()) {
-                    $this->jsonValues = array('success' => true);
+                if ($this->context->cart->checkQuantities() && $this->context->cart->nbProducts()) {
+                    $this->jsonValues = ['success' => true];
                 } else {
-                    $this->jsonValues = array('success' => false);
+                    $this->jsonValues = ['success' => false];
                 }
                 break;
             case 'product':
-                $product = new Product((int)$request->idProduct);
+                $product = new Product((int) $request->idProduct);
                 $group = $this->parseCombination($request->combination);
-                $product->id_product_attribute = $this->module->getIdProductAttributeByIdAttributes($request->idProduct, $group);
+
+                if (false == empty($group)) {
+                    /* @phpstan-ignore-next-line */
+                    $product->id_product_attribute = $this->module->getIdProductAttributeByIdAttributes($request->idProduct, $group);
+                }
+
                 if ($product->checkQty($request->quantity)) {
-                    $this->jsonValues = array('success' => true);
+                    $this->jsonValues = ['success' => true];
                 } else {
-                    $this->jsonValues = array('success' => false);
+                    $this->jsonValues = ['success' => false];
                 }
                 break;
             default:
@@ -83,10 +91,15 @@ class PaypalScInitModuleFrontController extends PaypalAbstarctModuleFrontControl
     protected function parseCombination($combination)
     {
         $temp_group = explode('|', $combination);
-        $group = array();
+        $group = [];
 
         foreach ($temp_group as $item) {
             $temp = explode(':', $item);
+
+            if (count($temp) == 1) {
+                continue;
+            }
+
             $temp = array_map(
                 function ($value) {
                     return trim($value);
@@ -103,13 +116,13 @@ class PaypalScInitModuleFrontController extends PaypalAbstarctModuleFrontControl
     {
         if (empty($this->context->cart->id)) {
             $this->context->cart->add();
-            $this->context->cookie->id_cart = $this->context->cart->id;
+            $this->context->cookie->__set('id_cart', $this->context->cart->id);
             $this->context->cookie->write();
         } else {
             // delete all product in cart
             $products = $this->context->cart->getProducts();
             foreach ($products as $product) {
-                $this->context->cart->deleteProduct($product['id_product'], $product['id_product_attribute'], $product['id_customization'], $product['id_address_delivery']);
+                $this->context->cart->deleteProduct($product['id_product'], $product['id_product_attribute'], $product['id_customization']);
             }
         }
 
@@ -139,13 +152,29 @@ class PaypalScInitModuleFrontController extends PaypalAbstarctModuleFrontControl
             $this->prepareProduct();
         }
 
-        $this->method->setShortCut(true);
-        $this->method->init();
+        if (empty($request->addAddress)) {
+            $this->method->setShortCut(true);
+        }
+
+        if (isset($request->savePaypalAccount) && $request->savePaypalAccount) {
+            PaypalContext::getContext()->set('savePaypalAccount', true);
+        }
+
+        if (isset($request->sca_verification)) {
+            PaypalContext::getContext()->set('scaVerification', $request->sca_verification);
+        }
+
+        if (empty($request->apmMethod)) {
+            $this->method->init();
+        } else {
+            $this->method->initApm($request->apmMethod);
+        }
+
         $this->jsonValues = ['success' => true, 'idOrder' => $this->method->getPaymentId()];
     }
 
     public function getRequest()
     {
-        return json_decode(file_get_contents('php://input'));
+        return json_decode(Tools::file_get_contents('php://input'));
     }
 }

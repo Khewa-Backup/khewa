@@ -4,33 +4,37 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit26073f7269134cc5876b1b1420904e9e
+class ComposerStaticInitd1034c64e28668bbb0fc23c78fc6da69
 {
     public static $prefixLengthsPsr4 = array (
-        'P' => 
+        'P' =>
         array (
             'PrestaShop\\Module\\BlockReassurance\\' => 35,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'PrestaShop\\Module\\BlockReassurance\\' => 
+        'PrestaShop\\Module\\BlockReassurance\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
     );
 
     public static $classMap = array (
-        'ReassuranceActivity' => __DIR__ . '/../..' . '/classes/ReassuranceActivity.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'PrestaShop\\Module\\BlockReassurance\\Entity\\Psreassurance' => __DIR__ . '/../..' . '/src/Entity/Psreassurance.php',
+        'PrestaShop\\Module\\BlockReassurance\\Entity\\PsreassuranceLang' => __DIR__ . '/../..' . '/src/Entity/PsreassuranceLang.php',
+        'PrestaShop\\Module\\BlockReassurance\\Form\\PsreassuranceFormDataHandler' => __DIR__ . '/../..' . '/src/Form/PsreassuranceFormDataHandler.php',
+        'PrestaShop\\Module\\BlockReassurance\\Repository\\PsreassuranceRepository' => __DIR__ . '/../..' . '/src/Repository/PsreassuranceRepository.php',
         'blockreassurance' => __DIR__ . '/../..' . '/blockreassurance.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit26073f7269134cc5876b1b1420904e9e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit26073f7269134cc5876b1b1420904e9e::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit26073f7269134cc5876b1b1420904e9e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd1034c64e28668bbb0fc23c78fc6da69::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd1034c64e28668bbb0fc23c78fc6da69::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitd1034c64e28668bbb0fc23c78fc6da69::$classMap;
 
         }, null, ClassLoader::class);
     }

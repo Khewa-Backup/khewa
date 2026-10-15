@@ -1,6 +1,7 @@
 <?php
-/**
- * 2007-2021 PayPal
+
+/*
+ * Since 2007 PayPal
  *
  * NOTICE OF LICENSE
  *
@@ -15,30 +16,36 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ *  versions in the future. If you wish to customize PrestaShop for your
+ *  needs please refer to http://www.prestashop.com for more information.
  *
- * @author 2007-2021 PayPal
- * @copyright PayPal
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @author Since 2007 PayPal
+ *  @author 202 ecommerce <tech@202-ecommerce.com>
+ *  @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ *  @copyright PayPal
+ *
  */
 
 namespace PaypalAddons\classes\API\Request;
 
 use PaypalAddons\classes\AbstractMethodPaypal;
+use PaypalAddons\classes\API\Client\HttpClient;
+use PaypalAddons\classes\API\ExtensionSDK\Order\AuthorizationsCaptureRequest;
+use PaypalAddons\classes\API\HttpAdoptedResponse;
 use PaypalAddons\classes\API\Response\Error;
 use PaypalAddons\classes\API\Response\ResponseCaptureAuthorize;
-use PayPalCheckoutSdk\Core\PayPalHttpClient;
-use PayPalCheckoutSdk\Payments\AuthorizationsCaptureRequest;
-use PayPalHttp\HttpException;
-use Symfony\Component\VarDumper\VarDumper;
+use PaypalAddons\classes\PaypalException;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaypalCaptureAuthorizeRequest extends RequestAbstract
 {
-    /** @var \PaypalOrder*/
+    /** @var \PaypalOrder */
     protected $paypalOrder;
 
-    public function __construct(PayPalHttpClient $client, AbstractMethodPaypal $method, \PaypalOrder $paypalOrder)
+    public function __construct(HttpClient $client, AbstractMethodPaypal $method, \PaypalOrder $paypalOrder)
     {
         parent::__construct($client, $method);
         $this->paypalOrder = $paypalOrder;
@@ -51,10 +58,13 @@ class PaypalCaptureAuthorizeRequest extends RequestAbstract
     {
         $response = new ResponseCaptureAuthorize();
         $captureAuhorize = new AuthorizationsCaptureRequest($this->paypalOrder->id_transaction);
-        $captureAuhorize->prefer('return=representation');
 
         try {
             $exec = $this->client->execute($captureAuhorize);
+
+            if ($exec instanceof HttpAdoptedResponse) {
+                $exec = $exec->getAdoptedResponse();
+            }
 
             if (in_array($exec->statusCode, [200, 201, 202])) {
                 $response->setSuccess(true)
@@ -62,18 +72,15 @@ class PaypalCaptureAuthorizeRequest extends RequestAbstract
                     ->setStatus($exec->result->status)
                     ->setDateTransaction($this->getDateTransaction($exec));
             } else {
-                $error = new Error();
-                $resultDecoded = json_decode($exec->message);
-                $error->setMessage($resultDecoded->message);
-                $response->setSuccess(false)->setError($error);
+                $response->setSuccess(false)->setData($exec);
             }
-        } catch (HttpException $e) {
+        } catch (PaypalException $e) {
             $error = new Error();
             $resultDecoded = json_decode($e->getMessage());
             $error->setMessage($resultDecoded->details[0]->description)->setErrorCode($e->getCode());
             $response->setSuccess(false)
                 ->setError($error);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $error = new Error();
             $error->setErrorCode($e->getCode())->setMessage($e->getMessage());
             $response->setError($error)->setSuccess(false);
@@ -82,9 +89,14 @@ class PaypalCaptureAuthorizeRequest extends RequestAbstract
         return $response;
     }
 
-    protected function getDateTransaction(\PayPalHttp\HttpResponse $exec)
+    protected function getDateTransaction($exec)
     {
         $date = \DateTime::createFromFormat(\DateTime::ATOM, $exec->result->create_time);
+
+        if (!$date) {
+            $date = new \DateTime();
+        }
+
         return $date->format('Y-m-d H:i:s');
     }
 }

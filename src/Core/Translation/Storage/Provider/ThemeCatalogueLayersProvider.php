@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 declare(strict_types=1);
 
@@ -34,6 +14,7 @@ use PrestaShop\PrestaShop\Core\Translation\Exception\InvalidThemeException;
 use PrestaShop\PrestaShop\Core\Translation\Exception\TranslationFilesNotFoundException;
 use PrestaShop\PrestaShop\Core\Translation\Storage\Extractor\ThemeExtractor;
 use PrestaShop\PrestaShop\Core\Translation\Storage\Loader\DatabaseTranslationLoader;
+use PrestaShop\PrestaShop\Core\Translation\Storage\Provider\Definition\ModuleProviderDefinition;
 use PrestaShop\PrestaShop\Core\Translation\Storage\Provider\Finder\FileTranslatedCatalogueFinder;
 use PrestaShop\PrestaShop\Core\Translation\Storage\Provider\Finder\UserTranslatedCatalogueFinder;
 use RuntimeException;
@@ -93,6 +74,17 @@ class ThemeCatalogueLayersProvider implements CatalogueLayersProviderInterface
     private $theme;
 
     /**
+     * @var MessageCatalogue|null
+     */
+    private $defaultCatalogue;
+
+    /**
+     * @var ModuleCatalogueProviderFactory
+     */
+    private $moduleCatalogueProviderFactory;
+
+    /**
+     * @param ModuleCatalogueProviderFactory $moduleCatalogueProviderFactory
      * @param CatalogueLayersProviderInterface $coreFrontProvider
      * @param DatabaseTranslationLoader $databaseTranslationLoader
      * @param ThemeExtractor $themeExtractor
@@ -102,6 +94,7 @@ class ThemeCatalogueLayersProvider implements CatalogueLayersProviderInterface
      * @param string $themeName
      */
     public function __construct(
+        ModuleCatalogueProviderFactory $moduleCatalogueProviderFactory,
         CatalogueLayersProviderInterface $coreFrontProvider,
         DatabaseTranslationLoader $databaseTranslationLoader,
         ThemeExtractor $themeExtractor,
@@ -111,6 +104,7 @@ class ThemeCatalogueLayersProvider implements CatalogueLayersProviderInterface
         string $themeName
     ) {
         $this->databaseTranslationLoader = $databaseTranslationLoader;
+        $this->moduleCatalogueProviderFactory = $moduleCatalogueProviderFactory;
         $this->coreFrontProvider = $coreFrontProvider;
         $this->themeExtractor = $themeExtractor;
         $this->themeRepository = $themeRepository;
@@ -129,7 +123,11 @@ class ThemeCatalogueLayersProvider implements CatalogueLayersProviderInterface
         bool $refreshCache = false
     ): MessageCatalogue {
         // Extracts wordings from the theme's templates
-        return $this->themeExtractor->extract($this->theme, $locale);
+        if ($this->defaultCatalogue === null) {
+            $this->defaultCatalogue = $this->themeExtractor->extract($this->theme, $locale);
+        }
+
+        return $this->defaultCatalogue;
     }
 
     /**
@@ -137,12 +135,15 @@ class ThemeCatalogueLayersProvider implements CatalogueLayersProviderInterface
      *
      * @return MessageCatalogue
      *
-     * @throws TranslationFilesNotFoundException
+     * The **file** translated catalogue for a theme other than classic corresponds
+     * to the core files, overwritten by the user-translated core wordings (if any), overwritten
+     * by the theme files (if any)
      */
     public function getFileTranslatedCatalogue(string $locale): MessageCatalogue
     {
         // load front office catalogue
-        $catalogue = $this->coreFrontProvider->getFileTranslatedCatalogue($locale);
+        $coreCatalogue = $this->getCoreCatalogue($locale);
+        $coreCatalogue->addCatalogue($this->getModulesTranslations($locale));
 
         try {
             $fileTranslatedCatalogue = (new FileTranslatedCatalogueFinder(
@@ -152,13 +153,12 @@ class ThemeCatalogueLayersProvider implements CatalogueLayersProviderInterface
                 ->getCatalogue($locale);
 
             // overwrite with the theme's own catalogue
-            $catalogue->addCatalogue($fileTranslatedCatalogue);
-        } catch (TranslationFilesNotFoundException $e) {
-            // there are no translation files, ignore them
-            return new MessageCatalogue($locale);
+            $coreCatalogue->addCatalogue($fileTranslatedCatalogue);
+        } catch (TranslationFilesNotFoundException) {
+            // No translation file was found in the theme, we keep using those from the core
         }
 
-        return $catalogue;
+        return $coreCatalogue;
     }
 
     /**
@@ -205,5 +205,57 @@ class ThemeCatalogueLayersProvider implements CatalogueLayersProviderInterface
         $this->filesystem->mkdir($resourceDirectory);
 
         return $resourceDirectory;
+    }
+
+    private function getCoreCatalogue(string $locale): MessageCatalogue
+    {
+        $coreCatalogue = $this->coreFrontProvider->getFileTranslatedCatalogue($locale);
+
+        // load core user-translated catalogue
+        $coreUserTranslatedCatalogue = (new UserTranslatedCatalogueFinder(
+            $this->databaseTranslationLoader,
+            ['*']
+        ))
+            ->getCatalogue($locale);
+
+        $coreCatalogue->addCatalogue($coreUserTranslatedCatalogue);
+
+        return $coreCatalogue;
+    }
+
+    private function getModulesTranslations(string $locale): MessageCatalogue
+    {
+        $moduleCatalogue = new MessageCatalogue($locale);
+        $modules = $this->getModulesFromTranslations($locale);
+
+        foreach ($modules as $module) {
+            $moduleProvider = $this->moduleCatalogueProviderFactory->getModuleCatalogueProvider(
+                new ModuleProviderDefinition($module)
+            );
+            try {
+                $moduleCatalogue->addCatalogue($moduleProvider->getFileTranslatedCatalogue($locale));
+            } catch (Exception) {
+                // no translations found
+            }
+        }
+
+        return $moduleCatalogue;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getModulesFromTranslations(string $locale): array
+    {
+        $modules = [];
+
+        $catalogue = $this->getDefaultCatalogue($locale);
+        foreach ($catalogue->getDomains() as $domain) {
+            if (preg_match('/^Modules([A-Z]([^A-Z]+))/', $domain, $matches)) {
+                $modules[] = strtolower($matches[1]);
+            }
+        }
+
+        return array_unique($modules);
     }
 }

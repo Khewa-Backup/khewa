@@ -30,9 +30,13 @@
                 {if $category.description}
                     <div id="category-description" class="text-muted">{$category.description nofilter}</div>
                 {/if}
-                {if !empty($category.image.large.url)}
+                {if !empty($category.cover.large.url)}
                     <div class="category-cover">
-                        <img src="{$category.image.large.url}" alt="{if !empty($category.image.legend)}{$category.image.legend}{else}{$category.name}{/if}" loading="lazy" width="141" height="180">
+                        <picture>
+                            {if !empty($category.cover.large.sources.avif)}<source srcset="{$category.cover.large.sources.avif}" type="image/avif">{/if}
+                            {if !empty($category.cover.large.sources.webp)}<source srcset="{$category.cover.large.sources.webp}" type="image/webp">{/if}
+                            <img src="{$category.cover.large.url}" alt="{if !empty($category.cover.legend)}{$category.cover.legend}{else}{$category.name}{/if}" fetchpriority="high" width="{$category.cover.large.width}" height="{$category.cover.large.height}">
+                        </picture>
                     </div>
                 {/if}
             </div>

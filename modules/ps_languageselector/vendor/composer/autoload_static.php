@@ -4,11 +4,16 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit544dc8ec77fa2b6366b071b93eca6eac
+class ComposerStaticInit000924679bf344e109a44c6a46b7ec3e
 {
+    public static $classMap = array (
+        'Ps_Languageselector' => __DIR__ . '/../..' . '/ps_languageselector.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->classMap = ComposerStaticInit000924679bf344e109a44c6a46b7ec3e::$classMap;
 
         }, null, ClassLoader::class);
     }

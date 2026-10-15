@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 /**
@@ -30,6 +10,9 @@
 class HelperOptionsCore extends Helper
 {
     public $required = false;
+
+    /** @var int */
+    public $id;
 
     public function __construct()
     {
@@ -49,9 +32,7 @@ class HelperOptionsCore extends Helper
     {
         $this->tpl = $this->createTemplate($this->base_tpl);
         $tab = Tab::getTab($this->context->language->id, $this->id);
-        if (!isset($languages)) {
-            $languages = Language::getLanguages(false);
-        }
+        $languages = Language::getLanguages(false);
 
         $has_color_field = false;
         $use_multishop = false;
@@ -100,6 +81,13 @@ class HelperOptionsCore extends Helper
                 $field['is_invisible'] = $is_invisible;
 
                 $field['required'] = isset($field['required']) ? $field['required'] : $this->required;
+
+                if ($field['type'] === 'checkbox' && isset($field['value_multiple'])) {
+                    $multipleValues = is_array($field['value']) ? $field['value'] : explode(',', $field['value']);
+                    foreach ($multipleValues as $currentValue) {
+                        $field['value_multiple'][$currentValue] = true;
+                    }
+                }
 
                 if ($field['type'] == 'color') {
                     $has_color_field = true;
@@ -211,7 +199,7 @@ class HelperOptionsCore extends Helper
                                 }
                             }
                         </script>';
-                    $field['link_remove_ip'] = '<button type="button" class="btn btn-default" onclick="addRemoteAddr();"><i class="icon-plus"></i> ' . $this->l('Add my IP', 'Helper') . '</button>';
+                    $field['link_remove_ip'] = '<button type="button" class="btn btn-default" onclick="addRemoteAddr();"><i class="icon-plus"></i> ' . Context::getContext()->getTranslator()->trans('Add my IP', [], 'Admin.Actions') . '</button>';
                 }
 
                 // Multishop default value
@@ -244,11 +232,12 @@ class HelperOptionsCore extends Helper
             'tabs' => (isset($tabs)) ? $tabs : null,
             'option_list' => $option_list,
             'current_id_lang' => $this->context->language->id,
-            'languages' => isset($languages) ? $languages : null,
+            'languages' => $languages,
             'currency_left_sign' => $this->context->currency->getSign('left'),
             'currency_right_sign' => $this->context->currency->getSign('right'),
             'use_multishop' => $use_multishop,
             'has_color_field' => $has_color_field,
+            'controller_name' => $this->controller_name,
         ]);
 
         return parent::generate();
@@ -287,8 +276,10 @@ class HelperOptionsCore extends Helper
     public function displayOptionTypePrice($key, $field, $value)
     {
         echo $this->context->currency->getSign('left');
-        $this->displayOptionTypeText($key, $field, $value);
-        echo $this->context->currency->getSign('right') . ' ' . $this->l('(tax excl.)', 'Helper');
+        if (method_exists($this, 'displayOptionTypeText')) {
+            $this->displayOptionTypeText($key, $field, $value);
+        }
+        echo $this->context->currency->getSign('right') . ' ' . Context::getContext()->getTranslator()->trans('(tax excl.)', [], 'Admin.Global');
     }
 
     /**
@@ -302,6 +293,11 @@ class HelperOptionsCore extends Helper
     public function getOptionValue($key, $field)
     {
         $value = Tools::getValue($key, Configuration::get($key));
+
+        if (!empty($field['skip_clean_html'])) {
+            return $value;
+        }
+
         if (!Validate::isCleanHtml($value)) {
             $value = Configuration::get($key);
         }

@@ -1,27 +1,7 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://devdocs.prestashop.com/ for more information.
- *
- * @author    PrestaShop SA and Contributors <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ * For the full copyright and license information, please view the
+ * docs/licenses/LICENSE.txt file that was distributed with this source code.
  */
 
 namespace PrestaShopBundle\Form\Admin\Sell\Address;
@@ -42,11 +22,12 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Form type for address add/edit
@@ -105,8 +86,8 @@ class CustomerAddressType extends TranslatorAwareType
             'Admin.Notifications.Info'
         ) . ' ' . TypedRegexValidator::GENERIC_NAME_CHARS;
         $stateChoices = $this->stateChoiceProvider->getChoices(['id_country' => $countryId]);
-
         $showStates = !empty($stateChoices);
+        $requiredFields = $options['requiredFields'];
 
         if (!isset($data['id_customer'])) {
             $builder->add('customer_email', EmailType::class, [
@@ -138,7 +119,7 @@ class CustomerAddressType extends TranslatorAwareType
                 'The national ID card number of this person, or a unique tax identification number.',
                 'Admin.Orderscustomers.Feature'
             ),
-            'required' => false,
+            'required' => in_array('dni', $requiredFields, true),
             'empty_data' => '',
             'constraints' => [
                 new CleanHtml(),
@@ -236,7 +217,7 @@ class CustomerAddressType extends TranslatorAwareType
             ->add('company', TextType::class, [
                 'label' => $this->trans('Company', 'Admin.Global'),
                 'help' => $genericInvalidCharsMessage,
-                'required' => false,
+                'required' => in_array('company', $requiredFields, true),
                 'empty_data' => '',
                 'constraints' => [
                     new CleanHtml(),
@@ -255,7 +236,7 @@ class CustomerAddressType extends TranslatorAwareType
             ])
             ->add('vat_number', TextType::class, [
                 'label' => $this->trans('VAT number', 'Admin.Orderscustomers.Feature'),
-                'required' => false,
+                'required' => in_array('vat_number', $requiredFields, true),
                 'empty_data' => '',
                 'constraints' => [
                     new CleanHtml(),
@@ -297,7 +278,7 @@ class CustomerAddressType extends TranslatorAwareType
             ])
             ->add('address2', TextType::class, [
                 'label' => $this->trans('Address (2)', 'Admin.Global'),
-                'required' => false,
+                'required' => in_array('address2', $requiredFields, true),
                 'empty_data' => '',
                 'constraints' => [
                     new CleanHtml(),
@@ -372,6 +353,7 @@ class CustomerAddressType extends TranslatorAwareType
                         ),
                     ]),
                 ],
+                'autocomplete' => true,
                 'attr' => [
                     'data-states-url' => $this->router->generate('admin_country_states'),
                 ],
@@ -387,12 +369,13 @@ class CustomerAddressType extends TranslatorAwareType
                 'row_attr' => [
                     'class' => 'js-address-state-select',
                 ],
+                'autocomplete' => true,
                 'attr' => [
                     'visible' => $showStates,
                 ],
             ])->add('phone', TextType::class, [
                 'label' => $this->trans('Phone', 'Admin.Global'),
-                'required' => false,
+                'required' => in_array('phone', $requiredFields, true),
                 'empty_data' => '',
                 'constraints' => [
                     new CleanHtml(),
@@ -411,7 +394,8 @@ class CustomerAddressType extends TranslatorAwareType
             ])
             ->add('phone_mobile', TextType::class, [
                 'label' => $this->trans('Mobile phone', 'Admin.Global'),
-                'required' => false,
+                'required' => in_array('phone_mobile', $requiredFields, true),
+                'empty_data' => '',
                 'constraints' => [
                     new CleanHtml(),
                     new TypedRegex([
@@ -428,7 +412,7 @@ class CustomerAddressType extends TranslatorAwareType
                 ],
             ])
             ->add('other', TextareaType::class, [
-                'required' => false,
+                'required' => in_array('other', $requiredFields, true),
                 'label' => $this->trans('Other', 'Admin.Global'),
                 'help' => $this->trans(
                     'Invalid characters:',
@@ -450,5 +434,12 @@ class CustomerAddressType extends TranslatorAwareType
                     ]),
                 ],
             ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'requiredFields' => [],
+        ]);
     }
 }
