@@ -39,9 +39,11 @@ The web server's errors go to `/Users/hello/khewa-php83-apache/logs/error_log`. 
 
 | Module | Before | Now | Result |
 |---|---|---|---|
-| hspointofsalepro (POS) | 4.2.7, broke the whole site on 9.2: PHP 8 can't read line 1267 (`a ? b : c ? d : e`), and it uses `PrestaShopAutoload`, which was removed in PS 8 | 5.8.1 (from `khewa-updates/module files/v5.8.1-hspointofsalepro.zip`), switched on | Works. These load with no errors: shop pages, admin dashboard, POS › Manage, and the till screen with all its script files. The till hasn't been used for a real sale yet. The old 4.2.7 files are kept in `modules/hspointofsalepro_pre_9.2`. |
+| hspointofsalepro (POS) | 4.2.7, broke the whole site on 9.2: PHP 8 can't read line 1267 (`a ? b : c ? d : e`), and it uses `PrestaShopAutoload`, which was removed in PS 8 | 5.8.1 (from `khewa-updates/module files/v5.8.1-hspointofsalepro.zip`), switched on | Works. These load with no errors: shop pages, admin dashboard, POS › Manage, and the till screen with all its script files. A cash test sale went through (see below). The old 4.2.7 files are kept in `modules/hspointofsalepro_pre_9.2`. |
+| thegiftcard | 1.18.1 | 1.18.3 (from `module files/v1.18.3-thegiftcard.zip`), switched on | Works. There were no upgrade steps between 1.18.1 and 1.18.3. |
+| paypal | 6.7.1, already the newest (PS 9 support since 6.5.0) | 6.7.1, one line fixed | `AdminPayPalSetupController.php` line 301: `\Tools::jsonEncode(...)` changed to `json_encode(...)`. That was the only removed call left. |
 
-How it was updated:
+How POS was updated:
 1. The zip was unpacked into `modules/hspointofsalepro`.
 2. POS's own upgrade steps ran through PrestaShop's module functions (`Module::needUpgrade`, `initUpgradeModule`, `runUpgradeModule`), so 4.2.7's data moved to 5.8.1. Two steps were applied: 4.2.8 and 5.6.0.
 3. `bin/console prestashop:module upgrade` couldn't be used. It loads every module and crashes on `iqitextendedproduct`.
@@ -52,18 +54,19 @@ The database backup from just before this is `backups/khewa_live-before-pos-5.8.
 
 Getting POS fully working on 9.2 is its own job. Where it stands:
 - **Done:** updated to 5.8.1. The admin pages and the till screen open.
-- **Not done:** no real sale has been made on the till yet.
+- **Done:** a cash test sale went through the till's own requests (add product, complete). It made order 34244 (reference `UIESLVUMY`, $6.32, guest customer), which opens in Admin › Orders. The order modules that are switched on (thegiftcard, paypal, stripe_official, ets_superspeed, ps_emailalerts and others) ran with no errors. **This is a local test order.**
+- **Done:** add to cart works on the shop.
+- **Not tested:** a full shop checkout. The only switched-on payment options are PayPal and Stripe, and both need their live online services.
 
-Blockers before a POS sale can work:
-1. **canadapostlabels:** its 5 active Canada Post carriers make every cart, POS carts included, load the module, and it crashes. Needs a 9.x version from ZH Media.
-2. **Modules that run when an order is made** (not tested yet):
+What was holding POS back, and what was done:
 
-| Module | Installed version | Newest online | What to ask the client |
+| Module | Problem | Done for now | What to ask the client |
 |---|---|---|---|
-| thegiftcard | 1.18.1 | 1.18.3 (zip already in `module files`) | Nothing, install the zip |
-| kbetsy | 4.0.4 | 4.0.4 | Knowband fix: still uses `Tools::encrypt` and `Tools::displayPrice` |
-| paypal | 6.7.1 | 6.7.1 | Nothing |
-| mailchimppro | 3.1.6 | not found | Newest version, or its Addons page |
+| canadapostlabels | Its 5 Canada Post carriers made every cart, POS carts included, load the module, and it crashed | **Its 5 carriers are switched off** (ids 377, 378, 383, 384, 430; `ps_carrier.active = 0`). Customers can't pick Canada Post shipping until it's replaced. | A 9.x version from ZH Media |
+| kbetsy | Still uses `Tools::encrypt` (Etsy order import) and `Tools::displayPrice` (admin orders list) | Switched off | A fix from Knowband (4.0.4 claims 9.x support) |
+| mailchimppro | PS 9 support unknown; it runs when orders and carts change | Switched off | The newest version, or its Addons page |
+
+To switch the Canada Post carriers back on: `UPDATE ps_carrier SET active=1 WHERE id_carrier IN (377,378,383,384,430);`
 
 ## Modules switched off
 
@@ -71,13 +74,15 @@ Each of these crashed a page on 9.2, so it's switched off. The files and the dat
 
 | Module | What broke | Error |
 |---|---|---|
+| kbetsy | Etsy order import, admin Etsy orders list (switched off so it can't affect POS sales) | `Tools::encrypt()` and `Tools::displayPrice()` were removed |
+| mailchimppro | Nothing seen yet; switched off so it can't affect POS sales | PS 9 support not confirmed |
 | ps_metrics | Whole site, cache clear | `LoggerAdapter::emergency()` doesn't match the new `Psr\Log` interface. **Folder renamed to `ps_metrics_pre_9.2`.** |
 | directlabelprintproduct | Every admin page | `addJquery()` was removed |
 | cronjobs | Every admin page | `Tools::encrypt()` was removed |
 | iqitextendedproduct | Admin dashboard | Constant `_PS_PROD_IMG_DIR_` was removed |
 | bulkactions | Admin › Catalog › Categories | `setMedia()` call on the admin controller no longer exists |
 | amazzingfilter | Admin › Catalog › Products (it's also the shop's product filter) | `setMedia()` call on the admin controller no longer exists |
-| canadapostlabels | Shop home page, Admin › Orders › Carts. **Also add to cart, even while switched off:** PrestaShop still loads it to price its Canada Post carriers (`Cart::getPackageShippingCostFromModule`). | `Tools::encrypt()` was removed; class `PrestaShop\PrestaShop\Adapter\ObjectPresenter` was moved |
+| canadapostlabels | Shop home page, Admin › Orders › Carts. **Also add to cart, even while switched off:** PrestaShop still loads it to price its Canada Post carriers (`Cart::getPackageShippingCostFromModule`). Fixed for now by switching those 5 carriers off (see the POS section). | `Tools::encrypt()` was removed; class `PrestaShop\PrestaShop\Adapter\ObjectPresenter` was moved |
 | featuredproducts | Shop home page (now and then) | Random products with no price break the product presenter (`formatPrice(null)`) |
 | pm_crosssellingoncart | Shop home page | `prepareMultipleProductsForTemplate()` gets `false` instead of a list |
 | iqitelementor | Shop home page (Elementor layout) | `Hook::getRetroHookName()` was removed |

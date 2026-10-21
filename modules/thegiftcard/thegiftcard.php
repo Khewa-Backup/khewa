@@ -39,7 +39,7 @@ class Thegiftcard extends Module
     {
         $this->name = 'thegiftcard';
         $this->tab = 'front_office_features';
-        $this->version = '1.18.1';
+        $this->version = '1.18.3';
         $this->author = 'Keyrnel';
         $this->module_key = '09a30c9e46963b4cea1943096439e8ea';
         $this->bootstrap = true;
@@ -1859,9 +1859,9 @@ class Thegiftcard extends Module
             'defaultLanguage' => (int) $this->context->language->id,
             'topmenu' => (bool) ($topmenu && $topmenu->active),
             'tinymce' => true,
-            'iso' => file_exists(__PS_BASE_URI__ . '/js/tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
+            'iso' => file_exists(_PS_ROOT_DIR_ . '/js/tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
             'path_css' => _THEME_CSS_DIR_,
-            'ad' => __PS_BASE_URI__,
+            'ad' => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
             'statistics' => GiftCardModel::getstatistics($this),
             'cron_url' => $this->context->link->getBaseLink((int) Configuration::get('PS_SHOP_DEFAULT')) . 'index.php?fc=module&module=thegiftcard&controller=cron&secure_key=' . Configuration::get('GIFTCARD_CRON_TOKEN'),
             'cron_active' => Configuration::get('GIFTCARD_CRON_ACTIVE'),
@@ -1978,22 +1978,21 @@ class Thegiftcard extends Module
                             throw new PrestaShopException($this->l('Please fill a valid email'));
                         } elseif (!Validate::isMessage($value)) {
                             throw new PrestaShopException($this->l('An error occurred while attempting to save this data.'));
-                        } else {
-                            if ($id_customization == 0) {
-                                Db::getInstance()->execute(
-                                    'INSERT INTO `' . _DB_PREFIX_ . 'customization` (`id_cart`, `id_product`, `id_product_attribute`)
+                        }
+                        if ($id_customization == 0) {
+                            Db::getInstance()->execute(
+                                'INSERT INTO `' . _DB_PREFIX_ . 'customization` (`id_cart`, `id_product`, `id_product_attribute`)
                                 VALUES (0, ' . (int) $giftCardProduct->id . ', ' . (int) $id_combination . ')'
-                                );
+                            );
 
-                                $id_customization = (int) Db::getInstance()->Insert_ID();
-                            }
+                            $id_customization = (int) Db::getInstance()->Insert_ID();
+                        }
 
-                            $query = 'INSERT INTO `' . _DB_PREFIX_ . 'customized_data` (`id_customization`, `type`, `index`, `value`)
+                        $query = 'INSERT INTO `' . _DB_PREFIX_ . 'customized_data` (`id_customization`, `type`, `index`, `value`)
                             VALUES (' . (int) $id_customization . ', ' . Product::CUSTOMIZE_TEXTFIELD . ', ' . (int) $indexes[$field_name] . ', \'' . pSQL($value) . '\')';
 
-                            if (!Db::getInstance()->execute($query)) {
-                                throw new PrestaShopException($this->l('Cannot save customization data'));
-                            }
+                        if (!Db::getInstance()->execute($query)) {
+                            throw new PrestaShopException($this->l('Cannot save customization data'));
                         }
                     } else {
                         throw new PrestaShopException($this->l('Please fill all the fields.'));
@@ -2050,12 +2049,11 @@ class Thegiftcard extends Module
             exit(json_encode([
                 'error' => false,
             ]));
-        } else {
-            exit(json_encode([
-                'error' => true,
-                'errors' => $this->_post_errors,
-            ]));
         }
+        exit(json_encode([
+            'error' => true,
+            'errors' => $this->_post_errors,
+        ]));
     }
 
     public function ajaxProcessaddProductImage()
@@ -2232,12 +2230,11 @@ class Thegiftcard extends Module
             exit(json_encode([
                 'confirmations' => $this->l('Image position updated.'),
             ]));
-        } else {
-            exit(json_encode([
-                'confirmations' => '',
-                'errors' => $this->_post_errors,
-            ]));
         }
+        exit(json_encode([
+            'confirmations' => '',
+            'errors' => $this->_post_errors,
+        ]));
     }
 
     public function ajaxProcessUpdateCover()
@@ -2287,12 +2284,11 @@ class Thegiftcard extends Module
             exit(json_encode([
                 'confirmations' => $this->l('Cover updated.'),
             ]));
-        } else {
-            exit(json_encode([
-                'confirmations' => '',
-                'errors' => $this->_post_errors,
-            ]));
         }
+        exit(json_encode([
+            'confirmations' => '',
+            'errors' => $this->_post_errors,
+        ]));
     }
 
     public function ajaxProcessUpdateCaptionTags()
@@ -2376,11 +2372,10 @@ class Thegiftcard extends Module
                 'confirmations' => '',
                 'errors' => $this->_post_errors,
             ]));
-        } else {
-            exit(json_encode([
-                'confirmations' => $this->l('Image data updated.'),
-            ]));
         }
+        exit(json_encode([
+            'confirmations' => $this->l('Image data updated.'),
+        ]));
     }
 
     public function getProductImageDir()
@@ -2475,12 +2470,11 @@ class Thegiftcard extends Module
                 'confirmations' => $this->l('Template deleted.'),
                 'deleted_ids' => $deleted_ids,
             ]));
-        } else {
-            exit(json_encode([
-                'confirmations' => '',
-                'errors' => $this->_post_errors,
-            ]));
         }
+        exit(json_encode([
+            'confirmations' => '',
+            'errors' => $this->_post_errors,
+        ]));
     }
 
     public function ajaxProcessGeneratePdf()
@@ -2620,8 +2614,6 @@ class Thegiftcard extends Module
         if ($id_product && in_array($id_product, $product_ids)) {
             Tools::redirectAdmin($this->getAdminLink('AdminModules', ['configure' => $this->name, 'tab_module' => $this->tab, 'module_name' => $this->name]));
         }
-
-        return;
     }
 
     public function hookDisplayHeader($params)
@@ -2637,8 +2629,6 @@ class Thegiftcard extends Module
                 Tools::redirect($this->context->link->getModuleLink($this->name, 'page'));
             }
         }
-
-        return;
     }
 
     public function hookActionDeleteProductInCartAfter($params)
@@ -2735,16 +2725,11 @@ class Thegiftcard extends Module
             $cart_rule->date_to = date('Y-m-d', strtotime('+' . Configuration::get('GIFTCARD_EXPIRATION_TIME') . ' ' .
                 Configuration::get('GIFTCARD_EXPIRATION_DATE'), strtotime($cart_rule->date_from)));
             $cart_rule->reduction_amount = $data['amount'];
-            $cart_rule->reduction_tax = false;
-            $cart_rule->minimum_amount_tax = true;
+            $cart_rule->reduction_tax = true;
             $cart_rule->reduction_currency = (int) $order->id_currency;
             $cart_rule->cart_rule_restriction = (int) Configuration::get('GIFTCARD_CART_RULE') ? false : true;
             $cart_rule->shop_restriction = Shop::isFeatureActive() ? true : false;
             $cart_rule->add();
-
-            // Force reduction_tax to 0 (tax excluded) and minimum_amount_tax to 1 (tax included)
-            // directly in database to prevent hooks or defaults from changing them
-            Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'cart_rule` SET `reduction_tax` = 0, `minimum_amount_tax` = 1 WHERE `id_cart_rule` = ' . (int) $cart_rule->id);
 
             if (Shop::isFeatureActive()) {
                 Db::getInstance()->execute('INSERT INTO `' . _DB_PREFIX_ . 'cart_rule_shop` (`id_cart_rule`, `id_shop`)
@@ -2769,15 +2754,7 @@ class Thegiftcard extends Module
                 }
             }
 
-            // Ensure reduction_tax stays false (tax excluded) and minimum_amount_tax stays true
-            // (tax included) - set before update
-            $cart_rule->reduction_tax = false;
-            $cart_rule->minimum_amount_tax = true;
             $cart_rule->update();
-
-            // Force reduction_tax to 0 (tax excluded) and minimum_amount_tax to 1 (tax included)
-            // directly in database after update as well
-            Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'cart_rule` SET `reduction_tax` = 0, `minimum_amount_tax` = 1 WHERE `id_cart_rule` = ' . (int) $cart_rule->id);
         }
 
         return true;
@@ -3515,7 +3492,5 @@ class Thegiftcard extends Module
                 }
             }
         }
-
-        return;
     }
 }

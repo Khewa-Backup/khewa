@@ -3,7 +3,7 @@
         'name' => 'keyrnel/thegiftcard',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'd7d62071ff7bd04c47ccdf10853b8de92072f88a',
+        'reference' => '95fa86fad2a57765206d2b8fbec31213c886ab33',
         'type' => 'prestashop-module',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'keyrnel/thegiftcard' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'd7d62071ff7bd04c47ccdf10853b8de92072f88a',
+            'reference' => '95fa86fad2a57765206d2b8fbec31213c886ab33',
             'type' => 'prestashop-module',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
