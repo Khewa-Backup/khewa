@@ -48,6 +48,23 @@ How it was updated:
 
 The database backup from just before this is `backups/khewa_live-before-pos-5.8.1.sql.gz`.
 
+## POS (RockPOS): separate job
+
+Getting POS fully working on 9.2 is its own job. Where it stands:
+- **Done:** updated to 5.8.1. The admin pages and the till screen open.
+- **Not done:** no real sale has been made on the till yet.
+
+Blockers before a POS sale can work:
+1. **canadapostlabels:** its 5 active Canada Post carriers make every cart, POS carts included, load the module, and it crashes. Needs a 9.x version from ZH Media.
+2. **Modules that run when an order is made** (not tested yet):
+
+| Module | Installed version | Newest online | What to ask the client |
+|---|---|---|---|
+| thegiftcard | 1.18.1 | 1.18.3 (zip already in `module files`) | Nothing, install the zip |
+| kbetsy | 4.0.4 | 4.0.4 | Knowband fix: still uses `Tools::encrypt` and `Tools::displayPrice` |
+| paypal | 6.7.1 | 6.7.1 | Nothing |
+| mailchimppro | 3.1.6 | not found | Newest version, or its Addons page |
+
 ## Modules switched off
 
 Each of these crashed a page on 9.2, so it's switched off. The files and the data are still there.
