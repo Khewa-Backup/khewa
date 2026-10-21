@@ -60,7 +60,7 @@ Each of these crashed a page on 9.2, so it's switched off. The files and the dat
 | iqitextendedproduct | Admin dashboard | Constant `_PS_PROD_IMG_DIR_` was removed |
 | bulkactions | Admin › Catalog › Categories | `setMedia()` call on the admin controller no longer exists |
 | amazzingfilter | Admin › Catalog › Products (it's also the shop's product filter) | `setMedia()` call on the admin controller no longer exists |
-| canadapostlabels | Shop home page, Admin › Orders › Carts | `Tools::encrypt()` was removed; class `PrestaShop\PrestaShop\Adapter\ObjectPresenter` was moved |
+| canadapostlabels | Shop home page, Admin › Orders › Carts. **Also add to cart, even while switched off:** PrestaShop still loads it to price its Canada Post carriers (`Cart::getPackageShippingCostFromModule`). | `Tools::encrypt()` was removed; class `PrestaShop\PrestaShop\Adapter\ObjectPresenter` was moved |
 | featuredproducts | Shop home page (now and then) | Random products with no price break the product presenter (`formatPrice(null)`) |
 | pm_crosssellingoncart | Shop home page | `prepareMultipleProductsForTemplate()` gets `false` instead of a list |
 | iqitelementor | Shop home page (Elementor layout) | `Hook::getRetroHookName()` was removed |
