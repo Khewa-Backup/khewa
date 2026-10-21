@@ -35,13 +35,25 @@ The live shop does **not** run through AMPPS on port 80. It needs PHP 8.3, so it
 
 The web server's errors go to `/Users/hello/khewa-php83-apache/logs/error_log`. Admin errors also go to `live/var/logs/prod-<date>.log`.
 
+## Modules updated
+
+| Module | Before | Now | Result |
+|---|---|---|---|
+| hspointofsalepro (POS) | 4.2.7, broke the whole site on 9.2: PHP 8 can't read line 1267 (`a ? b : c ? d : e`), and it uses `PrestaShopAutoload`, which was removed in PS 8 | 5.8.1 (from `khewa-updates/module files/v5.8.1-hspointofsalepro.zip`), switched on | Works. These load with no errors: shop pages, admin dashboard, POS › Manage, and the till screen with all its script files. The till hasn't been used for a real sale yet. The old 4.2.7 files are kept in `modules/hspointofsalepro_pre_9.2`. |
+
+How it was updated:
+1. The zip was unpacked into `modules/hspointofsalepro`.
+2. POS's own upgrade steps ran through PrestaShop's module functions (`Module::needUpgrade`, `initUpgradeModule`, `runUpgradeModule`), so 4.2.7's data moved to 5.8.1. Two steps were applied: 4.2.8 and 5.6.0.
+3. `bin/console prestashop:module upgrade` couldn't be used. It loads every module and crashes on `iqitextendedproduct`.
+
+The database backup from just before this is `backups/khewa_live-before-pos-5.8.1.sql.gz`.
+
 ## Modules switched off
 
 Each of these crashed a page on 9.2, so it's switched off. The files and the data are still there.
 
 | Module | What broke | Error |
 |---|---|---|
-| hspointofsalepro (POS) | Whole site, shop and admin | PHP 8 can't read line 1267 (`a ? b : c ? d : e`). Also uses `PrestaShopAutoload`, which was removed in PS 8. **Version on the live site: 4.2.7. Folder renamed to `hspointofsalepro_pre_9.2`.** |
 | ps_metrics | Whole site, cache clear | `LoggerAdapter::emergency()` doesn't match the new `Psr\Log` interface. **Folder renamed to `ps_metrics_pre_9.2`.** |
 | directlabelprintproduct | Every admin page | `addJquery()` was removed |
 | cronjobs | Every admin page | `Tools::encrypt()` was removed |

@@ -1,0 +1,96 @@
+<?php
+/**
+ * RockPOS - Point of Sale for PrestaShop.
+ *
+ * @author    Hamsa Technologies
+ * @copyright Hamsa Technologies
+ * @license   One license is granted for only one website.
+ */
+
+/**
+ * Search index stats for Point of Sale.
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+class PosProductSearchIndexStats extends PosSearchIndex
+{
+    /**
+     * @param array $id_shops
+     *                        array(<pre>
+     *                        int,
+     *                        int,
+     *                        ...
+     *                        )</pre>
+     *
+     * @return int
+     */
+    public static function getTotalIndexedProducts()
+    {
+        $sub_query = new DbQuery(); // Get id_words based on shops
+        $sub_query->select('DISTINCT `id_word`');
+        $sub_query->from('pos_search_word');
+        $sub_query->where('`id_shop` IN (' . implode(',', Shop::getContextListShopID()) . ')');
+
+        $query = new DbQuery(); // Count id_products based on id_words
+        $query->select('COUNT(DISTINCT `id_product`)');
+        $query->from('pos_search_index');
+        $query->where('`id_word` IN (' . $sub_query->build() . ')');
+
+        return (int)Db::getInstance()->getValue($query);
+    }
+
+    /**
+     * @return int
+     */
+    public static function getTotalProducts()
+    {
+        // $query = new DbQuery();
+        // $query->select('COUNT(p.`id_product`)');
+        // $query->from('product', 'p');
+        // $query->join(Shop::addSqlAssociation('product', 'p'));
+        // $query->where(!PosConfiguration::get('POS_PRODUCT_INACTIVE') ? 'p.`active` = 1' : null);
+
+        $query = new DbQuery();
+        $query->select('COUNT(DISTINCT p.`id_product`)');
+        $query->from('product', 'p');
+        $query->join(Shop::addSqlAssociation('product', 'p'));
+        $query->innerJoin('product_lang', 'pl', 'pl.`id_product` = p.`id_product`');
+        $query->where(" pl.`name` <> '' ");
+
+        $visibilities = PosConfiguration::getProductVisibilities();
+        $visibility_values = array();
+        foreach ($visibilities as $key => $value) {
+            if (PosConfiguration::get($key)) {
+                $visibility_values[] = '\'' . $value . '\'';
+            }
+        }
+        if (!empty($visibility_values)) {
+            $query->where('p.`visibility` IN (' . implode(',', $visibility_values) . ')');
+        }
+
+        return (int)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query, false);
+    }
+
+    /**
+     * @return int
+     */
+    public static function getTotalProductsAllShop()
+    {
+        $query = new DbQuery();
+        $query->select('COUNT(p.`id_product`)');
+        $query->from('product', 'p');
+        $query->join(Shop::addSqlAssociation('product', 'p', true, null, true));
+        $query->where(!PosConfiguration::get('POS_PRODUCT_INACTIVE') ? 'product_shop.`active` = 1' : null);
+        $product_visibilities = PosConfiguration::getProductVisibilities();
+        $product_visibility = array();
+        foreach ($product_visibilities as $key => $value) {
+            if (Configuration::get($key)) {
+                $product_visibility[] = $value;
+            }
+        }
+        $query->where(!empty($product_visibility) ? 'p.`visibility` IN ("' . implode('","', $product_visibility) . '")' : null);
+
+        return (int)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query, false);
+    }
+}
