@@ -41,7 +41,7 @@ Each of these crashed a page on 9.2, so it's switched off. The files and the dat
 
 | Module | What broke | Error |
 |---|---|---|
-| hspointofsalepro (POS) | Whole site, shop and admin | PHP 8 can't read line 1267 (`a ? b : c ? d : e`). Also uses `PrestaShopAutoload`, which was removed in PS 8. **Folder renamed to `hspointofsalepro_pre_9.2`.** |
+| hspointofsalepro (POS) | Whole site, shop and admin | PHP 8 can't read line 1267 (`a ? b : c ? d : e`). Also uses `PrestaShopAutoload`, which was removed in PS 8. **Version on the live site: 4.2.7. Folder renamed to `hspointofsalepro_pre_9.2`.** |
 | ps_metrics | Whole site, cache clear | `LoggerAdapter::emergency()` doesn't match the new `Psr\Log` interface. **Folder renamed to `ps_metrics_pre_9.2`.** |
 | directlabelprintproduct | Every admin page | `addJquery()` was removed |
 | cronjobs | Every admin page | `Tools::encrypt()` was removed |
