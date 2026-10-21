@@ -66,7 +66,19 @@ What was holding POS back, and what was done:
 | kbetsy | Still uses `Tools::encrypt` (Etsy order import) and `Tools::displayPrice` (admin orders list) | Switched off | A fix from Knowband (4.0.4 claims 9.x support) |
 | mailchimppro | PS 9 support unknown; it runs when orders and carts change | Switched off | The newest version, or its Addons page |
 
-To switch the Canada Post carriers back on: `UPDATE ps_carrier SET active=1 WHERE id_carrier IN (377,378,383,384,430);`
+Canada Post carriers switched off (all run by the `canadapostlabels` module):
+
+| id | Name |
+|---|---|
+| 377 | Canada Post (Tracked Packet Int'l) |
+| 378 | Canada Post (Xpresspost International) Insured with Tracking |
+| 383 | Canada Post (Expedited Parcel USA) Insured with Tracking |
+| 384 | Canada Post (Tracked Packet USA) |
+| 430 | Canada Post (Expedited) Insured with Tracking |
+
+Still on, because they don't use the module: 382 "Canada Post - (Small Packet Int'l)" and 432 "Canada Post (Standard)".
+
+To switch the 5 back on: `UPDATE ps_carrier SET active=1 WHERE id_carrier IN (377,378,383,384,430);`
 
 ## Modules switched off
 
