@@ -7,13 +7,10 @@
 - Database: `khewa_live` in AMPPS MySQL (user `root`, password `mysql`).
 - Shop: http://localhost:8083/dev-prestashop/khewa-updates/live/
 - Admin: http://localhost:8083/dev-prestashop/khewa-updates/live/admin556cvt7923/
+- POS till: http://localhost:8083/dev-prestashop/khewa-updates/live/en/pos
 - The `khewa` repo site stays on AMPPS, port 80, PHP 7.4. Nothing there was changed.
 
-Branch commits, oldest first:
-1. `live shop code from 22 Sep backup plus repo changes up to 10 Oct`
-2. `update to PrestaShop 9.2.0`
-3. `move out 1.7 overrides and ps_metrics so 9.2 loads`
-4. `rename modules that break 9.2 even when switched off to <name>_pre_9.2`
+`git log` on the branch lists every step. Code changes and database changes are written down below, because database changes don't show in git.
 
 ## How to start it
 
@@ -35,50 +32,47 @@ The live shop does **not** run through AMPPS on port 80. It needs PHP 8.3, so it
 
 The web server's errors go to `/Users/hello/khewa-php83-apache/logs/error_log`. Admin errors also go to `live/var/logs/prod-<date>.log`.
 
-## Modules updated
+## Modules updated or fixed for 9.2
 
-| Module | Before | Now | Result |
-|---|---|---|---|
-| hspointofsalepro (POS) | 4.2.7, broke the whole site on 9.2: PHP 8 can't read line 1267 (`a ? b : c ? d : e`), and it uses `PrestaShopAutoload`, which was removed in PS 8 | 5.8.1 (from `khewa-updates/module files/v5.8.1-hspointofsalepro.zip`), switched on | Works. These load with no errors: shop pages, admin dashboard, POS › Manage, and the till screen with all its script files. A cash test sale went through (see below). The old 4.2.7 files are kept in `modules/hspointofsalepro_pre_9.2`. |
-| thegiftcard | 1.18.1 | 1.18.3 (from `module files/v1.18.3-thegiftcard.zip`), switched on | Works. There were no upgrade steps between 1.18.1 and 1.18.3. |
-| paypal | 6.7.1, already the newest (PS 9 support since 6.5.0) | 6.7.1, one line fixed | `AdminPayPalSetupController.php` line 301: `\Tools::jsonEncode(...)` changed to `json_encode(...)`. That was the only removed call left. |
+Every change in a vendor module's code is marked in the code with a comment starting `Khewa PS 9.2`. **A future update of that module from its vendor will overwrite these changes**, so check each one again after updating.
 
-How POS was updated:
-1. The zip was unpacked into `modules/hspointofsalepro`.
-2. POS's own upgrade steps ran through PrestaShop's module functions (`Module::needUpgrade`, `initUpgradeModule`, `runUpgradeModule`), so 4.2.7's data moved to 5.8.1. Two steps were applied: 4.2.8 and 5.6.0.
-3. `bin/console prestashop:module upgrade` couldn't be used. It loads every module and crashes on `iqitextendedproduct`.
+| Module | Version | What was wrong on 9.2 | What was done | Tested |
+|---|---|---|---|---|
+| hspointofsalepro (POS) | 4.2.7 → **5.8.1** | 4.2.7 broke the whole site (PHP 8 syntax, `PrestaShopAutoload` removed) | Updated from `module files/v5.8.1-hspointofsalepro.zip`, with its own upgrade steps 4.2.8 and 5.6.0 run. Old files kept in `modules/hspointofsalepro_pre_9.2`. | Admin pages, till screen, 2 cash test sales |
+| canadapostlabels (Canada Post, ZH Media) | 4.1.1 (no newer version) | `Tools::encrypt`, `Tools::displayPrice`, `Carrier::getCarrierNameFromShopName` removed; `ObjectPresenter` moved; manifests page used removed `l()`; tracking page list needs `currentIndex`; label PDF merge used PHP's removed `each()` | Fixed in its code (9 files). The secret key keeps the 1.7 value, so existing links still work. The 5 Canada Post carriers are switched back on. | Live rates at checkout, admin rate quote, all 9 admin pages + settings, order page panel, tracking lookup, merging 3 real label PDFs |
+| kbetsy (Etsy, Knowband) | 4.0.4 (newest) | `Tools::encrypt`, `Tools::stripslashes`, `Tools::displayPrice` removed; advanced stock check removed | Fixed in its code (3 files). Also added 2 admin tabs the module defines but that were never installed (Return Policy, Customers Listing). | All 20 admin pages + settings |
+| mailchimppro (Mailchimp) | 3.1.6 | Nothing | No change needed | 22 admin pages + settings (read real data), cart, checkout and a POS sale with it on |
+| paypal (202 ecommerce) | 6.7.1 (newest) | 1) **PayPal is not shown at checkout on the live site either.** Its files are 6.7.1, but on the live server its upgrade never ran (the live database said 5.4.2). 6.x needs the account secret encrypted, and the live secret was still the old plain 5.x value. 2) Five old 5.x admin pages (2021 files) no longer work: Setup, Customize checkout, Help, Installment, Get credentials. | 1) The upgrade ran during the 9.2 update. The secret was encrypted the same way PayPal 6.x saves it (`ToolKit::encrypt`). **PayPal now shows at checkout.** 2) Their menu entries are hidden; PayPal 6.x uses Modules › PayPal › Configure instead. One harmless line fix in one of those old files (`jsonEncode` → `json_encode`). | Checkout shows "Pay with Paypal", settings and logs pages |
+| thegiftcard (Keyrnel) | 1.18.1 → **1.18.3** | Choosing a gift card amount failed: 9.2 rejects the gift card variants' ISBN values (see "Catalog ISBN problem" below) | Updated from `module files/v1.18.3-thegiftcard.zip`. Cleared ISBN on the gift card product (4523) and its 23 variants only; old values saved in table `zz_giftcard_isbn_backup`. | Gift card page, picking $20 and $50, preview PDF, add to cart |
 
-The database backup from just before this is `backups/khewa_live-before-pos-5.8.1.sql.gz`.
+Database changes in this section (not in git):
+- Canada Post carriers 377, 378, 383, 384, 430 switched back on.
+- Etsy tabs `AdminEtsyReturnPolicy` and `AdminEtsyCustomersListing` added.
+- PayPal: `PAYPAL_EC_SECRET_LIVE` encrypted. Menu entries `AdminPayPalSetup`, `AdminPayPalCustomizeCheckout` and `AdminPayPalHelp` hidden (`active = 0`).
+- Gift card product 4523: ISBN cleared.
 
-## POS (RockPOS): separate job
+## What was NOT tested, on purpose
 
-Getting POS fully working on 9.2 is its own job. Where it stands:
-- **Done:** updated to 5.8.1. The admin pages and the till screen open.
-- **Done:** a cash test sale went through the till's own requests (add product, complete). It made order 34244 (reference `UIESLVUMY`, $6.32, guest customer), which opens in Admin › Orders. The order modules that are switched on (thegiftcard, paypal, stripe_official, ets_superspeed, ps_emailalerts and others) ran with no errors. **This is a local test order.**
-- **Done:** add to cart works on the shop.
-- **Not tested:** a full shop checkout. The only switched-on payment options are PayPal and Stripe, and both need their live online services.
+The local database holds the client's real accounts, so nothing was done that changes something outside this computer:
+- **Canada Post:** creating labels, returns, manifests and end-of-day transmit. These create real shipments that cost money.
+- **Etsy:** anything that talks to Etsy. It isn't connected anyway: there's no access token, and the last sync was in June 2021.
+- **Mailchimp:** sending data. For the cart, checkout and POS tests the API key was blanked, then put back.
+- **PayPal:** clicking "Pay with Paypal", which creates a real PayPal order.
 
-What was holding POS back, and what was done:
+## Test orders left in the local database
 
-| Module | Problem | Done for now | What to ask the client |
-|---|---|---|---|
-| canadapostlabels | Its 5 Canada Post carriers made every cart, POS carts included, load the module, and it crashed | **Its 5 carriers are switched off** (ids 377, 378, 383, 384, 430; `ps_carrier.active = 0`). Customers can't pick Canada Post shipping until it's replaced. | A 9.x version from ZH Media |
-| kbetsy | Still uses `Tools::encrypt` (Etsy order import) and `Tools::displayPrice` (admin orders list) | Switched off | A fix from Knowband (4.0.4 claims 9.x support) |
-| mailchimppro | PS 9 support unknown; it runs when orders and carts change | Switched off | The newest version, or its Addons page |
+- 34244 (`UIESLVUMY`) and 34245 (`TALUPUPRK`): POS cash sales of $6.32 each, guest customer.
 
-Canada Post carriers switched off (all run by the `canadapostlabels` module):
+## POS (RockPOS)
 
-| id | Name |
-|---|---|
-| 377 | Canada Post (Tracked Packet Int'l) |
-| 378 | Canada Post (Xpresspost International) Insured with Tracking |
-| 383 | Canada Post (Expedited Parcel USA) Insured with Tracking |
-| 384 | Canada Post (Tracked Packet USA) |
-| 430 | Canada Post (Expedited) Insured with Tracking |
+POS 5.8.1 works on 9.2: the till opens, and cash sales complete with every fixed module switched on. Nothing is blocking it any more.
 
-Still on, because they don't use the module: 382 "Canada Post - (Small Packet Int'l)" and 432 "Canada Post (Standard)".
+## Catalog ISBN problem (needs a decision)
 
-To switch the 5 back on: `UPDATE ps_carrier SET active=1 WHERE id_carrier IN (377,378,383,384,430);`
+PrestaShop 9.2 checks ISBN values much more strictly than 1.7.
+- **All 5,255 products and 6,193 variants that have an ISBN fail the 9.2 check.** Almost all of them are just a copy of the product's UPC (for example `754000003621`).
+- Anything that saves those products through PrestaShop's normal save will fail with "Property ... isbn is not valid". That can include admin product edits and modules that update products.
+- Possible fixes: clear ISBN where it equals UPC (UPC stays), or keep the old, looser ISBN rule with a small override. It's the client's choice. Only the gift card product was changed.
 
 ## Modules switched off
 
@@ -86,21 +80,18 @@ Each of these crashed a page on 9.2, so it's switched off. The files and the dat
 
 | Module | What broke | Error |
 |---|---|---|
-| kbetsy | Etsy order import, admin Etsy orders list (switched off so it can't affect POS sales) | `Tools::encrypt()` and `Tools::displayPrice()` were removed |
-| mailchimppro | Nothing seen yet; switched off so it can't affect POS sales | PS 9 support not confirmed |
 | ps_metrics | Whole site, cache clear | `LoggerAdapter::emergency()` doesn't match the new `Psr\Log` interface. **Folder renamed to `ps_metrics_pre_9.2`.** |
+| rc_pgtagmanager (Google Tag Manager) | **Cart and checkout pages came out completely blank** | Constant `_PS_PRICE_COMPUTE_PRECISION_` was removed. The error was swallowed while the page rendered, so nothing showed in the logs. |
 | directlabelprintproduct | Every admin page | `addJquery()` was removed |
 | cronjobs | Every admin page | `Tools::encrypt()` was removed |
 | iqitextendedproduct | Admin dashboard | Constant `_PS_PROD_IMG_DIR_` was removed |
 | bulkactions | Admin › Catalog › Categories | `setMedia()` call on the admin controller no longer exists |
 | amazzingfilter | Admin › Catalog › Products (it's also the shop's product filter) | `setMedia()` call on the admin controller no longer exists |
-| canadapostlabels | Shop home page, Admin › Orders › Carts. **Also add to cart, even while switched off:** PrestaShop still loads it to price its Canada Post carriers (`Cart::getPackageShippingCostFromModule`). Fixed for now by switching those 5 carriers off (see the POS section). | `Tools::encrypt()` was removed; class `PrestaShop\PrestaShop\Adapter\ObjectPresenter` was moved |
 | featuredproducts | Shop home page (now and then) | Random products with no price break the product presenter (`formatPrice(null)`) |
 | pm_crosssellingoncart | Shop home page | `prepareMultipleProductsForTemplate()` gets `false` instead of a list |
 | iqitelementor | Shop home page (Elementor layout) | `Hook::getRetroHookName()` was removed |
 | iqitmegamenu | Shop menu | `Tools::jsonDecode()` was removed |
 | iqitlinksmanager | Shop footer links | `Tools::encrypt()` was removed |
-| iqitthemeeditor | Admin › Theme editor | Admin controller method `l()` was removed |
 | revsliderprestashop | Shop home page slider | `Tools::encrypt()` was removed |
 | an_wishlist | Shop home page | `addJquery()` was removed |
 | ph_simpleblog | Shop home page, Admin blog pages | `Tools::encrypt()` was removed |
@@ -114,7 +105,9 @@ Each of these crashed a page on 9.2, so it's switched off. The files and the dat
 
 The same list, one name per line, is in `backups/modules-switched-off.txt`.
 
-With the Warehouse theme modules off (Elementor, mega menu, links, slider), the shop works but looks plainer.
+**Switched back on, with one broken page:** `iqitthemeeditor` (Warehouse theme settings). Switching it off made **every category page blank**, because the theme's templates use its `add_url_param` modifier. So it stays on. Only its own Admin › Theme editor page fails (removed `l()`).
+
+With the other Warehouse theme modules off (Elementor, mega menu, links, slider), the shop works but looks plainer. All 47 shop pages I could reach from the home, category and product pages, plus the customer account pages, load fully.
 
 **To switch a module back on** (replace `NAME`):
 ```sql
@@ -125,6 +118,8 @@ UPDATE ps_module SET active=1 WHERE name='NAME';
 Then clear the cache by emptying `live/var/cache/`. For a renamed folder, also remove `_pre_9.2` from its name.
 
 `zz_module_shop_off` is a table I added. It keeps the shop rows of every module I switched off.
+
+**A page that comes out completely blank** with nothing in the logs is usually a template error swallowed during rendering, like the Tag Manager and theme editor cases above.
 
 ## Database changes the update tool missed
 
@@ -146,6 +141,7 @@ The shop's update tool is now 7.6.6. The old one is in `backups/modules-moved-ou
 ## Other things changed
 
 - **1.7 override files moved out of `live/override/`** to `backups/override-1.7/`, because 9.2 can't start with them. The 33 core files that were edited directly on the live server were also replaced by the update. The old versions of both are in commit 1 and in the backup.
+- **Overrides now in `live/override/`:** `classes/Cart.php` from POS 5.8.1 (installed by POS itself).
 - **Not a module problem:** Admin › Advanced › Extra property definitions (a new 9.2 page) fails with "Illegal mix of collations". The new 9.2 tables use `utf8mb4_unicode_ci`, and the shop's older tables use `utf8mb4_general_ci`.
 - **Local-only settings:**
   - the shop address is `localhost:8083`
@@ -158,4 +154,5 @@ The shop's update tool is now 7.6.6. The old one is in `backups/modules-moved-ou
 - `live-code-2026-10-16.tar.gz`: live code before the update, with the repo changes after 22 Sep already applied
 - `khewa_live-2026-10-16.sql.gz`: database before the update
 - `khewa_live-after-9.2-before-sqlfix.sql.gz`: database after the update, before the missed 9.2 database changes
+- `khewa_live-before-pos-5.8.1.sql.gz`, `khewa_live-before-giftcard-paypal-carriers.sql.gz`, `khewa_live-before-module-fixes.sql.gz`: database before each round of module work
 - `update-to-8.2.8.log`, `update-to-9.2.0.log`: update tool output
