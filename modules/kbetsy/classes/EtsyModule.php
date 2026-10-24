@@ -3635,7 +3635,8 @@ class EtsyModule extends Module
             $create_customer->is_guest = 1;
             $create_customer->active = 1;
             $original_passd = Tools::substr(md5(uniqid(mt_rand(), true)), 0, 8);
-            $passd = Tools::encrypt($original_passd);
+            // Khewa PS 9.2: Tools::encrypt() was removed; Tools::hash() is how 9.2 hashes customer passwords.
+            $passd = Tools::hash($original_passd);
             $create_customer->passwd = $passd;
             $create_customer->secure_key = md5(uniqid(rand(), true));
             $create_customer->add();
@@ -4182,7 +4183,7 @@ class EtsyModule extends Module
                         if (
                             !ImageManager::resize(
                                 $fp,
-                                $new_path . '-' . Tools::stripslashes($imageType['name']) . '.' . $image->image_format,
+                                $new_path . '-' . $imageType['name'] . '.' . $image->image_format,
                                 $imageType['width'],
                                 $imageType['height'],
                                 $image->image_format
@@ -4190,7 +4191,7 @@ class EtsyModule extends Module
                         ) {
                             $file['error'] = sprintf(
                                 'An error occurred while copying image: %s',
-                                Tools::stripslashes($imageType['name'])
+                                $imageType['name']
                             );
                             continue;
                         }

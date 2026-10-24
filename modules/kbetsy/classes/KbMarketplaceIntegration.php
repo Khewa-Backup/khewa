@@ -94,7 +94,8 @@ class KbMarketplaceIntegration extends ObjectModel
         $inventory = 0;
         if (!empty($id_product)) {
             $id_shop = Context::getContext()->shop->id;
-            if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && Product::usesAdvancedStockManagement($id_product) && StockAvailable::dependsOnStock($id_product, $id_shop)) {
+            // Khewa PS 9.2: advanced stock management (StockAvailable::dependsOnStock) was removed.
+            if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && method_exists('StockAvailable', 'dependsOnStock') && Product::usesAdvancedStockManagement($id_product) && StockAvailable::dependsOnStock($id_product, $id_shop)) {
                 $warehouses = Warehouse::getWarehousesByProductId($id_product, $id_product_attribute);
                 if (!empty($warehouses)) {
                     foreach ($warehouses as $warehouse) {

@@ -108,7 +108,10 @@ class AdminEtsyOrdersListingController extends ModuleAdminController
     public static function setOrderCurrency($echo, $tr)
     {
         $order = new Order($tr['id_order']);
-        return Tools::displayPrice($echo, (int) $order->id_currency);
+        // Khewa PS 9.2: Tools::displayPrice() was removed; same output through the context locale.
+        $currency = new Currency((int) $order->id_currency);
+
+        return Tools::getContextLocale(Context::getContext())->formatPrice($echo, $currency->iso_code);
     }
 
     public function initToolbar()
