@@ -587,9 +587,8 @@ class FPDI extends FPDF_TPL
                 // A dictionary.
                 $this->_straightOut('<<');
 
-                reset($value[1]);
-
-                while (list($k, $v) = each($value[1])) {
+                // Khewa PS 9.2 / PHP 8: each() was removed; foreach walks the dictionary the same way.
+                foreach ($value[1] as $k => $v) {
                     $this->_straightOut($k . ' ');
                     $this->_writeValue($v);
                 }

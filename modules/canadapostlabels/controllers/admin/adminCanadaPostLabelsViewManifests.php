@@ -32,7 +32,8 @@ class AdminCanadaPostLabelsViewManifestsController extends ModuleAdminController
         $this->actions = array('printmanifest');
         $this->bulk_actions = array(
             'print' => array(
-                'text'    => $this->l('Print selected'),
+                // Khewa PS 9.2: AdminController::l() was removed; translate through the module.
+                'text'    => $this->module->l('Print selected', 'adminCanadaPostLabelsViewManifests'),
                 'icon'    => 'icon-print'
             )
         );

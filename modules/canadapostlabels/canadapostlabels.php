@@ -205,10 +205,15 @@ class CanadaPostLabels extends CarrierModule
         $this->displayName            = $this->l('Canada Post: Rates, Bulk Labels, Returns, Tracking, Estimator');
         $this->description            = $this->l('Offer real-time rates to customers, create bulk order labels in one click, allow customers to track their orders, and provide shipping quotes on the product and cart pages.');
         $this->ps_versions_compliancy = array('min' => '1.6.0.0', 'max' => _PS_VERSION_);
-        $this->secure_key = Tools::encrypt($this->name);
+        // Khewa PS 9.2: Tools::encrypt() was removed. Same value as 1.7 (md5 of cookie key + name),
+        // so the existing cron / tracking links that carry this key keep working.
+        $this->secure_key = md5(_COOKIE_KEY_ . $this->name);
 
         if (version_compare(_PS_VERSION_, '1.7.0.0') >= 0) {
-            $this->objectPresenter = new PrestaShop\PrestaShop\Adapter\ObjectPresenter();
+            // Khewa PS 9.2: ObjectPresenter moved to Adapter\Presenter\Object.
+            $this->objectPresenter = class_exists('PrestaShop\PrestaShop\Adapter\Presenter\Object\ObjectPresenter')
+                ? new PrestaShop\PrestaShop\Adapter\Presenter\Object\ObjectPresenter()
+                : new PrestaShop\PrestaShop\Adapter\ObjectPresenter();
         }
 
         if (self::getConfig('SAVE_INFO') == false) {

@@ -27,7 +27,6 @@ use \ObjectModel;
 use \Order;
 use \State;
 use \Validate;
-use Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\AclBundle\Entity\Car;
 use Symfony\Component\Validator\Constraints\Valid;
 
 class Forms extends \CanadaPostLabels
@@ -195,7 +194,7 @@ class Forms extends \CanadaPostLabels
             );
         $helper->token                    = $token ? Tools::getAdminTokenLite($this->context->controller->controller_name) : false;
         $fullBaseFolder = _PS_BO_ALL_THEMES_DIR_
-                          . $this->context->employee->bo_theme . DIRECTORY_SEPARATOR
+                          . ($this->context->employee->bo_theme ?: 'default') . DIRECTORY_SEPARATOR
                           . 'template' . DIRECTORY_SEPARATOR
                           . 'helpers' . DIRECTORY_SEPARATOR
                           . 'form' . DIRECTORY_SEPARATOR;
@@ -1503,7 +1502,8 @@ class Forms extends \CanadaPostLabels
 
         foreach ($carriers as $key => $carrier) {
             if ($carrier['name'] == '0') {
-                $carriers[$key]['name'] = \Carrier::getCarrierNameFromShopName();
+                // Khewa PS 9.2: Carrier::getCarrierNameFromShopName() was removed; same logic as 1.7.
+                $carriers[$key]['name'] = str_replace(array('#', ';'), '', \Configuration::get('PS_SHOP_NAME'));
             }
         }
 
@@ -3511,7 +3511,7 @@ class Forms extends \CanadaPostLabels
         $helper->token         = Tools::getAdminTokenLite($this->context->controller->controller_name);
         $helper->currentIndex  = $currentIndex ? $currentIndex : AdminController::$currentIndex;
         $helper->base_folder = _PS_BO_ALL_THEMES_DIR_
-                               . $this->context->employee->bo_theme . DIRECTORY_SEPARATOR
+                               . ($this->context->employee->bo_theme ?: 'default') . DIRECTORY_SEPARATOR
                                . 'template' . DIRECTORY_SEPARATOR
                                . 'helpers' . DIRECTORY_SEPARATOR
                                . 'list' . DIRECTORY_SEPARATOR;
@@ -3560,7 +3560,7 @@ class Forms extends \CanadaPostLabels
         $helper->token         = Tools::getAdminTokenLite($this->context->controller->controller_name);
         $helper->currentIndex  = $currentIndex ? $currentIndex : AdminController::$currentIndex;
         $helper->base_folder = _PS_BO_ALL_THEMES_DIR_
-                               . $this->context->employee->bo_theme . DIRECTORY_SEPARATOR
+                               . ($this->context->employee->bo_theme ?: 'default') . DIRECTORY_SEPARATOR
                                . 'template' . DIRECTORY_SEPARATOR
                                . 'helpers' . DIRECTORY_SEPARATOR
                                . 'list' . DIRECTORY_SEPARATOR;
@@ -4431,7 +4431,7 @@ class Forms extends \CanadaPostLabels
     {
         $currency = new \Currency(\Currency::getIdByIsoCode('CAD'));
 
-        return \Tools::displayPrice($price, $currency);
+        return \CanadaPostPs\Tools::displayPrice($price, $currency);
     }
 
     /*
@@ -4448,7 +4448,7 @@ class Forms extends \CanadaPostLabels
                 '',
                 array('id_order' => $row['id_order'])
             ),
-            \CanadaPostPs\Icon::getIconHtml('refresh') . ($price ? \Tools::displayPrice($price, $currency) : ''),
+            \CanadaPostPs\Icon::getIconHtml('refresh') . ($price ? \CanadaPostPs\Tools::displayPrice($price, $currency) : ''),
             array('class' => 'btn-fetch-bulk-rate')
         );
 

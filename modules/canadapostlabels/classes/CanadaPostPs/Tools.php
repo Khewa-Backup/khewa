@@ -774,4 +774,22 @@ class Tools extends \Tools
 
         return $Context->smarty->fetch(_PS_MODULE_DIR_. 'canadapostlabels/views/templates/hook/link.tpl');
     }
+
+    /**
+     * Khewa PS 9.2: \Tools::displayPrice() was removed in PrestaShop 9. Same behaviour as 1.7.8.
+     */
+    public static function displayPrice($price, $currency = null, $no_utf8 = false, ?\Context $context = null)
+    {
+        if (!is_numeric($price)) {
+            return $price;
+        }
+        $context = $context ?: \Context::getContext();
+        $currency = $currency ?: $context->currency;
+        if (is_int($currency)) {
+            $currency = \Currency::getCurrencyInstance($currency);
+        }
+        $currencyCode = is_array($currency) ? $currency["iso_code"] : $currency->iso_code;
+
+        return \Tools::getContextLocale($context)->formatPrice($price, $currencyCode);
+    }
 }

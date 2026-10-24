@@ -225,7 +225,7 @@ class AdminCanadaPostLabelsCreateLabelController extends ModuleAdminController
                     $serviceMethod    = \CanadaPostPs\Method::getMethodByCode($Quote->getServiceCode());
                     if (Tools::getIsset('updateBulkOrderRate')) {
                         $price = Configuration::get($this->module->_prefix . 'TAX') ? $Quote->getPriceTaxIncl() : $Quote->getPriceTaxExcl();
-                        $response['rate'] = \CanadaPostPs\Icon::getIconHtml('refresh') .\Tools::displayPrice($price);
+                        $response['rate'] = \CanadaPostPs\Icon::getIconHtml('refresh') .\CanadaPostPs\Tools::displayPrice($price);
                     } else {
                         $response['rate'] = sprintf(
                             '%s: $%s (tax incl) | $%s (tax excl) | %s Business Day(s) | Arrives %s',

@@ -318,7 +318,8 @@ class fpdi_pdf_parser extends pdf_parser
         }
 
         $res = $this->_getPageRotation($obj[1][1]['/Parent']);
-        if ($res[0] == pdf_parser::TYPE_OBJECT) {
+        // Khewa PS 9.2 / PHP 8: $res is false when no parent has a rotation; same result, no warning.
+        if (is_array($res) && $res[0] == pdf_parser::TYPE_OBJECT) {
             return $res[1];
         }
 

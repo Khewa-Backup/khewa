@@ -145,6 +145,8 @@ class AdminCanadaPostLabelsTrackingController extends ModuleAdminController
         $helper->no_link         = true;
         $helper->identifier    = 'eventId';
         $helper->token         = Tools::getAdminTokenLite($this->controller_name);
+        // Khewa PS 9.2: HelperList needs currentIndex to build its links, or it throws.
+        $helper->currentIndex  = self::$currentIndex;
 
         return $helper->generateList($events, $fields_list);
     }
