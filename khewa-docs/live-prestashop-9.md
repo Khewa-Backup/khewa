@@ -23,6 +23,7 @@ The live shop does **not** run through AMPPS on port 80. It needs PHP 8.3, so it
 2. Start PHP 8.3. It's a background service on port 9083 and usually starts with the Mac.
    ```
    brew services start php@8.3
+   On 2 Nov 2026 it was updated to **8.3.36**. That's the October security fix for the "PHP2Shell" break-in flaw (CVE-2026-109618/109619). A second flaw (CVE-2026-115560) has no PHP fix yet, so `session.upload_progress.enabled` is off in `/opt/homebrew/etc/php/8.3/conf.d/zz-khewa-security.ini`. **The live server needs the same: PHP 8.3.36 or newer, and that setting off.**
    ```
 3. Start the port-8084 web server:
    ```
