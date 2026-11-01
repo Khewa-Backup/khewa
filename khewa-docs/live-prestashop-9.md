@@ -14,17 +14,20 @@
 
 ## How to start it
 
-The live shop does **not** run through AMPPS on port 80. It needs PHP 8.3, so it has its own small web server on port 8084.
+The live shop does **not** run through AMPPS on port 80. It needs PHP 8.5, so it has its own small web server on port 8084.
 
 1. Start MySQL. Use the AMPPS app as usual, or run:
    ```
    cd /Applications/AMPPS/apps/mysql && bin/mysqld_safe --defaults-file=etc/my.cnf &
    ```
-2. Start PHP 8.3. It's a background service on port 9083 and usually starts with the Mac.
+2. Start PHP 8.5. It's a background service on port 9085 and usually starts with the Mac.
    ```
-   brew services start php@8.3
-   On 2 Nov 2026 it was updated to **8.3.36**. That's the October security fix for the "PHP2Shell" break-in flaw (CVE-2026-109618/109619). A second flaw (CVE-2026-115560) has no PHP fix yet, so `session.upload_progress.enabled` is off in `/opt/homebrew/etc/php/8.3/conf.d/zz-khewa-security.ini`. **The live server needs the same: PHP 8.3.36 or newer, and that setting off.**
+   brew services start php
    ```
+   **PHP version (2 Nov 2026):** the shop runs on **PHP 8.5.12**, the newest release. That release has the October security fix for the "PHP2Shell" break-in flaw (CVE-2026-109618/109619). A second flaw (CVE-2026-115560) has no PHP fix yet, so `session.upload_progress.enabled` is off in `/opt/homebrew/etc/php/8.5/conf.d/zz-khewa-security.ini`. PrestaShop 9.2 supports PHP 8.1 to 8.5.
+   - Checked before switching: every PHP file was scanned with 8.3 and 8.5. No file that works on 8.3 fails on 8.5; 8.5 only adds "deprecated" warnings, which change nothing. Shop, admin and POS pages were compared on both, and a POS cash sale was done on 8.5.
+   - PHP 8.3.36 is still installed but switched off (`brew services start php@8.3` and port 9083 in the web server config to go back).
+   - **The live server needs the same: PHP 8.5.12 (or at least 8.3.36), and upload progress off.**
 3. Start the port-8084 web server:
    ```
    /Applications/AMPPS/apps/apache/bin/httpd -f /Users/hello/khewa-php83-apache/httpd.conf -k start
@@ -68,6 +71,7 @@ The local database holds the client's real accounts, so nothing was done that ch
 - 34244 (`UIESLVUMY`) and 34245 (`TALUPUPRK`): POS cash sales of $6.32 each, guest customer.
 - 34246 (`WHPIFDLIT`): POS cash sale, $28.74. Its return was opened but not finished.
 - 34247 (`FHEGATPIK`): POS cash sale with a $5 discount, $22.13, then returned with a credit slip (voucher `V2008C186P34247`).
+- 34248 (`LVUKVATIN`): POS cash sale, $28.74, done on PHP 8.5.
 
 ## POS (RockPOS)
 
