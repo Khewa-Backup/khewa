@@ -582,6 +582,7 @@ class PosPaymentModule extends PaymentModule
                             'customer' => $this->context->customer,
                             'currency' => $this->context->currency,
                             'orderStatus' => $order_state,
+                            'isRock' => true, // Khewa
                         ));
                     } catch (Exception $e) {
                         $this->logActionValidateOrderHookException($order, $e);

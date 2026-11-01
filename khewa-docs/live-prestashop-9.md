@@ -29,6 +29,7 @@ The live shop does **not** run through AMPPS on port 80. It needs PHP 8.3, so it
    /Applications/AMPPS/apps/apache/bin/httpd -f /Users/hello/khewa-php83-apache/httpd.conf -k start
    ```
    To stop it, run the same command with `-k stop`.
+   If it won't start, check that nothing else uses port 8083 (`lsof -iTCP:8083 -sTCP:LISTEN`). A Docker container (llama.cpp) was using it on 2 Nov 2026.
 
 The web server's errors go to `/Users/hello/khewa-php83-apache/logs/error_log`. Admin errors also go to `live/var/logs/prod-<date>.log`.
 
@@ -62,10 +63,30 @@ The local database holds the client's real accounts, so nothing was done that ch
 ## Test orders left in the local database
 
 - 34244 (`UIESLVUMY`) and 34245 (`TALUPUPRK`): POS cash sales of $6.32 each, guest customer.
+- 34246 (`WHPIFDLIT`): POS cash sale, $28.74. Its return was opened but not finished.
+- 34247 (`FHEGATPIK`): POS cash sale with a $5 discount, $22.13, then returned with a credit slip (voucher `V2008C186P34247`).
 
 ## POS (RockPOS)
 
 POS 5.8.1 works on 9.2: the till opens, and cash sales complete with every fixed module switched on. Nothing is blocking it any more.
+
+### Khewa's own POS changes, put back on 5.8.1
+
+Every Khewa change in the old 4.2.7 files was put into the 5.8.1 files. Where 5.8.1 already had the same code, nothing was needed. Each change is marked `// Khewa` in the code. **A new RockPOS version from the vendor will remove them again.**
+
+- `views/js/apps/sales.js`: receipt and cart changes (prices without tax, subtotal after discount, tax lines, discount types Voucher / Gift Card / Credit Slip). The file is minified. The readable copy and the script that builds it are in `khewa-docs/pos/`.
+- `views/templates/front/sales.tpl`: loads the Khewa `sales.js` with a fixed version number, so browsers don't keep the old one.
+- `hspointofsalepro.php`: labels (Full Refund, Credit Slip) and the order discount without tax.
+- `controllers/front/sales.php`: discount checks and discount info for the receipt, extra payment line for voucher / gift card / credit slip, "CA Standard Rate" first in the tax list, quick-sale products get state 9, daily clean-up of quick-sale products off, loading an old order keeps its cart, credit slip codes use the letter P and no tax, refund date saved on the order.
+- `classes/PosProduct.php`, `PosTax.php`, `PosPaymentModule.php`, `PosSalesSummary.php`, `order/PosOrderPayment.php`, `controllers/admin/AdminRockPosManage.php`: tax group fallback, tax rounding down, `isRock` flag for other modules, the day summary's tax columns, payment fields accept any value, PDF opens in the browser.
+
+Tested on 9.2: login, barcode scan, cash sale, $5 discount sale, receipt data, return with credit slip, day summary.
+
+**Known gap until khewacorechanges is installed:** a $5 discount takes $6.61 off (tax added twice). The khewacorechanges `CartRule` override fixes this. The old live shop had the same fix edited into core files.
+
+## khewacorechanges module (copied, NOT installed)
+
+`modules/khewacorechanges` is copied from the `khewa` repo and changed so it works on 9.2. It is **not installed**. Install it from Admin › Modules when ready. Its own `UPDATE_SAFETY.md` has a "9.2 port" section with what was changed and how to check each part.
 
 ## Catalog ISBN problem (needs a decision)
 

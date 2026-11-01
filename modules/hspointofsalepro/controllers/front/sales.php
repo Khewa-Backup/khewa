@@ -29,6 +29,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
     protected $static_actions = array(
         'search',
         'getCombinations',
+        'getDiscountInfo', // Khewa
     );
 
     /**
@@ -794,6 +795,10 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                             $custom_product->add();
                             $this->ajax_json['success'] = true;
                             $this->ajax_json['message'] = $this->module->i18n['this_product_is_saved_successfully'];
+                            // Khewa
+                            $productReal = new product($product->id);
+                            $productReal->state = '9';
+                            $productReal->save();
                         }
                     } else {
                         $this->ajax_json['message'] = $this->module->i18n['there_was_an_error_saving_this_product'];
@@ -824,13 +829,22 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
      *               ...
      *               )
      */
+    // Khewa: 'CA Standard Rate' 14.975 first (id 0 = group 25, see PosProduct::calculatePrice), real group hidden, 'No tax' removed
     protected function getTaxRulesGroups()
     {
+//        $default_tax = array(
+//            array(
+//                'name' => $this->module->i18n['no_tax'],
+//                'id_tax_rules_group' => 0,
+//                'rate' => 0,
+//                'active' => 1,
+//            ),
+//        );
         $default_tax = array(
             array(
-                'name' => $this->module->i18n['no_tax'],
+                'name' => 'CA Standard Rate',
                 'id_tax_rules_group' => 0,
-                'rate' => 0,
+                'rate' => '14.975',
                 'active' => 1,
             ),
         );
@@ -842,13 +856,35 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
             }
         }
 
+        $custom_filtered_tax_rule_groups = array(); // PHP 8: array_merge() needs an array even when nothing matches
+        $filtered_tax_rule_groups =  PosTaxRulesGroup::getAssociatedTaxRates($address->id_country, $this->context->cart->id_shop, $address->id_state);
+
+
+//        $tax_rules_groups = array_merge(
+//            $default_tax,
+//            PosTaxRulesGroup::getAssociatedTaxRates($address->id_country, $this->context->cart->id_shop, $address->id_state)
+//        );
+
+
+        foreach ($filtered_tax_rule_groups as $filtered_tax_rule_group) {
+            if($filtered_tax_rule_group['name'] != 'CA Standard Rate'){
+                $custom_filtered_tax_rule_groups[] = $filtered_tax_rule_group;
+            }
+        }
+
         $tax_rules_groups = array_merge(
-            PosTaxRulesGroup::getAssociatedTaxRates($address->id_country, $this->context->cart->id_shop, $address->id_state),
-            $default_tax
+            $default_tax,
+            $custom_filtered_tax_rule_groups
         );
+
+
+
         foreach ($tax_rules_groups as &$tax_rules_group) {
             unset($tax_rules_group['active']);
         }
+
+
+
 
         return $tax_rules_groups;
     }
@@ -873,6 +909,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
 
     protected function clear()
     {
+        return true; // Khewa: daily clean-up of custom products switched off
         if (date('Y-m-d') != date('Y-m-d', (int) Configuration::get('CUSTOM_PRODUCT_CRON_LAST_RUN'))) {
             PosCustomProduct::deleteOutOfDateProducts();
             Configuration::updateValue('CUSTOM_PRODUCT_CRON_LAST_RUN', strtotime(date('Y-m-d')));
@@ -2879,18 +2916,62 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
      */
     public function ajaxProcessOrderDiscount()
     {
-        $this->_requirePosEmployeeAuth();
+        $this->_requirePosEmployeeAuth(); // RockPOS 5.8.1
         switch ($this->sub_action) {
             case 'add':
                 $discount_type = trim(Tools::getValue('discount_type'));
                 $discount_value = trim(Tools::getValue('discount_value'));
+
+//                Configuration::get('msg_after_'.$iso_code);
+
+//                $this->context->cookie->__set($saved_key_guest, 'no');
+//                $this->context->cookie->write();
+//                $can_guest = $this->context->cookie->__get($saved_key_guest);
+
+
+
                 $error_message = $this->isValidOrderDiscount($discount_type, $discount_value);
                 if ($error_message) {
                     $this->ajax_json['message'] = $error_message;
                     $this->ajax_json['success'] = false;
                 } else {
+                    $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
+
+                    $discount_arr = array(
+                        'discount_type' => $discount_type,
+                        'discount_value' => $discount_value,
+                        'reduction_percent' => $cart_rule->reduction_percent,
+                        'reduction_amount' => $cart_rule->reduction_amount,
+                    );
+
+
+
+
+                    $discount_index = 'discounts_'.$this->context->cart->id;
+
+                    Configuration::updateValue($discount_index, json_encode($discount_arr));
+
                     if ($discount_type === PosConstants::DISCOUNT_TYPE_VOUCHER) {
                         $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
+                        // Ensure reduction_tax = false for vouchers
+                        if (Validate::isLoadedObject($cart_rule)) {
+                            $cart_rule->reduction_tax = false;
+                            $cart_rule->update();
+                        }
+                    }elseif ($discount_type ==='gift-card'){
+                        $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
+                        // Ensure reduction_tax = false for gift cards
+                        if (Validate::isLoadedObject($cart_rule)) {
+                            $cart_rule->reduction_tax = false;
+                            $cart_rule->update();
+                        }
+                    }elseif ($discount_type === 'credit-slip'){
+                        $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
+                        // Ensure reduction_tax = false for credit slips
+                        if (Validate::isLoadedObject($cart_rule)) {
+                            $cart_rule->reduction_tax = false;
+                            $cart_rule->update();
+                        }
                     } else {
                         // add a new cart rule if it's not an existing voucher
                         $languages = Language::getLanguages(false);
@@ -2905,8 +2986,19 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                             $names,
                             $this->module->i18n['point_of_sale']
                         );
+                        // Ensure reduction_tax = false for new percentage/amount discounts
+                        if (Validate::isLoadedObject($cart_rule)) {
+                            $cart_rule->reduction_tax = false;
+                            $cart_rule->update();
+                        }
                     }
-                    if (Validate::isLoadedObject($cart_rule) && (bool) $this->context->cart->addCartRule((int) $cart_rule->id)) {
+                    // Defensive check: do not apply mismatched existing code even if upstream validation changes.
+                    if (Validate::isLoadedObject($cart_rule)
+                        && in_array($discount_type, array(PosConstants::DISCOUNT_TYPE_VOUCHER, 'gift-card', 'credit-slip'))
+                        && ($typeError = $this->validateDiscountTypeMatchesSelection($discount_type, $cart_rule))) {
+                        $this->ajax_json['success'] = false;
+                        $this->ajax_json['message'] = $typeError;
+                    } elseif (Validate::isLoadedObject($cart_rule) && (bool) $this->context->cart->addCartRule((int) $cart_rule->id)) {
                         $this->ajax_json['success'] = true;
                         $this->ajax_json['message'] = $this->module->i18n['discount_applied'];
                     }
@@ -2969,18 +3061,189 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
                     if (Validate::isLoadedObject($cart_rule)) {
                         $error_message = $cart_rule->checkValidity($this->context, false, true);
+                        if (!$error_message) {
+                            $error_message = $this->validateDiscountTypeMatchesSelection($discount_type, $cart_rule);
+                        }
                     } else {
                         $error_message = $this->module->i18n['this_voucher_does_not_exist'];
                     }
                 }
                 break;
-
+            case 'credit-slip':
+                if (!$discount_value) {
+                    $error_message = $this->module->i18n['you_must_enter_a_voucher_code'];
+                } elseif (!Validate::isCleanHtml($discount_value)) {
+//                    $error_message = $this->module->i18n['the_voucher_code_is_invalid'];
+                    $error_message = "Code does not exist!";
+                } else {
+                    $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
+                    if (Validate::isLoadedObject($cart_rule)) {
+                        $error_message = $cart_rule->checkValidity($this->context, false, true);
+                        if (!$error_message) {
+                            $error_message = $this->validateDiscountTypeMatchesSelection($discount_type, $cart_rule);
+                        }
+                    } else {
+//                        $error_message = $this->module->i18n['this_voucher_does_not_exist'];
+                        $error_message = "Code does not exist!";
+                    }
+                }
+                break;
+            case 'gift-card':
+                if (!$discount_value) {
+                    $error_message = $this->module->i18n['you_must_enter_a_voucher_code'];
+                } elseif (!Validate::isCleanHtml($discount_value)) {
+//                    $error_message = $this->module->i18n['the_voucher_code_is_invalid'];
+                    $error_message = "Code does not exist!";
+                } else {
+                    $cart_rule = new CartRule(CartRule::getIdByCode($discount_value));
+                    if (Validate::isLoadedObject($cart_rule)) {
+                        $error_message = $cart_rule->checkValidity($this->context, false, true);
+                        if (!$error_message) {
+                            $error_message = $this->validateDiscountTypeMatchesSelection($discount_type, $cart_rule);
+                        }
+                    } else {
+//                        $error_message = $this->module->i18n['this_voucher_does_not_exist'];
+                        $error_message = "Code does not exist!";
+                    }
+                }
+                break;
             default:
                 $error_message = $this->module->i18n['discount_invalid'];
                 break;
         }
 
         return $error_message;
+    }
+
+    protected function getDiscountTypeLabel($type)
+    {
+        switch ($type) {
+            case PosConstants::DISCOUNT_TYPE_VOUCHER:
+                return 'Voucher';
+            case 'gift-card':
+                return 'Gift Card';
+            case 'credit-slip':
+                return 'Credit Slip';
+            default:
+                return 'Unknown';
+        }
+    }
+
+    protected function getCartRuleDisplayName(CartRule $cart_rule)
+    {
+        $name = '';
+        if (is_array($cart_rule->name)) {
+            $id_lang = (int)$this->context->language->id;
+            if (isset($cart_rule->name[$id_lang])) {
+                $name = (string)$cart_rule->name[$id_lang];
+            } else {
+                foreach ($cart_rule->name as $value) {
+                    if (!empty($value)) {
+                        $name = (string)$value;
+                        break;
+                    }
+                }
+            }
+        } elseif (is_string($cart_rule->name)) {
+            $name = $cart_rule->name;
+        }
+
+        return trim($name);
+    }
+
+    protected function detectCartRuleType(CartRule $cart_rule)
+    {
+        $name = $this->getCartRuleDisplayName($cart_rule);
+        $description = trim((string)$cart_rule->description);
+
+        $nameLower = Tools::strtolower($name);
+        $descriptionLower = Tools::strtolower($description);
+
+        if (strpos($nameLower, 'bon') !== false || strpos($nameLower, 'voucher') !== false) {
+            return PosConstants::DISCOUNT_TYPE_VOUCHER;
+        }
+
+        if (strpos($nameLower, 'gift') !== false || strpos($nameLower, 'cadeau') !== false) {
+            return 'gift-card';
+        }
+
+        $startsWithCapitalV = preg_match('/^V/u', $name) === 1;
+        $containsVoucher = strpos($nameLower, 'voucher') !== false;
+        $containsCredit = (strpos($nameLower, 'credit') !== false || strpos($descriptionLower, 'credit') !== false);
+
+        if (($startsWithCapitalV && !$containsVoucher) || $containsCredit) {
+            return 'credit-slip';
+        }
+
+        return 'unknown';
+    }
+
+    protected function validateDiscountTypeMatchesSelection($selected_type, CartRule $cart_rule)
+    {
+        $detected_type = $this->detectCartRuleType($cart_rule);
+        if ($detected_type === 'unknown' || $selected_type === $detected_type) {
+            return null;
+        }
+
+        return 'Selected code is a "' . $this->getDiscountTypeLabel($detected_type) . '". Please select "' . $this->getDiscountTypeLabel($detected_type) . '" on the left.';
+    }
+
+    // Khewa: discount information for the receipt's tax lines (sales.js)
+    public function ajaxProcessGetDiscountInfo()
+    {
+        $id_order = (int) Tools::getValue('id_order', 0);
+        
+       
+        if (empty($id_order)) {
+            $this->ajax_json = array(
+                'success' => false,
+                'message' => 'Order ID is required',
+                'data' => array()
+            );
+            return;
+        }
+        
+        // try {
+            // Query to get discount information from order_cart_rule and cart_rule tables
+            $sql = 'SELECT cr.reduction_percent, cr.reduction_amount 
+                    FROM ' . _DB_PREFIX_ . 'order_cart_rule ocr
+                    INNER JOIN ' . _DB_PREFIX_ . 'cart_rule cr ON ocr.id_cart_rule = cr.id_cart_rule
+                    WHERE ocr.id_order = ' . (int) $id_order;
+            
+            $result = Db::getInstance()->getRow($sql);
+            
+            if ($result) {
+                $is_percentage = (float) $result['reduction_percent'] > 0;
+                $reduction_percent = (float) $result['reduction_percent'];
+                $reduction_amount = (float) $result['reduction_amount'];
+                
+                $this->ajax_json = array(
+                    'success' => true,
+                    'message' => 'Discount information retrieved',
+                    'data' => array(
+                        'is_percentage' => $is_percentage,
+                        'reduction_percent' => $reduction_percent,
+                        'reduction_amount' => $reduction_amount
+                    )
+                );
+            } else {
+                $this->ajax_json = array(
+                    'success' => true,
+                    'message' => 'No discount found for this order',
+                    'data' => array(
+                        'is_percentage' => false,
+                        'reduction_percent' => 0,
+                        'reduction_amount' => 0
+                    )
+                );
+            }
+        // } catch (Exception $e) {
+        //     $this->ajax_json = array(
+        //         'success' => false,
+        //         'message' => 'Error retrieving discount information: ' . $e->getMessage(),
+        //         'data' => array()
+        //     );
+        // }
     }
 
     /**
@@ -3804,6 +4067,52 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                                 $expiring_days,
                                 $version
                             ) : 0;
+                            // Khewa
+                            //-------------------------------------------------------------------------------------------------------
+
+                            $discount_index = 'discounts_'.$this->context->cart->id;
+                            $discount_arr = Configuration::get($discount_index);
+                            $current_date =  date('Y-m-d h:i:s') ;
+
+                            if($discount_arr !=false){
+                                $discount_arr = json_decode($discount_arr,true);
+                                if($discount_arr['discount_type'] == 'voucher'){
+                                    $custom_payment_method = 'Voucher';
+                                }elseif ($discount_arr['discount_type'] == 'gift-card'){
+                                    $custom_payment_method = 'InStore Gift Card';
+
+                                }elseif ($discount_arr['discount_type'] == 'credit-slip'){
+                                    $custom_payment_method = 'Credit Slip';
+                                }else{
+                                    $custom_payment_method = 'Voucher';
+                                }
+
+
+//                                var_dump($discount_arr);
+//                                var_dump($order->reference);
+//                                var_dump($discount_arr['reduction_amount']);
+//                                var_dump($custom_payment_method);
+//                                var_dump($current_date);
+//                                die();
+                            if($discount_arr['reduction_amount'] > 0 ){
+                             Db::getInstance()->insert(
+                                'order_payment',
+                                array(
+                                    'order_reference' => $order->reference,
+                                    'id_currency' => 3,
+                                    'amount' => $discount_arr['reduction_amount'],
+                                    'payment_method' => $custom_payment_method,
+                                    'conversion_rate' => 1.0,
+                                    'date_add' => $current_date,
+                                    )
+                                );
+                            }
+
+                                Configuration::deleteByName($discount_index);
+                            }
+
+
+                            //-------------------------------------------------------------------------------------------------------
                             if (isset($this->context->cookie->new_voucher_code) && !empty($this->context->cookie->new_voucher_code)) {
                                 $new_cart_rule = new PosCartRule((int) $this->context->cookie->new_voucher_code);
                                 if (Validate::isLoadedObject($new_cart_rule)) {
@@ -3964,21 +4273,23 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                 if (!empty($id_cart)) {
                     $cart = new PosCart($id_cart);
                     $id_exchange = 0;
-                    if ($cart->OrderExists()) {
-                        $exchange = PosExchange::getInstanceByOldOder($id_current_order);
-                        if (Validate::isLoadedObject($exchange)) {
-                            $clone_cart = new PosCart($exchange->id_cart_new);
-                        } else {
-                            $clone_cart = clone $cart;
-                            $clone_cart->id = 0;
-                            $clone_cart->save();
-                            $exchange->id_cart_new = (int) $clone_cart->id;
-                            $exchange->id_order_old = (int) $id_current_order;
-                            $exchange->save();
-                        }
-                        $id_exchange = $exchange->id;
-                        $id_cart = $clone_cart->id;
-                    }
+                    // Khewa: cart clone switched off
+                    // if ($cart->OrderExists()) {
+                    //     $exchange = PosExchange::getInstanceByOldOder($id_current_order);
+                    //     if (Validate::isLoadedObject($exchange)) {
+                    //         $clone_cart = new PosCart($exchange->id_cart_new);
+                    //     } else {
+                    //         $clone_cart = clone $cart;
+                    //         $clone_cart->id = 0;
+                    //         $clone_cart->save();
+                    //         $exchange->id_cart_new = (int) $clone_cart->id;
+                    //         $exchange->id_order_old = (int) $id_current_order;
+                    //         $exchange->save();
+                    //     }
+                    //     $id_exchange = $exchange->id;
+                    //     $id_cart = $clone_cart->id;
+                    // }
+                    $this->context->cart = $cart; // Khewa
 
                     if ($this->sub_action == 'load') {
                         unset($this->context->cookie->id_pos_exchange);
@@ -3995,7 +4306,7 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     $out_of_stock = false;
                     $products_out_of_stock = [];
                     foreach ($this->getTransactionData($id_current_order)['cart']['products'] as $k => $v) {
-                        $productQuantity = PosProduct::getQuantity($v['id_product'], $v['id_product_attribute'], null);
+                        $productQuantity = PosProduct::getQuantity($v['id_product'], $v['id_product_attribute'], null, $cart); // Khewa
                         $allow_ordering_out_of_stock = PosProduct::allowOrderingOutOfStock($v['id_product']);
                         if ($productQuantity <= 0 && !$allow_ordering_out_of_stock) {
                             $out_of_stock = true;
@@ -4089,6 +4400,10 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     Tools::getValue('amount_due'),
                     Tools::getValue('shipping_back')
                 );
+                // Khewa (guarded with method_exists: the method doesn't exist, which crashed on the live site)
+                if (Tools::getValue('shipping_back') && method_exists($order, 'removeShipping')) {
+                    $order->removeShipping();
+                }
 
                 $product_returns = $order->getProductsReturn($product_returns);
                 $exchange_products = array();
@@ -4297,10 +4612,10 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     $cartrule->description = sprintf($this->module->i18n['credit_card_slip_for_order'], $order->id);
                     foreach ($language_ids as $id_lang) {
                         // Define a temporary name
-                        $cartrule->name[$id_lang] = 'V0C' . (int) ($order->id_customer) . 'O' . (int) ($order->id);
+                        $cartrule->name[$id_lang] = 'V0C' . (int) ($order->id_customer) . 'P' . (int) ($order->id); // Khewa: P
                     }
                     // Define a temporary code
-                    $cartrule->code = 'V0C' . (int) ($order->id_customer) . 'O' . (int) ($order->id);
+                    $cartrule->code = 'V0C' . (int) ($order->id_customer) . 'P' . (int) ($order->id); // Khewa: P
 
                     $cartrule->quantity = 1;
                     $cartrule->quantity_per_user = 1;
@@ -4327,16 +4642,16 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                     }
                     if ($total > 0) {
                         $cartrule->reduction_amount = $total;
-                        $cartrule->reduction_tax = true;
+                        $cartrule->reduction_tax = false; // Khewa
                         $cartrule->minimum_amount_currency = $order->id_currency;
                         $cartrule->reduction_currency = $order->id_currency;
                         $success[] = $cartrule->add();
                         if (array_sum($success) >= count($success)) {
                             // Update the voucher code and name
                             foreach ($language_ids as $id_lang) {
-                                $cartrule->name[$id_lang] = 'V' . (int) ($cartrule->id) . 'C' . (int) ($order->id_customer) . 'O' . $order->id;
+                                $cartrule->name[$id_lang] = 'V' . (int) ($cartrule->id) . 'C' . (int) ($order->id_customer) . 'P' . $order->id; // Khewa: P
                             }
-                            $cartrule->code = 'V' . (int) ($cartrule->id) . 'C' . (int) ($order->id_customer) . 'O' . $order->id;
+                            $cartrule->code = 'V' . (int) ($cartrule->id) . 'C' . (int) ($order->id_customer) . 'P' . $order->id; // Khewa: P
                             $voucher_code = array(
                                 'code' => $cartrule->code,
                                 'id_cart_rule' => $cartrule->id,
@@ -4406,6 +4721,15 @@ class HsPointOfSaleProSalesModuleFrontController extends PosModuleFrontControlle
                 } else {
                     // nothing todo
                 }
+                // Khewa
+                $time_now =  date('y-m-d h:i:s');
+                $status =  Db::getInstance()->update(
+                    'orders',
+                    array(
+                        'possible_refund_date' => $time_now,
+                    ),
+                    'id_order ='.(int) Tools::getValue('id_order', 0)
+                );
                 break;
             case 'get_nb_free_orders':
                 $expiring_days = Tools::getValue('expiring_days');

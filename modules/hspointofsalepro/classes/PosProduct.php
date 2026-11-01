@@ -57,6 +57,10 @@ class PosProduct extends Product
         if (!$this->vat_address instanceof Address || !Validate::isLoadedObject($this->vat_address)) {
             return;
         }
+        // Khewa: tax group 0 ('CA Standard Rate' in the POS list) means group 25
+        if($this->id_tax_rules_group == '0'){
+            $this->id_tax_rules_group = '25';
+        }
         if (Configuration::get('PS_TAX') && $this->id_tax_rules_group && $this->tax_included) {
             $tax_manager = TaxManagerFactory::getManager($this->vat_address, $this->id_tax_rules_group);
             $tax_calculator = $tax_manager->getTaxCalculator();

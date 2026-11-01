@@ -171,15 +171,20 @@ class PosSalesSummary
         return $sales;
     }
     
+    // Khewa
     public function getSalesSummary()
     {
         $sql = 'SELECT
                   IFNULL(SUM(o.`total_paid_tax_incl` / o.`conversion_rate`), 0) AS `total_tax_incl`,
                   IFNULL(SUM(o.`total_paid_tax_excl` / o.`conversion_rate`), 0) AS `total_tax_excl`,
+                  IFNULL(SUM((o.`total_paid_tax_incl` - o.`total_paid_tax_excl`)  / o.`conversion_rate` ), 0) AS `total_tax`,
                   IFNULL(SUM(o.`total_price_tax_excl` / o.`conversion_rate`), 0) AS `total_products`,
                   COUNT(o.`id_order`) AS `total_transaction`,
+                  o.`conversion_rate`,
+
                   IFNULL(SUM(`sold_items`), 0) AS `sold_items`
-                FROM (' . $this->getOrdersSummary(true) . ') AS o';
+                FROM (' . $this->getOrdersSummary(true) . ' UNION ' . $this->getOrdersSummary() . ') AS o';
+
         $sales = Db::getInstance()->getRow($sql);
         $sales['total_real_paid'] = $this->getTotalRealPaidSummary();
         $sales['refund'] = abs($this->getRefundSummary());
@@ -362,28 +367,21 @@ class PosSalesSummary
         return Db::getInstance()->executeS($query);
     }
     
+    // Khewa
     public function getTaxSummary()
     {
-        $tax_summary = array();
-
-        // Get product taxes (only active taxes)
-        $product_taxes = $this->getProductTaxes();
-        $this->mergeTaxesIntoSummary($tax_summary, $product_taxes);
-        $active_rates = $this->getActiveRates($product_taxes);
-
-        // Get and merge shipping taxes
-        $shipping_taxes = $this->getShippingTaxes();
-        $this->mergeShippingTaxes($tax_summary, $shipping_taxes, $active_rates);
-
-        // Get and distribute wrapping/discount taxes
-        $order_taxes = $this->getOrderWrappingDiscountTaxes();
-        $this->distributeWrappingDiscountTaxes($tax_summary, $order_taxes);
-
-        // Adjust to match expected total
-        $this->adjustTaxSummaryToMatchTotal($tax_summary);
-
-        // Convert to indexed array and sort
-        return $this->formatTaxSummaryResult($tax_summary);
+        $query = new DbQuery();
+        $query->select('SUM((od.`total_price_tax_incl` - od.`total_price_tax_excl`)  /  o.`conversion_rate`) AS `total1`');
+        $query->select('SUM(odt.`total_amount`) AS `total`');
+        $query->select('t.`rate`', 'rate');
+        $query->from('order_detail', 'od');
+        $query->innerJoin('orders', 'o', 'o.`id_order` = od.`id_order`');
+        $query->innerJoin('order_detail_tax', 'odt', 'odt.`id_order_detail` = od.`id_order_detail`');
+        $query->innerJoin('tax', 't', 't.`id_tax` = odt.`id_tax`');
+        $query->where('o.`reference` IN (' . $this->getOrderReferencesQuery()->build() . ')');
+        $query->where('o.`valid` = 1');
+        $query->groupBy('t.`rate`');
+        return Db::getInstance()->executeS($query);
     }
 
     /**

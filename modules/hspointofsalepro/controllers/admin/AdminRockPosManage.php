@@ -1813,7 +1813,7 @@ class AdminRockPosManageController extends AdminRockPosCommon
             PosConstants::TEMPLATE_SALES_SUMMARY,
             $this->context->smarty
         );
-        $pdf_sales_summary->render();
+        $pdf_sales_summary->render('I'); // Khewa: open in the browser instead of downloading
     }
 
     /**

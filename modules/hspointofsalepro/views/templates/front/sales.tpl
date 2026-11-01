@@ -26,7 +26,9 @@
 <div id="content"></div>
 </body>
 <script src="{$js_path|escape:'htmlall':'UTF-8'}apps/qzTrayKey.js?v={$file_version|escape:'htmlall':'UTF-8'}"></script>
-<script src="{$js_path|escape:'htmlall':'UTF-8'}apps/sales.js?v={$file_version|escape:'htmlall':'UTF-8'}"></script>
+{*<script src="{$js_path|escape:'htmlall':'UTF-8'}apps/sales.js?v={$file_version|escape:'htmlall':'UTF-8'}"></script>*}
+{* Khewa: fixed version so browsers load the Khewa-changed sales.js *}
+<script src="{$js_path|escape:'htmlall':'UTF-8'}apps/sales.js?v=khewa-581-receiptfix-1"></script>
 <script src="{$js_path|escape:'htmlall':'UTF-8'}rsvp-3.1.0.min.js"></script>
 <script src="{$js_path|escape:'htmlall':'UTF-8'}sha-256.min.js"></script>
 <script src="{$js_path|escape:'htmlall':'UTF-8'}qz-tray.js"></script>
