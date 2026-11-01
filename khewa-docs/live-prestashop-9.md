@@ -5,16 +5,16 @@
 - Code: `khewa-updates/live/`
   - This folder is a git worktree of the `khewa` repo, on branch `live-prestashop-9`. It isn't pushed.
 - Database: `khewa_live` in AMPPS MySQL (user `root`, password `mysql`).
-- Shop: http://localhost:8083/dev-prestashop/khewa-updates/live/
-- Admin: http://localhost:8083/dev-prestashop/khewa-updates/live/admin556cvt7923/
-- POS till: http://localhost:8083/dev-prestashop/khewa-updates/live/en/pos
+- Shop: http://localhost:8084/dev-prestashop/khewa-updates/live/
+- Admin: http://localhost:8084/dev-prestashop/khewa-updates/live/admin556cvt7923/
+- POS till: http://localhost:8084/dev-prestashop/khewa-updates/live/en/pos
 - The `khewa` repo site stays on AMPPS, port 80, PHP 7.4. Nothing there was changed.
 
 `git log` on the branch lists every step. Code changes and database changes are written down below, because database changes don't show in git.
 
 ## How to start it
 
-The live shop does **not** run through AMPPS on port 80. It needs PHP 8.3, so it has its own small web server on port 8083.
+The live shop does **not** run through AMPPS on port 80. It needs PHP 8.3, so it has its own small web server on port 8084.
 
 1. Start MySQL. Use the AMPPS app as usual, or run:
    ```
@@ -24,12 +24,12 @@ The live shop does **not** run through AMPPS on port 80. It needs PHP 8.3, so it
    ```
    brew services start php@8.3
    ```
-3. Start the port-8083 web server:
+3. Start the port-8084 web server:
    ```
    /Applications/AMPPS/apps/apache/bin/httpd -f /Users/hello/khewa-php83-apache/httpd.conf -k start
    ```
    To stop it, run the same command with `-k stop`.
-   If it won't start, check that nothing else uses port 8083 (`lsof -iTCP:8083 -sTCP:LISTEN`). A Docker container (llama.cpp) was using it on 2 Nov 2026.
+   If it won't start, check that nothing else uses port 8084 (`lsof -iTCP:8084 -sTCP:LISTEN`). The shop moved from 8083 to 8084 on 2 Nov 2026 because a Docker container (llama.cpp) took 8083.
 
 The web server's errors go to `/Users/hello/khewa-php83-apache/logs/error_log`. Admin errors also go to `live/var/logs/prod-<date>.log`.
 
@@ -165,7 +165,7 @@ The shop's update tool is now 7.6.6. The old one is in `backups/modules-moved-ou
 - **Overrides now in `live/override/`:** `classes/Cart.php` from POS 5.8.1 (installed by POS itself).
 - **Not a module problem:** Admin › Advanced › Extra property definitions (a new 9.2 page) fails with "Illegal mix of collations". The new 9.2 tables use `utf8mb4_unicode_ci`, and the shop's older tables use `utf8mb4_general_ci`.
 - **Local-only settings:**
-  - the shop address is `localhost:8083`
+  - the shop address is `localhost:8084`
   - https is off
   - emails are off (`PS_MAIL_METHOD = 3`)
   - `.htaccess` points to the local path; the server copy is in `backups/live-server-config/`
