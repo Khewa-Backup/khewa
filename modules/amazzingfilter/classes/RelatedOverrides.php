@@ -8,6 +8,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+// Khewa PS 9.2: PHP 8.2+ warns when a class adds properties on the fly; this class does that a lot
+#[\AllowDynamicProperties]
 class RelatedOverrides
 {
     public function __construct($af)
@@ -61,7 +63,9 @@ class RelatedOverrides
     public function getData($extended = false)
     {
         $data = [];
-        $autoload = PrestaShopAutoload::getInstance();
+        // Khewa PS 9.2: the autoloader class moved to a namespace (PrestaShop\Autoload\PrestashopAutoload)
+        $autoload = class_exists('PrestaShop\\Autoload\\PrestashopAutoload')
+            ? \PrestaShop\Autoload\PrestashopAutoload::getInstance() : PrestaShopAutoload::getInstance();
         foreach (Tools::scandir($this->custom_dir, 'php', '', true) as $file) {
             $class_name = basename($file, '.php');
             if ($class_name != 'index') {

@@ -46,12 +46,14 @@ Every change in a vendor module's code is marked in the code with a comment star
 | mailchimppro (Mailchimp) | 3.1.6 | Nothing | No change needed | 22 admin pages + settings (read real data), cart, checkout and a POS sale with it on |
 | paypal (202 ecommerce) | 6.7.1 (newest) | 1) **PayPal is not shown at checkout on the live site either.** Its files are 6.7.1, but on the live server its upgrade never ran (the live database said 5.4.2). 6.x needs the account secret encrypted, and the live secret was still the old plain 5.x value. 2) Five old 5.x admin pages (2021 files) no longer work: Setup, Customize checkout, Help, Installment, Get credentials. | 1) The upgrade ran during the 9.2 update. The secret was encrypted the same way PayPal 6.x saves it (`ToolKit::encrypt`). **PayPal now shows at checkout.** 2) Their menu entries are hidden; PayPal 6.x uses Modules › PayPal › Configure instead. One harmless line fix in one of those old files (`jsonEncode` → `json_encode`). | Checkout shows "Pay with Paypal", settings and logs pages |
 | thegiftcard (Keyrnel) | 1.18.1 → **1.18.3** | Choosing a gift card amount failed: 9.2 rejects the gift card variants' ISBN values (see "Catalog ISBN problem" below) | Updated from `module files/v1.18.3-thegiftcard.zip`. Cleared ISBN on the gift card product (4523) and its 23 variants only; old values saved in table `zz_giftcard_isbn_backup`. | Gift card page, picking $20 and $50, preview PDF, add to cart |
+| amazzingfilter (Amazzing Filter, the product filter on category pages) | 3.2.6 (no newer version) | Admin › Catalog › Products crashed (`setMedia()` called on the new product page). Also: `Tools::encrypt` and `Tools::link_rewrite` removed (cron link, product links), `addColorsToProductList` removed (filter updates on the shop page would crash), the autoloader class moved (settings page, Overrides tab would crash), the attribute class is now `ProductAttribute` (its cache was not cleared when attributes change). The old product-page script does not work on the new product page. | Fixed in its code (7 files). The cron link keeps its old secret, so it still works. When a product's combinations are added, changed or removed on the new product page, the product is now re-indexed on the server at the end of that save. PHP 8.2+ warnings about added properties are switched off for its own classes. Module is on again. | Category pages (EN and FR): picking categories and colours, price slider, pages, sorting, links with filters, reload. Best sales page filter, search, home, product page, add to cart. Admin: settings page (all 15 tabs), edit and save a template, save settings, clear cache, re-index all products in all 3 shops, Catalog › Products list and product edit page, Catalog › Categories. Re-index after a product save and after a combination change (run directly) |
 
 Database changes in this section (not in git):
 - Canada Post carriers 377, 378, 383, 384, 430 switched back on.
 - Etsy tabs `AdminEtsyReturnPolicy` and `AdminEtsyCustomersListing` added.
 - PayPal: `PAYPAL_EC_SECRET_LIVE` encrypted. Menu entries `AdminPayPalSetup`, `AdminPayPalCustomizeCheckout` and `AdminPayPalHelp` hidden (`active = 0`).
 - Gift card product 4523: ISBN cleared.
+- amazzingfilter switched back on (rows moved back from `zz_module_shop_off` to `ps_module_shop`, `active = 1`). Its product index (`ps_af_index`) was rebuilt from its settings page.
 
 ## What was NOT tested, on purpose
 
@@ -108,7 +110,6 @@ Each of these crashed a page on 9.2, so it's switched off. The files and the dat
 | cronjobs | Every admin page | `Tools::encrypt()` was removed |
 | iqitextendedproduct | Admin dashboard | Constant `_PS_PROD_IMG_DIR_` was removed |
 | bulkactions | Admin › Catalog › Categories | `setMedia()` call on the admin controller no longer exists |
-| amazzingfilter | Admin › Catalog › Products (it's also the shop's product filter) | `setMedia()` call on the admin controller no longer exists |
 | featuredproducts | Shop home page (now and then) | Random products with no price break the product presenter (`formatPrice(null)`) |
 | pm_crosssellingoncart | Shop home page | `prepareMultipleProductsForTemplate()` gets `false` instead of a list |
 | iqitelementor | Shop home page (Elementor layout) | `Hook::getRetroHookName()` was removed |

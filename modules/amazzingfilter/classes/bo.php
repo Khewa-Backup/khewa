@@ -8,6 +8,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+// Khewa PS 9.2: PHP 8.2+ warns when a class adds properties on the fly; this class does that a lot
+#[\AllowDynamicProperties]
 class Bo extends AmazzingFilter
 {
     public function extendGetContent()
@@ -56,8 +58,13 @@ class Bo extends AmazzingFilter
     public function addJquery()
     {
         if (empty($this->context->jqueryAdded)) {
-            version_compare(_PS_VERSION_, '1.7.6.0', '>=') ? $this->context->controller->setMedia() :
-            $this->context->controller->addJquery();
+            // Khewa PS 9.2: on Symfony admin pages (like the new product page) the controller is a
+            // LegacyControllerContext with no setMedia()/addJquery(), and jQuery is already loaded there.
+            // Only call setMedia() on real legacy admin controllers (AdminModules config page).
+            if ($this->context->controller instanceof AdminController) {
+                version_compare(_PS_VERSION_, '1.7.6.0', '>=') ? $this->context->controller->setMedia() :
+                $this->context->controller->addJquery();
+            }
             $this->context->jqueryAdded = 1;
         }
     }

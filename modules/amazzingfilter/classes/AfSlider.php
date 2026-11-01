@@ -8,6 +8,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+// Khewa PS 9.2: PHP 8.2+ warns when a class adds properties on the fly; this class does that a lot
+#[\AllowDynamicProperties]
 class AfSlider
 {
     public function assignParamsForNumericSliders(&$params)

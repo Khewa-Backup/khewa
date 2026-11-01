@@ -4,6 +4,8 @@
  *  @copyright Amazzing
  *  @license   https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+// Khewa PS 9.2: PHP 8.2+ warns when a class adds properties on the fly; this class does that a lot
+#[\AllowDynamicProperties]
 class AmazzingFilter extends Module
 {
     public $x = [];
@@ -656,7 +658,11 @@ class AmazzingFilter extends Module
     {
         if (Tools::getValue('controller') == 'AdminProducts') {
             // reindexProduct after mass combinations generation
-            if ($this->is_modern) {
+            if ($this->is_modern && !($this->context->controller instanceof AdminController)) {
+                // Khewa PS 9.2: the product page is a Symfony page now. product-indexer.js only works on the
+                // old 1.7 product form, so it is not loaded here. Combination changes are re-indexed on the
+                // server instead, see queueProductReindex().
+            } elseif ($this->is_modern) {
                 $this->bo()->addJquery();
                 $js_path = $this->_path . 'views/js/product-indexer.js?v=' . $this->version;
                 $this->context->controller->js_files[] = $js_path;
@@ -3960,6 +3966,7 @@ class AmazzingFilter extends Module
             $cache_dependencies = [
                 'Category' => 'c_list',
                 'Attribute' => 'a_list',
+                'ProductAttribute' => 'a_list', // Khewa PS 9.2: class Attribute is called ProductAttribute now
                 'FeatureValue' => 'f_list',
                 'Combination' => 'comb_data',
                 'Order' => 'comb_data',
@@ -3968,12 +3975,46 @@ class AmazzingFilter extends Module
             ];
             if (isset($cache_dependencies[$cls])) {
                 $this->cache('clear', $cache_dependencies[$cls]);
+                if ($cls == 'Combination' && !empty($params['object']->id_product)) {
+                    $this->queueProductReindex((int) $params['object']->id_product); // Khewa PS 9.2
+                }
             } elseif (in_array($cls, ['Language', 'Currency', 'Group'])) {
                 $this->cache('clear', 'indexationColumns');
                 $this->i['suffixes'] = [];
                 $this->indexationColumns('adjust');
             }
         }
+    }
+
+    /**
+     * Khewa PS 9.2: on the new Symfony product page, combinations are added, changed and removed
+     * in their own requests, without a product save and without the old product-indexer.js.
+     * So the product is re-indexed once, at the end of the request, when auto indexing is on.
+     */
+    public function queueProductReindex($id_product)
+    {
+        if (!$this->is_modern || !$id_product || (!empty($this->context->controller)
+            && get_class($this->context->controller) == 'AdminProductsController')) {
+            return;
+        }
+        if (!isset($this->x['reindex_queue'])) {
+            $this->x['reindex_queue'] = [];
+            register_shutdown_function([$this, 'runQueuedProductReindex']);
+        }
+        $this->x['reindex_queue'][$id_product] = $id_product;
+    }
+
+    public function runQueuedProductReindex()
+    {
+        $this->defineSettings();
+        if (!empty($this->x['reindex_queue']) && !empty($this->settings['indexation']['auto'])) {
+            try {
+                $this->indexProduct(array_values($this->x['reindex_queue']), $this->shopIDs('all'));
+            } catch (Exception $e) {
+                $this->log('add', 'Re-index after combination change failed: ' . $e->getMessage());
+            }
+        }
+        $this->x['reindex_queue'] = [];
     }
 
     public function hookActionAdminTagsControllerSaveAfter()
@@ -4794,7 +4835,10 @@ class AmazzingFilter extends Module
         $this->current_controller = $params['current_controller'];
         $products_data = $this->getFilteredProducts($params);
         $this->context->forced_sorting = ['by' => $params['orderBy'], 'way' => $params['orderWay']];
-        $this->context->controller->addColorsToProductList($products_data['products']);
+        // Khewa PS 9.2: addColorsToProductList() was removed from FrontController (it was for 1.6 themes)
+        if (method_exists($this->context->controller, 'addColorsToProductList')) {
+            $this->context->controller->addColorsToProductList($products_data['products']);
+        }
         $this->context->smarty->assign([
             'link' => $this->context->link,
             'static_token' => Tools::getToken(false),
@@ -5890,7 +5934,7 @@ class AmazzingFilter extends Module
         $sep = Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR');
         foreach ($attributes as &$a) {
             foreach ($a as &$b) {
-                $b = str_replace($sep, '_', Tools::link_rewrite($b));
+                $b = str_replace($sep, '_', Tools::str2url($b)); // Khewa PS 9.2: Tools::link_rewrite() was removed
             }
             $id = ($with_id && !empty($a['id_attribute']) ? (int) $a['id_attribute'] . $sep : '');
             $anchor .= '/' . $id . $a['group'] . $sep . $a['name'];
@@ -5967,7 +6011,9 @@ class AmazzingFilter extends Module
 
     public function getCronToken()
     {
-        return Tools::encrypt($this->name);
+        // Khewa PS 9.2: Tools::encrypt() was removed. Same value as before (md5 of cookie key + name),
+        // so cron links that already exist keep working.
+        return md5(_COOKIE_KEY_ . $this->name);
     }
 
     public function getCronURL($id_shop, $params = [])

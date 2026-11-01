@@ -15,6 +15,8 @@ use PrestaShop\PrestaShop\Core\Product\Search\ProductSearchQuery;
 use PrestaShop\PrestaShop\Core\Product\Search\ProductSearchResult;
 use PrestaShop\PrestaShop\Core\Product\Search\SortOrder;
 
+// Khewa PS 9.2: PHP 8.2+ warns when a class adds properties on the fly; this class does that a lot
+#[\AllowDynamicProperties]
 class AmazzingFilterProductSearchProvider implements ProductSearchProviderInterface
 {
     public function __construct($module)
