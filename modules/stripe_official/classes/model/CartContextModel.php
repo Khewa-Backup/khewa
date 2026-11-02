@@ -76,6 +76,11 @@ class CartContextModel
         $psCart = $context->cart;
         $cartId = (int) $psCart->id;
 
+        // Khewa (Aug 2026, re-applied on 3.9.0): strip any cart rule that's no longer valid (e.g. cart dropped below its
+        // minimum amount) before calculating what to charge, so the amount sent
+        // to Stripe always matches the order that will actually be created.
+        (new PrestashopCartService())->refreshCart($psCart);
+
         $amount = $psCart->getOrderTotal();
         $amount = round($amount, 2);
         $amount = Stripe_official::isZeroDecimalCurrency($currencyIsoCode) ?

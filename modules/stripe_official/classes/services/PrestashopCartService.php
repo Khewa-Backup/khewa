@@ -215,6 +215,11 @@ class PrestashopCartService
 
     public function getAmount($cart, $countryId = null, $selectedCarrierId = null)
     {
+        // Khewa (Aug 2026, re-applied on 3.9.0; was in createIntent::getAmount() on 3.7.3): strip any cart rule
+        // that's no longer valid before calculating what to charge, so the amount
+        // sent to Stripe always matches the order that will actually be created.
+        $this->refreshCart($cart);
+
         $currency = new Currency($cart->id_currency);
         $isoCode = Tools::strtolower((string) $currency->iso_code);
 

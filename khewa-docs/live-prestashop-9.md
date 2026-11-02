@@ -256,6 +256,7 @@ This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, 
 - **Admin accounts (3 Nov):** all removed except #1 (developer.musa, the developer) and #2 (m@v-x.cc, the client). 15 accounts removed, including the store staff and the POS till logins (Rock@khewa.com, Rock_Window@khewa.com, Nancy, Breanna, Charlotte, Nathalie and others). **Staff need new accounts with new passwords before they can use the admin or the POS.** Backup of the account tables: `backups/khewa_live-employees-before-removal-2026-11-03.sql.gz`.
 - **Old updateproducts exports (3 Nov):** about 495 old export files (2021–2026, some with cost prices) moved out of `modules/updateproducts/files/` to the removed-files backup.
 - **Old PayPal 5.4.2 and Stripe 3.7.3 leftover files (3 Nov):** 872 files moved out (`LIST-3.txt`); the code that runs matches the official PayPal 6.7.1 and Stripe 3.9.0 exactly.
+- **Stripe: Khewa's own change put back (3 Nov).** Commit `1f9a45d8c` (19 Aug 2026) in the khewa repo made Stripe remove discount codes that are no longer valid before charging, so the amount charged matches the order. Stripe 3.9.0 had lost it; re-added in `classes/model/CartContextModel.php` and `classes/services/PrestashopCartService.php::getAmount()` (marked `Khewa`). The older "stripe changes" commit `ffcac2604` was only a Stripe version update, not a Khewa change.
 - Full scan outputs: `/Users/hello/khewa-incident-2026-10-29/scan-2026-11-03/`.
 
 ## Security: what's left (3 Nov 2026)
