@@ -115,11 +115,30 @@ Things seen while testing the Warehouse update, not changed:
 - Admin product edit page shows the word "Array" at the very top. It is not from the theme modules (still there with them off).
 - There are no blog posts and no Revolution sliders in the database, so related posts and sliders show nothing.
 
-### Cron jobs for the live server
+### Cron jobs for the live server (cPanel → Cron Jobs)
 
-- **cronjobs** (runs the gift card and Canada Post hourly jobs): `curl -s "https://khewa.com/admin556cvt7923/index.php?controller=AdminCronJobs&token=c822eab0bf0ddccfa598ee949ebe73d6"` every hour. The token is `CRONJOBS_EXECUTION_TOKEN`, kept from 1.7. If the admin folder gets an IP-only rule, let the server's own IP through for this URL.
-- **ntbackupandrestore** backup: `curl -s "https://khewa.com/index.php?fc=module&module=ntbackupandrestore&controller=cron&secure_key=<key>&config=1"`, or from the command line `php modules/ntbackupandrestore/ajax/backup.php 1` (no key needed). `<key>` is `md5(_COOKIE_KEY_ . 'ntbackupandrestore_khewa_cron')`; the module's Automation tab shows the full URL. The old `modules/ntbackupandrestore/ajax/backup.php?secure_key=…` URL and the 2N remote cron no longer work.
-- RockPOS index crons (`crons/rockposcornpi.sh`, `rockposcornci.sh`) are unchanged.
+**First, before adding anything: read the whole current cron list in cPanel and delete every line you don't recognise.** The cron list was never checked after the hack, and attackers often add a cron that puts their files back.
+
+**General:**
+- A cron line that runs PHP from the command line must use **PHP 8.5**, not the server's default `php`, which may be an old version. On cPanel this is usually `/usr/local/bin/ea-php85` or `/opt/cpanel/ea-php85/root/usr/bin/php`; check in cPanel → MultiPHP. Lines that use `curl` to call a URL don't care about this.
+- The account's home is `/home/kbklzsah/`, and the shop is in `/home/kbklzsah/public_html/`. The old POS scripts mention `/home/j8m1o8hr4gjg/` only in a comment; that's an older account, not used.
+- After the upload, run each line below once by hand (or open the URL) and check it answers.
+
+| # | What | Cron line (every … ) | Change? |
+|---|---|---|---|
+| 1 | **Cron tasks module** (runs the gift card job, Canada Post job and the bulkremove "South West" rule, all hourly) | every hour: `curl -s "https://khewa.com/admin556cvt7923/index.php?controller=AdminCronJobs&token=c822eab0bf0ddccfa598ee949ebe73d6"` | Keep or add. The token is the old one, so an existing line keeps working. If the admin folder becomes IP-only, let the server's own IP through. |
+| 2 | **POS product index** | `/bin/bash /home/kbklzsah/public_html/crons/rockposcornpi.sh` (as before) | Keep as it is. The script now sends a secret key itself. |
+| 3 | **POS customer index** | `/bin/bash /home/kbklzsah/public_html/crons/rockposcornci.sh` (as before) | Keep as it is. |
+| 4 | **Cache clean-up** (`clear_ps_cache.sh`, yours) | every 30 min: `/bin/sh $HOME/clear_ps_cache.sh` | The script is meant to sit in the **home folder**, not in `public_html`. After the upload, copy `public_html/clear_ps_cache.sh` to `/home/kbklzsah/clear_ps_cache.sh` and point the cron there. |
+| 5 | **Backups** (ntbackupandrestore), only if you want automatic backups | e.g. daily at night: `/usr/local/bin/ea-php85 /home/kbklzsah/public_html/modules/ntbackupandrestore/ajax/backup.php 1` (no key needed), or `curl -s "https://khewa.com/index.php?fc=module&module=ntbackupandrestore&controller=cron&secure_key=<key>&config=1"` (key in the module's Automation tab) | **Change.** The old `modules/ntbackupandrestore/ajax/backup.php?secure_key=…` URL and the vendor's remote cron no longer work. Each backup is about 2 GB; keep only 1–2. |
+| 6 | Gift card (thegiftcard) own cron URL | — | **Remove** any separate line. It runs through #1. |
+| 7 | Canada Post own cron URL | — | **Remove** any separate line. It runs through #1. |
+| 8 | Mailchimp cron | — | **Remove** if present (last ran 2024; the module syncs on its own). |
+| 9 | Etsy (kbetsy) sync cron | — | **Remove** if present. Etsy isn't connected, and its old cron key no longer works. |
+| 10 | Help desk email fetch (wkhelpdesk IMAP) | — | **Remove** if present. PHP 8.5 on this setup has no IMAP, so it only prints an error. |
+| 11 | Orders export scheduled report | — | **Remove** if present. The module is switched off. |
+| 12 | Superspeed page-cache refresh, Google Merchant feed | as they are | Keep if present. Their URLs still work (each checks its own token). |
+| 13 | Anything calling `robots.php`, `prestaeditor`, `sucuri*`, `geoff*`, the old root `/hspointofsalepro/`, or any unknown URL or file | — | **Remove.** These are gone or were the attacker's. |
 
 ## What was NOT tested, on purpose
 
