@@ -39,45 +39,44 @@ class bulkremove extends Module
     public function install()
     { 
         return (parent::install() && $this->registerHook('displayBackOfficeHeader')
-               && $this->registerHook('displayHeader')
+               && $this->registerHook('actionCronJob') // Khewa PS 9.2: was displayHeader
                );  
     }
      
-     public function hookDisplayHeader()
-     {
+    // Khewa PS 9.2: the "South West" rule used to run on every shop page view (hookDisplayHeader).
+    // It now runs once an hour from the Cron tasks module (cronjobs) through actionCronJob.
+    public function hookActionCronJob()
+    {
+        $this->deactivateSouthWestOutOfStock();
+    }
 
+    // Khewa PS 9.2: tells the cronjobs module to run hookActionCronJob every hour
+    public function getCronFrequency()
+    {
+        return array(
+            'hour' => -1,
+            'day' => -1,
+            'month' => -1,
+            'day_of_week' => -1,
+        );
+    }
 
-         $controller = Tools::getValue('controller');
-
-       //  if($controller =='order'){
-             $sql = "SELECT * FROM `"._DB_PREFIX_."product_lang` WHERE `description_short` LIKE '%South West%' OR `description_short` LIKE '%Southwest%'";
-//         $sql = "SELECT * FROM `"._DB_PREFIX_."product_lang` WHERE `description_short` LIKE '%120 sheets%' OR `description_short` LIKE '%Southwest%'";
-             $products = DB::getInstance()->executeS($sql);
-
-//var_dump($products);die();
-
-
-             $product_arr = array();
-             foreach($products as $product){
-                 $sql = 'SELECT * FROM `'._DB_PREFIX_.'stock_available` WHERE `quantity` = 0 AND id_product= '. $product['id_product'];
-                 $id_product =  DB::getInstance()->executeS($sql);
-
-                 if(count($id_product)>0){
-                     $product_arr[] = $id_product[0];
-                 }
-             }
-             foreach($product_arr as $product){
-                 Db::getInstance()->update(
-                     'product_shop',
-                     array(
-                         'active' => 0,
-                     ),
-                     'id_product ='.(int) $product['id_product']
-                 );
-             }
-       //  }
-
-     }
+    // Switches off products whose short description says "South West"/"Southwest" and that have a stock row at 0
+    // (same rule as before, done in one query instead of one query per product)
+    public function deactivateSouthWestOutOfStock()
+    {
+        return Db::getInstance()->execute(
+            'UPDATE `' . _DB_PREFIX_ . 'product_shop` ps SET ps.`active` = 0
+             WHERE ps.`active` = 1
+             AND ps.`id_product` IN (
+                 SELECT pl.`id_product` FROM `' . _DB_PREFIX_ . 'product_lang` pl
+                 WHERE pl.`description_short` LIKE \'%South West%\' OR pl.`description_short` LIKE \'%Southwest%\'
+             )
+             AND ps.`id_product` IN (
+                 SELECT sa.`id_product` FROM `' . _DB_PREFIX_ . 'stock_available` sa WHERE sa.`quantity` = 0
+             )'
+        );
+    }
 
     public function getContent()
     {
@@ -92,7 +91,7 @@ class bulkremove extends Module
             $product_avail = Tools::getValue('product_avail');
 
  
-            $id_category = $category_id_availability;
+            $id_category = (int) $category_id_availability; // Khewa PS 9.2: number only
             $sql = 'SELECT * FROM `'._DB_PREFIX_.'category_product` WHERE id_category = '.$id_category;
             $products = DB::getInstance()->executeS($sql);
             foreach ($products as $item) {
@@ -101,7 +100,7 @@ class bulkremove extends Module
                     Db::getInstance()->update(
                         'stock_available',
                         array(
-                            'out_of_stock' =>$product_avail,
+                            'out_of_stock' => (int) $product_avail,
                         ),
                         'id_product ='.(int) $id_product
                     );
@@ -122,7 +121,7 @@ class bulkremove extends Module
             $category_id_carrier = Tools::getValue('category_id_carrier');
 
 
-            $sql = 'SELECT * FROM `'._DB_PREFIX_.'category_product` WHERE id_category = '.$category_id_carrier;
+            $sql = 'SELECT * FROM `'._DB_PREFIX_.'category_product` WHERE id_category = '.(int) $category_id_carrier; // Khewa PS 9.2: number only
 
             $products = DB::getInstance()->executeS($sql);
 
@@ -141,15 +140,15 @@ class bulkremove extends Module
             foreach ($products as $product) {
                 $id_product = $product['id_product'];
 
-                foreach ($carriers as $carrier_id) {
+                foreach ((array) $carriers as $carrier_id) { // Khewa PS 9.2: no warning when none ticked
 
 
                     Db::getInstance()->insert(
                         'product_carrier',
                         array(
                             'id_shop' => (int) $id_shop,
-                            'id_product' => $id_product,
-                            'id_carrier_reference' => $carrier_id,
+                            'id_product' => (int) $id_product,
+                            'id_carrier_reference' => (int) $carrier_id,
                         )
                     );
                 }
@@ -159,7 +158,7 @@ class bulkremove extends Module
             $category_id_barcode = Tools::getValue('category_id_barcode');
 
 
-            $id_category = $category_id_barcode;
+            $id_category = (int) $category_id_barcode; // Khewa PS 9.2: number only
             $sql = 'SELECT * FROM `'._DB_PREFIX_.'category_product` WHERE id_category = '.$id_category;
             $products = DB::getInstance()->executeS($sql);
 
@@ -173,7 +172,7 @@ class bulkremove extends Module
                     'id_product ='.(int) $id_product
                 );
 
-                $sql = 'SELECT * FROM `'._DB_PREFIX_.'product_attribute` WHERE id_product = '.$id_product;
+                $sql = 'SELECT * FROM `'._DB_PREFIX_.'product_attribute` WHERE id_product = '.(int) $id_product;
                 $product_attributes = DB::getInstance()->executeS($sql);
 
                 foreach ($product_attributes as $item) {
@@ -197,7 +196,7 @@ class bulkremove extends Module
             $width = Tools::getValue('category_id_width');
             $height =Tools::getValue('category_id_height');
 
-            $id_category = $category_id_for_weights;
+            $id_category = (int) $category_id_for_weights; // Khewa PS 9.2: number only
 
             $sql = 'SELECT * FROM `'._DB_PREFIX_.'category_product` WHERE id_category = '.$id_category;
             $products = DB::getInstance()->executeS($sql);
@@ -207,10 +206,10 @@ class bulkremove extends Module
                 Db::getInstance()->update(
                     'product',
                     array(
-                        'weight' => $weight,
-                        'depth' => $depth,
-                        'width' => $width,
-                        'height' => $height,
+                        'weight' => (float) $weight,
+                        'depth' => (float) $depth,
+                        'width' => (float) $width,
+                        'height' => (float) $height,
                     ),
                     'id_product ='.(int) $id_product
                 );
@@ -457,34 +456,35 @@ $exist = array();
      */
      
 
-    public function hookBackOfficeHeader()
+    // Khewa PS 9.2: the registered hook is displayBackOfficeHeader, and 9.2's product page has no ?controller= in the URL,
+    // so the old code never ran. Same rule: opening a product named "copy of ..." clears UPC and ISBN on its combinations.
+    public function hookDisplayBackOfficeHeader()
     {
-        $controller = Tools::getValue('controller');
-        if($controller == 'AdminProducts'){
-            $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-            $link_array = explode('products/',$actual_link);
-            $link_array = explode('/edit',$link_array[1]);
-            $id_product = (int)$link_array[0];
-
-
-            $sql = 'SELECT * FROM `'._DB_PREFIX_.'product_lang` WHERE id_product = '.$id_product.' AND id_lang = '.$this->context->language->id;
-            $products = DB::getInstance()->executeS($sql);
-            $product_name = $products[0]['name'];
-
-                if(strpos($product_name, "copy of") !== false){
-                    Db::getInstance()->update(
-                        'product_attribute',
-                        array(
-                            'upc' => '',
-                            'isbn' => '',
-                        ),
-                        'id_product ='.(int) $id_product
-                    );
-                } else{
-                    //do nothing
-                }
+        $uri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+        if (!preg_match('#/sell/catalog/products(?:-v2)?/(\d+)/edit#', $uri, $m)
+            && !(Tools::getValue('controller') == 'AdminProducts' && ($m = array(1 => (int) Tools::getValue('id_product'))) && $m[1])) {
+            return '';
+        }
+        $id_product = (int) $m[1];
+        $product_name = (string) Db::getInstance()->getValue(
+            'SELECT `name` FROM `' . _DB_PREFIX_ . 'product_lang` WHERE id_product = ' . $id_product . ' AND id_lang = ' . (int) $this->context->language->id
+        );
+        if ($product_name !== '' && stripos($product_name, 'copy of') !== false) {
+            Db::getInstance()->update(
+                'product_attribute',
+                array(
+                    'upc' => '',
+                    'isbn' => '',
+                ),
+                'id_product =' . $id_product
+            );
         }
         return '';
+    }
+
+    public function hookBackOfficeHeader()
+    {
+        return $this->hookDisplayBackOfficeHeader();
     }
 
    
