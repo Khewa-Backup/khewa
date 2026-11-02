@@ -246,6 +246,42 @@ The shop's update tool is now 7.6.6. The old one is in `backups/modules-moved-ou
 - `khewa_live-before-pos-5.8.1.sql.gz`, `khewa_live-before-giftcard-paypal-carriers.sql.gz`, `khewa_live-before-module-fixes.sql.gz`: database before each round of module work
 - `update-to-8.2.8.log`, `update-to-9.2.0.log`: update tool output
 
+## Hack report: local 9.2 copy (3 Nov 2026)
+
+**Attacker code found and removed:**
+1. `robots.php` and 4 fake `wp-admin.php` / `wp-core.php` files in `classes/`: backdoors (Aug 2026)
+2. `.well-known/acme-challenge/init.php`: backdoor
+3. `modules/prestaeditor/`: file-editor module uploaded with a stolen admin login (14 Aug 2026)
+4. `controllers/front/AuthController.php`: backdoor inside the login code. Replaced by the 9.2 update, clean now.
+5. `controllers/front/OrderController.php`: card skimmer at checkout (9 Sep). Replaced by 9.2, clean now.
+6. `modules/wkhelpdesk/views/js/tinymce/tinymce_wk_setup.js`: a second copy of the same card skimmer (9 Sep)
+7. `modules/mailchimppro/views/js/front/mc-cdn-health.js`: script pulling attack code from the Ethereum blockchain, on every page (16 Sep)
+8. `modules/ps_shoppingcart/controllers/front/redirect.php`: encrypted backdoor from an **older break-in, Sep 2025** (also in the `khewa` git repo)
+- Plus leftover tools: `geoff*.php`, `phpinfo.php`, `inode_diagnostic2.php`, 6 `sucuri*` files. All kept as evidence in `/Users/hello/khewa-incident-2026-10-29/quarantine-local-9.2/`.
+
+**Holes closed (ways in, or ways that could have been used):**
+- updateproducts: `.php` upload through import (the likely way in), image import, export names.
+- wkhelpdesk: built-in file manager with no login check.
+- ntbackupandrestore: full backups could be made and downloaded without a login.
+- 9 more modules where PrestaShop 9 runs admin code before the login check (worst: read and delete any file on the server). See "Login-check gap pass".
+- Removed: old card-sale logs with the Virtual Merchant PIN, old export files with cost prices, database backups in the admin folder.
+- Admin accounts cut to #1 (developer) and #2 (client).
+
+**How the files were checked:**
+
+| What | How | Result |
+|---|---|---|
+| Every file (151,000, incl. hidden and git-ignored) | fingerprints of the real attack + general backdoor patterns | clean after removals |
+| Core | file by file vs official PrestaShop 9.2.0 (43,323 files) | match |
+| Warehouse theme + 46 modules | file by file vs the vendor zips | match, except our marked changes |
+| 4 Khewa modules + 10 free modules (PayPal, Stripe, stats, cron, autoupgrade…) | file by file vs git or the official exact version | clean; old leftovers removed |
+| directlabelprintproduct, bestkit_log, wkhelpdesk | updated from the vendor zips | match the vendor (wkhelpdesk keeps Khewa's changes) |
+| Database | 1,063 text columns, admin accounts, modules, hooks, keys | clean |
+
+**Modules with no exact clean copy (pattern check only, nothing bad found):** prettyurls, loyaltypointsrsi, newprodslider, upc2isbn, virtualmerchant, iqitaddthisplugin, bulkremove, rc_pgtagmanager, smartargetmessagebar (off), ntbackupandrestore, ets_sociallogin, wpheadertext, pronesissizechart, ordersexportsalesreportpro (off). Also wkinventory (about half compared; its zip is cut short) and Mailchimp (checked against 3.1.8, not its own 3.1.6). Zips of their exact versions would close this.
+
+**Still to do at upload:** new passwords (including the Virtual Merchant PIN), the cookie key (ideally), `.htaccess` for khewa.com, the security checklist, one scan of the server copy afterwards.
+
 ## Security clean-up of this local copy (2 Nov 2026)
 
 This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, so it still had the attacker's files. **Only this local copy was cleaned. The live server was not touched.**
