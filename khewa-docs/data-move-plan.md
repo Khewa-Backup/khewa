@@ -23,7 +23,7 @@ Every table falls into one of two kinds:
 - **Data** (comes from live): orders and everything under them (details, taxes, payments, invoices, history, slips, returns, carriers, order cart rules), carts, customers, addresses, groups of customers, guests, products and everything under them (shop/lang rows, combinations, stock, prices, specific prices, categories of products, features, images, attachments, tags), cart rules and their limits, gift cards, POS sales tables (`ps_pos_*`), customer threads and messages, help desk tickets, loyalty points, stock movements, Etsy/Mailchimp sync tables, connection/stats rows.
 - **Setup** (stays as it is here): modules and their versions, hooks, admin menu (tabs) and rights, admin accounts, theme and theme editor settings, mega menu, Elementor pages, module settings, carriers, taxes, payment setup, `ps_configuration`, and everything else we fixed for 9.2.
 
-Each table is put on one list or the other, written down in a file (`data-move-tables.txt`). Tables nobody owns are checked by hand once.
+Each table is put on one list or the other, written down in `khewa-docs/data-move-tables.txt` (done 3 Nov: every one of the 632 tables is sorted). Tables nobody owns are checked by hand once.
 
 ### Steps on upload day
 1. **Put live into maintenance.** Nothing new can come in.

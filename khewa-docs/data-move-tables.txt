@@ -1,0 +1,657 @@
+# Which tables come from live on upload day (see data-move-plan.md)
+#
+# DATA    = replaced by the live table (after its structure is upgraded to 9.2)
+# REBUILD = rebuilt after the move (amazzingfilter index: module settings > re-index)
+# SETUP   = kept from this 9.2 shop (all our fixes live here)
+# SKIP    = not moved, left empty or as it is (login sessions: everyone logs in again)
+#
+# ps_configuration is SETUP, but these live values are copied over it on the day
+# (the practice run lists every key that changed on live since 16 Oct, then each is decided):
+#   - invoice / delivery slip / order numbering: PS_INVOICE_START_NUMBER, PS_DELIVERY_NUMBER, PS_INVOICE_PREFIX, PS_DELIVERY_PREFIX (+ shop rows)
+#   - gift card, loyalty and POS counters/settings changed by staff since 16 Oct
+#   - PS_CURRENCY_DEFAULT rates if changed (ps_currency conversion_rate)
+#
+# Row counts are from the local database on 3 Nov 2026 (estimates for big tables).
+
+
+## DATA (251 tables)
+ps_accessory	390	catalogue
+ps_address	1193	customers and their messages
+ps_an_wishlist	10	reviews / wishlists
+ps_an_wishlist_products	47	reviews / wishlists
+ps_attachment	0	catalogue
+ps_attachment_lang	2	catalogue
+ps_attribute	725	catalogue
+ps_attribute_group	20	catalogue
+ps_attribute_group_lang	40	catalogue
+ps_attribute_group_shop	58	catalogue
+ps_attribute_lang	1450	catalogue
+ps_attribute_shop	2109	catalogue
+ps_cart	30603	carts
+ps_cart_cart_rule	1272	carts
+ps_cart_product	47040	carts
+ps_cart_rule	1882	cart rules / vouchers / credit slip codes
+ps_cart_rule_carrier	0	cart rules / vouchers / credit slip codes
+ps_cart_rule_combination	0	cart rules / vouchers / credit slip codes
+ps_cart_rule_compatible_types	0	cart rules / vouchers / credit slip codes
+ps_cart_rule_country	1	cart rules / vouchers / credit slip codes
+ps_cart_rule_group	0	cart rules / vouchers / credit slip codes
+ps_cart_rule_lang	3800	cart rules / vouchers / credit slip codes
+ps_cart_rule_product_rule	6	cart rules / vouchers / credit slip codes
+ps_cart_rule_product_rule_group	6	cart rules / vouchers / credit slip codes
+ps_cart_rule_product_rule_value	6	cart rules / vouchers / credit slip codes
+ps_cart_rule_shop	126	cart rules / vouchers / credit slip codes
+ps_cart_rule_type	5	cart rules / vouchers / credit slip codes
+ps_cart_rule_type_lang	10	cart rules / vouchers / credit slip codes
+ps_category	245	catalogue
+ps_category_group	864	catalogue
+ps_category_lang	1470	catalogue
+ps_category_product	13845	catalogue
+ps_category_shop	328	catalogue
+ps_cms	9	CMS pages (client may edit them)
+ps_cms_category	0	CMS pages (client may edit them)
+ps_cms_category_lang	6	CMS pages (client may edit them)
+ps_cms_category_shop	3	CMS pages (client may edit them)
+ps_cms_lang	54	CMS pages (client may edit them)
+ps_cms_role	2	CMS pages (client may edit them)
+ps_cms_role_lang	0	CMS pages (client may edit them)
+ps_cms_shop	27	CMS pages (client may edit them)
+ps_connections	3470238	visit stats and the shop log
+ps_connections_page	0	visit stats and the shop log
+ps_connections_source	18090	visit stats and the shop log
+ps_cpl_batch	18	Canada Post label batches
+ps_cpl_cache_tracking	47	Canada Post labels/shipments
+ps_cpl_manifest	0	Canada Post labels/shipments
+ps_cpl_order_error	2	Canada Post labels/shipments
+ps_cpl_order_label_address	226	Canada Post labels/shipments
+ps_cpl_order_label_customs	226	Canada Post labels/shipments
+ps_cpl_order_label_customs_product	514	Canada Post labels/shipments
+ps_cpl_order_label_options	226	Canada Post labels/shipments
+ps_cpl_order_label_parcel	226	Canada Post labels/shipments
+ps_cpl_order_label_preferences	226	Canada Post labels/shipments
+ps_cpl_order_label_return	226	Canada Post labels/shipments
+ps_cpl_order_label_settings	226	Canada Post labels/shipments
+ps_cpl_return_shipment	0	Canada Post labels/shipments
+ps_cpl_shipment	244	Canada Post labels/shipments
+ps_customer	1165	customers and their messages
+ps_customer_group	1243	customers and their messages
+ps_customer_message	2510	customers and their messages
+ps_customer_message_sync_imap	8	customers and their messages
+ps_customer_thread	1993	customers and their messages
+ps_customization	104	catalogue
+ps_customization_field	9	catalogue
+ps_customization_field_lang	34	catalogue
+ps_customized_data	392	catalogue
+ps_date_range	0	visit stats and the shop log
+ps_discountgenerator_group	23	generated discount codes
+ps_discountgenerator_group_lang	46	generated discount codes
+ps_discountgenerator_list	333	generated discount codes
+ps_emailsubscription	183	newsletter / stock alerts / reviews / GDPR log
+ps_etsy_attribute_mapping	0	Etsy sync data (Etsy not connected)
+ps_etsy_attribute_mapping1	5	Etsy sync data (Etsy not connected)
+ps_etsy_attributes	16	Etsy sync data (Etsy not connected)
+ps_etsy_audit_log	6435	Etsy sync data (Etsy not connected)
+ps_etsy_categories	3037	Etsy sync data (Etsy not connected)
+ps_etsy_category_mapping	5	Etsy sync data (Etsy not connected)
+ps_etsy_countries	247	Etsy sync data (Etsy not connected)
+ps_etsy_exclude_product	0	Etsy sync data (Etsy not connected)
+ps_etsy_images	183	Etsy sync data (Etsy not connected)
+ps_etsy_orders_list	0	Etsy sync data (Etsy not connected)
+ps_etsy_products_history	0	Etsy sync data (Etsy not connected)
+ps_etsy_products_list	83	Etsy sync data (Etsy not connected)
+ps_etsy_profiles	5	Etsy sync data (Etsy not connected)
+ps_etsy_queue	0	Etsy sync data (Etsy not connected)
+ps_etsy_regions	5	Etsy sync data (Etsy not connected)
+ps_etsy_shipping_templates	0	Etsy sync data (Etsy not connected)
+ps_etsy_shipping_templates_entries	9	Etsy sync data (Etsy not connected)
+ps_etsy_shipping_upgrades	0	Etsy sync data (Etsy not connected)
+ps_etsy_shop_section	7	Etsy sync data (Etsy not connected)
+ps_etsy_translation	0	Etsy sync data (Etsy not connected)
+ps_feature	13	catalogue
+ps_feature_flag	17	catalogue
+ps_feature_lang	26	catalogue
+ps_feature_product	808	catalogue
+ps_feature_shop	39	catalogue
+ps_feature_value	166	catalogue
+ps_feature_value_lang	332	catalogue
+ps_featuredproducts	6	catalogue
+ps_featuredproducts_lang	12	catalogue
+ps_featuredproducts_shop	6	catalogue
+ps_giftcard	162	gift cards
+ps_guest	3562559	customers and their messages
+ps_image	5113	catalogue
+ps_image_lang	10226	catalogue
+ps_image_shop	10680	catalogue
+ps_invrecaptcha_stats	117	module data (Khewa mails, Stripe refunds, size charts per product, stats)
+ps_iqitreviews_products	0	reviews / wishlists
+ps_iqitwishlist_product	138	reviews / wishlists
+ps_khewamails	1107	module data (Khewa mails, Stripe refunds, size charts per product, stats)
+ps_khewareports_stripe_refund	26	module data (Khewa mails, Stripe refunds, size charts per product, stats)
+ps_log	110763	visit stats and the shop log
+ps_loyalty	208	loyalty points
+ps_loyalty_history	415	loyalty points
+ps_mail	27267	customers and their messages
+ps_mailalert_customer_oos	36	newsletter / stock alerts / reviews / GDPR log
+ps_mailchimppro_api_log	498	Mailchimp sync state
+ps_mailchimppro_campaign	0	Mailchimp sync state
+ps_mailchimppro_jobs	0	Mailchimp sync state
+ps_mailchimppro_pixel_log	771	Mailchimp sync state
+ps_mailchimppro_promocodes	0	Mailchimp sync state
+ps_mailchimppro_specific_price	0	Mailchimp sync state
+ps_manufacturer	27	catalogue
+ps_manufacturer_lang	54	catalogue
+ps_manufacturer_shop	81	catalogue
+ps_message	1698	customers and their messages
+ps_message_readed	0	customers and their messages
+ps_order_carrier	34173	orders
+ps_order_cart_rule	1331	orders
+ps_order_detail	65569	orders
+ps_order_detail_tax	130416	orders
+ps_order_history	38400	orders
+ps_order_invoice	33674	orders
+ps_order_invoice_payment	35358	orders
+ps_order_invoice_tax	16793	orders
+ps_order_payment	35531	orders
+ps_order_return	0	orders
+ps_order_return_detail	0	orders
+ps_order_slip	359	orders
+ps_order_slip_detail	315	orders
+ps_orders	33497	orders
+ps_pack	3	catalogue
+ps_page	3526	visit stats and the shop log
+ps_page_type	89	visit stats and the shop log
+ps_page_viewed	0	visit stats and the shop log
+ps_pagenotfound	322855	visit stats and the shop log
+ps_paypal_capture	2	payment records
+ps_paypal_ipn	0	payment records
+ps_paypal_order	151	payment records
+ps_paypal_processlogger	164	payment records
+ps_paypal_vaulting	0	payment records
+ps_pos_cart	14197	POS sales data
+ps_pos_cart_payment	14518	POS sales data
+ps_pos_custom_product	10949	POS sales data
+ps_pos_customer	53	POS sales data
+ps_pos_customer_search_index	2654	POS search index (from live; the POS crons keep it up to date)
+ps_pos_customer_search_word	2153	POS search index (from live; the POS crons keep it up to date)
+ps_pos_employee_checkin	0	POS sales data
+ps_pos_exchange	578	POS sales data
+ps_pos_orders	0	POS sales data
+ps_pos_product_note	3	POS sales data
+ps_pos_returned_order	485	POS sales data
+ps_pos_sales_commission	25454	POS sales data
+ps_pos_search_index	501553	POS search index (from live; the POS crons keep it up to date)
+ps_pos_search_word	141575	POS search index (from live; the POS crons keep it up to date)
+ps_product	6902	catalogue
+ps_product_attachment	4	catalogue
+ps_product_attribute	6315	catalogue
+ps_product_attribute_combination	6441	catalogue
+ps_product_attribute_image	1566	catalogue
+ps_product_attribute_lang	12149	catalogue
+ps_product_attribute_shop	15782	catalogue
+ps_product_carrier	23537	catalogue
+ps_product_comment	0	catalogue
+ps_product_comment_criterion	0	catalogue
+ps_product_comment_criterion_category	0	catalogue
+ps_product_comment_criterion_lang	2	catalogue
+ps_product_comment_criterion_product	0	catalogue
+ps_product_comment_grade	0	catalogue
+ps_product_comment_report	0	catalogue
+ps_product_comment_usefulness	0	catalogue
+ps_product_country_tax	0	catalogue
+ps_product_download	0	catalogue
+ps_product_group_reduction_cache	0	catalogue
+ps_product_lang	41952	catalogue
+ps_product_sale	5772	catalogue
+ps_product_shop	14738	catalogue
+ps_product_supplier	133	catalogue
+ps_product_tag	17635	catalogue
+ps_pronesissizechartgroups	8	module data (Khewa mails, Stripe refunds, size charts per product, stats)
+ps_pronesissizechartproducts	10343	module data (Khewa mails, Stripe refunds, size charts per product, stats)
+ps_psgdpr_consent_lang	20	newsletter / stock alerts / reviews / GDPR log
+ps_psgdpr_log	730	newsletter / stock alerts / reviews / GDPR log
+ps_search_index	217464	catalogue
+ps_search_word	57629	catalogue
+ps_sekeyword	5	module data (Khewa mails, Stripe refunds, size charts per product, stats)
+ps_simpleblog_author	0	blog posts
+ps_simpleblog_author_lang	0	blog posts
+ps_simpleblog_category	0	blog posts
+ps_simpleblog_category_lang	2	blog posts
+ps_simpleblog_category_shop	1	blog posts
+ps_simpleblog_comment	0	blog posts
+ps_simpleblog_post	0	blog posts
+ps_simpleblog_post_image	0	blog posts
+ps_simpleblog_post_lang	0	blog posts
+ps_simpleblog_post_product	0	blog posts
+ps_simpleblog_post_shop	0	blog posts
+ps_simpleblog_post_tag	0	blog posts
+ps_simpleblog_post_type	4	blog posts
+ps_simpleblog_related_post	0	blog posts
+ps_simpleblog_tag	0	blog posts
+ps_specific_price	29	catalogue
+ps_specific_price_priority	3150	catalogue
+ps_specific_price_rule	0	catalogue
+ps_specific_price_rule_condition	0	catalogue
+ps_specific_price_rule_condition_group	0	catalogue
+ps_statssearch	68588	visit stats and the shop log
+ps_stock	0	catalogue
+ps_stock_available	31979	catalogue
+ps_stock_mvt	25067	catalogue
+ps_stripe_capture	0	payment records
+ps_stripe_customer	183	payment records
+ps_stripe_event	598	payment records
+ps_stripe_idempotency_key	391	payment records
+ps_stripe_lock_keys	0	payment records
+ps_stripe_official_processlogger	15311	payment records
+ps_stripe_payment	402	payment records
+ps_stripe_payment_intent	434	payment records
+ps_stripe_webhook	0	payment records
+ps_supplier	3	catalogue
+ps_supplier_lang	6	catalogue
+ps_supplier_shop	9	catalogue
+ps_tag	1127	catalogue
+ps_tag_count	5361	catalogue
+ps_wk_hd_customer	437	help desk tickets
+ps_wk_hd_customer_shop	450	help desk tickets
+ps_wk_hd_ticket	1333	help desk tickets
+ps_wk_hd_ticket_agent	19	help desk tickets
+ps_wk_hd_ticket_agent_shop	27	help desk tickets
+ps_wk_hd_ticket_attachment	62	help desk tickets
+ps_wk_hd_ticket_attachment_shop	62	help desk tickets
+ps_wk_hd_ticket_msg	2232	help desk tickets
+ps_wk_hd_ticket_msg_shop	2195	help desk tickets
+ps_wk_hd_ticket_shop	1348	help desk tickets
+ps_wk_hd_ticket_thread	1333	help desk tickets
+ps_wk_hd_ticket_token	217	help desk tickets
+ps_wk_hd_ticket_token_shop	217	help desk tickets
+ps_wkinventory	0	stocktake lists (redo the 2021 lock after)
+ps_wkinventory_log	0	stocktake lists (redo the 2021 lock after)
+ps_wkinventory_product	3688	stocktake lists (redo the 2021 lock after)
+
+## REBUILD (1 tables)
+ps_af_index	1419	filter index: rebuild after the move
+
+## SETUP (377 tables)
+ps_access	2509	shop setup
+ps_address_format	244	setup / module settings
+ps_admin_filter	305	shop setup
+ps_advice	260	setup / module settings
+ps_advice_lang	102	setup / module settings
+ps_af_category_templates	28	module setup (fixed here)
+ps_af_customer_filters	1	module setup (fixed here)
+ps_af_manufacturer_templates	3	module setup (fixed here)
+ps_af_merged_attribute	0	module setup (fixed here)
+ps_af_merged_attribute_lang	0	module setup (fixed here)
+ps_af_merged_attribute_map	0	module setup (fixed here)
+ps_af_merged_feature	0	module setup (fixed here)
+ps_af_merged_feature_lang	0	module setup (fixed here)
+ps_af_merged_feature_map	0	module setup (fixed here)
+ps_af_seopage_templates	1	module setup (fixed here)
+ps_af_settings	9	module setup (fixed here)
+ps_af_supplier_templates	1	module setup (fixed here)
+ps_af_templates	21	module setup (fixed here)
+ps_af_templates_lang	32	module setup (fixed here)
+ps_alias	2	shop setup
+ps_api_client	0	shop setup
+ps_authorization_role	1832	shop setup
+ps_b2b_role	0	setup / module settings
+ps_b2b_role_authorization_role	0	setup / module settings
+ps_badge	234	setup / module settings
+ps_badge_lang	468	setup / module settings
+ps_bestkit_log	137605	module setup (fixed here)
+ps_bestkit_log_detail	488852	module setup (fixed here)
+ps_bestkit_log_login_attempt	2	module setup (fixed here)
+ps_bestkit_log_visit	1223	module setup (fixed here)
+ps_bestkit_log_visit_detail	224469	module setup (fixed here)
+ps_business_entity	0	module setup (fixed here)
+ps_business_entity_address	0	module setup (fixed here)
+ps_business_entity_customer_b2b	0	module setup (fixed here)
+ps_business_entity_identifier	0	module setup (fixed here)
+ps_business_identifier	0	module setup (fixed here)
+ps_carrier	432	shop setup
+ps_carrier_group	2142	shop setup
+ps_carrier_lang	2592	shop setup
+ps_carrier_shop	1288	shop setup
+ps_carrier_tax_rules_group_shop	525	shop setup
+ps_carrier_zone	1298	shop setup
+ps_condition	244	shop setup
+ps_condition_advice	83	shop setup
+ps_condition_badge	236	shop setup
+ps_configuration	2808	settings (+ a few live counters copied, see plan)
+ps_configuration_kpi	132	settings (+ a few live counters copied, see plan)
+ps_configuration_kpi_lang	32	settings (+ a few live counters copied, see plan)
+ps_configuration_lang	350	settings (+ a few live counters copied, see plan)
+ps_contact	0	shop setup
+ps_contact_lang	2	shop setup
+ps_contact_shop	3	shop setup
+ps_country	244	shop setup
+ps_country_lang	488	shop setup
+ps_country_shop	732	shop setup
+ps_cpl_address	0	module setup (fixed here)
+ps_cpl_box	7	module setup (fixed here)
+ps_cpl_cache	27639	module setup (fixed here)
+ps_cpl_cache_rate	28382	module setup (fixed here)
+ps_cpl_carrier_mapping	38	module setup (fixed here)
+ps_cpl_group	0	module setup (fixed here)
+ps_cpl_method	21	module setup (fixed here)
+ps_cpl_rate_discount	0	module setup (fixed here)
+ps_cpl_rate_discount_shop	1	module setup (fixed here)
+ps_cpl_service	4	module setup (fixed here)
+ps_crazy_autocomplete_products	0	module setup (fixed here)
+ps_crazy_content	5	module setup (fixed here)
+ps_crazy_content_lang	10	module setup (fixed here)
+ps_crazy_content_shop	0	module setup (fixed here)
+ps_crazy_extended_modules	0	module setup (fixed here)
+ps_crazy_fonts	0	module setup (fixed here)
+ps_crazy_layout_type	0	module setup (fixed here)
+ps_crazy_library	0	module setup (fixed here)
+ps_crazy_options	2003	module setup (fixed here)
+ps_crazy_revision	14	module setup (fixed here)
+ps_crazy_setting	28	module setup (fixed here)
+ps_crazyprdlayouts	0	module setup (fixed here)
+ps_crazyprdlayouts_lang	0	module setup (fixed here)
+ps_crazyprdlayouts_shop	0	module setup (fixed here)
+ps_cronjobs	3	setup / module settings
+ps_currency	2	shop setup
+ps_currency_lang	4	shop setup
+ps_currency_shop	9	shop setup
+ps_customer_b2b	0	new in 9.2, not in live (empty)
+ps_delivery	2410	shop setup
+ps_dlpp_templates	1	setup / module settings
+ps_elegantalseoessentials_auto_meta	0	module setup (fixed here)
+ps_elegantalseoessentials_auto_meta_lang	0	module setup (fixed here)
+ps_elegantalseoessentials_auto_meta_shop	0	module setup (fixed here)
+ps_elegantalseoessentials_canonicals	0	module setup (fixed here)
+ps_elegantalseoessentials_canonicals_lang	0	module setup (fixed here)
+ps_elegantalseoessentials_canonicals_shop	0	module setup (fixed here)
+ps_elegantalseoessentials_html	0	module setup (fixed here)
+ps_elegantalseoessentials_html_lang	0	module setup (fixed here)
+ps_elegantalseoessentials_html_shop	0	module setup (fixed here)
+ps_elegantalseoessentials_image_alt	0	module setup (fixed here)
+ps_elegantalseoessentials_image_alt_lang	0	module setup (fixed here)
+ps_elegantalseoessentials_image_alt_shop	0	module setup (fixed here)
+ps_elegantalseoessentials_redirects	0	module setup (fixed here)
+ps_elegantalseoessentials_redirects_shop	0	module setup (fixed here)
+ps_employee	16	shop setup
+ps_employee_account	0	shop setup
+ps_employee_shop	48	shop setup
+ps_ets_solo_connect	11	module setup (fixed here)
+ps_ets_solo_user	11	module setup (fixed here)
+ps_ets_superspeed_blog_category_image	0	module setup (fixed here)
+ps_ets_superspeed_blog_gallery_image	0	module setup (fixed here)
+ps_ets_superspeed_blog_post_image	0	module setup (fixed here)
+ps_ets_superspeed_blog_slide_image	0	module setup (fixed here)
+ps_ets_superspeed_browse_image	0	module setup (fixed here)
+ps_ets_superspeed_cache_page	29356	module setup (fixed here)
+ps_ets_superspeed_cache_page_error	0	module setup (fixed here)
+ps_ets_superspeed_cache_page_hook	1136136	module setup (fixed here)
+ps_ets_superspeed_cache_page_log	0	module setup (fixed here)
+ps_ets_superspeed_category_image	0	module setup (fixed here)
+ps_ets_superspeed_dynamic	0	module setup (fixed here)
+ps_ets_superspeed_home_slide_image	0	module setup (fixed here)
+ps_ets_superspeed_hook_module	2	module setup (fixed here)
+ps_ets_superspeed_hook_time	613	module setup (fixed here)
+ps_ets_superspeed_manufacturer_image	0	module setup (fixed here)
+ps_ets_superspeed_others_image	0	module setup (fixed here)
+ps_ets_superspeed_product_image	12780	module setup (fixed here)
+ps_ets_superspeed_product_image_lang	0	module setup (fixed here)
+ps_ets_superspeed_supplier_image	0	module setup (fixed here)
+ps_ets_superspeed_time	150	module setup (fixed here)
+ps_ets_superspeed_upload_image	0	module setup (fixed here)
+ps_eventbus_incremental_sync	131911	module setup (fixed here)
+ps_eventbus_job	1894	module setup (fixed here)
+ps_eventbus_live_sync	5	module setup (fixed here)
+ps_eventbus_type_sync	24	module setup (fixed here)
+ps_extra_property_definition	0	new in 9.2, not in live (empty)
+ps_extra_property_definition_shop	0	new in 9.2, not in live (empty)
+ps_fb_category_match	0	setup / module settings
+ps_gender	3	shop setup
+ps_gender_lang	6	shop setup
+ps_giftcard_amounts	2	gift card module settings (1.18.3 here)
+ps_giftcard_image_lang	2	gift card module settings (1.18.3 here)
+ps_giftcard_tags	2	gift card module settings (1.18.3 here)
+ps_gmcp_advanced_exclusion	0	module setup (fixed here)
+ps_gmcp_brands	0	module setup (fixed here)
+ps_gmcp_categories	0	module setup (fixed here)
+ps_gmcp_discount_association	0	module setup (fixed here)
+ps_gmcp_features_by_cat	0	module setup (fixed here)
+ps_gmcp_gsa_emails	0	module setup (fixed here)
+ps_gmcp_gsa_orders_data	0	module setup (fixed here)
+ps_gmcp_gsa_orders_products_data	0	module setup (fixed here)
+ps_gmcp_gsa_returns_data	0	module setup (fixed here)
+ps_gmcp_product_excluded	0	module setup (fixed here)
+ps_gmcp_tags	0	module setup (fixed here)
+ps_gmcp_tags_brands	0	module setup (fixed here)
+ps_gmcp_tags_cats	0	module setup (fixed here)
+ps_gmcp_tags_dynamic_best_sale	0	module setup (fixed here)
+ps_gmcp_tags_dynamic_categories	0	module setup (fixed here)
+ps_gmcp_tags_dynamic_features	0	module setup (fixed here)
+ps_gmcp_tags_dynamic_last_product_ordered	0	module setup (fixed here)
+ps_gmcp_tags_dynamic_new_product	0	module setup (fixed here)
+ps_gmcp_tags_dynamic_promotion	0	module setup (fixed here)
+ps_gmcp_tags_price_range	0	module setup (fixed here)
+ps_gmcp_tags_products	0	module setup (fixed here)
+ps_gmcp_tags_suppliers	0	module setup (fixed here)
+ps_gmcp_taxonomy	0	module setup (fixed here)
+ps_gmcp_taxonomy_categories	0	module setup (fixed here)
+ps_gmcp_tmp_rules	0	module setup (fixed here)
+ps_group	5	shop setup
+ps_group_lang	10	shop setup
+ps_group_reduction	0	shop setup
+ps_group_shop	15	shop setup
+ps_gsitemap_sitemap	2	setup / module settings
+ps_homeslider	3	shop setup
+ps_homeslider_slides	3	shop setup
+ps_homeslider_slides_lang	6	shop setup
+ps_hook	1321	shop setup
+ps_hook_alias	88	shop setup
+ps_hook_module	2187	shop setup
+ps_hook_module_exceptions	0	shop setup
+ps_image_type	8	image sizes
+ps_import_match	0	shop setup
+ps_info	0	shop setup
+ps_info_lang	6	shop setup
+ps_info_shop	3	shop setup
+ps_ipcatalogexport	0	module setup (fixed here)
+ps_ipcatalogexport_email	0	module setup (fixed here)
+ps_ipcatalogexport_ftp	0	module setup (fixed here)
+ps_ipcatalogimport	0	module setup (fixed here)
+ps_ipcatalogimport_ftp	0	module setup (fixed here)
+ps_ipcatalogimport_history	0	module setup (fixed here)
+ps_iqit_elementor_category	0	module setup (fixed here)
+ps_iqit_elementor_category_lang	2	module setup (fixed here)
+ps_iqit_elementor_category_shop	0	module setup (fixed here)
+ps_iqit_elementor_content	0	module setup (fixed here)
+ps_iqit_elementor_content_lang	0	module setup (fixed here)
+ps_iqit_elementor_content_shop	0	module setup (fixed here)
+ps_iqit_elementor_landing	0	module setup (fixed here)
+ps_iqit_elementor_landing_lang	2	module setup (fixed here)
+ps_iqit_elementor_product	0	module setup (fixed here)
+ps_iqit_elementor_product_lang	0	module setup (fixed here)
+ps_iqit_elementor_product_shop	0	module setup (fixed here)
+ps_iqit_elementor_template	2	module setup (fixed here)
+ps_iqit_htmlandbanner	0	module setup (fixed here)
+ps_iqit_htmlandbanner_lang	2	module setup (fixed here)
+ps_iqit_htmlandbanner_shop	0	module setup (fixed here)
+ps_iqit_link_block	2	module setup (fixed here)
+ps_iqit_link_block_lang	4	module setup (fixed here)
+ps_iqit_link_block_shop	2	module setup (fixed here)
+ps_iqit_productvideo	0	module setup (fixed here)
+ps_iqit_threesixty	0	module setup (fixed here)
+ps_iqitadditionaltab	0	module setup (fixed here)
+ps_iqitadditionaltab_lang	0	module setup (fixed here)
+ps_iqitadditionaltab_shop	0	module setup (fixed here)
+ps_iqitmegamenu_html	0	module setup (fixed here)
+ps_iqitmegamenu_htmlc	0	module setup (fixed here)
+ps_iqitmegamenu_htmlc_lang	0	module setup (fixed here)
+ps_iqitmegamenu_tabs	12	module setup (fixed here)
+ps_iqitmegamenu_tabs_lang	24	module setup (fixed here)
+ps_iqitmegamenu_tabs_shop	22	module setup (fixed here)
+ps_iqitmenulinks	0	module setup (fixed here)
+ps_iqitmenulinks_lang	0	module setup (fixed here)
+ps_lang	2	shop setup
+ps_lang_shop	6	shop setup
+ps_link_block	0	shop setup
+ps_link_block_lang	2	shop setup
+ps_link_block_shop	0	shop setup
+ps_linksmenutop	0	shop setup
+ps_linksmenutop_lang	0	shop setup
+ps_loyalty_state	5	loyalty states
+ps_loyalty_state_lang	10	loyalty states
+ps_mbo_api_config	0	setup / module settings
+ps_memcached_servers	0	setup / module settings
+ps_meta	27	shop setup
+ps_meta_lang	114	shop setup
+ps_module	140	shop setup
+ps_module_access	1087	shop setup
+ps_module_carrier	62	shop setup
+ps_module_country	1754	shop setup
+ps_module_currency	15	shop setup
+ps_module_group	2135	shop setup
+ps_module_history	273	shop setup
+ps_module_preference	0	shop setup
+ps_module_shop	280	shop setup
+ps_mutation	0	new in 9.2, not in live (empty)
+ps_ntbr_aws	0	module setup (fixed here)
+ps_ntbr_backups	0	module setup (fixed here)
+ps_ntbr_box	0	module setup (fixed here)
+ps_ntbr_config	0	module setup (fixed here)
+ps_ntbr_dropbox	0	module setup (fixed here)
+ps_ntbr_ftp	0	module setup (fixed here)
+ps_ntbr_glob_conf	36	module setup (fixed here)
+ps_ntbr_googlecloud	0	module setup (fixed here)
+ps_ntbr_googledrive	0	module setup (fixed here)
+ps_ntbr_onedrive	0	module setup (fixed here)
+ps_ntbr_owncloud	0	module setup (fixed here)
+ps_ntbr_pcloud	0	module setup (fixed here)
+ps_ntbr_scan_size	88554	module setup (fixed here)
+ps_ntbr_shadow_drive	0	module setup (fixed here)
+ps_ntbr_sugarsync	0	module setup (fixed here)
+ps_ntbr_webdav	0	module setup (fixed here)
+ps_ntbr_yandex	0	module setup (fixed here)
+ps_operating_system	9	shop setup
+ps_order_message	3	order status / message templates
+ps_order_message_lang	6	order status / message templates
+ps_order_return_state	6	order status / message templates
+ps_order_return_state_lang	12	order status / message templates
+ps_order_state	55	order status / message templates
+ps_order_state_lang	110	order status / message templates
+ps_orders_export_srpro	25	setup / module settings
+ps_oxsrp_aexp_email	0	module setup (fixed here)
+ps_oxsrp_aexp_ftp	0	module setup (fixed here)
+ps_oxsrp_schdl_email	0	module setup (fixed here)
+ps_oxsrp_schdl_ftp	0	module setup (fixed here)
+ps_pos_payment	6	module setup (fixed here)
+ps_pos_payment_lang	12	module setup (fixed here)
+ps_pos_payment_shop	12	module setup (fixed here)
+ps_profile	4	shop setup
+ps_profile_lang	8	shop setup
+ps_psgdpr_consent	10	module setup (fixed here)
+ps_psreassurance	3	shop setup
+ps_psreassurance_lang	6	shop setup
+ps_quick_access	8	shop setup
+ps_quick_access_lang	16	shop setup
+ps_range_price	166	shop setup
+ps_range_weight	568	shop setup
+ps_rc_pgtagmanager_client_id	649	module setup (fixed here)
+ps_rc_pgtagmanager_orders_sent	456	module setup (fixed here)
+ps_request_sql	31	shop setup
+ps_required_field	0	shop setup
+ps_revslider_attachment_images	0	module setup (fixed here)
+ps_revslider_backup_slides	0	module setup (fixed here)
+ps_revslider_css	0	module setup (fixed here)
+ps_revslider_layer_animations	0	module setup (fixed here)
+ps_revslider_navigations	0	module setup (fixed here)
+ps_revslider_options	25	module setup (fixed here)
+ps_revslider_sliders	0	module setup (fixed here)
+ps_revslider_slides	0	module setup (fixed here)
+ps_revslider_static_slides	0	module setup (fixed here)
+ps_risk	4	shop setup
+ps_risk_lang	8	shop setup
+ps_search_engine	38	shop setup
+ps_shipment	0	new in 9.2, not in live (empty)
+ps_shipment_product	0	new in 9.2, not in live (empty)
+ps_shop	3	shop setup
+ps_shop_group	3	shop setup
+ps_shop_url	3	shop setup
+ps_smarty_cache	0	shop setup
+ps_smarty_last_flush	2	shop setup
+ps_smarty_lazy_cache	13	shop setup
+ps_state	324	shop setup
+ps_stock_mvt_reason	12	stock movement reasons
+ps_stock_mvt_reason_lang	24	stock movement reasons
+ps_store	0	shop setup
+ps_store_lang	2	shop setup
+ps_store_shop	3	shop setup
+ps_stripejs_transaction	0	module setup (fixed here)
+ps_supply_order	0	module setup (fixed here)
+ps_supply_order_detail	0	module setup (fixed here)
+ps_supply_order_history	0	module setup (fixed here)
+ps_supply_order_receipt_history	0	module setup (fixed here)
+ps_supply_order_state	6	module setup (fixed here)
+ps_supply_order_state_lang	12	module setup (fixed here)
+ps_tab	317	shop setup
+ps_tab_advice	83	shop setup
+ps_tab_lang	630	shop setup
+ps_tab_module_preference	0	shop setup
+ps_tax	32	shop setup
+ps_tax_lang	64	shop setup
+ps_tax_rule	1845	shop setup
+ps_tax_rules_group	30	shop setup
+ps_tax_rules_group_shop	90	shop setup
+ps_timezone	560	setup / module settings
+ps_translation	577	shop setup
+ps_updateproducts_images	0	setup / module settings
+ps_warehouse	0	module setup (fixed here)
+ps_warehouse_carrier	0	module setup (fixed here)
+ps_warehouse_product_location	0	module setup (fixed here)
+ps_warehouse_shop	0	module setup (fixed here)
+ps_web_browser	11	shop setup
+ps_webservice_account	0	shop setup
+ps_webservice_account_shop	0	shop setup
+ps_webservice_permission	0	shop setup
+ps_wk_customer_message_sync_imap	7	module setup (fixed here)
+ps_wk_customer_reply_sync_imap	11	module setup (fixed here)
+ps_wk_customer_reply_sync_imap_shop	11	module setup (fixed here)
+ps_wk_deleted_attribute	0	module setup (fixed here)
+ps_wk_deleted_attribute_group	6	module setup (fixed here)
+ps_wk_deleted_category	43	module setup (fixed here)
+ps_wk_deleted_customer	1	module setup (fixed here)
+ps_wk_deleted_feature	0	module setup (fixed here)
+ps_wk_deleted_manufacturer	0	module setup (fixed here)
+ps_wk_deleted_product	6556	module setup (fixed here)
+ps_wk_deleted_supplier	0	module setup (fixed here)
+ps_wk_entity_restore_history	6817	module setup (fixed here)
+ps_wk_hd_access_right	5	module setup (fixed here)
+ps_wk_hd_access_right_agent_mapping	110	module setup (fixed here)
+ps_wk_hd_access_right_agent_mapping_shop	205	module setup (fixed here)
+ps_wk_hd_group	2	module setup (fixed here)
+ps_wk_hd_group_agent_mapping	4	module setup (fixed here)
+ps_wk_hd_group_agent_mapping_shop	4	module setup (fixed here)
+ps_wk_hd_group_lang	4	module setup (fixed here)
+ps_wk_hd_group_query_type_mapping	9	module setup (fixed here)
+ps_wk_hd_group_query_type_mapping_shop	9	module setup (fixed here)
+ps_wk_hd_group_shop	2	module setup (fixed here)
+ps_wk_hd_query_type	7	module setup (fixed here)
+ps_wk_hd_query_type_lang	14	module setup (fixed here)
+ps_wk_hd_query_type_shop	7	module setup (fixed here)
+ps_wk_hd_status_code	7	module setup (fixed here)
+ps_wk_hd_status_code_lang	14	module setup (fixed here)
+ps_wk_hd_status_code_shop	7	module setup (fixed here)
+ps_wk_hd_status_mapping	7	module setup (fixed here)
+ps_wk_hd_status_mapping_shop	7	module setup (fixed here)
+ps_wpfooterslider	18	module setup (fixed here)
+ps_wpfooterslider_slides	6	module setup (fixed here)
+ps_wpfooterslider_slides_lang	12	module setup (fixed here)
+ps_wpheadertext	0	setup / module settings
+ps_wpheadertext_lang	2	setup / module settings
+ps_zone	12	shop setup
+ps_zone_shop	34	shop setup
+zz_giftcard_isbn_backup	24	our helper tables (keep)
+zz_module_shop_off	39	our helper tables (keep)
+
+## SKIP (3 tables)
+ps_customer_session	1029	login sessions (everyone logs in again)
+ps_employee_session	2458	login sessions (everyone logs in again)
+tmp_add91	568	old temporary table
+
+## UNSORTED (0)
