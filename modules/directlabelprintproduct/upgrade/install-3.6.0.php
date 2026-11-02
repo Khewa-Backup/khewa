@@ -9,12 +9,9 @@
  * Original and altered files may not be (re)distributed without permission.
  *
  * @author    Leone MusicReader B.V.
- *
  * @copyright 2021 Leone MusicReader B.V.
- *
  * @license   custom see above
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

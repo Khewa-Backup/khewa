@@ -1,6 +1,15 @@
 <?php
+/**
+ * Back-office visit model.
+ *
+ * @author Best-Kit
+ * @copyright 2026 Best-Kit
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
+ */
 
-require_once _PS_MODULE_DIR_ . 'bestkit_log/includer.php';
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class BestkitLogVisit extends ObjectModel
 {
@@ -30,16 +39,19 @@ class BestkitLogVisit extends ObjectModel
         ),
     );
 
-    public static function registerNewVisit()
+    public static function registerNewVisit($context)
     {
-        $context = Context::getContext();
+        if (!Validate::isLoadedObject($context->employee)) {
+            return 0;
+        }
 
         $logObj = new BestkitLogVisit();
-        $logObj->id_employee = $context->employee->id;
-        $logObj->email = $context->employee->email;
+        $logObj->id_employee = (int) $context->employee->id;
+        $logObj->email = (string) $context->employee->email;
         $logObj->name = $context->employee->firstname . ' ' . $context->employee->lastname;
         $logObj->ip = Tools::getRemoteAddr();
         $logObj->session_start = date('Y-m-d H:i:s');
+        $logObj->session_end = $logObj->session_start;
 
         if ($logObj->add()) {
             return $logObj->id;
@@ -48,25 +60,51 @@ class BestkitLogVisit extends ObjectModel
         return 0;
     }
 
+    public static function belongsToEmployee($visitId, $employeeId)
+    {
+        return (bool) Db::getInstance()->getValue(
+            'SELECT 1
+            FROM `' . _DB_PREFIX_ . 'bestkit_log_visit`
+            WHERE `id_bestkit_log_visit` = ' . (int) $visitId . '
+                AND `id_employee` = ' . (int) $employeeId
+        );
+    }
+
     public static function recordVisitDetails($id)
     {
-        foreach (self::$CLASS_EXCEPTIONS as $exception) {
-            if (strpos($_SERVER['QUERY_STRING'], $exception) !== false)
-                return;
-        }
-        unset($exception);
+        $queryString = isset($_SERVER['QUERY_STRING'])
+            ? BestkitLog::redactSensitiveQueryValues('?' . $_SERVER['QUERY_STRING'])
+            : '';
+        $queryString = ltrim($queryString, '?');
+        $requestUri = isset($_SERVER['REQUEST_URI'])
+            ? BestkitLog::redactSensitiveQueryValues($_SERVER['REQUEST_URI'])
+            : '';
 
-        Db::getInstance()->execute('
+        foreach (self::$CLASS_EXCEPTIONS as $exception) {
+            if (strpos($queryString, $exception) !== false) {
+                return;
+            }
+        }
+
+        Db::getInstance()->update(
+            'bestkit_log_visit',
+            array('session_end' => date('Y-m-d H:i:s')),
+            '`id_bestkit_log_visit` = ' . (int) $id
+        );
+
+        return Db::getInstance()->execute('
             INSERT INTO `' . _DB_PREFIX_ . 'bestkit_log_visit_detail`
             (
                 `id_bestkit_log_visit`,
                 `path`,
-                `url`
+                `url`,
+                `stay_duration`
             )
             VALUES (
                 '.(int)$id.',
-                "'.pSQL($_SERVER['QUERY_STRING']).'",
-                "'.pSQL($_SERVER['REQUEST_URI']).'"
+                "'.pSQL($queryString).'",
+                "'.pSQL($requestUri).'",
+                0
             )
         ');
     }

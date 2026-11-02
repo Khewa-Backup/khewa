@@ -6,7 +6,7 @@
         top: 50%;
         transform: translate(-50%, -50%);
         height: 50px;
-        width: 400px;
+        width: 700px;
         background-color: black;
         z-index: 1000;
         font-size: 20px;
@@ -35,6 +35,13 @@
             }
             else if (!id) {
                 id = el.parentNode.parentNode.parentNode.parentNode.getAttribute("data-product-id");
+            }
+
+            if(!id){
+                id = el.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("data-product-id");
+            }
+            if(!id){
+                id = el.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("data-product-id");
             }
 
             console.log("print product label:" + id);
@@ -126,7 +133,10 @@
             });
         }
 
-        processNext(0);
+        startBatch(function() {
+            document.body.appendChild(waitDiv);
+            processNext(0)
+        });
     }
 
     function printLabelSelectedProducts(pForm,includingCombinations,excludeMainProduct) {
@@ -181,6 +191,15 @@
             processCombination(0);
         }
 
+
+        startBatch(function() {
+            document.body.appendChild(waitDiv);
+            processNext(0)
+        });
+
+    }
+
+    function startBatch(start_callback){
         //Check if multiple templates are defined
         var check_multiple_url=dlpp_controller_url+"&action=hasTemplateVariants&id_product=DEFAULT&cache="+Math.round(Math.random()*1000);
         var xhttp = new XMLHttpRequest();
@@ -188,21 +207,17 @@
             if (this.readyState == 4 && this.status == 200) {
                 if(this.responseText=="1"){
                     askVariantChoice(function(choice) {
-                        document.body.appendChild(waitDiv);
                         batchVariant = choice;
-                        processNext(0);
+                        start_callback();
                     });
                 }else{
-                    document.body.appendChild(waitDiv);
                     batchVariant=1;
-                    processNext(0);
+                    start_callback();
                 }
             }
         }.bind(xhttp);
         xhttp.open("GET", check_multiple_url, true);
         xhttp.send();
-
-
     }
 
 
@@ -212,7 +227,7 @@
             if (this.readyState == 4 && this.status == 200) {
                 product_ids_array=JSON.parse(xhttp.responseText);
                 documentReadyDLPP2();
-            }else if(this.readyState == 4){
+            }else if(this.readyState == 4 && this.status != 0){
                 console.log("Retrieval Error:"+this.readyState+"-"+this.status);
                 alert("{l s='Direct Label Print couldn\'t load product data.' mod='directlabelprintproduct'}");
             }
@@ -352,6 +367,20 @@
                                        "<img src=\"{$dlppb_module_folder|escape:'html':'UTF-8'}views/img/icon-print.png\" style=\"height:25px\"/></a></center>");
                                node.labelAdded = "yes";
                            }
+                       }
+                   }
+
+                   //Pack Popup in Order
+                   var pack_lines=$("#product-pack-modal-table tr");
+                   for (var i = 1; i < pack_lines.length-1; i++) {
+                       var pack_line=pack_lines[i];
+                       if (typeof pack_line.labelAdded == "undefined") {
+                           var product_id = pack_line.id.replace("productpack_", "");
+                           console.log("Pack Line ID:" + product_id);
+                           $(pack_line).append("" +
+                               "<td><a class=\"btn\" href=\"#\" onclick=\"printProductLabelOf(" + product_id + "); return true;\">" +
+                               "<img src=\"{$dlppb_module_folder|escape:'html':'UTF-8'}views/img/icon-print.png\" style=\"height:25px\"/></a></td>");
+                           pack_line.labelAdded="yes";
                        }
                    }
                }, 3000);

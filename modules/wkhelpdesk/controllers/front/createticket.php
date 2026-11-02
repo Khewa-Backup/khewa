@@ -1,32 +1,34 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your
-* needs please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
-
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
 {
     public function getBreadcrumbLinks()
     {
         $breadcrumb = parent::getBreadcrumbLinks();
-        $breadcrumb['links'][] = array(
+        $breadcrumb['links'][] = [
             'title' => $this->module->l('Create new ticket', 'createticket'),
-            'url' => ''
-        );
+            'url' => '',
+        ];
 
         return $breadcrumb;
     }
@@ -35,12 +37,12 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
         if (Configuration::get('WK_HD_GUEST_TICKET') || $this->context->customer->isLogged()) {
-            $smartyVars = array(
+            $smartyVars = [
                 'fileExtensions' => implode(', ', WkHdTicket::getSelectedFileExtension()),
                 'bgColor' => Configuration::get('WK_HD_TITLE_BG_COLOR'),
                 'textColor' => Configuration::get('WK_HD_TITLE_TEXT_COLOR'),
-                'attachmentMaxSize' => Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE')
-            );
+                'attachmentMaxSize' => Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE'),
+            ];
             if (Configuration::get('WK_HD_ENABLE_CREATE_CAPTCHA')) {
                 $smartyVars['wkHdCaptchaSiteKey'] = Configuration::get('WK_HD_CAPTCHA_SITE_KEY');
             }
@@ -59,14 +61,14 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
             $smartyVars['id_module'] = $this->module->id;
             $this->context->smarty->assign($smartyVars);
             $this->defineJSVars();
-            $this->setTemplate('module:'.$this->module->name.'/views/templates/front/createticket.tpl');
+            $this->setTemplate('module:' . $this->module->name . '/views/templates/front/createticket.tpl');
         } else {
             Tools::redirect(
                 $this->context->link->getPageLink(
                     'authentication',
                     true,
                     $this->context->language->id,
-                    array('back' => $this->context->link->getModuleLink($this->module->name, 'createticket'))
+                    ['back' => $this->context->link->getModuleLink($this->module->name, 'createticket')]
                 )
             );
         }
@@ -74,8 +76,9 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
 
     public function defineJSVars()
     {
-        $jsVars = array(
+        $jsVars = [
             'imgRemove' => $this->module->l('Remove', 'createticket'),
+            'wk_choose_file' => $this->module->l('Choose file', 'createticket'),
             'err' => $this->module->l('Error:', 'createticket'),
             'choosefile_fileButtonHtml' => $this->module->l('Choose File', 'createticket'),
             'nofileselect_fileDefaultHtml' => $this->module->l('No file selected', 'createticket'),
@@ -87,12 +90,12 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
             'subjectError' => $this->module->l('Subject is required.', 'createticket'),
             'msgError' => $this->module->l('Message is required.', 'createticket'),
             'iso' => $this->context->language->iso_code,
-            'mp_tinymce_path' => _MODULE_DIR_.'wkhelpdesk/libs',
+            'mp_tinymce_path' => _MODULE_DIR_ . 'wkhelpdesk/libs',
             'noCaptchaError' => $this->module->l('Please click on the captcha.', 'createticket'),
             'filesizeError' => $this->module->l('File exceeds maximum size.', 'createticket'),
             'maxSizeAllowed' => Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE'),
-            'captchaEnabled' => Configuration::get('WK_HD_ENABLE_CREATE_CAPTCHA')
-        );
+            'captchaEnabled' => Configuration::get('WK_HD_ENABLE_CREATE_CAPTCHA'),
+        ];
 
         Media::addJsDef($jsVars);
     }
@@ -101,27 +104,29 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
     {
         parent::setMedia();
 
-        $this->registerJavascript('createticket-js', 'modules/'.$this->module->name.'/views/js/createticket.js');
-        $this->registerJavascript('createticket-remove-js', 'modules/'.$this->module->name.'/views/js/wkimageremove.js');
+        $this->registerJavascript('createticket-js', 'modules/' . $this->module->name . '/views/js/createticket.js');
+        $this->registerJavascript('createticket-remove-js', 'modules/' . $this->module->name . '/views/js/wkimageremove.js');
         $this->context->controller->addJqueryPlugin('growl', null, false);
         $this->context->controller->registerStylesheet('growl-css', 'js/jquery/plugins/growl/jquery.growl.css');
         if (Configuration::get('WK_HD_ENABLE_CREATE_CAPTCHA')) {
             $this->registerJavascript(
                 'captcha-js',
                 'https://www.google.com/recaptcha/api.js',
-                array(
-                    'server' => 'remote'
-                )
+                [
+                    'server' => 'remote',
+                ]
             );
         }
         $this->registerStylesheet(
             'helpdesk_global-css',
-            'modules/'.$this->module->name.'/views/css/helpdesk_global.css'
+            'modules/' . $this->module->name . '/views/css/helpdesk_global.css'
         );
         $this->registerStylesheet(
             'helpdesk_createticket-css',
-            'modules/'.$this->module->name.'/views/css/createticket.css'
+            'modules/' . $this->module->name . '/views/css/createticket.css'
         );
+
+        return true;
     }
 
     private function verifyRecaptchaToken($token)
@@ -131,12 +136,12 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
         } elseif (!Tools::strlen(trim($token))) {
             $this->errors[] = $this->module->l('Please check the captcha.', 'createticket');
         } else {
-            $request = array(
+            $request = [
                 'secret' => Configuration::get('WK_HD_CAPTCHA_SECRET_KEY'),
-                'response' => $token
-            );
+                'response' => $token,
+            ];
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+            curl_setopt($ch, CURLOPT_URL, 'https://www.google.com/recaptcha/api/siteverify');
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
             // Receive server response ...
@@ -147,6 +152,7 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
             if (!$response['success']) {
                 $this->errors[] = $this->module->l('Recaptcha could not be verified.', 'createticket');
             }
+
             return $response['success'];
         }
     }
@@ -173,7 +179,7 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
                 if (isset($_FILES['ticketOtherAttachment'])) {
                     $ticketOtherAttachment = $_FILES['ticketOtherAttachment'];
                 }
-                //Validate data
+                // Validate data
                 if ($firstname != '') {
                     if (!Validate::isName($firstname)) {
                         $this->errors[] = $this->module->l('First name is not valid.', 'createticket');
@@ -212,7 +218,7 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
                     $this->errors[] = $this->module->l('Subject is required field.', 'createticket');
                 }
 
-                if ($reference!= '') {
+                if ($reference != '') {
                     if (!Validate::isGenericName($reference)) {
                         $this->errors[] = $this->module->l('Reference number is not valid.', 'createticket');
                     }
@@ -230,14 +236,14 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
                     $this->errors[] = $this->module->l('Message is required field.', 'createticket');
                 }
 
-                //validate ticket main file
+                // validate ticket main file
                 if ($ticketAttachment && !empty($ticketAttachment['name'])) {
                     if (!WkHdTicket::validateTicketMainAttachment($ticketAttachment)) {
                         $this->errors[] = $this->module->l('Main attachment file is not valid.', 'createticket');
                     }
                 }
 
-                //validate ticket other files
+                // validate ticket other files
                 if ($ticketOtherAttachment && !empty($ticketOtherAttachment['name'])) {
                     if (!WkHdTicket::validateTicketOtherAttachment($ticketOtherAttachment)) {
                         $this->errors[] = $this->module->l('Other attachment file(s) are not valid.', 'createticket');
@@ -308,22 +314,22 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
 
                         $protocolLink = (Configuration::get('PS_SSL_ENABLED') || Tools::usingSecureMode()) ?
                         'https://' : 'http://';
-                        $ticketLink = $protocolLink.Tools::getShopDomainSsl().__PS_BASE_URI__.
-                        'index.php?fc=module&module=wkhelpdesk&controller=viewticket&id='.$ticketId;
+                        $ticketLink = $protocolLink . Tools::getShopDomainSsl() . __PS_BASE_URI__ .
+                        'index.php?fc=module&module=wkhelpdesk&controller=viewticket&id=' . $ticketId;
 
                         if (!$idCustomer) { // generate token if customer is not registered
                             $token = WkHdTicket::getToken();
-                            $ticketLink .= '&token='.$token;
+                            $ticketLink .= '&token=' . $token;
                             $objTicketToken = new WkHdTicketToken();
                             $objTicketToken->hd_id_ticket = (int) $ticketId;
                             $objTicketToken->token = pSQL($token);
                             $objTicketToken->save();
                         }
 
-                        //confirmation mail to customer
-                        $ticketParams = array(
+                        // confirmation mail to customer
+                        $ticketParams = [
                             '{ticket_link}' => $ticketLink,
-                            '{customer_name}' => $firstname.' '.$lastname,
+                            '{customer_name}' => $firstname . ' ' . $lastname,
                             '{subject}' => $subject,
                             '{message}' => $message,
                             '{email}' => $email,
@@ -331,34 +337,31 @@ class WkHelpDeskCreateTicketModuleFrontController extends ModuleFrontController
                             '{id_query_type}' => $queryType,
                             '{ticket_id}' => $ticketId,
                             '{isCustomer}' => $isCustomer ? 'customer' : 'visitor',
-                        );
+                        ];
 
                         $objTicketAgent = new WkHdTicketAgent();
                         if (Configuration::get('WK_HD_NEW_TICKET_CUSTOMER_NOTIFICATON')) {
-                            $objTicketAgent->createTicketMailToCustomer($ticketParams); //confirmation mail to customer
+                            $objTicketAgent->createTicketMailToCustomer($ticketParams); // confirmation mail to customer
                         }
                         if (Configuration::get('WK_HD_NEW_TICKET_AGENT_NOTIFICATON')) {
                             $objTicketAgent->customerReplyToAgent($ticketParams); // mail to agents
                         }
 
                         if ($this->context->customer->isLogged()) {
-                            Tools::redirectLink($this->context->link->getModuleLink(
+                            Tools::redirect( /* Khewa PS 9.2: redirectLink() removed */ $this->context->link->getModuleLink(
                                 'wkhelpdesk',
                                 'ticketlist',
-                                array('created' => 1)
+                                ['created' => 1]
                             ));
                         } else {
-                            Tools::redirectLink($this->context->link->getModuleLink(
+                            Tools::redirect( /* Khewa PS 9.2: redirectLink() removed */ $this->context->link->getModuleLink(
                                 'wkhelpdesk',
                                 'createticket',
-                                array('created' => 1)
+                                ['created' => 1]
                             ));
                         }
                     } else {
-                        $this->errors[] = $this->module->l(
-                            'Your ticket did not create due to some technical error.',
-                            'createticket'
-                        );
+                        $this->errors[] = $this->module->l('Your ticket did not create due to some technical error.', 'createticket');
                     }
                 }
             }

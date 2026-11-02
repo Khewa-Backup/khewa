@@ -70,7 +70,7 @@
                 </div>
             </div>
             <div class="panel-footer">
-				<a href="{$moduleLink}" class="btn btn-default"><i class="process-icon-cancel"></i>{l s='Cancel' mod='wkhelpdesk'}</a>
+				<a href="{$moduleLink|escape:'html':'UTF-8'}" class="btn btn-default"><i class="process-icon-cancel"></i>{l s='Cancel' mod='wkhelpdesk'}</a>
 				<button class="btn btn-default pull-right" name="submitMail" id="submitMail" value="1" type="submit"><i class="process-icon-save"></i>{l s='Save' mod='wkhelpdesk'}</button>
 			</div>
         </div>

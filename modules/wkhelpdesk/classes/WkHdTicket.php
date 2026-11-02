@@ -1,23 +1,25 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your
-* needs please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
-
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class WkHdTicket extends ObjectModel
 {
     public $id;
@@ -32,40 +34,40 @@ class WkHdTicket extends ObjectModel
     public $date_add;
     public $date_upd;
 
-    public static $definition = array(
+    public static $definition = [
         'table' => 'wk_hd_ticket',
         'primary' => 'id',
-        'fields' => array(
-            'hd_id_customer' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true),
-            'id_query_type' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true),
-            'first_name' => array('type' => self::TYPE_STRING, 'validate' => 'isName', 'required' => true,'size' => 32),
-            'last_name' => array('type' => self::TYPE_STRING, 'validate' => 'isName', 'required' => true, 'size' => 32),
-            'assigned_agent_id' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true),
-            'id_status' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true),
-            'id_order' => array('type' => self::TYPE_INT),
-            'date_add' => array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat', 'required' => false),
-            'date_upd' => array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat', 'required' => false),
-            'subject' => array(
+        'fields' => [
+            'hd_id_customer' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true],
+            'id_query_type' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true],
+            'first_name' => ['type' => self::TYPE_STRING, 'validate' => 'isName', 'required' => true, 'size' => 32],
+            'last_name' => ['type' => self::TYPE_STRING, 'validate' => 'isName', 'required' => true, 'size' => 32],
+            'assigned_agent_id' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true],
+            'id_status' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true],
+            'id_order' => ['type' => self::TYPE_INT],
+            'date_add' => ['type' => self::TYPE_DATE, 'validate' => 'isDateFormat', 'required' => false],
+            'date_upd' => ['type' => self::TYPE_DATE, 'validate' => 'isDateFormat', 'required' => false],
+            'subject' => [
                 'type' => self::TYPE_STRING,
                 'validate' => 'isMailSubject',
                 'required' => true,
-                'size' => 255
-            )
-        )
-    );
+                'size' => 255,
+            ],
+        ],
+    ];
 
     public function __construct($id = null, $idLang = null, $idShop = null)
     {
         parent::__construct($id, $idLang, $idShop);
-        Shop::addTableAssociation('wk_hd_ticket', array('type' => 'shop', 'primary' => 'id'));
+        Shop::addTableAssociation('wk_hd_ticket', ['type' => 'shop', 'primary' => 'id']);
     }
 
     public function getTicketsByIdQueryType($idQueryType)
     {
         return Db::getInstance()->executeS(
-            'SELECT * FROM `'._DB_PREFIX_.'wk_hd_ticket` wht'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wht').'
-            WHERE `id_query_type` = '.(int) $idQueryType.' GROUP BY wht.`id`'
+            'SELECT * FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wht'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wht') . '
+            WHERE `id_query_type` = ' . (int) $idQueryType . ' GROUP BY wht.`id`'
         );
     }
 
@@ -73,15 +75,16 @@ class WkHdTicket extends ObjectModel
     {
         $obj = new self((int) $id);
         $obj->assigned_agent_id = (int) $assignedAgentId;
+
         return $obj->save();
     }
 
     public function getInfoById($id)
     {
         return Db::getInstance()->getRow(
-            'SELECT * FROM `'._DB_PREFIX_.'wk_hd_ticket` wht'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wht').'
-            WHERE wht.`id` = '.(int) $id.' GROUP BY wht.`id`'
+            'SELECT * FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wht'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wht') . '
+            WHERE wht.`id` = ' . (int) $id . ' GROUP BY wht.`id`'
         );
     }
 
@@ -89,7 +92,7 @@ class WkHdTicket extends ObjectModel
     {
         $result = false;
         if ($selectedFileExt) {
-            $allFileExt = Tools::jsonDecode(Configuration::get('WK_HD_ATTACHMENT_TYPE'), true);
+            $allFileExt = json_decode(Configuration::get('WK_HD_ATTACHMENT_TYPE'), true);
             foreach ($allFileExt as &$fileExt) {
                 $isAvailble = 0;
                 foreach ($selectedFileExt as $selectFileExt) {
@@ -99,7 +102,7 @@ class WkHdTicket extends ObjectModel
                 }
                 $fileExt['is_availble'] = $isAvailble;
             }
-            $result = Configuration::updateValue('WK_HD_ATTACHMENT_TYPE', Tools::jsonEncode($allFileExt));
+            $result = Configuration::updateValue('WK_HD_ATTACHMENT_TYPE', json_encode($allFileExt));
         }
 
         return $result;
@@ -108,7 +111,7 @@ class WkHdTicket extends ObjectModel
     public static function getSelectedFileExtension()
     {
         $fileExt = WkHdTicket::getAllFileExtension();
-        $selectedFileExt = array();
+        $selectedFileExt = [];
         foreach ($fileExt as $file) {
             if ($file['is_availble']) {
                 $selectedFileExt[] = $file['ext_name'];
@@ -120,23 +123,23 @@ class WkHdTicket extends ObjectModel
 
     public static function getAllFileExtension()
     {
-        return Tools::jsonDecode(Configuration::get('WK_HD_ATTACHMENT_TYPE'), true);
+        return json_decode(Configuration::get('WK_HD_ATTACHMENT_TYPE'), true);
     }
 
     public function getAllTicketByIdCustomerAndIdLang($idCustomer, $idLang)
     {
         return Db::getInstance()->executeS(
             'SELECT wkt.*, wkc.`first_name`, wkc.`last_name` , wkc.`email`, wkqtl.`query_name`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` wkt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt').'
-            JOIN `'._DB_PREFIX_.'wk_hd_customer` wkc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wkt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt') . '
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` wkc
             ON (wkt.`hd_id_customer` = wkc.`id`)
-            JOIN `'._DB_PREFIX_.'wk_hd_query_type` wkqt
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type` wkqt
             ON (wkt.`id_query_type` = wkqt.`id`)
-            JOIN `'._DB_PREFIX_.'wk_hd_query_type_lang` wkqtl
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type_lang` wkqtl
             ON (wkqtl.`id` = wkqt.`id`)
-            WHERE wkqtl.`id_lang` = '.(int) $idLang.'
-            AND wkc.`id_ps_customer` = '.(int) $idCustomer.' GROUP BY wkt.`id`'
+            WHERE wkqtl.`id_lang` = ' . (int) $idLang . '
+            AND wkc.`id_ps_customer` = ' . (int) $idCustomer . ' GROUP BY wkt.`id`'
         );
     }
 
@@ -144,15 +147,15 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT wkt.*, wkc.`first_name`, wkc.`last_name` , wkc.`email`, wkqtl.`query_name`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` wkt
-            JOIN `'._DB_PREFIX_.'wk_hd_customer` wkc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wkt
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` wkc
             ON (wkt.`hd_id_customer` = wkc.`id`)
-            JOIN `'._DB_PREFIX_.'wk_hd_query_type` wkqt
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type` wkqt
             ON (wkt.`id_query_type` = wkqt.`id`)
-            JOIN `'._DB_PREFIX_.'wk_hd_query_type_lang` wkqtl
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type_lang` wkqtl
             ON (wkqtl.`id` = wkqt.`id`)
-            WHERE wkqtl.`id_lang` = '.(int) $idLang.'
-            AND wkc.`email` = \''.pSQL($idCustomer).'\' GROUP BY wkt.`id`'
+            WHERE wkqtl.`id_lang` = ' . (int) $idLang . '
+            AND wkc.`email` = \'' . pSQL($idCustomer) . '\' GROUP BY wkt.`id`'
         );
     }
 
@@ -160,13 +163,13 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT wkt.`subject`, wkt.`first_name`, wkt.`last_name` , wkt.`id` as `ticket_id`, wktm.*
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` wkt
-            JOIN `'._DB_PREFIX_.'wk_hd_customer` wkc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wkt
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` wkc
             ON (wkt.`hd_id_customer` = wkc.`id`)
-            JOIN `'._DB_PREFIX_.'wk_hd_ticket_msg` wktm
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_ticket_msg` wktm
             ON (wkt.`id` = wktm.`hd_id_ticket`)
-            WHERE wkc.`id_ps_customer` = '.(int) $idCustomer.'
-            AND wkt.`id` = '.(int) $id.'
+            WHERE wkc.`id_ps_customer` = ' . (int) $idCustomer . '
+            AND wkt.`id` = ' . (int) $id . '
             ORDER BY wktm.`id` ASC'
         );
     }
@@ -175,16 +178,16 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT wkt.`subject`, wkc.`first_name`, wkc.`last_name` , wkt.`id` as `ticket_id`, wktm.*
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` wkt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt').'
-            JOIN `'._DB_PREFIX_.'wk_hd_ticket_token` wktt
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wkt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt') . '
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_ticket_token` wktt
             ON (wkt.`id` = wktt.`hd_id_ticket`)
-            JOIN `'._DB_PREFIX_.'wk_hd_customer` wkc
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` wkc
             ON (wkt.`hd_id_customer` = wkc.`id`)
-            JOIN `'._DB_PREFIX_.'wk_hd_ticket_msg` wktm
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_ticket_msg` wktm
             ON (wkt.`id` = wktm.`hd_id_ticket`)
-            WHERE wktt.`token` = \''.pSQL($token).'\'
-            AND wkt.`id` = '.(int) $id.'
+            WHERE wktt.`token` = \'' . pSQL($token) . '\'
+            AND wkt.`id` = ' . (int) $id . '
             ORDER BY wktm.`id` ASC'
         );
     }
@@ -243,18 +246,18 @@ class WkHdTicket extends ObjectModel
             hdt.`date_add`, hdt.`assigned_agent_id`, hdt.`id` as `ticket_id`,
             hdt.`id_status`, hdt.`id_order`, hdqtl.`query_name`, hdtm.`id` as `msg_id`,
             hdta.`name` as `assigned_agent_name`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` hdt
-            JOIN `'._DB_PREFIX_.'wk_hd_customer` wkc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` hdt
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` wkc
             ON (hdt.`hd_id_customer` = wkc.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type` hdqt
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type` hdqt
             ON (hdt.`id_query_type` = hdqt.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type_lang` hdqtl
-            ON (hdqtl.`id` = hdqt.`id` AND hdqtl.`id_lang` = '.(int) $idLang.')
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_ticket_msg` hdtm
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type_lang` hdqtl
+            ON (hdqtl.`id` = hdqt.`id` AND hdqtl.`id_lang` = ' . (int) $idLang . ')
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_ticket_msg` hdtm
             ON (hdt.`id` = hdtm.`hd_id_ticket`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_ticket_agent` hdta
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_ticket_agent` hdta
             ON (hdt.`assigned_agent_id` = hdta.`id`)
-            WHERE hdt.`id` = '.(int) $id
+            WHERE hdt.`id` = ' . (int) $id
         );
     }
 
@@ -268,31 +271,31 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT hdt.*, wk_hd_ticket_shop.id_shop as id_shop,
-            CONCAT(hdt.`first_name`,\''.' '.'\', hdt.`last_name`) customer_name,
+            CONCAT(hdt.`first_name`,\' ' . '\', hdt.`last_name`) customer_name,
             hdc.`email`, hdc.is_spam, hdc.`id` as `hd_customer_id`, hdqtl.`query_name`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` hdt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt').'
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_customer` hdc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` hdt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt') . '
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` hdc
             ON(hdt.`hd_id_customer` = hdc.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type` hdqt
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type` hdqt
             ON (hdt.`id_query_type` = hdqt.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type_lang` hdqtl
-            ON (hdqt.`id` = hdqtl.`id` AND hdqtl.`id_lang` = '.(int) $idLang.')
-            WHERE hdc.is_spam = 0 AND'.($idTicket ? ' hdt.id ='.(int)$idTicket : ' hdt.`id_query_type`
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type_lang` hdqtl
+            ON (hdqt.`id` = hdqtl.`id` AND hdqtl.`id_lang` = ' . (int) $idLang . ')
+            WHERE hdc.is_spam = 0 AND' . ($idTicket ? ' hdt.id =' . (int) $idTicket : ' hdt.`id_query_type`
             IN (
                 SELECT `id_query_type`
-                FROM `'._DB_PREFIX_.'wk_hd_group_query_type_mapping` hdgqt'
-                .WkHdGroup::addSqlAssociationCustom('wk_hd_group_query_type_mapping', 'hdgqt').'
+                FROM `' . _DB_PREFIX_ . 'wk_hd_group_query_type_mapping` hdgqt'
+                . WkHdGroup::addSqlAssociationCustom('wk_hd_group_query_type_mapping', 'hdgqt') . '
                 WHERE hdgqt.`id_group` IN (
                     SELECT `id_group`
-                    FROM `'._DB_PREFIX_.'wk_hd_group_agent_mapping` wkhdgam'
-                    .WkHdGroup::addSqlAssociationCustom('wk_hd_group_query_type_mapping', 'wkhdgam').'
-                    JOIN `'._DB_PREFIX_.'wk_hd_group` wkhdg
+                    FROM `' . _DB_PREFIX_ . 'wk_hd_group_agent_mapping` wkhdgam'
+                    . WkHdGroup::addSqlAssociationCustom('wk_hd_group_query_type_mapping', 'wkhdgam') . '
+                    JOIN `' . _DB_PREFIX_ . 'wk_hd_group` wkhdg
                     ON (wkhdgam.`id_group` = wkhdg.`id`
                     AND wkhdg.`active` = 1)
                 )
-            )').
-            ($idTicket ? ' ' : 'OR hdt.`assigned_agent_id` = '.(int) $idAgent).'
+            )') .
+            ($idTicket ? ' ' : 'OR hdt.`assigned_agent_id` = ' . (int) $idAgent) . '
             GROUP BY hdt.`id` ORDER BY hdt.`id_query_type` ASC'
         );
     }
@@ -301,32 +304,32 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT hdt.*, wk_hd_ticket_shop.id_shop as id_shop,
-            CONCAT(hdt.`first_name`,\''.' '.'\', hdt.`last_name`) customer_name,
+            CONCAT(hdt.`first_name`,\' ' . '\', hdt.`last_name`) customer_name,
             hdc.`email`, hdc.is_spam, hdc.`id` as `hd_customer_id`, hdqtl.`query_name`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` hdt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt').'
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_customer` hdc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` hdt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt') . '
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` hdc
             ON(hdt.`hd_id_customer` = hdc.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type` hdqt
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type` hdqt
             ON (hdt.`id_query_type` = hdqt.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type_lang` hdqtl
-            ON (hdqt.`id` = hdqtl.`id` AND hdqtl.`id_lang` = '.(int) $idLang.')
-            WHERE hdc.is_spam = 1 AND'.($idTicket ? ' hdt.id ='.(int)$idTicket : ' hdt.`id_query_type`
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type_lang` hdqtl
+            ON (hdqt.`id` = hdqtl.`id` AND hdqtl.`id_lang` = ' . (int) $idLang . ')
+            WHERE hdc.is_spam = 1 AND' . ($idTicket ? ' hdt.id =' . (int) $idTicket : ' hdt.`id_query_type`
             IN (
                 SELECT `id_query_type`
-                FROM `'._DB_PREFIX_.'wk_hd_group_query_type_mapping` hdgqt'
-                .WkHdGroup::addSqlAssociationCustom('wk_hd_group_query_type_mapping', 'hdgqt').'
+                FROM `' . _DB_PREFIX_ . 'wk_hd_group_query_type_mapping` hdgqt'
+                . WkHdGroup::addSqlAssociationCustom('wk_hd_group_query_type_mapping', 'hdgqt') . '
                 WHERE hdgqt.`id_group` IN (
                     SELECT `id_group`
-                    FROM `'._DB_PREFIX_.'wk_hd_group_agent_mapping` wkhdgam'
-                    .WkHdGroup::addSqlAssociationCustom('wk_hd_group_query_type_mapping', 'wkhdgam').'
-                    JOIN `'._DB_PREFIX_.'wk_hd_group` wkhdg
+                    FROM `' . _DB_PREFIX_ . 'wk_hd_group_agent_mapping` wkhdgam'
+                    . WkHdGroup::addSqlAssociationCustom('wk_hd_group_agent_mapping', 'wkhdgam') . '
+                    JOIN `' . _DB_PREFIX_ . 'wk_hd_group` wkhdg
                     ON (wkhdgam.`id_group` = wkhdg.`id`
-                    AND wkhdgam.`id_agent` = '.(int) $idAgent.'
+                    AND wkhdgam.`id_agent` = ' . (int) $idAgent . '
                     AND wkhdg.`active` = 1)
                 )
-            )').
-            ($idTicket ? ' ' : 'OR hdt.`assigned_agent_id` = '.(int) $idAgent).'
+            )') .
+            ($idTicket ? ' ' : 'OR hdt.`assigned_agent_id` = ' . (int) $idAgent) . '
             GROUP BY hdt.`id` ORDER BY hdt.`id_query_type` ASC'
         );
     }
@@ -335,17 +338,17 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT hdt.*, wk_hd_ticket_shop.id_shop as id_shop,
-            CONCAT(hdt.`first_name`,\''.' '.'\',hdt.`last_name`) customer_name,
+            CONCAT(hdt.`first_name`,\' ' . '\',hdt.`last_name`) customer_name,
             hdc.`email`,hdc.is_spam, hdc.`id` as `hd_customer_id`, hdqtl.`query_name`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` hdt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt').'
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_customer` hdc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` hdt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt') . '
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` hdc
             ON(hdt.`hd_id_customer` = hdc.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type` hdqt
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type` hdqt
             ON (hdt.`id_query_type` = hdqt.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type_lang` hdqtl
-            ON (hdqt.`id` = hdqtl.`id` AND hdqtl.`id_lang` = '.(int) $idLang.')
-            WHERE '.($idTicket ? ' hdt.id ='.(int) $idTicket.' AND ' : '').'hdc.is_spam = 0
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type_lang` hdqtl
+            ON (hdqt.`id` = hdqtl.`id` AND hdqtl.`id_lang` = ' . (int) $idLang . ')
+            WHERE ' . ($idTicket ? ' hdt.id =' . (int) $idTicket . ' AND ' : '') . 'hdc.is_spam = 0
             GROUP BY hdt.`id`
             ORDER BY hdt.`id_query_type` ASC'
         );
@@ -355,17 +358,17 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT hdt.*, wk_hd_ticket_shop.id_shop as id_shop,
-            CONCAT(hdt.`first_name`,\''.' '.'\',hdt.`last_name`) customer_name,
+            CONCAT(hdt.`first_name`,\' ' . '\',hdt.`last_name`) customer_name,
             hdc.`email`,hdc.is_spam, hdc.`id` as `hd_customer_id`, hdqtl.`query_name`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` hdt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt').'
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_customer` hdc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` hdt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt') . '
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` hdc
             ON(hdt.`hd_id_customer` = hdc.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type` hdqt
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type` hdqt
             ON (hdt.`id_query_type` = hdqt.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_query_type_lang` hdqtl
-            ON (hdqt.`id` = hdqtl.`id` AND hdqtl.`id_lang` = '.(int) $idLang.')
-            WHERE '.($idTicket ? ' hdt.id ='.(int)$idTicket.' AND ' : '').'hdc.is_spam = 1
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_query_type_lang` hdqtl
+            ON (hdqt.`id` = hdqtl.`id` AND hdqtl.`id_lang` = ' . (int) $idLang . ')
+            WHERE ' . ($idTicket ? ' hdt.id =' . (int) $idTicket . ' AND ' : '') . 'hdc.is_spam = 1
             GROUP BY hdt.`id`
             ORDER BY hdt.`id_query_type` ASC'
         );
@@ -375,17 +378,17 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT hdt.`id`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` hdt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt').'
-            JOIN `'._DB_PREFIX_.'wk_hd_customer` hdc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` hdt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt') . '
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` hdc
             ON(hdt.`hd_id_customer` = hdc.`id`)
-            JOIN `'._DB_PREFIX_.'wk_hd_group_query_type_mapping` hdgqtm
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_group_query_type_mapping` hdgqtm
             ON (hdt.`id_query_type` = hdgqtm.`id_query_type`)
-            JOIN `'._DB_PREFIX_.'wk_hd_group_agent_mapping` hdgam
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_group_agent_mapping` hdgam
             ON (hdgam.`id_group` = hdgqtm.`id_group`)
-            WHERE hdt.`assigned_agent_id` = '.(int) $idAgent.'
-            OR hdgam.`id_agent` = '.(int) $idAgent.'
-            AND hdt.`id` LIKE \''.(int) $idTicket.'%\' AND hdc.is_spam = 0 GROUP BY hdt.`id`'
+            WHERE hdt.`assigned_agent_id` = ' . (int) $idAgent . '
+            OR hdgam.`id_agent` = ' . (int) $idAgent . '
+            AND hdt.`id` LIKE \'' . (int) $idTicket . '%\' AND hdc.is_spam = 0 GROUP BY hdt.`id`'
         );
     }
 
@@ -393,17 +396,17 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT hdt.`id`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` hdt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt').'
-            JOIN `'._DB_PREFIX_.'wk_hd_customer` hdc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` hdt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt') . '
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` hdc
             ON(hdt.`hd_id_customer` = hdc.`id`)
-            JOIN `'._DB_PREFIX_.'wk_hd_group_query_type_mapping` hdgqtm
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_group_query_type_mapping` hdgqtm
             ON (hdt.`id_query_type` = hdgqtm.`id_query_type`)
-            JOIN `'._DB_PREFIX_.'wk_hd_group_agent_mapping` hdgam
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_group_agent_mapping` hdgam
             ON (hdgam.`id_group` = hdgqtm.`id_group`)
-            WHERE hdt.`assigned_agent_id` = '.(int) $idAgent.'
-            OR hdgam.`id_agent` = '.(int) $idAgent.'
-            AND hdt.`id` LIKE \''.(int) $idTicket.'%\' AND hdc.is_spam = 1 GROUP BY hdt.`id`'
+            WHERE hdt.`assigned_agent_id` = ' . (int) $idAgent . '
+            OR hdgam.`id_agent` = ' . (int) $idAgent . '
+            AND hdt.`id` LIKE \'' . (int) $idTicket . '%\' AND hdc.is_spam = 1 GROUP BY hdt.`id`'
         );
     }
 
@@ -411,11 +414,11 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT wkt.`id`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` wkt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt').'
-            JOIN `'._DB_PREFIX_.'wk_hd_customer` wkc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wkt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt') . '
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` wkc
             ON (wkt.`hd_id_customer` = wkc.`id`)
-            WHERE wkt.`id` LIKE \''.(int) $idTicket.'%\' AND wkc.is_spam = 0 GROUP BY wkt.`id`'
+            WHERE wkt.`id` LIKE \'' . (int) $idTicket . '%\' AND wkc.is_spam = 0 GROUP BY wkt.`id`'
         );
     }
 
@@ -423,31 +426,31 @@ class WkHdTicket extends ObjectModel
     {
         return Db::getInstance()->executeS(
             'SELECT wkt.`id`
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` wkt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt').'
-            JOIN `'._DB_PREFIX_.'wk_hd_customer` wkc
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wkt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt') . '
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` wkc
             ON (wkt.`hd_id_customer` = wkc.`id`)
-            WHERE wkt.`id` LIKE \''.(int) $idTicket.'%\' AND wkc.is_spam = 1 GROUP BY wkt.`id`'
+            WHERE wkt.`id` LIKE \'' . (int) $idTicket . '%\' AND wkc.is_spam = 1 GROUP BY wkt.`id`'
         );
     }
 
     public function checkAgentTicketAccessRight($idAgent, $idTicket)
     {
         return Db::getInstance()->getValue(
-            'SELECT hdt.`id` FROM `'._DB_PREFIX_.'wk_hd_ticket` hdt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt').'
-            WHERE (hdt.`assigned_agent_id` = '.(int) $idAgent.'
-            AND hdt.`id` = '.(int) $idTicket.')
+            'SELECT hdt.`id` FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` hdt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'hdt') . '
+            WHERE (hdt.`assigned_agent_id` = ' . (int) $idAgent . '
+            AND hdt.`id` = ' . (int) $idTicket . ')
             OR hdt.`id` = (
-            SELECT hdt.`id` FROM `'._DB_PREFIX_.'wk_hd_ticket` hdt
-            JOIN `'._DB_PREFIX_.'wk_hd_group_query_type_mapping` hdgqtm
+            SELECT hdt.`id` FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` hdt
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_group_query_type_mapping` hdgqtm
             ON (hdgqtm.`id_query_type` = hdt.`id_query_type`)
-            JOIN `'._DB_PREFIX_.'wk_hd_group_agent_mapping` hdgam
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_group_agent_mapping` hdgam
             ON (hdgam.`id_group` = hdgqtm.`id_group`)
-            JOIN `'._DB_PREFIX_.'wk_hd_ticket_agent` hdta
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_ticket_agent` hdta
             ON (hdta.`id` = hdgam.`id_agent`)
-            WHERE hdta.`id` = '.(int) $idAgent.'
-            AND hdt.`id` = '.(int) $idTicket.') GROUP BY hdt.`id`'
+            WHERE hdta.`id` = ' . (int) $idAgent . '
+            AND hdt.`id` = ' . (int) $idTicket . ') GROUP BY hdt.`id`'
         );
     }
 
@@ -456,15 +459,15 @@ class WkHdTicket extends ObjectModel
         return Db::getInstance()->executeS(
             'SELECT wkt.`subject`, wkt.`id` as `ticket_id`, wktm.*,
             wkt.`first_name`, wkt.`last_name`, wkta.`name`, wkta.`email`, wkc.id_ps_customer
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` wkt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt').'
-            JOIN `'._DB_PREFIX_.'wk_hd_ticket_msg` wktm
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wkt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt') . '
+            JOIN `' . _DB_PREFIX_ . 'wk_hd_ticket_msg` wktm
             ON (wkt.`id` = wktm.`hd_id_ticket`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_customer` wkc
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_customer` wkc
             ON (wkt.`hd_id_customer` = wkc.`id`)
-            LEFT JOIN `'._DB_PREFIX_.'wk_hd_ticket_agent` wkta
+            LEFT JOIN `' . _DB_PREFIX_ . 'wk_hd_ticket_agent` wkta
             ON (wktm.`id_agent` = wkta.`id`)
-            WHERE wkt.`id` = '.(int) $id.'
+            WHERE wkt.`id` = ' . (int) $id . '
             ORDER BY wktm.`id` ASC'
         );
     }
@@ -475,31 +478,31 @@ class WkHdTicket extends ObjectModel
         if ($langTables) {
             foreach ($langTables as $tables) {
                 $tableIdArr = Db::getInstance()->executeS(
-                    'SELECT `id` FROM `'._DB_PREFIX_.$tables.'` '
+                    'SELECT `id` FROM `' . _DB_PREFIX_ . $tables . '` '
                 );
                 if ($tableIdArr) {
                     foreach ($tableIdArr as $table_id) {
                         $tableLangArr = Db::getInstance()->getRow(
-                            'SELECT * FROM `'._DB_PREFIX_.$tables.'_lang`
-                            WHERE `id` = '.$table_id['id'].' AND `id_lang` = '.(int) $lang_id
+                            'SELECT * FROM `' . _DB_PREFIX_ . $tables . '_lang`
+                            WHERE `id` = ' . $table_id['id'] . ' AND `id_lang` = ' . (int) $lang_id
                         );
 
+                        $table_all_val = '';
                         if ($tableLangArr) {
-                            $table_all_val = '';
                             foreach ($tableLangArr as $table_key => $table_val) {
                                 if ($table_key == 'id') {
-                                    $table_all_val = "'".(int)$table_val."'";
+                                    $table_all_val = "'" . (int) $table_val . "'";
                                 } elseif ($table_key == 'id_lang') {
-                                    $table_all_val = $table_all_val.', '."'".(int)$newIdLang."'";
+                                    $table_all_val = $table_all_val . ', ' . "'" . (int) $newIdLang . "'";
                                 } else {
                                     $content = str_replace("'", "\'", pSQL($table_val));
-                                    $table_all_val = $table_all_val.', '."'".pSQL($content)."'";
+                                    $table_all_val = $table_all_val . ', ' . "'" . pSQL($content) . "'";
                                 }
                             }
                         }
                         // we already used pSQL() and int for type casting when we creating this string $table_all_val.
                         Db::getInstance()->execute(
-                            'INSERT INTO `'._DB_PREFIX_.$tables.'_lang` VALUES ('.$table_all_val.')'
+                            'INSERT INTO `' . _DB_PREFIX_ . $tables . '_lang` VALUES (' . $table_all_val . ')'
                         );
                     }
                 }
@@ -515,22 +518,22 @@ class WkHdTicket extends ObjectModel
             $orders = Order::getByReference($reference);
             if ($orders) {
                 foreach ($orders as $order) {
-                    $idOrder = (int)$order->id;
+                    $idOrder = (int) $order->id;
                     break;
                 }
             }
         }
 
-        return (int)$idOrder;
+        return (int) $idOrder;
     }
 
     public function getTicketByOrderId($idOrder)
     {
         return Db::getInstance()->executeS(
             'SELECT *
-            FROM `'._DB_PREFIX_.'wk_hd_ticket` wkt'
-            .WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt').'
-            WHERE wkt.`id_order` = '.(int) $idOrder
+            FROM `' . _DB_PREFIX_ . 'wk_hd_ticket` wkt'
+            . WkHdGroup::addSqlAssociationCustom('wk_hd_ticket', 'wkt') . '
+            WHERE wkt.`id_order` = ' . (int) $idOrder
         );
     }
 }

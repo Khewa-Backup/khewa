@@ -17,7 +17,12 @@
 * @copyright Since 2010 Webkul
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 */
+// Khewa PS 9.2: guard from wkhelpdesk 5.0.2 (this file keeps Khewa changes, so it was merged by hand).
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
+    include_once 'WkHdAdminTranslationTrait.php'; // Khewa PS 9.2: l() for admin pages
     include_once 'WkHdTicketToken.php';
     include_once 'WkHdAccessRight.php';
     include_once 'WkHdAccessRightMapping.php';

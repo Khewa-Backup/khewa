@@ -1,0 +1,5 @@
+services:
+  bestkit_log.authentication_subscriber:
+    class: BestkitLogAuthenticationSubscriber
+    tags:
+      - { name: kernel.event_subscriber }

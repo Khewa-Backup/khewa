@@ -1,25 +1,31 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your
-* needs please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+require_once dirname(__FILE__) . '/../../classes/WkHdAdminTranslationTrait.php'; // Khewa PS 9.2
 
 class AdminAgentManagementController extends ModuleAdminController
 {
+    use WkHdAdminTranslationTrait; // Khewa PS 9.2: admin l() was removed in PS 9
+
     public function __construct()
     {
         $this->context = Context::getContext();
@@ -32,75 +38,75 @@ class AdminAgentManagementController extends ModuleAdminController
         parent::__construct();
         $this->toolbar_title = $this->l('Agents');
         if (Shop::getContext() == Shop::CONTEXT_SHOP) {
-            Shop::addTableAssociation('wk_hd_ticket_agent', array('type' => 'shop', 'primary' => 'id'));
+            Shop::addTableAssociation('wk_hd_ticket_agent', ['type' => 'shop', 'primary' => 'id']);
         }
         $this->_join .= WkHdGroup::addSqlAssociationCustom('wk_hd_ticket_agent', 'a', false);
         $this->_group = ' GROUP BY a.id';
         $this->_where .= ' AND a.`is_super_admin` != 1';
-        $this->_select = "a.`id` as `temp_id`";
+        $this->_select = 'a.`id` as `temp_id`';
 
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
-            $this->fields_list = array(
-                'id' => array(
+            $this->fields_list = [
+                'id' => [
                     'title' => $this->l('ID'),
                     'align' => 'center',
                     'class' => 'fixed-width-xs',
-                ),
-                'employee_id' => array(
+                ],
+                'employee_id' => [
                     'title' => $this->l('Employee Id'),
                     'align' => 'center',
-                    'hint' => $this->l('Prestashop Employee ID'),
-                ),
-                'name' => array(
+                    'hint' => $this->l('Prestashop employee ID'),
+                ],
+                'name' => [
                     'title' => $this->l('Agent name'),
                     'align' => 'center',
-                ),
-                'email' => array(
+                ],
+                'email' => [
                     'title' => $this->l('Agent email'),
                     'align' => 'center',
-                ),
-                'active' => array(
+                ],
+                'active' => [
                     'title' => $this->l('Status'),
                     'active' => 'status',
                     'type' => 'bool',
                     'orderby' => false,
                     'align' => 'center',
-                ),
-                'temp_id' => array(
+                ],
+                'temp_id' => [
                     'title' => $this->l('View access rights'),
-                    'align' =>'center',
+                    'align' => 'center',
                     'search' => false,
                     'callback' => 'viewAccessRights',
-                ),
-                'date_add' => array(
+                ],
+                'date_add' => [
                     'title' => $this->l('Add date'),
                     'align' => 'text-right',
                     'type' => 'datetime',
-                    'filter_key' => 'a!date_add'
-                )
-            );
+                    'filter_key' => 'a!date_add',
+                ],
+            ];
         } else {
             $this->errors[] = $this->l('You do not have access right to view this page.');
         }
 
-        $this->bulk_actions = array(
-            'delete' => array(
+        $this->bulk_actions = [
+            'delete' => [
                 'text' => $this->l('Delete selected'),
                 'icon' => 'icon-trash',
                 'confirm' => $this->l('Delete selected items?'),
-            ),
-        );
+            ],
+        ];
     }
 
     public function viewAccessRights($id)
     {
         $this->context->smarty->assign(
             'access_link',
-            self::$currentIndex.'&token='.$this->token.'&viewwk_hd_ticket_agent&id='.$id
+            self::$currentIndex . '&token=' . $this->token . '&viewwk_hd_ticket_agent&id=' . $id
         );
 
-        return $this->module->display(_PS_MODULE_DIR_.'wkhelpdesk', 'viewaccessright.tpl');
+        return $this->module->display(_PS_MODULE_DIR_ . 'wkhelpdesk', 'viewaccessright.tpl');
     }
 
     public function initToolbar()
@@ -108,10 +114,10 @@ class AdminAgentManagementController extends ModuleAdminController
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
             parent::initToolbar();
-            $this->page_header_toolbar_btn['new'] = array(
-                'href' => self::$currentIndex.'&add'.$this->table.'&token='.$this->token,
+            $this->page_header_toolbar_btn['new'] = [
+                'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
                 'desc' => $this->l('Add new agent'),
-            );
+            ];
         }
     }
 
@@ -119,9 +125,10 @@ class AdminAgentManagementController extends ModuleAdminController
     {
         if (($this->display == 'edit') && (Shop::getContext() == Shop::CONTEXT_SHOP)) {
             if (!$this->loadObject(true)) {
-                Tools::redirectAdmin(self::$currentIndex.'&token='.$this->token);
+                Tools::redirectAdmin(self::$currentIndex . '&token=' . $this->token);
             }
         }
+
         return parent::initContent();
     }
 
@@ -129,7 +136,7 @@ class AdminAgentManagementController extends ModuleAdminController
     {
         if (($this->display == 'edit') && (Shop::getContext() != Shop::CONTEXT_SHOP)) {
             return $this->context->smarty->fetch(
-                _PS_MODULE_DIR_.$this->module->name.'/views/templates/admin/_partials/shop_warning.tpl'
+                _PS_MODULE_DIR_ . $this->module->name . '/views/templates/admin/_partials/shop_warning.tpl'
             );
         } else {
             $objHdEmployee = new WkHdTicketAgent();
@@ -164,17 +171,17 @@ class AdminAgentManagementController extends ModuleAdminController
                     }
                 }
 
-                $this->fields_form = array(
-                    'submit' => array(
+                $this->fields_form = [
+                    'submit' => [
                         'title' => $this->l('Save'),
-                    ),
-                );
-
-                return parent::renderForm();
+                    ],
+                ];
             } else {
                 $this->errors[] = $this->l('You do not have access right to view this page.');
             }
         }
+
+        return parent::renderForm();
     }
 
     public function renderView()
@@ -183,11 +190,11 @@ class AdminAgentManagementController extends ModuleAdminController
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
             $idAgent = Tools::getValue('id');
             if ($idAgent) {
-                //get agent information
+                // get agent information
                 $objTicketAgent = new WkHdTicketAgent();
                 $agentInfo = $objTicketAgent->getAgentInfoById($idAgent);
                 if ($agentInfo) {
-                    //get agent access rights
+                    // get agent access rights
                     $objAccessRightMapping = new WkHdAccessRightMapping();
                     $mappedAccessRights = $objAccessRightMapping->getAccessRightByIdAgent($idAgent);
 
@@ -199,11 +206,11 @@ class AdminAgentManagementController extends ModuleAdminController
             } else {
                 $this->errors[] = $this->l('Agent information not found.');
             }
-
-            return parent::renderView();
         } else {
             $this->errors[] = $this->l('You do not have access right to view this page.');
         }
+
+        return parent::renderView();
     }
 
     public function processSave()
@@ -235,7 +242,7 @@ class AdminAgentManagementController extends ModuleAdminController
                     $objEmployee = new Employee($idEmployee);
                     $objTicketAgent = new WkHdTicketAgent();
                     $objTicketAgent->employee_id = (int) $idEmployee;
-                    $objTicketAgent->name = pSQL($objEmployee->firstname).' '.pSQL($objEmployee->lastname);
+                    $objTicketAgent->name = pSQL($objEmployee->firstname) . ' ' . pSQL($objEmployee->lastname);
                     $objTicketAgent->email = pSQL($objEmployee->email);
                     $objTicketAgent->is_super_admin = (int) 0;
                     $objTicketAgent->active = (int) 1;
@@ -251,23 +258,23 @@ class AdminAgentManagementController extends ModuleAdminController
                     $objAccessRightMapping->save();
                 }
 
-                if (Tools::isSubmit('submitAdd'.$this->table.'AndStay')) {
+                if (Tools::isSubmit('submitAdd' . $this->table . 'AndStay')) {
                     if ($idEmployee) {
                         Tools::redirectAdmin(
-                            self::$currentIndex.'&id='.(int) $idAgent.'&update'.
-                            $this->table.'&conf=3&token='.$this->token
+                            self::$currentIndex . '&id=' . (int) $idAgent . '&update' .
+                            $this->table . '&conf=3&token=' . $this->token
                         );
                     } else {
                         Tools::redirectAdmin(
-                            self::$currentIndex.'&id='.(int) $idAgent.'&update'.
-                            $this->table.'&conf=4&token='.$this->token
+                            self::$currentIndex . '&id=' . (int) $idAgent . '&update' .
+                            $this->table . '&conf=4&token=' . $this->token
                         );
                     }
                 } else {
                     if ($idEmployee) {
-                        Tools::redirectAdmin(self::$currentIndex.'&conf=3&token='.$this->token);
+                        Tools::redirectAdmin(self::$currentIndex . '&conf=3&token=' . $this->token);
                     } else {
-                        Tools::redirectAdmin(self::$currentIndex.'&conf=4&token='.$this->token);
+                        Tools::redirectAdmin(self::$currentIndex . '&conf=4&token=' . $this->token);
                     }
                 }
             } else {

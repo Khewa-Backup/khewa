@@ -321,9 +321,13 @@ class WkHdTicketManager
     public function attachFileToReply($filename, $idMsg)
     {
         // file_name
-        $filePath = _PS_UPLOAD_DIR_.$filename;
+        $filePath = _PS_UPLOAD_DIR_.basename((string) $filename); // Khewa PS 9.2: no folder parts in the name
         if (file_exists($filePath)) {
-            $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
+            // Khewa PS 9.2: safe types only (the file comes from the shop contact form upload folder)
+            $fileExtension = WkHdTicketAttachment::khewaSafeExtension($filePath, false);
+            if (!$fileExtension) {
+                return;
+            }
             $uploadPath = _PS_MODULE_DIR_.'wkhelpdesk/ticketattachments/';
             $fileName = $idMsg.'_1.'.$fileExtension; // _1 because this is msg mail attachment
             if (Tools::copy($filePath, $uploadPath.$fileName)) {

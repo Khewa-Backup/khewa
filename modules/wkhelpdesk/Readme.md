@@ -1,1 +1,1 @@
-- Module V5.0.0 compatible with PrestaShop V1.7.x.x
+- Module V5.0.2 compatible with PrestaShop V1.7.x.x & V8.x.x

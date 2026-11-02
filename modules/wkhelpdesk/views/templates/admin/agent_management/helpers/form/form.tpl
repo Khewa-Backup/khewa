@@ -17,7 +17,7 @@
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 *}
 
-<form method="post" action="{$current}&{if !empty($submit_action)}{$submit_action}{/if}&token={$token}" class="defaultForm form-horizontal {$name_controller}" enctype="multipart/form-data" id="agentForm">
+<form method="post" action="{$current|escape:'html':'UTF-8'}&{if !empty($submit_action)}{$submit_action|escape:'html':'UTF-8'}{/if}&token={$token|escape:'html':'UTF-8'}" class="defaultForm form-horizontal {$name_controller|escape:'html':'UTF-8'}" enctype="multipart/form-data" id="agentForm">
 	<div class="panel">
 		<div class="panel-heading">
 			{if isset($agentInfo)}

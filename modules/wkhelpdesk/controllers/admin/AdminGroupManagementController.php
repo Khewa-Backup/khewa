@@ -1,25 +1,31 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your
-* needs please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+require_once dirname(__FILE__) . '/../../classes/WkHdAdminTranslationTrait.php'; // Khewa PS 9.2
 
 class AdminGroupManagementController extends ModuleAdminController
 {
+    use WkHdAdminTranslationTrait; // Khewa PS 9.2: admin l() was removed in PS 9
+
     public function __construct()
     {
         $this->context = Context::getContext();
@@ -34,10 +40,10 @@ class AdminGroupManagementController extends ModuleAdminController
         parent::__construct();
         $this->toolbar_title = $this->l('Groups');
         if (Shop::getContext() == Shop::CONTEXT_SHOP) {
-            Shop::addTableAssociation('wk_hd_group', array('type' => 'shop', 'primary' => 'id'));
+            Shop::addTableAssociation('wk_hd_group', ['type' => 'shop', 'primary' => 'id']);
         }
         $this->_join .= WkHdGroup::addSqlAssociationCustom('wk_hd_group', 'a', false);
-        $this->_where .= ' AND b.`id_shop`='.min(Shop::getContextListShopID());
+        $this->_where .= ' AND b.`id_shop`=' . min(Shop::getContextListShopID());
         $this->_group = ' GROUP BY a.id';
 
         $this->_where .= ' AND a.`is_default_group` != 1';
@@ -45,48 +51,49 @@ class AdminGroupManagementController extends ModuleAdminController
 
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
-            $this->fields_list = array(
-                'id' => array(
+            $this->fields_list = [
+                'id' => [
                     'title' => $this->l('ID'),
                     'align' => 'center',
                     'class' => 'fixed-width-xs',
-                ),
-                'group_name' => array(
+                ],
+                'group_name' => [
                     'title' => $this->l('Group name'),
                     'align' => 'center',
-                ),
-                'active' => array(
+                ],
+                'active' => [
                     'title' => $this->l('Status'),
                     'active' => 'status',
                     'type' => 'bool',
                     'align' => 'center',
-                ),
-                'date_add' => array(
+                ],
+                'date_add' => [
                     'title' => $this->l('Add date'),
                     'type' => 'datetime',
-                    'filter_key' => 'a!date_add'
-                )
-            );
+                    'filter_key' => 'a!date_add',
+                ],
+            ];
         } else {
             $this->errors[] = $this->l('You do not have access right to view this page.');
         }
 
-        $this->bulk_actions = array(
-            'delete' => array(
+        $this->bulk_actions = [
+            'delete' => [
                 'text' => $this->l('Delete selected'),
                 'icon' => 'icon-trash',
                 'confirm' => $this->l('Delete selected items?'),
-            ),
-        );
+            ],
+        ];
     }
 
     public function initContent()
     {
         if (($this->display == 'edit') && (Shop::getContext() == Shop::CONTEXT_SHOP)) {
             if (!$this->loadObject(true)) {
-                Tools::redirectAdmin(self::$currentIndex.'&token='.$this->token);
+                Tools::redirectAdmin(self::$currentIndex . '&token=' . $this->token);
             }
         }
+
         return parent::initContent();
     }
 
@@ -95,10 +102,10 @@ class AdminGroupManagementController extends ModuleAdminController
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
             parent::initToolbar();
-            $this->page_header_toolbar_btn['new'] = array(
-                'href' => self::$currentIndex.'&add'.$this->table.'&token='.$this->token,
+            $this->page_header_toolbar_btn['new'] = [
+                'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
                 'desc' => $this->l('Add new group'),
-            );
+            ];
         }
     }
 
@@ -106,18 +113,18 @@ class AdminGroupManagementController extends ModuleAdminController
     {
         if (($this->display == 'edit') && (Shop::getContext() != Shop::CONTEXT_SHOP)) {
             return $this->context->smarty->fetch(
-                _PS_MODULE_DIR_.$this->module->name.'/views/templates/admin/_partials/shop_warning.tpl'
+                _PS_MODULE_DIR_ . $this->module->name . '/views/templates/admin/_partials/shop_warning.tpl'
             );
         } else {
             $objHdEmployee = new WkHdTicketAgent();
             if ($objHdEmployee->validateEmployee($this->context->employee)) {
                 $objTicketAgent = new WkHdTicketAgent();
                 $allAgents = $objTicketAgent->getAllAgent();
-                $smartyVars = array(
+                $smartyVars = [
                     'languages' => Language::getLanguages(),
                     'total_languages' => count(Language::getLanguages()),
-                    'current_lang' => Language::getLanguage((int) $this->context->language->id)
-                );
+                    'current_lang' => Language::getLanguage((int) $this->context->language->id),
+                ];
 
                 // get all ticket agents
                 if ($allAgents) {
@@ -145,7 +152,7 @@ class AdminGroupManagementController extends ModuleAdminController
                             }
                         }
 
-                        //get group and agent mapping information
+                        // get group and agent mapping information
                         $groupAgentMapping = $objGroupAgentMapping->getInfoByIdGroup($idGroup);
                         if ($idGroup) {
                             if ($groupAgentMapping) {
@@ -158,17 +165,17 @@ class AdminGroupManagementController extends ModuleAdminController
                 }
 
                 $this->context->smarty->assign($smartyVars);
-                $this->fields_form = array(
-                    'submit' => array(
+                $this->fields_form = [
+                    'submit' => [
                         'title' => $this->l('Save'),
-                    ),
-                );
-
-                return parent::renderForm();
+                    ],
+                ];
             } else {
                 $this->errors[] = $this->l('You do not have access right to view this page.');
             }
         }
+
+        return parent::renderForm();
     }
 
     public function renderView()
@@ -186,10 +193,10 @@ class AdminGroupManagementController extends ModuleAdminController
                     $mappedGroupAgent = $objGroupAgentMapping->getMappedAgentInfoByIdGroup($idGroup);
 
                     $this->context->smarty->assign(
-                        array(
+                        [
                             'groupInfo' => $groupInfo,
                             'mappedGroupAgent' => $mappedGroupAgent,
-                        )
+                        ]
                     );
                 } else {
                     $this->errors[] = $this->l('Group information not found.');
@@ -197,11 +204,11 @@ class AdminGroupManagementController extends ModuleAdminController
             } else {
                 $this->errors[] = $this->l('Group information not found.');
             }
-
-            return parent::renderView();
         } else {
             $this->errors[] = $this->l('You do not have access right to view this page.');
         }
+
+        return parent::renderView();
     }
 
     public function processSave()
@@ -209,35 +216,31 @@ class AdminGroupManagementController extends ModuleAdminController
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
             $groupNameError = 0;
-            $idGroup = Tools::getValue('id'); //if edit
+            $idGroup = Tools::getValue('id'); // if edit
             $languages = Language::getLanguages();
             $selectedGroupAgent = Tools::getValue('groupAgent');
             $defaultIdLang = $this->context->language->id;
 
-            //validate group name
-            if (trim(Tools::getValue('group_name_'.$defaultIdLang))) {
+            // validate group name
+            if (trim(Tools::getValue('group_name_' . $defaultIdLang))) {
                 foreach ($languages as $language) {
-                    if (!Validate::isCatalogName(Tools::getValue('group_name_'.$language['id_lang']))) {
+                    if (!Validate::isCatalogName(Tools::getValue('group_name_' . $language['id_lang']))) {
                         $groupNameError = 1;
                     }
-                    if (Tools::strlen(Tools::getValue('group_name_'.$language['id_lang'])) > 128) {
+                    if (Tools::strlen(Tools::getValue('group_name_' . $language['id_lang'])) > 128) {
                         $groupNameError = 2;
                     }
                 }
             } else {
                 $defaultLang = Language::getLanguage((int) $defaultIdLang);
-                $this->errors[] = $this->l('Group name is required ').$defaultLang['name'];
+                $this->errors[] = $this->l('Group name is required ') . $defaultLang['name'];
             }
 
             if ($groupNameError == 1) {
-                $this->errors[] = $this->l(
-                    'Group name must not have Invalid characters like '
-                ).' <>;=#{}';
+                $this->errors[] = $this->l('Group name must not have Invalid characters like') . ' <>;=#{}';
             }
             if ($groupNameError == 2) {
-                $this->errors[] = $this->l(
-                    'Maximum query type length allowed is 128 characters.'
-                );
+                $this->errors[] = $this->l('Maximum query type length allowed is 128 characters.');
             }
 
             if (empty($selectedGroupAgent)) {
@@ -245,7 +248,7 @@ class AdminGroupManagementController extends ModuleAdminController
             }
 
             if (empty($this->errors)) {
-                //if edit then first delete agent mapping
+                // if edit then first delete agent mapping
                 if ($idGroup) {
                     $objGroup = new WkHdGroup((int) $idGroup);
                     $objGroupAgentMapping = new WkHdGroupAgentMapping();
@@ -259,10 +262,10 @@ class AdminGroupManagementController extends ModuleAdminController
 
                 foreach ($languages as $language) {
                     $idLang = $language['id_lang'];
-                    if (!Tools::getValue('group_name_'.$idLang)) {
+                    if (!Tools::getValue('group_name_' . $idLang)) {
                         $idLang = $defaultIdLang;
                     }
-                    $objGroup->group_name[$language['id_lang']] = pSQL(Tools::getValue('group_name_'.$idLang));
+                    $objGroup->group_name[$language['id_lang']] = pSQL(Tools::getValue('group_name_' . $idLang));
                 }
                 $objGroup->save();
                 $addedIdGroup = $objGroup->id;
@@ -277,23 +280,23 @@ class AdminGroupManagementController extends ModuleAdminController
                     }
                 }
 
-                if (Tools::isSubmit('submitAdd'.$this->table.'AndStay')) {
+                if (Tools::isSubmit('submitAdd' . $this->table . 'AndStay')) {
                     if ($idGroup) {
                         Tools::redirectAdmin(
-                            self::$currentIndex.'&id='.(int) $addedIdGroup.'&update'.
-                            $this->table.'&conf=4&token='.$this->token
+                            self::$currentIndex . '&id=' . (int) $addedIdGroup . '&update' .
+                            $this->table . '&conf=4&token=' . $this->token
                         );
                     } else {
                         Tools::redirectAdmin(
-                            self::$currentIndex.'&id='.(int) $addedIdGroup.'&update'.
-                            $this->table.'&conf=3&token='.$this->token
+                            self::$currentIndex . '&id=' . (int) $addedIdGroup . '&update' .
+                            $this->table . '&conf=3&token=' . $this->token
                         );
                     }
                 } else {
                     if ($idGroup) {
-                        Tools::redirectAdmin(self::$currentIndex.'&conf=4&token='.$this->token);
+                        Tools::redirectAdmin(self::$currentIndex . '&conf=4&token=' . $this->token);
                     } else {
-                        Tools::redirectAdmin(self::$currentIndex.'&conf=3&token='.$this->token);
+                        Tools::redirectAdmin(self::$currentIndex . '&conf=3&token=' . $this->token);
                     }
                 }
             } else {

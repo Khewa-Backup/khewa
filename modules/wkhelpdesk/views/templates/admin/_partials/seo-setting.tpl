@@ -42,7 +42,7 @@
                     <span title="" data-html="true" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='New ticket page URL' mod='wkhelpdesk'}">{l s='New ticket' mod='wkhelpdesk'}</span>
                 </label>
                 <div class="col-lg-2">
-                    <input type="text" class="form-control" name="newTicketUrl" {if isset($smarty.post.newTicketUrl)} value="{$smarty.post.newTicketUrl}" {else} value="{$newTicketUrl}" {/if}/>
+                    <input type="text" class="form-control" name="newTicketUrl" {if isset($smarty.post.newTicketUrl)} value="{$smarty.post.newTicketUrl|escape:'html':'UTF-8'}" {else} value="{$newTicketUrl|escape:'html':'UTF-8'}" {/if}/>
                 </div>
             </div>
             <div class="form-group row url_rewriting_div">
@@ -50,11 +50,11 @@
                     <span title="" data-html="true" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='View(Reply) ticket page URL' mod='wkhelpdesk'}">{l s='View(Reply) ticket' mod='wkhelpdesk'}</span>
                 </label>
                 <div class="col-lg-2">
-                    <input type="text" class="form-control" name="viewTicketUrl" {if isset($smarty.post.viewTicketUrl)} value="{$smarty.post.viewTicketUrl}" {else} value="{$viewTicketUrl}" {/if}/>
+                    <input type="text" class="form-control" name="viewTicketUrl" {if isset($smarty.post.viewTicketUrl)} value="{$smarty.post.viewTicketUrl|escape:'html':'UTF-8'}" {else} value="{$viewTicketUrl|escape:'html':'UTF-8'}" {/if}/>
                 </div>
             </div>
             <div class="panel-footer">
-				<a href="{$moduleLink}" class="btn btn-default"><i class="process-icon-cancel"></i>{l s='Cancel' mod='wkhelpdesk'}</a>
+				<a href="{$moduleLink|escape:'html':'UTF-8'}" class="btn btn-default"><i class="process-icon-cancel"></i>{l s='Cancel' mod='wkhelpdesk'}</a>
 				<button class="btn btn-default pull-right" name="submitSeo" id="submitSeo" value="1" type="submit"><i class="process-icon-save"></i>{l s='Save' mod='wkhelpdesk'}</button>
 			</div>
         </div>

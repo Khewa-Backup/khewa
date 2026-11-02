@@ -1,6 +1,10 @@
 <?php
+
 namespace WkHelpDesk\Grid\Column;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 use PrestaShop\PrestaShop\Core\Grid\Column\AbstractColumn;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,7 +26,7 @@ final class HtmlTypeColumn extends AbstractColumn
         $resolver
             ->setRequired([
                 'ModuleClass',
-                'custom_text'
+                'custom_text',
             ])
             ->setAllowedTypes('ModuleClass', 'object')
             ->setAllowedTypes('custom_text', 'string');

@@ -17,6 +17,10 @@
 * @copyright Since 2010 Webkul
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 */
+// Khewa PS 9.2: guard from wkhelpdesk 5.0.2 (this file keeps Khewa changes, so it was merged by hand).
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class WkHdCustomer extends ObjectModel
 {

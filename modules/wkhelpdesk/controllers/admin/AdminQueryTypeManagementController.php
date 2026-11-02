@@ -1,25 +1,31 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your
-* needs please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+require_once dirname(__FILE__) . '/../../classes/WkHdAdminTranslationTrait.php'; // Khewa PS 9.2
 
 class AdminQueryTypeManagementController extends ModuleAdminController
 {
+    use WkHdAdminTranslationTrait; // Khewa PS 9.2: admin l() was removed in PS 9
+
     public function __construct()
     {
         $this->context = Context::getContext();
@@ -33,72 +39,71 @@ class AdminQueryTypeManagementController extends ModuleAdminController
         parent::__construct();
         $this->toolbar_title = $this->l('Query types');
         if (Shop::getContext() == Shop::CONTEXT_SHOP) {
-            Shop::addTableAssociation('wk_hd_query_type', array('type' => 'shop', 'primary' => 'id'));
+            Shop::addTableAssociation('wk_hd_query_type', ['type' => 'shop', 'primary' => 'id']);
         }
         $this->_join .= WkHdGroup::addSqlAssociationCustom('wk_hd_query_type', 'a', false);
-        $this->_where .= ' AND b.`id_shop`='.min(Shop::getContextListShopID());
+        $this->_where .= ' AND b.`id_shop`=' . min(Shop::getContextListShopID());
         $this->_group = ' GROUP BY a.id';
         $this->_select = 'b.`query_name`';
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
-            $this->fields_list = array(
-                'id' => array(
+            $this->fields_list = [
+                'id' => [
                     'title' => $this->l('ID'),
                     'align' => 'center',
                     'class' => 'fixed-width-xs',
-                ),
-                'query_name' => array(
+                ],
+                'query_name' => [
                     'title' => $this->l('Query type'),
                     'align' => 'center',
-                    'hint' => $this->l(
-                        'This will be displayed in front office when any customer will create new ticket.'
-                    ),
-                ),
-                'active' => array(
+                    'hint' => $this->l('This will be displayed in front office when any customer will create new ticket.'),
+                ],
+                'active' => [
                     'title' => $this->l('Status'),
                     'active' => 'status',
                     'type' => 'bool',
                     'orderby' => false,
                     'align' => 'center',
-                ),
-                'date_add' => array(
+                ],
+                'date_add' => [
                     'title' => $this->l('Add date'),
                     'type' => 'datetime',
                     'callback' => 'getFormatedDate',
-                    'filter_key' => 'a!date_add'
-                ),
-                'date_upd' => array(
+                    'filter_key' => 'a!date_add',
+                ],
+                'date_upd' => [
                     'title' => $this->l('Update date'),
                     'type' => 'datetime',
                     'callback' => 'getFormatedDate',
-                    'filter_key' => 'a!date_upd'
-                )
-            );
+                    'filter_key' => 'a!date_upd',
+                ],
+            ];
         } else {
             $this->errors[] = $this->l('You do not have access right to view this page.');
         }
 
-        $this->bulk_actions = array(
-            'delete' => array(
+        $this->bulk_actions = [
+            'delete' => [
                 'text' => $this->l('Delete selected'),
                 'icon' => 'icon-trash',
                 'confirm' => $this->l('Delete selected items?'),
-            ),
-        );
+            ],
+        ];
     }
 
     public function getFormatedDate($val, $data)
     {
-        return date("d-m-Y H:i:s", strtotime($val));
+        return date('d-m-Y H:i:s', strtotime($val));
     }
 
     public function initContent()
     {
         if (($this->display == 'edit') && (Shop::getContext() == Shop::CONTEXT_SHOP)) {
             if (!$this->loadObject(true)) {
-                Tools::redirectAdmin(self::$currentIndex.'&token='.$this->token);
+                Tools::redirectAdmin(self::$currentIndex . '&token=' . $this->token);
             }
         }
+
         return parent::initContent();
     }
 
@@ -107,10 +112,10 @@ class AdminQueryTypeManagementController extends ModuleAdminController
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
             parent::initToolbar();
-            $this->page_header_toolbar_btn['new'] = array(
-                'href' => self::$currentIndex.'&add'.$this->table.'&token='.$this->token,
+            $this->page_header_toolbar_btn['new'] = [
+                'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
                 'desc' => $this->l('Add new query type'),
-            );
+            ];
         }
     }
 
@@ -118,7 +123,7 @@ class AdminQueryTypeManagementController extends ModuleAdminController
     {
         if (($this->display == 'edit') && (Shop::getContext() != Shop::CONTEXT_SHOP)) {
             return $this->context->smarty->fetch(
-                _PS_MODULE_DIR_.$this->module->name.'/views/templates/admin/_partials/shop_warning.tpl'
+                _PS_MODULE_DIR_ . $this->module->name . '/views/templates/admin/_partials/shop_warning.tpl'
             );
         } else {
             $objHdEmployee = new WkHdTicketAgent();
@@ -128,11 +133,11 @@ class AdminQueryTypeManagementController extends ModuleAdminController
 
                 // get all group information by language id
                 $allGroup = $objGroup->getAllGroupInfoByIdLang($this->context->language->id);
-                $smartyVar = array(
+                $smartyVar = [
                     'languages' => Language::getLanguages(),
                     'total_languages' => count(Language::getLanguages()),
                     'current_lang' => Language::getLanguage((int) $curr_lang),
-                );
+                ];
 
                 // get all group
                 if ($allGroup) {
@@ -159,7 +164,7 @@ class AdminQueryTypeManagementController extends ModuleAdminController
 
                     $objGroupQueryMapping = new WkHdGroupQueryTypeMapping();
 
-                    //get mapped group information
+                    // get mapped group information
                     $groupQueryMapping = $objGroupQueryMapping->getInfoByIdQueryType($id);
                     if ($groupQueryMapping) {
                         $smartyVar['groupQueryMapping'] = $groupQueryMapping;
@@ -167,17 +172,17 @@ class AdminQueryTypeManagementController extends ModuleAdminController
                 }
 
                 $this->context->smarty->assign($smartyVar);
-                $this->fields_form = array(
-                    'submit' => array(
+                $this->fields_form = [
+                    'submit' => [
                         'title' => $this->l('Save'),
-                    ),
-                );
-
-                return parent::renderForm();
+                    ],
+                ];
             } else {
                 $this->errors[] = $this->l('You do not have access right to view this page.');
             }
         }
+
+        return parent::renderForm();
     }
 
     public function processSave()
@@ -185,34 +190,30 @@ class AdminQueryTypeManagementController extends ModuleAdminController
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
             $queryNameError = 0;
-            $id = Tools::getValue('id');//if edit
+            $id = Tools::getValue('id'); // if edit
             $languages = Language::getLanguages();
             $selectedIdGroup = Tools::getValue('idGroup');
             $defaultIdLang = $this->context->language->id;
             //  query type validation
-            if (trim(Tools::getValue('query_name_'.$defaultIdLang))) {
+            if (trim(Tools::getValue('query_name_' . $defaultIdLang))) {
                 foreach ($languages as $language) {
-                    if (!Validate::isCatalogName(Tools::getValue('query_name_'.$language['id_lang']))) {
+                    if (!Validate::isCatalogName(Tools::getValue('query_name_' . $language['id_lang']))) {
                         $queryNameError = 1;
                     }
-                    if (Tools::strlen(Tools::getValue('query_name_'.$language['id_lang'])) > 128) {
+                    if (Tools::strlen(Tools::getValue('query_name_' . $language['id_lang'])) > 128) {
                         $queryNameError = 2;
                     }
                 }
             } else {
                 $default_lang = Language::getLanguage($defaultIdLang);
-                $this->errors[] = $this->l('Query type is required ').$default_lang['name'];
+                $this->errors[] = $this->l('Query type is required ') . $default_lang['name'];
             }
 
             if ($queryNameError == 1) {
-                $this->errors[] = $this->l(
-                    'Query Type must not have invalid characters'
-                ).' <>;=#{}';
+                $this->errors[] = $this->l('Query Type must not have invalid characters') . ' <>;=#{}';
             }
             if ($queryNameError == 2) {
-                $this->errors[] = $this->l(
-                    'Maximum query type length allowed is 128 characters.'
-                );
+                $this->errors[] = $this->l('Maximum query type length allowed is 128 characters.');
             }
 
             if (empty($selectedIdGroup)) {
@@ -239,10 +240,10 @@ class AdminQueryTypeManagementController extends ModuleAdminController
 
                 foreach ($languages as $language) {
                     $lang_id = $language['id_lang'];
-                    if (!Tools::getValue('query_name_'.$lang_id)) {
+                    if (!Tools::getValue('query_name_' . $lang_id)) {
                         $lang_id = $defaultIdLang;
                     }
-                    $objQueryType->query_name[$language['id_lang']] = pSQL(Tools::getValue('query_name_'.$lang_id));
+                    $objQueryType->query_name[$language['id_lang']] = pSQL(Tools::getValue('query_name_' . $lang_id));
                 }
                 $objQueryType->save();
                 $savedIdQuery = $objQueryType->id;
@@ -257,23 +258,23 @@ class AdminQueryTypeManagementController extends ModuleAdminController
                     }
                 }
 
-                if (Tools::isSubmit('submitAdd'.$this->table.'AndStay')) {
+                if (Tools::isSubmit('submitAdd' . $this->table . 'AndStay')) {
                     if ($id) {
                         Tools::redirectAdmin(
-                            self::$currentIndex.'&id='.(int) $savedIdQuery.'&update'.$this->table.
-                            '&conf=4&token='.$this->token
+                            self::$currentIndex . '&id=' . (int) $savedIdQuery . '&update' . $this->table .
+                            '&conf=4&token=' . $this->token
                         );
                     } else {
                         Tools::redirectAdmin(
-                            self::$currentIndex.'&id='.(int) $savedIdQuery.'&update'.$this->table.
-                            '&conf=3&token='.$this->token
+                            self::$currentIndex . '&id=' . (int) $savedIdQuery . '&update' . $this->table .
+                            '&conf=3&token=' . $this->token
                         );
                     }
                 } else {
                     if ($id) {
-                        Tools::redirectAdmin(self::$currentIndex.'&conf=3&token='.$this->token);
+                        Tools::redirectAdmin(self::$currentIndex . '&conf=3&token=' . $this->token);
                     } else {
-                        Tools::redirectAdmin(self::$currentIndex.'&conf=4&token='.$this->token);
+                        Tools::redirectAdmin(self::$currentIndex . '&conf=4&token=' . $this->token);
                     }
                 }
             } else {
@@ -299,17 +300,13 @@ class AdminQueryTypeManagementController extends ModuleAdminController
                     // check is any ticket created for this query type
                     $isTicketsAvailable = $objTicket->getTicketsByIdQueryType($id);
                     if ($isTicketsAvailable) {
-                        $this->errors[] = $this->l(
-                            'You can not delete this query type because customer(s) are created ticket for this query type.'
-                        );
+                        $this->errors[] = $this->l('You can not delete this query type because customer(s) are created ticket for this query type.');
                     } else {
                         // all query type can not deleted
                         $allQueryType = $objQueryType->getAllQueryType(false, true);
                         if (count($allQueryType) == 1) {
                             if ($allQueryType[0]['id'] == $id) {
-                                $this->errors[] = $this->l(
-                                    'You can not delete this query type because at least one active query type required.'
-                                );
+                                $this->errors[] = $this->l('You can not delete this query type because at least one active query type required.');
                             }
                         }
                     }
@@ -321,9 +318,7 @@ class AdminQueryTypeManagementController extends ModuleAdminController
                     if (count($allQueryType) == 1) {
                         // all query type must not disabled
                         if ($allQueryType[0]['id'] == $id) {
-                            $this->errors[] = $this->l(
-                                'You can not disable this query type because at least one query type must enable.'
-                            );
+                            $this->errors[] = $this->l('You can not disable this query type because at least one query type must enable.');
                         }
                     }
                 }
@@ -341,7 +336,7 @@ class AdminQueryTypeManagementController extends ModuleAdminController
     {
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
-            $toDelete = array();
+            $toDelete = [];
             if (is_array($this->boxes) && !empty($this->boxes)) {
                 $objTicket = new WkHdTicket();
                 $count = 0;
@@ -350,25 +345,21 @@ class AdminQueryTypeManagementController extends ModuleAdminController
                         // check is any ticket created for this query type
                         $isTicketsAvailable = $objTicket->getTicketsByIdQueryType($id);
                         if ($isTicketsAvailable) {
-                            $this->errors[] = $this->l(
-                                'You can not delete this query type because customer(s) are created ticket for this query type.'
-                            );
+                            $this->errors[] = $this->l('You can not delete this query type because customer(s) are created ticket for this query type.');
                         } else {
                             // all query type can not deleted
                             $objQueryType = new WkHdQueryType();
                             $allQueryType = $objQueryType->getAllQueryType(false, true);
                             if (count($allQueryType) == 1) {
                                 if ($allQueryType[0]['id'] == $id) {
-                                    $this->errors[] = $this->l(
-                                        'You can not delete all query type because at least one query active type required.'
-                                    );
+                                    $this->errors[] = $this->l('You can not delete all query type because at least one query active type required.');
                                 } else {
                                     $toDelete[$count] = $id;
-                                    $count++;
+                                    ++$count;
                                 }
                             } else {
                                 $toDelete[$count] = $id;
-                                $count++;
+                                ++$count;
                             }
                         }
                     }
@@ -389,17 +380,17 @@ class AdminQueryTypeManagementController extends ModuleAdminController
                     }
                 }
             } elseif (empty($this->boxes)) {
-                $this->errors[] = $this->l(
-                    'You must select at least one element to delete.'
-                );
+                $this->errors[] = $this->l('You must select at least one element to delete.');
             }
 
             if (empty($this->errors)) {
-                Tools::redirectAdmin(self::$currentIndex.'&conf=2&token='.$this->token);
+                Tools::redirectAdmin(self::$currentIndex . '&conf=2&token=' . $this->token);
             }
         } else {
             $this->errors[] = $this->l('You do not have access right to view this page.');
         }
+
+        return true;
     }
 
     protected function processBulkDisableSelection()
@@ -415,16 +406,14 @@ class AdminQueryTypeManagementController extends ModuleAdminController
                         if (count($allQueryType) == 1) {
                             // all query type must not disabled
                             if ($allQueryType[0]['id'] == $id) {
-                                $this->errors[] = $this->l(
-                                    'You can not disable all query type because at least one query type must enable.'
-                                );
+                                $this->errors[] = $this->l('You can not disable all query type because at least one query type must enable.');
                             } else {
-                                $object = new WkHdQueryType((int)$id);
+                                $object = new WkHdQueryType((int) $id);
                                 $object->active = (int) 0;
                                 $object->update();
                             }
                         } else {
-                            $object = new WkHdQueryType((int)$id);
+                            $object = new WkHdQueryType((int) $id);
                             $object->active = (int) 0;
                             $object->update();
                         }
@@ -433,10 +422,12 @@ class AdminQueryTypeManagementController extends ModuleAdminController
             }
 
             if (empty($this->errors)) {
-                Tools::redirectAdmin(self::$currentIndex.'&conf=5&token='.$this->token);
+                Tools::redirectAdmin(self::$currentIndex . '&conf=5&token=' . $this->token);
             }
         } else {
             $this->errors[] = $this->l('You do not have access right to view this page.');
         }
+
+        return true;
     }
 }

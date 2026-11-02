@@ -25,8 +25,8 @@
 	</div>
 {/if}
 
-<div class="page-title" style="background-color:{$hd_bg_color};">
-	<span class="bottom-indent" style="color:{$hd_text_color};">
+<div class="page-title" style="background-color:{$hd_bg_color|escape:'html':'UTF-8'};">
+	<span class="bottom-indent" style="color:{$hd_text_color|escape:'html':'UTF-8'};">
 		{l s='Ticket List' mod='wkhelpdesk'}
 	</span>
 </div>
@@ -50,24 +50,24 @@
 						{assign var="ticketUrl" value="{url entity='module' name='wkhelpdesk' controller='viewticket' params=['id' => $ticket.id]}"}
 						<tr>
 							<td>
-								{$ticket.id}
+								{$ticket.id|escape:'html':'UTF-8'}
 							</td>
 							<td>
-								{$ticket.query_name}
+								{$ticket.query_name|escape:'html':'UTF-8'}
 							</td>
 							<td>
-								<a href="{$ticketUrl}">
-									{$ticket.subject}
+								<a href="{$ticketUrl|escape:'html':'UTF-8'}">
+									{$ticket.subject|escape:'html':'UTF-8'}
 								</a>
 							</td>
 							<td>
-                                <span class="wk_hd_ticket_status" style="background:{if $ticket.id_status <= 6 }{$statusColors[($ticket.id_status - 1)]}{else}deepskyblue{/if}">
-									{$ticket.status}
+                                <span class="wk_hd_ticket_status" style="background:{if $ticket.id_status <= 6 }{$statusColors[($ticket.id_status - 1)]|escape:'html':'UTF-8'}{else}deepskyblue{/if}">
+									{$ticket.status|escape:'html':'UTF-8'}
 								</span>
 							</td>
 							<td>{dateFormat date=$ticket.date_add full=1}</td>
 							<td class="wk_hd_ticket_view_btn">
-								<a href="{$ticketUrl}" class="btn btn-primary" title="{l s='Preview' mod='wkhelpdesk'}">
+								<a href="{$ticketUrl|escape:'html':'UTF-8'}" class="btn btn-primary" title="{l s='Preview' mod='wkhelpdesk'}">
 									<span class="view_ticket"><i class="fa fa-eye"></i></span>
 								</a>
 							</td>

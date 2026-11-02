@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{directlabelprintproduct}prestashop>directlabelprintproduct_30dcbd35acb9e1031064b20b3ef131bb'] = 'Direct Label Print - Édition de produit ou de code-barres';
 $_MODULE['<{directlabelprintproduct}prestashop>directlabelprintproduct_068337d0424beca0654c45ee7296d8bf'] = 'Ajoute à la liste des produits un bouton d\'impression d\'étiquettes comportant noms et codes-barres. Conçu pour les imprimantes d\'étiquettes.';
 $_MODULE['<{directlabelprintproduct}prestashop>directlabelprintproduct_01259e7dd4189745df1e9f8ebed8b581'] = 'L\'étiquette a bien été mise à jour.';

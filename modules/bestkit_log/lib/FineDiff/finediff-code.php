@@ -27,11 +27,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
+ * @author Raymond Hill
  * @copyright Copyright 2011 (c) Raymond Hill (http://raymondhill.net/blog/?p=441)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @link http://www.raymondhill.net/finediff/
  * @version 0.6
- * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Usage (simplest):
@@ -82,6 +87,8 @@ abstract class FineDiffOp {
 }
 
 class FineDiffDeleteOp extends FineDiffOp {
+    private $fromLen;
+
     public function __construct($len) {
         $this->fromLen = $len;
     }
@@ -100,6 +107,8 @@ class FineDiffDeleteOp extends FineDiffOp {
 }
 
 class FineDiffInsertOp extends FineDiffOp {
+    private $text;
+
     public function __construct($text) {
         $this->text = $text;
     }
@@ -122,6 +131,9 @@ class FineDiffInsertOp extends FineDiffOp {
 }
 
 class FineDiffReplaceOp extends FineDiffOp {
+    private $fromLen;
+    private $text;
+
     public function __construct($fromLen, $text) {
         $this->fromLen = $fromLen;
         $this->text = $text;
@@ -151,6 +163,8 @@ class FineDiffReplaceOp extends FineDiffOp {
 }
 
 class FineDiffCopyOp extends FineDiffOp {
+    private $len;
+
     public function __construct($len) {
         $this->len = $len;
     }
@@ -179,13 +193,13 @@ class FineDiffCopyOp extends FineDiffOp {
 class FineDiffOps {
     public function appendOpcode($opcode, $from, $from_offset, $from_len) {
         if ( $opcode === 'c' ) {
-            $edits[] = new FineDiffCopyOp($from_len);
+            $this->edits[] = new FineDiffCopyOp($from_len);
         }
         else if ( $opcode === 'd' ) {
-            $edits[] = new FineDiffDeleteOp($from_len);
+            $this->edits[] = new FineDiffDeleteOp($from_len);
         }
         else /* if ( $opcode === 'i' ) */ {
-            $edits[] = new FineDiffInsertOp(substr($from, $from_offset, $from_len));
+            $this->edits[] = new FineDiffInsertOp(substr($from, $from_offset, $from_len));
         }
     }
     public $edits = array();
@@ -198,6 +212,13 @@ class FineDiffOps {
  *
  */
 class FineDiff {
+
+    private $granularityStack = array();
+    private $edits = array();
+    private $from_text = '';
+    private $last_edit = false;
+    private $stackpointer = 0;
+    private $from_offset = 0;
 
     /**------------------------------------------------------------------------
      *
@@ -364,7 +385,7 @@ class FineDiff {
                 while ( $end < $from_len && (ord($from[$end]) & 0xC0) === 0x80 ) { $end++; }
                 if ( $opcode === 'c' ) { // copy n characters from source
                     call_user_func($callback, 'c', $from, $beg, $end - $beg, '');
-                    $last_to_chars = substr($from, $from, $beg, $end - $beg);
+                    $last_to_chars = substr($from, $beg, $end - $beg);
                 }
                 else /* if ( $opcode === 'd' ) */ { // delete n characters from source
                     call_user_func($callback, 'd', $from, $beg, $end - $beg, '');

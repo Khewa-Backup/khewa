@@ -16,12 +16,12 @@
 * @copyright Since 2010 Webkul
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 *}
-<form method="post" action="{$current}&{if !empty($submit_action)}{$submit_action}{/if}&token={$token}" class="defaultForm form-horizontal {$name_controller}" enctype="multipart/form-data" id="groupForm">
+<form method="post" action="{$current|escape:'html':'UTF-8'}&{if !empty($submit_action)}{$submit_action|escape:'html':'UTF-8'}{/if}&token={$token|escape:'html':'UTF-8'}" class="defaultForm form-horizontal {$name_controller|escape:'html':'UTF-8'}" enctype="multipart/form-data" id="groupForm">
 	<div class="panel">
 		<div class="panel-heading">
 			{if isset($groupInfo)}
 			<i class="icon-pencil"></i>
-			{l s='Edit group' mod='wkhelpdesk'} {$groupInfo['group_name'][{$current_lang.id_lang}]}
+			{l s='Edit group' mod='wkhelpdesk'} {$groupInfo['group_name'][{$current_lang.id_lang|escape:'html':'UTF-8'}]|escape:'html':'UTF-8'}
 			{else}
 			<i class="icon-user"></i>
 			{l s='Add new group' mod='wkhelpdesk'}
@@ -39,27 +39,27 @@
 				<div class="col-lg-6">
 				{/if}
 					{if isset($groupInfo)}
-						<input type="hidden" value="{$groupInfo.id}" name="id" />
+						<input type="hidden" value="{$groupInfo.id|escape:'html':'UTF-8'}" name="id" />
 						{foreach from=$languages item=language}
 							{assign var="group_name" value="group_name_`$language.id_lang`"}
 							<input type="text"
-							id="group_name_{$language.id_lang}"
-							name="group_name_{$language.id_lang}"
-							value="{$groupInfo['group_name'][{$language.id_lang}]}"
+							id="group_name_{$language.id_lang|escape:'html':'UTF-8'}"
+							name="group_name_{$language.id_lang|escape:'html':'UTF-8'}"
+							value="{$groupInfo['group_name'][{$language.id_lang|escape:'html':'UTF-8'}]|escape:'html':'UTF-8'}"
 							class="form-control group_name_all"
-							data-lang-name="{$language.name}"
+							data-lang-name="{$language.name|escape:'html':'UTF-8'}"
 							{if $current_lang.id_lang != $language.id_lang}style="display:none;"{/if} maxlength="128"/>
 						{/foreach}
 					{else}
 						{foreach from=$languages item=language}
 							{assign var="group_name" value="group_name_`$language.id_lang`"}
 							<input type="text"
-							id="group_name_{$language.id_lang}"
-							name="group_name_{$language.id_lang}"
-							value="{if isset($smarty.post.$group_name)}{$smarty.post.$group_name}{/if}"
+							id="group_name_{$language.id_lang|escape:'html':'UTF-8'}"
+							name="group_name_{$language.id_lang|escape:'html':'UTF-8'}"
+							value="{if isset($smarty.post.$group_name)}{$smarty.post.$group_name|escape:'html':'UTF-8'}{/if}"
 							class="form-control group_name_all
-							{if $current_lang.id_lang == $language.id_lang}group_default_lang_class{/if}"
-							data-lang-name="{$language.name}"
+							{if $current_lang.id_lang == $language.id_lang|escape:'html':'UTF-8'}group_default_lang_class{/if}"
+							data-lang-name="{$language.name|escape:'html':'UTF-8'}"
 							{if $current_lang.id_lang != $language.id_lang}style="display:none;"{/if} maxlength="128"/>
 						{/foreach}
 					{/if}
@@ -67,13 +67,13 @@
 				{if $total_languages > 1}
 				<div class="col-lg-2">
 					<button type="button" id="group_lang_btn" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-						{$current_lang.iso_code}
+						{$current_lang.iso_code|escape:'html':'UTF-8'}
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu">
 						{foreach from=$languages item=language}
 							<li>
-								<a href="javascript:void(0)" onclick="showGroupLangField('{$language.iso_code}', {$language.id_lang});">{$language.name}</a>
+								<a href="javascript:void(0)" onclick="showGroupLangField('{$language.iso_code|escape:'html':'UTF-8'}', {$language.id_lang|escape:'html':'UTF-8'});">{$language.name|escape:'html':'UTF-8'}</a>
 							</li>
 						{/foreach}
 					</ul>
@@ -94,7 +94,7 @@
 							{foreach $allAgents as $agent}
 								<tr>
 									<td>
-										<input type="checkbox" value="{$agent.id}" class="access_right_box" name="groupAgent[]"
+										<input type="checkbox" value="{$agent.id|escape:'html':'UTF-8'}" class="access_right_box" name="groupAgent[]"
 										{if isset($groupAgentMapping)}
 											{foreach $groupAgentMapping as $groupAgent}
 												{if $groupAgent.id_agent == $agent.id} checked="checked" {/if}
@@ -103,7 +103,7 @@
 										/>
 									</td>
 									<td>
-										{$agent.name}({$agent.email})
+										{$agent.name|escape:'html':'UTF-8'}({$agent.email|escape:'html':'UTF-8'})
 									</td>
 								</tr>
 							{/foreach}
@@ -113,13 +113,13 @@
 			</div>
 			</div>
 			<div class="panel-footer">
-				<a href="{$link->getAdminLink('AdminGroupManagement')}" class="btn btn-default">
+				<a href="{$link->getAdminLink('AdminGroupManagement')|escape:'html':'UTF-8'}" class="btn btn-default">
 					<i class="process-icon-cancel"></i> {l s='Cancel' mod='wkhelpdesk'}
 				</a>
-				<button type="submit" name="submitAdd{$table}" class="btn btn-default pull-right">
+				<button type="submit" name="submitAdd{$table|escape:'html':'UTF-8'}" class="btn btn-default pull-right">
 					<i class="process-icon-save"></i> {l s='Save' mod='wkhelpdesk'}
 				</button>
-				<button type="submit" name="submitAdd{$table}AndStay" class="btn btn-default pull-right">
+				<button type="submit" name="submitAdd{$table|escape:'html':'UTF-8'}AndStay" class="btn btn-default pull-right">
 					<i class="process-icon-save"></i> {l s='Save and stay' mod='wkhelpdesk'}
 				</button>
 			</div>
@@ -129,7 +129,7 @@
 			</div>
 			</div>
 			<div class="panel-footer">
-				<a href="{$link->getAdminLink('AdminGroupManagement')}" class="btn btn-default"><i class="process-icon-back"></i> {l s='Back to list' mod='wkhelpdesk'}</a>
+				<a href="{$link->getAdminLink('AdminGroupManagement')|escape:'html':'UTF-8'}" class="btn btn-default"><i class="process-icon-back"></i> {l s='Back to list' mod='wkhelpdesk'}</a>
 			</div>
 		{/if}
 	</div>

@@ -16,12 +16,12 @@
 * @copyright Since 2010 Webkul
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 *}
-<form method="post" action="{$current}&{if !empty($submit_action)}{$submit_action}{/if}&token={$token}" class="defaultForm form-horizontal {$name_controller}" enctype="multipart/form-data" id="queryTypeForm">
+<form method="post" action="{$current|escape:'html':'UTF-8'}&{if !empty($submit_action)}{$submit_action|escape:'html':'UTF-8'}{/if}&token={$token|escape:'html':'UTF-8'}" class="defaultForm form-horizontal {$name_controller|escape:'html':'UTF-8'}" enctype="multipart/form-data" id="queryTypeForm">
 	<div class="panel">
 		<div class="panel-heading">
 			{if isset($queryTypeInfo)}
 			<i class="icon-pencil"></i>
-			{l s='Edit query type' mod='wkhelpdesk'} {$queryTypeInfo['query_name'][{$current_lang.id_lang}]}
+			{l s='Edit query type' mod='wkhelpdesk'} {$queryTypeInfo['query_name'][{$current_lang.id_lang|escape:'html':'UTF-8'}]|escape:'html':'UTF-8'}
 			{else}
 			<i class="icon-user"></i>
 			{l s='Add new query type' mod='wkhelpdesk'}
@@ -39,27 +39,27 @@
 				<div class="col-lg-6">
 				{/if}
 				{if isset($queryTypeInfo)}
-					<input type="hidden" value="{$queryTypeInfo.id}" name="id" />
+					<input type="hidden" value="{$queryTypeInfo.id|escape:'html':'UTF-8'}" name="id" />
 					{foreach from=$languages item=language}
 						{assign var="query_name" value="query_name_`$language.id_lang`"}
 						<input type="text"
-						id="query_name_{$language.id_lang}"
-						name="query_name_{$language.id_lang}"
-						value="{$queryTypeInfo['query_name'][{$language.id_lang}]}"
+						id="query_name_{$language.id_lang|escape:'html':'UTF-8'}"
+						name="query_name_{$language.id_lang|escape:'html':'UTF-8'}"
+						value="{$queryTypeInfo['query_name'][{$language.id_lang|escape:'html':'UTF-8'}]|escape:'html':'UTF-8'}"
 						class="form-control query_name_all"
-						data-lang-name="{$language.name}"
+						data-lang-name="{$language.name|escape:'html':'UTF-8'}"
 						{if $current_lang.id_lang != $language.id_lang}style="display:none;"{/if} maxlength="128"/>
 					{/foreach}
 				{else}
 					{foreach from=$languages item=language}
 						{assign var="query_name" value="query_name_`$language.id_lang`"}
 						<input type="text"
-						id="query_name_{$language.id_lang}"
-						name="query_name_{$language.id_lang}"
-						value="{if isset($smarty.post.$query_name)}{$smarty.post.$query_name}{/if}"
+						id="query_name_{$language.id_lang|escape:'html':'UTF-8'}"
+						name="query_name_{$language.id_lang|escape:'html':'UTF-8'}"
+						value="{if isset($smarty.post.$query_name)}{$smarty.post.$query_name|escape:'html':'UTF-8'}{/if}"
 						class="form-control query_name_all
 						{if $current_lang.id_lang == $language.id_lang}query_name_default_lang_class{/if}"
-						data-lang-name="{$language.name}"
+						data-lang-name="{$language.name|escape:'html':'UTF-8'}"
 						{if $current_lang.id_lang != $language.id_lang}style="display:none;"{/if} maxlength="128"/>
 					{/foreach}
 				{/if}
@@ -67,13 +67,13 @@
 				{if $total_languages > 1}
 				<div class="col-lg-2">
 					<button type="button" id="query_name_lang_btn" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-						{$current_lang.iso_code}
+						{$current_lang.iso_code|escape:'html':'UTF-8'}
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu">
 						{foreach from=$languages item=language}
 							<li>
-								<a href="javascript:void(0)" onclick="showQueryLangField('{$language.iso_code}', {$language.id_lang});">{$language.name}</a>
+								<a href="javascript:void(0)" onclick="showQueryLangField('{$language.iso_code|escape:'html':'UTF-8'}', {$language.id_lang|escape:'html':'UTF-8'});">{$language.name|escape:'html':'UTF-8'}</a>
 							</li>
 						{/foreach}
 					</ul>
@@ -88,7 +88,7 @@
 					<div class="col-lg-4 ">
 						<select name="idGroup" id="idGroup">
 							{foreach $allGroup as $group}
-								<option value="{$group.id}" {if isset($groupQueryMapping)} {if $groupQueryMapping.id_group == $group.id} selected="selected" {/if} {/if}>{$group.group_name}</option>
+								<option value="{$group.id|escape:'html':'UTF-8'}" {if isset($groupQueryMapping)} {if $groupQueryMapping.id_group == $group.id} selected="selected" {/if} {/if}>{$group.group_name|escape:'html':'UTF-8'}</option>
 							{/foreach}
 						</select>
 					</div>
@@ -96,13 +96,13 @@
 			{/if}
 		</div>
 		<div class="panel-footer">
-			<a href="{$link->getAdminLink('AdminQueryTypeManagement')}" class="btn btn-default">
+			<a href="{$link->getAdminLink('AdminQueryTypeManagement')|escape:'html':'UTF-8'}" class="btn btn-default">
 				<i class="process-icon-cancel"></i> {l s='Cancel' mod='wkhelpdesk'}
 			</a>
-			<button type="submit" name="submitAdd{$table}" class="btn btn-default pull-right">
+			<button type="submit" name="submitAdd{$table|escape:'html':'UTF-8'}" class="btn btn-default pull-right">
 				<i class="process-icon-save"></i> {l s='Save' mod='wkhelpdesk'}
 			</button>
-			<button type="submit" name="submitAdd{$table}AndStay" class="btn btn-default pull-right">
+			<button type="submit" name="submitAdd{$table|escape:'html':'UTF-8'}AndStay" class="btn btn-default pull-right">
 				<i class="process-icon-save"></i> {l s='Save and stay' mod='wkhelpdesk'}
 			</button>
 		</div>

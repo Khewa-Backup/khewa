@@ -20,7 +20,7 @@
 <div class="row" style="margin-bottom: 20px;">
     <div class="col-xs-1 wk_hd_others_name_div" style="width:60px;">
         <div class="wk_hd_name_initial" style="background:#C8DFFD;">
-            <p class="h4" style="line-height:30px;color:#2483EF;text-align:center;">{$name|substr:0:1}</p>
+            <p class="h4" style="line-height:30px;color:#2483EF;text-align:center;">{$name|escape:'html':'UTF-8'|substr:0:1}</p>
         </div>
     </div>
     <div class="col-xs-8 col-sm-9 wk_hd_msg_div">
@@ -28,7 +28,7 @@
         {if $is_attachment}
             <br />
             {foreach $objTicketAttachment->getAttachmentByIdMsg($ticket_msg.id) as $attachment}
-                <a class="btn btn-default wk-hd-download-attachment" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment.attachment_token, 'id' => $attachment.id])}" target="_blank" title="{$attachment.attachment_name}"><i class="material-icons">&#xE2C4;</i> {l s='Download file' mod='wkhelpdesk'}</a>
+                <a class="btn btn-default wk-hd-download-attachment" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment.attachment_token, 'id' => $attachment.id])|escape:'html':'UTF-8'}" target="_blank" title="{$attachment.attachment_name|escape:'html':'UTF-8'}"><i class="material-icons">&#xE2C4;</i> {l s='Download file' mod='wkhelpdesk'}</a>
             {/foreach}
         {/if}
     </div>
@@ -36,7 +36,7 @@
     <div class="row">
         <div class="col-xs-1" style="width:60px;"></div>
         <div class="col-xs-8 col-sm-9">
-            <span class="wk_hd_datetime_received text-muted" style="display:block;"><i>{$name}</i>, {$ticket_msg.date_add|date_format:"%d-%b-%Y"}, {$ticket_msg.date_add|date_format:"%r"|substr:0:11}</span>
+            <span class="wk_hd_datetime_received text-muted" style="display:block;"><i>{$name|escape:'html':'UTF-8'}</i>, {$ticket_msg.date_add|date_format:"%d-%b-%Y"}, {$ticket_msg.date_add|date_format:"%r"|substr:0:11}</span>
         </div>
     </div>
 </div>

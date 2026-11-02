@@ -17,11 +17,11 @@
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 *}
 
-<img src="{$ajax_loader}" id="ajax_loader_img" style="display: none;position: absolute;top: 20%;left: 50%;z-index: 10000;" />
-<script type="text/javascript" src="{$tinymceJsLink}"></script>
-<script type="text/javascript" src="{$tinymceJsSetupLink}"></script>
+<img src="{$ajax_loader|escape:'html':'UTF-8'}" id="ajax_loader_img" style="display: none;position: absolute;top: 20%;left: 50%;z-index: 10000;" />
+<script type="text/javascript" src="{$tinymceJsLink|escape:'html':'UTF-8'}"></script>
+<script type="text/javascript" src="{$tinymceJsSetupLink|escape:'html':'UTF-8'}"></script>
 
-<form method="post" action="{$current}&{if !empty($submit_action)}{$submit_action}{/if}&token={$token}" class="defaultForm {$name_controller}" enctype="multipart/form-data" id="replyForm">
+<form method="post" action="{$current|escape:'html':'UTF-8'}&{if !empty($submit_action)}{$submit_action|escape:'html':'UTF-8'}{/if}&token={$token|escape:'html':'UTF-8'}" class="defaultForm {$name_controller|escape:'html':'UTF-8'}" enctype="multipart/form-data" id="replyForm">
 {if $add == 1}
 	<div class="panel">
 		<div class="panel-heading">
@@ -33,17 +33,17 @@
 				<div class="clearfix">
 					<div class="form-group col-lg-6">
 						<label for="firstname" class="control-label required">{l s='First name' mod='wkhelpdesk'}</label>
-						<input class="form-control" type="text" name="firstname" id="firstname" {if isset($firstname)} value="{$firstname}" readonly="readonly" {else if isset($smarty.post.firstname)} value="{$smarty.post.firstname}" {/if}/>
+						<input class="form-control" type="text" name="firstname" id="firstname" {if isset($firstname)} value="{$firstname|escape:'html':'UTF-8'}" readonly="readonly" {else if isset($smarty.post.firstname)} value="{$smarty.post.firstname|escape:'html':'UTF-8'}" {/if}/>
 					</div>
 
 					<div class="form-group col-lg-6">
 						<label for="lastname" class="control-label required">{l s='Last name' mod='wkhelpdesk'}</label>
-						<input class="form-control" type="text" name="lastname" id="lastname" {if isset($lastname)} value="{$lastname}" readonly="readonly" {else if isset($smarty.post.lastname)} value="{$smarty.post.lastname}" {/if}/>
+						<input class="form-control" type="text" name="lastname" id="lastname" {if isset($lastname)} value="{$lastname|escape:'html':'UTF-8'}" readonly="readonly" {else if isset($smarty.post.lastname)} value="{$smarty.post.lastname|escape:'html':'UTF-8'}" {/if}/>
 					</div>
 
 					<div class="form-group">
 						<label for="email" class="control-label required">{l s='Email' mod='wkhelpdesk'}</label>
-						<input class="form-control" type="text" name="email" id="email" {if isset($email)} value="{$email}" readonly="readonly" {else if isset($smarty.post.email)} value="{$smarty.post.email}" {/if}/>
+						<input class="form-control" type="text" name="email" id="email" {if isset($email)} value="{$email|escape:'html':'UTF-8'}" readonly="readonly" {else if isset($smarty.post.email)} value="{$smarty.post.email|escape:'html':'UTF-8'}" {/if}/>
 					</div>
 
 					<div class="form-group col-lg-6">
@@ -54,7 +54,7 @@
 									<option value="0">{l s='-- Choose --' mod='wkhelpdesk'}</option>
                                     {if isset($allQueryType)}
                                         {foreach $allQueryType as $queryType}
-                                            <option value="{$queryType.id}"{if isset($smarty.request.queryType) && $smarty.request.queryType == $queryType.id} selected="selected"{/if}>{$queryType.query_name}</option>
+                                            <option value="{$queryType.id|escape:'html':'UTF-8'}"{if isset($smarty.request.queryType) && $smarty.request.queryType == $queryType.id} selected="selected"{/if}>{$queryType.query_name|escape:'html':'UTF-8'}</option>
                                         {/foreach}
                                     {/if}
 								</select>
@@ -64,7 +64,7 @@
 
 					<div class="form-group col-lg-6">
 						<label for="reference" class="control-label">{l s='Order reference' mod='wkhelpdesk'}</label>
-						<input class="form-control" type="text" name="reference" id="reference" {if isset($reference)} value="{$reference}" readonly="readonly" {else if isset($smarty.post.reference)} value="{$smarty.post.reference}" {/if}/>
+						<input class="form-control" type="text" name="reference" id="reference" {if isset($reference)} value="{$reference|escape:'html':'UTF-8'}" readonly="readonly" {else if isset($smarty.post.reference)} value="{$smarty.post.reference|escape:'html':'UTF-8'}" {/if}/>
 					</div>
 
 					<div class="form-group col-lg-12">
@@ -75,8 +75,8 @@
                             </div>
                             <button type="button" id="removeImage" class="btn btn-primary mx-2">{l s='Remove' mod='wkhelpdesk'}</button>
                         </div>
-						<p class="form-control-static">{l s='Valid file extension(s) are ' mod='wkhelpdesk'}{$fileExtensions}.</p>
-						<p class="form-control-static">{l s='Maximum file size for all files: ' mod='wkhelpdesk'}{$attachmentMaxSize}{l s='MB' mod='wkhelpdesk'}</p>
+						<p class="form-control-static">{l s='Valid file extension(s) are ' mod='wkhelpdesk'}{$fileExtensions|escape:'html':'UTF-8'}.</p>
+						<p class="form-control-static">{l s='Maximum file size for all files: ' mod='wkhelpdesk'}{$attachmentMaxSize|escape:'html':'UTF-8'}{l s='MB' mod='wkhelpdesk'}</p>
 					</div>
 
 					<div class="form-group col-lg-12">
@@ -88,7 +88,7 @@
 
 					<div class="form-group col-lg-12">
 						<label for="subject" class="control-label required">{l s='Subject' mod='wkhelpdesk'}</label>
-						<input class="form-control" type="text" name="subject" id="subject" {if isset($smarty.post.subject)} value="{$smarty.post.subject}" {else if isset($smarty.post.subject)} value="{$smarty.post.subject}" {/if}/>
+						<input class="form-control" type="text" name="subject" id="subject" {if isset($smarty.post.subject)} value="{$smarty.post.subject|escape:'html':'UTF-8'}" {else if isset($smarty.post.subject)} value="{$smarty.post.subject|escape:'html':'UTF-8'}" {/if}/>
 					</div>
 
 					<div class="form-group col-lg-12">
@@ -99,9 +99,9 @@
 			</fieldset>
 		</div>
 		<div class="panel-footer">
-			<a href="{$link->getAdminLink('AdminAllTicket')}&status={if isset($smarty.get.back_url)}&status={$smarty.get.back_url}{/if}" class="btn btn-default"><i class="process-icon-cancel"></i> {l s='Cancel' mod='wkhelpdesk'}</a>
-			<button type="submit" name="submitAdd{$table}" class="btn btn-default pull-right"><i class="process-icon-save"></i> {l s='Create' mod='wkhelpdesk'}</button>
-			<button type="submit" name="submitAdd{$table}AndStay" class="btn btn-default pull-right">
+			<a href="{$link->getAdminLink('AdminAllTicket')|escape:'html':'UTF-8'}&status={if isset($smarty.get.back_url)}&status={$smarty.get.back_url|escape:'html':'UTF-8'}{/if}" class="btn btn-default"><i class="process-icon-cancel"></i> {l s='Cancel' mod='wkhelpdesk'}</a>
+			<button type="submit" name="submitAdd{$table|escape:'html':'UTF-8'}" class="btn btn-default pull-right"><i class="process-icon-save"></i> {l s='Create' mod='wkhelpdesk'}</button>
+			<button type="submit" name="submitAdd{$table|escape:'html':'UTF-8'}AndStay" class="btn btn-default pull-right">
 				<i class="process-icon-save"></i> {l s='Create and stay' mod='wkhelpdesk'}
 			</button>
 		</div>
@@ -112,27 +112,27 @@
 		<div class="panel-body">
 			<div class="row" style="margin-bottom: 5px;">
 				<div class="col-lg-3"><span class="col-lg-12 text-right">{l s='Ticket ID' mod='wkhelpdesk'}</span></div>
-				<div class="col-lg-9">{$ticketDetails.ticket_id}</div>
+				<div class="col-lg-9">{$ticketDetails.ticket_id|escape:'html':'UTF-8'}</div>
 			</div>
 			<div class="row" style="margin-bottom: 5px;">
 				<div class="col-lg-3"><span class="col-lg-12 text-right">{l s='Query type' mod='wkhelpdesk'}</span></div>
-				<div class="col-lg-9">{$ticketDetails.query_name}</div>
+				<div class="col-lg-9">{$ticketDetails.query_name|escape:'html':'UTF-8'}</div>
 			</div>
 
 			<div class="row" style="margin-bottom: 5px;">
 				<div class="col-lg-3"><span class="col-lg-12 text-right">{l s='Ticket create date' mod='wkhelpdesk'}</span></div>
-				<div class="col-lg-9">{$ticketDetails.date_add}</div>
+				<div class="col-lg-9">{$ticketDetails.date_add|escape:'html':'UTF-8'}</div>
 			</div>
 
 			<div class="row" style="margin-bottom: 5px;">
 				<div class="col-lg-3"><span class="col-lg-12 text-right">{l s='Subject' mod='wkhelpdesk'}</span></div>
-				<div class="col-lg-9">{$ticketDetails.subject}</div>
+				<div class="col-lg-9">{$ticketDetails.subject|escape:'html':'UTF-8'}</div>
 			</div>
 
 			<div class="row" style="margin-bottom: 5px;">
 				<div class="col-lg-3"><span class="col-lg-12 text-right">{l s='Current status' mod='wkhelpdesk'}</span></div>
 				<div class="col-lg-9">
-				{$objHelpDesk->getStatusTextById($ticketDetails.id_status)}
+				{$objHelpDesk->getStatusTextById($ticketDetails.id_status)|escape:'html':'UTF-8'}
 				</div>
 			</div>
 
@@ -148,10 +148,10 @@
 			</div>
 
 			{if $ticketDetails.id_order != 0}
-				{assign var="order_link" value="{$link->getAdminLink(AdminOrders)}&vieworder&id_order={$ticketDetails.id_order}"}
+				{assign var="order_link" value="{$link->getAdminLink(AdminOrders)}&vieworder&id_order={$ticketDetails.id_order|escape:'html':'UTF-8'}"}
 				<div class="row" style="margin-bottom: 5px;">
 					<div class="col-lg-3"><span class="col-lg-12 text-right">{l s='Order Id' mod='wkhelpdesk'}</span></div>
-					<div class="col-lg-9"><a href="{$order_link}" class="badge _blank">#{$ticketDetails.id_order}</a> <a href="{$order_link}" class="btn btn-default _blank">{l s='See More' mod='wkhelpdesk'}</a></div>
+					<div class="col-lg-9"><a href="{$order_link|escape:'html':'UTF-8'}" class="badge _blank">#{$ticketDetails.id_order|escape:'html':'UTF-8'}</a> <a href="{$order_link|escape:'html':'UTF-8'}" class="btn btn-default _blank">{l s='See More' mod='wkhelpdesk'}</a></div>
 				</div>
 			{/if}
 		</div>
@@ -182,7 +182,7 @@
                                     <ul class="dropdown-menu">
                                         {foreach $statusList as $status}
                                         {if $objHelpDesk->getMappedStatusIdByStatus({$status.ticket_status})}
-                                            <li><a href="#" data-status="{$status.ticket_status}" class="change_ticket_status">{$status.ticket_status}</a></li>
+                                            <li><a href="#" data-status="{$status.ticket_status|escape:'html':'UTF-8'}" class="change_ticket_status">{$status.ticket_status|escape:'html':'UTF-8'}</a></li>
                                         {/if}
                                         {/foreach}
                                     </ul>
@@ -199,75 +199,75 @@
 			{foreach $ticketConversation as $ticket_msg}
 				{if $ticket_msg.id_customer != 0}
 					<div class="well">
-						<p><span class="pull-left"><i class="icon-user"></i> <b>{$ticket_msg.first_name} {$ticket_msg.last_name}</b>
+						<p><span class="pull-left"><i class="icon-user"></i> <b>{$ticket_msg.first_name|escape:'html':'UTF-8'} {$ticket_msg.last_name|escape:'html':'UTF-8'}</b>
                          ({if $ticket_msg.id_ps_customer neq 0}{l s='Customer' mod='wkhelpdesk'}{else}{l s='Visitor' mod='wkhelpdesk'}{/if})</span>
 							<span class="pull-right">
-								<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|substr:11:5}</span>
+								<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|escape:'html':'UTF-8'|substr:11:5}</span>
 							</span>
 						</p><br />
 
 						{$ticket_msg.message|stripslashes}
 						{foreach $objTicketAttachment->getAttachmentByIdMsg($ticket_msg.id) as $attachment}
-							<a class="btn btn-default" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment['attachment_token'], 'id' => $attachment['id']])}" target="_blank"><i class="icon-download"></i> {l s='Download file' mod='wkhelpdesk'}</a>
+							<a class="btn btn-default" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment['attachment_token'], 'id' => $attachment['id']])|escape:'html':'UTF-8'}" target="_blank"><i class="icon-download"></i> {l s='Download file' mod='wkhelpdesk'}</a>
 						{/foreach}
 					</div>
 				{else}
 					{if $ticket_msg.is_internal_note == 1}
 						<div class="alert alert-info">
 							<span class="pull-right">
-								<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|substr:11:5}</span>
+								<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|escape:'html':'UTF-8'|substr:11:5}</span>
 							</span>
 
-							<p style="text-align: center;">({l s='Internal note by:' mod='wkhelpdesk'} {$ticket_msg.name} ({$ticket_msg.profile} - {$ticket_msg.email}))</p>
+							<p style="text-align: center;">({l s='Internal note by:' mod='wkhelpdesk'} {$ticket_msg.name|escape:'html':'UTF-8'} ({$ticket_msg.profile|escape:'html':'UTF-8'} - {$ticket_msg.email|escape:'html':'UTF-8'}))</p>
 							{$ticket_msg.message|stripslashes}
 							{foreach $objTicketAttachment->getAttachmentByIdMsg($ticket_msg.id) as $attachment}
-								<a class="btn btn-default" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment['attachment_token'], 'id' => $attachment['id']])}" target="_blank"><i class="icon-download"></i> {l s='Download file' mod='wkhelpdesk'}</a>
+								<a class="btn btn-default" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment['attachment_token'], 'id' => $attachment['id']])|escape:'html':'UTF-8'}" target="_blank"><i class="icon-download"></i> {l s='Download file' mod='wkhelpdesk'}</a>
 							{/foreach}
 						</div>
 					{else if $ticket_msg.is_agent_assign == 1 || $ticket_msg.is_agent_assign == 2}
 						<div class="alert alert-warning">
 							<span class="pull-right">
-								<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|substr:11:5}</span>
+								<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|escape:'html':'UTF-8'|substr:11:5}</span>
 							</span>
 
 							{if $ticket_msg.is_agent_assign == 1}
 								<p style="text-align: center;">
-									{$ticket_msg.name} ({$ticket_msg.profile})
+									{$ticket_msg.name|escape:'html':'UTF-8'} ({$ticket_msg.profile|escape:'html':'UTF-8'})
 									{l s='assigned agent from ' mod='wkhelpdesk'}
 									{if $ticket_msg.agent_from == 0}
 										{l s='Unassigned' mod='wkhelpdesk'}
 									{else}
-										{assign var="temp_name" value="{$objTicketAgent->getAgentNameById($ticket_msg.agent_from)}"}
+										{assign var="temp_name" value="{$objTicketAgent->getAgentNameById($ticket_msg.agent_from)|escape:'html':'UTF-8'}"}
 										{if $temp_name == 'not_found'}
 											{l s='Deleted agent' mod='wkhelpdesk'}
 										{else}
-											{$temp_name}
+											{$temp_name|escape:'html':'UTF-8'}
 										{/if}
 									{/if}
 									{l s='to' mod='wkhelpdesk'}
-									{assign var="temp_name" value="{$objTicketAgent->getAgentNameById($ticket_msg.agent_to)}"}
+									{assign var="temp_name" value="{$objTicketAgent->getAgentNameById($ticket_msg.agent_to)|escape:'html':'UTF-8'}"}
 									{if $temp_name == 'not_found'}
 										{l s='Deleted agent' mod='wkhelpdesk'}
 									{else}
-										{$temp_name}
+										{$temp_name|escape:'html':'UTF-8'}
 									{/if}
 								</p>
 								{$ticket_msg.message|stripslashes}
 								{foreach $objTicketAttachment->getAttachmentByIdMsg($ticket_msg.id) as $attachment}
-									<a class="btn btn-default" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment['attachment_token'], 'id' => $attachment['id']])}" target="_blank"><i class="icon-download"></i> {l s='Download file' mod='wkhelpdesk'}</a>
+									<a class="btn btn-default" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment['attachment_token'], 'id' => $attachment['id']])|escape:'html':'UTF-8'}" target="_blank"><i class="icon-download"></i> {l s='Download file' mod='wkhelpdesk'}</a>
 								{/foreach}
 							{else}
 								<p style="text-align: center;">
-									{$ticket_msg.name}
+									{$ticket_msg.name|escape:'html':'UTF-8'}
 									{l s='remove agent ' mod='wkhelpdesk'}
 									{if $ticket_msg.agent_from == 0}
 										{l s='Unassigned' mod='wkhelpdesk'}
 									{else}
-										{assign var="temp_name" value="{$objTicketAgent->getAgentNameById($ticket_msg.agent_from)}"}
+										{assign var="temp_name" value="{$objTicketAgent->getAgentNameById($ticket_msg.agent_from)|escape:'html':'UTF-8'}"}
 										{if $temp_name == 'not_found'}
 											{l s='Deleted agent' mod='wkhelpdesk'}
 										{else}
-											{$temp_name}
+											{$temp_name|escape:'html':'UTF-8'}
 										{/if}
 									{/if}
 								</p>
@@ -277,42 +277,42 @@
 						<div class="status_upd">
 							<div class="alert alert-success">
 								<span class="pull-right">
-									<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|substr:11:5}</span>
+									<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|escape:'html':'UTF-8'|substr:11:5}</span>
 								</span>
 
 								<p style="text-align: center;">
 									{l s='Status updated by ' mod='wkhelpdesk'}
 									{if $ticket_msg.name != null}
-										{$ticket_msg.name}
+										{$ticket_msg.name|escape:'html':'UTF-8'}
 									{else}
 										{l s='SYSTEM' mod='wkhelpdesk'}
 									{/if}
 									{l s='from' mod='wkhelpdesk'}
-									{$objHelpDesk->getStatusTextById($ticket_msg.status_from)}
+									{$objHelpDesk->getStatusTextById($ticket_msg.status_from)|escape:'html':'UTF-8'}
 									{l s='to' mod='wkhelpdesk'}
-									{$objHelpDesk->getStatusTextById($ticket_msg.status_to)}</p>
+									{$objHelpDesk->getStatusTextById($ticket_msg.status_to)|escape:'html':'UTF-8'}</p>
 							</div>
 						</div>
 					{else}
 						<div class="well agent_msg_div">
-							<p><span class="pull-left"><i class="icon-user"></i> <b>{$ticket_msg.name}
-                            </b>({$ticket_msg.profile})</span>
+							<p><span class="pull-left"><i class="icon-user"></i> <b>{$ticket_msg.name|escape:'html':'UTF-8'}
+                            </b>({$ticket_msg.profile|escape:'html':'UTF-8'})</span>
 								<span class="pull-right">
-									<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|substr:11:5}</span>
+									<span class="timeline-date"><i class="icon-calendar"></i> {dateFormat date=$ticket_msg.date_add full=0} - <i class="icon-time"></i> {$ticket_msg.date_add|escape:'html':'UTF-8'|substr:11:5}</span>
 								</span>
 							</p><br />
 
 							{$ticket_msg.message|stripslashes}
 							{foreach $objTicketAttachment->getAttachmentByIdMsg($ticket_msg.id) as $attachment}
-								<a class="btn btn-default" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment['attachment_token'], 'id' => $attachment['id']])}" target="_blank"><i class="icon-download"></i> {l s='Download file' mod='wkhelpdesk'}</a>
+								<a class="btn btn-default" href="{$link->getModuleLink('wkhelpdesk', 'downloadattachment', ['token' => $attachment['attachment_token'], 'id' => $attachment['id']])|escape:'html':'UTF-8'}" target="_blank"><i class="icon-download"></i> {l s='Download file' mod='wkhelpdesk'}</a>
 							{/foreach}
 						</div>
 					{/if}
 				{/if}
 			{/foreach}
 			<div class="padding_div">
-				<input type="hidden" name="idAgent" id="idAgent" value="{$agentInfo.id}">
-				<input type="hidden" name="id" id="idTicket" value="{$ticketDetails.ticket_id}">
+				<input type="hidden" name="idAgent" id="idAgent" value="{$agentInfo.id|escape:'html':'UTF-8'}">
+				<input type="hidden" name="id" id="idTicket" value="{$ticketDetails.ticket_id|escape:'html':'UTF-8'}">
 				<div class="form-group">
 					<label for="message" class="control-label">{l s='You' mod='wkhelpdesk'}</label>
 				</div>
@@ -341,7 +341,7 @@
 						<div class="col-lg-4">
 							<select name="assignedAgent" class="chosen form-control" id="assignedAgent">
 								{foreach $agentList as $agent}
-									<option value="{$agent.id}">{$agent.name}({$agent.email})</option>
+									<option value="{$agent.id|escape:'html':'UTF-8'}">{$agent.name|escape:'html':'UTF-8'}({$agent.email|escape:'html':'UTF-8'})</option>
 								{/foreach}
 							</select>
 						</div>
@@ -361,8 +361,8 @@
                         </div>
                         <button type="button" id="removeImage" class="btn btn-primary mx-2">Remove</button>
                     </div>
-					<p class="form-control-static">{l s='Valid file extension(s) are ' mod='wkhelpdesk'}{$fileExtensions}.</p>
-					<p class="form-control-static">{l s='Maximum file size: ' mod='wkhelpdesk'}{$attachmentMaxSize}{l s='MB' mod='wkhelpdesk'}</p>
+					<p class="form-control-static">{l s='Valid file extension(s) are ' mod='wkhelpdesk'}{$fileExtensions|escape:'html':'UTF-8'}.</p>
+					<p class="form-control-static">{l s='Maximum file size: ' mod='wkhelpdesk'}{$attachmentMaxSize|escape:'html':'UTF-8'}{l s='MB' mod='wkhelpdesk'}</p>
 				</div>
 
 				<div class="form-group">
@@ -374,13 +374,13 @@
 			</div>
 		</div>
 		<div class="panel-footer">
-			<a href="{$link->getAdminLink('AdminAllTicket')}{if isset($smarty.get.back_url)}&status={$smarty.get.back_url}{/if}" class="btn btn-default">
+			<a href="{$link->getAdminLink('AdminAllTicket')|escape:'html':'UTF-8'}{if isset($smarty.get.back_url)|escape:'html':'UTF-8'}&status={$smarty.get.back_url|escape:'html':'UTF-8'}{/if}" class="btn btn-default">
 				<i class="process-icon-cancel"></i> {l s='Cancel' mod='wkhelpdesk'}
 			</a>
-			<button type="submit" name="submitAdd{$table}" class="btn btn-default pull-right">
+			<button type="submit" name="submitAdd{$table|escape:'html':'UTF-8'}" class="btn btn-default pull-right">
 				<i class="process-icon-save"></i> {l s='Reply' mod='wkhelpdesk'}
 			</button>
-			<button type="submit" name="submitAdd{$table}AndStay" class="btn btn-default pull-right">
+			<button type="submit" name="submitAdd{$table|escape:'html':'UTF-8'}AndStay" class="btn btn-default pull-right">
 				<i class="process-icon-save"></i> {l s='Reply and stay' mod='wkhelpdesk'}
 			</button>
 		</div>

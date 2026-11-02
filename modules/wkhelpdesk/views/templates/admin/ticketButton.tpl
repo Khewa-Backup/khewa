@@ -17,6 +17,6 @@
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 *}
 
-<a href="{$url}" target="_blank" class="btn btn-primary pointer">
+<a href="{$url|escape:'html':'UTF-8'}" target="_blank" class="btn btn-primary pointer">
     <i class="material-icons">remove_red_eye</i>
 </a>

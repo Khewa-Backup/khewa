@@ -30,7 +30,7 @@
 						<input name="ticket_number" class="form-control" id="ticket_number" type="text" placeholder="{l s='Ex. 1562' mod='wkhelpdesk'}"/>
 						<div class="input-group-addon">
 							<i class="icon-search" id="ticket_search_icon"></i>
-							<img src="{$ajaxLoader}" id="ajax_loader_img" style="display: none;" />
+							<img src="{$ajaxLoader|escape:'html':'UTF-8'}" id="ajax_loader_img" style="display: none;" />
 						</div>
     					</div>
 						<ul id="tickets_ul" class="list-group"></ul>
@@ -41,7 +41,7 @@
 						<select name="ticket_customers" class="chosen" id="ticket_customers">
 							<option value="0" {if $selectedTicketCustomer == 0} selected="selected" {/if} disabled>{l s='Filter by customer' mod='wkhelpdesk'}</option>
 							{foreach $customerList as $id => $ticket_customer}
-								<option value="{$id}" {if $selectedTicketCustomer == $id} selected="selected" {/if}>{$ticket_customer.name}({$ticket_customer.email})</option>
+								<option value="{$id|escape:'html':'UTF-8'}" {if $selectedTicketCustomer == $id} selected="selected" {/if}>{$ticket_customer.name|escape:'html':'UTF-8'}({$ticket_customer.email|escape:'html':'UTF-8'})</option>
 							{/foreach}
 						</select>
 					</div>
@@ -52,14 +52,14 @@
 							<option value="0" {if $selectedQueryType == 0} selected="selected" {/if} disabled>{l s='Filter by query type' mod='wkhelpdesk'}</option>
                             {if isset($allQueryType)}
 							{foreach $allQueryType as $queryType}
-								<option value="{$queryType.id}" {if $selectedQueryType == $queryType.id} selected="selected" {/if}>{$queryType.query_name}</option>
+								<option value="{$queryType.id|escape:'html':'UTF-8'}" {if $selectedQueryType == $queryType.id} selected="selected" {/if}>{$queryType.query_name|escape:'html':'UTF-8'}</option>
 							{/foreach}
                             {/if}
 						</select>
 					</div>
 
 					<div class="form-group">
-						<a href="{$adminUri}" class="btn btn-default">
+						<a href="{$adminUri|escape:'html':'UTF-8'}" class="btn btn-default">
 							{l s='Reset filter' mod='wkhelpdesk'}
 						</a>
 					</div>
@@ -72,12 +72,12 @@
 			<div class="container-fluid">
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			      <ul class="nav navbar-nav">
-			      	{assign var="selected_admin_uri" value="{$adminUri}"}
+			      	{assign var="selected_admin_uri" value="{$adminUri|escape:'html':'UTF-8'}"}
 			      	{if $selectedTicketCustomer != 0}
-			      		{assign var="selected_admin_uri" value="{$selected_admin_uri}&ticket_customer={$selectedTicketCustomer}"}
+			      		{assign var="selected_admin_uri" value="{$selected_admin_uri|escape:'html':'UTF-8'}&ticket_customer={$selectedTicketCustomer|escape:'html':'UTF-8'}"}
 			      	{/if}
 			      	{if $selectedQueryType != 0}
-			      		{assign var="selected_admin_uri" value="{$selected_admin_uri}&queryType={$selectedQueryType}"}
+			      		{assign var="selected_admin_uri" value="{$selected_admin_uri|escape:'html':'UTF-8'}&queryType={$selectedQueryType|escape:'html':'UTF-8'}"}
 			      	{/if}
 					{* Customization By Ram Chandra *}
 					<li {if $selectedStatus == 0}class="active"{/if}>
@@ -91,9 +91,9 @@
                         {foreach $allStatus as $id => $status}
                         {if $objHelpDesk->getMappedStatusIdByStatus({$status.ticket_status})}
                         <li {if $selectedStatus == $status.id}class="active"{/if}>
-                            <a {if $selectedStatus == $status.id}class="btn btn-primary"{/if} href="{$selected_admin_uri}&status={$status.id}">
-                                <span class="name">{$status.ticket_status}</span>
-                                <span class="badge">{$ticketStatusCount[$status.id]}</span>
+                            <a {if $selectedStatus == $status.id}class="btn btn-primary"{/if} href="{$selected_admin_uri|escape:'html':'UTF-8'}&status={$status.id|escape:'html':'UTF-8'}">
+                                <span class="name">{$status.ticket_status|escape:'html':'UTF-8'}</span>
+                                <span class="badge">{$ticketStatusCount[$status.id]|escape:'html':'UTF-8'}</span>
                             </a>
                         </li>
                         {/if}
@@ -112,7 +112,7 @@
 					{* {if  isset($allStatus)} *}
 						{* {foreach $allStatus as $id => $status}
                             {if $selectedStatus == $status.id}
-                                {$status.ticket_status}{l s=' ticket(s)' mod='wkhelpdesk'}
+                                {$status.ticket_status|escape:'html':'UTF-8'}{l s=' ticket(s)' mod='wkhelpdesk'}
                             {/if}
                         {/foreach} *}
 					{else}
@@ -153,14 +153,14 @@
 										{* Customization #1012187 *}
 										<td><input type="checkbox" class="wk-select-check" value="{$ticket.id}"></td>
 										{* Customization end #1012187*}
-										<td><a href="{$adminUri}&id={$ticket.id}&updatewk_hd_ticket{if isset($smarty.get.status)}&back_url={$smarty.get.status}{/if}">#{$ticket.id}</a></td>
-										<td><a href="{$adminUri}&id={$ticket.id}&updatewk_hd_ticket{if isset($smarty.get.status)}&back_url={$smarty.get.status}{/if}">{$ticket.subject|truncate:30}</a></td>
+										<td><a href="{$adminUri|escape:'html':'UTF-8'}&id={$ticket.id|escape:'html':'UTF-8'}&updatewk_hd_ticket{if isset($smarty.get.status)}&back_url={$smarty.get.status|escape:'html':'UTF-8'}{/if}">#{$ticket.id|escape:'html':'UTF-8'}</a></td>
+										<td><a href="{$adminUri|escape:'html':'UTF-8'}&id={$ticket.id|escape:'html':'UTF-8'}&updatewk_hd_ticket{if isset($smarty.get.status)}&back_url={$smarty.get.status|escape:'html':'UTF-8'}{/if}">{$ticket.subject|truncate:30}</a></td>
                                         {if isset($allShopContext)}
-                                            <td>{$ticket.shop_name}</td>
+                                            <td>{$ticket.shop_name|escape:'html':'UTF-8'}</td>
                                         {/if}
-										<td>{$ticket.customer_name}</td>
+										<td>{$ticket.customer_name|escape:'html':'UTF-8'}</td>
                                         <td>{$ticket.email}</td>
-										<td>{$ticket.order_ref}</td>
+										<td>{$ticket.order_ref|escape:'html':'UTF-8'}</td>
 										{* Customization By Ram Chandra *}
 										{if ($selectedStatus == 0)}
 											<td>
@@ -192,8 +192,8 @@
 											</td>
 										{/if}
 										{* END *}
-										<td>{$ticket.query_name}</td>
-										<td>{$ticket.date_add}</td>
+										<td>{$ticket.query_name|escape:'html':'UTF-8'}</td>
+										<td>{$ticket.date_add|escape:'html':'UTF-8'}</td>
 									</tr>
 								{/foreach}
 							</tbody>
@@ -242,10 +242,10 @@
 		var search_item = "{l s='Search' js=1 mod='wkhelpdesk'}";
 		var p_page = "{l s='Previous' js=1 mod='wkhelpdesk'}";
 		var n_page = "{l s='Next' js=1 mod='wkhelpdesk'}";
-		var admin_uri = "{$adminUri}";
-		var selected_status = "{$selectedStatus}";
-		var selected_query_type = "{$selectedQueryType}";
-		var selected_ticket_customer = "{$selectedTicketCustomer}";
+		var admin_uri = "{$adminUri|escape:'html':'UTF-8'}";
+		var selected_status = "{$selectedStatus|escape:'html':'UTF-8'}";
+		var selected_query_type = "{$selectedQueryType|escape:'html':'UTF-8'}";
+		var selected_ticket_customer = "{$selectedTicketCustomer|escape:'html':'UTF-8'}";
         var openedStatus = "{$openedStatus}";
 
 		if ($("#wk_ticket_list_"+openedStatus).length) {
@@ -281,8 +281,8 @@
 			window.location.href = redirect_uri+'&queryType='+$(this).val()+'&ticket_customer='+selected_ticket_customer;
 		});
 
-		var idAgent = "{$agentInfo.id}";
-		var isSuperAdmin = "{$agentInfo.is_super_admin}";
+		var idAgent = "{$agentInfo.id|escape:'html':'UTF-8'}";
+		var isSuperAdmin = "{$agentInfo.is_super_admin|escape:'html':'UTF-8'}";
 		var searchTicketNumber = null;
 		var xhr;
 		$(document).click(function(){

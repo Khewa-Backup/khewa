@@ -56,17 +56,17 @@
             <div class="form-group row PositionBlock">
                 <label class="control-label col-lg-4 required">{l s='Site key' mod='wkhelpdesk'}</label>
                 <div class="col-lg-6">
-                    <input type="text" class="form-control" name="captchaSiteKey" {if isset($smarty.post.captchaSiteKey)} value="{$smarty.post.captchaSiteKey}" {else} value="{$captchaSiteKey}" {/if}/>
+                    <input type="text" class="form-control" name="captchaSiteKey" {if isset($smarty.post.captchaSiteKey)} value="{$smarty.post.captchaSiteKey|escape:'html':'UTF-8'}" {else} value="{$captchaSiteKey|escape:'html':'UTF-8'}" {/if}/>
                 </div>
             </div>
             <div class="form-group row PositionBlock">
                 <label class="control-label col-lg-4 required">{l s='Secret key' mod='wkhelpdesk'}</label>
                 <div class="col-lg-6">
-                    <input type="text" class="form-control" name="captchaSecretKey" {if isset($smarty.post.captchaSecretKey)} value="{$smarty.post.captchaSecretKey}" {else} value="{$captchaSecretKey}" {/if}/>
+                    <input type="text" class="form-control" name="captchaSecretKey" {if isset($smarty.post.captchaSecretKey)} value="{$smarty.post.captchaSecretKey|escape:'html':'UTF-8'}" {else} value="{$captchaSecretKey|escape:'html':'UTF-8'}" {/if}/>
                 </div>
             </div>
             <div class="panel-footer">
-				<a href="{$moduleLink}" class="btn btn-default"><i class="process-icon-cancel"></i>{l s='Cancel' mod='wkhelpdesk'}</a>
+				<a href="{$moduleLink|escape:'html':'UTF-8'}" class="btn btn-default"><i class="process-icon-cancel"></i>{l s='Cancel' mod='wkhelpdesk'}</a>
 				<button class="btn btn-default pull-right" name="submitCaptcha" id="submitCaptcha" value="1" type="submit"><i class="process-icon-save"></i>{l s='Save' mod='wkhelpdesk'}</button>
 			</div>
         </div>

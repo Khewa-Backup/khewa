@@ -1,3 +1,33 @@
+---------------------------------------------------------------
+Change Log : V5.0.1 to V5.0.2 | Compatible PS V1.7.x.x and V8.x.x
+---------------------------------------------------------------
+## Update Policy:
+- Only file needs to be updated.
+
+## Issue Fixed:
+- Fixed query type access issue for agent
+- Fixed validator issues
+- Fixed attachment label translation issue at Front office
+
+-----------------------------
+Change Log : V5.0.0 to V5.0.1
+-----------------------------
+## Update Policy:
+- Only file needs to be updated.
+
+## Issue Fixed:
+- Some display issues fixed
+- Some other bugs fixed
+
+## Improvements:
+- Compatible with PrestaShop V8.x.x
+- Text improvement
+- Updated translation
+
+Removed hook
+- displayHeader
+- displayBackOfficeHeader
+
 -----------------------------
 Change Log : V4.2.1 to V5.0.0
 -----------------------------

@@ -1,3 +1,11 @@
+{*
+ * Action audit details.
+ *
+ * @author Best-Kit
+ * @copyright 2026 Best-Kit
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
+ *}
+
 <div class="col-lg-12 bestkit-log-details">
     <div class="panel">
         <div class="panel-heading">
@@ -7,11 +15,11 @@
         <div class="panel-title">
             <div>
                 <strong>{l s='Object:' mod='bestkit_log'}</strong>
-                {$bestkit_log.diffObj->object}
+                {$bestkit_log.diffObj->object|escape:'html':'UTF-8'}
             </div>
             <div>
                 <strong>{l s='Path:' mod='bestkit_log'}</strong>
-                {$bestkit_log.diffObj->path}
+                {$bestkit_log.diffObj->path|escape:'html':'UTF-8'}
             </div>
         </div>
 
@@ -28,11 +36,21 @@
             <tbody>
                 {foreach $bestkit_log.details as $detail}
                     <tr>
-                        <td>{$bestkit_log.diffObj->id}</td>
-                        <td>{$detail.name}</td>
-                        <td>{$detail.old_value}</td>
-                        <td>{$detail.new_value}</td>
-                        <td>{$detail.diff nofilter}</td>
+                        <td>{$bestkit_log.diffObj->id_object|intval}</td>
+                        <td>{$detail.name|escape:'html':'UTF-8'}</td>
+                        <td>{$detail.old_value|escape:'html':'UTF-8'}</td>
+                        <td>{$detail.new_value|escape:'html':'UTF-8'}</td>
+                        <td>
+                            {foreach $detail.diff_parts as $part}
+                                {if $part.type == 'delete'}
+                                    <del>{$part.value|escape:'html':'UTF-8'}</del>
+                                {elseif $part.type == 'insert'}
+                                    <ins>{$part.value|escape:'html':'UTF-8'}</ins>
+                                {else}
+                                    {$part.value|escape:'html':'UTF-8'}
+                                {/if}
+                            {/foreach}
+                        </td>
                     </tr>
                 {/foreach}
             </tbody>

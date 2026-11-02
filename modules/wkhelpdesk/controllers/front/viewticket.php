@@ -1,37 +1,39 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your
-* needs please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
-
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
 {
     public function getBreadcrumbLinks()
     {
         $breadcrumb = parent::getBreadcrumbLinks();
-        $breadcrumb['links'][] = array(
+        $breadcrumb['links'][] = [
             'title' => $this->module->l('Ticket list', 'viewticket'),
-            'url' => $this->context->link->getModuleLink('wkhelpdesk', 'ticketlist')
-        );
+            'url' => $this->context->link->getModuleLink('wkhelpdesk', 'ticketlist'),
+        ];
 
-        $breadcrumb['links'][] = array(
+        $breadcrumb['links'][] = [
             'title' => $this->module->l('Ticket conversation', 'viewticket'),
-            'url' => ''
-        );
+            'url' => '',
+        ];
 
         return $breadcrumb;
     }
@@ -44,15 +46,15 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
             $objTicket = new WkHdTicket();
             $objTicketAttachment = new WkHdTicketAttachment();
 
-            $smartyVars = array(
+            $smartyVars = [
                 'objTicketAttachment' => $objTicketAttachment,
                 'bgColor' => Configuration::get('WK_HD_TITLE_BG_COLOR'),
                 'textColor' => Configuration::get('WK_HD_TITLE_TEXT_COLOR'),
                 'attachmentMaxSize' => Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE'),
                 'fileExtensions' => implode(', ', WkHdTicket::getSelectedFileExtension()),
                 'ticketDetails' => $objTicket->getTicketDetailsByIdAndIdLang($ticketId, $this->context->language->id),
-                'formUrl' => $this->context->link->getModuleLink('wkhelpdesk', 'viewticket', array('id' => $ticketId)),
-            );
+                'formUrl' => $this->context->link->getModuleLink('wkhelpdesk', 'viewticket', ['id' => $ticketId]),
+            ];
             if (Configuration::get('WK_HD_ENABLE_VIEW_CAPTCHA')) {
                 $smartyVars['wkHdCaptchaSiteKey'] = Configuration::get('WK_HD_CAPTCHA_SITE_KEY');
             }
@@ -79,7 +81,7 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
                 $smartyVars['formUrl'] = $this->context->link->getModuleLink(
                     'wkhelpdesk',
                     'viewticket',
-                    array('id' => $ticketId, 'token' => $token)
+                    ['id' => $ticketId, 'token' => $token]
                 );
             } else {
                 Tools::redirect(
@@ -87,26 +89,26 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
                         'authentication',
                         true,
                         $this->context->language->id,
-                        array('back' => $smartyVars['formUrl'])
+                        ['back' => $smartyVars['formUrl']]
                     )
                 );
             }
             $ticketValue = $objTicket->getTicketDetailsByIdAndIdLang($ticketId, $this->context->language->id);
-            $statusNameWithId = array(
-                $this->module->getStatusTextById($ticketValue['id_status'])
-            );
+            $statusNameWithId = [
+                $this->module->getStatusTextById($ticketValue['id_status']),
+            ];
             $smartyVars['statusNameWithId'] = $statusNameWithId;
-            $smartyVars['statusColors'] = array(
+            $smartyVars['statusColors'] = [
                 'lightseagreen',
                 'green',
                 'deepskyblue',
                 'orange',
                 'lightgreen',
-                'red'
-            );
+                'red',
+            ];
             $this->context->smarty->assign($smartyVars);
             $this->defineJSVars();
-            $this->setTemplate('module:'.$this->module->name.'/views/templates/front/viewticket.tpl');
+            $this->setTemplate('module:' . $this->module->name . '/views/templates/front/viewticket.tpl');
         } else {
             Tools::redirect($this->context->link->getPageLink('my-account'));
         }
@@ -114,20 +116,21 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
 
     public function defineJSVars()
     {
-        $jsVars = array(
+        $jsVars = [
             'img_remove' => $this->module->l('Remove', 'viewticket'),
+            'wk_choose_file' => $this->module->l('Choose file', 'viewticket'),
             'err' => $this->module->l('Error:', 'viewticket'),
             'msgError' => $this->module->l('Message is required.', 'viewticket'),
             'choosefile_fileButtonHtml' => $this->module->l('Choose File', 'viewticket'),
             'nofileselect_fileDefaultHtml' => $this->module->l('No file selected', 'viewticket'),
             'prev_img' => $this->module->l('First select main attachment.', 'viewticket'),
             'iso' => $this->context->language->iso_code,
-            'mp_tinymce_path' => _MODULE_DIR_.'wkhelpdesk/libs',
+            'mp_tinymce_path' => _MODULE_DIR_ . 'wkhelpdesk/libs',
             'noCaptchaError' => $this->module->l('Please click on the captcha.', 'viewticket'),
             'filesizeError' => $this->module->l('File exceeds maximum size.', 'viewticket'),
             'maxSizeAllowed' => Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE'),
-            'captchaEnabled' => Configuration::get('WK_HD_ENABLE_VIEW_CAPTCHA')
-        );
+            'captchaEnabled' => Configuration::get('WK_HD_ENABLE_VIEW_CAPTCHA'),
+        ];
 
         Media::addJsDef($jsVars);
     }
@@ -136,24 +139,26 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
     {
         parent::setMedia();
 
-        $this->registerStylesheet('viewticket-css', 'modules/'.$this->module->name.'/views/css/viewticket.css');
-        $this->registerJavascript('viewticket-js', 'modules/'.$this->module->name.'/views/js/viewticket.js');
-        $this->registerJavascript('viewticket-remove-js', 'modules/'.$this->module->name.'/views/js/wkimageremove.js');
+        $this->registerStylesheet('viewticket-css', 'modules/' . $this->module->name . '/views/css/viewticket.css');
+        $this->registerJavascript('viewticket-js', 'modules/' . $this->module->name . '/views/js/viewticket.js');
+        $this->registerJavascript('viewticket-remove-js', 'modules/' . $this->module->name . '/views/js/wkimageremove.js');
         $this->context->controller->addJqueryPlugin('growl', null, false);
         $this->context->controller->registerStylesheet('growl-css', 'js/jquery/plugins/growl/jquery.growl.css');
         if (Configuration::get('WK_HD_ENABLE_VIEW_CAPTCHA')) {
             $this->registerJavascript(
                 'captcha-js',
                 'https://www.google.com/recaptcha/api.js',
-                array(
-                    'server' => 'remote'
-                )
+                [
+                    'server' => 'remote',
+                ]
             );
         }
         $this->registerStylesheet(
             'helpdesk_global-css',
-            'modules/'.$this->module->name.'/views/css/helpdesk_global.css'
+            'modules/' . $this->module->name . '/views/css/helpdesk_global.css'
         );
+
+        return true;
     }
 
     private function verifyRecaptchaToken($token)
@@ -161,14 +166,14 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
         if (!Configuration::get('WK_HD_ENABLE_VIEW_CAPTCHA')) {
             return true;
         } elseif (!Tools::strlen(trim($token))) {
-            $this->errors[] = $this->module->l('Please check the captcha.', 'createticket');
+            $this->errors[] = $this->module->l('Please check the captcha.', 'viewticket');
         } else {
-            $request = array(
+            $request = [
                 'secret' => Configuration::get('WK_HD_CAPTCHA_SECRET_KEY'),
-                'response' => $token
-            );
+                'response' => $token,
+            ];
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+            curl_setopt($ch, CURLOPT_URL, 'https://www.google.com/recaptcha/api/siteverify');
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
             // Receive server response ...
@@ -177,8 +182,9 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
             curl_close($ch);
             $response = json_decode($server_output, true);
             if (!$response['success']) {
-                $this->errors[] = $this->module->l('Recaptcha could not be verified.', 'createticket');
+                $this->errors[] = $this->module->l('Recaptcha could not be verified.', 'viewticket');
             }
+
             return $response['success'];
         }
     }
@@ -195,6 +201,22 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
 
                 $ticketAttachment = false;
                 $ticketOtherAttachment = false;
+                $objTicket = new WkHdTicket((int) $ticketId);
+                $isValid = false;
+                if (!empty($token)) {
+                    $objWkHdTicketToken = new WkHdTicketToken();
+                    $tokenTkt = $objWkHdTicketToken->getTokenByIdTicket($ticketId);
+                    $isValid = ($tokenTkt == $token) && ($objTicket->hd_id_customer == $hdIdCustomer);
+                } elseif (isset($this->context->customer, $this->context->customer->id)
+                    && $this->context->customer->id
+                    && $this->context->customer->isLogged()
+                ) {
+                    $hdCustomer = new WkHdCustomer($hdIdCustomer);
+                    $isValid = ($hdCustomer->id_ps_customer == $this->context->customer->id) && ($objTicket->hd_id_customer == $hdIdCustomer);
+                }
+                if (!$isValid) {
+                    Tools::redirect($this->context->link->getModuleLink($this->module->name, 'ticketlist'));
+                }
                 if ($_FILES['ticketAttachment']['tmp_name'] != '') {
                     $ticketAttachment = $_FILES['ticketAttachment'];
                 }
@@ -210,14 +232,14 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
                     $this->errors[] = $this->module->l('Message is required field.', 'viewticket');
                 }
 
-                //validate ticket main file
+                // validate ticket main file
                 if ($ticketAttachment && !empty($ticketAttachment['name'])) {
                     if (!WkHdTicket::validateTicketMainAttachment($ticketAttachment)) {
                         $this->errors[] = $this->module->l('Main attachment file is not valid.', 'viewticket');
                     }
                 }
 
-                //validate ticket other files
+                // validate ticket other files
                 if ($ticketOtherAttachment && !empty($ticketOtherAttachment['name'])) {
                     if (!WkHdTicket::validateTicketOtherAttachment($ticketOtherAttachment)) {
                         $this->errors[] = $this->module->l('Other attachment file(s) are not valid.', 'viewticket');
@@ -226,7 +248,6 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
 
                 if (!count($this->errors)) {
                     $objStatusMapping = new WkHdStatusMapping();
-                    $objTicket = new WkHdTicket((int) $ticketId);
                     $prevStatus = (int) $objTicket->id_status;
                     $openIdStatus = (int) $objStatusMapping->getMappedStatusIdByStatus('open');
                     $objTicket->id_status = (int) $openIdStatus;
@@ -275,16 +296,16 @@ class WkHelpDeskViewTicketModuleFrontController extends ModuleFrontController
                     if (Configuration::get('WK_HD_CUSTOMER_REPLY_MAIL')) {
                         $objTicket_agent = new WkHdTicketAgent();
                         $objTicket_agent->customerReplyToAgent(
-                            array('{ticket_id}' => $ticketId, '{message}' => $message),
+                            ['{ticket_id}' => $ticketId, '{message}' => $message],
                             true
                         );
                     }
 
-                    $paramsArray = array('sent' => 1, 'id' => $ticketId);
+                    $paramsArray = ['sent' => 1, 'id' => $ticketId];
                     if ($token) {
                         $paramsArray['token'] = $token;
                     }
-                    Tools::redirectLink(
+                    Tools::redirect( /* Khewa PS 9.2: redirectLink() removed */ 
                         $this->context->link->getModuleLink(
                             'wkhelpdesk',
                             'viewticket',

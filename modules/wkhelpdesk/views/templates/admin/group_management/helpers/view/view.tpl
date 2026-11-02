@@ -24,9 +24,9 @@
 				{if isset($groupInfo)}
 					<div class="panel-heading">
 						<i class="icon-user"></i>
-						{$groupInfo.group_name}
+						{$groupInfo.group_name|escape:'html':'UTF-8'}
 						<div class="panel-heading-action">
-							<a href="{$current}&amp;updatewk_hd_group&amp;id={$groupInfo.id|intval}&amp;token={$token}" class="btn btn-default">
+							<a href="{$current|escape:'html':'UTF-8'}&amp;updatewk_hd_group&amp;id={$groupInfo.id|intval}&amp;token={$token|escape:'html':'UTF-8'}" class="btn btn-default" style="position:relative;">
 								<i class="icon-edit"></i>
 								{l s='Edit' mod='wkhelpdesk'}
 							</a>
@@ -37,7 +37,7 @@
 							<label class="control-label col-lg-3">{l s='Mapped Agent(s)' mod='wkhelpdesk'} :</label>
 							<div class="col-lg-9">
 								{foreach $mappedGroupAgent as $group_agent}
-									<p class="form-control-static">{$group_agent.name}({$group_agent.email})</p>
+									<p class="form-control-static">{$group_agent.name|escape:'html':'UTF-8'}({$group_agent.email|escape:'html':'UTF-8'})</p>
 								{/foreach}
 							</div>
 						</div>

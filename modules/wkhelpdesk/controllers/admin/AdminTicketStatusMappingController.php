@@ -1,25 +1,31 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your
-* needs please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+require_once dirname(__FILE__) . '/../../classes/WkHdAdminTranslationTrait.php'; // Khewa PS 9.2
 
 class AdminTicketStatusMappingController extends ModuleAdminController
 {
+    use WkHdAdminTranslationTrait; // Khewa PS 9.2: admin l() was removed in PS 9
+
     public function __construct()
     {
         $this->context = Context::getContext();
@@ -31,34 +37,34 @@ class AdminTicketStatusMappingController extends ModuleAdminController
         parent::__construct();
         $this->toolbar_title = $this->l('Ticket status mapping');
         $this->_select = 'wk_hd_status_mapping_shop.*';
-        Shop::addTableAssociation('wk_hd_status_mapping', array('type' => 'shop', 'primary' => 'id'));
+        Shop::addTableAssociation('wk_hd_status_mapping', ['type' => 'shop', 'primary' => 'id']);
         $this->_join .= WkHdGroup::addSqlAssociationCustom('wk_hd_status_mapping', 'a', false);
         $this->_group = ' GROUP BY a.id';
 
         $objHdEmployee = new WkHdTicketAgent();
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
-            $this->fields_list = array(
-                'id' => array(
+            $this->fields_list = [
+                'id' => [
                     'title' => $this->l('ID'),
                     'align' => 'center',
                     'class' => 'fixed-width-xs',
-                    'filter_key' => 'wk_hd_status_mapping_shop!id'
-                ),
-                'id_status' => array(
+                    'filter_key' => 'wk_hd_status_mapping_shop!id',
+                ],
+                'id_status' => [
                     'title' => $this->l('Ticket status'),
                     'align' => 'center',
                     'search' => false,
                     'callback' => 'displayStatusText',
-                    'filter_key' => 'wk_hd_status_mapping_shop!id_status'
-                ),
-                'id_status_selected' => array(
+                    'filter_key' => 'wk_hd_status_mapping_shop!id_status',
+                ],
+                'id_status_selected' => [
                     'title' => $this->l('Selected ticket status'),
                     'align' => 'center',
                     'search' => false,
                     'callback' => 'displayStatusText',
-                    'filter_key' => 'wk_hd_status_mapping_shop!id_status_selected'
-                )
-            );
+                    'filter_key' => 'wk_hd_status_mapping_shop!id_status_selected',
+                ],
+            ];
         } else {
             $this->errors[] = $this->l('You do not have access right to view this page.');
         }
@@ -68,9 +74,10 @@ class AdminTicketStatusMappingController extends ModuleAdminController
     {
         if (($this->display == 'edit') && (Shop::getContext() == Shop::CONTEXT_SHOP)) {
             if (!$this->loadObject(true)) {
-                Tools::redirectAdmin(self::$currentIndex.'&token='.$this->token);
+                Tools::redirectAdmin(self::$currentIndex . '&token=' . $this->token);
             }
         }
+
         return parent::initContent();
     }
 
@@ -80,7 +87,7 @@ class AdminTicketStatusMappingController extends ModuleAdminController
         if ($statusText) {
             return $statusText;
         } else {
-            return "--";
+            return '--';
         }
     }
 
@@ -90,10 +97,10 @@ class AdminTicketStatusMappingController extends ModuleAdminController
         if ($objHdEmployee->validateEmployee($this->context->employee)) {
             parent::initToolbar();
             $url = explode('index.php?', $this->context->link->getAdminLink('AdminTicketStatus'))[1];
-            $this->page_header_toolbar_btn['new'] = array(
-                'href' => 'index.php?'.$url.'&addwk_hd_status_code',
+            $this->page_header_toolbar_btn['new'] = [
+                'href' => 'index.php?' . $url . '&addwk_hd_status_code',
                 'desc' => $this->l('Add new status'),
-            );
+            ];
         }
     }
 
@@ -101,7 +108,7 @@ class AdminTicketStatusMappingController extends ModuleAdminController
     {
         if (Shop::getContext() != Shop::CONTEXT_SHOP) {
             return $this->context->smarty->fetch(
-                _PS_MODULE_DIR_.$this->module->name.'/views/templates/admin/_partials/shop_warning.tpl'
+                _PS_MODULE_DIR_ . $this->module->name . '/views/templates/admin/_partials/shop_warning.tpl'
             );
         } else {
             $objHdEmployee = new WkHdTicketAgent();
@@ -116,27 +123,27 @@ class AdminTicketStatusMappingController extends ModuleAdminController
                     $statusText = WkHdStatusMapping::getStatusById($mappedStatus['id_status']);
 
                     $this->context->smarty->assign(
-                        array(
+                        [
                             'allStatus' => $allStatus,
                             'statusText' => $statusText,
                             'mappedStatus' => $mappedStatus,
-                        )
+                        ]
                     );
                 } else {
                     $this->errors[] = $this->l('Status mapping information not found.');
                 }
 
-                $this->fields_form = array(
-                    'submit' => array(
+                $this->fields_form = [
+                    'submit' => [
                         'title' => $this->l('Save'),
-                    ),
-                );
-
-                return parent::renderForm();
+                    ],
+                ];
             } else {
                 $this->errors[] = $this->l('You do not have access right to view this page.');
             }
         }
+
+        return parent::renderForm();
     }
 
     public function processSave()
@@ -152,9 +159,9 @@ class AdminTicketStatusMappingController extends ModuleAdminController
                 $objStatusMapping->id_status = (int) $idStatus;
                 $objStatusMapping->id_status_selected = (int) $idStatusSelected;
                 $objStatusMapping->save();
-                Tools::redirectAdmin(self::$currentIndex.'&conf=4&token='.$this->token);
+                Tools::redirectAdmin(self::$currentIndex . '&conf=4&token=' . $this->token);
             } else {
-                $this->errors[] = $this->l('There is error in status mapping');
+                $this->errors[] = $this->l('There is error in status mapping.');
             }
         } else {
             $this->errors[] = $this->l('You do not have access right to view this page.');

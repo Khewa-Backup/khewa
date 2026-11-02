@@ -1,0 +1,19 @@
+{
+  "name": "bestkit/bestkit-log",
+  "description": "Back-office action, login and visit audit log for PrestaShop 9",
+  "type": "prestashop-module",
+  "license": "AFL-3.0",
+  "authors": [
+    {
+      "name": "Best-Kit"
+    }
+  ],
+  "autoload": {
+    "classmap": [
+      "classes/BestkitLogAuthenticationSubscriber.php"
+    ]
+  },
+  "require": {
+    "php": ">=8.1"
+  }
+}

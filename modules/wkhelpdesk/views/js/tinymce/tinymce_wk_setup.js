@@ -4,14 +4,13 @@ tinymce.init({
     plugins: [
          "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
          "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-         "save table contextmenu directionality emoticons template paste textcolor autoresize responsivefilemanager"
+         "save table contextmenu directionality emoticons template paste textcolor autoresize"
    	],
    	browser_spellcheck : true,
    	toolbar1 : "code,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,|,blockquote,forecolor,pasteword,|,bullist,numlist,|,outdent,indent,|,link,unlink,anchor,|,cleanup,|,media,image,preview",
    	toolbar2: "",
-	external_filemanager_path: mp_tinymce_path+"/filemanager/",
-	filemanager_title: "Filemanager",
-	external_plugins: { "filemanager" : mp_tinymce_path+"/filemanager/plugin.min.js"},
+	// Khewa PS 9.2: the file manager (libs/filemanager) is switched off. It let anyone upload files with no login.
+	// Images can still be added by web address with the image button.
 	image_advtab: true ,
 	statusbar: false,
 	relative_urls : false,

@@ -34,7 +34,7 @@
                 </label>
                 <div class="col-lg-2">
                     <div class="input-group">
-                        <input type="color" data-hex="true" class="color mColorPickerInput" name="bgColor" {if isset($smarty.post.bgColor)} value="{$smarty.post.bgColor}" {else} value="{$bgColor}" {/if}/>
+                        <input type="color" data-hex="true" class="color mColorPickerInput" name="bgColor" {if isset($smarty.post.bgColor)} value="{$smarty.post.bgColor|escape:'html':'UTF-8'}" {else} value="{$bgColor|escape:'html':'UTF-8'}" {/if}/>
                     </div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                 </label>
                 <div class="col-lg-2">
                     <div class="input-group">
-                        <input type="color" data-hex="true" class="color mColorPickerInput" name="textColor" {if isset($smarty.post.textColor)} value="{$smarty.post.textColor}" {else} value="{$textColor}" {/if}/>
+                        <input type="color" data-hex="true" class="color mColorPickerInput" name="textColor" {if isset($smarty.post.textColor)} value="{$smarty.post.textColor|escape:'html':'UTF-8'}" {else} value="{$textColor|escape:'html':'UTF-8'}" {/if}/>
                     </div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                 <div class="col-lg-2">
                     <select id="fileType" name="fileType[]" multiple="multiple">
                         {foreach $fileType as $attachment_file}
-                            <option value="{$attachment_file.ext_name}" {if $attachment_file.is_availble == 1} selected="selected" {/if}>{$attachment_file.ext_name}</option>
+                            <option value="{$attachment_file.ext_name|escape:'html':'UTF-8'}" {if $attachment_file.is_availble == 1} selected="selected" {/if}>{$attachment_file.ext_name|escape:'html':'UTF-8'}</option>
                         {/foreach}
                     </select>
                 </div>
@@ -85,14 +85,14 @@
                         <p>{l s='Please set the CRON, insert the following line in your cron tasks manager:' mod='wkhelpdesk'}</p>
                         <br />
                         <ul class="list-unstyled">
-                            <li><code>{$cron_url}</code></li>
+                            <li><code>{$cron_url|escape:'html':'UTF-8'}</code></li>
                         </ul>
                     </div>
                 </div>
             </div>
             {* end *}
             <div class="panel-footer">
-				<a href="{$moduleLink}" class="btn btn-default"><i class="process-icon-cancel"></i>{l s='Cancel' mod='wkhelpdesk'}</a>
+				<a href="{$moduleLink|escape:'html':'UTF-8'}" class="btn btn-default"><i class="process-icon-cancel"></i>{l s='Cancel' mod='wkhelpdesk'}</a>
 				<button class="btn btn-default pull-right" name="submitGeneral" id="submitGeneral" value="1" type="submit"><i class="process-icon-save"></i>{l s='Save' mod='wkhelpdesk'}</button>
 			</div>
         </div>

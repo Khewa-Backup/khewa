@@ -3,7 +3,7 @@
 define('lang_Select', 'Välj'); // Select
 define('lang_Erase', 'Radera'); // Erase
 define('lang_Open', 'Öppna'); // Open
-define('lang_Confirm_del', 'Är du säker på att du vill radera denna fil?'); //Are you sure you want to delete this file?
+define('lang_Confirm_del', 'Är du säker på att du vill radera denna fil?'); // Are you sure you want to delete this file?
 define('lang_All', 'Alla'); // All
 define('lang_Files', 'Filer'); // Files
 define('lang_Images', 'Bilder'); // Images

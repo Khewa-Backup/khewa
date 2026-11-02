@@ -1,4 +1,11 @@
 <?php
+/**
+ * Bestkit Admin Log module.
+ *
+ * @author Best-Kit
+ * @copyright 2026 Best-Kit
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
+ */
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -12,23 +19,18 @@ class bestkit_log extends Module
     const COOKIE_LOG_VISIT_PARAM_NAME = 'bestkit_log_visit';
 
     protected $_hooks = array(
-		'header',
-		'actionObjectAddBefore',
-		'actionObjectAddAfter',
-		'actionObjectUpdateBefore',
-		'actionObjectUpdateAfter',
-		'actionObjectDeleteBefore',
-		'actionObjectDeleteAfter',
-		'actionAdminControllerSetMedia',
+        'actionObjectAddAfter',
+        'actionObjectUpdateBefore',
+        'actionObjectUpdateAfter',
+        'actionObjectDeleteBefore',
+        'actionObjectDeleteAfter',
+        'actionAdminControllerSetMedia',
     );
-
-    protected $_moduleParams = array();
-    protected $_moduleParamsLang = array();
 
     protected $_tabs = array(
         array(
             'class_name' => 'AdminBestkitLogs',
-            'parent' => false,
+            'parent' => null,
             'name' => 'Bestkit Admin log'
         ),
         array(
@@ -51,17 +53,21 @@ class bestkit_log extends Module
     public function __construct()
     {
         $this->name = 'bestkit_log';
-        $this->tab = 'payments_gateways';
-        $this->version = '1.7.4'; //Update for Prestashop 1.7.8
+        $this->tab = 'administration';
+        $this->version = '2.0.1';
         $this->author = 'best-kit';
         $this->need_instance = 0;
         $this->module_key = '8a8e23d4093aa682ad4dd8dac1878c8b';
-        $this->bootstrap = TRUE;
+        $this->bootstrap = true;
+        $this->ps_versions_compliancy = array(
+            'min' => '9.0.0',
+            'max' => '9.99.99',
+        );
 
         parent::__construct();
 
         $this->displayName = $this->l('Admin/Employee actions log');
-        $this->description = $this->l('Log all actions performed in store backend by admin users, view log history on the grid and keep the log records for as long as you need. View login activity and block malicious login attempts. Know what have been done in your store admin panel and by whom.');
+        $this->description = $this->l('Log back-office actions, employee login attempts and visited administration pages.');
     }
 
     public function getDir($file = '')
@@ -71,143 +77,67 @@ class bestkit_log extends Module
 
     public function install()
     {
-        if (parent::install()) {
-            $sql = array();
-            include ($this->getDir('sql/install.php'));
-            foreach ($sql as $_sql) {
-                Db::getInstance()->Execute($_sql);
-            }
-			
-            foreach ($this->_hooks as $hook) {
-                if (!$this->registerHook($hook)) {
-                    return FALSE;
-                }
-            }
-
-            $languages = Language::getLanguages();
-            foreach ($this->_tabs as $tab) {
-                $_tab = new Tab();
-                $_tab->class_name = $tab['class_name'];
-                $_tab->id_parent = Tab::getIdFromClassName($tab['parent']);
-                if (empty($_tab->id_parent)) {
-                    $_tab->id_parent = 0;
-                }
-
-                $_tab->module = $this->name;
-                foreach ($languages as $language) {
-                    $_tab->name[$language['id_lang']] = $this->l($tab['name']);
-                }
-
-                $_tab->add();
-            }
-
-            if (!$this->installConfiguration()) {
-                return FALSE;
-            }
-
-            return TRUE;
+        if (!parent::install()) {
+            return false;
         }
 
-        return FALSE;
+        $queries = include $this->getDir('sql/install.php');
+        foreach ($queries as $query) {
+            if (!Db::getInstance()->execute($query)) {
+                $this->uninstall();
+
+                return false;
+            }
+        }
+
+        foreach ($this->_hooks as $hook) {
+            if (!$this->registerHook($hook)) {
+                $this->uninstall();
+
+                return false;
+            }
+        }
+
+        $languages = Language::getLanguages(false);
+        foreach ($this->_tabs as $tabData) {
+            $tab = new Tab();
+            $tab->class_name = $tabData['class_name'];
+            $tab->id_parent = $tabData['parent'] === null
+                ? 0
+                : (int) Tab::getIdFromClassName($tabData['parent']);
+            $tab->module = $this->name;
+
+            foreach ($languages as $language) {
+                $tab->name[(int) $language['id_lang']] = $this->l(trim($tabData['name']));
+            }
+
+            if (!$tab->add()) {
+                $this->uninstall();
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function uninstall()
     {
-        if ($return = parent::uninstall()) {
-            $sql = array();
-            include ($this->getDir('sql/uninstall.php'));
-            foreach ($sql as $_sql) {
-                Db::getInstance()->Execute($_sql);
-            }
+        $result = true;
+        $queries = include $this->getDir('sql/uninstall.php');
+        foreach ($queries as $query) {
+            $result = Db::getInstance()->execute($query) && $result;
+        }
 
-            foreach ($this->_tabs as $tab) {
-                $_tab_id = Tab::getIdFromClassName($tab['class_name']);
-                $_tab = new Tab($_tab_id);
-                $_tab->delete();
+        foreach ($this->_tabs as $tabData) {
+            $tabId = (int) Tab::getIdFromClassName($tabData['class_name']);
+            if ($tabId > 0) {
+                $tab = new Tab($tabId);
+                $result = $tab->delete() && $result;
             }
         }
 
-        return $return;
-    }
-
-    public function installConfiguration()
-    {
-        foreach ($this->_moduleParams as $param => $value) {
-            if (!$this->setConfig($param, $value)) {
-                return FALSE;
-            }
-        }
-
-        foreach ($this->_moduleParamsLang as $param => $value) {
-            $values = array();
-            foreach (Language::getLanguages(FALSE) as $lang) {
-                $values[$lang['id_lang']] = $value;
-            }
-
-            if (!$this->setConfig($param, $values)) {
-                return FALSE;
-            }
-        }
-
-        return TRUE;
-    }
-
-    public function getConfig($name)
-    {
-        if (array_key_exists($name, $this->_moduleParamsLang)) {
-            $values = array();
-            foreach (Language::getLanguages(FALSE) as $lang) {
-                $values[$lang['id_lang']] = Configuration::get(self::PREFIX . $name, $lang['id_lang']);
-            }
-
-            return $values;
-        } else {
-            return Configuration::get(self::PREFIX . $name);
-        }
-    }
-
-    public function setConfig($name, $value)
-    {
-        return Configuration::updateValue(self::PREFIX . $name, $value, TRUE);
-    }
-
-    protected function postProcess() {
-        if (Tools::isSubmit('submitUpdate')) {
-            if (is_array($_POST)) {
-                foreach ($_POST as $key => $value) {
-                    if (array_key_exists($key, $this->_moduleParams)) {
-                        $validation_method = $this->_moduleParams[$key]['validate'];
-                        if (Validate::{$validation_method}($value) || empty($value)) {
-                            $this->setConfig($key, $value);
-                        } else {
-                            $this->errors[] = sprintf($this->l('%s `%s`, sorry but value `%s` does not correct'), $this->_moduleParams[$key]['validateErrMsg'], $this->_moduleParams[$key]['validateErrField'], $value);
-                        }
-                    }
-                }
-
-                $languages = Language::getLanguages(FALSE);
-                foreach (array_keys($this->_moduleParamsLang) as $key) {
-                    $values = array();
-                    foreach ($languages as $lang) {
-                        $values[$lang['id_lang']] = Tools::getValue($key . '_' . $lang['id_lang']);
-                    }
-
-                    $this->setConfig($key, $values);
-                }
-            }
-
-            if (!count($this->errors))
-                Tools::redirectAdmin('index.php?tab=AdminModules&conf=4&configure=' . $this->name . '&token=' . Tools::getAdminToken('AdminModules' . (int)Tab::getIdFromClassName('AdminModules') . (int)$this->context->employee->id));
-        }
-    }
-
-    private function initToolbar() {
-        $this->toolbar_btn['save'] = array(
-            'href' => '#',
-            'desc' => $this->l('Save')
-        );
-
-        return $this->toolbar_btn;
+        return parent::uninstall() && $result;
     }
 
     public function _renderHelp() {
@@ -233,64 +163,9 @@ class bestkit_log extends Module
         return $this->display(__FILE__, 'help.tpl');
     }
 
-    private function initForm() {
-        $helper = new HelperForm();
-        $helper->module = $this;
-        $helper->name_controller = $this->name;
-        $helper->identifier = $this->identifier;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
-        $helper->toolbar_scroll = TRUE;
-        $helper->toolbar_btn = $this->initToolbar();
-        $helper->title = $this->displayName;
-        $helper->submit_action = 'submitUpdate';
-
-        $languages = Language::getLanguages(FALSE);
-        $availableLanguages = array();
-        foreach ($languages as $k => $language) {
-            $languages[$k]['is_default'] = (int)($language['id_lang'] == Configuration::get('PS_LANG_DEFAULT'));
-            $availableLanguages[] = array(
-                'id' => $language['id_lang'],
-                'id_language' => $language['name'],
-            );
-        }
-
-        $helper->languages = $languages;
-        $helper->default_form_language = (int)Configuration::get('PS_LANG_DEFAULT');
-
-        $this->fields_form[0]['form'] = array(
-            'tinymce' => TRUE,
-            'legend' => array(
-                'title' => $this->l('General settings'),
-                'icon' => 'icon-cogs'
-            ),
-            'input' => array(
-                array(
-                    'col' => '9',
-                    'type' => 'categories_select',
-                    'category_tree' => $this->_renderHelp(),
-                    'name' => '__links_help',
-                ),
-            ),
-            'submit' => array(
-                'name' => 'submitUpdate',
-                'title' => $this->l('   Save   '),
-            ),
-        );
-
-        return $helper;
-    }
-
-    public function getContent() {
-        $this->postProcess();
-        $helper = $this->initForm();
-        foreach ($this->fields_form as $fieldset) {
-            foreach ($fieldset['form']['input'] as $input) {
-                $helper->fields_value[$input['name']] = $this->getConfig($input['name']);
-            }
-        }
-
-        return $helper->generateForm($this->fields_form);
+    public function getContent()
+    {
+        return $this->_renderHelp();
     }
 
     public function getLogExceptions()
@@ -298,90 +173,187 @@ class bestkit_log extends Module
         return BestkitLog::getLogExceptions();
     }
 
-    public function setStatusCallback($status)
-    {
-        $this->context->smarty->assign([
-            'bestkit_points' => [
-                'status' => [
-                    'name' => $status,
-                    'color' => $status == 'update' ? 'orange' : ($status == 'add' ? 'green' : 'red'),
-                ]
-            ]
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/admin/status_renderer.tpl');
-    }
-
     public function hookActionAdminControllerSetMedia()
     {
-        if (!isset($this->context->cookie->{self::COOKIE_LOG_VISIT_PARAM_NAME})) {
-            $this->context->cookie->{self::COOKIE_LOG_VISIT_PARAM_NAME} = BestkitLogVisit::registerNewVisit();
+        if (!Validate::isLoadedObject($this->context->employee)) {
+            return;
         }
 
-        BestkitLogVisit::recordVisitDetails($this->context->cookie->{self::COOKIE_LOG_VISIT_PARAM_NAME});
+        $visitId = $this->context->cookie->__isset(self::COOKIE_LOG_VISIT_PARAM_NAME)
+            ? (int) $this->context->cookie->__get(self::COOKIE_LOG_VISIT_PARAM_NAME)
+            : 0;
+        if (!$visitId || !BestkitLogVisit::belongsToEmployee($visitId, (int) $this->context->employee->id)) {
+            $visitId = BestkitLogVisit::registerNewVisit($this->context);
+            $this->context->cookie->__set(self::COOKIE_LOG_VISIT_PARAM_NAME, $visitId);
+        }
+
+        if ($visitId > 0) {
+            BestkitLogVisit::recordVisitDetails($visitId);
+        }
     }
-	
-/*
-	public function hookActionObjectAddBefore($params) {
-		//print_r($params); die('hookActionObjectAddBefore');
-		
-		BestkitLog::saveLog($this->context, $params['object'], 'actionObject'.get_class($params['object']).'Add', 'before'); //Before
-	}
-    public function hookActionObjectUpdateBefore($params) {
-        if (in_array(get_class($params['object']), $this->exceptions))
-            return;
 
-        $this->context->bestkitlog_data_before = $params['object'];
+    /**
+     * Only back-office actions are logged (BestkitLog::saveLog() requires an employee),
+     * so front-office object changes (carts, customers, connections...) are skipped early
+     */
+    protected function isEmployeeContext()
+    {
+        // Khewa PS 9.2: never log while one of our own hooks is already running. Loading the "before" copy of an
+        // object (new $class($id)) can save other objects, which ran our hooks again and again until PHP ran out
+        // of memory (seen on the POS till when adding to the cart).
+        if (self::$khewaBusy) {
+            return false;
+        }
+
+        return isset($this->context->employee) && Validate::isLoadedObject($this->context->employee);
     }
-	public function hookActionObjectDeleteBefore($params) {
-		//print_r($params); die('hookActionObjectDeleteBefore');
 
-		BestkitLog::saveLog($this->context, $params['object'], 'actionObject'.get_class($params['object']).'Delete', 'before'); //Before
-	}
-*/
-	public function hookActionObjectAddAfter($params) {
-		if (in_array(get_class($params['object']), $this->getLogExceptions()))
-		    return;
+    /** Khewa PS 9.2: true while a logging hook is running (stops the hooks calling themselves). */
+    protected static $khewaBusy = false;
 
-        if (is_object(Context::getContext()->employee) && Context::getContext()->employee->id) {
-            BestkitLog::saveLog(
-                $params['object'],
-                BestkitLog::getFromRegistry(BestkitLog::getRegistryName($params['object'], true)),
-                'add',
-                $this->context,
-                isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? 'ajax action' : ''
-            );
-	    }
-	}
-
-	public function hookActionObjectUpdateAfter($params) {
-        if (in_array(get_class($params['object']), $this->getLogExceptions()))
+    public function hookActionObjectDeleteBefore($params)
+    {
+        if (!$this->isEmployeeContext()) {
             return;
+        }
+        self::$khewaBusy = true; // Khewa PS 9.2: see isEmployeeContext()
+        try {
+            $this->khewaActionObjectDeleteBefore($params);
+        } finally {
+            self::$khewaBusy = false;
+        }
+    }
 
-        if (is_object(Context::getContext()->employee) && Context::getContext()->employee->id) {
-		    BestkitLog::saveLog(
-		        $params['object'],
-                BestkitLog::getFromRegistry(BestkitLog::getRegistryName($params['object'])),
-                'update',
-                $this->context,
-                isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? 'ajax action' : ''
-            );
-	    }
-	}
-
-	public function hookActionObjectDeleteAfter($params) {
-        if (in_array(get_class($params['object']), $this->getLogExceptions()))
+    protected function khewaActionObjectDeleteBefore($params)
+    {
+        if (!isset($params['object']) || !is_object($params['object'])) {
             return;
+        }
 
-        if (is_object(Context::getContext()->employee) && Context::getContext()->employee->id) {
-            BestkitLog::saveLog(
-                $params['object'],
-                BestkitLog::getFromRegistry(BestkitLog::getRegistryName($params['object'])),
-                'delete',
-                $this->context,
-                isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? 'ajax action' : ''
-            );
-	    }
-	}
+        BestkitLog::putToRegistry(
+            BestkitLog::getRegistryName($params['object']),
+            $params['object']
+        );
+    }
+
+    public function hookActionObjectAddAfter($params)
+    {
+        if (!$this->isEmployeeContext()) {
+            return;
+        }
+        self::$khewaBusy = true; // Khewa PS 9.2: see isEmployeeContext()
+        try {
+            $this->khewaActionObjectAddAfter($params);
+        } finally {
+            self::$khewaBusy = false;
+        }
+    }
+
+    protected function khewaActionObjectAddAfter($params)
+    {
+        if (!isset($params['object'])) {
+            return;
+        }
+
+        BestkitLog::saveLog(
+            $params['object'],
+            null,
+            'add',
+            $this->context,
+            isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? 'ajax action' : ''
+        );
+    }
+
+    public function hookActionObjectUpdateBefore($params)
+    {
+        if (!$this->isEmployeeContext()) {
+            return;
+        }
+        self::$khewaBusy = true; // Khewa PS 9.2: see isEmployeeContext()
+        try {
+            $this->khewaActionObjectUpdateBefore($params);
+        } finally {
+            self::$khewaBusy = false;
+        }
+    }
+
+    protected function khewaActionObjectUpdateBefore($params)
+    {
+        if (!isset($params['object']) || !is_object($params['object'])) {
+            return;
+        }
+
+        if (in_array(get_class($params['object']), $this->getLogExceptions(), true)) {
+            return;
+        }
+
+        $class = get_class($params['object']);
+        try {
+            $original = new $class($params['object']->id);
+        } catch (Throwable $exception) {
+            return;
+        }
+
+        BestkitLog::putToRegistry(
+            BestkitLog::getRegistryName($params['object']),
+            $original
+        );
+    }
+
+    public function hookActionObjectUpdateAfter($params)
+    {
+        if (!$this->isEmployeeContext()) {
+            return;
+        }
+        self::$khewaBusy = true; // Khewa PS 9.2: see isEmployeeContext()
+        try {
+            $this->khewaActionObjectUpdateAfter($params);
+        } finally {
+            self::$khewaBusy = false;
+        }
+    }
+
+    protected function khewaActionObjectUpdateAfter($params)
+    {
+        if (!isset($params['object'])) {
+            return;
+        }
+
+        BestkitLog::saveLog(
+            $params['object'],
+            BestkitLog::getFromRegistry(BestkitLog::getRegistryName($params['object'])),
+            'update',
+            $this->context,
+            isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? 'ajax action' : ''
+        );
+    }
+
+    public function hookActionObjectDeleteAfter($params)
+    {
+        if (!$this->isEmployeeContext()) {
+            return;
+        }
+        self::$khewaBusy = true; // Khewa PS 9.2: see isEmployeeContext()
+        try {
+            $this->khewaActionObjectDeleteAfter($params);
+        } finally {
+            self::$khewaBusy = false;
+        }
+    }
+
+    protected function khewaActionObjectDeleteAfter($params)
+    {
+        if (!isset($params['object'])) {
+            return;
+        }
+
+        BestkitLog::saveLog(
+            $params['object'],
+            BestkitLog::getFromRegistry(BestkitLog::getRegistryName($params['object'])),
+            'delete',
+            $this->context,
+            isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? 'ajax action' : ''
+        );
+    }
 
 }

@@ -9,7 +9,7 @@
  *
  * @author    Leone MusicReader B.V.
  *
- * @copyright 2016-2021 Leone MusicReader B.V.
+ * @copyright 2016-2023 Leone MusicReader B.V.
  *
  * @license   custom see above
  */
@@ -263,6 +263,9 @@ function printMultipleHTML(codes_1, width,height,rotate,counts,callback) {
 
 function generateImageFromHTML(code, width,height,rotate,callback){
 
+    var previousScrollY=window.scrollY;
+    var previousScrollX=window.scrollX;
+
     window.scrollTo(0, 0);
 
     var enlargement=4;
@@ -386,12 +389,12 @@ function generateImageFromHTML(code, width,height,rotate,callback){
                 var data_url="data:image/svg+xml;utf8,"+encodeURIComponent(myRectangle);
 
                 callback(data_url);
-
+                window.scrollTo(previousScrollX, previousScrollY);
             });
-        },50);
+        },100);
     }
 
-    var imageObjects=$(".product_image");
+    var imageObjects=$(".product_image_dlp");
     if(imageObjects.length==0){
         renderLabelContentsNow();
         return;
@@ -414,15 +417,21 @@ function generateImageFromHTML(code, width,height,rotate,callback){
             var oReq = new XMLHttpRequest();
             oReq.open("GET", imgOBJ.alt, true);
             oReq.responseType = "blob";
-            oReq.onload = function (oEvent) {
-                var blob = oReq.response;
-                const reader = new FileReader();
-                reader.addEventListener("load", function () {
-                    // convert image file to base64 string
-                    imgOBJ.src = reader.result;
-                    finish();
-                }, false);
-                reader.readAsDataURL(blob);
+            oReq.onreadystatechange=function(){
+                if(oReq.readyState==4){
+                    if(blob!=null){
+                        var blob = oReq.response;
+                        const reader = new FileReader();
+                        reader.addEventListener("load", function () {
+                            // convert image file to base64 string
+                            imgOBJ.src = reader.result;
+                            finish();
+                        }, false);
+                        reader.readAsDataURL(blob);
+                    }else{
+                        finish();
+                    }
+                }
             };
             oReq.send();
         }else{
@@ -743,7 +752,7 @@ function isiOSBrowser() {
 
 function copyLabelContent(){
     var code=$('#summernote').summernote('code');
-    if(code.length<10000000) {
+    if(code.length<60000) {
         console.log("html_code:" + code);
         document.getElementById("label_content").value = code;
     }else{
@@ -754,7 +763,7 @@ function copyLabelContent(){
 
 function insertProductImage(){
     var node = document.createElement('img');
-    node.className = "product_image";
+    node.className = "product_image_dlp";
     node.src=image_sample_url;
     node.alt="[[cover_image_url]]";
     node.style.width="381px";

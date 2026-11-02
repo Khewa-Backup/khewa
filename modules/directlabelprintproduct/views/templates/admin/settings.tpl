@@ -277,6 +277,8 @@
                     products_group.label="{l s='Products' mod='directlabelprintproduct'}";
                     var categories_group=document.createElement("optgroup");
                     categories_group.label="{l s='Categories' mod='directlabelprintproduct'}";
+                    var brand_group=document.createElement("optgroup");
+                    brand_group.label="{l s='Brands' mod='directlabelprintproduct'}";
                     var alreadySelected=(choosenTemplate.length==0);
                     keys.forEach(function (key) {
                         var option = document.createElement("option");
@@ -288,6 +290,8 @@
                             products_group.appendChild(option);
                         }else if (key.startsWith("category-")){
                             categories_group.appendChild(option);
+                        }else if (key.startsWith("brand-")) {
+                            brand_group.appendChild(option);
                         }else{
                             dropdown.append(option);
                         }
@@ -301,11 +305,16 @@
                             products_group.appendChild(option);
                         }else if (choosenTemplate.startsWith("category-")) {
                             categories_group.appendChild(option);
+                        }else if (choosenTemplate.startsWith("brand-")) {
+                            brand_group.appendChild(option);
                         }
                         $("#downloadDymoTemplate").hide(); //Can't download new
                     }
                     if (products_group.children.length>0) {
                         dropdown.append(products_group);
+                    }
+                    if (brand_group.children.length>0) {
+                        dropdown.append(brand_group);
                     }
                     if (categories_group.children.length>0) {
                         dropdown.append(categories_group);
@@ -363,6 +372,8 @@
                         products_group.label="{l s='Products' mod='directlabelprintproduct'}";
                         var categories_group=document.createElement("optgroup");
                         categories_group.label="{l s='Categories' mod='directlabelprintproduct'}";
+                        var brands_group=document.createElement("optgroup");
+                        brands_group.label="{l s='Brand' mod='directlabelprintproduct'}";
                         keys.forEach(function (key) {
                             var option = document.createElement("option");
                             option.value = key;
@@ -371,10 +382,15 @@
                                 products_group.appendChild(option);
                             }else if (key.startsWith("category-")){
                                 categories_group.appendChild(option);
+                            }else if (key.startsWith("brand-")){
+                                brands_group.appendChild(option);
                             }else{
                                 searchresultselect.append(option);
                             }
                         });
+                        if (brands_group.children.length>0) {
+                            searchresultselect.append(brands_group);
+                        }
                         if (products_group.children.length>0) {
                             searchresultselect.append(products_group);
                         }
@@ -491,14 +507,21 @@
     <button class="btn btn-default" id="recommendedModulesButton"><i class="icon-puzzle-piece" ></i><br/>{l s='Recommended Modules' mod='directlabelprintproduct'}</button>
 </div>
 
-<ps-alert-error id="noDymoFoundError">{l s='The module can\'t find a DYMO Printer.' mod='directlabelprintproduct'}<br/>
+<ps-alert-error id="noDymoFoundError">
+    <div style="font-size:20px;">
+        <b>{l s='The module can\'t find a DYMO Printer.' mod='directlabelprintproduct'}</b><br/>
+
     {l s='Please make sure:' mod='directlabelprintproduct'}<br/>
     <ul>
         <li>{l s='You have a DYMO Printer. If not, then please select "Other" below.' mod='directlabelprintproduct'}</li>
-        <li>{l s='The latest DYMO Label or Dymo Connect Software is installed, to be sure we recommend to reinstall from' mod='directlabelprintproduct'} <a href="https://www.dymo.com/on/demandware.store/Sites-dymo-Site/en_US/Support-user-guides" target="_blank">{l s='this website' mod='directlabelprintproduct'}</a>.</li>
-        <li>{l s='Still not working? Then click on the Dymo icon in system tray and choose "Diagnose". That should tell what is wrong.' mod='directlabelprintproduct'}</li>
+        <li>{l s='The latest DYMO Label or Dymo Connect Software is installed, to be sure we recommend to reinstall from' mod='directlabelprintproduct'} <a href="https://www.dymo.com/support?cfid=user-guide" target="_blank">{l s='this website' mod='directlabelprintproduct'}</a>.</li>
+        <li>{l s='Still not working? Then click on the Dymo icon in system tray and choose "Diagnose". That should tell what is wrong.' mod='directlabelprintproduct'}<br/>
+            <a href="{$imgfolder|escape:'html':'UTF-8'}dymo_diagnose_windows.png" target="_blank"> <img src="{$imgfolder|escape:'html':'UTF-8'}dymo_diagnose_windows.png" height="80" style="margin:10px;margin-bottom:30px"/></a>
+            <a href="{$imgfolder|escape:'html':'UTF-8'}dymo_diagnose_mac.png" target="_blank"> <img src="{$imgfolder|escape:'html':'UTF-8'}dymo_diagnose_mac.png" height="80" style="margin:10px;margin-bottom:30px"/></a>
+        </li>
         <li><a href="https://addons.prestashop.com/contact-form.php?id_product=26296" target="_blank">{l s='Contact us if you still have problems getting it working.' mod='directlabelprintproduct'}</a></li>
     </ul>
+    </div>
 </ps-alert-error>
 
 {if isset($error) }
@@ -725,7 +748,9 @@
         <ps-input-text id="width_input" name="width_input" label="{l s='Label Width' mod='directlabelprintproduct'}" size="20" hint="{l s='Enter width of label used.' mod='directlabelprintproduct'} "  help="{l s='Please enter whole numbers only (no dots, commas or text). The unit doesn\'t matter, the printer decides the actual size.' mod='directlabelprintproduct'}" fixed-width="50" value="{$width_input|escape:'html':'UTF-8'}"></ps-input-text>
         <ps-input-text id="height_input" name="height_input" label="{l s='Label Height' mod='directlabelprintproduct'}" size="20" hint="{l s='Enter height of label used.' mod='directlabelprintproduct'}" help="{l s='Please enter whole numbers only (no dots, commas or text). The unit doesn\'t matter, the printer decides the actual size.' mod='directlabelprintproduct'}" fixed-width="50" value="{$height_input|escape:'html':'UTF-8'}"></ps-input-text>
 
-        <ps-alert-warn><b>{l s='Important! Please make sure "Paper Size" in your printer settings / preferences is set correctly.' mod='directlabelprintproduct'}</b></ps-alert-warn>
+        <ps-alert-warn><div style="font-size:17px; margin-left:8px;"><b>{l s='Important! Please make sure "Paper Size" in your printer settings / preferences is set correctly.' mod='directlabelprintproduct'}</b><br/>
+        <a href="https://support.microsoft.com/en-us/topic/printer-is-configured-to-use-the-wrong-paper-size-ee2ee88a-95fa-f15a-0517-611ec20ffd26" target="_blank">Instructions Windows</a> <br/><a href="https://support.apple.com/en-gb/guide/mac-help/mh26678/mac" target="_blank">Instructions Mac OS</a>
+            </div></ps-alert-warn>
 
         <ps-switch id="rotate_image" name="rotate_image" label="{l s='Rotate Label' mod='directlabelprintproduct'}"  hint="{l s='This allows to change orientation of print. If YES then label is rotated 90 degrees.' mod='directlabelprintproduct'}" yes="{l s='Yes' mod='directlabelprintproduct'}" no="{l s='No' mod='directlabelprintproduct'}" active="{$rotate_image|escape:'html':'UTF-8'}"></ps-switch>
 

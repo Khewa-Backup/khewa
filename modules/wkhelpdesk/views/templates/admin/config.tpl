@@ -20,7 +20,7 @@
 {if isset($errors)}
 <div class="alert alert-danger">
 	{foreach $errors as $error}
-		{$error}<br />
+		{$error|escape:'html':'UTF-8'}<br />
 	{/foreach}
 </div>
 {/if}
@@ -28,7 +28,7 @@
 {if isset($successes)}
 <div class="alert alert-success">
 	{foreach $successes as $success}
-		{$success}<br />
+		{$success|escape:'html':'UTF-8'}<br />
 	{/foreach}
 </div>
 {/if}
@@ -56,10 +56,10 @@
 			</ul>
 			<ul class='list-group'>
 				<li class='list-group-item'>
-					<a><i class="icon-info"></i> {l s='Version ' mod='wkhelpdesk'}{$version}</a>
+					<a><i class="icon-info"></i> {l s='Version ' mod='wkhelpdesk'}{$version|escape:'html':'UTF-8'}</a>
 				</li>
 				<li class='list-group-item'>
-					<a href="{$docLink}" target="_blank"><i class="icon-download"></i> {l s='Documentation' mod='wkhelpdesk'}</a>
+					<a href="{$docLink|escape:'html':'UTF-8'}" target="_blank"><i class="icon-download"></i> {l s='Documentation' mod='wkhelpdesk'}</a>
 				</li>
 			</ul>
 		</div>

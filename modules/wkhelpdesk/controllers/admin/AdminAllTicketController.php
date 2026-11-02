@@ -17,9 +17,17 @@
 * @copyright Since 2010 Webkul
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 */
+// Khewa PS 9.2: guard from wkhelpdesk 5.0.2 (this file keeps Khewa changes, so it was merged by hand).
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+require_once dirname(__FILE__) . '/../../classes/WkHdAdminTranslationTrait.php'; // Khewa PS 9.2
 
 class AdminAllTicketController extends ModuleAdminController
 {
+    use WkHdAdminTranslationTrait; // Khewa PS 9.2: admin l() was removed in PS 9
+
     public function __construct()
     {
         $this->context = Context::getContext();
@@ -151,7 +159,10 @@ class AdminAllTicketController extends ModuleAdminController
                                 continue;
                             }
                         }
-                        $ticketStatusCount[$ticket['id_status']]++; // increment status counter
+                        // Khewa PS 9.2: isset check from 5.0.2 (PHP 8 warns on a missing key)
+                        if (isset($ticketStatusCount[$ticket['id_status']])) {
+                            ++$ticketStatusCount[$ticket['id_status']]; // increment status counter
+                        }
                         // Customization By Ram Chandra
                         $ticketStatusCount[0]++; // increment status counter
                         // END
@@ -205,7 +216,7 @@ class AdminAllTicketController extends ModuleAdminController
                 $smartyVars['ticketList'] = $ticketList;
                 $smartyVars['customerList'] = $customerList;
                 $smartyVars['selectedStatus'] = $selectedStatus;
-                $smartyVars['ticketStatusCount'] = $ticketStatusCount;
+                $smartyVars['ticketStatusCount'] = isset($ticketStatusCount) ? $ticketStatusCount : []; // Khewa PS 9.2: from 5.0.2
                 $smartyVars['selectedQueryType'] = $selectedQueryType;
                 $smartyVars['selectedTicketCustomer'] = $selectedTicketCustomer;
                 $smartyVars['adminUri'] = $this->context->link->getAdminLink('AdminAllTicket');
@@ -233,7 +244,7 @@ class AdminAllTicketController extends ModuleAdminController
         } else {
             $smartyVars['isAgent'] = 0;
         }
-        $smartyVars['openedStatus'] = Tools::getValue('status') ? Tools::getValue('status') : 0;
+        $smartyVars['openedStatus'] = (int) Tools::getValue('status'); // Khewa PS 9.2: number only, it is printed into the page script
         $this->context->smarty->assign($smartyVars);
         return parent::renderList();
     }
@@ -270,8 +281,10 @@ class AdminAllTicketController extends ModuleAdminController
             $objQueryType = new WkHdQueryType();
 
             if (!$objQueryType->isSuperAdmin($idEmployee)) {
+                // Khewa PS 9.2: 5.0.2 fix, the query types are linked to the agent id, not the employee id
+                $idAgent = $objQueryType->getTicketAgentId($idEmployee);
                 $allQueryType = $objQueryType->getAllQueryTypeForAgent(
-                    $idEmployee,
+                    $idAgent,
                     $idLang
                 );
             } else {
@@ -402,7 +415,7 @@ class AdminAllTicketController extends ModuleAdminController
         $this->addJS(_MODULE_DIR_.'wkhelpdesk/views/js/jquery.dataTables.min.js');
         $this->addJS(_MODULE_DIR_.'wkhelpdesk/views/js/dataTables.bootstrap.js?v='.time());
         $this->addJS(_MODULE_DIR_.'wkhelpdesk/views/js/wkimageremove.js?v='.time());
-        $this->addJS('growl', null, false);
+        $this->addjQueryPlugin('growl', null, false); // Khewa PS 9.2: growl is a jQuery plugin, addJS('growl') pointed to a missing file
         $this->addCSS('growl-css', 'js/jquery/plugins/growl/jquery.growl.css');
         //for tiny mce field
         Media::addJsDef(
@@ -836,7 +849,7 @@ class AdminAllTicketController extends ModuleAdminController
             }
         }
 
-        die(Tools::jsonEncode($param));
+        die(json_encode($param));
     }
 
     // search ticket by ticket id
@@ -861,7 +874,7 @@ class AdminAllTicketController extends ModuleAdminController
             }
         }
 
-        die(Tools::jsonEncode($param));
+        die(json_encode($param));
     }
 
     // Customization start #1012187
@@ -1011,7 +1024,7 @@ class AdminAllTicketController extends ModuleAdminController
             }
         }
 
-        die(Tools::jsonEncode($param));
+        die(json_encode($param));
     }
 
     // change ticket status
@@ -1040,6 +1053,6 @@ class AdminAllTicketController extends ModuleAdminController
             }
         }
 
-        die(Tools::jsonEncode($param));
+        die(json_encode($param));
     }
 }

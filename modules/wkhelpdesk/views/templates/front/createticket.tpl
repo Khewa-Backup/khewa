@@ -20,8 +20,8 @@
 
 {extends file=$layout}
 {block name='content'}
-<script type="text/javascript" src="{$smarty.const._MODULE_DIR_}wkhelpdesk/views/js/tinymce/tinymce.min.js"></script>
-<script type="text/javascript" src="{$smarty.const._MODULE_DIR_}wkhelpdesk/views/js/tinymce/tinymce_wk_setup.js"></script>
+<script type="text/javascript" src="{$smarty.const._MODULE_DIR_|escape:'html':'UTF-8'}wkhelpdesk/views/js/tinymce/tinymce.min.js"></script>
+<script type="text/javascript" src="{$smarty.const._MODULE_DIR_|escape:'html':'UTF-8'}wkhelpdesk/views/js/tinymce/tinymce_wk_setup.js"></script>
 
 {if isset($smarty.get.created)}
 	<div class="alert alert-success">
@@ -29,8 +29,8 @@
 	</div>
 {/if}
 
-<div class="page-title" style="background-color:{$bgColor};">
-	<span class="bottom-indent" style="color:{$textColor};">
+<div class="page-title" style="background-color:{$bgColor|escape:'html':'UTF-8'};">
+	<span class="bottom-indent" style="color:{$textColor|escape:'html':'UTF-8'};">
 		{l s='Customer service' mod='wkhelpdesk'} - {l s='Create new ticket' mod='wkhelpdesk'}
 	</span>
 </div>
@@ -43,21 +43,21 @@
 					<label for="firstname" class="control-label required">
 						{l s='First name' mod='wkhelpdesk'}
 					</label>
-					<input class="form-control" type="text" name="firstname" id="firstname" {if isset($firstname)} value="{$firstname}" readonly="readonly" {else if isset($smarty.post.firstname)} value="{$smarty.post.firstname}" {/if}/>
+					<input class="form-control" type="text" name="firstname" id="firstname" {if isset($firstname)} value="{$firstname|escape:'html':'UTF-8'}" readonly="readonly" {else if isset($smarty.post.firstname)} value="{$smarty.post.firstname|escape:'html':'UTF-8'}" {/if}/>
 				</div>
 
 				<div class="form-group wk-form-group col-lg-6">
 					<label for="lastname" class="control-label required">
 						{l s='Last name' mod='wkhelpdesk'}
 					</label>
-					<input class="form-control" type="text" name="lastname" id="lastname" {if isset($lastname)} value="{$lastname}" readonly="readonly" {else if isset($smarty.post.lastname)} value="{$smarty.post.lastname}" {/if}/>
+					<input class="form-control" type="text" name="lastname" id="lastname" {if isset($lastname)} value="{$lastname|escape:'html':'UTF-8'}" readonly="readonly" {else if isset($smarty.post.lastname)} value="{$smarty.post.lastname|escape:'html':'UTF-8'}" {/if}/>
 				</div>
 
 				<div class="form-group wk-form-group  col-lg-12">
 					<label for="email" class="control-label required">
 						{l s='Email' mod='wkhelpdesk'}
 					</label>
-					<input class="form-control" type="text" name="email" id="email" {if isset($email)} value="{$email}" readonly="readonly" {else if isset($smarty.post.email)} value="{$smarty.post.email}" {/if}/>
+					<input class="form-control" type="text" name="email" id="email" {if isset($email)} value="{$email|escape:'html':'UTF-8'}" readonly="readonly" {else if isset($smarty.post.email)} value="{$smarty.post.email|escape:'html':'UTF-8'}" {/if}/>
 				</div>
 
 				<div class="form-group wk-form-group col-lg-6">
@@ -70,7 +70,7 @@
 								<option value="0">{l s='-- Choose --' mod='wkhelpdesk'}</option>
                                 {if isset($queryTypes)}
 								 {foreach $queryTypes as $queryType}
-									<option value="{$queryType.id}"{if isset($smarty.request.queryType) && $smarty.request.queryType == $queryType.id} selected="selected"{/if}>{$queryType.query_name}</option>
+									<option value="{$queryType.id|escape:'html':'UTF-8'}"{if isset($smarty.request.queryType) && $smarty.request.queryType == $queryType.id} selected="selected"{/if}>{$queryType.query_name|escape:'html':'UTF-8'}</option>
 								{/foreach}
                                 {/if}
 							</select>
@@ -82,7 +82,7 @@
 					<label for="reference" class="control-label">
 						{l s='Order reference' mod='wkhelpdesk'}
 					</label>
-					<input class="form-control" type="text" name="reference" id="reference" {if isset($reference)} value="{$reference}" readonly="readonly" {else if isset($smarty.post.reference)} value="{$smarty.post.reference}" {/if}/>
+					<input class="form-control" type="text" name="reference" id="reference" {if isset($reference)} value="{$reference|escape:'html':'UTF-8'}" readonly="readonly" {else if isset($smarty.post.reference)} value="{$smarty.post.reference|escape:'html':'UTF-8'}" {/if}/>
 				</div>
 				<div class="form-group wk-form-group m-0 col-lg-12">
 					<label for="">
@@ -95,13 +95,13 @@
                     <button type="button" id="removeImage" class="btn btn-primary mx-2">{l s='Remove' mod='wkhelpdesk'}</button>
                     </div>
 					<p class="form-control-static m-0">
-						{l s='Valid file extension(s) are ' mod='wkhelpdesk'}{$fileExtensions}.
+						{l s='Valid file extension(s) are ' mod='wkhelpdesk'}{$fileExtensions|escape:'html':'UTF-8'}.
 					</p>
 					<p class="form-control-static m-0">
-						{l s='Maximum file size for all files: ' mod='wkhelpdesk'}{$attachmentMaxSize}{l s='MB' mod='wkhelpdesk'}
+						{l s='Maximum file size for all files: ' mod='wkhelpdesk'}{$attachmentMaxSize|escape:'html':'UTF-8'}{l s='MB' mod='wkhelpdesk'}
 					</p>
 				</div>
-				<div id="hd_other_files col-lg-12"></div>
+				<div id="hd_other_files" class="col-lg-12"></div>
 				<div class="form-group wk-form-group col-lg-12">
 					<a class="btn btn-primary" id="hd_btn_other_attachment">
 						<span>{l s='Attach more files' mod='wkhelpdesk'}</span>
@@ -112,18 +112,18 @@
 					<label for="subject" class="control-label required">
 						{l s='Subject' mod='wkhelpdesk'}
 					</label>
-					<input class="form-control" type="text" name="subject" id="subject" {if isset($smarty.post.subject)} value="{$smarty.post.subject}" {else if isset($smarty.post.subject)} value="{$smarty.post.subject}" {/if}/>
+					<input class="form-control" type="text" name="subject" id="subject" {if isset($smarty.post.subject)} value="{$smarty.post.subject|escape:'html':'UTF-8'}" {else if isset($smarty.post.subject)} value="{$smarty.post.subject|escape:'html':'UTF-8'}" {/if}/>
 				</div>
 
 				<div class="form-group wk-form-group col-lg-12">
 					<label for="message" class="control-label required">
 						{l s='Message' mod='wkhelpdesk'}
 					</label>
-					<textarea name="message" id="message" cols="2" rows="8" class="wk_tinymce form-control">{if isset($smarty.post.message)}{$smarty.post.message}{/if}</textarea>
+					<textarea name="message" id="message" cols="2" rows="8" class="wk_tinymce form-control">{if isset($smarty.post.message)}{$smarty.post.message|escape:'quotes':'UTF-8'}{/if}</textarea>
 				</div>
 				{hook h='displayGDPRConsent' mod='psgdpr' id_module=$id_module}
 				{if isset($wkHdCaptchaSiteKey)}
-					<div class="g-recaptcha col-lg-12" data-sitekey="{$wkHdCaptchaSiteKey}"></div>
+					<div class="g-recaptcha col-lg-12" data-sitekey="{$wkHdCaptchaSiteKey|escape:'html':'UTF-8'}"></div>
 				{/if}
 				<div class="submit col-lg-12">
 					<button type="submit" name="createTicket" id="createTicket" class="btn btn-primary pull-right pr-0">

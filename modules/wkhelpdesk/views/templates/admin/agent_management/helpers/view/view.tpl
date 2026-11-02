@@ -24,13 +24,13 @@
 				{if isset($agentInfo)}
 					<div class="panel-heading">
 						<i class="icon-user"></i>
-						{$agentInfo.name} -
-						<a href="mailto:{$agentInfo.email}">
+						{$agentInfo.name|escape:'html':'UTF-8'} -
+						<a href="mailto:{$agentInfo.email|escape:'html':'UTF-8'}">
 							<i class="icon-envelope"></i>
-							{$agentInfo.email}
+							{$agentInfo.email|escape:'html':'UTF-8'}
 						</a>
 						<div class="panel-heading-action">
-							<a href="{$current}&amp;updatewk_hd_ticket_agent&amp;id={$agentInfo.id|intval}&amp;token={$token}" class="btn btn-default">
+							<a href="{$current|escape:'html':'UTF-8'}&amp;updatewk_hd_ticket_agent&amp;id={$agentInfo.id|intval}&amp;token={$token|escape:'html':'UTF-8'}" class="btn btn-default" style="position:relative;">
 								<i class="icon-edit"></i>
 								{l s='Edit' mod='wkhelpdesk'}
 							</a>

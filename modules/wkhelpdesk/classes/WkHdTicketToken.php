@@ -17,6 +17,10 @@
 * @copyright Since 2010 Webkul
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 */
+// Khewa PS 9.2: guard from wkhelpdesk 5.0.2 (this file keeps Khewa changes, so it was merged by hand).
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class WkHdTicketToken extends ObjectModel
 {
@@ -166,7 +170,8 @@ class WkHdTicketToken extends ObjectModel
                 }
                 $from = $email;
                 if (!preg_match(
-                    '/('.Tools::cleanNonUnicodeSupport(
+                    '/('.( // Khewa PS 9.2: Tools::cleanNonUnicodeSupport() removed, pattern used as is
+                        
                         '[a-z\p{L}0-9!#$%&\'*+\/=?^`{}|~_-]+[.a-z\p{L}0-9!#$%&\'*+\/=?^`{}|~_-]'.
                         '*@[a-z\p{L}0-9]+[._a-z\p{L}0-9-]*\.[a-z0-9]+'
                     ).')/',
@@ -185,6 +190,7 @@ class WkHdTicketToken extends ObjectModel
 
                 // on reply code
                 $isReply = 0;
+                $idReplyImap = 0; // Khewa PS 9.2: from 5.0.2, avoid an undefined variable
                 if (!isset($overview->in_reply_to) && !isset($overview->references)) {
                     $wkReply = new WkCustomerReplySyncImap();
                     $wkReply->message_id = pSQL(Tools::substr(trim($overview->message_id), 1, -1));
@@ -249,7 +255,7 @@ class WkHdTicketToken extends ObjectModel
                 }
 
                 // reply code
-                if ($isReply) {
+                if ($isReply && isset($wkMessageId['id_ticket'])) { // Khewa PS 9.2: isset check from 5.0.2
                     $ticketId = $wkMessageId['id_ticket'];
                     $objStatusMapping = new WkHdStatusMapping();
                     $objTicket = new WkHdTicket((int) $ticketId);

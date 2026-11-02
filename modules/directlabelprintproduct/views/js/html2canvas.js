@@ -6615,7 +6615,8 @@
             if (image.width === width && image.height === height) {
                 return image;
             }
-            var canvas = this.canvas.ownerDocument.createElement('canvas');
+            //var canvas = this.canvas.ownerDocument.createElement('canvas');
+            var canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
             var ctx = canvas.getContext('2d');

@@ -1,6 +1,15 @@
 <?php
+/**
+ * Employee authentication attempt model.
+ *
+ * @author Best-Kit
+ * @copyright 2026 Best-Kit
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
+ */
 
-require_once _PS_MODULE_DIR_ . 'bestkit_log/includer.php';
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class BestkitLogLoginAttempt extends ObjectModel
 {
@@ -22,27 +31,47 @@ class BestkitLogLoginAttempt extends ObjectModel
             'email' 				=> array('type' => self::TYPE_STRING, 'validate' => 'isString'),
             'name' 				=> array('type' => self::TYPE_STRING, 'validate' => 'isString'),
             'ip' 				=> array('type' => self::TYPE_STRING, 'validate' => 'isString'),
-            'status' 				=> array('type' => self::TYPE_STRING, 'validate' => 'isUnsignedInt'),
+            'status' 				=> array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
             'user_agent' 				=> array('type' => self::TYPE_STRING, 'validate' => 'isString'),
             'date_add' 			=> array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
             'date_upd' 			=> array('type' => self::TYPE_DATE, 'validate' => 'isDateFormat'),
         ),
     );
 
-    public static function recordLoginAttempt($email, $passwd) {
-        Context::getContext()->employee = new Employee();
-        $employeeObj = Context::getContext()->employee->getByEmail($email, $passwd);
+    public static function recordAuthenticationAttempt(
+        $email,
+        $successful,
+        $idEmployee = 0,
+        $employeeName = '',
+        $ipAddress = '',
+        $userAgent = ''
+    ) {
+        $email = trim((string) $email);
+        $idEmployee = (int) $idEmployee;
+
+        if ($idEmployee === 0 && Validate::isEmail($email)) {
+            $employee = Db::getInstance()->getRow(
+                'SELECT `id_employee`, `firstname`, `lastname`
+                FROM `' . _DB_PREFIX_ . 'employee`
+                WHERE `email` = \'' . pSQL($email) . '\''
+            );
+
+            if (is_array($employee)) {
+                $idEmployee = (int) $employee['id_employee'];
+                $employeeName = trim($employee['firstname'] . ' ' . $employee['lastname']);
+            }
+        }
 
         $obj = new BestkitLogLoginAttempt();
-        if ($employeeObj) {
-            $obj->id_employee = $employeeObj->id;
-            $obj->email = $employeeObj->email;
-            $obj->name = $employeeObj->firstname . ' ' . $employeeObj->lastname;
-            $obj->status = 1;
-        }
-        $obj->ip = Tools::getRemoteAddr();
-        $obj->user_agent = $_SERVER['HTTP_USER_AGENT'];
+        $obj->id_employee = $idEmployee;
+        $obj->email = $email;
+        $obj->name = (string) $employeeName;
+        $obj->status = $successful ? 1 : 0;
+        $obj->ip = $ipAddress !== '' ? (string) $ipAddress : (string) Tools::getRemoteAddr();
+        $obj->user_agent = $userAgent !== ''
+            ? (string) $userAgent
+            : (isset($_SERVER['HTTP_USER_AGENT']) ? (string) $_SERVER['HTTP_USER_AGENT'] : '');
 
-        $obj->save();
+        return $obj->save();
     }
 }

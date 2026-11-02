@@ -19,7 +19,7 @@
 
 <span class="btn-group-action">
     <span class="btn-group">
-        <a class="btn btn-default" href="{$access_link}">
+        <a class="btn btn-default" href="{$access_link|escape:'html':'UTF-8'}">
             <i class="icon-search-plus"></i>&nbsp; {l s='View' mod='wkhelpdesk'}
         </a>
     </span>

@@ -1,0 +1,13 @@
+Options -Indexes
+
+<IfModule !mod_authz_core.c>
+    <Files *.php>
+        Order allow,deny
+        Deny from all
+    </Files>
+</IfModule>
+<IfModule mod_authz_core.c>
+    <Files *.php>
+        Require all denied
+    </Files>
+</IfModule>

@@ -131,14 +131,35 @@ $(document).ready(function(){
 	    var newdiv = document.createElement('div');
 	    newdiv.setAttribute("id", "childDiv" + i);
 	    newdiv.setAttribute("class", "hdChildDivClass");
-	    newdiv.innerHTML = "<div class='col-md-4'><input type='file' id='ticketOtherAttachment"+i+"' name='ticketOtherAttachment[]' class='hd_other_file_attachment'/></div><a class='hd_btn_other_remove btn btn-primary button button-small'><span>"+img_remove+"</span></a>";
+	    newdiv.innerHTML = `
+		<div style="display:flex">
+		<div class="ticketMainAttachment">
+		<input type="file" id="ticketOtherAttachment`+i+`" name="ticketOtherAttachment[]" value="" class="filestyle" size="chars" data-buttonText="`+wk_choose_file+`"  style="display:none"/>
+		<div class="bootstrap-filestyle input-group">
+			<input type="text" class="form-control wkFileText" placeholder="" disabled="">
+			<span class="group-span-filestyle input-group-btn" tabindex="0">
+			<label for="ticketOtherAttachment`+i+`" class="btn btn-default ">
+			<span class="icon-span-filestyle glyphicon glyphicon-folder-open"></span>
+			<span class="buttonText">`+wk_choose_file+`</span>
+			</label></span></div>
+		</div>
+		<button type="button" class="btn btn-primary mx-2 hd_btn_other_remove">`+img_remove+`</button>
+		</div>
+		`;
 	    var ni = document.getElementById('hd_other_files');
 	    ni.appendChild(newdiv);
 	    i++;
 	}
 
+	$(document).on("change", "[name='ticketOtherAttachment[]']", function(){
+		var file_name = $(this).val().split('/').pop().split('\\').pop();
+		if (file_name !== '') {
+			$(this).parent().closest(".hdChildDivClass").find('.wkFileText').val(file_name);
+		}
+	});
+
 	// Other image div remove event
 	$(document).on("click", ".hd_btn_other_remove", function(){
-		$(this).parent(".hdChildDivClass").remove();
+		$(this).parent().closest(".hdChildDivClass").remove();
 	});
 });

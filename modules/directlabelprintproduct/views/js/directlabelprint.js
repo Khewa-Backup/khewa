@@ -9,7 +9,7 @@
  *
  * @author    Leone MusicReader B.V.
  *
- * @copyright 2016-2021 Leone MusicReader B.V.
+ * @copyright 2016-2023 Leone MusicReader B.V.
  *
  * @license   custom see above
  */
@@ -20,14 +20,14 @@ function printProductLabel(url,info,count,isLast,callback) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            var label_xml=this.responseText;
+            var label_xml=this.responseText.trim();
             var label_per_product_count=info["label_per_product_count"];
             for(var n=1;n<=label_per_product_count;n++){
                 info["label_per_product_number"]=n;
                 printProductLabelXML(label_xml,info,count,isLast&&(n==label_per_product_count));
             }
             if(callback){
-                callback();
+                setTimeout(callback,20);
             }
         }
     }.bind(xhttp);

@@ -17,27 +17,30 @@
 * @copyright Since 2010 Webkul
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 */
+// Khewa PS 9.2: guard from wkhelpdesk 5.0.2 (this file keeps Khewa changes, so it was merged by hand).
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 require_once dirname(__FILE__).'/classes/HelpDeskClassInclude.php';
 
 class WkHelpDesk extends Module
 {
     private $postErrors = array();
+    public $secure_key; // Khewa PS 9.2: declared (PHP 8.2+ warns on dynamic properties), as in 5.0.2
 
     public function __construct()
     {
         $this->name = 'wkhelpdesk';
         $this->tab = 'front_office_features';
-        $this->version = '5.0.0';
+        $this->version = '5.0.2'; // Khewa PS 9.2: 5.0.2 files merged by hand with the Khewa changes
         $this->module_key = '73ddfe405c708dea7962bd45723057a1';
         $this->author = 'Webkul';
-        if (_PS_VERSION_ >= '1.7') {
-            $this->secure_key = Tools::hash($this->name);
-        } else {
-            $this->secure_key = Tools::encrypt($this->name);
-        }
+        // Khewa PS 9.2: Tools::encrypt() is gone and Tools::hash() now gives a new random value on every call,
+        // so the IMAP cron token never matched. Use the old fixed formula (same value as Tools::encrypt gave).
+        $this->secure_key = md5(_COOKIE_KEY_ . $this->name);
         $this->bootstrap = true;
-        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '1.7');
+        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_); // Khewa PS 9.2: from 5.0.2
         parent::__construct();
 
         $this->displayName = $this->l('Help Desk');
@@ -147,7 +150,7 @@ class WkHelpDesk extends Module
                     'captchaSecretKey' => Configuration::get('WK_HD_CAPTCHA_SECRET_KEY'),
                     'enabledGuestTicket' => Configuration::get('WK_HD_GUEST_TICKET'),
                     'version' => $this->version,
-                    'docLink' => _MODULE_DIR_.$this->name.'/doc_en.pdf',
+                    'docLink' => _MODULE_DIR_.$this->name.'/docs/doc_en.pdf', // Khewa PS 9.2: 5.0.2 moved the doc
                     'cron_url' => '5 0 * * * curl '.$link.'?token='.$this->secure_key,
                 )
             );
@@ -159,10 +162,10 @@ class WkHelpDesk extends Module
             'wkModuleAddonKey' => $this->module_key,
             'wkModuleAddonsId' => 22848,
             'wkModuleTechName' => $this->name,
-            'wkModuleDoc' => file_exists(_PS_MODULE_DIR_.$this->name.'/doc_en.pdf'),
+            'wkModuleDoc' => file_exists(_PS_MODULE_DIR_.$this->name.'/docs/doc_en.pdf'), // Khewa PS 9.2: 5.0.2 path
             //'wkAddonsDemo' => Configuration::get('WK_DEMO_PS_ADDON')// ONLY add in wkrepo for docker demo
         ));
-        $this->context->controller->addJs('https://prestashop.webkul.com/crossselling/wkcrossselling.min.js?t='.time());
+        // Khewa PS 9.2: removed the vendor advert script loaded from prestashop.webkul.com (no outside calls).
 
         return $this->display(__FILE__, '/views/templates/admin/config.tpl');
     }
@@ -209,13 +212,13 @@ class WkHelpDesk extends Module
         if ($helpdeskUrlRewrite) {
             if ($newTicketUrl == '') {
                 $this->postErrors[] = $this->l('New ticket URL is required field.');
-            } elseif (Tools::link_rewrite($newTicketUrl) != str_replace('/', '-', $newTicketUrl)) {
+            } elseif (Tools::str2url($newTicketUrl) /* Khewa PS 9.2: link_rewrite() removed */ != str_replace('/', '-', $newTicketUrl)) {
                 $this->postErrors[] = $this->l('New ticket URL is invalid.');
             }
 
             if ($viewTicketUrl == '') {
                 $this->postErrors[] = $this->l('View ticket URL is required field.');
-            } elseif (Tools::link_rewrite($viewTicketUrl) != str_replace('/', '-', $viewTicketUrl)) {
+            } elseif (Tools::str2url($viewTicketUrl) /* Khewa PS 9.2: link_rewrite() removed */ != str_replace('/', '-', $viewTicketUrl)) {
                 $this->postErrors[] = $this->l('View ticket URL is invalid.');
             }
         }
@@ -564,6 +567,13 @@ class WkHelpDesk extends Module
     /**
      * Module Installation Process.
      */
+    /**
+     * Khewa PS 9.2: empty listener for the registerGDPRConsent hook, as in 5.0.2.
+     */
+    public function hookRegisterGDPRConsent()
+    {
+    }
+
     public function createTable()
     {
         if (!file_exists(dirname(__FILE__).'/'.self::INSTALL_SQL_FILE)) {
@@ -603,7 +613,7 @@ class WkHelpDesk extends Module
         if (!Tools::isEmpty($customer['email']) && Validate::isEmail($customer['email'])) {
             $objHdCustomer = new WkHdCustomer();
             $res = $objHdCustomer->getCustomerByEmail($customer['email']);
-            if ($res && !empty($res)) {
+            if (is_array($res) && count($res) > 0) { // Khewa PS 9.2: from 5.0.2
                 return json_encode($res);
             }
             return json_encode($this->l('Help Desk : Unable to export customer using email.'));
@@ -616,9 +626,7 @@ class WkHelpDesk extends Module
             array(
                 'displayNav1',
                 'moduleRoutes',
-                'displayHeader',
                 'displayCustomerAccount',
-                'displayBackOfficeHeader',
                 'actionCustomerAccountAdd',
                 'actionObjectLanguageAddAfter',
                 'actionObjectEmployeeAddAfter',
@@ -829,7 +837,7 @@ class WkHelpDesk extends Module
     {
         Configuration::updateValue(
             'WK_HD_ATTACHMENT_TYPE',
-            Tools::jsonEncode(
+            json_encode( // Khewa PS 9.2: Tools::jsonEncode() removed
                 array(
                     0 => array('ext_name' => 'txt', 'is_availble' => 1),
                     1 => array('ext_name' => 'rtf', 'is_availble' => 1),

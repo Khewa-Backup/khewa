@@ -17,20 +17,20 @@
 * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 *}
 
-<form method="post" action="{$current}&{if !empty($submit_action)}{$submit_action}{/if}&token={$token}" class="defaultForm form-horizontal {$name_controller}" enctype="multipart/form-data">
+<form method="post" action="{$current|escape:'html':'UTF-8'}&{if !empty($submit_action)}{$submit_action|escape:'html':'UTF-8'}{/if}&token={$token|escape:'html':'UTF-8'}" class="defaultForm form-horizontal {$name_controller|escape:'html':'UTF-8'}" enctype="multipart/form-data">
 	<div class="panel">
 		<div class="panel-heading">
 			<i class="icon-pencil"></i>
 			{l s='Edit status mapping' mod='wkhelpdesk'}
 		</div>
 		<div class="panel-body">
-			<input type="hidden" value="{$mappedStatus.id}" name="id" />
-			<input type="hidden" value="{$mappedStatus.id_status}" name="idStatus" />
+			<input type="hidden" value="{$mappedStatus.id|escape:'html':'UTF-8'}" name="id" />
+			<input type="hidden" value="{$mappedStatus.id_status|escape:'html':'UTF-8'}" name="idStatus" />
 
 			<div class="form-group">
 				<label class="control-label col-lg-3">
 					<span>
-                        {$statusText}
+                        {$statusText|escape:'html':'UTF-8'}
 					</span>
 				</label>
 
@@ -38,8 +38,8 @@
 					<select class="fixed-width-xl" name="idStatusSelected" id="idStatusSelected">
                     {if isset($allStatus)}
 						{foreach $allStatus as $status}
-							<option value="{$status.id}" {if $status.id == $mappedStatus.id_status_selected} selected="selected" {/if}>
-                                {$status.ticket_status}
+							<option value="{$status.id|escape:'html':'UTF-8'}" {if $status.id == $mappedStatus.id_status_selected} selected="selected" {/if}>
+                                {$status.ticket_status|escape:'html':'UTF-8'}
 							</option>
 						{/foreach}
                     {/if}
@@ -47,10 +47,10 @@
 				</div>
 			</div>
 			<div class="panel-footer">
-				<a href="{$link->getAdminLink('AdminTicketStatusMapping')}" class="btn btn-default">
+				<a href="{$link->getAdminLink('AdminTicketStatusMapping')|escape:'html':'UTF-8'}" class="btn btn-default">
 					<i class="process-icon-cancel"></i> {l s='Cancel' mod='wkhelpdesk'}
 				</a>
-				<button type="submit" name="submitAdd{$table}" class="btn btn-default pull-right">
+				<button type="submit" name="submitAdd{$table|escape:'html':'UTF-8'}" class="btn btn-default pull-right">
 					<i class="process-icon-save"></i> {l s='Save' mod='wkhelpdesk'}
 				</button>
 			</div>
