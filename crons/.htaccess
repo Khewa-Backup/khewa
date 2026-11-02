@@ -1,0 +1,4 @@
+# Khewa: the cron shell scripts hold a secret key; never serve them
+<FilesMatch "\.sh$">
+  Require all denied
+</FilesMatch>

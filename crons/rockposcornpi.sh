@@ -4,7 +4,7 @@
 
 # /home/j8m1o8hr4gjg/public_html/crons/rockposcornpi.sh
 
-TOTALCUSTS=`curl -s -X GET https://khewa.com/crons/rockposprodcount.php`
+TOTALCUSTS=`curl -s -X GET https://khewa.com/crons/rockposprodcount.php?key=e540b78d36fb6a5068bf6722da95d3b9`
 PP=50
 TOTALP=$((($TOTALCUSTS|bc+$PP-1)/$PP))
 
