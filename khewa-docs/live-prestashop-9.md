@@ -99,6 +99,8 @@ The local database holds the client's real accounts, so nothing was done that ch
 - 34246 (`WHPIFDLIT`): POS cash sale, $28.74. Its return was opened but not finished.
 - 34247 (`FHEGATPIK`): POS cash sale with a $5 discount, $22.13, then returned with a credit slip (voucher `V2008C186P34247`).
 - 34248 (`LVUKVATIN`): POS cash sale, $28.74, done on PHP 8.5.
+- 34250 (`MLBQXDEKV`): POS cash sale, $28.74, khewacorechanges check.
+- 34251 (`DKMBEQJMT`): POS cash sale with a $5 discount (cart rule 2023), $22.99, khewacorechanges check.
 
 ## POS (RockPOS)
 
@@ -116,11 +118,20 @@ Every Khewa change in the old 4.2.7 files was put into the 5.8.1 files. Where 5.
 
 Tested on 9.2: login, barcode scan, cash sale, $5 discount sale, receipt data, return with credit slip, day summary.
 
-**Known gap until khewacorechanges is installed:** a $5 discount takes $6.61 off (tax added twice). The khewacorechanges `CartRule` override fixes this. The old live shop had the same fix edited into core files.
+## khewacorechanges module (installed)
 
-## khewacorechanges module (copied, NOT installed)
+`modules/khewacorechanges` is installed (2026-11-02, shop 1). The 9.2 update put every core file back to stock, so this module is now the only thing that carries Khewa's core changes. Each item was checked on 9.2 and proven by switching the module part off: see the module's `VERIFICATION.md`, section "PrestaShop 9.2".
 
-`modules/khewacorechanges` is copied from the `khewa` repo and changed so it works on 9.2. It is **not installed**. Install it from Admin › Modules when ready. Its own `UPDATE_SAFETY.md` has a "9.2 port" section with what was changed and how to check each part.
+What works (all checked): $10 tax-excluded voucher takes $10 off; POS $5 discount takes $5 before tax ($5.75 with tax, like the old shop; was $6.61); Orders list fast with a correct New customer column and filter; product URLs; PDF footer TPS/TVQ and Khewa invoice totals; customer-service total hidden; "Total spent" badge hidden; pickup sentence in order_conf; core "Product out of stock" mail and POS "new order" mail blocked (web orders still alerted); customer-service mails get `{link}`; specific references hidden; "Free" shipping label hidden; POS cash and discount sales.
+
+New on 9.2: the gift card fix (old commit `edd95ec6b`) is now in the module too (item #18). Stock 9.2 took $64.39 off for a $60 gift card; now it takes $60 and the order still keeps its full tax.
+
+Fixed in the module while installing: a `vendor/autoload.php` (without it the back office gave a 500 error), the cart totals (Cart `newCalculator()` override, merged into RockPOS's `override/classes/Cart.php`), an Order override for the tax lines, install no longer deletes RockPOS's `Cart.php`, the customer-service thread page template, and the two Warehouse cart templates the module keeps (were the old 4.5 files). Details in the module's `UPDATE_SAFETY.md`.
+
+Good to know:
+- Disabling the module does not switch off its Orders grid and customer-service mail services (9.2 loads services of every installed module). Uninstall it for that.
+- Merging into RockPOS's `Cart.php` removes the comments in that file (PrestaShop does this). The code is the same.
+- Not working / not tested: nothing open. A gift card bigger than the products total without tax gives a "Total (Tax excl.)" of $0.00 on the invoice while the tax line shows the full tax (same as the old shop).
 
 ## Catalog ISBN problem (needs a decision)
 

@@ -393,6 +393,16 @@ class Ps_EmailAlerts extends Module
         $id_shop = (int) $context->shop->id;
         $currency = $params['currency'];
         $order = $params['order'];
+
+        // Khewa (commit 2a5628fea): no employee "new order" alert for RockPOS till sales
+        if (!empty($order) && Module::isEnabled('hspointofsalepro')) {
+            $isInRockpos = Db::getInstance()->getRow('SELECT * FROM ' . _DB_PREFIX_ . 'pos_cart WHERE id_cart=' . (int) $order->id_cart);
+            if (!empty($isInRockpos)) {
+                return false;
+            }
+        }
+        // end
+
         $customer = $params['customer'];
         $configuration = Configuration::getMultiple(
             [

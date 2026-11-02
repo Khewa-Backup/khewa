@@ -5,7 +5,7 @@
 
 {extends file="helpers/view/view.tpl"}
 {block name="override_tpl"}
-{include file="./modal.tpl" }
+{* Khewa PS 9.2: full path, "./" points at this override folder, which has no modal.tpl / message.tpl *}{include file="controllers/customer_threads/helpers/view/modal.tpl" }
 <div class="panel">
 	<div class="panel-heading">
 		<i class="icon-comments"></i>
@@ -61,14 +61,14 @@
 					{/if}
 				</div>
 				{if !$first_message.id_employee}
-					{include file="./message.tpl" message=$first_message initial=true}
+					{include file="controllers/customer_threads/helpers/view/message.tpl" message=$first_message initial=true}
 				{/if}
 			</div>
 		</div>
 	</div>
 	<div class="row" data-role="thread-messages">
 		{foreach $messages as $message}
-			{include file="./message.tpl" message=$message initial=false}
+			{include file="controllers/customer_threads/helpers/view/message.tpl" message=$message initial=false}
 		{/foreach}
 	</div>
 </div>

@@ -50,6 +50,8 @@ Core file `classes/CartRule.php` was edited directly (no override wrapper used).
 - `c7e7fc5cb` ("OLD ISSUE - Tax issue again...", 2025-11-20) — extended the same treatment to **percentage** discounts too.
 - `f9dae8e23` ("undo", 2025-11-23) — fully reverted the `c7e7fc5cb` percent-discount change. **Current file only contains the original amount-discount fix from `99f2dc776`.**
 
+**PrestaShop 9.2 (Nov 2026):** on 9.2 the totals no longer go through `getContextualValue()` but through the Calculator classes, so the `CartRule` override alone did not fix the totals ($10 voucher still took $11.50 off; POS $5 discount took $6.61 off). The totals fix now lives with item #18 (Cart `newCalculator()` override + `src/Cart/`). The `CartRule` override stays, so the voucher value shown by `getContextualValue()` matches.
+
 ---
 
 ## 3. src/Core/Grid/Query/OrderQueryBuilder.php
@@ -247,6 +249,20 @@ The change is a **modification of the stock `ps_emailalerts` module** (back-in-s
 **Carried by module:** nothing — not a code change.
 
 No matching commit anywhere in git history (`git log --all --grep="nathaliecoutou"` returns nothing). This is very likely a domain/hosting/DNS-level change (or a Shop URL entry in the `ps_shop_url` DB table) rather than a code change — nothing in this repo reflects it. Flagging for user confirmation on scope; there's nothing to document as a "core change" here unless more detail surfaces.
+
+---
+
+## 18. Gift card can cover the tax (Khewa PS 9.2, added Nov 2026)
+
+**Status: confirmed via git history (commit `edd95ec6b`, "core change online gift card issue", 2025-11-26). Not a Trello card.**
+
+**Carried by module (since the 9.2 port):** `override/classes/Cart.php` (`newCalculator()`, merged by PrestaShop into RockPOS's root `Cart.php`), `src/Cart/KhewaCalculator.php`, `src/Cart/KhewaCartRuleCalculator.php`, `override/classes/order/Order.php` (`getProductTaxesDetails()`), and the "Total Tax" line in `pdf/invoice.total-tab.tpl`.
+
+On the 1.7 site, Khewa edited `src/Core/Cart/Calculator.php`, `src/Core/Cart/CartRuleCalculator.php`, `classes/order/Order.php`, `classes/pdf/HTMLTemplateInvoice.php`, the root `override/classes/Cart.php` and `pdf/invoice.total-tab.tpl`. Goal: a fixed-amount gift card stored "tax excluded" is taken off after tax, like a payment. It may be bigger than the products total without tax, and then also pays the tax. The tax of the order is not lowered by it.
+
+The 9.2 update put stock files back, so these edits were gone. Checked on 9.2 without the module: a $60 gift card on a $56.00 / $64.39 (without / with tax) cart took **$64.39** off (9.2 adds tax on top of the card), and a $10 voucher took $11.50 off (item #2). On 9.2 every total goes through the Calculator classes, so the `CartRule` override (#2) alone no longer changes the totals.
+
+The 9.2 fix covers #2 and #18 together. A fixed amount, "tax excluded", whole-order cart rule (vouchers, gift cards, credit slip codes, RockPOS amount discounts) is taken off the total with tax as it is, up to the products total with tax. The same value is used without tax, so the tax stays. The total without tax stops at 0. Every other cart rule uses stock 9.2 code. No core code is copied: the Cart override calls the stock `newCalculator()` and hands its result to the module's subclass.
 
 ---
 

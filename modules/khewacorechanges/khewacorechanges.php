@@ -117,8 +117,23 @@ class Khewacorechanges extends Module
             if (!file_exists($rootFile)) {
                 continue;
             }
-            // Either a hand-made copy, or a leftover of ours from a failed
-            // install: back it up and let PrestaShop regenerate it.
+            // Khewa PS 9.2: a root file can also belong to another module (RockPOS owns
+            // override/classes/Cart.php). Never delete those: PrestaShop merges our methods
+            // into them. Only a file whose methods are all ours (a hand-made copy, or a
+            // leftover of ours from a failed install) is backed up and removed, so that
+            // PrestaShop regenerates it from this module.
+            $rootMethods = $this->getMethodNames(file_get_contents($rootFile));
+            $ourMethods = $this->getMethodNames(file_get_contents($moduleOverrideDir . $file));
+            $shared = array_intersect($rootMethods, $ourMethods);
+            if (!empty(array_diff($rootMethods, $ourMethods))) {
+                if (!empty($shared)) {
+                    // Another module's file still holding our methods from before: take
+                    // only ours out (PrestaShop's own removal), keep the rest.
+                    $this->backupFile($rootFile, 'override/' . $file);
+                    $this->removeOverride(basename($file, '.php'));
+                }
+                continue;
+            }
             $this->backupFile($rootFile, 'override/' . $file);
             @unlink($rootFile);
             $removed = true;
@@ -136,6 +151,18 @@ class Khewacorechanges extends Module
         } else {
             PrestaShopAutoload::getInstance()->generateIndex();
         }
+    }
+
+    /**
+     * Khewa PS 9.2: names of the functions declared in a PHP file's source.
+     *
+     * @return string[]
+     */
+    protected function getMethodNames($source)
+    {
+        preg_match_all('/function\s+&?\s*(\w+)\s*\(/i', (string) $source, $m);
+
+        return array_values(array_unique(array_map('strtolower', $m[1])));
     }
 
     /* ------------------------------------------------------------------ */

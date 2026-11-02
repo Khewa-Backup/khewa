@@ -2,7 +2,7 @@
 
 ## PrestaShop 9.2 port (Nov 2026, branch `live-prestashop-9`)
 
-The module was copied from the 1.7.8 site and made 9.2-ready. **It is not installed yet.** What changed for 9.2:
+The module was copied from the 1.7.8 site and made 9.2-ready. **Installed on the local 9.2 shop on 2026-11-02** and checked item by item (see `VERIFICATION.md`, section "PrestaShop 9.2"). What changed for 9.2:
 
 | Part | Problem on 9.2 | What was done |
 |---|---|---|
@@ -17,9 +17,23 @@ The module was copied from the 1.7.8 site and made 9.2-ready. **It is not instal
 | `files/root/modules/ps_emailalerts/ps_emailalerts.php` (#16) | Was 3.0.0; the shop now has 3.0.1, so Apply would downgrade it | Rebuilt as 3.0.1 + Khewa's POS-sale skip. The old Notify-me fix (method rename) doesn't apply to 3.0.1 |
 | `mail_product_list` managed file (#15) | 9.2's own partial already has `nofilter` (in both places) | No longer deployed; the copy is kept for reference |
 
-Not changed by this port: the order_conf mails (#9, same variables in 9.2), the PDF footer and total tab (#5, #10), the out-of-stock and POS new-order mail blocks (#11, #16), the BO CSS (#7/#8) and specific references (#14).
+Not changed by this port: the order_conf mails (#9, same variables in 9.2), the PDF footer (#5), the out-of-stock and POS new-order mail blocks (#11, #16), the BO CSS (#7/#8) and specific references (#14).
 
-Site version: PrestaShop 1.7.8.7. "Handled" = this module carries the change and re-applies it after an update. Full history per item in `CORE_CHANGES.md`. Routine after any update: Modules → Khewa Core Changes → Configure → **Re-apply all**, check both Class overrides say *installed*, clear the cache.
+**Fixes made while installing and testing on 9.2 (Nov 2026, marked `Khewa PS 9.2`):**
+
+| Part | Problem found | What was done |
+|---|---|---|
+| `vendor/autoload.php` (new) | 9.2 checks that every Messenger handler class exists while it builds the container. The `file:` key in `services.yml` comes too late, so after install the whole back office gave a 500 error | Small class loader for `KhewaCoreChanges\` → `src/`. PrestaShop loads `vendor/autoload.php` of every installed module early |
+| #2 totals + new #18 gift card | On 9.2 all totals go through the Calculator classes, not `CartRule::getContextualValue()`. With only the CartRule override, a $10 voucher still took $11.50 off and the POS $5 discount $6.61 | New `override/classes/Cart.php` (`newCalculator()`, merged into RockPOS's root `Cart.php`), `src/Cart/KhewaCalculator.php`, `src/Cart/KhewaCartRuleCalculator.php`. Fixed-amount "tax excluded" whole-order rules are taken off after tax; everything else is stock 9.2 |
+| #18 tax part | A gift card bigger than the products total without tax lowered the order tax | New `override/classes/order/Order.php` (`getProductTaxesDetails()`), runs the stock method with only that gap removed |
+| #10 `pdf/invoice.total-tab.tpl` | Same gift card case: "Total Tax" showed paid-with-tax minus paid-without-tax | Shows the tax lines' sum only in that case (1.7 did this in `HTMLTemplateInvoice.php`) |
+| `install()` → `adoptExistingOverrides()` | Would have deleted RockPOS's root `override/classes/Cart.php` (it deleted any root file with the same name) | Only removes a root file whose methods are all the module's; other modules' files are kept and PrestaShop merges into them |
+| #6 `view.tpl` managed file | Its `./modal.tpl` / `./message.tpl` includes point at the override folder, so the thread page crashed ("Unable to load template") | Includes use the full `controllers/customer_threads/helpers/view/...` path |
+| #15 managed files `cart_popup`, `cart_subtotals` | The module copies were the old Warehouse 4.5 files; Apply would have put the old popup back over Warehouse 4.8.2 | Copies refreshed from the 4.8.2 theme files (they already carry the Khewa change). Old copies in `backup/20261102_kcc92-preinstall/` |
+
+Good to know on 9.2: disabling the module removes its overrides and stops its hooks, but **not** its `services.yml` (9.2 loads services of every installed module). To switch off #3 / #11b, uninstall the module.
+
+Site version: PrestaShop 1.7.8.7. "Handled" = this module carries the change and re-applies it after an update. Full history per item in `CORE_CHANGES.md`. Routine after any update: Modules → Khewa Core Changes → Configure → **Re-apply all**, check all five Class overrides (CartRule, Cart, Order, HTMLTemplate, ProductController) say *installed*, clear the cache.
 
 | # | Core change | What was actually changed | How this module handles it | Handled? |
 |---|---|---|---|---|
@@ -39,6 +53,7 @@ Site version: PrestaShop 1.7.8.7. "Handled" = this module carries the change and
 | 14 | Remove Specific References | The "Specific References" block (Ean13 / Isbn / Upc table) on the product page was removed — commented out in the warehouse theme's `catalog/_partials/product-details.tpl` (lines 68-79) | The module's `hookActionPresentProduct` empties `specific_references` before any template renders it — the section stays hidden **even on a stock or updated theme**. | **HANDLED** |
 | 15 | Removed Free (shipping label) | Cart popup + checkout summary templates suppress the shipping value when it contains no digits (i.e. the word "Free"); plus `nofilter` on customization text in the order email product list | The module's `hookActionPresentCart` blanks the shipping value whenever it contains no digits (the word "Free"/"Gratuit") before any template renders it — **works even with a stock, un-edited theme, so theme updates can't bring "Free" back**. The edited theme templates + the `nofilter` mail partial are also kept as deployable copies. | **HANDLED** |
 | 16 | Email Alert Module (ps_emailalerts) | In `hookActionValidateOrder`: if the order's cart is in `pos_cart` (a RockPOS till sale), skip the employee "new order" alert email (commit `2a5628fea`); plus the earlier "Notify me" button fix (`90c571fad`) | The module's own `hookActionEmailSendBefore` blocks the `new_order` email whenever the order is a RockPOS till sale (cart in `pos_cart`) — the mail is stopped before sending, outside ps_emailalerts. **ps_emailalerts can be updated freely; the skip keeps working.** A snapshot of `ps_emailalerts.php` is also kept for the Notify-me fix. | **HANDLED** |
+| 18 | Gift card covers the tax (Khewa PS 9.2) | Commit `edd95ec6b`: a fixed-amount, tax-excluded gift card is taken off after tax, may go past the products total without tax and pay the tax; the order tax is not lowered (Calculator.php, CartRuleCalculator.php, Order.php, HTMLTemplateInvoice.php, root Cart override) | `override/classes/Cart.php` (`newCalculator()` → `src/Cart/KhewaCalculator.php` + `KhewaCartRuleCalculator.php`), `override/classes/order/Order.php`, Total Tax line in `pdf/invoice.total-tab.tpl`. Also carries the #2 totals on 9.2 | **HANDLED** |
 
 
 **Also handled (found during the #11 recheck, no Trello card):** two customized customer-service email handlers in `src/Adapter/CustomerService/CommandHandler/` — `AddOrderCustomerMessageHandler.php` (adds a `{link}` contact-page/thread-token variable to the reply notification) and `ReplyToCustomerThreadHandler.php` (points `{link}` at the wkhelpdesk ticket when that module is enabled). Carried the same way as #3: `config/services.yml` re-declares both handler services to module copies under `src/CustomerService/CommandHandler/`. Test: replace either core file with the stock 1.7.8.7 version, clear cache, send a customer-service reply / order message — the email's link must still be the customized one. (Housekeeping: a stock backup `AddOrderCustomerMessageHandler.php_BKP` sits in the core folder; harmless.)
@@ -92,6 +107,9 @@ Behaviour: front office, add a product with free shipping to the cart — the ca
 
 **16. Email alert module:**
 Behaviour: make a POS till sale — employees must get **no** "new order" email; place a normal online order — the email must still arrive. Update-proof test: replace `modules/ps_emailalerts/ps_emailalerts.php` with the stock vendor file (no pos_cart code in it), make a POS sale — still **no** employee email, because the module blocks it at `Mail::send` level. Put the file back (or Apply). The snapshot copy additionally protects the "Notify me" button fix.
+
+**18. Gift card covers the tax (and #2 totals on 9.2):**
+Cart with one product at $56.00 / $64.39 (without / with tax). Add a fixed-amount, tax-excluded cart rule: $10 must take exactly $10.00 off the total with tax; $60 must take $60.00 off (not $64.39); $70 stops at $64.39. Place the $60 order: tax lines on the invoice must still add up to the full products tax ($8.39). Proof: disable the module (its overrides are removed) and the same cart takes $11.50 / $64.39 off. Re-enable.
 
 
 ---

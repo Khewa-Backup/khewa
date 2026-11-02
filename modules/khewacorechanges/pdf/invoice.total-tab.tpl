@@ -22,6 +22,11 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  *}
+{* Khewa PS 9.2 (CORE_CHANGES.md #18): an after-tax gift card bigger than the products total without tax
+   leaves less tax in the paid totals than the order really has. Then show the tax from the tax lines
+   (products + shipping + wrapping), like the 1.7 site did (classes/pdf/HTMLTemplateInvoice.php, commit edd95ec6b).
+   Ecotax is off on this shop, so 9.2 puts exactly that gap in ecotax_taxes; on every other invoice it is 0. *}
+{if $footer.ecotax_taxes < -0.015}{assign var="khewaTotalTaxes" value=$footer.product_taxes + $footer.shipping_taxes + $footer.wrapping_taxes}{else}{assign var="khewaTotalTaxes" value=$footer.total_taxes}{/if}
 <table id="total-tab" width="100%">
 
 	{if $footer.product_discounts_tax_excl > 0}
@@ -78,7 +83,7 @@
 				{l s='Total Tax' d='Shop.Pdf' pdf='true'}
 			</td>
 			<td class="white">
-				{displayPrice currency=$order->id_currency price=$footer.total_taxes}
+				{displayPrice currency=$order->id_currency price=$khewaTotalTaxes}
 			</td>
 		</tr>
 
@@ -135,7 +140,7 @@
 				{l s='Total Tax' d='Shop.Pdf' pdf='true'}
 			</td>
 			<td class="white">
-				{displayPrice currency=$order->id_currency price=$footer.total_taxes}
+				{displayPrice currency=$order->id_currency price=$khewaTotalTaxes}
 			</td>
 		</tr>
 

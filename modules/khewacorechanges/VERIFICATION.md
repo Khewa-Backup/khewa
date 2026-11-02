@@ -9,6 +9,38 @@ Status legend: `TODO` / `PASS` / `FAIL`.
 
 ---
 
+## PrestaShop 9.2 (Nov 2026)
+
+Local 9.2.0 shop, PHP 8.5, branch `live-prestashop-9`. The 9.2 update put every core file back to stock, so the module is now the only thing that carries each change. Module installed 2026-11-02 (`bin/console prestashop:module install`, shop 1). For each item: (a) checked the behaviour with the module on, (b) proved the module does it by switching that part off (module disabled = its overrides removed and its hooks stopped; `config/services.yml` moved away for the services; the managed file moved away for #6), then put everything back. Theme and mail files that also carry a Khewa change were set back to stock for the test, so only the module could do it. Test scripts: `scratchpad/kcc92/` (not kept in the repo).
+
+| # | Item | Result | How proven |
+|---|---|---|---|
+| 2 | Fixed-amount "tax excluded" voucher | **PASS** (after fix) | Cart $56.00 / $64.39: $10 voucher takes $10.00 off with tax. Module off: $11.50. The CartRule override alone did NOT fix it on 9.2 (totals go through the Calculator); fixed with #18's Cart override |
+| 2 | POS $5 "amount" discount | **PASS** (after fix) | Real POS sale 34251: discount $5.75 with tax = $5 before tax, total $22.99, tax $3.74 kept. Same as the 1.7 shop (order 28999: $5 typed → $5.75 off). Before: $6.61 (order 34247) |
+| 3 | Orders grid service swap | **PASS** | `debug:container` shows `KhewaOrderQueryBuilder`; Orders list loads in 1.2–1.8 s, New customer = Yes filter gives 50 rows, all really first orders (checked in SQL). With `services.yml` moved away: core class, list did not load in 180 s |
+| 4 | ProductController `init(): void` | **PASS** | 10 URLs on shared slugs (`dream-catcher`, `oval-pendant`, `leather-moccasins-for-men`, also with a wrong slug) all open the product of the numeric id. Module off: stock also gets them right (same as Sep), so this proves "no break", the override is code-identical to 1.7 |
+| 5 | PDF footer TPS/TVQ | **PASS** | Invoice of order 33578: `getTemplate('footer')` → module `pdf/`, TPS and TVQ present, PDF made (493 KB). Module off + theme copies moved away: core `pdf/footer.tpl`, no TPS/TVQ |
+| 6 | Customer-service total blanked | **PASS** (after fix) | Thread 2017 shows "2 order(s) validated for a total amount of" with no amount. Copy moved away: "$583" shows. "Re-apply" put it back byte-identical. The copy crashed the page before the fix (`./modal.tpl` include) |
+| 7/8 | "Total spent" badge hidden | **PASS** | Customers list: `<style id="khewacorechanges-bo">` present, 30 badges, 0 shown. Module off: not on `displayBackOfficeHeader` |
+| 9 | order_conf pickup sentence | **PASS** | Replayed Mail::send's hook call: `order_conf` goes to `modules/khewacorechanges/mails/en|qc|fr/`, sentence in html + txt, even with the sentence removed from the site `mails/`. Module off: site files, no sentence. No mail sent |
+| 10 | Invoice total/product tabs | **PASS** | Order 33578: Shipping before Discounts (Khewa order), tax-rate column, totals $164.00 / −$41.00 / $123.00 / tax $18.42 / $141.42. Module off: stock order (Discounts first) |
+| 11a | Block core `productoutofstock` mail | **PASS** | 9.2 core StockManager sends it again (`src/Core/Stock/mails/`). Replayed `Hook::exec(..., array_return)` + Mail::send's reduce: module returns `false` → BLOCKED. ps_emailalerts' own stock mail and other mails still go. Module off: WOULD SEND |
+| 11b | Customer-service handlers | **PASS** | `debug:messenger`: one handler each, the Khewa classes. Built both mails through the container services with a spy Mail class: `order_merchant_comment` and `reply_msg` both get `{link}` = contact page + thread id + token. With `services.yml` moved away: core classes, `order_merchant_comment` has no `{link}` |
+| 14 | Specific references hidden | **PASS** | Products 502, 18121, 18098, 18097 (combinations + EAN): no `specific-references` block, even with the theme block made stock again. Module off: block shows with 1–3 labels |
+| 15 | "Free" shipping label blanked | **PASS** | Real CartPresenter (a `CartLazyArray`) on a pickup cart: shipping value `''`; stock-like theme template shows only "Sous-total 56,00 $". Module off: `'Gratuit'` shown |
+| 16 | No `new_order` mail for POS sales | **PASS** | Replayed hook: POS order 34248 → BLOCKED, web order 34197 → WOULD SEND. Deployed `ps_emailalerts.php` (3.0.1 + POS skip) also in place. Module off: both WOULD SEND |
+| 18 | Gift card covers the tax (new) | **PASS** (new fix) | See below |
+
+**#11a / #16 and ets_superspeed:** the Sep failure came from ets_superspeed's root `override/classes/Hook.php`. On 9.2 the root `override/` has no `Hook.php` (only RockPOS's `Cart.php` + this module's files), and `Hook` / `Mail` load from core. ets_superspeed 2.1.10 still ships a `Hook.php` in its own folder and would put it back only on its own install / enable / disable / upgrade. That 2.1.10 copy returns the result of any hook whose name starts with `action` untouched, so even then `false` would get through.
+
+**#18 gift card (commit `edd95ec6b`):** stock 9.2 does not cap a tax-excluded gift card, it does worse: a $60 card on a $56.00 / $64.39 cart took **$64.39** off (it adds tax on top of the card). With the module: $60.00 off; a $70 card stops at $64.39. Real order (CLI, deleted afterwards): total $9.56 with tax, $4.50 without tax, cart rule value $60 / $60, `order_detail_tax` = $8.39 (full products tax), no extra remainder voucher, invoice "Total Tax" $9.06 (products $8.39 + shipping $0.67). Module off: tax lines $4.39, invoice tax $5.06. Order 33578 (25% discount) still gets stock tax ($18.42).
+
+**Override install next to RockPOS:** PrestaShop merged `newCalculator()` into RockPOS's root `override/classes/Cart.php` (RockPOS methods unchanged; PrestaShop drops the comments of a file it merges into). Disable / enable / uninstall / install all took the method out and put it back cleanly. `var/cache/prod/class_index.php` points Cart, CartRule, Order, HTMLTemplate and ProductController to root `override/`.
+
+**POS:** cash sale 34250 ($28.74) and $5 discount sale 34251 ($22.99) both completed with the module on.
+
+---
+
 ## 2 — classes/CartRule.php (fixed-amount discount tax)
 
 **Accepted:** cart rule with `reduction_tax = 0` (discount entered tax-excluded)
