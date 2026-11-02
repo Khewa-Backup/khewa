@@ -167,7 +167,7 @@ class WkDeletedCategory extends ObjectModel
             $objDeletedCategory->position = $categoryInfo['position'];
             $objDeletedCategory->is_root_category = $categoryInfo['is_root_category'];
             $objDeletedCategory->shop = isset($categoryInfo['shop']) ? $categoryInfo['shop'] : '';
-            $objDeletedCategory->lang = $categoryInfo['lang'];
+            $objDeletedCategory->lang = $categoryInfo['lang'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
             $objDeletedCategory->category_product = $categoryInfo['category_product'];
             $objDeletedCategory->category_group = $categoryInfo['category_group'];
             $objDeletedCategory->group_reduction = $categoryInfo['group_reduction'];

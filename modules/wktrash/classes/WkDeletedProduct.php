@@ -220,7 +220,8 @@ class WkDeletedProduct extends ObjectModel
                 $images = $this->getImageByProductId($idProduct);
                 if ($images) {
                     foreach ($images as $image) {
-                        $source = _PS_PROD_IMG_DIR_ . Image::getImgFolderStatic($image['id_image']) .
+                        // Khewa PS 9.2: _PS_PROD_IMG_DIR_ was renamed _PS_PRODUCT_IMG_DIR_ (undefined constant = fatal)
+                        $source = _PS_PRODUCT_IMG_DIR_ . Image::getImgFolderStatic($image['id_image']) .
                             $image['id_image'] . '.jpg';
                         $destination = _PS_MODULE_DIR_ . 'wktrash/views/img/product/image/' . $image['id_image'] . '.jpg';
                         if (file_exists($source)) {
@@ -729,8 +730,8 @@ class WkDeletedProduct extends ObjectModel
             $objDeletedProduct->cache_has_attachments = $productInfo['cache_has_attachments'];
             $objDeletedProduct->is_virtual = $productInfo['is_virtual'];
             $objDeletedProduct->state = $productInfo['state'];
-            $objDeletedProduct->shop = $productInfo['shop'];
-            $objDeletedProduct->lang = $productInfo['lang'];
+            $objDeletedProduct->shop = $productInfo['shop'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
+            $objDeletedProduct->lang = $productInfo['lang'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
             $objDeletedProduct->combination = $productInfo['combination'];
             $objDeletedProduct->feature = $productInfo['feature'];
             $objDeletedProduct->attachment = $productInfo['attachment'];

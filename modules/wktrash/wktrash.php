@@ -23,6 +23,12 @@ if (!defined('_PS_VERSION_')) {
 require_once 'classes/WkTrashRequiredClasses.php';
 class WkTrash extends Module
 {
+    // Khewa PS 9.2: declared here, PHP 8.2+ warns about properties added on the fly
+    public $secure_key;
+
+    // Khewa PS 9.2: remembers what was already copied to the trash in this request, so a supplier is not saved twice
+    private static $alreadySaved = [];
+
     public function __construct()
     {
         $this->name = 'wktrash';      /* Name of the Module */
@@ -32,7 +38,8 @@ class WkTrash extends Module
         $this->module_key = 'b3425416650fe2b291c038b5ced6b469';
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
         parent::__construct();
-        $this->secure_key = Tools::encrypt($this->name);
+        // Khewa PS 9.2: Tools::encrypt() was removed (admin pages crashed). Tools::hash() is the same idea.
+        $this->secure_key = Tools::hash($this->name);
         $this->displayName = $this->l('Restore Deleted Data');
         $this->description = $this->l('This module provides a feature to restore products, categories, brands, suppliers, customers, attributes, attribute values and features.');
         $this->bootstrap = true;
@@ -76,6 +83,13 @@ class WkTrash extends Module
             'actionObjectCustomerUpdateBefore',
             'actionDeleteGDPRCustomer',
             'actionExportGDPRData',
+            // Khewa PS 9.2: these replace the module's old overrides (Customer, Attribute, AttributeGroup,
+            // Feature, AdminSuppliersController). Overrides of those classes can't be used on 9.2.
+            'actionObjectCustomerDeleteBefore',
+            'actionObjectProductAttributeDeleteBefore',
+            'actionObjectAttributeGroupDeleteBefore',
+            'actionObjectFeatureDeleteBefore',
+            'actionDispatcherBefore',
         ]);
     }
 
@@ -401,14 +415,171 @@ class WkTrash extends Module
 
     public function hookActionObjectProductDeleteBefore($params)
     {
+        // Khewa PS 9.2: skip if already saved earlier in this request (see hookActionDispatcherBefore)
+        if (!$this->markSaved('product', (int) $params['object']->id)) {
+            return;
+        }
         $objDeletedProduct = new WkDeletedProduct();
         $objDeletedProduct->getProductDetailBeforeDelete($params['object']->id);
     }
 
     public function hookActionObjectSupplierDeleteBefore($params)
     {
+        // Khewa PS 9.2: skip if already saved earlier in this request (see hookActionDispatcherBefore)
+        if (!$this->markSaved('supplier', (int) $params['object']->id)) {
+            return;
+        }
         $objDeletedSupplier = new WkDeletedSupplier();
         $objDeletedSupplier->getSupplierDetailBeforeDelete($params['object']->id);
+    }
+
+    /**
+     * Khewa PS 9.2: true the first time a type + id is seen in this request, false after that.
+     */
+    private function markSaved($type, $id)
+    {
+        if (!$id || isset(self::$alreadySaved[$type][$id])) {
+            return false;
+        }
+        self::$alreadySaved[$type][$id] = true;
+
+        return true;
+    }
+
+    /**
+     * Khewa PS 9.2: on 9.2 the supplier page is a Symfony page. Its delete removes the supplier's product links
+     * and address before Supplier::delete() runs, so the "delete before" hook is too late to keep them.
+     * This hook runs before the page action (it replaces the old AdminSuppliersController override).
+     * Same for products: the new product page removes the images and combinations before Product::delete(),
+     * so they were lost from the trash copy. The product is now copied before the page action starts.
+     * Same for customers, attribute groups and features: their delete() removes linked data first.
+     */
+    public function hookActionDispatcherBefore($params)
+    {
+        if (!defined('_PS_ADMIN_DIR_')) {
+            return;
+        }
+        try {
+            $container = PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance();
+            $request = $container ? $container->get('request_stack')->getCurrentRequest() : null;
+        } catch (Exception $e) {
+            return;
+        }
+        if (!$request) {
+            return;
+        }
+        $route = (string) $request->attributes->get('_route');
+
+        // route => [type, id in the url, list of ids posted by a bulk action]
+        $routes = [
+            'admin_products_delete_from_all_shops' => ['product', 'productId', null],
+            'admin_products_delete_from_shop' => ['product', 'productId', null],
+            'admin_products_delete_from_shop_group' => ['product', 'productId', null],
+            'admin_products_bulk_delete_from_all_shops' => ['product', null, 'product_bulk'],
+            'admin_products_bulk_delete_from_shop' => ['product', null, 'product_bulk'],
+            'admin_products_bulk_delete_from_shop_group' => ['product', null, 'product_bulk'],
+            'admin_suppliers_delete' => ['supplier', 'supplierId', null],
+            'admin_suppliers_bulk_delete' => ['supplier', null, 'supplier_bulk'],
+            'admin_attribute_groups_delete' => ['attribute_group', 'attributeGroupId', null],
+            'admin_attribute_groups_bulk_delete' => ['attribute_group', null, 'attribute_group_bulk'],
+            'admin_features_delete' => ['feature', 'featureId', null],
+            'admin_features_bulk_delete' => ['feature', null, 'feature_bulk'],
+            'admin_customers_delete' => ['customer', null, null],
+            'admin_customers_delete_bulk' => ['customer', null, null],
+        ];
+        if (!isset($routes[$route])) {
+            return;
+        }
+        list($type, $urlKey, $bulkKey) = $routes[$route];
+
+        $ids = [];
+        if ($type === 'customer') {
+            // Khewa PS 9.2: Customer::delete() removes the groups, addresses, vouchers and specific prices before
+            // its "delete before" hook runs.
+            $form = (array) $request->request->all('delete_customers');
+            $ids = (array) ($form['customers_to_delete'] ?? []);
+        } elseif ($urlKey) {
+            $ids[] = $request->attributes->get($urlKey);
+        } elseif ($bulkKey) {
+            $ids = (array) $request->request->all($bulkKey);
+        }
+
+        foreach (array_map('intval', $ids) as $id) {
+            if (!$this->markSaved($type, $id)) {
+                continue;
+            }
+            switch ($type) {
+                case 'product':
+                    (new WkDeletedProduct())->getProductDetailBeforeDelete($id);
+                    break;
+                case 'supplier':
+                    (new WkDeletedSupplier())->getSupplierDetailBeforeDelete($id);
+                    break;
+                case 'attribute_group':
+                    // Khewa PS 9.2: AttributeGroup::delete() removes the attribute values before its hook runs
+                    (new WkDeletedAttributeGroup())->getAttributeGroupDetailBeforeDelete($id);
+                    break;
+                case 'feature':
+                    // Khewa PS 9.2: Feature::delete() removes the feature values and product links before its hook runs
+                    (new WkDeletedFeature())->getFeatureDetailBeforeDelete($id);
+                    break;
+                case 'customer':
+                    (new WkDeletedCustomer())->getCustomerDetailBeforeDelete($id);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Khewa PS 9.2: replaces the old Customer override (full delete, "allow the customer to register again").
+     * Same checks as the override: not for the GDPR module's own delete and not for ajax calls.
+     */
+    public function hookActionObjectCustomerDeleteBefore($params)
+    {
+        if (Tools::getValue('controller') == 'AdminAjaxPsgdpr'
+            || Tools::getValue('ajax')
+            || Tools::getValue('action') == 'DeleteCustomer'
+        ) {
+            return;
+        }
+        if (!$this->markSaved('customer', (int) $params['object']->id)) {
+            return;
+        }
+        $objDeletedCustomer = new WkDeletedCustomer();
+        $objDeletedCustomer->getCustomerDetailBeforeDelete($params['object']->id);
+    }
+
+    /**
+     * Khewa PS 9.2: replaces the old Attribute override. The class is ProductAttribute on 9.2.
+     */
+    public function hookActionObjectProductAttributeDeleteBefore($params)
+    {
+        $objDeletedAttribute = new WkDeletedAttribute();
+        $objDeletedAttribute->getAttributeDetailBeforeDelete($params['object']->id);
+    }
+
+    /**
+     * Khewa PS 9.2: replaces the old AttributeGroup override.
+     */
+    public function hookActionObjectAttributeGroupDeleteBefore($params)
+    {
+        if (!$this->markSaved('attribute_group', (int) $params['object']->id)) {
+            return;
+        }
+        $objDeletedAttributeGroup = new WkDeletedAttributeGroup();
+        $objDeletedAttributeGroup->getAttributeGroupDetailBeforeDelete($params['object']->id);
+    }
+
+    /**
+     * Khewa PS 9.2: replaces the old Feature override.
+     */
+    public function hookActionObjectFeatureDeleteBefore($params)
+    {
+        if (!$this->markSaved('feature', (int) $params['object']->id)) {
+            return;
+        }
+        $objDeletedFeature = new WkDeletedFeature();
+        $objDeletedFeature->getFeatureDetailBeforeDelete($params['object']->id);
     }
 
     public function hookActionObjectCategoryDeleteBefore($params)
@@ -425,7 +596,8 @@ class WkTrash extends Module
 
     public function hookActionObjectCustomerUpdateBefore($params)
     {
-        if ($params['object']->deleted) {
+        // Khewa PS 9.2: skip if this customer was already saved in this request
+        if ($params['object']->deleted && $this->markSaved('customer', (int) $params['object']->id)) {
             $objDeletedCustomer = new WkDeletedCustomer();
             $objDeletedCustomer->getCustomerDetailBeforeDelete($params['object']->id);
         }

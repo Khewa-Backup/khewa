@@ -143,8 +143,8 @@ class WkDeletedManufacturer extends ObjectModel
             $objDeletedManufacturer->id_manufacturer = $manufacturerInfo['id_manufacturer'];
             $objDeletedManufacturer->name = $manufacturerInfo['name'];
             $objDeletedManufacturer->active = $manufacturerInfo['active'];
-            $objDeletedManufacturer->shop = $manufacturerInfo['shop'];
-            $objDeletedManufacturer->lang = $manufacturerInfo['lang'];
+            $objDeletedManufacturer->shop = $manufacturerInfo['shop'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
+            $objDeletedManufacturer->lang = $manufacturerInfo['lang'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
             $objDeletedManufacturer->address = $manufacturerInfo['address'];
             $objDeletedManufacturer->product_manufacturer = $manufacturerInfo['product_manufacturer'];
             $objDeletedManufacturer->save();

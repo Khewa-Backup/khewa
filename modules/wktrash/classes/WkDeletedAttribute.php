@@ -183,8 +183,8 @@ class WkDeletedAttribute extends ObjectModel
             $objDeletedAttribute->attribute_name = $attributeInfo['attribute_name'];
             $objDeletedAttribute->color = $attributeInfo['color'];
             $objDeletedAttribute->position = $attributeInfo['position'];
-            $objDeletedAttribute->shop = $attributeInfo['shop'];
-            $objDeletedAttribute->lang = $attributeInfo['lang'];
+            $objDeletedAttribute->shop = $attributeInfo['shop'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
+            $objDeletedAttribute->lang = $attributeInfo['lang'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
             $objDeletedAttribute->product_attribute = $attributeInfo['product_attribute'];
             $objDeletedAttribute->save();
         }

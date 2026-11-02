@@ -87,7 +87,8 @@
 
     function rcAjaxAction(event) {
         var req = new XMLHttpRequest();
-        var url = trackingData.moduleUrl + 'rc_pgtagmanager-ajax.php';
+        // Khewa PS 9.2: modules/.htaccess blocks rc_pgtagmanager-ajax.php, use the module front controller
+        var url = trackingData.ajaxUrl || (trackingData.moduleUrl + 'rc_pgtagmanager-ajax.php');
         var data = {
             'action': event.currentTarget.dataset.action,
             'id_order': trackingData.orderId,

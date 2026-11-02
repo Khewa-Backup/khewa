@@ -76,7 +76,9 @@ class WkDeletedCustomer extends ObjectModel
             'firstname' => ['type' => self::TYPE_STRING, 'validate' => 'isName', 'required' => true, 'size' => 255],
             'lastname' => ['type' => self::TYPE_STRING, 'validate' => 'isName', 'required' => true, 'size' => 255],
             'email' => ['type' => self::TYPE_STRING, 'validate' => 'isEmail', 'required' => true, 'size' => 255],
-            'passwd' => ['type' => self::TYPE_STRING, 'validate' => 'isPlaintextPassword', 'required' => true, 'size' => 255],
+            // Khewa PS 9.2: Validate::isPlaintextPassword() was removed (saving the trash copy failed). The value
+            // kept here is the stored hash, so check it the same way the core Customer class does.
+            'passwd' => ['type' => self::TYPE_STRING, 'validate' => 'isHashedPassword', 'required' => true, 'size' => 255],
             'last_passwd_gen' => ['type' => self::TYPE_STRING, 'copy_post' => false],
             'birthday' => ['type' => self::TYPE_DATE, 'validate' => 'isBirthDate'],
             'newsletter' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],

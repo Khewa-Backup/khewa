@@ -17,8 +17,17 @@
  * @copyright 2010-2021 Webkul IN
  * @license LICENSE.txt
 */
+// Khewa PS 9.2: the trait must be loaded before the class is declared
+require_once dirname(__FILE__) . '/../../classes/WkTrashAdminTranslationTrait.php';
+
 class AdminWkEntityRestoreHistoryController extends ModuleAdminController
 {
+    // Khewa PS 9.2: PrestaShop 9 removed l() from admin controllers
+    use WkTrashAdminTranslationTrait;
+
+    // Khewa PS 9.2: needed by the trait (message number for "Successful restore.")
+    const WKTRASH_RESTORE_CONF = 1000;
+
     public function __construct()
     {
         $this->bootstrap = true;

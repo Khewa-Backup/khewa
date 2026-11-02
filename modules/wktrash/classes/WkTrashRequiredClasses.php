@@ -27,3 +27,5 @@ include_once 'WkDeletedAttributeGroup.php';
 include_once 'WkDeletedAttribute.php';
 include_once 'WkDeletedFeature.php';
 include_once 'WkEntityRestoreHistory.php';
+// Khewa PS 9.2: l() for the admin pages, removed from PrestaShop 9
+include_once 'WkTrashAdminTranslationTrait.php';

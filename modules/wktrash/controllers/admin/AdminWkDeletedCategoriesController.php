@@ -17,8 +17,17 @@
  * @copyright 2010-2021 Webkul IN
  * @license LICENSE.txt
  */
+// Khewa PS 9.2: the trait must be loaded before the class is declared
+require_once dirname(__FILE__) . '/../../classes/WkTrashAdminTranslationTrait.php';
+
 class AdminWkDeletedCategoriesController extends ModuleAdminController
 {
+    // Khewa PS 9.2: PrestaShop 9 removed l() from admin controllers
+    use WkTrashAdminTranslationTrait;
+
+    // Khewa PS 9.2: message number for "Successful restore."
+    const WKTRASH_RESTORE_CONF = 1000;
+
     public function __construct()
     {
         $this->bootstrap = true;
@@ -72,7 +81,7 @@ class AdminWkDeletedCategoriesController extends ModuleAdminController
                 'confirm' => $this->l('Restore selected items?'),
             ],
         ];
-        $index = count($this->_conf);
+        $index = self::WKTRASH_RESTORE_CONF; // Khewa PS 9.2: fixed message slot, see WkTrashAdminTranslationTrait
         $this->_conf[$index] = $this->l('Successful restore.');
     }
 
@@ -140,7 +149,7 @@ class AdminWkDeletedCategoriesController extends ModuleAdminController
                     $this->restoreCategoryAfterDeletion($idDeletedCategory);
                 }
                 if (empty($this->context->controller->errors)) {
-                    $index = count($this->_conf);
+                    $index = self::WKTRASH_RESTORE_CONF; // Khewa PS 9.2: fixed message slot, see WkTrashAdminTranslationTrait
                     Tools::redirectAdmin(
                         AdminController::$currentIndex . '&token=' . $this->context->controller->token . '&conf=' . $index
                     );
@@ -170,7 +179,7 @@ class AdminWkDeletedCategoriesController extends ModuleAdminController
                 }
             }
             if (empty($this->context->controller->errors)) {
-                $index = count($this->_conf);
+                $index = self::WKTRASH_RESTORE_CONF; // Khewa PS 9.2: fixed message slot, see WkTrashAdminTranslationTrait
                 Tools::redirectAdmin(
                     AdminController::$currentIndex . '&token=' . $this->context->controller->token . '&conf=' . $index
                 );
@@ -278,7 +287,8 @@ class AdminWkDeletedCategoriesController extends ModuleAdminController
                         foreach ($imageTypes as $imageType) {
                             ImageManager::resize(
                                 $source,
-                                $destination . '-' . Tools::stripslashes($imageType['name']) . '.jpg',
+                                // Khewa PS 9.2: Tools::stripslashes() was removed, use plain stripslashes()
+                                $destination . '-' . stripslashes($imageType['name']) . '.jpg',
                                 $imageType['width'],
                                 $imageType['height']
                             );

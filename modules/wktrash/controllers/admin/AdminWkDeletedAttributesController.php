@@ -17,8 +17,17 @@
  * @copyright 2010-2021 Webkul IN
  * @license LICENSE.txt
 */
+// Khewa PS 9.2: the trait must be loaded before the class is declared
+require_once dirname(__FILE__) . '/../../classes/WkTrashAdminTranslationTrait.php';
+
 class AdminWkDeletedAttributesController extends ModuleAdminController
 {
+    // Khewa PS 9.2: PrestaShop 9 removed l() from admin controllers
+    use WkTrashAdminTranslationTrait;
+
+    // Khewa PS 9.2: message number for "Successful restore."
+    const WKTRASH_RESTORE_CONF = 1000;
+
     public function __construct()
     {
         $this->bootstrap = true;
@@ -72,7 +81,7 @@ class AdminWkDeletedAttributesController extends ModuleAdminController
                 'confirm' => $this->l('Restore selected items?'),
             ],
         ];
-        $index = count($this->_conf);
+        $index = self::WKTRASH_RESTORE_CONF; // Khewa PS 9.2: fixed message slot, see WkTrashAdminTranslationTrait
         $this->_conf[$index] = $this->l('Successful restore.');
     }
 
@@ -140,7 +149,7 @@ class AdminWkDeletedAttributesController extends ModuleAdminController
                     $this->restoreAttributeAfterDeletion($idDeletedAttribute);
                 }
                 if (empty($this->context->controller->errors)) {
-                    $index = count($this->_conf);
+                    $index = self::WKTRASH_RESTORE_CONF; // Khewa PS 9.2: fixed message slot, see WkTrashAdminTranslationTrait
                     Tools::redirectAdmin(
                         AdminController::$currentIndex . '&token=' . $this->context->controller->token . '&conf=' . $index
                     );
@@ -159,7 +168,7 @@ class AdminWkDeletedAttributesController extends ModuleAdminController
                 }
             }
             if (empty($this->context->controller->errors)) {
-                $index = count($this->_conf);
+                $index = self::WKTRASH_RESTORE_CONF; // Khewa PS 9.2: fixed message slot, see WkTrashAdminTranslationTrait
                 Tools::redirectAdmin(
                     AdminController::$currentIndex . '&token=' . $this->context->controller->token . '&conf=' . $index
                 );
@@ -209,12 +218,13 @@ class AdminWkDeletedAttributesController extends ModuleAdminController
         }
 
         if (!empty($attributeInfo) && $attributeInfo) {
-            $attribute = new Attribute(); // Restore Attribute with new ID
+            // Khewa PS 9.2: the Attribute class is called ProductAttribute since PrestaShop 8
+            $attribute = new ProductAttribute(); // Restore Attribute with new ID
             if (!Configuration::get('WK_RESTORE_ENTITY_NEW_ID')) {
                 // Restore Attribute with Old ID
                 $wkResult = WkDeletedAttribute::insertDataInPrimaryTable($attributeInfo);
                 if ($wkResult) {
-                    $attribute = new Attribute($attributeInfo['id_attribute']);
+                    $attribute = new ProductAttribute($attributeInfo['id_attribute']); // Khewa PS 9.2
                 }
             }
 
@@ -226,7 +236,7 @@ class AdminWkDeletedAttributesController extends ModuleAdminController
 
             $attribute->id_attribute_group = $groupId;
             $attribute->color = $attributeInfo['color'];
-            $attribute->position = Attribute::getHigherPosition($groupId) + 1;
+            $attribute->position = ProductAttribute::getHigherPosition($groupId) + 1; // Khewa PS 9.2
 
             foreach (Language::getLanguages() as $lang) {
                 $attribute->name[$lang['id_lang']] = $attributeInfo['lang'][$lang['id_lang']]['name'];

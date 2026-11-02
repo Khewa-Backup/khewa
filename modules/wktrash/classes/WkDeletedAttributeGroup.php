@@ -192,8 +192,8 @@ class WkDeletedAttributeGroup extends ObjectModel
             $objDeletedAttributeGroup->is_color_group = $attributeGroupInfo['is_color_group'];
             $objDeletedAttributeGroup->group_type = $attributeGroupInfo['group_type'];
             $objDeletedAttributeGroup->position = $attributeGroupInfo['position'];
-            $objDeletedAttributeGroup->shop = $attributeGroupInfo['shop'];
-            $objDeletedAttributeGroup->lang = $attributeGroupInfo['lang'];
+            $objDeletedAttributeGroup->shop = $attributeGroupInfo['shop'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
+            $objDeletedAttributeGroup->lang = $attributeGroupInfo['lang'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
             $objDeletedAttributeGroup->attribute_value = $attributeGroupInfo['attribute_value'];
             $objDeletedAttributeGroup->save();
         }

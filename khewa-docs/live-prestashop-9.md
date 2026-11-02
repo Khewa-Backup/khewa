@@ -56,6 +56,8 @@ Every change in a vendor module's code is marked in the code with a comment star
 | pm_crosssellingoncart (products under the cart) | 2.4.7.1 (same as the zip) | Every page crashed: the product query asked for `meta_keywords`, a column removed in 9; `Tools::displayPrice()` removed; an empty setting crashed on PHP 8; `.size()` removed in jQuery 3; admin product search used `ajax_products_list.php`, removed in 9 | Fixed in its code (6 files: `pm_crosssellingoncart.php`, `views/js/front.js`, `views/js/pm_crosssellingoncart.js`, `views/js/admin17.js`, `views/templates/admin/_configure/helpers/form/form.tpl`, `views/templates/admin/core/support.tpl`). Product search now runs inside the module settings page. Its calls to the Addons / Presta-Module sites and the logo and ads loaded from presta-module.com are switched off. | Cart EN/FR: 11 cards shown, add one to cart from the block. Product page, home pages of all shops. Admin: settings page, product pictures, product search, add a product (not saved), save |
 | an_wishlist (wish list) | 2.2.8 (same as the zip) | Every page crashed: `addJquery()` removed. Also `ajaxDie()` removed (add/remove button) and `meta_keywords` column removed (admin Products tab) | Fixed in its code (3 files: `an_wishlist.php`, `controllers/front/ajax.php`, `classes/an_wish_products.php`). The wish list now reads the current shop's product data. | Category and product pages (hearts shown), heart as a visitor (asks to log in), add, wish list page EN/FR with price, wish list in cart, remove. Admin: Settings, Products and Customers tabs, save |
 | bulkactions (Handy bulk actions) | 1.3.0 (same as the zip) | Admin › Catalog › Categories crashed: `setMedia()` does not exist on the new admin pages. Its actions also posted to a wrong address on these pages (404), and `Tools::displayPrice()` was removed (set price). | Fixed in `bulkactions.php`. | On a test category set: set parent, copy to parent, add and restrict group access. On a test product: add to / remove from category, set default category, set price, add / remove feature value, replace text. On a test customer: add to / remove from group. Settings page. All test data deleted. Not working: the old combination tools on the product edit page (PS 9 has a new product page with its own bulk edit for combinations). |
+| rc_pgtagmanager (Google Tag Manager, ReactionCode) | 2.5.4 (no zip; same as installed) | **Cart and checkout pages came out blank**: constant `_PS_PRICE_COMPUTE_PRECISION_` removed. Also: 9.2 blocks direct calls to `.php` files in `modules/` (`modules/.htaccess`), so its ajax file `rc_pgtagmanager-ajax.php` gave 403: no product data for lists, clicks, add to cart and product page, and orders were never marked as sent (sent again on every reload). Order tab buttons in admin had the same 403. Version check said "made for 1.7 only". Old hook names (`header`, `orderConfirmation`, …) are only aliases now. A status change on the new order page never sent the order. Small PHP 8 warnings. | Fixed in its code (6 files, one new: `controllers/front/ajax.php`, a module page that does the job of the blocked ajax file; the JS now calls it). Precision taken from the currency. Hooks moved to their real names. Status change on the order page now counts as a back office change (ajax calls like the POS till still don't). Back office client id fixed (it was new every time). Module is on again. | Guest/new customer, Google blocked in the browser, data layer read locally: home and category (product views on scroll, also after an amazzingfilter filter), product click, product page, add to cart, cart page (+1 and remove), checkout steps 1–5 incl. carrier choice, order confirmation (purchase event, order marked sent), FR shop. Admin: settings page and save, order page tracking tab (remove from table, force send), status change → purchase and refund hits. Server hits were stubbed and only logged, never sent (and they are Universal Analytics, which Google shut down in 2024). POS cash sale. |
+| wktrash (Restore Deleted Data, Webkul) | 4.0.2 (same as the zip) | Every admin page crashed: `Tools::encrypt()` and the admin `l()` method removed. Its overrides (Customer, Attribute, AttributeGroup, Feature, AdminSuppliersController) can't work on 9.2 and are not installed. On the new 9.2 admin pages, products lose images and combinations, and customers, attribute groups, features and suppliers lose their linked data before the "delete" hook runs, so the trash copy was missing them. Saving a deleted customer failed (`isPlaintextPassword` check removed). `_PS_PROD_IMG_DIR_` renamed, `Tools::stripslashes()` removed, `Attribute` class renamed. "Successful restore" showed as "Signed in to PrestaShop Addons". | Fixed in its code (21 files, one new: `classes/WkTrashAdminTranslationTrait.php`). The overrides are replaced by hooks, and the module copies a product, customer, supplier, attribute group or feature just before the admin page deletes it. The module's `override` folder is renamed `override-ps17-not-used`, so switching it on never copies them into `override/`. Module is on again. | All 9 trash pages and settings page. Deleted on the 9.2 admin pages and restored: product (with image and combination), category, customer (full delete, with address and group; and "can't register again" delete), attribute group (with its value), attribute value, feature, supplier. All test data then deleted for good, trash rows and history too. POS cash sale. |
 
 Database changes in this section (not in git):
 - Canada Post carriers 377, 378, 383, 384, 430 switched back on.
@@ -68,6 +70,9 @@ Database changes in this section (not in git):
 - iqitelementor, iqitmegamenu, iqitlinksmanager, iqitextendedproduct, revsliderprestashop, ph_simpleblog, ph_relatedposts switched back on (rows moved back from `zz_module_shop_off`, `active = 1`).
 - wpfooterslider: `ps_module.version` set to 2.1.0 (the zip has no upgrade steps). Its new setting `WP_FOOTER_SHOWHEAD` is not saved, so the heading stays hidden as before.
 - featuredproducts, pm_crosssellingoncart, an_wishlist, bulkactions switched back on (rows moved back from `zz_module_shop_off`, `active = 1`).
+- rc_pgtagmanager and wktrash switched back on (rows moved back from `zz_module_shop_off`, `active = 1`).
+- rc_pgtagmanager: hooks moved to their real names (`displayHeader`, `displayOrderConfirmation`, `displayBackOfficeHeader`, `actionOrderStatusUpdate`; the old alias names removed), all 3 shops.
+- wktrash: hooks added (`actionObjectSupplierDeleteBefore`, `actionObjectCustomerDeleteBefore`, `actionObjectProductAttributeDeleteBefore`, `actionObjectAttributeGroupDeleteBefore`, `actionObjectFeatureDeleteBefore`, `actionDispatcherBefore`), all 3 shops.
 
 
 ### Khewa's own Warehouse theme changes, put back on 4.8.2
@@ -98,6 +103,7 @@ The local database holds the client's real accounts, so nothing was done that ch
 - **Canada Post:** creating labels, returns, manifests and end-of-day transmit. These create real shipments that cost money.
 - **Etsy:** anything that talks to Etsy. It isn't connected anyway: there's no access token, and the last sync was in June 2021.
 - **Mailchimp:** sending data. For the cart, checkout and POS tests the API key was blanked, then put back.
+  For the Tag Manager and trash tests the key was not blanked. Mailchimp's own API log shows no calls during those tests.
 - **PayPal:** clicking "Pay with Paypal", which creates a real PayPal order.
 
 ## Test orders left in the local database
@@ -108,6 +114,7 @@ The local database holds the client's real accounts, so nothing was done that ch
 - 34248 (`LVUKVATIN`): POS cash sale, $28.74, done on PHP 8.5.
 - 34250 (`MLBQXDEKV`): POS cash sale, $28.74, khewacorechanges check.
 - 34251 (`DKMBEQJMT`): POS cash sale with a $5 discount (cart rule 2023), $22.99, khewacorechanges check.
+- 34253 (`SBKWJDSNJ`) and 34254 (`DPNJWDMMO`): POS cash sales, $28.74 each, Tag Manager and trash checks.
 
 ## POS (RockPOS)
 
@@ -154,14 +161,12 @@ Each of these crashed a page on 9.2, so it's switched off. The files and the dat
 | Module | What broke | Error |
 |---|---|---|
 | ps_metrics | Whole site, cache clear | `LoggerAdapter::emergency()` doesn't match the new `Psr\Log` interface. **Folder renamed to `ps_metrics_pre_9.2`.** |
-| rc_pgtagmanager (Google Tag Manager) | **Cart and checkout pages came out completely blank** | Constant `_PS_PRICE_COMPUTE_PRECISION_` was removed. The error was swallowed while the page rendered, so nothing showed in the logs. |
 | directlabelprintproduct | Every admin page | `addJquery()` was removed |
 | cronjobs | Every admin page | `Tools::encrypt()` was removed |
 | wkhelpdesk | Admin help desk pages | Admin controller method `l()` was removed |
 | wkinventory | Admin › Barcodes and Stocktake pages | `Translate::getAdminTranslation()` was removed |
 | bestkit_log | Admin log pages | Admin controller method `l()` was removed |
 | ntbackupandrestore | Admin backup page | `Tools::encrypt()` was removed |
-| wktrash | Admin restore history page | `Tools::encrypt()` was removed |
 | ps_facebook | Its admin page | Can't reach `billing-api.distribution.prestashop.net`. **This is a network problem, not a 9.2 code problem.** |
 
 The same list, one name per line, is in `backups/modules-switched-off.txt`.

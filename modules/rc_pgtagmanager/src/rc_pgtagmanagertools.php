@@ -323,7 +323,9 @@ class Rc_PgTagManagerTools
      */
     public static function tagProduct($product, $position, $list, $quantity_wanted)
     {
-        $precision = _PS_PRICE_COMPUTE_PRECISION_;
+        // Khewa PS 9.2: the constant _PS_PRICE_COMPUTE_PRECISION_ was removed (fatal error, blank cart and
+        // checkout pages). Use the precision of the current currency instead, like the core does now.
+        $precision = (int) Context::getContext()->getComputingPrecision();
 
         // Filter right default attribute
         if (isset($product['id_product_attribute']) && $product['id_product_attribute']) {
@@ -459,7 +461,8 @@ class Rc_PgTagManagerTools
             foreach ($order_sources as $source) {
                 $host = parse_url($source['http_referer'], PHP_URL_HOST);
                 // if referrer is self domain skip it
-                if (!preg_match($pattern_rel, $host)) {
+                // Khewa PS 9.2: $host is null for an empty referrer, PHP 8.1+ warns when null goes to preg_match
+                if (!preg_match($pattern_rel, (string) $host)) {
                     // set the referrer and break it
                     $source_connection = $source['http_referer'];
                     break;
@@ -761,7 +764,9 @@ class Rc_PgTagManagerTools
     {
         $ga_cookie = new CookieCore('rc_gtmemploye', __PS_BASE_URI__);
 
-        if (!isset($ga_cookie->uuidv4)) {
+        // Khewa PS 9.2: checked a field that is never set ("uuidv4"), so every back office hit got a new
+        // random client id. Check the field that is really saved.
+        if (!isset($ga_cookie->client_id) || !$ga_cookie->client_id) {
             $expire = strtotime('+2 year');
             $ga_cookie->setExpire($expire);
             $ga_cookie->client_id = self::setUuidv4();

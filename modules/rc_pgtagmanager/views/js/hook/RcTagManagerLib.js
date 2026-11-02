@@ -2086,7 +2086,7 @@ function RcTagManagerLib() {
     // AJAX - get Product data and send to GA
     function getData(caseClick, idProducts, list, link, quantityWanted) {
         var req = new XMLHttpRequest();
-        var url = privateValues.moduleUrl + 'rc_pgtagmanager-ajax.php';
+        var url = getAjaxUrl();
         var data = {
             action: 'product',
             products_position: privateValues.productsPosition,
@@ -2142,7 +2142,7 @@ function RcTagManagerLib() {
     // Ajax Call - after sent transaction to GA set order data in DB
     function setOrderInDb(orderId, idShop) {
         var req = new XMLHttpRequest();
-        var url = privateValues.moduleUrl + 'rc_pgtagmanager-ajax.php';
+        var url = getAjaxUrl();
         var data = {
             action: 'orderComplete',
             is_order: true,
@@ -2196,7 +2196,7 @@ function RcTagManagerLib() {
                         clientId !== publicValues.trackingFeatures.gua.clientId
                     ) {
                         req = new XMLHttpRequest();
-                        url = privateValues.moduleUrl + 'rc_pgtagmanager-ajax.php';
+                        url = getAjaxUrl();
                         data = {
                             action: 'clientId',
                             id_customer: publicValues.trackingFeatures.common.userId,
@@ -2626,6 +2626,19 @@ function RcTagManagerLib() {
 
     ///////////////////////
     // COMMON TOOLS
+
+    // Khewa PS 9.2: modules/.htaccess blocks direct calls to rc_pgtagmanager-ajax.php (403),
+    // so the requests go to the module front controller given by the server.
+    function getAjaxUrl() {
+        if (
+            publicValues.trackingFeatures &&
+            publicValues.trackingFeatures.common &&
+            publicValues.trackingFeatures.common.ajaxUrl
+        ) {
+            return publicValues.trackingFeatures.common.ajaxUrl;
+        }
+        return privateValues.moduleUrl + 'rc_pgtagmanager-ajax.php';
+    }
 
     // GENERAL - redirect to new location
     function redirectLink() {

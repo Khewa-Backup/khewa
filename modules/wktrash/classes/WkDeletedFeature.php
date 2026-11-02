@@ -165,8 +165,8 @@ class WkDeletedFeature extends ObjectModel
             $objDeletedFeature->id_feature = $featureInfo['id_feature'];
             $objDeletedFeature->feature_name = $featureInfo['feature_name'];
             $objDeletedFeature->position = $featureInfo['position'];
-            $objDeletedFeature->shop = $featureInfo['shop'];
-            $objDeletedFeature->lang = $featureInfo['lang'];
+            $objDeletedFeature->shop = $featureInfo['shop'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
+            $objDeletedFeature->lang = $featureInfo['lang'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
             $objDeletedFeature->product_feature = $featureInfo['product_feature'];
             $objDeletedFeature->feature_value = $featureInfo['feature_value'];
             $objDeletedFeature->save();

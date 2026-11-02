@@ -139,8 +139,8 @@ class WkDeletedSupplier extends ObjectModel
             $objDeletedSupplier->id_supplier = $supplierInfo['id_supplier'];
             $objDeletedSupplier->name = $supplierInfo['name'];
             $objDeletedSupplier->active = $supplierInfo['active'];
-            $objDeletedSupplier->shop = $supplierInfo['shop'];
-            $objDeletedSupplier->lang = $supplierInfo['lang'];
+            $objDeletedSupplier->shop = $supplierInfo['shop'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
+            $objDeletedSupplier->lang = $supplierInfo['lang'] ?? null; // Khewa PS 9.2: no warning on PHP 8 when the entity had no shop or language rows
             $objDeletedSupplier->address = $supplierInfo['address'];
             $objDeletedSupplier->product_supplier = $supplierInfo['product_supplier'];
             $objDeletedSupplier->supplier_order = isset($supplierInfo['supplier_order']) ? $supplierInfo['supplier_order'] : '';

@@ -58,6 +58,9 @@ class Rc_PgTagManager extends Module
 
     public $secret_key;
 
+    // Khewa PS 9.2: declared here, PHP 8.2+ warns about properties added on the fly
+    public $author_address;
+
     // add custom error messages
     protected $errors = array();
 
@@ -69,7 +72,8 @@ class Rc_PgTagManager extends Module
         $this->author = 'ReactionCode';
         $this->author_address = '0xf21e54Ea7B0D8e4413f99D60a3CC1dc49C5ffEf8';
         $this->module_key = '3567cdec5eb216d55117d376f35d57d2';
-        $this->ps_versions_compliancy = array('min' => '1.7.0.0', 'max' => '1.7.99');
+        // Khewa PS 9.2: was 'max' => '1.7.99', which marks the module as not made for this shop version.
+        $this->ps_versions_compliancy = array('min' => '1.7.0.0', 'max' => _PS_VERSION_);
         $this->bootstrap = true;
 
         // avoid fatal error on PS16
@@ -97,16 +101,18 @@ class Rc_PgTagManager extends Module
         // Simple database to register orders set to GTM
         include(dirname(__FILE__) . '/sql/install.php');
 
+        // Khewa PS 9.2: old hook names (header, orderConfirmation, backOfficeHeader, updateOrderStatus) are
+        // only aliases now and log a warning on every page. Register the real names instead.
         $hooks = array(
-            'header',
-            'orderConfirmation',
+            'displayHeader',
+            'displayOrderConfirmation',
             'displayBeforeBodyClosingTag',
-            'backOfficeHeader',
+            'displayBackOfficeHeader',
             'displayAdminOrderTabOrder',
             'displayAdminOrderContentOrder',
             'displayAdminOrderTabLink',
             'displayAdminOrderTabContent',
-            'updateOrderStatus'
+            'actionOrderStatusUpdate'
         );
 
         $installed = parent::install() && $this->registerHook($hooks);
@@ -122,7 +128,10 @@ class Rc_PgTagManager extends Module
             Tools::clearSmartyCache();
             Tools::clearXMLCache();
             Media::clearCache();
-            Tools::generateIndex();
+            // Khewa PS 9.2: Tools::generateIndex() was removed (it rebuilt the old class index file).
+            if (method_exists('Tools', 'generateIndex')) {
+                Tools::generateIndex();
+            }
 
             return true;
         } else {
@@ -1153,6 +1162,42 @@ class Rc_PgTagManager extends Module
         }
     }
 
+    /**
+     * Khewa PS 9.2: the get('twig') service call is deprecated in 9.x, getTwig() is the new way.
+     */
+    private function getTwigEnv()
+    {
+        if (method_exists($this, 'getTwig') && ($twig = $this->getTwig())) {
+            return $twig;
+        }
+
+        return $this->get('twig');
+    }
+
+    /**
+     * Khewa PS 9.2: hooks are now registered with their real names (old names are aliases).
+     * These pass the call on to the old methods.
+     */
+    public function hookDisplayHeader($params)
+    {
+        return $this->hookHeader();
+    }
+
+    public function hookDisplayOrderConfirmation($params)
+    {
+        return $this->hookOrderConfirmation($params);
+    }
+
+    public function hookDisplayBackOfficeHeader($params)
+    {
+        return $this->hookBackOfficeHeader();
+    }
+
+    public function hookActionOrderStatusUpdate($params)
+    {
+        return $this->hookUpdateOrderStatus($params);
+    }
+
     /* DISPLAY HOOKS */
     public function hookHeader()
     {
@@ -1381,7 +1426,9 @@ class Rc_PgTagManager extends Module
                 'isNewSignUp' => $is_new_sign_up,
                 'isGuest' => $is_guest,
                 'idShop' => $id_shop,
-                'token' => $token
+                'token' => $token,
+                // Khewa PS 9.2: modules/.htaccess blocks rc_pgtagmanager-ajax.php, use the module front controller
+                'ajaxUrl' => $this->context->link->getModuleLink($this->name, 'ajax', array(), null, null, $id_shop)
             )
         );
 
@@ -1716,7 +1763,8 @@ class Rc_PgTagManager extends Module
             $this->isSymfonyContext() &&
             $params['route'] === 'admin_orders_view'
         ) {
-            return $this->get('twig')->render(
+            // Khewa PS 9.2: $this->get('twig') is deprecated, use getTwig()
+            return $this->getTwigEnv()->render(
                 '@Modules/'.$this->name.'/views/PrestaShop/Admin/Sell/Order/Order/tab_link.html.twig',
                 ['documentsTitle' => ucwords($this->l('tracking status'))]
             );
@@ -1759,10 +1807,20 @@ class Rc_PgTagManager extends Module
                 'orderId' => $order_id,
                 'orderIdShop' => $order_id_shop,
                 'moduleUrl' => $module_url,
-                'token' => $this->secret_key
+                'token' => $this->secret_key,
+                // Khewa PS 9.2: modules/.htaccess blocks rc_pgtagmanager-ajax.php, use the module front controller
+                'ajaxUrl' => $this->context->link->getModuleLink(
+                    $this->name,
+                    'ajax',
+                    [],
+                    null,
+                    (int) $order_obj->id_lang,
+                    $order_id_shop
+                )
             ];
 
-            return $this->get('twig')->render(
+            // Khewa PS 9.2: $this->get('twig') is deprecated, use getTwig()
+            return $this->getTwigEnv()->render(
                 '@Modules/'.$this->name.'/views/PrestaShop/Admin/Sell/Order/Order/tab_content.html.twig',
                 ['tracking_data' => json_encode($tracking_data)]
             );
@@ -1778,7 +1836,17 @@ class Rc_PgTagManager extends Module
         // Get the GA property
         $ga_id = Configuration::get('RC_PGTAGMANAGER_GA_ID');
 
-        if (in_array('displayBackOfficeHeader', $active_hooks) && $ga_id) {
+        // Khewa PS 9.2: the order page is a Symfony page now. A status change there is a plain form post that
+        // redirects, so displayBackOfficeHeader has not run yet and the order was never sent. Also accept a
+        // normal (not ajax) back office request. Ajax calls (like the POS till) stay excluded as before.
+        $is_back_office = in_array('displayBackOfficeHeader', $active_hooks) || (
+            defined('_PS_ADMIN_DIR_')
+            && !Tools::getValue('ajax')
+            && strtolower((string) ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) !== 'xmlhttprequest'
+            && php_sapi_name() !== 'cli'
+        );
+
+        if ($is_back_office && $ga_id) {
             // Order state list to avoid send order to GA
             $invalid_statuses = explode(',', Configuration::get('RC_PGTAGMANAGER_IOS'));
 
