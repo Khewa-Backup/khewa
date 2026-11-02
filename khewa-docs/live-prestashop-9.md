@@ -254,6 +254,8 @@ This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, 
   - Kept on purpose: modules that come with PrestaShop 9.2 (even if not installed), the new Warehouse 4.8.2 modules, Google/site verification `.html` files, Google Merchant feed files, modules' own install `.sql` files.
   - Checked after: shop pages, 11 admin pages and a POS sale (order 34256).
 - **Admin accounts (3 Nov):** all removed except #1 (developer.musa, the developer) and #2 (m@v-x.cc, the client). 15 accounts removed, including the store staff and the POS till logins (Rock@khewa.com, Rock_Window@khewa.com, Nancy, Breanna, Charlotte, Nathalie and others). **Staff need new accounts with new passwords before they can use the admin or the POS.** Backup of the account tables: `backups/khewa_live-employees-before-removal-2026-11-03.sql.gz`.
+- **Old updateproducts exports (3 Nov):** about 495 old export files (2021–2026, some with cost prices) moved out of `modules/updateproducts/files/` to the removed-files backup.
+- **Old PayPal 5.4.2 and Stripe 3.7.3 leftover files (3 Nov):** 872 files moved out (`LIST-3.txt`); the code that runs matches the official PayPal 6.7.1 and Stripe 3.9.0 exactly.
 - Full scan outputs: `/Users/hello/khewa-incident-2026-10-29/scan-2026-11-03/`.
 
 ## Security: what's left (3 Nov 2026)
