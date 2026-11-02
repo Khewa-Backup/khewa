@@ -251,6 +251,24 @@ This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, 
 - **Admin accounts (3 Nov):** all removed except #1 (developer.musa, the developer) and #2 (m@v-x.cc, the client). 15 accounts removed, including the store staff and the POS till logins (Rock@khewa.com, Rock_Window@khewa.com, Nancy, Breanna, Charlotte, Nathalie and others). **Staff need new accounts with new passwords before they can use the admin or the POS.** Backup of the account tables: `backups/khewa_live-employees-before-removal-2026-11-03.sql.gz`.
 - Full scan outputs: `/Users/hello/khewa-incident-2026-10-29/scan-2026-11-03/`.
 
+## Security: what's left (3 Nov 2026)
+
+**In the local copy:**
+1. **updateproducts is switched on, and its import can upload a `.php` file.** Likely the way in. Switch it off or fix it before the upload (option: update with `module files/v3.9.4-updateproducts.zip` and check that version for the same hole).
+2. **About 10 modules and the modules' `vendor/` folders** only got the pattern check, with no clean copy to compare. Small leftover risk. Clean zips from the vendors would close it.
+3. **Third-party scripts on every page:** smartarget.online (smartargetmessagebar, switched on) and Tag Manager loaded twice (rc_pgtagmanager + theme editor).
+4. **Modules not fixed yet:** directlabelprintproduct, wkhelpdesk, bestkit_log, wkinventory, ntbackupandrestore, cronjobs. Each gets the same check when it is fixed.
+
+**For the upload:**
+5. **`.htaccess` has local paths** (`/dev-prestashop/khewa-updates/live/`). Regenerate it for khewa.com on the server, and keep the security block on top. Same for the shop URL in the database.
+6. **Passwords:** the 2 admin accounts left (#1 developer, #2 client), new accounts for staff, the new DB password in `parameters.php`, cPanel/FTP, and the **Virtual Merchant PIN** (found in the old logs).
+7. **The checklist below** ("Security setup for the live upload"): 2FA, admin folder open only to your IPs, read-only files, dangerous PHP functions off, firewall, file-change alerts, PHP 8.5.12 with upload progress off.
+8. **After the upload,** run the same fingerprint scan once on the server copy, to be sure what is live matches what was cleaned.
+
+**Later, not for the upload:** the `khewa` git repo still has the `redirect.php` backdoor (`modules/ps_shoppingcart/controllers/front/redirect.php`); clean it before future work there.
+
+Debug mode is off (`_PS_MODE_DEV_` = false), which is right for live.
+
 ## Security setup for the live upload (to discuss)
 
 Why: in Aug 2026 someone logged into the admin with a real account and uploaded a module (`prestaeditor`) that let them change any file. An admin who can upload modules can run any code; PrestaShop can't stop that by design. So the protection has to stop the login, or limit what a backdoor can do. To do on the live server when 9.2 goes up:
