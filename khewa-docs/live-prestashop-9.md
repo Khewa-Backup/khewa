@@ -115,7 +115,7 @@ The local database holds the client's real accounts, so nothing was done that ch
 - 34250 (`MLBQXDEKV`): POS cash sale, $28.74, khewacorechanges check.
 - 34251 (`DKMBEQJMT`): POS cash sale with a $5 discount (cart rule 2023), $22.99, khewacorechanges check.
 - 34253 (`SBKWJDSNJ`) and 34254 (`DPNJWDMMO`): POS cash sales, $28.74 each, Tag Manager and trash checks.
-- 34255 (`ANYQOBYAB`): POS cash sale, check after the security clean-up.
+- 34255 (`ANYQOBYAB`) and 34256 (`FWSCUWJZS`): POS cash sales, checks after the security clean-up.
 
 ## POS (RockPOS)
 
@@ -239,6 +239,14 @@ This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, 
 - **Found by the full scan (3 Nov), also moved out or cleaned:**
   - `modules/wkhelpdesk/views/js/tinymce/tinymce_wk_setup.js`: line 30 was the **same card skimmer** as in `OrderController.php` (same fingerprint), added 9 Sep. Line removed; the rest matches the vendor file. Infected copy in quarantine.
   - `modules/ps_shoppingcart/controllers/front/redirect.php`: an **encrypted backdoor** (runs code sent in a secret cookie, deletes itself if changed). Dated 18 Sep 2025, so it is from an **older break-in**. PrestaShop's cart module has no such file. Moved to quarantine. **It is also in the `khewa` git repo** (commit `c90e4c5cd`, 18 Jun 2026, "sync working tree to production backup"), so git is not a clean copy either.
+- **Unneeded files removed (3 Nov):** 79 items (418 MB) moved to `khewa-updates/backups/removed-from-live-2026-11-03/` (list in `LIST.txt` there), so they don't go up with the upload:
+  - unused module folders: old copies (`*_pre_9.2`, `crazyelements-`, `gamification-`, `reportsale-`, `pronesissizechart-`, `thegiftcard_after_Musa_upate`, `thegiftcard_withmytext_changes`, `mailalerts_old`, `sekeywords_old`, `elegantalseoessentials_disable`), `modules/clone.khewa.com/`, migration tools (`ets_oneclicktomigrate`, `ets_pres2prespwkeeper`) and other modules that aren't installed and don't come with PrestaShop
+  - all `.zip` files in `modules/`, `themes/` and `translations/`
+  - `themes/classic-` (old copy), root `/hspointofsalepro/` (old POS copy; the POS cron jobs use the real module), `khewa.com/` folder (2021 sales spreadsheets)
+  - database backups `admin556cvt7923/backups/*.sql.bz2`
+  - empty 2021 stub files, 1.7 leftovers (`AdminOutstandingController.php`, `AdminZonesController.php`; 9.2 has its own pages), `robots_old.txt`, `phptest-*`, `htaccess_original...`, all `error_log` files
+  - Kept on purpose: modules that come with PrestaShop 9.2 (even if not installed), the new Warehouse 4.8.2 modules, Google/site verification `.html` files, Google Merchant feed files, modules' own install `.sql` files.
+  - Checked after: shop pages, 11 admin pages and a POS sale (order 34256).
 - Full scan outputs: `/Users/hello/khewa-incident-2026-10-29/scan-2026-11-03/`.
 
 ## Security setup for the live upload (to discuss)
