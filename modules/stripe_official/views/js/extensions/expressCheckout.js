@@ -29,6 +29,10 @@ $(function() {
   // Check if the product from product page is out of stock. If YES - unmount the Express Checkout elements, if NO - initialize it
   if (typeof prestashop !== 'undefined' && typeof prestashop.on === 'function') {
     prestashop.on('updatedProduct', (event) => {
+      // Khewa PS 9.2: stop when the express checkout part is not on the page (no stripe_express_* vars), it threw "stripe_product_out_of_stock is not defined"
+      if (typeof stripe_express_amount === 'undefined' || !document.getElementById('stripe_product_quantity')) {
+        return;
+      }
       const productQuantity = typeof document.getElementById('stripe_product_quantity') !== 'undefined' ?
         (typeof document.getElementById('stripe_product_quantity').value !== 'undefined' ? document.getElementById('stripe_product_quantity').value : '0') : '';
       const quantity = typeof document.getElementById('quantity_wanted') !== 'undefined' ?
@@ -49,6 +53,10 @@ $(function() {
   // Check if the product from cart is out of stock. If YES - unmount the Express Checkout elements, if NO - initialize it
   if (typeof prestashop !== 'undefined' && typeof prestashop.on === 'function') {
     prestashop.on('updateCart', (args) => {
+      // Khewa PS 9.2: stop when the express checkout part is not on the page (no stripe_express_* vars), it threw "stripe_product_out_of_stock is not defined"
+      if (typeof stripe_express_amount === 'undefined') {
+        return;
+      }
       if (typeof args != 'undefined' && typeof args.resp != 'undefined' && (args.resp.errors !== '' || args.resp.cart.products.length === 0)) {
         if (expressCheckoutElement && isMounted) {
           console.log('Unmounting express checkout element => Cart has errors or is empty');

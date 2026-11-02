@@ -96,6 +96,8 @@ jQuery.fn.rating = function(generalOptions) {
         newStar.click(function selectGrade() {
           var selectedGrade = $(this).data('grade');
           ratingInput.val(selectedGrade);
+          // Khewa PS 9.2: productcomments 9.x post-comment.js only sends the review once a star was clicked
+          ratingChosen = true;
         });
         fullStars.append(newStar);
       }

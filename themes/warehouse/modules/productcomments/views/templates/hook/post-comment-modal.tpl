@@ -25,6 +25,9 @@
 
 <script type="text/javascript">
   var productCommentPostErrorMessage = '{l s='Sorry, your review cannot be posted.' d='Modules.Productcomments.Shop' js=1}';
+  {* Khewa PS 9.2: productcomments 9.x post-comment.js needs these two, without them its script stops at page load *}
+  var productCommentMandatoryMessage = '{l s='Please choose a rating for your review.' d='Modules.Productcomments.Shop' js=1}';
+  var ratingChosen = false;
 </script>
 
 <div id="post-product-comment-modal" class="modal fade product-comment-modal" role="dialog" aria-hidden="true">

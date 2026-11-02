@@ -25,6 +25,11 @@
 
 jQuery(document).ready(function () {
   const $ = jQuery;
+  // Khewa PS 9.2: the review form is not on the page (Warehouse uses iqitreviews, productcomments has no product page hook),
+  // so stop here instead of failing with "productCommentMandatoryMessage is not defined"
+  if (!$('#post-product-comment-modal').length || typeof productCommentMandatoryMessage === 'undefined') {
+    return;
+  }
   $('body').on('click', '.post-product-comment', function (event) {
     event.preventDefault();
     showPostCommentModal();

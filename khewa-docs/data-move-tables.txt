@@ -270,7 +270,7 @@ ps_wkinventory_product	3688	stocktake lists (redo the 2021 lock after)
 ## REBUILD (1 tables)
 ps_af_index	1419	filter index: rebuild after the move
 
-## SETUP (377 tables)
+## SETUP (379 tables)
 ps_access	2509	shop setup
 ps_address_format	244	setup / module settings
 ps_admin_filter	305	shop setup
@@ -649,6 +649,8 @@ ps_zone_shop	34	shop setup
 zz_giftcard_isbn_backup	24	our helper tables (keep)
 zz_module_shop_off	39	our helper tables (keep)
 
+ps_iqitmenulinks	0	mega menu links (created 3 Nov, empty; not in live)
+ps_iqitmenulinks_lang	0	mega menu links (created 3 Nov, empty; not in live)
 ## SKIP (3 tables)
 ps_customer_session	1029	login sessions (everyone logs in again)
 ps_employee_session	2458	login sessions (everyone logs in again)
