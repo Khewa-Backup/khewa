@@ -239,7 +239,7 @@ This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, 
 - **Found by the full scan (3 Nov), also moved out or cleaned:**
   - `modules/wkhelpdesk/views/js/tinymce/tinymce_wk_setup.js`: line 30 was the **same card skimmer** as in `OrderController.php` (same fingerprint), added 9 Sep. Line removed; the rest matches the vendor file. Infected copy in quarantine.
   - `modules/ps_shoppingcart/controllers/front/redirect.php`: an **encrypted backdoor** (runs code sent in a secret cookie, deletes itself if changed). Dated 18 Sep 2025, so it is from an **older break-in**. PrestaShop's cart module has no such file. Moved to quarantine. **It is also in the `khewa` git repo** (commit `c90e4c5cd`, 18 Jun 2026, "sync working tree to production backup"), so git is not a clean copy either.
-- Full scan outputs: `/private/tmp/claude-501/-Applications-AMPPS-www-dev-prestashop-khewa-updates/15a53657-8374-495c-badc-cf7fe5834608/scratchpad/scan/` (temporary folder).
+- Full scan outputs: `/Users/hello/khewa-incident-2026-10-29/scan-2026-11-03/`.
 
 ## Security setup for the live upload (to discuss)
 
