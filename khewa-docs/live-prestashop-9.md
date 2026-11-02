@@ -115,6 +115,7 @@ The local database holds the client's real accounts, so nothing was done that ch
 - 34250 (`MLBQXDEKV`): POS cash sale, $28.74, khewacorechanges check.
 - 34251 (`DKMBEQJMT`): POS cash sale with a $5 discount (cart rule 2023), $22.99, khewacorechanges check.
 - 34253 (`SBKWJDSNJ`) and 34254 (`DPNJWDMMO`): POS cash sales, $28.74 each, Tag Manager and trash checks.
+- 34255 (`ANYQOBYAB`): POS cash sale, check after the security clean-up.
 
 ## POS (RockPOS)
 
@@ -222,6 +223,20 @@ The shop's update tool is now 7.6.6. The old one is in `backups/modules-moved-ou
 - `khewa_live-after-9.2-before-sqlfix.sql.gz`: database after the update, before the missed 9.2 database changes
 - `khewa_live-before-pos-5.8.1.sql.gz`, `khewa_live-before-giftcard-paypal-carriers.sql.gz`, `khewa_live-before-module-fixes.sql.gz`: database before each round of module work
 - `update-to-8.2.8.log`, `update-to-9.2.0.log`: update tool output
+
+## Security clean-up of this local copy (2 Nov 2026)
+
+This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, so it still had the attacker's files. **Only this local copy was cleaned. The live server was not touched.**
+
+- **Moved out** (not deleted) to `/Users/hello/khewa-incident-2026-10-29/quarantine-local-9.2/`, same folder layout:
+  - backdoors: `robots.php`, `classes/wp-admin.php`, `classes/controller/wp-admin.php`, `classes/range/wp-admin.php`, `classes/stock/wp-core.php`, `.well-known/acme-challenge/init.php`, `modules/prestaeditor/`
+  - leftover tools: `geoff.php`, `geoffs_assassin.php`, `phpinfo.php`, `inode_diagnostic2.php`, 6 `sucuri*` files
+- **New attack script found (not found on 29 Oct):** `modules/mailchimppro/views/js/front/mc-cdn-health.js`. It is a real Mailchimp file with one hidden scrambled line (874 KB) added on 16 Sep. In the browser it fetches its real code from the Ethereum blockchain, so the attacker can change it at any time. It runs on every shop page. The file was cut back to its real 137 lines; the infected copy is in the quarantine folder (`.txt`). **The live server most likely still has it.**
+- **`.htaccess`:** the 29 Oct safety block is now on top (blocks `robots.php`, WordPress scans, `.php` files that don't exist, scraper URLs, junk bots).
+- **`robots.txt`:** the 5 lines from 29 Oct added under `# Private pages`.
+- Checked after: shop, category, product, admin and POS work; a POS cash sale went through. `/robots.php`, `/classes/wp-admin.php` and made-up `.php` names give 403.
+
+The full backdoor scan of core, modules, theme and the database comes next.
 
 ## Security setup for the live upload (to discuss)
 
