@@ -91,10 +91,13 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
         $this->addJqueryPlugin('autocomplete');
     }
 
-    public function init()
+    /**
+     * Khewa PS 9.2: SECURITY. These two ajax calls used to run in init(), which on 9.2 runs before the
+     * login check (anyone could make the shop call etsy.com or read category mappings). They now run
+     * at the top of postProcess(), which 9.2 calls only after the login and permission checks.
+     */
+    protected function khewaAjaxActions()
     {
-        parent::init();
-
         if (!Tools::isEmpty(trim(Tools::getValue('ajaxPropertiesList'))) && !Tools::isEmpty(trim(Tools::getValue('category_code')))) {
             return $this->ajaxGetPropertiesList();
         } else if (!Tools::isEmpty(trim(Tools::getValue('ajaxCheckCategoryExist')))) {
@@ -1449,6 +1452,8 @@ class AdminEtsyProfileManagementController extends ModuleAdminController
 
     public function postProcess()
     {
+        $this->khewaAjaxActions(); // Khewa PS 9.2: moved from init()
+
         /* Below 3-4 lines of code is no longer requured. It was added to display category selection on the Popup */
         if (!empty(Tools::getValue('action')) && Tools::getValue('action') == 'getEtsyCategory') {
             $etsy_categories = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'etsy_categories WHERE parent_id = "' . pSQL(Tools::getValue('category_code')) . '" ORDER BY category_name ASC');

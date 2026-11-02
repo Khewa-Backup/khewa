@@ -28,14 +28,19 @@ class AdminKhewaReportsReportsController extends ModuleAdminController
         $this->bootstrap = true;
     }
 
-    public function init()
+    /**
+     * Khewa PS 9.2: SECURITY. On 9.2 init() runs while the route is matched, before the login check,
+     * so the export was open to anyone (sales report download without login). It now runs in
+     * postProcess(), which 9.2 calls only after the login and permission checks.
+     */
+    public function postProcess()
     {
-        parent::init();
-        
         // Handle export action
         if (Tools::isSubmit('submitKhewaReportsExport')) {
             $this->processExport();
         }
+
+        return parent::postProcess();
     }
 
     public function initContent()

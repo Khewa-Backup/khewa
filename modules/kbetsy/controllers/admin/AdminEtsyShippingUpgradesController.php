@@ -71,7 +71,7 @@ class AdminEtsyShippingUpgradesController extends ModuleAdminController
         $this->_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'etsy_shipping_templates` st ON (a.id_etsy_shipping_templates = st.id_etsy_shipping_templates)';
         $this->_where = " = 1 AND a.delete_flag = '0'";
         if (!Tools::isEmpty(trim(Tools::getValue('id_etsy_shipping_templates')))) {
-            $this->_where .= " AND a.id_etsy_shipping_templates = " . Tools::getValue('id_etsy_shipping_templates');
+            $this->_where .= " AND a.id_etsy_shipping_templates = " . (int) Tools::getValue('id_etsy_shipping_templates'); // Khewa PS 9.2: (int), the raw value went into the SQL
             $this->list_simple_header = true;
         }
         $this->_orderBy = 'id_etsy_shipping_upgrades';

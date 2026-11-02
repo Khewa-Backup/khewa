@@ -33,7 +33,9 @@ class KhewamailsSubmitEmailModuleFrontController extends ModuleFrontController
                 $emailTemplate = Configuration::get('KHEWA_EMAIL_HTML');
 
                 // Replace placeholders in the template
-                $emailTemplate = str_replace('{name}', $name, $emailTemplate);
+                // Khewa PS 9.2: SECURITY. Public form: escape the name so nobody can put links or HTML into
+                // an email the shop sends to any address they type.
+                $emailTemplate = str_replace('{name}', htmlspecialchars(Tools::substr((string) $name, 0, 64), ENT_QUOTES, 'UTF-8'), $emailTemplate);
 
                 $languageId = $this->context->language->id;
                 $shopId = $this->context->shop->id;

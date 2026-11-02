@@ -77,8 +77,12 @@ class KbetsyCronModuleFrontController extends ModuleFrontController
         }
 
         if (!Tools::isEmpty(trim(Tools::getValue('action')))) {
-            $secure_key = Configuration::get('KBETSY_SECURE_KEY');
-            if (($secure_key == Tools::getValue('secure_key')) || ($action == 'testConnection')) {
+            $secure_key = (string) Configuration::get('KBETSY_SECURE_KEY');
+            // Khewa PS 9.2: SECURITY. Strict key check (an empty key never matches). testConnection checks
+            // its own key below (the Etsy reply brings it back in "state").
+            $given_key = Tools::getValue('secure_key');
+            $key_ok = $secure_key !== '' && is_string($given_key) && hash_equals($secure_key, $given_key);
+            if ($key_ok || ($action == 'testConnection')) {
                 switch ($action) {
                     case 'testConnection':
                         $this->testConnection();
@@ -152,6 +156,15 @@ class KbetsyCronModuleFrontController extends ModuleFrontController
         $code = '';
         if (!empty(Tools::getValue('code'))) {
             $authCode = Tools::getValue('code');
+        }
+        // Khewa PS 9.2: SECURITY. This page is public. Before, anyone could start it and read the module key
+        // in the Etsy link ("state="), or send any "code" and wipe the saved Etsy connection.
+        // Start: only with the module key (the back office link adds it). Etsy reply: "state" must be the key.
+        $khewa_key = (string) $secure_key;
+        $khewa_given = (Tools::getValue('cron') == 'token_generate' && empty($authCode)) ? Tools::getValue('secure_key') : Tools::getValue('state');
+        if ($khewa_key === '' || !is_string($khewa_given) || !hash_equals($khewa_key, $khewa_given)) {
+            echo $this->module->l('You are not authorized to access', 'cron');
+            die;
         }
         if ((Tools::getValue('cron') == 'token_generate') && empty($authCode)) {
             $challenge_bytes = hash("sha256", $code_verifier, true);

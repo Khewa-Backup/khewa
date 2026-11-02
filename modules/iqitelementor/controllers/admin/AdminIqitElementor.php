@@ -97,10 +97,8 @@ class AdminIqitElementorController extends ModuleAdminController
 
     public function init()
     {
-        if (Tools::getValue('instagamTokenRemove')) {
-            $this->removeInstagramProfile();
-            Tools::redirectAdmin($this->context->link->getAdminLink('AdminIqitElementor'));
-        }
+        // Khewa PS 9.2: SECURITY. The Instagram token removal moved to postProcess(): on 9.2 init() runs
+        // before the login check, so anyone could remove the Instagram settings.
 
 
         if (Tools::isSubmit('edit' . $this->className)) {
@@ -193,6 +191,12 @@ class AdminIqitElementorController extends ModuleAdminController
 
     public function postProcess()
     {
+        // Khewa PS 9.2: moved from init(), runs after the login check
+        if (Tools::getValue('instagamTokenRemove')) {
+            $this->removeInstagramProfile();
+            Tools::redirectAdmin($this->context->link->getAdminLink('AdminIqitElementor'));
+        }
+
         if (Tools::isSubmit('submit' . $this->className)) {
             $returnObject = $this->processSave();
             if (!$returnObject) {

@@ -822,7 +822,9 @@ class AdminEtsyGeneralSettingsController extends ModuleAdminController
                 }
                 $redirect_url = $this->context->link->getAdminlink('AdminEtsyGeneralSettings');
                 Configuration::updateGlobalValue('etsy_redirect_url', $redirect_url);
-                Tools::redirect($this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'testConnection', 'cron' => 'token_generate')));
+                // Khewa PS 9.2: SECURITY. Pass the module key so the public cron page only starts the Etsy
+                // connection for the back office (it puts the key in the Etsy link).
+                Tools::redirect($this->context->link->getModuleLink('kbetsy', 'cron', array('action' => 'testConnection', 'cron' => 'token_generate', 'secure_key' => Configuration::get('KBETSY_SECURE_KEY'))));
             }
         }
     }

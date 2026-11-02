@@ -39,8 +39,22 @@ class gmerchantcenterproshoppingactionModuleFrontController extends ModuleFrontC
      */
     public function postProcess()
     {
+        // Khewa PS 9.2: SECURITY. This page had no check at all: anyone could create customers, carts,
+        // orders and products, or change order states, by posting type/action. It now needs the module's
+        // feed token (same as the cron and feed links). Google's "Buy on Google" (Shopping Actions) has
+        // been closed by Google, so nothing legit calls this page without the token.
+        $sKhewaToken = (string) Configuration::get('GMCP_FEED_TOKEN');
+        $sKhewaGiven = Tools::getValue('token');
+        if ($sKhewaToken === '' || !is_string($sKhewaGiven) || !hash_equals($sKhewaToken, $sKhewaGiven)) {
+            header('HTTP/1.1 403 Forbidden');
+            die('Access denied');
+        }
         $aParams = $_POST;
         $sResponse = '';
+        // Khewa PS 9.2: only plain names for the class file name built from "type"
+        if (!empty($aParams['type']) && !preg_match('/^[a-z]+$/', (string) $aParams['type'])) {
+            die('Access denied');
+        }
 
         // Init module object
         $oModule = new GMerchantCenterPro();

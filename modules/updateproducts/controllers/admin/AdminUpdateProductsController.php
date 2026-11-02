@@ -14,12 +14,22 @@ class AdminUpdateProductsController extends ModuleAdminController
     ini_set("max_execution_time","0");
     ini_set('memory_limit', '-1');
 
+    parent::__construct();
+  }
+
+  /**
+   * Khewa PS 9.2: SECURITY. The error log reset was in the constructor, which on 9.2 runs before the
+   * login check, so anyone could empty the log. It now runs here, after the login and permission checks.
+   */
+  public function postProcess()
+  {
     $write_fd = fopen(_PS_MODULE_DIR_ . 'updateproducts/error/error.log', 'w');
     fwrite($write_fd, " ");
     fclose($write_fd);
     ini_set("log_errors", 1);
     ini_set("error_log", _PS_MODULE_DIR_ . 'updateproducts/error/error.log');
-    parent::__construct();
+
+    return parent::postProcess();
   }
 
   public function ajaxProcessAddProduct()

@@ -11,9 +11,15 @@
 class AdminOrdersExportSalesReportProController extends ModuleAdminController
 {
 
-    public function init()
+    /**
+     * Khewa PS 9.2: SECURITY. This was init() and did not call parent::init(). On 9.2 init() runs
+     * while the route is matched, before the login check, so anyone could run the ajax actions
+     * (save/delete settings, list customers and orders), export orders, and read and delete any
+     * file with action=getFile. It now runs in postProcess(), which 9.2 calls only after the
+     * login and permission checks.
+     */
+    public function postProcess()
     {
-//        parent::init();
 
 
 
@@ -70,7 +76,17 @@ class AdminOrdersExportSalesReportProController extends ModuleAdminController
         $id = pSQL(Tools::getValue('id'));
         $type = pSQL(Tools::getValue('type'));
         $name = pSQL(Tools::getValue('name'));
+        // Khewa PS 9.2: SECURITY. Only files made by this module in output/ (no ../, known types).
+        // The file is deleted after download, so a path like ../../../config/x.php read and removed any file.
+        if (!preg_match('/^[A-Za-z0-9_-]+$/', (string) $id) || !in_array($type, ['excel', 'csv', 'pdf', 'html'], true)) {
+            die($this->module->l("File doesn't exist.")); // Khewa PS 9.2: AdminController::l() was removed
+        }
+        $name = preg_replace('/[^\w .-]/u', '', (string) $name);
         $filePath = realpath(dirname(__FILE__) . '/../../output/' . $id . '.' . ($type === 'excel' ? 'xlsx' : $type));
+        $outputDir = realpath(dirname(__FILE__) . '/../../output');
+        if ($filePath === false || $outputDir === false || dirname($filePath) !== $outputDir) {
+            die($this->module->l("File doesn't exist.")); // Khewa PS 9.2: AdminController::l() was removed
+        }
         $size = filesize($filePath);
 
 
@@ -103,13 +119,13 @@ class AdminOrdersExportSalesReportProController extends ModuleAdminController
             unlink($filePath);
             die;
         } else {
-            die($this->l("File doesn't exist."));
+            die($this->module->l("File doesn't exist.")); // Khewa PS 9.2: AdminController::l() was removed
         }
     }
 
     private function getDoc()
     {
-        $lang = pSQL(Tools::getValue('lang'));
+        $lang = preg_replace('/[^a-z]/', '', (string) Tools::getValue('lang')); // Khewa PS 9.2: no ../ in the path
         $file_path = realpath(dirname(__FILE__) . '/../../doc/readme_' . $lang . '.pdf');
         if (file_exists($file_path)) {
             header('Content-type:application/pdf');
@@ -117,7 +133,7 @@ class AdminOrdersExportSalesReportProController extends ModuleAdminController
             readfile($file_path);
             die;
         } else {
-            die($this->l("File doesn't exist."));
+            die($this->module->l("File doesn't exist.")); // Khewa PS 9.2: AdminController::l() was removed
         }
     }
 }

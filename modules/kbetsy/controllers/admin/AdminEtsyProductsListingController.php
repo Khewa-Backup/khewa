@@ -326,7 +326,11 @@ class AdminEtsyProductsListingController extends ModuleAdminController
         unset($this->toolbar_btn['new']);
     }
 
-    public function init()
+    /**
+     * Khewa PS 9.2: SECURITY. The status toggle used to run in init(), before the login check, so anyone
+     * could switch listings on or off. It now runs at the top of postProcess() (after the login check).
+     */
+    protected function khewaToggleStatus()
     {
         if (Tools::getIsset('statusetsy_products_list')) {
             $id_ebay_profile_products = Tools::getValue('id_etsy_products_list');
@@ -337,7 +341,6 @@ class AdminEtsyProductsListingController extends ModuleAdminController
 
             Tools::redirectAdmin($this->context->link->getAdminlink('AdminEtsyProductsListing') . '&etsyConf=63');
         }
-        parent::init();
     }
 
     /**
@@ -529,6 +532,7 @@ class AdminEtsyProductsListingController extends ModuleAdminController
 
     public function postProcess()
     {
+        $this->khewaToggleStatus(); // Khewa PS 9.2: moved from init()
 
         $method_name = 'AdminEtsyProductsListing::postProcess()';
 

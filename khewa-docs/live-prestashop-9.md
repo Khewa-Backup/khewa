@@ -143,6 +143,7 @@ The local database holds the client's real accounts, so nothing was done that ch
 - 34258 (`HYXCEGRKH`): POS cash sale, $28.74, check with bestkit_log, wkhelpdesk and directlabelprintproduct on.
 - 34260: POS cash sale (Small Print - Moon Wisdom), check with wkinventory on.
 - 34261 (`BJQQBBSTF`): POS cash sale, $28.74, check with ntbackupandrestore and cronjobs on.
+- 34262 (`JCZSJRNLT`): POS cash sale, $28.74, check after the login-check gap pass.
 
 ## POS (RockPOS)
 
@@ -276,6 +277,46 @@ This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, 
 - **Stripe: Khewa's own change put back (3 Nov).** Commit `1f9a45d8c` (19 Aug 2026) in the khewa repo made Stripe remove discount codes that are no longer valid before charging, so the amount charged matches the order. Stripe 3.9.0 had lost it; re-added in `classes/model/CartContextModel.php` and `classes/services/PrestashopCartService.php::getAmount()` (marked `Khewa`). The older "stripe changes" commit `ffcac2604` was only a Stripe version update, not a Khewa change.
 - Full scan outputs: `/Users/hello/khewa-incident-2026-10-29/scan-2026-11-03/`.
 
+## Login-check gap pass (3 Nov)
+
+**Why:** in 1.7, `AdminController::init()` sent visitors who were not logged in to the login page. 9.2 took that out and lets Symfony do the login check instead. But Symfony first builds the old-style admin page (to find the route), and that already runs:
+
+1. the page's constructor,
+2. `init()`, which calls `ajaxPreprocess()` (when `ajax=1`), `initProcess()`, `initBreadcrumbs()`, `initModal()`, `initToolbarFlags()` (→ `initToolbar()`, `initPageHeaderToolbar()`), `initNotifications()`,
+3. the hooks `actionDispatcherBefore`, `actionControllerInitBefore/After`, `actionAdminControllerInitBefore/After`.
+
+Only after that come the login check, then the rights check, then `setMedia()`, `postProcess()` and `initContent()` / `displayAjax*()`. The token in the URL is not checked before `init()` either. (Core: `src/PrestaShopBundle/Routing/LegacyRouterChecker.php`, `Controller/Admin/LegacyController.php`.) Also: an admin page is reachable as long as its menu entry (`ps_tab`) exists, even if the module is off for every shop.
+
+So any module admin page that does real work in those early steps could be used by anyone, with no login. All module admin pages (installed or not, with a menu entry) were scanned by a script, the hits read, and each real one tried without login. Module front pages, root `.php` files and the `.htaccess` rules in `modules/` were checked too.
+
+| Module | File | What a visitor with no login could do | Fixed |
+|---|---|---|---|
+| khewareports | `AdminKhewaReportsQuickActionController.php`, `AdminKhewaReportsReportsController.php` | Download the full sales report (Excel) for any dates | Yes: the export runs in `postProcess()` |
+| ordersexportsalesreportpro | `AdminOrdersExportSalesReportProController.php` | Its `init()` never checked anything (open on 1.7 too): **read and then delete any file on the server** (`action=getFile&id=../../../…`), export orders, list customers, save or delete its settings | Yes: all moved to `postProcess()`; file download only takes plain names of its own files in `output/` |
+| revsliderprestashop | `AdminRevolutionsliderAjax.php`, `AdminRevolutionsliderFmanager.php` | Run every slider admin action (import, delete, save sliders and settings) and the file manager (upload/delete files; its files are missing, so this part only crashed). Open on 1.7 too | Yes: moved to `postProcess()` |
+| ets_superspeed | `AdminSuperSpeedAjaxController.php` | Change speed settings (and so rewrite `.htaccess`), optimise/upload/delete images, clear caches, call Cloudflare | Yes: moved to `postProcess()` |
+| kbetsy | `AdminEtsyProductsListingController.php` | Switch Etsy listings on or off (open on 1.7 too) | Yes: moved to `postProcess()` |
+| kbetsy | `AdminEtsyProfileManagementController.php` | Make the shop call etsy.com, read category mappings | Yes: moved to `postProcess()` |
+| kbetsy | `controllers/front/cron.php` (public page) | `action=testConnection&cron=token_generate` **showed the module's secret key** (in the Etsy link), which unlocks every sync job; any `code=` wiped the saved Etsy connection | Yes: needs the key to start (the admin button adds it); the Etsy reply must bring the key back in `state`; strict key compare |
+| iqitelementor | `AdminIqitElementor.php` | Remove the saved Instagram settings | Yes: moved to `postProcess()` |
+| updateproducts | `AdminUpdateProductsController.php` | Empty the module's error log | Yes: moved to `postProcess()` |
+| gmerchantcenterpro | `controllers/front/shoppingaction.php` (public page) | No check at all: create customers, carts, orders and products, change order states. Not usable today: the module is off in every shop and the page crashes first (`_GMCP_GSA_LIB` missing) | Yes anyway: needs the feed token (`GMCP_FEED_TOKEN`) |
+| khewamails | `controllers/front/submitemail.php` (public form) | Put HTML/links in the name, which went into the welcome email sent to any typed address | Yes: name escaped and cut to 64 characters |
+| kbetsy | `AdminEtsyShippingTemplatesEntriesController.php`, `AdminEtsyShippingUpgradesController.php` | (Logged-in only) raw `id_etsy_shipping_templates` went into SQL | Yes: `(int)` |
+
+All marked `Khewa PS 9.2`. Each was tried without login before (it worked) and after (sent to login), and with a logged-in admin after (still works: report downloads, toggle, Etsy checks, Superspeed and slider ajax, Instagram removal, update products page). Data changed by the tests was put back.
+
+**Checked and fine:** cronjobs (strict token, fixed earlier), ntbackupandrestore (fixed earlier), autoupgrade (constructor only copies its own file; work stops when nobody is logged in), RockPOS (`AdminRockPosSales` only redirects; the POS page and its ajax refuse without a POS login), ps_mbo API pages (signed, and no menu entry), mailchimppro, wkhelpdesk, wkinventory, wktrash, paypal (`AdminPaypalDiagnostic` has no menu entry), ps_checkout and ps_googleanalytics (no menu entry), canadapostlabels, ps_accounts, ps_facebook, stripe_official. Front pages: wishlists, reviews, psgdpr exports, help desk download/view (token or owner checked), loyalty points (own customer only), Canada Post, the gift card, amazzingfilter/gsitemap/thegiftcard/wkhelpdesk crons (token), ordersexport export (key). `modules/.htaccess` blocks every `.php` in `modules/`; only `modules/ets_superspeed/cronjob.php` is let through by that module's own `.htaccess`, and it only passes to the token-checked cron page. Root: `index.php`, `init.php`, `autoload.php` do nothing on their own; `gmerchantcenterpro.xml.php` needs the feed token.
+
+**Left (small):**
+- `hspointofsalepro` `searchCron` (POS search index rebuild) has no token. Anyone can start a rebuild (slow page, no data out). The live crontab (`crons/rockposcornpi.sh`, `rockposcornci.sh`) calls it without a token, so adding one means changing the server crontab at the same time.
+- `crons/rockposprodcount.php` and `rockposcustindex.php` show the number of products and customers to anyone.
+- `mailchimppro` front `cronjob` has no token (only starts a sync to Mailchimp when cron sync is on).
+- `ets_superspeed` cron token (`ETS_SPEED_SUPER_TOCKEN`) is only 6 characters (it only refreshes the page cache).
+- `gmerchantcenterpro.xml.php` with the feed token can run any of the module's settings actions (the token is in the Google feed links).
+- Visitors with no login who open a kbetsy admin page get an error page instead of the login page (not a leak; a 9.2 login-redirect problem with that module).
+- ordersexportsalesreportpro is off in every shop and still uses removed 9.2 functions (`Tools::jsonEncode`) in its filters, so its admin page is not fully working. Not fixed here (off).
+
 ## Security: what's left (3 Nov 2026)
 
 **In the local copy:**
@@ -284,7 +325,7 @@ This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, 
 3. ~~Third-party scripts on every page~~ **Fixed 3 Nov 2026:** smartargetmessagebar switched off (and never loads on cart, checkout or account pages if switched on again). Tag Manager now loads once (rc_pgtagmanager only).
 4. **updateproducts export files are open to anyone with the link.** `modules/updateproducts/files/` holds about 495 old exports (2021 to 2026, some with cost prices). Names are dates, so they can be guessed. Delete the old ones (or move them off the server) before the upload, and delete each new export after downloading it.
 5. ~~Modules not fixed yet~~ **All fixed 3 Nov 2026** (ntbackupandrestore and cronjobs last, see the module table). wkinventory's public PDF report in `img/` is closed. wkhelpdesk's file manager, which let anyone upload files with no login, is switched off. ntbackupandrestore's actions no longer work without login, and its backups can't be downloaded from the web.
-   - **Worth a look by whoever checks the other modules:** on PS 9, a module's admin page (legacy controller) is built and its `init()` runs **before** the login check. Code that does real work in a module admin controller's constructor, `init()` or `ajaxPreprocess()` can be reached without login. ntbackupandrestore was the only module using `ajaxPreprocess()`; constructors and `init()` of the other modules were not all checked.
+   - ~~Module admin pages that run code before the login check~~ **Checked and fixed 3 Nov 2026** for every module (see "Login-check gap pass (3 Nov)" above).
    - **Maintenance IP list:** `PS_MAINTENANCE_IP` (all shops) still holds the 2N Technologies cron server IPs `188.165.241.158`, `94.23.43.136`, `2001:41d0:2:bc9e::`, `2001:41d0:2:2c88::` (added by ntbackupandrestore in the past) and many other old IPs. Not changed here; clean the list on the live server.
    - **Restoring from the module** copies the backup (whole DB + `parameters.php`) and `restore.php` into the shop root while it runs, and passes the DB password in the restore URL (so it lands in the web server's access log). `restore.php` now only answers the IP that started the restore. Prefer restoring by hand on the server, and delete `restore.php` and the `.tar` from the root if a restore stops half way.
 

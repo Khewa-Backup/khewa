@@ -26,10 +26,14 @@ if (!defined('_PS_VERSION_')) { exit; }
  */
 class AdminSuperSpeedAjaxController extends ModuleAdminController
 {
-    public function init()
+    /**
+     * Khewa PS 9.2: SECURITY. This was init(). On 9.2 init() runs while the route is matched, before
+     * the login check, so anyone could change the speed settings (and rewrite .htaccess), upload or
+     * delete images, clear caches or call Cloudflare. postProcess() runs only after the login and
+     * permission checks.
+     */
+    public function postProcess()
     {
-
-       parent::init();
        if(Tools::isSubmit('changeSubmitImageOptimize') || Tools::isSubmit('btnSubmitImageOptimize') || Tools::isSubmit('btnSubmitImageAllOptimize') || Tools::isSubmit('submitUploadImageSave')||Tools::isSubmit('submitUploadImageCompress') || Tools::isSubmit('submitBrowseImageOptimize') || Tools::isSubmit('btnSubmitCleaneImageUnUsed'))
             $this->module->_postImage();
        if(Tools::isSubmit('btnSubmitPageCache') || Tools::isSubmit('clear_all_page_caches') || Tools::isSubmit('btnSubmitPageCacheDashboard') || Tools::isSubmit('btnRefreshSystemAnalyticsNew'))
@@ -97,5 +101,6 @@ class AdminSuperSpeedAjaxController extends ModuleAdminController
                 )
             );
        }
+           return parent::postProcess(); // Khewa PS 9.2
     }
 }
