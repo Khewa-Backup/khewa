@@ -9167,10 +9167,8 @@ class Tools
      */
     public static function ip()
     {
-        if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
-            return $_SERVER['HTTP_X_FORWARDED_FOR'];
-        if(isset($_SERVER['HTTP_CLIENT_IP']))
-            return $_SERVER['HTTP_CLIENT_IP'];
+        // Khewa PS 9.2: only REMOTE_ADDR. X-Forwarded-For / Client-IP headers can be faked by anyone,
+        // which made the $my_ip lock useless.
         return $_SERVER['REMOTE_ADDR'];
     }
 

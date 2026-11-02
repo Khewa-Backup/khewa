@@ -19,6 +19,12 @@
 
 // Need to be independant of the backup script to not be force to wait
 
+// Khewa PS 9.2: this old endpoint is switched off for web calls (PS 9.2 also blocks direct .php calls in
+// modules/). The admin page uses AdminNtbackupandrestoreController::khewaAjaxActions() instead.
+if (PHP_SAPI !== 'cli') {
+    header('HTTP/1.1 403 Forbidden');
+    exit('Forbidden');
+}
 require_once dirname(__FILE__) . '/../autoload.php';
 
 $ntbr = new NtbrChild();

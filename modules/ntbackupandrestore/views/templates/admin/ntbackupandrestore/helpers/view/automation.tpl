@@ -160,6 +160,8 @@
                     </div>
                     <br/>
                 {/if}
+                {* Khewa PS 9.2: public "secure download link" switched off (it let anyone with the link download the full backup). *}
+                {if false}
                 <div class="{if $light}light_version{/if}">
                     <p>{l s='You can also automate your backup download with a secure link. Please click on the button below to generate this secure link.' mod='ntbackupandrestore'}</p>
                     <p>
@@ -177,6 +179,7 @@
                         {/if}
                     </div>
                 </div>
+                {/if}
             {/if}
         </div>
         <div>

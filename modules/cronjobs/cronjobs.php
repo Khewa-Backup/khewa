@@ -28,9 +28,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-if (defined('_PS_ADMIN_DIR_') === false) {
-    define('_PS_ADMIN_DIR_', _PS_ROOT_DIR_.'/admin/');
-}
+// Khewa PS 9.2: do not define _PS_ADMIN_DIR_ here any more. Defining it outside the back office
+// (front office, bin/console) made core code think it runs in the admin. getAdminDir() handles it.
 
 require_once(dirname(__FILE__).'/classes/CronJobsForms.php');
 
@@ -41,7 +40,8 @@ class CronJobs extends Module
     protected $_successes;
     protected $_warnings;
 
-    public $webservice_url = 'http://webcron.prestashop.com/crons';
+    // Khewa PS 9.2: the remote PrestaShop cron service is never called (see updateWebservice()).
+    public $webservice_url = '';
 
     public function __construct()
     {
@@ -74,16 +74,15 @@ class CronJobs extends Module
 
     public function install()
     {
-        Configuration::updateValue('CRONJOBS_ADMIN_DIR', Tools::encrypt($this->getAdminDir()));
-        Configuration::updateValue('CRONJOBS_MODE', 'webservice');
+        // Khewa PS 9.2: Tools::encrypt() is gone; always local "advanced" mode; stable secret token.
+        Configuration::updateValue('CRONJOBS_ADMIN_DIR', self::hashValue($this->getAdminDir()));
+        Configuration::updateValue('CRONJOBS_MODE', 'advanced');
         Configuration::updateValue('CRONJOBS_MODULE_VERSION', $this->version);
         Configuration::updateValue('CRONJOBS_WEBSERVICE_ID', 0);
 
-        $token = Tools::encrypt(Tools::getShopDomainSsl().time());
-        Configuration::updateGlobalValue('CRONJOBS_EXECUTION_TOKEN', $token);
+        self::getExecutionToken();
 
         if (parent::install()) {
-            $this->updateWebservice(true);
 
             return $this->installDb() && $this->installTab() &&
                 $this->registerHook('actionModuleRegisterHookAfter') &&
@@ -96,23 +95,48 @@ class CronJobs extends Module
 
     protected function getAdminDir()
     {
-        return basename(_PS_ADMIN_DIR_);
+        // Khewa PS 9.2: _PS_ADMIN_DIR_ only exists in the back office.
+        return defined('_PS_ADMIN_DIR_') ? basename(_PS_ADMIN_DIR_) : '';
+    }
+
+    /**
+     * Khewa PS 9.2: replacement for the removed Tools::encrypt() (same formula as before: md5 of cookie key + value).
+     */
+    public static function hashValue($value)
+    {
+        return md5(_COOKIE_KEY_ . $value);
+    }
+
+    /**
+     * Khewa PS 9.2: the cron URL token. Keeps the stored token (so an existing server crontab keeps working).
+     * If it is missing or weak, it is set to a stable value that can't be guessed without the cookie key:
+     * md5(_COOKIE_KEY_ . 'cronjobs').
+     */
+    public static function getExecutionToken()
+    {
+        $token = (string) Configuration::getGlobalValue('CRONJOBS_EXECUTION_TOKEN');
+        if (!preg_match('/^[a-f0-9]{32}$/', $token)) {
+            $token = self::hashValue('cronjobs');
+            Configuration::updateGlobalValue('CRONJOBS_EXECUTION_TOKEN', $token);
+        }
+
+        return $token;
     }
 
     protected function init()
     {
-        $new_admin_dir = (Tools::encrypt($this->getAdminDir()) != Configuration::get('CRONJOBS_ADMIN_DIR'));
-        $new_module_version = version_compare($this->version, Configuration::get('CRONJOBS_MODULE_VERSION'), '!=');
+        // Khewa PS 9.2: Tools::encrypt() removed; admin dir is only known in the back office;
+        // always fall back to local "advanced" mode (no remote cron service).
+        $admin_dir = $this->getAdminDir();
+        $new_admin_dir = ($admin_dir !== '' && self::hashValue($admin_dir) != Configuration::get('CRONJOBS_ADMIN_DIR'));
+        $new_module_version = version_compare($this->version, (string) Configuration::get('CRONJOBS_MODULE_VERSION'), '!=');
 
         if ($new_admin_dir || $new_module_version) {
             Configuration::updateValue('CRONJOBS_MODULE_VERSION', $this->version);
-            Configuration::updateValue('CRONJOBS_ADMIN_DIR', Tools::encrypt($this->getAdminDir()));
-
-
-            if (Configuration::get('CRONJOBS_MODE') == 'webservice') {
-                $this->updateWebservice(true);
-                return $this->enableWebservice();
+            if ($admin_dir !== '') {
+                Configuration::updateValue('CRONJOBS_ADMIN_DIR', self::hashValue($admin_dir));
             }
+
             return $this->disableWebservice();
         }
     }
@@ -192,7 +216,7 @@ class CronJobs extends Module
         if ($hook_name == 'actionCronJob') {
             $module = $params['object'];
             $this->registerModuleHook($module->id);
-            $this->updateWebservice(Configuration::get('CRONJOBS_MODE') == 'webservice');
+            $this->updateWebservice(false); // Khewa PS 9.2: local mode only
         }
     }
 
@@ -203,7 +227,7 @@ class CronJobs extends Module
         if ($hook_name == 'actionCronJob') {
             $module = $params['object'];
             $this->unregisterModuleHook($module->id);
-            $this->updateWebservice(Configuration::get('CRONJOBS_MODE') == 'webservice');
+            $this->updateWebservice(false); // Khewa PS 9.2: local mode only
         }
     }
 
@@ -437,10 +461,11 @@ class CronJobs extends Module
     protected function postProcessConfiguration()
     {
         if (Tools::isSubmit('cron_mode') == true) {
-            if (Tools::getValue('cron_mode') == 'advanced') {
-                return $this->disableWebservice();
+            // Khewa PS 9.2: "Basic" (remote PrestaShop cron service) is not allowed; always advanced.
+            if (Tools::getValue('cron_mode') != 'advanced') {
+                $this->setWarningMessage('The Basic mode (PrestaShop remote cron service) is switched off on this shop. Advanced mode is used.');
             }
-            return $this->enableWebservice();
+            return $this->disableWebservice();
         }
     }
 
@@ -647,8 +672,8 @@ class CronJobs extends Module
 
     protected function enableWebservice()
     {
-        Configuration::updateValue('CRONJOBS_MODE', 'webservice');
-        $this->updateWebservice(true);
+        // Khewa PS 9.2: never register the shop with the remote cron service. Stay in advanced mode.
+        return $this->disableWebservice();
     }
 
     protected function disableWebservice()
@@ -659,6 +684,10 @@ class CronJobs extends Module
 
     protected function updateWebservice($use_webservice)
     {
+        // Khewa PS 9.2: no outbound call to webcron.prestashop.com, ever. The old code below is kept unreachable
+        // for reference only.
+        return true;
+
         if ($this->isLocalEnvironment() == true) {
             return true;
         }
@@ -724,12 +753,17 @@ class CronJobs extends Module
 
     protected function registerModuleHook($id_module)
     {
-        $module = Module::getInstanceById($id_module);
+        $module = Module::getInstanceById((int)$id_module);
         $id_shop = (int)Context::getContext()->shop->id;
         $id_shop_group = (int)Context::getContext()->shop->id_shop_group;
 
         if (is_callable(array($module, 'getCronFrequency')) == true) {
             $frequency = $module->getCronFrequency();
+            // Khewa PS 9.2: force ints (values go straight into SQL).
+            foreach (array('hour', 'day', 'month', 'day_of_week') as $key) {
+                $frequency[$key] = isset($frequency[$key]) ? (int)$frequency[$key] : self::EACH;
+            }
+            $id_module = (int)$id_module;
 
             $query = 'INSERT INTO '._DB_PREFIX_.bqSQL($this->name).'
                 (`id_module`, `hour`, `day`, `month`, `day_of_week`, `active`, `id_shop`, `id_shop_group`)
@@ -739,7 +773,7 @@ class CronJobs extends Module
         } else {
             $query = 'INSERT INTO '._DB_PREFIX_.bqSQL($this->name).'
                 (`id_module`, `active`, `id_shop`, `id_shop_group`)
-                VALUES ('.$id_module.', FALSE, '.$id_shop.', '.$id_shop_group.')';
+                VALUES ('.(int)$id_module.', FALSE, '.$id_shop.', '.$id_shop_group.')';
         }
 
         return Db::getInstance()->execute($query);

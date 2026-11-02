@@ -16,6 +16,12 @@
  * @copyright 2013-2024 2N Technologies
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+// Khewa PS 9.2: this old endpoint is switched off for web calls (PS 9.2 also blocks direct .php calls in
+// modules/). The admin page uses AdminNtbackupandrestoreController::khewaAjaxActions() instead.
+if (PHP_SAPI !== 'cli') {
+    header('HTTP/1.1 403 Forbidden');
+    exit('Forbidden');
+}
 require_once dirname(__FILE__) . '/../autoload.php';
 
 $ntbr = new NtBackupAndRestore(); // No need to get NtbrCore and NtbrChild

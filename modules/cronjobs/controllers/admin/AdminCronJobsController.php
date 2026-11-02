@@ -28,7 +28,11 @@ class AdminCronJobsController extends ModuleAdminController
 {
     public function __construct()
     {
-        if (Tools::getValue('token') != Configuration::getGlobalValue('CRONJOBS_EXECUTION_TOKEN')) {
+        // Khewa PS 9.2: strict, timing-safe token check; empty stored token never matches.
+        $expected = (string) Configuration::getGlobalValue('CRONJOBS_EXECUTION_TOKEN');
+        $given = Tools::getValue('token');
+        if ($expected === '' || !is_string($given) || !hash_equals($expected, $given)) {
+            header('HTTP/1.1 403 Forbidden');
             die('Invalid token');
         }
 

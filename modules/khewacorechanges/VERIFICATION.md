@@ -465,6 +465,14 @@ resolved in the outgoing mail.
 
 **Status:** TODO
 
+**Khewa PS 9.2 (guest ticket link):** wkhelpdesk 5.0.2 checks who opens `viewticket`.
+For a guest ticket (help desk customer with no shop account) the `{link}` now
+carries the ticket's access token (`&token=…` from `wk_hd_ticket_token`), the same
+way wkhelpdesk builds its own reply links. Customer tickets keep the plain link.
+Tested 2026-11-02 with one guest and one customer test ticket (deleted after):
+guest link opens without login; wrong token and no token are refused; the
+customer link opens only when that customer is logged in.
+
 ---
 
 ## 14 — Specific References block removed from product page

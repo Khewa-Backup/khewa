@@ -130,7 +130,28 @@ class ReplyToCustomerThreadHandler implements ReplyToCustomerThreadHandlerInterf
             $mapping = $objTicketManager->getTicketByThread($customerThread->id);
             if (!empty($mapping)) {
                 $idTicket = $mapping['id_ticket'];
-                $params['{link}'] = $this->context->link->getModuleLink('wkhelpdesk', 'viewticket', ['id' => $idTicket]);
+                $linkParams = ['id' => $idTicket];
+                // Khewa PS 9.2: wkhelpdesk 5.0.2 checks access on viewticket. A guest ticket (help desk customer
+                // without a PrestaShop account) needs its access token in the link, built the same way as
+                // wkhelpdesk does in AdminAllTicketController / WkHdTicketManager. Logged-in customers keep the plain link.
+                $objTicket = new \WkHdTicket((int) $idTicket);
+                if (\Validate::isLoadedObject($objTicket)) {
+                    $objHdCustomer = new \WkHdCustomer((int) $objTicket->hd_id_customer);
+                    if (!$objHdCustomer->id_ps_customer) {
+                        $objTicketToken = new \WkHdTicketToken();
+                        if ($token = $objTicketToken->getTokenByIdTicket((int) $idTicket)) {
+                            $linkParams['token'] = $token;
+                        }
+                    }
+                }
+                $params['{link}'] = $this->context->link->getModuleLink(
+                    'wkhelpdesk',
+                    'viewticket',
+                    $linkParams,
+                    null,
+                    (int) $customerThread->id_lang,
+                    (int) $customerThread->id_shop
+                );
             }
         }
         // end

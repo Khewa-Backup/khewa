@@ -61,6 +61,14 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
         $this->ntbr = new NtbrChild();
     }
 
+    /**
+     * Khewa PS 9.2: AdminController::l() was removed in PS 9. Use the module translator.
+     */
+    protected function l($string, $class = null, $addslashes = false, $htmlentities = true)
+    {
+        return $this->module->l($string, $class ?: self::PAGE);
+    }
+
     public function setMedia($isNewTheme = false)
     {
         parent::setMedia($isNewTheme);
@@ -109,8 +117,136 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
         return true;
     }
 
+    /**
+     * Khewa PS 9.2: PS 9.2 blocks direct calls to modules/*.php (modules/.htaccess), so the old
+     * ajax/backup_progress.php, ajax/backup_stop.php and ajax/download_file.php are replaced by these
+     * admin actions. They run only for a logged-in employee with a valid admin token.
+     */
+    protected function khewaAjaxActions()
+    {
+        if (Tools::isSubmit('backup_progress')) {
+            $last_log = NtBackupAndRestore::getModuleBackupDirectory() . 'lastlog.txt';
+            header('Content-Type: text/plain; charset=utf-8');
+            if (Apparatus::checkFileExists($last_log)) {
+                readfile($last_log);
+            }
+            exit;
+        }
+
+        if (Tools::isSubmit('backup_stop')) {
+            $this->ntbr->log('ERR' . $this->ntbr->l('The backup was stopped manually', 'backup_stop'));
+            $handle = fopen(_PS_MODULE_DIR_ . $this->ntbr->name . '/' . NtbrCore::STOP_FILE, 'w');
+            if ($handle) {
+                fclose($handle);
+            }
+            exit;
+        }
+
+        if (Tools::isSubmit('download_file')) {
+            if (Tools::isSubmit('backup')) {
+                // Only a backup known to the module, found by its number (no file name or path from the request).
+                $nb_file = (string) Tools::getValue('nb');
+                if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $nb_file)) {
+                    exit($this->ntbr->l('Error', 'download_file'));
+                }
+                $old_backups = $this->ntbr->findOldBackups();
+                $nb_detail = explode('.', $nb_file);
+                if (!isset($old_backups[$nb_detail[0]]['backup_dir']) || !is_dir($old_backups[$nb_detail[0]]['backup_dir'])) {
+                    exit($this->ntbr->l('Error', 'download_file'));
+                }
+                $backup_dir = $old_backups[$nb_detail[0]]['backup_dir'];
+                if (isset($nb_detail[1])) {
+                    if (!isset($old_backups[$nb_detail[0]]['part'][$nb_file]['name'])) {
+                        exit($this->ntbr->l('Error', 'download_file'));
+                    }
+                    $backup = $old_backups[$nb_detail[0]]['part'][$nb_file]['name'];
+                } else {
+                    if (!isset($old_backups[$nb_detail[0]]['name'])) {
+                        exit($this->ntbr->l('Error', 'download_file'));
+                    }
+                    $backup = $old_backups[$nb_detail[0]]['name'];
+                }
+                $this->ntbr->downloadFile($backup_dir . basename($backup), 'application/x-tar');
+                exit;
+            } elseif (Tools::isSubmit('log')) {
+                $log_file = NtBackupAndRestore::getModuleBackupDirectory() . 'log.txt';
+                if (Apparatus::checkFileExists($log_file)) {
+                    $this->ntbr->downloadFile($log_file, 'application/octet-stream');
+                    exit;
+                }
+                exit($this->ntbr->l('No log file available', 'download_file'));
+            } elseif (Tools::isSubmit('restore')) {
+                $this->ntbr->downloadFile(
+                    _PS_MODULE_DIR_ . $this->ntbr->name . '/restore.txt',
+                    'application/octet-stream',
+                    'restore.php'
+                );
+                exit;
+            }
+            exit($this->ntbr->l('Error', 'download_file'));
+        }
+    }
+
+    /**
+     * Khewa PS 9.2: true if $path is an existing file directly inside one of the backup folders
+     * (module backup folder or a configured backup folder), and looks like a backup file.
+     */
+    protected function khewaIsBackupFile($path)
+    {
+        $real = realpath($path);
+        if ($real === false || !is_file($real)) {
+            return false;
+        }
+        if (!preg_match('/\.tar(\.gz)?(\.crypt)?$/', $real)) {
+            return false;
+        }
+        $dirs = [NtBackupAndRestore::getModuleBackupDirectory()];
+        foreach (ConfigNtbr::getListBackupDirectories() as $dir) {
+            $dirs[] = $dir['backup_dir'];
+        }
+        foreach ($dirs as $dir) {
+            $real_dir = realpath($dir);
+            if ($real_dir !== false && dirname($real) === $real_dir) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Khewa PS 9.2: SECURITY. On PS 9 the legacy admin controller is built and init() is run while the
+     * route is matched, BEFORE the login check (LegacyRouterChecker). AdminController::init() calls
+     * ajaxPreprocess(), so every ajax action here (create/download/delete/restore backup, save accounts...)
+     * was open to visitors who are not logged in. Nothing is done here any more; the actions run from
+     * postProcess(), which PS 9 calls only after the login and permission checks.
+     */
     public function ajaxPreprocess()
     {
+    }
+
+    public function postProcess()
+    {
+        if ($this->ajax) {
+            if (!isset($this->context->employee) || !Validate::isLoadedObject($this->context->employee)
+                || !$this->context->employee->isLoggedBack()
+            ) {
+                header('HTTP/1.1 403 Forbidden');
+                exit(json_encode([]));
+            }
+            $this->khewaAjaxRouter();
+        }
+
+        return parent::postProcess();
+    }
+
+    /**
+     * Khewa PS 9.2: the old ajaxPreprocess() body (moved, see above).
+     */
+    protected function khewaAjaxRouter()
+    {
+        $this->khewaAjaxActions(); // Khewa PS 9.2
+
         $type_module = $this->ntbr->getTypeModule();
         $light = ($type_module == '') ? 0 : 1;
         $is_presta_edition = NtBackupAndRestore::isPrestaEdition();
@@ -540,7 +676,8 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
             ]
         );
 
-        $available_version = Tools::file_get_contents(NtbrCore::URL_VERSION, false, $http_context, 1);
+        // Khewa PS 9.2: no version check against version.2n-tech.com (no outbound calls).
+        $available_version = 0;
 
         // version_compare return -1 if first version is smaller than the second,
         // 0 if they are equals and 1 if the second is smaller than the first
@@ -963,9 +1100,10 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
             }
         }
 
-        $download_files_links = $this->ntbr->generateUrls(true);
-
-        $this->ntbr->writeCronFiles(false);
+        // Khewa PS 9.2: admin-only links instead of the old public ajax/*.php files (see khewaAjaxActions()).
+        $khewa_admin_ajax = $context->link->getAdminLink(NtBackupAndRestore::TAB_MODULE) . '&ajax=1';
+        $download_files_links = ['link' => $khewa_admin_ajax . '&download_file=1'];
+        // Khewa PS 9.2: no more generated PHP files in ajax/ (writeCronFiles() is now a no-op).
 
         if (!$light) {
             $p_id = '20130';
@@ -1028,7 +1166,7 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
         }
 
         $total_scan_root_size = ScanSizeNtbr::getTotalSize();
-        $last_scan_date = Tools::displayDate(ScanSizeNtbr::getLastDate(), null, true);
+        $last_scan_date = Tools::displayDate(ScanSizeNtbr::getLastDate(), true); // Khewa PS 9.2: new signature ($date, bool $full)
         $last_scan_config = ConfigNtbr::getNameById(GlobConfNtbr::get('NTBR_SCAN_ID_CONFIG'));
 
         $module_path = $this->module->getPathUri();
@@ -1100,10 +1238,12 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
             'light' => $light,
             'link_full_version' => $link_full_version,
             'url_ajax' => $url_ajax,
-            'create_auto_cron_php' => $this->ntbr->normalizePath($physic_path_modules) . $this->ntbr->name . '/ajax/php_cron',
+            // Khewa PS 9.2: CLI path and cron URL go to the new safe entry points.
+            'create_auto_cron_php' => 'php ' . $this->ntbr->normalizePath($physic_path_modules) . $this->ntbr->name . '/ajax/backup.php',
+            'khewa_cron_url' => $context->link->getModuleLink($this->ntbr->name, 'cron', ['secure_key' => $this->ntbr->secure_key], null, null, (int) Configuration::get('PS_SHOP_DEFAULT')),
             'secure_key' => $this->ntbr->secure_key,
-            'backup_progress' => $url_ajax . '/backup_progress.php?' . $param_secure_key,
-            'backup_stop' => $url_ajax . '/backup_stop.php?' . $param_secure_key,
+            'backup_progress' => $khewa_admin_ajax . '&backup_progress=1',
+            'backup_stop' => $khewa_admin_ajax . '&backup_stop=1',
             'link_restore_file' => $shop_url . NtbrCore::NEW_RESTORE_NAME,
             'restore_lastlog' => $shop_url . 'lastlog.txt',
             'download_file' => $download_files_links['link'],
@@ -1419,6 +1559,13 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
 
         $file_path = $infos['backup_dir'] . $infos['file_name'];
 
+        // Khewa PS 9.2: path traversal fix. Only real backup files inside a backup folder can be read.
+        $infos['pos'] = (int) $infos['pos'];
+        $infos['file_size'] = (int) $infos['file_size'];
+        if (basename((string) $infos['file_name']) !== (string) $infos['file_name'] || !$this->khewaIsBackupFile($file_path)) {
+            exit(json_encode(['result' => 0]));
+        }
+
         $size_to_read = $infos['file_size'] - $infos['pos'];
 
         if ($size_to_read > NtbrChild::MAX_FILE_DOWNLOAD_SIZE) {
@@ -1664,7 +1811,8 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
             }
 
             // If the config change, upd in NtVersion
-            if ($old_receive_email_version != $config->receive_email_version || $old_mail_version != $config->mail_version) {
+            // Khewa PS 9.2: never send the e-mail address to version.2n-tech.com (no outbound calls).
+            if (false && ($old_receive_email_version != $config->receive_email_version || $old_mail_version != $config->mail_version)) {
                 $shop_domain = Tools::getCurrentUrlProtocolPrefix() . Tools::getHttpHost();
                 $shop_url = $shop_domain . __PS_BASE_URI__;
                 $context = Context::getContext();
@@ -2398,7 +2546,7 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
             $update = $this->ntbr->updateBackupList();
 
             $total_scan_root_size = ScanSizeNtbr::getTotalSize();
-            $last_scan_date = Tools::displayDate(ScanSizeNtbr::getLastDate(), null, true);
+            $last_scan_date = Tools::displayDate(ScanSizeNtbr::getLastDate(), true); // Khewa PS 9.2: new signature ($date, bool $full)
             $last_scan_config = ConfigNtbr::getNameById(GlobConfNtbr::get('NTBR_SCAN_ID_CONFIG'));
 
             exit(json_encode([
@@ -2429,7 +2577,7 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
         if ($result) {
             $update = $this->ntbr->updateBackupList();
             $total_scan_root_size = ScanSizeNtbr::getTotalSize();
-            $last_scan_date = Tools::displayDate(ScanSizeNtbr::getLastDate(), null, true);
+            $last_scan_date = Tools::displayDate(ScanSizeNtbr::getLastDate(), true); // Khewa PS 9.2: new signature ($date, bool $full)
             $last_scan_config = ConfigNtbr::getNameById(GlobConfNtbr::get('NTBR_SCAN_ID_CONFIG'));
 
             exit(json_encode([
@@ -2465,6 +2613,14 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
     public function deleteScanFiles()
     {
         $path = _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . Tools::getValue('path');
+
+        // Khewa PS 9.2: path traversal fix. Never delete outside the shop folder, nor the shop folder itself.
+        $real_path = realpath($path);
+        $real_root = realpath(_PS_ROOT_DIR_);
+        if ($real_path === false || $real_root === false || strpos($real_path, $real_root . DIRECTORY_SEPARATOR) !== 0) {
+            exit(json_encode(['result' => false]));
+        }
+        $path = $real_path;
 
         if (is_file($path)) {
             if (!Apparatus::checkFileExists($path)) {
@@ -3236,7 +3392,13 @@ class AdminNtbackupandrestoreController extends ModuleAdminController
 
     public function sendFileToBackupDir()
     {
-        $filename = Tools::getValue('filename');
+        $filename = (string) Tools::getValue('filename');
+
+        // Khewa PS 9.2: path traversal fix. Only a plain backup file name (no folder) can be moved.
+        if ($filename === '' || basename($filename) !== $filename || !preg_match('/\.tar(\.gz)?(\.crypt)?$/', $filename)
+            || !is_file(_PS_ROOT_DIR_ . '/' . $filename)) {
+            exit(json_encode(['result' => '0']));
+        }
 
         if (!rename(_PS_ROOT_DIR_ . '/' . $filename, NtBackupAndRestore::getModuleBackupDirectory() . $filename)) {
             exit(json_encode(['result' => '0']));

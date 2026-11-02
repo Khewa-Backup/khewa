@@ -93,6 +93,7 @@
 	var url_ajax                        = "{$url_ajax|escape:'javascript':'UTF-8'}";
 	var create_auto_cron_php            = "{$create_auto_cron_php|escape:'javascript':'UTF-8'}";
 	var secure_key                      = "{$secure_key|escape:'html':'UTF-8'}";
+	var khewa_cron_url                  = "{$khewa_cron_url|escape:'javascript':'UTF-8'}"; {* Khewa PS 9.2 *}
     var running_backup                  = {$running_backup|intval};
     var activate_2nt_automation         = {$activate_2nt_automation|intval};
     var fake_mdp                        = "{$fake_mdp|escape:'html':'UTF-8'}";
@@ -154,7 +155,7 @@
         list_configs["{$nb|intval}"]['name']            = "{$config.name|escape:'html':'UTF-8'}";
     {/foreach}
 </script>
-{include file="toolbar.tpl" toolbar_btn=$toolbar_btn toolbar_scroll=$toolbar_scroll title=$title}
+{* Khewa PS 9.2: toolbar.tpl no longer exists in the PS 9 admin theme (page header toolbar is used instead) *}
 <div id="ntbackupandrestore">
     {if $module_address_use != $module_address_config}
         <div id="shop_error" class="error alert alert-danger">

@@ -81,6 +81,9 @@ class NtBackupAndRestore extends Module
 
     public $nt_dev;
 
+    /** @var string Khewa PS 9.2: declared (dynamic properties are deprecated in PHP 8.2+) */
+    public $secure_key;
+
     public function __construct()
     {
         $this->name = 'ntbackupandrestore';
@@ -88,11 +91,14 @@ class NtBackupAndRestore extends Module
         $this->version = '14.7.0';
         $this->author = '2N Technologies';
         $this->need_instance = 0;
-        $this->ps_versions_compliancy = ['min' => '1.5', 'max' => '8.1.99'];
+        $this->ps_versions_compliancy = ['min' => '1.5', 'max' => '9.2.99']; // Khewa PS 9.2
         $key_full = '652f1358e0ab9984c886ef5fceac8675';
         $key_light = '4271039ddcff6fad89705a81386abdec';
         $this->module_key = '652f1358e0ab9984c886ef5fceac8675';
-        $this->secure_key = Tools::encrypt($this->name);
+        // Khewa PS 9.2: Tools::encrypt() was removed. Stable secret key, made from the cookie key.
+        // Not the old value md5(_COOKIE_KEY_ . 'ntbackupandrestore'): that one was sent to the vendor's
+        // remote cron service (ntcron.2n-tech.com), so it is no longer secret.
+        $this->secure_key = md5(_COOKIE_KEY_ . 'ntbackupandrestore_khewa_cron');
 
         // Delete one of the class if both exists, depending on the module_key (except when in dev environment)
         if (!@Apparatus::checkFileExists(_PS_ROOT_DIR_ . '/../ntbr_mode_dev.txt')) {
@@ -1335,6 +1341,9 @@ class NtBackupAndRestore extends Module
 
     public function setOperation($operation)
     {
+        // Khewa PS 9.2: no install/upgrade/uninstall tracking call to tm.2n-tech.com.
+        return;
+
         if (NtbrCore::checkValidIp()) {
             $module_id = Configuration::get('NTBR_ID');
 
@@ -1419,6 +1428,12 @@ class NtBackupAndRestore extends Module
 
     public function writeCronFiles($install)
     {
+        // Khewa PS 9.2: no more generated PHP files in ajax/ (they held the secret key, and PS 9.2 blocks
+        // direct .php calls in modules/ anyway). Cron: front controller "cron" (URL) or ajax/backup.php (CLI).
+        $this->deleteCronFiles();
+
+        return;
+
         $physic_path_modules = Apparatus::getRealPath(_PS_ROOT_DIR_ . '/modules') . '/';
         $shop_domain = Tools::getCurrentUrlProtocolPrefix() . Tools::getHttpHost();
         $url_modules = $shop_domain . __PS_BASE_URI__ . 'modules/';

@@ -96,6 +96,15 @@ class NtbrChild extends NtbrCore
             return false;
         }
 
+        // Khewa PS 9.2: lock the copied restore.php to the IP of the employee who started the restore,
+        // so nobody else can use it while it sits in the shop root.
+        $khewa_ip = isset($_SERVER['REMOTE_ADDR']) ? (string) $_SERVER['REMOTE_ADDR'] : '';
+        if (filter_var($khewa_ip, FILTER_VALIDATE_IP)) {
+            $khewa_restore = (string) Tools::file_get_contents($new_restore);
+            $khewa_restore = preg_replace('/^\$my_ip = \'\';/m', '$my_ip = \'' . $khewa_ip . '\';', $khewa_restore, 1);
+            file_put_contents($new_restore, $khewa_restore);
+        }
+
         foreach ($list_old_new_backup as $old_new_backup) {
             if (!rename($old_new_backup['old'], $old_new_backup['new'])) {
                 return false;

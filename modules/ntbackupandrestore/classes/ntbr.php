@@ -1125,7 +1125,8 @@ abstract class NtbrCore extends NtBackupAndRestore
             $this->backup_name = 'backup0' . $suffix;
         }
 
-        $this->backup_name_date = $this->correctFileName($this->backup_name . '.' . date('Ymd') . '.' . date('His'));
+        // Khewa PS 9.2: random part in the file name, so a backup file name can't be guessed.
+        $this->backup_name_date = $this->correctFileName($this->backup_name . '.' . date('Ymd') . '.' . date('His') . '.' . bin2hex(random_bytes(8)));
 
         $this->part_size = $this->config->part_size * 1024 * 1024;
         $this->part_number = 1;
@@ -1153,6 +1154,10 @@ abstract class NtbrCore extends NtBackupAndRestore
      */
     public function setMaintenanceIP()
     {
+        // Khewa PS 9.2: do not touch PS_MAINTENANCE_IP. The vendor code added the 2N Technologies cron
+        // server IPs (and the current visitor) to the maintenance allow list of every shop on each visit.
+        return;
+
         // Find IP
         $ip = $_SERVER['REMOTE_ADDR'];
 
@@ -1397,6 +1402,7 @@ abstract class NtbrCore extends NtBackupAndRestore
         }
 
         $this->config_backup_dir = $this->getBackupDirectory();
+        self::khewaProtectDir($this->config_backup_dir); // Khewa PS 9.2
         $this->dump_file = $this->config_backup_dir . 'dump.sql';
         $this->dump_file_name = 'dump';
         $this->dump_file_ext = 'sql';
@@ -1916,7 +1922,7 @@ abstract class NtbrCore extends NtBackupAndRestore
             '{hours_start}' => $hours_start,
             '{date_end}' => $date_end,
             '{hours_end}' => $hours_end,
-            '{backup_result}' => Tools::nl2br(Tools::stripslashes($result)),
+            '{backup_result}' => Tools::nl2br(stripslashes((string) $result)), // Khewa PS 9.2: Tools::stripslashes() removed
         ];
 
         $id_lang = $this->context->language->id ? $this->context->language->id : Configuration::get('PS_LANG_DEFAULT');
@@ -5178,14 +5184,19 @@ abstract class NtbrCore extends NtBackupAndRestore
             $gid = filegroup($path);
             $mtime = filemtime($path);
 
-            $info['mode'] = decoct($mode) . ' ';
-            $info['uid'] = str_pad((int) $uid, 6, ' ', STR_PAD_LEFT) . ' ';
+            // Khewa PS 9.2: tar header numbers must be octal. The vendor code wrote decoct() of an octal
+            // string for mode ("0644" -> "1204") and decimal uid/gid (gid 80 is not octal), so standard tar
+            // tools could not open the archive. The module's own restore script ignores these fields.
+            $info['mode'] = str_pad((string) $mode, 6, '0', STR_PAD_LEFT) . ' ';
+            $uid = decoct((int) $uid);
+            $gid = decoct((int) $gid);
+            $info['uid'] = str_pad($uid, 6, ' ', STR_PAD_LEFT) . ' ';
 
             if (Apparatus::strlen($info['uid']) > 7) {
                 $info['uid'] = '     0 ';
             }
 
-            $info['gid'] = str_pad((int) $gid, 6, ' ', STR_PAD_LEFT) . ' ';
+            $info['gid'] = str_pad($gid, 6, ' ', STR_PAD_LEFT) . ' ';
 
             if (Apparatus::strlen($info['gid']) > 7) {
                 $info['gid'] = '     0 ';
@@ -6260,6 +6271,11 @@ abstract class NtbrCore extends NtBackupAndRestore
      */
     public function generateUrls($temp = false, $id_shop_group = null, $id_shop = null)
     {
+        // Khewa PS 9.2: switched off. It wrote public PHP files in ajax/ that let anyone with the link
+        // download the full backup (whole DB + parameters.php). Downloads now go only through the
+        // admin page (AdminNtbackupandrestoreController::khewaAjaxActions()).
+        return $temp ? ['link' => ''] : ['backup' => '', 'log' => ''];
+
         $sel_dyn = Tools::passwdGen(25);
         $secure_key = Tools::passwdGen(50);
         $hash = hash('sha512', $secure_key . $this->secure_key . $sel_dyn);
@@ -7073,6 +7089,10 @@ abstract class NtbrCore extends NtBackupAndRestore
      */
     public function updRootCertificat()
     {
+        // Khewa PS 9.2: no download of cacert.pem from curl.se (no outbound calls). The bundled
+        // lib/cacert.pem is only needed for remote storages, which are not used on this shop.
+        return true;
+
         // Certificat GlobalSign Root CA used by curl.haxx.se, needed to get other certificats
         $certificat_source = '	ISRG Root X1
 								==============
@@ -7332,8 +7352,39 @@ abstract class NtbrCore extends NtBackupAndRestore
         return $header_size;
     }
 
+    /**
+     * Khewa PS 9.2: make sure a backup folder has a deny-all .htaccess and an index.php, so the web server
+     * never lists or serves backup files, even when the folder was changed in the configuration.
+     */
+    public static function khewaProtectDir($dir)
+    {
+        if (!$dir || !is_dir($dir) || !is_writable($dir)) {
+            return;
+        }
+        $dir = rtrim($dir, '/\\') . DIRECTORY_SEPARATOR;
+        $htaccess = "# Khewa PS 9.2: deny all web access (backups hold the whole database)\n"
+            . "<IfModule mod_authz_core.c>\n    Require all denied\n</IfModule>\n"
+            . "<IfModule !mod_authz_core.c>\n    Order deny,allow\n    Deny from all\n</IfModule>\n"
+            . "Options -Indexes\n";
+        if (!file_exists($dir . '.htaccess')) {
+            @file_put_contents($dir . '.htaccess', $htaccess);
+        } else {
+            $current = (string) @file_get_contents($dir . '.htaccess');
+            if (stripos($current, 'Require all denied') === false && stripos($current, 'Deny from all') === false) {
+                NtBackupAndRestore::lg('WARNING: backup folder ' . $dir . ' has a .htaccess without deny-all rules');
+            }
+        }
+        if (!file_exists($dir . 'index.php')) {
+            @file_put_contents($dir . 'index.php', "<?php\nheader('Location: ../');\nexit;\n");
+        }
+    }
+
     public static function checkValidIp()
     {
+        // Khewa PS 9.2: always false. This turns off every call to the vendor (rkx.fr IP lookup,
+        // tm.2n-tech.com usage tracking, ntcron.2n-tech.com remote cron). Use the local cron URL instead.
+        return false;
+
         $domain_use = Tools::getHttpHost();
 
         $ip = $domain_use;

@@ -170,9 +170,8 @@ class CronJobsForms
                         'type' => 'radio',
                         'name' => 'cron_mode',
                         'label' => self::$module->l('Cron mode', 'CronJobsForms'),
+                        // Khewa PS 9.2: "Basic" (remote PrestaShop cron service) option removed; local mode only.
                         'values' => array(
-                            array('id' => 'webservice', 'value' => 'webservice', 'label' => self::$module->l('Basic', 'CronJobsForms'),
-                                'p' => self::$module->l('Use the PrestaShop cron tasks webservice to execute your tasks.', 'CronJobsForms')),
                             array('id' => 'advanced', 'value' => 'advanced', 'label' => self::$module->l('Advanced', 'CronJobsForms'),
                                 'p' => self::$module->l('For advanced users only: use your own crontab manager instead of PrestaShop cron tasks service.', 'CronJobsForms'))
                         ),
@@ -191,8 +190,9 @@ class CronJobsForms
 
     public static function getFormValues()
     {
-        $token = Configuration::get('CRONJOBS_EXECUTION_TOKEN', null, 0, 0);
-        $admin_folder = str_replace(_PS_ROOT_DIR_.'/', null, basename(_PS_ADMIN_DIR_));
+        // Khewa PS 9.2: token via helper (stable, secret); no null to str_replace (PHP 8.1+).
+        $token = CronJobs::getExecutionToken();
+        $admin_folder = str_replace(_PS_ROOT_DIR_.'/', '', basename(_PS_ADMIN_DIR_));
         if (version_compare(_PS_VERSION_, '1.7', '<') == true) {
             $path = Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.$admin_folder.'/';
             $curl_url = $path.Context::getContext()->link->getAdminLink('AdminCronJobs', false);
