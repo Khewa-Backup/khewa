@@ -71,7 +71,9 @@ function initProductsAutocomplete()
 		queryParams = queryParams + '&token=' + pm_crosssellingoncart.productsAutocompleteToken;
 	}
 
-	$('#product_autocomplete_input').autocomplete('ajax_products_list.php?' + queryParams, {
+	// Khewa PS 9.2: ajax_products_list.php is gone in PS 9, the module config page answers the search
+	var searchUrl = (typeof (pm_crosssellingoncart.productsAutocompleteUrl) !== 'undefined') ? pm_crosssellingoncart.productsAutocompleteUrl + '&' + queryParams : 'ajax_products_list.php?' + queryParams;
+	$('#product_autocomplete_input').autocomplete(searchUrl, {
 			minLength: 2,
 			minChars: 1,
 			autoFill: true, // Disable to prevent json to be displayed as autocompletion
@@ -81,7 +83,8 @@ function initProductsAutocomplete()
 			scroll:false,
 			cacheLength:0,
 			parse: function(data) {
-				var rows = JSON.parse(data);
+				// Khewa PS 9.2: the new search answer may already be parsed by jQuery
+				var rows = (typeof data === 'string') ? JSON.parse(data) : data;
 				var parsed = [];
 				for(var index in rows) {
 				    var row = rows[index];

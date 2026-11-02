@@ -40,7 +40,7 @@ class an_wishlistajaxModuleFrontController extends ModuleFrontController
             $return['error'] = 'notLogged';
             $this->context->smarty->assign('myAccount', Context::getContext()->link->getPageLink('my-account', null));
             $return['modal'] = $this->module->display($this->module->name, 'modal.tpl');
-            $this->ajaxDie(json_encode($return));
+            $this->khewaJsonDie($return);
         }
 		
 
@@ -95,6 +95,13 @@ class an_wishlistajaxModuleFrontController extends ModuleFrontController
         $return['count'] = an_wish_products::countProductsWishlist($idWish);
         $return['countWishlists'] = an_wish_products::countProductsAllWishlists($idProduct);
 
-        $this->ajaxDie(json_encode($return));
+        $this->khewaJsonDie($return);
     }	
+
+    // Khewa PS 9.2: Controller::ajaxDie() was removed in PS 9
+    protected function khewaJsonDie($data)
+    {
+        header('Content-Type: application/json');
+        die(json_encode($data));
+    }
 }

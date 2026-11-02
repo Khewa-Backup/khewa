@@ -130,12 +130,15 @@ class an_wish_products extends ObjectModel
         }
 
 		$sql = '
-		SELECT  *, p.*
+		SELECT  *, p.*, product_shop.*
 		FROM `' . _DB_PREFIX_ . 'an_wishlist_products` awl
-		
-        LEFT JOIN `' . _DB_PREFIX_ . 'product` p
+
+        INNER JOIN `' . _DB_PREFIX_ . 'product` p
             ON (p.`id_product` = awl.`id_product`)
-		
+        ' . /* Khewa PS 9.2: use this shop's product data (price, default combination) and skip
+               deleted products; otherwise PS 9.2 may find no price and the presenter crashes */
+        Shop::addSqlAssociation('product', 'p') . '
+
 		LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl
             ON (p.`id_product` = pl.`id_product`
             AND pl.`id_lang` = ' . (int) Context::getContext()->language->id . Shop::addSqlRestrictionOnLang('pl') . ')		
@@ -157,7 +160,7 @@ class an_wish_products extends ObjectModel
         SELECT
             p.*, product_shop.*, stock.out_of_stock, IFnull(stock.quantity, 0) as quantity, pl.`description`, pl.`description_short`, pl.`available_now`, pl.`available_later`,
             IFnull(product_attribute_shop.id_product_attribute, 0) id_product_attribute,
-            pl.`link_rewrite`, pl.`meta_description`, pl.`meta_keywords`, pl.`meta_title`,
+            pl.`link_rewrite`, pl.`meta_description`, pl.`meta_title`, ' /* Khewa PS 9.2: pl.meta_keywords column was removed in PS 9 */ . '
             pl.`name`, image_shop.`id_image` id_image, il.`legend`, m.`name` AS manufacturer_name,
             
             (SELECT COUNT(*) FROM `' . _DB_PREFIX_ . 'an_wishlist_products`,  `' . _DB_PREFIX_ . 'an_wishlist` 

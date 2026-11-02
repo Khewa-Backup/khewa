@@ -45,6 +45,7 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        {include file="./cs-addons.tpl"}
+        {* Khewa PS 9.2: only when there is a list; cs-addons.tpl loads a script from cdn.presta-module.com *}
+        {if !empty($pm_addons_products)}{include file="./cs-addons.tpl"}{/if}
     </div>
 </div>

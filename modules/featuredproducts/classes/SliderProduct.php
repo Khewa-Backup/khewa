@@ -35,6 +35,12 @@ class SliderProduct
 
   public static function getProductsByIds($ids, $order, $limit)
   {
+    // Khewa PS 9.2: keep only real numeric ids; an empty IN() list was an SQL error and executeS() gave false
+    $ids = implode(',', array_filter(array_map('intval', explode(',', (string) $ids))));
+    if (!$ids) {
+      return array();
+    }
+
     $order_by = '';
 
     if ($order == 'random') {
@@ -45,28 +51,37 @@ class SliderProduct
       $order_by = 'p.date_add';
     }
 
+    $id_shop = (int) MpmSliderTools::getShopId();
+
+    // Khewa PS 9.2: read price/active from product_shop and the default combination from
+    // product_attribute_shop for the current shop. The old query took the default combination from
+    // ps_product_attribute (all shops). When that combination is not in this shop, PS 9.2 finds
+    // no price and the product presenter crashes on formatPrice(null).
     $sql = '
-			SELECT p.*, pl.`description`, pl.`description_short`, pl.`available_now`,
-					pl.`available_later`, pl.`link_rewrite`, pl.`meta_description`,  pl.`meta_title`, pl.`name`, IFNULL(pa.id_product_attribute, 0) AS id_product_attribute,pa.minimal_quantity AS product_attribute_minimal_quantity
+			SELECT p.*, product_shop.*, pl.`description`, pl.`description_short`, pl.`available_now`,
+					pl.`available_later`, pl.`link_rewrite`, pl.`meta_description`,  pl.`meta_title`, pl.`name`, IFNULL(pas.id_product_attribute, 0) AS id_product_attribute, pas.minimal_quantity AS product_attribute_minimal_quantity
 					, i.id_image
       FROM ' . _DB_PREFIX_ . 'product_lang as pl
       INNER JOIN ' . _DB_PREFIX_ . 'product as p
       ON p.id_product = pl.id_product
-      LEFT JOIN ' . _DB_PREFIX_ . 'product_attribute as pa
-      ON p.id_product = pa.id_product AND pa.default_on = 1
-      LEFT JOIN ' . _DB_PREFIX_ . 'image as i
-      ON p.id_product = i.id_product AND i.cover = 1
-      LEFT JOIN ' . _DB_PREFIX_ . 'category_product as c
-      ON p.id_product = c.id_product
+      INNER JOIN ' . _DB_PREFIX_ . 'product_shop as product_shop
+      ON product_shop.id_product = p.id_product AND product_shop.id_shop = ' . $id_shop . '
+      LEFT JOIN ' . _DB_PREFIX_ . 'product_attribute_shop as pas
+      ON p.id_product = pas.id_product AND pas.default_on = 1 AND pas.id_shop = ' . $id_shop . '
+      LEFT JOIN ' . _DB_PREFIX_ . 'image_shop as i
+      ON p.id_product = i.id_product AND i.cover = 1 AND i.id_shop = ' . $id_shop . '
       WHERE pl.id_lang = ' . MpmSliderTools::getLangId() . '
-      AND pl.id_shop = ' . MpmSliderTools::getShopId() . '
-      AND p.active = 1
-      AND p.id_product IN(' . pSQL($ids) . ')
+      AND pl.id_shop = ' . $id_shop . '
+      AND product_shop.active = 1
+      AND p.id_product IN(' . $ids . ')
       GROUP BY p.id_product
-       ORDER BY ' . pSQL($order_by) . ' LIMIT ' . (int)$limit. '
+      ' . ($order_by ? 'ORDER BY ' . $order_by : '') . ' LIMIT ' . (int)$limit. '
 			';
 
-    return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+    $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+
+    // Khewa PS 9.2: always give back a list, never false (the caller loops over it)
+    return is_array($result) ? $result : array();
   }
 
   private static function getProductsIdsOrderedByVisitTime($limit)

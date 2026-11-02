@@ -164,7 +164,7 @@ class an_wishlist extends Module implements WidgetInterface
 
     public function hookDisplayHeader()
     {		
-		$this->context->controller->addJquery();
+		// Khewa PS 9.2: FrontController::addJquery() was removed; the theme already loads jQuery in core.js
         $this->context->controller->registerStylesheet(
             "anwishcss",
             'modules/' . $this->name . '/views/css/front.css',

@@ -182,8 +182,11 @@ class BulkActions extends Module
                 ]);
                 $html = $this->display($this->local_path, 'views/templates/admin/additional-html.tpl');
                 $js_vars += [
-                    'ba_ajax_path' => 'index.php?controller=AdminModules&configure=' . $this->name
-                        . '&token=' . Tools::getAdminTokenLite('AdminModules') . '&ajax=1&handybulkcactions=1',
+                    // Khewa PS 9.2: the old relative 'index.php?controller=AdminModules...' path broke on Symfony
+                    // pages (/sell/catalog/index.php -> 404). Use the full module config link; 'configure' is
+                    // added again because the Symfony route keeps the module name in the path only.
+                    'ba_ajax_path' => $this->context->link->getAdminLink('AdminModules', true, [], ['configure' => $this->name])
+                        . '&configure=' . $this->name . '&ajax=1&handybulkcactions=1',
                     'ba_type' => $action_type,
                     'ba_html' => preg_replace('/\s+/S', ' ', $html),
                     'ba_savedTxt' => $this->l('Saved'),
@@ -197,10 +200,24 @@ class BulkActions extends Module
     public function addJqueryBO()
     {
         if (empty($this->context->jqueryAdded)) {
-            version_compare(_PS_VERSION_, '1.7.6.0', '>=') ? $this->context->controller->setMedia()
-                : $this->context->controller->addJquery();
+            // Khewa PS 9.2: on Symfony admin pages (Catalog > Categories...) context->controller is a
+            // LegacyControllerContext without setMedia(); those pages already load jQuery, so only call
+            // setMedia()/addJquery() when the controller still has them.
+            if (method_exists($this->context->controller, 'setMedia')) {
+                $this->context->controller->setMedia();
+            } elseif (method_exists($this->context->controller, 'addJquery')) {
+                $this->context->controller->addJquery();
+            }
             $this->context->jqueryAdded = 1;
         }
+    }
+
+    // Khewa PS 9.2: Tools::displayPrice() was removed in PS 9
+    public function khewaDisplayPrice($price)
+    {
+        $currency = $this->context->currency ?: Currency::getDefaultCurrency();
+
+        return $this->context->getCurrentLocale()->formatPrice((float) $price, $currency->iso_code);
     }
 
     public function getSelectedItems()
@@ -268,10 +285,10 @@ class BulkActions extends Module
                         $this->saveObject($p_obj);
                         Product::flushPriceCache();
                         $price_tax_incl_no_reduc = $p_obj->getPrice(true, null, 6, null, false, false);
-                        $ret['final_price_' . $id_product] = Tools::displayPrice($price_tax_incl_no_reduc);
+                        $ret['final_price_' . $id_product] = $this->khewaDisplayPrice($price_tax_incl_no_reduc);
                     }
                 }
-                $ret['displayed_value'] = Tools::displayPrice($price);
+                $ret['displayed_value'] = $this->khewaDisplayPrice($price);
                 break;
             case 'addFeatureValue':
             case 'removeFeatureValue':
@@ -500,7 +517,7 @@ class BulkActions extends Module
         if ($type == 'weight') {
             $number = number_format($number, 6, '.', '') . Configuration::get('PS_WEIGHT_UNIT');
         } elseif ($type == 'price') {
-            $number = Tools::displayPrice($number);
+            $number = $this->khewaDisplayPrice($number);
         }
 
         return $number;

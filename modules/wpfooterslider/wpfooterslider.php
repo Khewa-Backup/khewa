@@ -41,11 +41,12 @@ class WpFooterSlider extends Module implements WidgetInterface
     {
         $this->name = 'wpfooterslider';
         $this->tab = 'front_office_features';
-        $this->version = '2.0.1';
+        $this->version = '2.1.0';
         $this->author = 'WEB-PLUS';
         $this->module_key = 'f71a5e3f0a9a1987305b75afbbcaa4a8';
         $this->need_instance = 0;
-        $this->secure_key = Tools::encrypt($this->name);
+        // Khewa PS 9.2: Tools::encrypt() was removed; same stable key as the old md5(_COOKIE_KEY_ . name)
+        $this->secure_key = md5(_COOKIE_KEY_ . $this->name);
         $this->bootstrap = true;
 
         parent::__construct();
@@ -82,6 +83,7 @@ class WpFooterSlider extends Module implements WidgetInterface
                 /* Sets up configuration */
                 $res = Configuration::updateValue('WP_FOOTER_SPEED', 400, false, $shop_group_id, $shop_id);
                 $res &= Configuration::updateValue('WP_FOOTER_MOUSEOVER_PAUSE', true, false, $shop_group_id, $shop_id);
+                $res &= Configuration::updateValue('WP_FOOTER_SHOWHEAD', true, false, $shop_group_id, $shop_id);
                 $res &= Configuration::updateValue('WP_FOOTER_LOOP', false, false, $shop_group_id, $shop_id);
                 $res &= Configuration::updateValue('WP_FOOTER_AUTO_START', false, false, $shop_group_id, $shop_id);
                 $res &= Configuration::updateValue('WP_FOOTER_DISPLAY_ITEMS', 6, false, $shop_group_id, $shop_id);
@@ -93,6 +95,7 @@ class WpFooterSlider extends Module implements WidgetInterface
                 foreach ($shop_groups_list as $shop_group_id) {
                     $res &= Configuration::updateValue('WP_FOOTER_SPEED', 400, false, $shop_group_id);
                     $res &= Configuration::updateValue('WP_FOOTER_MOUSEOVER_PAUSE', true, false, $shop_group_id);
+                    $res &= Configuration::updateValue('WP_FOOTER_SHOWHEAD', true, false, $shop_group_id);
                     $res &= Configuration::updateValue('WP_FOOTER_LOOP', false, false, $shop_group_id);
                     $res &= Configuration::updateValue('WP_FOOTER_AUTO_START', false, false, $shop_group_id);
                     $res &= Configuration::updateValue('WP_FOOTER_DISPLAY_ITEMS', 6, false, $shop_group_id);
@@ -103,6 +106,7 @@ class WpFooterSlider extends Module implements WidgetInterface
             /* Sets up Global configuration */
             $res &= Configuration::updateValue('WP_FOOTER_SPEED', 400);
             $res &= Configuration::updateValue('WP_FOOTER_MOUSEOVER_PAUSE', true);
+            $res &= Configuration::updateValue('WP_FOOTER_SHOWHEAD', true);
             $res &= Configuration::updateValue('WP_FOOTER_LOOP', false);
             $res &= Configuration::updateValue('WP_FOOTER_AUTO_START', false);
             $res &= Configuration::updateValue('WP_FOOTER_DISPLAY_ITEMS', 6);
@@ -157,6 +161,7 @@ class WpFooterSlider extends Module implements WidgetInterface
             /* Unsets configuration */
             $res &= Configuration::deleteByName('WP_FOOTER_SPEED');
             $res &= Configuration::deleteByName('WP_FOOTER_MOUSEOVER_PAUSE');
+            $res &= Configuration::deleteByName('WP_FOOTER_SHOWHEAD');
             $res &= Configuration::deleteByName('WP_FOOTER_LOOP');
             $res &= Configuration::deleteByName('WP_FOOTER_AUTO_START');
             $res &= Configuration::deleteByName('WP_FOOTER_DISPLAY_ITEMS');
@@ -225,6 +230,22 @@ class WpFooterSlider extends Module implements WidgetInterface
 
     public function getContent()
     {
+        // Khewa PS 9.2: PS 9 blocks direct calls to .php files inside modules/ (modules/.htaccess),
+        // so ajax_wpfooterslider.php gets 403. The slide drag-and-drop order is now saved here,
+        // inside the logged-in module config page.
+        if (Tools::getValue("action") == "updateSlidesPosition" && Tools::getValue("secure_key") == $this->secure_key) {
+            $slides = Tools::getValue("slides");
+            if (is_array($slides)) {
+                foreach ($slides as $position => $id_slide) {
+                    Db::getInstance()->execute("UPDATE `"._DB_PREFIX_."wpfooterslider_slides` SET `position` = ".(int)$position."
+                        WHERE `id_wpfooterslider_slides` = ".(int)$id_slide);
+                }
+                $this->clearCache();
+            }
+            header("Content-Type: application/json");
+            die(json_encode(["success" => is_array($slides)]));
+        }
+
         $this->_html .= $this->headerHTML();
 
         /* Validate & process */
@@ -386,6 +407,7 @@ class WpFooterSlider extends Module implements WidgetInterface
 
                 $res = Configuration::updateValue('WP_FOOTER_SPEED', (int)Tools::getValue('WP_FOOTER_SPEED'), false, $shop_group_id, $shop_id);
                 $res &= Configuration::updateValue('WP_FOOTER_MOUSEOVER_PAUSE', (int)Tools::getValue('WP_FOOTER_MOUSEOVER_PAUSE'), false, $shop_group_id, $shop_id);
+                $res &= Configuration::updateValue('WP_FOOTER_SHOWHEAD', (int)Tools::getValue('WP_FOOTER_SHOWHEAD'), false, $shop_group_id, $shop_id);
                 $res &= Configuration::updateValue('WP_FOOTER_LOOP', (int)Tools::getValue('WP_FOOTER_LOOP'), false, $shop_group_id, $shop_id);
                 $res &= Configuration::updateValue('WP_FOOTER_AUTO_START', (int)Tools::getValue('WP_FOOTER_AUTO_START'), false, $shop_group_id, $shop_id);
                 $res &= Configuration::updateValue('WP_FOOTER_DISPLAY_ITEMS', (int)Tools::getValue('WP_FOOTER_DISPLAY_ITEMS'), false, $shop_group_id, $shop_id);
@@ -397,6 +419,7 @@ class WpFooterSlider extends Module implements WidgetInterface
                 case Shop::CONTEXT_ALL:
                     $res &= Configuration::updateValue('WP_FOOTER_SPEED', (int)Tools::getValue('WP_FOOTER_SPEED'));
                     $res &= Configuration::updateValue('WP_FOOTER_MOUSEOVER_PAUSE', (int)Tools::getValue('WP_FOOTER_MOUSEOVER_PAUSE'));
+                    $res &= Configuration::updateValue('WP_FOOTER_SHOWHEAD', (int)Tools::getValue('WP_FOOTER_SHOWHEAD'));
                     $res &= Configuration::updateValue('WP_FOOTER_LOOP', (int)Tools::getValue('WP_FOOTER_LOOP'));
                     $res &= Configuration::updateValue('WP_FOOTER_AUTO_START', (int)Tools::getValue('WP_FOOTER_AUTO_START'));
                     $res &= Configuration::updateValue('WP_FOOTER_DISPLAY_ITEMS', (int)Tools::getValue('WP_FOOTER_DISPLAY_ITEMS'));
@@ -405,6 +428,7 @@ class WpFooterSlider extends Module implements WidgetInterface
                         foreach ($shop_groups_list as $shop_group_id) {
                             $res &= Configuration::updateValue('WP_FOOTER_SPEED', (int)Tools::getValue('WP_FOOTER_SPEED'), false, $shop_group_id);
                             $res &= Configuration::updateValue('WP_FOOTER_MOUSEOVER_PAUSE', (int)Tools::getValue('WP_FOOTER_MOUSEOVER_PAUSE'), false, $shop_group_id);
+                            $res &= Configuration::updateValue('WP_FOOTER_SHOWHEAD', (int)Tools::getValue('WP_FOOTER_SHOWHEAD'), false, $shop_group_id);
                             $res &= Configuration::updateValue('WP_FOOTER_LOOP', (int)Tools::getValue('WP_FOOTER_LOOP'), false, $shop_group_id);
                             $res &= Configuration::updateValue('WP_FOOTER_AUTO_START', (int)Tools::getValue('WP_FOOTER_AUTO_START'), false, $shop_group_id);
                             $res &= Configuration::updateValue('WP_FOOTER_DISPLAY_ITEMS', (int)Tools::getValue('WP_FOOTER_DISPLAY_ITEMS'), false, $shop_group_id);
@@ -417,6 +441,7 @@ class WpFooterSlider extends Module implements WidgetInterface
                         foreach ($shop_groups_list as $shop_group_id) {
                             $res &= Configuration::updateValue('WP_FOOTER_SPEED', (int)Tools::getValue('WP_FOOTER_SPEED'), false, $shop_group_id);
                             $res &= Configuration::updateValue('WP_FOOTER_MOUSEOVER_PAUSE', (int)Tools::getValue('WP_FOOTER_MOUSEOVER_PAUSE'), false, $shop_group_id);
+                            $res &= Configuration::updateValue('WP_FOOTER_SHOWHEAD', (int)Tools::getValue('WP_FOOTER_SHOWHEAD'), false, $shop_group_id);
                             $res &= Configuration::updateValue('WP_FOOTER_LOOP', (int)Tools::getValue('WP_FOOTER_LOOP'), false, $shop_group_id);
                             $res &= Configuration::updateValue('WP_FOOTER_AUTO_START', (int)Tools::getValue('WP_FOOTER_AUTO_START'), false, $shop_group_id);
                             $res &= Configuration::updateValue('WP_FOOTER_DISPLAY_ITEMS', (int)Tools::getValue('WP_FOOTER_DISPLAY_ITEMS'), false, $shop_group_id);
@@ -441,7 +466,9 @@ class WpFooterSlider extends Module implements WidgetInterface
                 $slide->active = 0;
             }
             $res = $slide->update();
-            $this->clearCache();
+            Tools::clearSmartyCache();
+            Media::clearCache(); 
+            
             $this->_html .= ($res ? $this->displayConfirmation($this->getTranslator()->trans('Configuration updated', array(), 'Admin.Notifications.Success')) : $this->displayError($this->getTranslator()->trans('The configuration could not be updated.', array(), 'Modules.Imageslider.Admin')));
         } elseif (Tools::isSubmit('submitSlide')) {
             /* Sets ID if needed */
@@ -468,25 +495,27 @@ class WpFooterSlider extends Module implements WidgetInterface
 
                 /* Uploads image and sets slide */
                 $type = Tools::strtolower(Tools::substr(strrchr($_FILES['image_'.$language['id_lang']]['name'], '.'), 1));
-                $imagesize = @getimagesize($_FILES['image_'.$language['id_lang']]['tmp_name']);
-                if (isset($_FILES['image_'.$language['id_lang']]) &&
-                    isset($_FILES['image_'.$language['id_lang']]['tmp_name']) &&
-                    !empty($_FILES['image_'.$language['id_lang']]['tmp_name'])) {
-                    $temp_name = tempnam(_PS_TMP_IMG_DIR_, 'PS');
-                    $salt = sha1(microtime());
-                    if ($error = ImageManager::validateUpload($_FILES['image_'.$language['id_lang']])) {
-                        $errors[] = $error;
-                    } elseif (!$temp_name || !move_uploaded_file($_FILES['image_'.$language['id_lang']]['tmp_name'], $temp_name)) {
-                        return false;
-                    } elseif (!ImageManager::resize($temp_name, dirname(__FILE__).'/views/img/'.$salt.'_'.$_FILES['image_'.$language['id_lang']]['name'], null, null, $type)) {
-                        $errors[] = $this->displayError($this->getTranslator()->trans('An error occurred during the image upload process.', array(), 'Admin.Notifications.Error'));
+                if (!empty($_FILES['image_'.$language['id_lang']]['tmp_name'])) {
+                    $imagesize = @getimagesize($_FILES['image_'.$language['id_lang']]['tmp_name']);
+                    if (isset($_FILES['image_'.$language['id_lang']]) &&
+                        isset($_FILES['image_'.$language['id_lang']]['tmp_name']) &&
+                        !empty($_FILES['image_'.$language['id_lang']]['tmp_name'])) {
+                        $temp_name = tempnam(_PS_TMP_IMG_DIR_, 'PS');
+                        $salt = sha1(microtime());
+                        if ($error = ImageManager::validateUpload($_FILES['image_'.$language['id_lang']])) {
+                            $errors[] = $error;
+                        } elseif (!$temp_name || !move_uploaded_file($_FILES['image_'.$language['id_lang']]['tmp_name'], $temp_name)) {
+                            return false;
+                        } elseif (!ImageManager::resize($temp_name, dirname(__FILE__).'/views/img/'.$salt.'_'.$_FILES['image_'.$language['id_lang']]['name'], null, null, $type)) {
+                            $errors[] = $this->displayError($this->getTranslator()->trans('An error occurred during the image upload process.', array(), 'Admin.Notifications.Error'));
+                        }
+                        if (isset($temp_name)) {
+                            @unlink($temp_name);
+                        }
+                        $slide->image[$language['id_lang']] = $salt.'_'.$_FILES['image_'.$language['id_lang']]['name'];
+                    } elseif (Tools::getValue('image_old_'.$language['id_lang']) != '') {
+                        $slide->image[$language['id_lang']] = Tools::getValue('image_old_' . $language['id_lang']);
                     }
-                    if (isset($temp_name)) {
-                        @unlink($temp_name);
-                    }
-                    $slide->image[$language['id_lang']] = $salt.'_'.$_FILES['image_'.$language['id_lang']]['name'];
-                } elseif (Tools::getValue('image_old_'.$language['id_lang']) != '') {
-                    $slide->image[$language['id_lang']] = Tools::getValue('image_old_' . $language['id_lang']);
                 }
             }
 
@@ -530,11 +559,11 @@ class WpFooterSlider extends Module implements WidgetInterface
         $this->context->controller->registerStylesheet('modules-wpfooterslidercss', 'modules/'.$this->name.'/views/css/wpfooterslider.css', array('media' => 'all', 'priority' => 150));
 
         Media::addJsDef(array(
-            'wpfooterlogos_items' => Configuration::get('WP_FOOTER_DISPLAY_ITEMS'),
-            'wpfooterlogos_scroll_items' => Configuration::get('WP_FOOTER_SCROLL_ITEMS'),
-            'wpfooterlogos_speed' => Configuration::get('WP_FOOTER_SPEED'),
+            'wpfooterlogos_items' => (int)Configuration::get('WP_FOOTER_DISPLAY_ITEMS'),
+            'wpfooterlogos_scroll_items' => (int)Configuration::get('WP_FOOTER_SCROLL_ITEMS'),
+            'wpfooterlogos_speed' => (int)Configuration::get('WP_FOOTER_SPEED'),
             'wpfooterlogos_auto' => (bool)Configuration::get('WP_FOOTER_AUTO_START'),
-            'wpfooterlogos_pause_hover' => (bool)Configuration::get('WP_FOOTER_MOUSEOVER_PAUSE'),
+            'wpfooterlogos_pause_hover' => (bool)Configuration::get('WP_FOOTER_MOUSEOVER_PAUSE'),            
             'wpfooterlogos_loop' => (bool)Configuration::get('WP_FOOTER_LOOP')
         ));
     }
@@ -565,6 +594,7 @@ class WpFooterSlider extends Module implements WidgetInterface
         return array(
             'wpfooterslider' => array(
                 'slides' => $slides,
+                'show_head' => (bool)Configuration::get('WP_FOOTER_SHOWHEAD'),
             ),
         );
     }
@@ -599,7 +629,8 @@ class WpFooterSlider extends Module implements WidgetInterface
         }
 
         Media::addJsDef(array(
-            'posturl' => $this->context->shop->physical_uri.$this->context->shop->virtual_uri.'modules/'.$this->name.'/ajax_'.$this->name.'.php?secure_key='.$this->secure_key
+            // Khewa PS 9.2: post to the module config page (see getContent) instead of the blocked ajax_wpfooterslider.php
+            'posturl' => $this->context->link->getAdminLink('AdminModules', true, [], ['configure' => $this->name]).'&secure_key='.$this->secure_key
         ));
 
         $this->context->controller->addJqueryUI('ui.sortable');
@@ -906,6 +937,24 @@ class WpFooterSlider extends Module implements WidgetInterface
                             )
                         ),
                     ),
+                    array(
+                        'type' => 'switch',
+                        'label' => $this->l('Display heading'),
+                        'desc' => $this->l('You can hide heading of the block'),
+                        'name' => 'WP_FOOTER_SHOWHEAD',
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->getTranslator()->trans('Enabled', array(), 'Admin.Global')
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->getTranslator()->trans('Disabled', array(), 'Admin.Global')
+                            )
+                        ),
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->getTranslator()->trans('Save', array(), 'Admin.Actions'),
@@ -942,6 +991,7 @@ class WpFooterSlider extends Module implements WidgetInterface
         return array(
             'WP_FOOTER_SPEED' => Tools::getValue('WP_FOOTER_SPEED', Configuration::get('WP_FOOTER_SPEED', null, $id_shop_group, $id_shop)),
             'WP_FOOTER_MOUSEOVER_PAUSE' => Tools::getValue('WP_FOOTER_MOUSEOVER_PAUSE', Configuration::get('WP_FOOTER_MOUSEOVER_PAUSE', null, $id_shop_group, $id_shop)),
+            'WP_FOOTER_SHOWHEAD' => Tools::getValue('WP_FOOTER_SHOWHEAD', Configuration::get('WP_FOOTER_SHOWHEAD', null, $id_shop_group, $id_shop)),
             'WP_FOOTER_LOOP' => Tools::getValue('WP_FOOTER_LOOP', Configuration::get('WP_FOOTER_LOOP', null, $id_shop_group, $id_shop)),
             'WP_FOOTER_AUTO_START' => Tools::getValue('WP_FOOTER_AUTO_START', Configuration::get('WP_FOOTER_AUTO_START', null, $id_shop_group, $id_shop)),
             'WP_FOOTER_DISPLAY_ITEMS' => Tools::getValue('WP_FOOTER_DISPLAY_ITEMS', Configuration::get('WP_FOOTER_DISPLAY_ITEMS', null, $id_shop_group, $id_shop)),
@@ -967,8 +1017,14 @@ class WpFooterSlider extends Module implements WidgetInterface
 
         foreach ($languages as $lang) {
             $fields['image'][$lang['id_lang']] = Tools::getValue('image_'.(int)$lang['id_lang']);
-            $fields['title'][$lang['id_lang']] = Tools::getValue('title_'.(int)$lang['id_lang'], $slide->title[$lang['id_lang']]);
-            $fields['url'][$lang['id_lang']] = Tools::getValue('url_'.(int)$lang['id_lang'], $slide->url[$lang['id_lang']]);
+            $fields['title'][$lang['id_lang']] = Tools::getValue(
+                'title_' . (int) $lang['id_lang'],
+                isset($slide->title[$lang['id_lang']]) ? $slide->title[$lang['id_lang']] : ''
+            );
+            $fields['url'][$lang['id_lang']] = Tools::getValue(
+                'url_' . (int) $lang['id_lang'],
+                isset($slide->url[$lang['id_lang']]) ? $slide->url[$lang['id_lang']] : ''
+            );
         }
 
         return $fields;

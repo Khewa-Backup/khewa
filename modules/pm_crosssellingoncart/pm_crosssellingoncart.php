@@ -40,7 +40,7 @@ class pm_crosssellingoncart extends Module
         $this->need_instance = 0;
         $this->bootstrap = true;
         $this->module_key = '4cf8891dfa30ed7ae18f4cc37d612b24';
-        $this->ps_versions_compliancy = array('min' => '1.5.0.0', 'max' => '1.7.99.99');
+        $this->ps_versions_compliancy = array('min' => '1.5.0.0', 'max' => _PS_VERSION_); // Khewa PS 9.2: was 1.7.99.99, module is fixed for 9.2
         parent::__construct();
         $this->languages = Language::getLanguages(false);
         $this->isoLang = Language::getIsoById($this->context->cookie->id_lang);
@@ -305,6 +305,10 @@ class pm_crosssellingoncart extends Module
     }
     public function getContent()
     {
+        // Khewa PS 9.2: product search for the "Products to be imposed" field (was admin ajax_products_list.php, removed in PS 9)
+        if (Tools::getValue('csocProductSearch')) {
+            $this->khewaProductSearch();
+        }
         $this->loadAssets();
         if (Tools::getValue('makeUpdate')) {
             $this->checkIfModuleIsUpdate(true);
@@ -354,7 +358,11 @@ class pm_crosssellingoncart extends Module
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             Media::addJsDef(array('pm_crosssellingoncart' => array()));
             if (version_compare(_PS_VERSION_, '1.7.6.0', '>=')) {
-                $jsDefs = array('productsAutocompleteToken' => Tools::getAdminTokenLite('AdminProducts'));
+                $jsDefs = array(
+                    'productsAutocompleteToken' => Tools::getAdminTokenLite('AdminProducts'),
+                    // Khewa PS 9.2: admin ajax_products_list.php is gone in PS 9; search through this module's config page
+                    'productsAutocompleteUrl' => $this->context->link->getAdminLink('AdminModules', true, array(), array('configure' => $this->name)) . '&csocProductSearch=1',
+                );
                 Media::addJsDef(array('pm_crosssellingoncart' => $jsDefs));
             }
         }
@@ -786,6 +794,48 @@ class pm_crosssellingoncart extends Module
     {
         return Tools::unSerialize(Configuration::get('PM_' . self::$modulePrefix . '_PRODUCT_SELECTION'));
     }
+    // Khewa PS 9.2: replaces the removed admin ajax_products_list.php (same JSON shape: id, name, ref, image)
+    protected function khewaProductSearch()
+    {
+        $q = trim((string) Tools::getValue('q'));
+        $excludeIds = array_filter(array_map('intval', explode(',', (string) Tools::getValue('excludeIds'))));
+        $limit = max(1, min(50, (int) Tools::getValue('limit', 20)));
+        $idLang = (int) $this->context->language->id;
+        $idShop = (int) $this->context->shop->id;
+        $list = array();
+        if (Tools::strlen($q) >= 1) {
+            $sql = 'SELECT p.`id_product`, p.`reference`, pl.`name`, pl.`link_rewrite`, image_shop.`id_image`
+                FROM `' . _DB_PREFIX_ . 'product` p
+                ' . Shop::addSqlAssociation('product', 'p') . '
+                LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (pl.`id_product` = p.`id_product` AND pl.`id_lang` = ' . $idLang . ' AND pl.`id_shop` = ' . $idShop . ')
+                LEFT JOIN `' . _DB_PREFIX_ . 'image_shop` image_shop ON (image_shop.`id_product` = p.`id_product` AND image_shop.`cover` = 1 AND image_shop.`id_shop` = ' . $idShop . ')
+                WHERE (pl.`name` LIKE \'%' . pSQL($q) . '%\' OR p.`reference` LIKE \'%' . pSQL($q) . '%\''
+                . (ctype_digit($q) ? ' OR p.`id_product` = ' . (int) $q : '') . ')'
+                . ($excludeIds ? ' AND p.`id_product` NOT IN (' . implode(',', $excludeIds) . ')' : '') . '
+                GROUP BY p.`id_product`
+                ORDER BY pl.`name` ASC
+                LIMIT ' . $limit;
+            $rows = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+            foreach ((is_array($rows) ? $rows : array()) as $row) {
+                $list[] = array(
+                    'id' => (int) $row['id_product'],
+                    'name' => $row['name'] . ($row['reference'] ? ' (ref: ' . $row['reference'] . ')' : ''),
+                    'ref' => $row['reference'],
+                    'image' => $this->khewaProductImageUrl($row['link_rewrite'], $row['id_image']),
+                );
+            }
+        }
+        header('Content-Type: application/json');
+        die(json_encode($list));
+    }
+    // Khewa PS 9.2: small product picture for the admin list (the old ../img/tmp/product_mini_*.jpg path does not resolve on the PS 9 config page)
+    protected function khewaProductImageUrl($linkRewrite, $idImage)
+    {
+        if (!$idImage) {
+            return '';
+        }
+        return $this->context->link->getImageLink((string) $linkRewrite, (int) $idImage, ImageType::getFormattedName('small'));
+    }
     protected function getCompulsoryProductList()
     {
         $productList = $this->getUnserializedProductList();
@@ -798,6 +848,8 @@ class pm_crosssellingoncart extends Module
                         'id' => $product->id,
                         'name' => $product->name . " (ref: " . $product->reference . ")",
                         'id_image' => $product->getCoverWs(),
+                        // Khewa PS 9.2: real picture URL for the admin list
+                        'image_url' => $this->khewaProductImageUrl(is_array($product->link_rewrite) ? '' : $product->link_rewrite, $product->getCoverWs()),
                     );
                 }
             }
@@ -808,7 +860,7 @@ class pm_crosssellingoncart extends Module
     {
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
 			SELECT p.*, product_shop.*, stock.out_of_stock, IFNULL(stock.quantity, 0) as quantity, MAX(product_attribute_shop.id_product_attribute) id_product_attribute, product_attribute_shop.minimal_quantity AS product_attribute_minimal_quantity, pl.`description`, pl.`description_short`, pl.`available_now`,
-				pl.`available_later`, pl.`link_rewrite`, pl.`meta_description`, pl.`meta_keywords`, pl.`meta_title`, pl.`name`, MAX(image_shop.`id_image`) id_image,
+				pl.`available_later`, pl.`link_rewrite`, pl.`meta_description`, pl.`meta_title`, ' /* Khewa PS 9.2: pl.meta_keywords column was removed in PS 9, the whole query failed and gave false */ . ' pl.`name`, MAX(image_shop.`id_image`) id_image,
 				il.`legend`, m.`name` AS manufacturer_name, cl.`name` AS category_default,
 				DATEDIFF(product_shop.`date_add`, DATE_SUB("'.date('Y-m-d').' 00:00:00",
 				INTERVAL '.(Validate::isUnsignedInt(Configuration::get('PS_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20).' DAY)) > 0 AS new,
@@ -852,6 +904,10 @@ class pm_crosssellingoncart extends Module
 			GROUP BY product_shop.`id_product`
 			ORDER BY FIELD(product_shop.`id_product`, '.implode(',', array_map('intval', $products)) . ')
 		');
+        // Khewa PS 9.2: never pass false on to prepareMultipleProductsForTemplate(array ...)
+        if (!is_array($result)) {
+            $result = array();
+        }
         if ($getProductsProperties && version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             $result = $this->prepareMultipleProductsForTemplate($result);
         }
@@ -966,6 +1022,9 @@ class pm_crosssellingoncart extends Module
     }
     private function doHttpRequest($data = array(), $c = 'prestashop', $s = 'api.addons')
     {
+        // Khewa PS 9.2: no calls to outside services (addons / presta-module API). Tools::jsonDecode/jsonEncode
+        // were also removed in PS 9, so json_decode/json_encode are used below.
+        return false;
         $data = array_merge(array(
             'version' => _PS_VERSION_,
             'iso_lang' => Tools::strtolower($this->context->language->iso_code),
@@ -987,7 +1046,7 @@ class pm_crosssellingoncart extends Module
         if (empty($response)) {
             return false;
         }
-        $responseToJson = Tools::jsonDecode($response);
+        $responseToJson = json_decode($response);
         if (empty($responseToJson)) {
             return false;
         }
@@ -995,10 +1054,12 @@ class pm_crosssellingoncart extends Module
     }
     private function getAddonsModulesFromApi()
     {
+        // Khewa PS 9.2: no outside calls and no ad list (its template loads images and a script from cdn.presta-module.com)
+        return array();
         $modules = Configuration::get('PM_' . self::$modulePrefix . '_AM');
         $modules_date = Configuration::get('PM_' . self::$modulePrefix . '_AMD');
         if ($modules && strtotime('+2 day', $modules_date) > time()) {
-            return Tools::jsonDecode($modules, true);
+            return json_decode($modules, true);
         }
         $jsonResponse = $this->doHttpRequest();
         if (empty($jsonResponse->products)) {
@@ -1015,24 +1076,26 @@ class pm_crosssellingoncart extends Module
                 'description' => $addonsEntry->description,
             );
         }
-        Configuration::updateValue('PM_' . self::$modulePrefix . '_AM', Tools::jsonEncode($dataToStore));
+        Configuration::updateValue('PM_' . self::$modulePrefix . '_AM', json_encode($dataToStore));
         Configuration::updateValue('PM_' . self::$modulePrefix . '_AMD', time());
-        return Tools::jsonDecode(Configuration::get('PM_' . self::$modulePrefix . '_AM'), true);
+        return json_decode(Configuration::get('PM_' . self::$modulePrefix . '_AM'), true);
     }
     private function getPMModulesFromApi()
     {
+        // Khewa PS 9.2: no outside calls
+        return array();
         $modules = Configuration::get('PM_' . self::$modulePrefix . '_PMM');
         $modules_date = Configuration::get('PM_' . self::$modulePrefix . '_PMMD');
         if ($modules && strtotime('+2 day', $modules_date) > time()) {
-            return Tools::jsonDecode($modules, true);
+            return json_decode($modules, true);
         }
         $jsonResponse = $this->doHttpRequest(array('list' => $this->getPMAddons()), 'presta-module', 'api-addons');
         if (empty($jsonResponse)) {
             return array();
         }
-        Configuration::updateValue('PM_' . self::$modulePrefix . '_PMM', Tools::jsonEncode($jsonResponse));
+        Configuration::updateValue('PM_' . self::$modulePrefix . '_PMM', json_encode($jsonResponse));
         Configuration::updateValue('PM_' . self::$modulePrefix . '_PMMD', time());
-        return Tools::jsonDecode(Configuration::get('PM_' . self::$modulePrefix . '_PMM'), true);
+        return json_decode(Configuration::get('PM_' . self::$modulePrefix . '_PMM'), true);
     }
     private function shuffleArray(&$a)
     {
@@ -1081,7 +1144,8 @@ class pm_crosssellingoncart extends Module
         }
         $vars = array(
             'support_links' => (is_array($this->_support_link) && sizeof($this->_support_link) ? $this->_support_link : array()),
-            'copyright_link' => (is_array($this->copyrightLink) && sizeof($this->copyrightLink) ? $this->copyrightLink : false),
+            // Khewa PS 9.2: no logo loaded from www.presta-module.com (outside service)
+            'copyright_link' => false,
             'pm_module_version' => $this->version,
             'pm_data' => $this->getPMdata(),
             'pm_products' => $pm_products,
@@ -1172,7 +1236,9 @@ class pm_crosssellingoncart extends Module
         $nbDays = Configuration::get($this->prefixFieldsOptions.'_CROSSSELLING_NB_DAYS');
         $imageSize = Configuration::get('PM_' . self::$modulePrefix . '_IMAGE_SIZE');
         $blockTitle = Configuration::get('PM_' . self::$modulePrefix . '_TITLE_BLOC', $this->context->cookie->id_lang);
-        $postProductSelection = @array_filter(unserialize(Configuration::get('PM_' . self::$modulePrefix . '_PRODUCT_SELECTION')));
+        // Khewa PS 9.2: on PHP 8 array_filter(false) is a fatal TypeError (the @ does not hide it)
+        $postProductSelection = Tools::unSerialize((string) Configuration::get('PM_' . self::$modulePrefix . '_PRODUCT_SELECTION'));
+        $postProductSelection = is_array($postProductSelection) ? array_filter($postProductSelection) : array();
         $productSelection = array();
         foreach ($postProductSelection as $k => $idProduct) {
             if (version_compare(_PS_VERSION_, '1.6.0.12', '>=')) {
@@ -1237,11 +1303,14 @@ class pm_crosssellingoncart extends Module
         }
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             $taxConfiguration = new TaxConfiguration();
+            // Khewa PS 9.2: Tools::displayPrice() was removed, format with the current locale instead
+            $locale = $this->context->getCurrentLocale();
+            $currencyIso = $this->context->currency->iso_code;
             foreach ($productSelection as $id => $product) {
                 if ($taxConfiguration->includeTaxes()) {
-                    $productSelection[$id]['price'] = Tools::displayPrice($product['price']);
+                    $productSelection[$id]['price'] = $locale->formatPrice((float) $product['price'], $currencyIso);
                 } else {
-                    $productSelection[$id]['price'] = Tools::displayPrice($product['price_tax_exc']);
+                    $productSelection[$id]['price'] = $locale->formatPrice((float) $product['price_tax_exc'], $currencyIso);
                 }
             }
         }

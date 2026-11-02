@@ -83,7 +83,7 @@
                                     <i class="icon-remove text-danger"></i>
                                 </button>
                                 {if (version_compare($ps_version, '1.7.0.0', '>='))}
-                                    <img src="../img/tmp/product_mini_{$product.id_image|intval}.jpg?time={$smarty.now}" />{$product.name|escape:'html':'UTF-8'}
+                                    {* Khewa PS 9.2: real picture URL from getCompulsoryProductList() *}<img width="45" height="45" src="{$product.image_url|escape:'html':'UTF-8'}" />{$product.name|escape:'html':'UTF-8'}
                                 {else}
                                     <img src="../img/tmp/product_mini_{$product.id|intval}_{$id_shop|intval}.jpg?time={$smarty.now}" />{$product.name|escape:'html':'UTF-8'}
                                 {/if}

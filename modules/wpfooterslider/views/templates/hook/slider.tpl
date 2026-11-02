@@ -26,6 +26,12 @@
 
 {if $wpfooterslider.slides}
 <div id="wp_footer" class="clearfix">
+  {if $wpfooterslider.show_head == 1}
+  <h2 class="h2 products-section-title text-uppercase text-lg-center mb-1">
+    <a href="{url entity='manufacturer'}">{l s='Our selected brands' mod='wpfooterslider'}</a>
+  </h2> 
+  {/if}
+
   <div id="wp_footer_wrapper" class="loader">
       {foreach from=$wpfooterslider.slides item=slide name='wpfooterslider'}
             <a href="{$slide.url}">

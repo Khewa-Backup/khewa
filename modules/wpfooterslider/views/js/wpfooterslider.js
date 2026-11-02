@@ -37,13 +37,21 @@ $(document).ready(function() {
             items: 1,
             slideBy : 1            
         },
-        400:{
+        250:{
             items: 2,
             slideBy : 2            
-        },            
-        768:{
+        },
+        400:{
+            items: 3,
+            slideBy : 3            
+        },
+        550:{
             items: 4,
-            slideBy : 4
+            slideBy : 4            
+        },              
+        768:{
+            items: 5,
+            slideBy : 5
         },
         992:{
            items: wpfooterlogos_items,
@@ -56,7 +64,7 @@ $(document).ready(function() {
         autoplay: wpfooterlogos_auto,
         autoplayHoverPause: wpfooterlogos_pause_hover,
         loop: wpfooterlogos_loop,
-        nav: false,
+        nav: true,
         dots: false,
         navText: ['<i class="material-icons">&#xE5CB;</i>','<i class="material-icons">&#xE5CC;</i>'],
         responsiveBaseElement: "#header .container"

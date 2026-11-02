@@ -15,7 +15,7 @@
 var pm_csocLoopInterval;
 if (typeof($csocjqPm) == 'undefined') $csocjqPm = $;
 function pm_reloadCartOnAdd(orderPageURL) {
-	if ($('#order-detail-content').size() > 0) {
+	if ($('#order-detail-content').length > 0) { // Khewa PS 9.2: .size() was removed in jQuery 3
 		$('div#csoc-container .ajax_add_to_cart_button').unbind('click');
 		$(document).off('click', '.ajax_add_to_cart_button').off('click', 'div#csoc-container .ajax_add_to_cart_button').on('click', 'div#csoc-container .ajax_add_to_cart_button', function(e) {
 			e.preventDefault();

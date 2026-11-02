@@ -43,7 +43,7 @@ setTimeout(function() {
 			}, 500);
 		}
 
-		if ($csocjqPm('body#product').size() > 0) {
+		if ($csocjqPm('body#product').length > 0) { // Khewa PS 9.2: .size() was removed in jQuery 3
 			// Remove product on CSOC
 			$csocjqPm(document).on('click', '#PM_CSOC a.ajax_add_to_cart_button', function(e){
 				e.preventDefault();
