@@ -62,6 +62,8 @@ class StockTakeLog extends ObjectModel
 
     protected static $is_present = array();
 
+    public $hash; // Khewa PS 9.2: declared (dynamic properties are deprecated in PHP 8.2+)
+
     /**
      * add a log item to the database
      *

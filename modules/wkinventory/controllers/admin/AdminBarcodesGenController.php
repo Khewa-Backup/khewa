@@ -15,6 +15,8 @@
 
 class AdminBarcodesgenController extends ModuleAdminController
 {
+    public $tmp_storage_file; // Khewa PS 9.2: declared (dynamic properties are deprecated in PHP 8.2+)
+
     public function __construct()
     {
         require_once(dirname(__FILE__).'/../../classes/Workshop.php');
@@ -149,8 +151,9 @@ class AdminBarcodesgenController extends ModuleAdminController
         // For Ajax Handler
         if (!isset($data_from_previous_iteration['product_ids'])) {
             // prepare Filters
-            $brands_ids = Tools::getValue('brands_ids');
-            $suppliers_ids = Tools::getValue('suppliers_ids');
+            // Khewa PS 9.2: these lists go into SQL "IN (...)", so keep only whole numbers
+            $brands_ids = implode(',', array_filter(array_map('intval', explode(',', (string)Tools::getValue('brands_ids')))));
+            $suppliers_ids = implode(',', array_filter(array_map('intval', explode(',', (string)Tools::getValue('suppliers_ids')))));
             $where = array();
 
             // prepare products
@@ -170,14 +173,14 @@ class AdminBarcodesgenController extends ModuleAdminController
             }
             // Search by brands
             if (!empty($brands_ids)) {
-                $query->where('p.`id_manufacturer` IN ('.pSQL($brands_ids).')');
+                $query->where('p.`id_manufacturer` IN ('.$brands_ids.')');
             }
             // Search by suppliers
             if (!empty($suppliers_ids)) {
                 $query->innerJoin(
                     'product_supplier',
                     'ps',
-                    'ps.`id_product` = p.`id_product` AND ps.id_supplier IN ('.pSQL($suppliers_ids).')'
+                    'ps.`id_product` = p.`id_product` AND ps.id_supplier IN ('.$suppliers_ids.')'
                 );
             }
             //echo $query->build();
@@ -213,7 +216,10 @@ class AdminBarcodesgenController extends ModuleAdminController
                 continue;
             }
             // Update EAN13/UPC for the current product
-            $completed = $this->module->saveBarcodes($product, $force_generation);
+            $this->module->saveBarcodes($product, $force_generation);
+            // Khewa PS 9.2: saveBarcodes() returns nothing when the product needs no new code;
+            // count the product as done anyway, or the ajax loop stops with an empty answer
+            $completed = true;
 
             if ($completed) {
                 $this->clearTmpStorage();
@@ -305,6 +311,7 @@ class AdminBarcodesgenController extends ModuleAdminController
         } elseif (Tools::strtolower(Tools::substr($class, -10)) == 'controller') {
             $class = Tools::substr($class, 0, -10);
         }
-        return Translate::getAdminTranslation($string, $class, $addslashes, $htmlentities);
+        // Khewa PS 9.2: Translate::getAdminTranslation() was removed; read this module's own translation files instead
+        return Translate::getModuleTranslation('wkinventory', $string, Tools::strtolower(basename(__FILE__, '.php')), null, (bool)$addslashes, null, true, $htmlentities !== false);
     }
 }

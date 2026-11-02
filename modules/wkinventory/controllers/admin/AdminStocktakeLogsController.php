@@ -116,7 +116,7 @@ class AdminStocktakeLogsController extends ModuleAdminController
 
     public function displayMessage($value, $tr)
     {
-        return Tools::stripslashes($value);
+        return stripslashes((string)$value); // Khewa PS 9.2: Tools::stripslashes() was removed
     }
 
     /**
@@ -200,6 +200,7 @@ class AdminStocktakeLogsController extends ModuleAdminController
         } elseif (Tools::strtolower(Tools::substr($class, -10)) == 'controller') {
             $class = Tools::substr($class, 0, -10);
         }
-        return Translate::getAdminTranslation($string, $class, $addslashes, $htmlentities);
+        // Khewa PS 9.2: Translate::getAdminTranslation() was removed; read this module's own translation files instead
+        return Translate::getModuleTranslation('wkinventory', $string, Tools::strtolower(basename(__FILE__, '.php')), null, (bool)$addslashes, null, true, $htmlentities !== false);
     }
 }

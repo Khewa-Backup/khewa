@@ -20,6 +20,11 @@ class WKInventory extends Module
 	public $product_has_isbn = false;
 	public $product_has_mpn = false;
 	public $identifiers;
+    // Khewa PS 9.2: declared (dynamic properties are deprecated in PHP 8.2+)
+    public $isPS15;
+    public $isPS17;
+    public $my_tabs;
+    public $fields_form;
 
     public function __construct()
     {
@@ -295,7 +300,8 @@ class WKInventory extends Module
                 Configuration::updateValue('WKINVENTORY_DEFAULTQTY_UPDATE', $default_qty);
                 Configuration::updateValue(
                     'WKINVENTORY_ORDER_STATES',
-                    (Tools::getValue('WKINVENTORY_ORDER_STATES') ? implode(Tools::getValue('WKINVENTORY_ORDER_STATES'), ',') : '')
+                    // Khewa PS 9.2: PHP 8 needs implode(glue, array); keep only whole numbers
+                    (is_array(Tools::getValue('WKINVENTORY_ORDER_STATES')) ? implode(',', array_map('intval', Tools::getValue('WKINVENTORY_ORDER_STATES'))) : '')
                 );
                 if ($this->context->employee->isSuperAdmin()) {
                     Configuration::updateValue(
@@ -316,9 +322,9 @@ class WKInventory extends Module
                 );
                 Configuration::updateValue('WKINVENTORY_PDFREPORT_MODE', Tools::getValue('WKINVENTORY_PDFREPORT_MODE'));
                 if (empty($output)) {
+                    // Khewa PS 9.2: the module settings page is a Symfony page, AdminController::$currentIndex is empty there
                     Tools::redirectAdmin(
-                        AdminController::$currentIndex.'&configure='.$this->name.'&token='
-                        .Tools::getAdminTokenLite('AdminModules').'&conf=6'
+                        $this->context->link->getAdminLink('AdminModules', true, array(), array('configure' => $this->name)).'&conf=6'
                     );
                 }
             }
@@ -827,7 +833,10 @@ class WKInventory extends Module
         $controllers = array('AdminStocktake', 'AdminStocktakedash', 'AdminBarcodesgen', 'AdminStocktakeLogs');
         if (Tools::getValue('configure') === $this->name ||
             in_array(Tools::getValue('controller'), $controllers)) {
-            $this->context->controller->addJquery();
+            // Khewa PS 9.2: addJquery() is gone (jQuery is always loaded in the back office)
+            if (method_exists($this->context->controller, 'addJquery')) {
+                $this->context->controller->addJquery();
+            }
             $this->context->controller->addCSS($this->_path.'views/css/wkinventory.css');
             if ($this->isPS15) {
                 $this->context->controller->addCSS($this->_path.'views/css/wkinventory_15.css');

@@ -19,6 +19,7 @@ class AdminStocktakeController extends ModuleAdminController
 {
     private $canUseAdvancedStockManagementNew;
     private $canUseAdvancedStockManagementOld;
+    public $ps172; // Khewa PS 9.2: declared (dynamic properties are deprecated in PHP 8.2+)
 
     public function __construct()
     {
@@ -314,7 +315,7 @@ class AdminStocktakeController extends ModuleAdminController
                 'shop_quantity' => (int)$inv_p->shop_quantity,
                 'stock_difference' => (int)$inv_p->real_quantity - ($inv_p->shop_quantity - $inv_p->sold_quantity),
                 'employee' => $this->getEmployeeName($this->context->employee->id),
-                'date_upd' => Tools::displayDate($inv_p->date_upd, null, true),
+                'date_upd' => Tools::displayDate($inv_p->date_upd, true), // Khewa PS 9.2: displayDate($date, bool $full)
             );
         } else {
             $response['message'] = $this->l('Unable to save modifications');
@@ -733,7 +734,7 @@ class AdminStocktakeController extends ModuleAdminController
 
         $is_supervisor = $this->isSupervisor($inventory->id_employee);
         if (!$is_supervisor) {// Display just warning above the list
-            $this->errors[] = $this->displayWarning($this->l('You don\'t have permissions to edit this inventory!'));
+            $this->displayWarning($this->l('You don\'t have permissions to edit this inventory!')); // Khewa PS 9.2: displayWarning() returns nothing
         }
 
         $this->actions = $is_supervisor ? array('delete') : array('-');
@@ -933,7 +934,11 @@ class AdminStocktakeController extends ModuleAdminController
                         $inventories_products_ids[] = (int)$item['id_inventory_product'];
                     }
                 }
-                $inventory->stock_valuation = Tools::displayPrice($inventory->getStockValue($inventories_products_ids));
+                // Khewa PS 9.2: Tools::displayPrice() was removed, format with the current locale
+                $inventory->stock_valuation = $this->context->getCurrentLocale()->formatPrice(
+                    (float)$inventory->getStockValue($inventories_products_ids),
+                    Currency::getIsoCodeById((int)Configuration::get('PS_CURRENCY_DEFAULT'))
+                );
                 $inventory->inventory_count = count($this->_list);
 
                 $pdf = new PDF($inventory, 'InventoryList', Context::getContext()->smarty);
@@ -1117,7 +1122,7 @@ class AdminStocktakeController extends ModuleAdminController
                 $this->fields_form['input'][] = $reset_unchanged_products_option;
                 $parameters = json_decode($inventory->settings, true);
 				$this->fields_value = array(
-					'reset_not_inventoried_stock' => $parameters['reset_not_inventoried_stock'],
+					'reset_not_inventoried_stock' => ($parameters['reset_not_inventoried_stock'] ?? 0), // Khewa PS 9.2: old inventories have no settings
 				);
 
                 $this->fields_form['input'][] = array(
@@ -1395,7 +1400,9 @@ class AdminStocktakeController extends ModuleAdminController
     {
         $categories = array_map('intval', Tools::getValue('categoryBox', array()));
         $id_supplier = Tools::getValue('id_supplier');
+        // Khewa PS 9.2: PHP 8 fails on current()/sizeof() of false when no brand is picked
         $manufacturer_ids = Tools::getValue('manufacturer_ids');
+        $manufacturer_ids = is_array($manufacturer_ids) ? $manufacturer_ids : array();
         $id_shop = Tools::getValue('id_shop');
         $is_empty = (int)Tools::getValue('is_empty');
         $stock_status = Tools::getValue('stock_status');
@@ -1428,7 +1435,7 @@ class AdminStocktakeController extends ModuleAdminController
                 $query->where('p.`id_supplier` = '.(int)$id_supplier);
             }
             // By Manufacturers
-            $current_manufacturer = current($manufacturer_ids);
+            $current_manufacturer = $manufacturer_ids ? current($manufacturer_ids) : 0;
             if (sizeof($manufacturer_ids) && !empty($current_manufacturer)) {
                 $query->where('p.`id_manufacturer` IN ('.pSQL(implode(',', array_map('intval', $manufacturer_ids))).')');
             }
@@ -1553,13 +1560,13 @@ class AdminStocktakeController extends ModuleAdminController
             $results['informations'] = $this->informations;
         }
 
-        if ((bool)$results['isFinished']) {/* finished */
+        if (!empty($results['isFinished'])) {/* finished */ // Khewa PS 9.2: key is missing after an error
             /* Check after just validating an inventory if it's worth to make an inventory */
             $inventory = new StockTake((int)Tools::getValue('id_inventory'));
             if ($validateBefore) {// validate inventory is finished
                 $parameters = json_decode($inventory->settings, true);
                 if (!StockTakeProduct::productsNeedInventory(Tools::getValue('id_inventory')) &&
-                    !$parameters['reset_not_inventoried_stock']) {
+                    empty($parameters['reset_not_inventoried_stock'])) { // Khewa PS 9.2: settings can be empty
                     $this->errors[] = $this->l('There are no products needing inventory (No movement of stock found for the products of this inventory)!');
                     $results['errors'] = $this->errors;
                 }
@@ -1644,7 +1651,7 @@ class AdminStocktakeController extends ModuleAdminController
 
         $inventory = new StockTake((int)Tools::getValue('id_inventory'));
         $parameters = json_decode($inventory->settings, true);
-        $reset_qty = (int)$parameters['reset_not_inventoried_stock'];
+        $reset_qty = (int)($parameters['reset_not_inventoried_stock'] ?? 0); // Khewa PS 9.2: settings can be empty
 
         $line_count = 0;
         if (Validate::isLoadedObject($inventory) && !$inventory->stock_updated) {
@@ -1681,7 +1688,8 @@ class AdminStocktakeController extends ModuleAdminController
                         $id_product_attribute = (int)$inventory_product->id_product_attribute;
                         $id_warehouse = (int)$inventory_product->id_warehouse;
 
-                        $mvt_params = array('id_stock_mvt_reason' => ($delta_quantity > 0 ? 4 : 5));
+                        // Khewa PS 9.2: reason 5 is the "+" inventory reason and 4 the "-" one (they were swapped)
+                        $mvt_params = array('id_stock_mvt_reason' => ($delta_quantity > 0 ? 5 : 4));
 
                         // IF A.S.M
                         if ($ps_asm && !empty($id_warehouse) &&
@@ -2045,7 +2053,8 @@ class AdminStocktakeController extends ModuleAdminController
     public function handleSoldQuantitiesFromOrders(StockTake $inventory)
     {
         $ps_asm = $this->canUseAdvancedStockManagementOld || $this->canUseAdvancedStockManagementNew ? true : false;
-        $orders_statuses_not_impact_inventory = Configuration::get('WKINVENTORY_ORDER_STATES');
+        // Khewa PS 9.2: keep only whole numbers before putting the list in SQL
+        $orders_statuses_not_impact_inventory = implode(',', array_filter(array_map('intval', explode(',', (string)Configuration::get('WKINVENTORY_ORDER_STATES')))));
         if (empty($orders_statuses_not_impact_inventory)) {
             return array(
                 'success' => false,
@@ -2071,7 +2080,7 @@ class AdminStocktakeController extends ModuleAdminController
             'od.`id_order` IN (
                 SELECT `id_order` 
                 FROM `'._DB_PREFIX_.'orders` 
-                WHERE `date_add` > \''.$inventory->date_add.'\' AND 
+                WHERE `date_add` > \''.pSQL($inventory->date_add).'\' AND 
                 `current_state` NOT IN ('.$orders_statuses_not_impact_inventory.')
             )'
         );
@@ -2288,6 +2297,7 @@ class AdminStocktakeController extends ModuleAdminController
         } elseif (Tools::strtolower(Tools::substr($class, -10)) == 'controller') {
             $class = Tools::substr($class, 0, -10);
         }
-        return Translate::getAdminTranslation($string, $class, $addslashes, $htmlentities);
+        // Khewa PS 9.2: Translate::getAdminTranslation() was removed; read this module's own translation files instead
+        return Translate::getModuleTranslation('wkinventory', $string, Tools::strtolower(basename(__FILE__, '.php')), null, (bool)$addslashes, null, true, $htmlentities !== false);
     }
 }

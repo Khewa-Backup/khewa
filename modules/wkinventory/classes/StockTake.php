@@ -186,9 +186,12 @@ class StockTake extends ObjectModel
     {
         $this->date_upd = date('Y-m-d H:i:s');
 		// Save settings
-		$this->settings = json_encode(array(
-			'reset_not_inventoried_stock' => Tools::getValue('reset_not_inventoried_stock')
-		));
+		// Khewa PS 9.2: only when the form sends the option; a plain date update (scan page) must not wipe it
+		if (Tools::getIsset('reset_not_inventoried_stock')) {
+			$this->settings = json_encode(array(
+				'reset_not_inventoried_stock' => Tools::getValue('reset_not_inventoried_stock')
+			));
+		}
         return parent::update($null_values);
     }
 

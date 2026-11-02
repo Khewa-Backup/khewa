@@ -63,6 +63,21 @@ class AdminStocktakegetpdfController extends ModuleAdminController
             echo $page_num;
             exit();
         }
+        // Khewa PS 9.2: send the finished report through this admin page (with token) instead of a public file in /img
+        if (Tools::getValue('downloadpdf')) {
+            $report = $this->pdf_list_dir.'Inventory-report.pdf';
+            if (!file_exists($report)) {
+                die($this->l('Folder pdf_list is empty'));
+            }
+            if (ob_get_level() && ob_get_length() > 0) {
+                ob_clean();
+            }
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="Inventory-report.pdf"');
+            header('Content-Length: '.filesize($report));
+            readfile($report);
+            exit();
+        }
         if (Tools::getValue('getpdf')) {
             if (Tools::getValue('pdfList')) {
                 $this->concatePDF(
@@ -123,7 +138,8 @@ class AdminStocktakegetpdfController extends ModuleAdminController
 
             // Clean folder where the generated files will be stored (to be merged)
             if (file_exists(dirname(__file__) . '/../../pdf_list')) {
-                foreach (glob(dirname(__file__) . '/../../pdf_list/*') as $file) {
+                // Khewa PS 9.2: delete only old report files, keep index.php and .htaccess
+            foreach (glob(dirname(__file__) . '/../../pdf_list/*.pdf') as $file) {
                     unlink($file);
                 }
             }
@@ -226,6 +242,7 @@ class AdminStocktakegetpdfController extends ModuleAdminController
             }
 
             $config = array(
+                'tempDir' => _PS_CACHE_DIR_.'wkinventory_mpdf', // Khewa PS 9.2: mPDF temp files go to var/cache, not the module folder
                 'format' => $format,
                 'mode' => $mode,
                 'default_font_size' => $default_font_size,
@@ -410,17 +427,21 @@ class AdminStocktakegetpdfController extends ModuleAdminController
     private function concatePDF()
     {
         //$this->setEnvironmentParameters();
+        // Khewa PS 9.2: the report used to be written to the public /img folder (anyone could download it).
+        // It now stays in pdf_list (closed to the web by pdf_list/.htaccess) and is sent by this controller.
         $file_name = 'Inventory-report.pdf';
-        $file_name_full = _PS_IMG_DIR_.$file_name;
-        $file_version = '?v='.time();
-        $file_url_full = _PS_IMG_.$file_name;
+        $file_name_full = $this->pdf_list_dir.$file_name;
+        $file_version = '&v='.time();
+        $file_url_full = $this->context->link->getAdminLink('AdminStocktakegetpdf', true).'&downloadpdf=1';
 
         if (file_exists($file_name_full)) {
             unlink($file_name_full);
         }
 
-        $pdf_files = scandir($this->pdf_list_dir);
-        unset($pdf_files[0], $pdf_files[1]);
+        // Khewa PS 9.2: only the page files made by createPDF() (not index.php, .htaccess or an old report)
+        $pdf_files = array_values(array_filter(scandir($this->pdf_list_dir), function ($f) {
+            return (bool)preg_match('/^page\d+\.pdf$/', $f);
+        }));
         $filesize = 0;
         foreach ($pdf_files as $pdf_file) {
             $filesize += filesize($this->pdf_list_dir.$pdf_file);
@@ -433,15 +454,14 @@ class AdminStocktakegetpdfController extends ModuleAdminController
             rename($this->pdf_list_dir.$first, $file_name_full);
         } else {
 			$mpdf = new \Mpdf\Mpdf(array(
+                'tempDir' => _PS_CACHE_DIR_.'wkinventory_mpdf', // Khewa PS 9.2: temp files in var/cache
                 'mode' => 'utf-8',
             ));
 			$mpdf->enableImports = true;
 
+            // Khewa PS 9.2: the old "$fk == 1" checks never ran (keys started at 2), removed with the new file list
             foreach ($pdf_files as $fk => $f) {
                 for ($i = 1; $i <= $mpdf->SetSourceFile($this->pdf_list_dir.$f); $i++) {
-                    if ($fk == 1) {
-                        $tpl_id = $mpdf->ImportPage(1);
-                    }
                     $tpl_id = $mpdf->ImportPage($i);
 					$size = $mpdf->getTemplateSize($tpl_id);
                     $orientation = $size['width'] > $size['height'] ? 'L' : 'P';
@@ -449,9 +469,6 @@ class AdminStocktakegetpdfController extends ModuleAdminController
                     $mpdf->AddPage($orientation);
                     $mpdf->useTemplate($tpl_id);
 
-                    if ($fk == 1) {
-                        break;
-                    }
                 }
             }
 			if (ob_get_level() && ob_get_length() > 0) {
@@ -548,6 +565,7 @@ class AdminStocktakegetpdfController extends ModuleAdminController
         } elseif (Tools::strtolower(Tools::substr($class, -10)) == 'controller') {
             $class = Tools::substr($class, 0, -10);
         }
-        return Translate::getAdminTranslation($string, $class, $addslashes, $htmlentities);
+        // Khewa PS 9.2: Translate::getAdminTranslation() was removed; read this module's own translation files instead
+        return Translate::getModuleTranslation('wkinventory', $string, Tools::strtolower(basename(__FILE__, '.php')), null, (bool)$addslashes, null, true, $htmlentities !== false);
     }
 }

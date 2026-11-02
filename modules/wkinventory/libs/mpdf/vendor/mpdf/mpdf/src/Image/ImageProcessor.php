@@ -131,11 +131,12 @@ class ImageProcessor implements \Psr\Log\LoggerAwareInterface
 	 *
 	 * @return self
 	 */
-	public function setLogger(LoggerInterface $logger)
+	// Khewa PS 9.2: ": void" added, PS 9.2 loads psr/log 3 whose LoggerAwareInterface needs it
+	public function setLogger(LoggerInterface $logger): void
 	{
 		$this->logger = $logger;
 
-		return $this;
+		return; // Khewa PS 9.2: void now
 	}
 
 	public function getImage(&$file, $firstTime = true, $allowvector = true, $orig_srcpath = false, $interpolation = false)

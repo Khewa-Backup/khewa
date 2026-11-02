@@ -116,7 +116,8 @@ class AssetFetcher implements \Psr\Log\LoggerAwareInterface
 		return strpos($path, '://') === false; // @todo More robust implementation
 	}
 
-	public function setLogger(LoggerInterface $logger)
+	// Khewa PS 9.2: ": void" added, PS 9.2 loads psr/log 3 whose LoggerAwareInterface needs it
+	public function setLogger(LoggerInterface $logger): void
 	{
 		$this->logger = $logger;
 	}
