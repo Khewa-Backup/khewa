@@ -245,6 +245,7 @@ This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, 
   - `themes/classic-` (old copy), root `/hspointofsalepro/` (old POS copy; the POS cron jobs use the real module), `khewa.com/` folder (2021 sales spreadsheets)
   - database backups `admin556cvt7923/backups/*.sql.bz2`
   - empty 2021 stub files, 1.7 leftovers (`AdminOutstandingController.php`, `AdminZonesController.php`; 9.2 has its own pages), `robots_old.txt`, `phptest-*`, `htaccess_original...`, all `error_log` files
+  - **Second pass (3 Nov), 64 more items** (list in `LIST-2.txt`): old `.htaccess_*` copies, `.user.ini_`, `.ftpquota`, root `*.log` files, `403.shtml`, empty `cgi-bin/` and `Sales_Reports/`, `clear_ps_cache.sh` (belongs in the server's home folder, not the shop), `admin…/.htaccess-`, `admin…/.rnd`, empty `app/test/`, old 1.7 `config/settings.inc.php`, module log files, all `.DS_Store` files, and **`modules/virtualmerchant/logs/` (2021 card-sale logs that include the Virtual Merchant gateway PIN — that PIN should be changed with Elavon/Converge).**
   - Kept on purpose: modules that come with PrestaShop 9.2 (even if not installed), the new Warehouse 4.8.2 modules, Google/site verification `.html` files, Google Merchant feed files, modules' own install `.sql` files.
   - Checked after: shop pages, 11 admin pages and a POS sale (order 34256).
 - Full scan outputs: `/Users/hello/khewa-incident-2026-10-29/scan-2026-11-03/`.
