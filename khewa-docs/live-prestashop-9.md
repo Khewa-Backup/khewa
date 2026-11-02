@@ -203,3 +203,18 @@ The shop's update tool is now 7.6.6. The old one is in `backups/modules-moved-ou
 - `khewa_live-after-9.2-before-sqlfix.sql.gz`: database after the update, before the missed 9.2 database changes
 - `khewa_live-before-pos-5.8.1.sql.gz`, `khewa_live-before-giftcard-paypal-carriers.sql.gz`, `khewa_live-before-module-fixes.sql.gz`: database before each round of module work
 - `update-to-8.2.8.log`, `update-to-9.2.0.log`: update tool output
+
+## Security setup for the live upload (to discuss)
+
+Why: in Aug 2026 someone logged into the admin with a real account and uploaded a module (`prestaeditor`) that let them change any file. An admin who can upload modules can run any code; PrestaShop can't stop that by design. So the protection has to stop the login, or limit what a backdoor can do. To do on the live server when 9.2 goes up:
+
+1. **Stop the login**
+   - 2-factor login for every admin account.
+   - Strong, unique passwords (start with account #1).
+   - Admin folder (`admin556cvt7923/`) only reachable from your IPs, via `.htaccess`.
+2. **Fewer powerful accounts:** staff get limited profiles. Only 1–2 SuperAdmins can install modules. Check employee #19 "Suport Support".
+3. **Read-only files:** the web server can't write to core and module folders. Writing is only switched on for a planned update, then off again. A backdoor then can't edit files like `AuthController.php`.
+4. **Turn off dangerous PHP functions** in php.ini: `exec`, `system`, `shell_exec`, `passthru`, `proc_open`, `popen`. A backdoor then can't run server commands. Test first: some modules (backup tools, for example) may need them.
+5. **Firewall:** Cloudflare or the host's WAF in front of the shop.
+6. **File-change alerts:** get a message the same day a `.php` file is added or changed, not two months later.
+7. **PHP:** 8.5.12 (or at least 8.3.36), with `session.upload_progress.enabled = Off` (see "How to start it").
