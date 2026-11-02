@@ -124,9 +124,40 @@ class SmartargetMessageBar extends Module
      */
     public function hookDisplayHeader()
     {
+        // Khewa PS 9.2: no third-party script on cart, checkout, order confirmation, account
+        // and payment pages.
+        if ($this->isBlockedPage()) {
+            return '';
+        }
+
         $this->context->smarty->assign('storefrontHash', $this->getStorefrontHash());
 
         return $this->display(__FILE__, 'views/templates/hook/header.tpl');
+    }
+
+    /**
+     * Khewa PS 9.2: pages where the smartarget.online loader must not run.
+     * Payment pages are module front controllers, so all module pages are left out too.
+     *
+     * @return bool
+     */
+    private function isBlockedPage()
+    {
+        $controller = $this->context->controller;
+        if (!$controller) {
+            return false;
+        }
+        if ($controller instanceof ModuleFrontController) {
+            return true;
+        }
+        $page = isset($controller->php_self) ? (string) $controller->php_self : '';
+        $blocked = [
+            'cart', 'order', 'order-opc', 'order-confirmation', 'order-follow', 'order-slip', 'order-detail',
+            'history', 'my-account', 'identity', 'address', 'addresses', 'discount', 'authentication',
+            'registration', 'password', 'guest-tracking', 'pdf-invoice', 'pdf-order-return', 'pdf-order-slip',
+        ];
+
+        return in_array($page, $blocked, true);
     }
 
     /**

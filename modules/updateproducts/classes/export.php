@@ -28,23 +28,32 @@ class mpmExport
     include_once(dirname(__FILE__).'/../../../config/config.inc.php');
     include_once(dirname(__FILE__).'/../../../init.php');
 
-    if (!class_exists('PHPExcel')) {
-      include_once(_PS_MODULE_DIR_ . 'updateproducts/libraries/PHPExcel_1.7.9/Classes/PHPExcel.php');
-      include_once(_PS_MODULE_DIR_ . 'updateproducts/libraries/PHPExcel_1.7.9/Classes/PHPExcel/IOFactory.php');
-    }
+    // Khewa PS 9.2: the bundled PHPExcel 1.7.9 does not parse on PHP 8, use PhpSpreadsheet from the PrestaShop core vendor folder.
 
     include_once(_PS_MODULE_DIR_.'updateproducts/classes/datamodel.php');
     include_once(_PS_MODULE_DIR_.'updateproducts/classes/updateProductTools.php');
     $this->_context = updateProductTools::getContext();
-    $this->_idShop = $idShop;
-    $this->_shopGroupId = $shopGroupId;
+    $this->_idShop = (int)$idShop;
+    $this->_shopGroupId = (int)$shopGroupId;
     $this->_idLang = (int)$idLang;
+    // Khewa PS 9.2: only the real formats, the format is used in file names.
+    if (!in_array($format, array('xlsx', 'csv'), true)) {
+      throw new Exception('Wrong file format');
+    }
     $this->_format = $format;
     $this->_separate = $separate;
+    // Khewa PS 9.2: export file name comes from the request, keep only safe characters (no folders, no dots).
+    if ($name_file) {
+      $name_file = preg_replace('/[^A-Za-z0-9_-]/', '_', (string)$name_file);
+      $name_file = Tools::substr(trim($name_file, '_'), 0, 100);
+      if ($name_file === '') {
+        $name_file = false;
+      }
+    }
     $this->_name_file = $name_file;
     $this->_more_settings = $more_settings;
     $this->_model = new productsUpdateModel();
-    $this->_PHPExcel = new PHPExcel();
+    $this->_PHPExcel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
     $imageTypes = ImageType::getImagesTypes('products');
     foreach ( $imageTypes  as $type ){
@@ -123,12 +132,14 @@ class mpmExport
     else{
       $this->_productsCount = Configuration::get('EXPORT_PRODUCTS_COUNT', null ,$this->_shopGroupId, $this->_idShop);
       $this->_categoryTreesCount = Configuration::getGlobalValue('EXPORT_CATEGORY_TREE_COUNT');
-      if( $this->_format == 'xlsx' || $this->_format == 'xls' ){
-        $this->_PHPExcel = PHPExcel_IOFactory::load(_PS_MODULE_DIR_ . 'updateproducts/files/export_products_' . Configuration::get('EXPORT_PRODUCTS_TIME', null ,$this->_shopGroupId, $this->_idShop) . ( (int)$limit - 1 ) . '.' . $this->_format);
+      // Khewa PS 9.2: PhpSpreadsheet readers
+      if( $this->_format == 'xlsx' ){
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
+        $this->_PHPExcel = $reader->load(_PS_MODULE_DIR_ . 'updateproducts/files/export_products_' . Configuration::get('EXPORT_PRODUCTS_TIME', null ,$this->_shopGroupId, $this->_idShop) . ( (int)$limit - 1 ) . '.' . $this->_format);
       }
 
       if( $this->_format == 'csv' ){
-        $reader = PHPExcel_IOFactory::createReader("CSV");
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Csv');
         $this->_PHPExcel = $reader->load(_PS_MODULE_DIR_ . 'updateproducts/files/export_products_' . Configuration::get('EXPORT_PRODUCTS_TIME', null ,$this->_shopGroupId, $this->_idShop) . ( (int)$limit - 1 ) . '.' . $this->_format);
       }
     }
@@ -216,11 +227,12 @@ class mpmExport
 
     $style_wrap = array(
       'borders'=>array(
+        // Khewa PS 9.2: PhpSpreadsheet style keys
         'outline' => array(
-          'style'=>PHPExcel_Style_Border::BORDER_THICK
+          'borderStyle'=>\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK
         ),
-        'allborders'=>array(
-          'style'=>PHPExcel_Style_Border::BORDER_THIN,
+        'allBorders'=>array(
+          'borderStyle'=>\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
           'color' => array(
             'rgb'=>'696969'
           )
@@ -232,12 +244,12 @@ class mpmExport
     $style_hprice = array(
       //выравнивание
       'alignment' => array(
-        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, // Khewa PS 9.2
       ),
       //заполнение цветом
       'fill' => array(
-        'type' => PHPExcel_Style_Fill::FILL_SOLID,
-        'color'=>array(
+        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+        'startColor'=>array(
           'rgb' => 'CFCFCF'
         )
       ),
@@ -253,7 +265,7 @@ class mpmExport
 
     $style_price = array(
       'alignment' => array(
-        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT, // Khewa PS 9.2
       )
     );
     $this->_PHPExcel->getActiveSheet()->getStyle('A2:'.$this->_alphabet[$j-1].($i-1))->applyFromArray($style_price);
@@ -261,8 +273,8 @@ class mpmExport
     $style_background1 = array(
       //заполнение цветом
       'fill' => array(
-        'type' => PHPExcel_Style_Fill::FILL_SOLID,
-        'color'=>array(
+        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, // Khewa PS 9.2
+        'startColor'=>array(
           'rgb' => 'F2F2F5'
         )
       ),
@@ -278,10 +290,11 @@ class mpmExport
       if( $field == 'image_cover' && $product[$field]){
         if( ($mime = getimagesize($product[$field]) ) ){
           $gdImage = $this->_getImageObject($mime, $product[$field]);
-          $objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+          // Khewa PS 9.2: PhpSpreadsheet drawing
+          $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing();
           $objDrawing->setImageResource($gdImage);
-          $objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
-          $objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+          $objDrawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
+          $objDrawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_DEFAULT);
           $objDrawing->setHeight(150);
           $objDrawing->setOffsetX(6);
           $objDrawing->setOffsetY(6);
@@ -292,7 +305,7 @@ class mpmExport
         }
       }
       else{
-        $this->_PHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($this->_alphabet[$i].$line, isset($product[$field]) ? $product[$field] : '',PHPExcel_Cell_DataType::TYPE_STRING);
+        $this->_PHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($this->_alphabet[$i].$line, isset($product[$field]) ? (string)$product[$field] : '',\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); // Khewa PS 9.2
       }
       $i++;
     }
@@ -344,7 +357,7 @@ class mpmExport
     }
 
     if ($this->_format == 'xlsx'){
-      $objWriter = PHPExcel_IOFactory::createWriter($this->_PHPExcel, 'Excel2007');
+      $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($this->_PHPExcel, 'Xlsx'); // Khewa PS 9.2
       if( (int)$this->_productsCount <= ((int)$this->_limit*(int)$this->_limitN)+(int)$this->_limitN ){
         $objWriter->save(_PS_MODULE_DIR_ . 'updateproducts/files/'.$name_file);
         for( $l = 0;$l<(int)$this->_limit;$l++ ){
@@ -358,8 +371,8 @@ class mpmExport
       }
     }
     elseif ($this->_format == 'csv'){
-      $objWriter = \PHPExcel_IOFactory::createWriter($this->_PHPExcel, 'CSV');
-       /** @var \PHPExcel_Writer_CSV $objWriter */
+      $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($this->_PHPExcel, 'Csv'); // Khewa PS 9.2
+       /** @var \PhpOffice\PhpSpreadsheet\Writer\Csv $objWriter */
       $objWriter->setUseBOM(true);
 
 

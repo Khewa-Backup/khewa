@@ -1,0 +1,25 @@
+# Khewa PS 9.2: this folder holds export and import files.
+# Never run scripts here (also blocks double names like x.php.csv),
+# and the uploaded import file is not public.
+
+# Apache 2.2
+<IfModule !mod_authz_core.c>
+   <FilesMatch "(?i)\.(php[0-9]?|phtml|phar|pht|phps|cgi|pl|py|sh|asp|aspx|jsp|shtml|htaccess|htpasswd|ini)(\.|$)">
+   order allow,deny
+   deny from all
+   </FilesMatch>
+   <FilesMatch "^import_products\.">
+   order allow,deny
+   deny from all
+   </FilesMatch>
+</IfModule>
+
+# Apache 2.4
+<IfModule mod_authz_core.c>
+   <FilesMatch "(?i)\.(php[0-9]?|phtml|phar|pht|phps|cgi|pl|py|sh|asp|aspx|jsp|shtml|htaccess|htpasswd|ini)(\.|$)">
+   Require all denied
+   </FilesMatch>
+   <FilesMatch "^import_products\.">
+   Require all denied
+   </FilesMatch>
+</IfModule>

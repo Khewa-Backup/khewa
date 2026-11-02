@@ -34,10 +34,7 @@ if (!defined('_PS_VERSION_')){
       include_once(dirname(__FILE__).'/../../../config/config.inc.php');
       include_once(dirname(__FILE__).'/../../../init.php');
 
-      if (!class_exists('PHPExcel')) {
-        include_once(_PS_MODULE_DIR_ . 'updateproducts/libraries/PHPExcel_1.7.9/Classes/PHPExcel.php');
-        include_once(_PS_MODULE_DIR_ . 'updateproducts/libraries/PHPExcel_1.7.9/Classes/PHPExcel/IOFactory.php');
-      }
+      // Khewa PS 9.2: the bundled PHPExcel 1.7.9 does not parse on PHP 8, use PhpSpreadsheet from the PrestaShop core vendor folder.
 
       include_once(_PS_MODULE_DIR_ . 'updateproducts/updateproducts.php');
       include_once(_PS_MODULE_DIR_.'updateproducts/classes/datamodel.php');
@@ -48,9 +45,14 @@ if (!defined('_PS_VERSION_')){
       }
 
       $this->_context = updateProductTools::getContext();
-      $this->_idShop = $idShop;
+      $this->_idShop = (int)$idShop;
       $this->_shopGroupId = updateProductTools::getShopGroupId();
       $this->_idLang = (int)$idLang;
+      // Khewa PS 9.2: the format comes from the request and was used as the file extension of the upload
+      // (a .php upload was possible). Only the formats the module really supports are allowed.
+      if (!in_array($format, array('xlsx', 'csv'), true)) {
+        throw new Exception( Module::getInstanceByName('updateproducts')->l('File must have XLSX or CSV extension!') );
+      }
       $this->_format = $format;
       $this->_separate = $separate;
       $this->_removeImages = (int)$remove_images;
@@ -237,7 +239,7 @@ if (!defined('_PS_VERSION_')){
       foreach ($this->_PHPExcelFactory->getWorksheetIterator() as $worksheet) {
         $highestRow         = $worksheet->getHighestRow(); // e.g. 10
         $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
-        $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+        $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn); // Khewa PS 9.2
         $fileFields = array();
         $this->_productsForUpdate = ($highestRow - 1);
         $checkHead = false;
@@ -273,11 +275,12 @@ if (!defined('_PS_VERSION_')){
           );
 
           for ($col = 0; $col < $highestColumnIndex; ++ $col) {
-            $cell = $worksheet->getCellByColumnAndRow($col, $row);
+            // Khewa PS 9.2: PhpSpreadsheet columns start at 1 (PHPExcel started at 0)
+            $cell = $worksheet->getCell(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + 1) . $row);
             $val = $cell->getValue();
  
-            if( $val && is_numeric($val) && PHPExcel_Shared_Date::isDateTime($cell) ) {
-              $dateValue = PHPExcel_Shared_Date::ExcelToPHPObject($val)->format('U');
+            if( $val && is_numeric($val) && \PhpOffice\PhpSpreadsheet\Shared\Date::isDateTime($cell) ) {
+              $dateValue = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($val)->format('U');
               $val = date('Y-m-d H:i:s', $dateValue);
             }
 
@@ -1233,10 +1236,10 @@ if (!defined('_PS_VERSION_')){
     {
       $sql = 'SELECT id_image
      FROM '._DB_PREFIX_.'updateproducts_images
-     WHERE id_product = "'.$idProduct.'"
-     AND image_url = "'.$imgUrl.'"
-     AND id_shop = "'.$this->_idShop.'"
-     ';
+     WHERE id_product = "'.(int)$idProduct.'"
+     AND image_url = "'.pSQL($imgUrl).'"
+     AND id_shop = "'.(int)$this->_idShop.'"
+     '; // Khewa PS 9.2: values escaped
 
       $res = Db::getInstance()->executeS($sql);
       if( isset( $res[0] ) && $res[0] ){
@@ -1249,11 +1252,12 @@ if (!defined('_PS_VERSION_')){
     private function _addCombinationImage( $imgUrl, $idProduct, $idImage )
     {
 
+      // Khewa PS 9.2: values escaped
       $data = array(
-        'image_url'  => $imgUrl,
-        'id_product' => $idProduct,
-        'id_image'   => $idImage,
-        'id_shop'    => $this->_idShop,
+        'image_url'  => pSQL($imgUrl),
+        'id_product' => (int)$idProduct,
+        'id_image'   => (int)$idImage,
+        'id_shop'    => (int)$this->_idShop,
       );
 
       Db::getInstance()->insert('updateproducts_images', $data);
@@ -1264,7 +1268,13 @@ if (!defined('_PS_VERSION_')){
       $url_img = trim($url_img);
       $url_img = str_replace(' ','%20', $url_img);
 
-      if(getimagesize($url_img)){
+      // Khewa PS 9.2: only web image links, no local files or other stream wrappers
+      if ($url_img && !preg_match('#^https?://#i', $url_img)) {
+        $this->_createErrorsFile('"Image url must start with http:// or https://, Image Url: ' . $url_img . '"' ,'Product ID - ' . $productId);
+        return false;
+      }
+
+      if($url_img && @getimagesize($url_img)){
 
         if($combination){
           $obj = new Combination($combination);
@@ -1290,9 +1300,10 @@ if (!defined('_PS_VERSION_')){
           }
         }
 
-        $path_parts_prod = pathinfo($url_img);
-        $name_img = $path_parts_prod['basename'];
-        $newpath_prod =  _PS_MODULE_DIR_ . 'updateproducts/upload/';
+        // Khewa PS 9.2: the downloaded image was saved under the name taken from the url
+        // (e.g. x.php) inside the module folder. Use a fixed random name in the system temp folder.
+        $name_img = 'updateproducts_' . md5(uniqid((string)mt_rand(), true)) . '.img';
+        $newpath_prod = rtrim(sys_get_temp_dir(), '/') . '/';
         if (PHP_VERSION_ID < 50300)
           clearstatcache();
         else
@@ -1320,10 +1331,12 @@ if (!defined('_PS_VERSION_')){
             $this->_cover = false;
           }
           if( ( $error = $image->validateFields(false, true) ) !== true ){
+            @unlink($newpath_prod.$name_img); // Khewa PS 9.2
             $this->_createErrorsFile($error,'Product ID - ' . $productId);
             return false;
           }
           if( ( $error = $image->validateFieldsLang(false, true) ) !== true ){
+            @unlink($newpath_prod.$name_img); // Khewa PS 9.2
             $this->_createErrorsFile($error,'Product ID - ' . $productId);
             return false;
           }
@@ -1339,6 +1352,7 @@ if (!defined('_PS_VERSION_')){
           $new_path = $image->getPathForCreation();
 
           if( !ImageManager::resize($newpath_prod.$name_img, $new_path.'.'.$image->image_format, null, null, 'jpg', false) ){
+            @unlink($newpath_prod.$name_img); // Khewa PS 9.2: never leave the download behind
             return false;
           }
 
@@ -2543,32 +2557,54 @@ if (!defined('_PS_VERSION_')){
         throw new Exception( Module::getInstanceByName('updateproducts')->l('Please select file for update!') );
       }
 
-      $file_type = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
-
-      if( $file_type != $this->_format && $this->_format == 'xlsx' ){
-        throw new Exception( Module::getInstanceByName('updateproducts')->l('File must have XLSX extension!') );
+      // Khewa PS 9.2: strict checks on the upload. Format is whitelisted in the constructor,
+      // the file name must end with that same extension, and the saved name is fixed.
+      if ( !is_array($_FILES['file']) || !isset($_FILES['file']['error'], $_FILES['file']['tmp_name'], $_FILES['file']['name'])
+        || is_array($_FILES['file']['name']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($_FILES['file']['tmp_name']) )
+      {
+        throw new Exception( Module::getInstanceByName('updateproducts')->l('Please select file for update!') );
       }
 
-      if( $file_type != $this->_format && $this->_format == 'csv' ){
-        throw new Exception( Module::getInstanceByName('updateproducts')->l('File must have CSV extension!') );
+      $file_type = Tools::strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
+      $allowed = array('xlsx' => 'xlsx', 'csv' => 'csv');
+
+      if( !isset($allowed[$this->_format]) || $file_type !== $allowed[$this->_format] ){
+        throw new Exception( Module::getInstanceByName('updateproducts')->l('File must have XLSX or CSV extension!') );
       }
 
-      if (!Tools::copy($_FILES['file']['tmp_name'],  _PS_MODULE_DIR_ . 'updateproducts/files/import_products.'. $this->_format)){
+      // Khewa PS 9.2: an xlsx file is a zip, check the content too
+      if ( $this->_format == 'xlsx' ) {
+        $fh = fopen($_FILES['file']['tmp_name'], 'rb');
+        $magic = $fh ? fread($fh, 4) : '';
+        if ($fh) {
+          fclose($fh);
+        }
+        if ($magic !== "PK\x03\x04") {
+          throw new Exception( Module::getInstanceByName('updateproducts')->l('File must have XLSX extension!') );
+        }
+      }
+
+      $target = _PS_MODULE_DIR_ . 'updateproducts/files/import_products.' . $allowed[$this->_format];
+
+      if (!Tools::copy($_FILES['file']['tmp_name'], $target)){
         throw new Exception(Module::getInstanceByName('updateproducts')->l('An error occurred while uploading file!', 'import') );
       }
 
+      // Khewa PS 9.2: PhpSpreadsheet readers
       if ($this->_format == 'csv'){
-        $reader = PHPExcel_IOFactory::createReader("CSV");
-        $file_encoding = mb_detect_encoding(Tools::file_get_contents(_PS_MODULE_DIR_.'updateproducts/data/import_products.csv'), array('UTF-8','ISO-8859-1','ASCII','GBK'), true);
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Csv');
+        // Khewa PS 9.2: the old code read a file in a "data" folder that does not exist
+        $file_encoding = mb_detect_encoding(Tools::file_get_contents($target), array('UTF-8','ISO-8859-1','ASCII','GBK'), true);
 
         if ($file_encoding) {
-           /** @var \PHPExcel_Reader_CSV $reader */
+           /** @var \PhpOffice\PhpSpreadsheet\Reader\Csv $reader */
           $reader->setInputEncoding($file_encoding);
         }
 
-        $this->_PHPExcelFactory = $reader->load(_PS_MODULE_DIR_ . "updateproducts/files/import_products." . $this->_format );
+        $this->_PHPExcelFactory = $reader->load($target);
       } else {
-        $this->_PHPExcelFactory = PHPExcel_IOFactory::load(_PS_MODULE_DIR_ . "updateproducts/files/import_products." . $this->_format );
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
+        $this->_PHPExcelFactory = $reader->load($target);
       }
     }
 
