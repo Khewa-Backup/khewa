@@ -40,7 +40,7 @@
 
                 {if $tab.view == 'carousel_s' || $tab.view == 'carousel'}
                 <div class="swiper-container-wrapper swiper-overflow swiper-arrows-{$tab.arrows_position}">
-                    <div class="products elementor-products-carousel swiper-container  swiper-products-carousel products-grid {$tab.cls_fix_classes}"  data-slider_options='{$tab.options|@json_encode nofilter}'>
+                    <div class="products elementor-products-carousel swiper-container swiper  swiper-products-carousel products-grid {$tab.cls_fix_classes}"  data-slider_options='{$tab.options|@json_encode nofilter}'>
                         <div class="swiper-wrapper">
                 {else}
                     <div class="products row {if $tab.view == 'list'}products-list{else}products-grid {/if}">

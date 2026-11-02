@@ -28,25 +28,13 @@
 <div id="language_selector" class="d-inline-block">
     <div class="language-selector-wrapper d-inline-block">
         <div class="language-selector dropdown js-dropdown">
-            <a class="expand-more" data-toggle="dropdown" data-iso-code="{$language.iso_code}"><img width="16" height="11" src="{$urls.img_lang_url}{$current_language.id_lang}.jpg" alt="{$current_language.name_simple}" class="img-fluid lang-flag" /> {$current_language.name_simple} <i class="fa fa-angle-down fa-fw" aria-hidden="true"></i></a>
+            <a class="expand-more" data-bs-toggle="dropdown" data-iso-code="{$language.iso_code}"><img width="16" height="11" src="{$urls.img_lang_url}{$current_language.id_lang}.jpg" alt="{$current_language.name_simple}" class="img-fluid lang-flag" /> {$current_language.name_simple} <i class="fa fa-angle-down fa-fw" aria-hidden="true"></i></a>
             <div class="dropdown-menu">
                 <ul>
                     {foreach from=$languages item=language}
                         <li {if $language.id_lang == $current_language.id_lang} class="current" {/if}>
                             <a href="{url entity='language' id=$language.id_lang}" rel="alternate" hreflang="{$language.iso_code}"
                                class="dropdown-item"><img width="16" height="11" src="{$urls.img_lang_url}{$language.id_lang}.jpg" alt="{$language.name_simple}" class="img-fluid lang-flag"  data-iso-code="{$language.iso_code}"/> {$language.name_simple}</a>
-
-{*                            {if $language.id_lang == '1'}*}
-{*                                <a href="https://khewa.com/en/" rel="alternate" hreflang="{$language.iso_code}"*}
-{*                                   class="dropdown-item"><img width="16" height="11" src="{$urls.img_lang_url}{$language.id_lang}.jpg" alt="{$language.name_simple}" class="img-fluid lang-flag"  data-iso-code="{$language.iso_code}"/> {$language.name_simple}</a>*}
-
-{*                            {else}*}
-{*                                <a href="https://khewa.com/qc/" rel="alternate" hreflang="{$language.iso_code}"*}
-{*                                   class="dropdown-item"><img width="16" height="11" src="{$urls.img_lang_url}{$language.id_lang}.jpg" alt="{$language.name_simple}" class="img-fluid lang-flag"  data-iso-code="{$language.iso_code}"/> {$language.name_simple}</a>*}
-
-{*                            {/if}*}
-
-
                         </li>
                     {/foreach}
                 </ul>

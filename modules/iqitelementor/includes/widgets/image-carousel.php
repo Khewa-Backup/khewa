@@ -308,6 +308,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 			]
 		);
+		
 		$this->add_control(
 			'arrows_bg_color',
 			[
@@ -484,15 +485,13 @@ class Widget_Image_Carousel extends Widget_Base {
             $image_width =  $item['image']['width'] ? 'width="' .\IqitElementorWpHelper::absint( $item['image']['width']). '"' : '';
             $image_height = $item['image']['height'] ? 'height="' .\IqitElementorWpHelper::absint( $item['image']['height']). '"' : '';
             $image_placeholder = '';
-            if($image_width){
-                $image_placeholder = 'src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 '.\IqitElementorWpHelper::absint( $item['image']['width']).' '.\IqitElementorWpHelper::absint( $item['image']['height']).' \'%3E%3C/svg%3E"';
-            }
+   
 
 
             if ( 'yes' === $instance['image_lazy'] ) {
-                $image_html = '<img class="swiper-slide-image swiper-lazy" '.$image_width .' '.$image_height.' '. $image_placeholder.' data-src="' . \IqitElementorWpHelper::esc_attr(\IqitElementorWpHelper::getImage($image_url)   ) . '" alt="' . \IqitElementorWpHelper::esc_attr( $item['text']  ) . '" />';
+                $image_html = '<img class="swiper-slide-image" '.$image_width .' '.$image_height.' '. ' loading="lazy" src="' . \IqitElementorWpHelper::esc_attr(\IqitElementorWpHelper::getImage($image_url)   ) . '" alt="' . \IqitElementorWpHelper::esc_attr( $item['text']  ) . '" />';
             } else{
-                $image_html = '<img class="swiper-slide-image swiper-lazy" '.$image_width .' '.$image_height.' src="' . \IqitElementorWpHelper::esc_attr(\IqitElementorWpHelper::getImage($image_url)   ) . '" alt="' . \IqitElementorWpHelper::esc_attr( $item['text']  ) . '" />';
+                $image_html = '<img class="swiper-slide-image" '.$image_width .' '.$image_height.' src="' . \IqitElementorWpHelper::esc_attr(\IqitElementorWpHelper::getImage($image_url)   ) . '" alt="' . \IqitElementorWpHelper::esc_attr( $item['text']  ) . '" />';
             }
 
 
@@ -549,7 +548,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 		?>
 		<div class="elementor-image-carousel-wrapper"  >
-			<div class="<?php echo implode( ' ', $carousel_classes ); ?> swiper-container  <?php echo implode( ' ', $cls_fix_classes); ?>" data-slider_options='<?php echo json_encode( $swiper_options ); ?>'>
+			<div class="<?php echo implode( ' ', $carousel_classes ); ?> swiper  <?php echo implode( ' ', $cls_fix_classes); ?>" data-slider_options='<?php echo json_encode( $swiper_options ); ?>'>
                 <div class="swiper-wrapper">
 				<?php echo implode( '', $slides ); ?>
                 </div>

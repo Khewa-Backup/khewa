@@ -37,6 +37,8 @@
 
         {hook h="displayHeaderCategory"}
 
+        {block name='product_list_products'}
+
         <section id="products">
             {if $listing.products|count}
                 {block name='product_list_active_filters'}
@@ -92,6 +94,10 @@
                 {block name='product_list_bottom_static'}{/block}
             {/if}
         </section>
-        {hook h="displayFooterCategory"}
+
+    {/block}
+
+    {block name='product_list_footer'}{/block}
+    {hook h="displayFooterCategory"}
     </section>
 {/block}

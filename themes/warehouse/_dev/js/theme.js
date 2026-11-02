@@ -24,12 +24,15 @@
  */
 /* eslint-disable */
 //import 'expose-loader?Tether!tether';
-import 'bootstrap/dist/js/bootstrap.min';
+import * as bootstrap from 'bootstrap';
+window.bootstrap = bootstrap; //
+//import './lib/compatibility-bs';
+import BSCompatibilityLayer from 'bootstrap-compatibility-layer';
 import 'flexibility';
 import 'bootstrap-touchspin';
 import 'waypoints/lib/jquery.waypoints.min';
 import 'waypoints/lib/shortcuts/sticky.min';
-import Swiper from './lib/swiper-bundle.min';
+import Swiper from 'swiper/bundle';
 window.Swiper = Swiper;
 import './selectors';
 
@@ -40,6 +43,7 @@ import './listing';
 import './product';
 import './cart';
 
+import usePasswordPolicy from './components/usePasswordPolicy';
 import ThemeCompontents from './components/theme-components';
 import ThemeOptions from './components/theme-options';
 import MobileAccordion from './components/mobile-accordion';
@@ -48,6 +52,7 @@ import DropDown from './components/drop-down';
 import Form from './components/form';
 import ProductMinitature from './components/product-miniature';
 import ProductSelect from './components/product-select';
+import MobileMenu from './components/MobileMenu';
 
 import prestashop from 'prestashop';
 import EventEmitter from 'events';
@@ -81,7 +86,7 @@ $(document).ready(() => {
   const themeCompontents = new ThemeCompontents();
 
   const blockSearch = new BlockSearch();
-
+  BSCompatibilityLayer.updateAllDataAttributes();
   mobileAccordion.init();
   blockSearch.init();
   dropDown.init();
@@ -89,6 +94,10 @@ $(document).ready(() => {
   productMinitature.init();
   productSelect.init();
   themeCompontents.init();
+  usePasswordPolicy('.field-password-policy');
+
+  const mobileMenu = new MobileMenu('.js-mobile-menu');
+
 });
 
 themeOptions.init();

@@ -116,7 +116,7 @@
         }
 
 
-        $('.delete_post_image').die().live('click', function(e)
+        $('.delete_post_image').on('click', function(e)
         {
             e.preventDefault();
             id = $(this).parent().parent().attr('id');

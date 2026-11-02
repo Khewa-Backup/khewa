@@ -1,6 +1,6 @@
  <div id="blockcart" class="blockcart cart-preview"
          data-refresh-url="{$refresh_url}">
-        <a id="cart-toogle" class="cart-toogle header-btn header-cart-btn" data-toggle="dropdown" data-display="static">
+        <a id="cart-toogle" class="cart-toogle header-btn header-cart-btn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside">
             <i class="fa fa-shopping-bag fa-fw icon" aria-hidden="true"><span class="cart-products-count-btn {if $cart.products_count < 1} d-none{/if}">{$cart.products_count}</span></i>
             <span class="info-wrapper">
             <span class="title">{l s='Cart' d='Shop.Theme.Checkout'}</span>

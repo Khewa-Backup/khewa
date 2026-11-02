@@ -33,9 +33,9 @@
                 {foreach from=$activeFilters item="filter"}
                     {block name='active_filters_item'}
                         <li class="filter-block">
-                            <a class="js-search-link btn btn-secondary btn-sm" href="{$filter.nextEncodedFacetsURL}">
-                                <i class="fa fa-times" aria-hidden="true"></i>
-                                {l s='%1$s: ' d='Shop.Theme.Catalog' sprintf=[$filter.facetLabel]}
+                            <a class="js-search-link btn btn-secondary btn-sm" href="{$filter.nextEncodedFacetsURL}"> <i
+                                    class="fa fa-times" aria-hidden="true"></i>
+                                {l s='%1$s:' d='Shop.Theme.Catalog' sprintf=[$filter.facetLabel]}
                                 {$filter.label}
                             </a>
                         </li>

@@ -64,6 +64,7 @@ class IqitElementorPreviewModuleFrontController extends ModuleFrontController
         }
     }
 
+
     public function getLayout()
     {
 

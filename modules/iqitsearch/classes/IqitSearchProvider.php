@@ -20,6 +20,7 @@
      public $id_shop;
      public $context;
      public $db;
+     public $module;
 
      public $words = array();
 
@@ -67,7 +68,7 @@
        foreach ($result as $select)
        foreach ($select as $brand) {
               $manufacturers[$brand['id_manufacturer']]['name'] = $brand['name'];
-              $manufacturers[$brand['id_manufacturer']]['link'] = Context::getContext()->link->getManufacturerLink($brand['id_manufacturer'], ($rewriteSettings ? Tools::link_rewrite($brand['name']) : 0));
+              $manufacturers[$brand['id_manufacturer']]['link'] = Context::getContext()->link->getManufacturerLink($brand['id_manufacturer'], ($rewriteSettings ? Tools::str2url($brand['name']) : 0));
               $manufacturers[$brand['id_manufacturer']]['image'] = Context::getContext()->link->getManufacturerImageLink($brand['id_manufacturer'],
                   'small_default') ;
       }
@@ -120,7 +121,7 @@
      }
 
      if (!empty($posts)){
-         $posts = SimpleBlogPost::getPosts($this->id_lang, 10, null, null, true, 'sbp.date_add', 'DESC', null, false, false, null, 'in', $posts);
+         $posts = SimpleBlogPost::getPosts($this->id_lang, 10, null, null, true, 'sbp.date_add', 'DESC', null, false, false, null, 'IN', $posts);
      }
 
 

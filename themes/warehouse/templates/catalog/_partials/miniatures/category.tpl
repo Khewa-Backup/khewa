@@ -25,12 +25,16 @@
 {block name='category_miniature_item'}
   <section class="category-miniature">
     <a href="{$category.url}">
+    <picture>
+      {if !empty($category.image.bySize.medium_default.sources.avif)}<source srcset="{$category.image.bySize.medium_default.sources.avif}" type="image/avif">{/if}
+      {if !empty($category.image.bySize.medium_default.sources.webp)}<source srcset="{$category.image.bySize.medium_default.sources.webp}" type="image/webp">{/if}
       <img
               src="{$category.image.medium.url}"
               alt="{if !empty($category.image.legend)}{$category.image.legend}{else}{$category.name}{/if}"
               loading="lazy"
               width="{$image.bySize.medium.width}"
-              height="{$image.bySize.medium.height}"
+              height="{$image.bySize.medium.height}" />
+    </picture>
     </a>
 
     <h1 class="h2">

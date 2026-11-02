@@ -184,7 +184,7 @@ class IqitElementorWidget_Modules
         if (!isset($hook_args['cart']) || !$hook_args['cart']) {
             $hook_args['cart'] = $context->cart;
         }
-        $retro_hook_name = Hook::getRetroHookName($hook_name);
+
 
         $altern = 0;
         $output = '';
@@ -208,15 +208,12 @@ class IqitElementorWidget_Modules
 
         // Check which / if method is callable
         $hook_callable = is_callable(array($moduleInstance, 'hook'.$hook_name));
-        $hook_retro_callable = is_callable(array($moduleInstance, 'hook'.$retro_hook_name));
 
-        if ($hook_callable || $hook_retro_callable) {
+        if ($hook_callable) {
             $hook_args['altern'] = ++$altern;
             // Call hook method
             if ($hook_callable) {
                 $display = Hook::coreCallHook($moduleInstance, 'hook'.$hook_name, $hook_args);
-            } elseif ($hook_retro_callable) {
-                $display = Hook::coreCallHook($moduleInstance, 'hook'.$retro_hook_name, $hook_args);
             } else {
                 return false;
             }

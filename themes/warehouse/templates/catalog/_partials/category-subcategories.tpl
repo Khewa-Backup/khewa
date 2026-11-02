@@ -29,15 +29,18 @@
         <div class="product-list-subcategories {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
             <div class="row">
                 {foreach from=$subcategories item=subcategory}
-                    <div class="col-{$iqitTheme.cat_sub_thumbs_p} col-md-{$iqitTheme.cat_sub_thumbs_t} col-lg-{$iqitTheme.cat_sub_thumbs_d}">
+                    <div
+                        class="col-{$iqitTheme.cat_sub_thumbs_p} col-md-{$iqitTheme.cat_sub_thumbs_t} col-lg-{$iqitTheme.cat_sub_thumbs_d}">
                         <div class="subcategory-image">
                             <a href="{$subcategory.url}">
-                                {if $subcategory.image.bySize.small_default.url}
-                                <img src="{$subcategory.image.bySize.small_default.url}" alt="{$subcategory.name}" width="{$subcategory.image.bySize.small_default.width}"
-                                     height="{$subcategory.image.bySize.small_default.height}" class="img-fluid" loading="lazy" />
+                                {if !empty($subcategory.thumbnail.small.url)}
+                                    <img class="img-fluid" src="{$subcategory.thumbnail.small.url}"
+                                        width="{$subcategory.thumbnail.small.width}" height="{$subcategory.thumbnail.small.height}"
+                                        alt="{$subcategory.name|escape:'html':'UTF-8'}" loading="lazy">
                                 {else}
-                                    <img src="{$urls.no_picture_image.bySize.small_default.url}" alt="{$subcategory.name}" width="{$urls.no_picture_image.bySize.small_default.width}"
-                                         height="{$urls.no_picture_image.bySize.small_default.height}" class="img-fluid" loading="lazy" />
+                                    <img class="img-fluid" src="{$urls.no_picture_image.small.url}"
+                                        width="{$urls.no_picture_image.small.width}" height="{$urls.no_picture_image.small.height}"
+                                        alt="{$subcategory.name|escape:'html':'UTF-8'}" loading="lazy">
                                 {/if}
                             </a>
                         </div>
@@ -48,4 +51,3 @@
         </div>
     {/if}
 {/block}
-

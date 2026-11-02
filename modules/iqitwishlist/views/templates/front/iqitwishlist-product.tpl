@@ -46,6 +46,7 @@
             <div class="col col-auto">
                 <a href="#" class="js-iqitwishlist-remove"
                    data-id-product="{$product.id_iqitwishlist_product|intval}"
+                   data-token="{$static_token}"
                    data-url="{url entity='module' name='iqitwishlist' controller='actions'}">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                 </a>

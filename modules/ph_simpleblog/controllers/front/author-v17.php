@@ -59,7 +59,7 @@ class PH_SimpleBlogAuthorModuleFrontController extends DefaultListBlogForPrestaS
 
         if (Validate::isLoadedObject($this->blogAuthor)) {
             $breadcrumb['links'][] = [
-                'title' => $this->l('Authors', 'author-v17'),
+                'title' => $this->module->getTranslator()->trans('Authors', [], 'Modules.Phsimpleblog.Shop'),
                 'url' => $this->context->link->getModuleLink('ph_simpleblog', 'authorslist'),
             ];
             $breadcrumb['links'][] = [

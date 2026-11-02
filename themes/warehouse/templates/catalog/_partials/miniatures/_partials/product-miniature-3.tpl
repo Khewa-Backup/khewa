@@ -36,10 +36,12 @@
                 <div class="product-category-name text-muted">{$product.category_name}</div>{/if}
         {/block}
 
+        {block name='product_iqit_flags'}
+            {hook h='displayProductCampagains' product=$product position='miniature' align='center'}
+        {/block}
+
         {block name='product_name'}
-            <h2 class="h3 product-title">
-                <a href="{$product.url}">{$product.name|truncate:90:'...'}</a>
-            </h2>
+       <a class="h3 product-title d-block" href="{$product.url}">{$product.name|truncate:90:'...'}</a>
         {/block}
 
         {block name='product_brand'}
@@ -104,7 +106,7 @@
                 <div class="product-functional-buttons-links">
                     {hook h='displayProductListFunctionalButtons' product=$product}
                     {block name='quick_view'}
-                        <a class="js-quick-view-iqit" href="#" data-link-action="quickview" data-toggle="tooltip"
+                        <a class="js-quick-view-iqit" href="#" data-link-action="quickview" data-bs-toggle="tooltip"
                            title="{l s='Quick view' d='Shop.Theme.Actions'}">
                             <i class="fa fa-eye" aria-hidden="true"></i></a>
                     {/block}

@@ -34,7 +34,7 @@
 
     {foreach from=$displayedFacets item="facet"}
       <aside class="facet clearfix">
-          <h4 class="block-title facet-title sasa"><span>{$facet.label}</span></h4>
+          <p class="block-title facet-title h4"><span>{$facet.label}</span></p>
         {assign var=_expand_id value=10|mt_rand:100000}
         {assign var=_collapse value=true}
         {foreach from=$facet.filters item="filter"}
@@ -55,7 +55,7 @@
                     {if $facet.multipleSelectionAllowed}
                       <span class="custom-checkbox"
                               {if isset($filter.properties.color) || isset($filter.properties.texture)}
-                          data-toggle="tooltip"
+                          data-bs-toggle="tooltip"
                           data-animation="false"
                           data-placement="top"
                           data-boundary="window"
@@ -113,7 +113,7 @@
             <ul id="facet_{$_expand_id}" class="">
               <li>
                   <div class="facet-dropdown dropdown">
-                      <a class="form-control select-title expand-more" rel="nofollow" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false">
+                      <a class="form-control select-title expand-more" rel="nofollow" data-bs-toggle="dropdown" data-bs-display="static" aria-haspopup="true" aria-expanded="false">
                     {$active_found = false}
                     <span>
                       {foreach from=$facet.filters item="filter"}

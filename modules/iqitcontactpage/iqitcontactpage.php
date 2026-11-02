@@ -23,6 +23,8 @@ use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 class IqitContactPage extends Module implements WidgetInterface
 {
     protected $templateFile;
+    public $cfgName;
+    public $defaults;
 
     public function __construct()
     {

@@ -1,4 +1,4 @@
-<div class="variant-links">
+<div class="variant-links">  
     {foreach from=$variants item=variant}
         <a href="{$variant.url}"
            class="{$variant.type}"
@@ -10,3 +10,4 @@
     {/foreach}
     <span class="js-count count"></span>
 </div>
+ 

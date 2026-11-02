@@ -148,6 +148,10 @@ abstract class Element_Base {
             $control_args['prefix_class'] = sprintf( $args['prefix_class'], '' );
         }
 
+        if ( ! empty( $args['responsive_default'] ) ) {
+            $control_args['default'] = $args['responsive_default']['desktop'];
+        }
+
         $control_args['responsive'] = self::RESPONSIVE_DESKTOP;
         $this->add_control(
             $id,
@@ -160,6 +164,9 @@ abstract class Element_Base {
         if ( ! empty( $args['prefix_class'] ) ) {
             $control_args['prefix_class'] = sprintf( $args['prefix_class'], '-' . self::RESPONSIVE_TABLET );
         }
+        if ( ! empty( $args['responsive_default'] ) ) {
+            $control_args['default'] = $args['responsive_default']['tablet'];
+        }
 
         $control_args['responsive'] = self::RESPONSIVE_TABLET;
         $this->add_control(
@@ -170,8 +177,13 @@ abstract class Element_Base {
         // Mobile
         $control_args = $args;
 
+
         if ( ! empty( $args['prefix_class'] ) ) {
             $control_args['prefix_class'] = sprintf( $args['prefix_class'], '-' . self::RESPONSIVE_MOBILE );
+        }
+
+        if ( ! empty( $args['responsive_default'] ) ) {
+            $control_args['default'] = $args['responsive_default']['mobile'];
         }
 
         $control_args['responsive'] = self::RESPONSIVE_MOBILE;

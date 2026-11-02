@@ -35,7 +35,7 @@
                 {/if}
             {/foreach}
         </div>
-    </div>
+    </div> 
 </fieldset>
 
 <fieldset class="form-group">

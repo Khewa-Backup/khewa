@@ -31,7 +31,7 @@
         	{foreach $categories AS $category}
 				<li><a href="{$category['url']}" title="{l s='Link to' mod='ph_simpleblog'} {$category['name']}">{$category['name']}</a>
 					{if isset($category['childrens'])}
-					<div class="navbar-toggler collapse-icons" data-toggle="collapse" data-target="#blog_subcategory_{$category['id']}"><i class="material-icons add"></i><i class="material-icons remove"></i></div>
+					<div class="navbar-toggler collapse-icons" data-bs-toggle="collapse" data-bs-target="#blog_subcategory_{$category['id']}"><i class="material-icons add"></i><i class="material-icons remove"></i></div>
 					<div class="collapse" id="blog_subcategory_{$category['id']}">
 						<ul class="category-sub-menu">
 							{foreach $category['childrens'] as $child_category}

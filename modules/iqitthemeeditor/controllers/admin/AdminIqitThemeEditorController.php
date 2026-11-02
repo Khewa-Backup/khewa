@@ -30,7 +30,7 @@ class AdminIqitThemeEditorController extends ModuleAdminController
        // $this->display = 'edit';
 
         parent::__construct();
-        $this->meta_title = $this->l('Iqit Theme Editor');
+        $this->meta_title = $this->module->getTranslator()->trans('Iqit Theme Editor', [], 'Modules.Iqitthemeeditor.Admin');
 
         if (!$this->module->active) {
             Tools::redirectAdmin($this->context->link->getAdminLink('AdminHome'));
@@ -57,6 +57,7 @@ class AdminIqitThemeEditorController extends ModuleAdminController
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
             'theme_version' => $this->module->version,
+            'ps_version' => _PS_VERSION_,
             'frontEditorLink' => $this->context->link->getAdminLink('IqitFrontThemeEditor'),
             'current_link' => $this->context->link->getAdminLink('Admin'.$this->name),
             'formType' => 'backoffice',
@@ -92,7 +93,10 @@ class AdminIqitThemeEditorController extends ModuleAdminController
                 }
             } elseif ($default['type'] == 'html') {
                 $var[$key] = htmlspecialchars_decode (Configuration::get($this->cfgName  . $key));
-            } else {
+            } elseif ($default['type'] == 'raw') {
+                $var[$key] = htmlspecialchars_decode (Configuration::get($this->cfgName  . $key));
+            } 
+            else {
                 $var[$key] = Configuration::get($this->cfgName  . $key);
             }
         }
@@ -147,10 +151,10 @@ class AdminIqitThemeEditorController extends ModuleAdminController
                     Configuration::updateValue($this->cfgName . 'options', json_encode($var));
                     $this->content .= $this->module->generateCssAndJs();
                 }catch(Exception $ex){
-                    $this->content .= $this->module->displayError($this->l('No config file'));
+                    $this->content .= $this->module->displayError($this->module->getTranslator()->trans('No config file', [], 'Modules.Iqitthemeeditor.Admin'));
                 }
             } else {
-                $this->content .= $this->module->displayError($this->l('No config file'));
+                $this->content .= $this->module->displayError($this->module->getTranslator()->trans('No config file', [], 'Modules.Iqitthemeeditor.Admin'));
             }
         } elseif (Tools::isSubmit('saveThemeEditor')) {
             $var = array();
@@ -167,7 +171,7 @@ class AdminIqitThemeEditorController extends ModuleAdminController
                     Configuration::updateValue($this->cfgName . $key, htmlspecialchars(Tools::getValue($key)), true);
                 } elseif ($default['type'] == 'raw') {
                     if (isset($_POST[$key]))
-                        Configuration::updateValue($this->cfgName . $key, $_POST[$key]);
+                    Configuration::updateValue($this->cfgName . $key, htmlspecialchars($_POST[$key]));
                 } else {
                     Configuration::updateValue($this->cfgName . $key, Tools::getValue($key));
                 }
@@ -227,7 +231,7 @@ class AdminIqitThemeEditorController extends ModuleAdminController
     {
         if (Shop::getContext() == Shop::CONTEXT_GROUP || Shop::getContext() == Shop::CONTEXT_ALL) {
             return '<p class="alert alert-warning">' .
-            $this->l('You cannot manage module from a "All Shops" or a "Group Shop" context, select directly the shop you want to edit') .
+            $this->module->l('You cannot manage module from a "All Shops" or a "Group Shop" context, select directly the shop you want to edit') . // Khewa PS 9.2: AdminController::l() was removed, use the module translator
             '</p>';
         } else {
             return '';

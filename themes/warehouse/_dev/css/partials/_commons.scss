@@ -38,6 +38,12 @@ p {
 hr {
   border-top: 1px solid $gray-light;
 }
+.cursor-initial {
+  /* stylelint-disable */
+  cursor: initial !important;
+  /* stylelint-enable */
+}
+
 
 .rte-content {
   img {
@@ -168,6 +174,12 @@ hr {
   }
 }
 
+.grey-background{
+  background: $gray-light-bg;
+}
+.cursor-pointer{
+  cursor: pointer;
+}
 //tables
 //tables
 .table-striped tbody tr:nth-of-type(odd) {

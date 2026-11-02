@@ -149,7 +149,7 @@
 						{if $post_type != 'post' && file_exists("$tpl_path./types/$post_type/description.tpl")}
 							{include file="./types/$post_type/description.tpl"}
 						{else}
-							{if Configuration::get('PH_BLOG_DISPLAY_DESCRIPTION')}
+						
 							<div class="post-content">
 								{$post.short_content|strip_tags:'UTF-8'}
 
@@ -161,7 +161,7 @@
 								</div><!-- .post-read-more -->
 								{/if}
 							</div><!-- .post-content -->	
-							{/if}
+						
 						{/if}
 
 						{if $post_type != 'post' && file_exists("$tpl_path./types/$post_type/meta.tpl")}

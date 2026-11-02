@@ -20,29 +20,29 @@ class AdminSimpleBlogTagsController extends ModuleAdminController
 
         $this->fields_list = [
             'id_simpleblog_tag' => [
-                'title' => $this->l('ID'),
+                'title' => $this->module->getTranslator()->trans('ID', [], 'Modules.Phsimpleblog.Admin'),
                 'align' => 'center',
                 'width' => 25,
             ],
             'lang' => [
-                'title' => $this->l('Language'),
+                'title' => $this->module->getTranslator()->trans('Language', [], 'Modules.Phsimpleblog.Admin'),
                 'filter_key' => 'l!name',
                 'width' => 100,
             ],
             'name' => [
-                'title' => $this->l('Name'),
+                'title' => $this->module->getTranslator()->trans('Name', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 'auto',
                 'filter_key' => 'a!name',
             ],
             'posts' => [
-                'title' => $this->l('Posts:'),
+                'title' => $this->module->getTranslator()->trans('Posts:', [], 'Modules.Phsimpleblog.Admin'),
                 'align' => 'center',
                 'width' => 50,
                 'havingFilter' => true,
             ],
         ];
 
-        $this->bulk_actions = ['delete' => ['text' => $this->l('Delete selected'), 'confirm' => $this->l('Delete selected items?')]];
+        $this->bulk_actions = ['delete' => ['text' => $this->module->getTranslator()->trans('Delete selected', [], 'Modules.Phsimpleblog.Admin'), 'confirm' => $this->module->getTranslator()->trans('Delete selected items?', [], 'Modules.Phsimpleblog.Admin')]];
     }
 
     public function renderList()
@@ -89,18 +89,18 @@ class AdminSimpleBlogTagsController extends ModuleAdminController
 
         $this->fields_form = [
             'legend' => [
-                'title' => $this->l('Tag'),
+                'title' => $this->module->getTranslator()->trans('Tag', [], 'Modules.Phsimpleblog.Admin'),
             ],
             'input' => [
                 [
                     'type' => 'text',
-                    'label' => $this->l('Name:'),
+                    'label' => $this->module->getTranslator()->trans('Name:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'name',
                     'required' => true,
                 ],
                 [
                     'type' => 'select',
-                    'label' => $this->l('Language:'),
+                    'label' => $this->module->getTranslator()->trans('Language:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'id_lang',
                     'required' => true,
                     'options' => [
@@ -115,7 +115,7 @@ class AdminSimpleBlogTagsController extends ModuleAdminController
                 'posts_unselected' => $obj->getPosts(false),
             ],
             'submit' => [
-                'title' => $this->l('Save'),
+                'title' => $this->module->getTranslator()->trans('Save', [], 'Modules.Phsimpleblog.Admin'),
                 'class' => 'button',
             ],
         ];

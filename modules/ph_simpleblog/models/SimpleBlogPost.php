@@ -28,6 +28,11 @@ class SimpleBlogPost extends ObjectModel
     public $id_product;
     public $gallery_style;
     public $active = 1;
+    public $category_rewrite;
+    public $url;
+    public $banner_thumb;
+    public $banner_wide;
+    public $comments;
 
     public $title;
     public $meta_title;
@@ -104,7 +109,7 @@ class SimpleBlogPost extends ObjectModel
             ],
             'gallery_style' => [
                 'type' => self::TYPE_STRING,
-                'validate' => 'isAnything',
+                'validate' => 'isString',
                 'size' => 32,
             ],
             'date_add' => [
@@ -273,7 +278,7 @@ class SimpleBlogPost extends ObjectModel
         return Db::getInstance()->executeS($sql);
     }
 
-    public static function getSimplePosts($id_lang, $id_shop = null, Context $context = null, $filter = null, $selected = [])
+    public static function getSimplePosts($id_lang, $id_shop = null, ?Context $context = null, $filter = null, $selected = [])
     {
         if (!isset($context)) {
             $context = Context::getContext();
@@ -425,8 +430,16 @@ class SimpleBlogPost extends ObjectModel
             $orderway = 'DESC';
         }
 
-        $sql->orderBy($orderby . ' ' . $orderway);
+        if ($orderby == 'IN-LIST') {
+         $orderby = 'FIELD(sbp.id_simpleblog_post, ' . implode(',', $selected) . ')';
+         $sql->orderBy($orderby);
+        } else{
+            $sql->orderBy($orderby . ' ' . $orderway);
+        }
 
+
+        
+       
         $sql->limit((int) $limit, $start);
 
         $result = Db::getInstance()->executeS($sql);
@@ -487,9 +500,14 @@ class SimpleBlogPost extends ObjectModel
         return $result;
     }
 
-    public static function getLink($rewrite, $category)
-    {
-        return Context::getContext()->link->getModuleLink('ph_simpleblog', 'single', ['rewrite' => $rewrite, 'sb_category' => $category]);
+    public static function getLink($rewrite, $category, $idLang = null)
+    {   
+        if($idLang){
+            return Context::getContext()->link->getModuleLink('ph_simpleblog', 'single', ['rewrite' => $rewrite, 'sb_category' => $category], null, $idLang);
+        } else {
+            return Context::getContext()->link->getModuleLink('ph_simpleblog', 'single', ['rewrite' => $rewrite, 'sb_category' => $category]);
+        }
+       
     }
 
     public static function getSearchLink($type = 'author', $keyword = false)
@@ -893,7 +911,7 @@ class SimpleBlogPost extends ObjectModel
         $sql_groups = (count($groups) ? 'IN (' . implode(',', $groups) . ')' : '= 1');
 
         $sql = 'SELECT p.*, product_shop.*, stock.out_of_stock, IFNULL(stock.quantity, 0) as quantity, pl.`description`, pl.`description_short`, MAX(product_attribute_shop.id_product_attribute) id_product_attribute,
-                    pl.`link_rewrite`, pl.`meta_description`, pl.`meta_keywords`, pl.`meta_title`,
+                    pl.`link_rewrite`, pl.`meta_description`, pl.`meta_title`,
                     pl.`name`, MAX(image_shop.`id_image`) id_image, il.`legend`, m.`name` AS manufacturer_name,
                     DATEDIFF(
                         p.`date_add`,
@@ -1013,16 +1031,34 @@ class SimpleBlogPost extends ObjectModel
         return new SimpleBlogPostType((int) $this->id_simpleblog_post_type, (int) Context::getContext()->language->id);
     }
 
+    public function authorForJsonLd(){
+
+        if(isset($this->author->firstname)){
+            return [
+                '@type' =>  'Person',
+                'name' => $this->author->firstname . ' '. $this->author->lastname,
+                'url' => $this->author->getUrl()
+            ];
+        } else {
+            return [
+                '@type' =>  'Person',
+                'name' => $this->author,
+            ];
+        }
+
+    }
+
     public function renderJsonLd()
     {
         $context = Context::getContext();
+
 
         $json = [];
         $json['@context'] = 'http://schema.org';
         $json['@type'] = 'BlogPosting';
         $json['headline'] = $this->title;
         $json['genre'] = $this->category;
-        $json['editor'] = $this->author;
+        $json['editor'] = $this->authorForJsonLd();
         if (isset($this->tags_list)) {
             $json['keywords'] = implode(' ', $this->tags_list);
         }
@@ -1046,8 +1082,8 @@ class SimpleBlogPost extends ObjectModel
         $json['articleBody'] = strip_tags($this->content);
         $json['mainEntityOfPage'] = $context->shop->getBaseURL();
 
-        $json['author']['@type'] = 'Person';
-        $json['author']['name'] = $this->author;
+        $json['author'] = $this->authorForJsonLd();
+       
 
         $json['commentCount'] = $this->comments;
         $json['discussionUrl'] = $this->url;

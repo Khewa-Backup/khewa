@@ -27,10 +27,19 @@
         <a href="{$product.url}" class="thumbnail product-thumbnail">
 
             {if $product.cover}
+                <picture>
+                {if !empty($product.cover.bySize.home_default.sources.avif)}<source srcset="{$product.cover.bySize.home_default.sources.avif}" type="image/avif">{/if}
+                {if !empty($product.cover.bySize.home_default.sources.webp)}<source srcset="{$product.cover.bySize.home_default.sources.webp}" type="image/webp">{/if}
                 <img
                         {if $iqitTheme.pl_lazyload}
-                            data-src="{$product.cover.bySize.home_default.url}"
-                            src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20{$product.cover.bySize.home_default.width}%20{$product.cover.bySize.home_default.height}'%3E%3C/svg%3E"
+                            {if isset($carousel) && $carousel}
+                                loading="lazy"
+                                src="{$product.cover.bySize.home_default.url}"
+                            {else}
+                                data-src="{$product.cover.bySize.home_default.url}"
+                                src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20{$product.cover.bySize.home_default.width}%20{$product.cover.bySize.home_default.height}'%3E%3C/svg%3E"
+                            {/if}
+
                         {else}
                             src="{$product.cover.bySize.home_default.url}"
                         {/if}
@@ -40,28 +49,44 @@
                         height="{$product.cover.bySize.home_default.height}"
                         class="img-fluid {if $iqitTheme.pl_lazyload}{if isset($carousel) && $carousel}swiper-lazy{else}js-lazy-product-image{/if} lazy-product-image{/if} product-thumbnail-first  {if !$iqitTheme.pl_lazyload}loaded{/if}"
                 >
+                </picture>
                 {if !isset($overlay)}
                     {if $iqitTheme.pl_rollover}
                         {foreach from=$product.images item=image}
                             {if !$image.cover}
-                                <img
+                                <picture>
+                                {if !empty($image.bySize.home_default.sources.avif)}<source srcset="{$image.bySize.home_default.sources.avif}" type="image/avif">{/if}
+                                {if !empty($image.bySize.home_default.sources.webp)}<source srcset="{$image.bySize.home_default.sources.webp}" type="image/webp">{/if}
+                                <img 
+                                {if isset($carousel) && $carousel}
+                                    loading="lazy"
+                                    src="{$image.bySize.home_default.url}"
+                                {else}
                                         src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20{$product.cover.bySize.home_default.width}%20{$product.cover.bySize.home_default.height}'%3E%3C/svg%3E"
                                         data-src="{$image.bySize.home_default.url}"
+                                {/if}
+                                
                                         width="{$image.bySize.home_default.width}"
                                         height="{$image.bySize.home_default.height}"
                                         alt="{if !empty($product.cover.legend)}{$product.cover.legend}{else}{$product.name|truncate:60:'...'}{/if} 2"
+                                        {if isset($carousel) && $carousel}loading="lazy"{/if}
                                         class="img-fluid {if isset($carousel) && $carousel}swiper-lazy{else}js-lazy-product-image{/if} lazy-product-image product-thumbnail-second"
                                 >
+                                </picture>
                                 {break}
                             {/if}
                         {/foreach}
                     {/if}
                 {/if}
             {else}
+                    <picture>
+                    {if !empty($urls.no_picture_image.bySize.home_default.sources.avif)}<source srcset="{$urls.no_picture_image.bySize.home_default.sources.avif}" type="image/avif">{/if}
+                    {if !empty($urls.no_picture_image.bySize.home_default.sources.webp)}<source srcset="{$urls.no_picture_image.bySize.home_default.sources.webp}" type="image/webp">{/if}
                     <img class="img-fluid product-thumbnail-first" src="{$urls.no_picture_image.bySize.home_default.url}"
                         alt="{if !empty($product.cover.legend)}{$product.cover.legend}{else}{$product.name|truncate:60:'...'}{/if}"
                          width="{$urls.no_picture_image.bySize.home_default.width}"
                          height="{$urls.no_picture_image.bySize.home_default.height}">
+                    </picture>
             {/if}
 
         </a>
@@ -81,7 +106,7 @@
                 <div class="product-functional-buttons-links">
                     {hook h='displayProductListFunctionalButtons' product=$product}
                     {block name='quick_view'}
-                        <a class="js-quick-view-iqit" href="#" data-link-action="quickview" data-toggle="tooltip"
+                        <a class="js-quick-view-iqit" href="#" data-link-action="quickview" data-bs-toggle="tooltip"
                            title="{l s='Quick view' d='Shop.Theme.Actions'}">
                             <i class="fa fa-eye" aria-hidden="true"></i></a>
                     {/block}
@@ -93,24 +118,13 @@
         {if !isset($list)}
         {block name='product_availability'}
             <div class="product-availability d-block">
-{*                {if $product.show_availability && $product.availability_message}*}
+                {* Khewa: stock badge hidden in product lists *}
+{*{if $product.show_availability && $product.availability_message}*}
 
 {*                    <span*}
-{*                            class="badge {if $product.availability == 'available'} {if $product.quantity <= 0  && $product.allow_oosp} badge-danger product-unavailable product-unavailable-allow-oosp {else}badge-success product-available{/if}{elseif $product.availability == 'last_remaining_items'}badge-warning d-none product-last-items{else}badge-danger product-unavailable  {if $product.quantity_all_versions}product-combination-only-unavailable{/if}{/if} mt-2">*}
-{*                  {if $product.availability == 'available'}*}
-{*                      <i class="fa fa-check rtl-no-flip" aria-hidden="true"></i>*}
-{*                                                     {$product.availability_message}*}
-{*                  {elseif $product.availability == 'last_remaining_items'}*}
-{*                      <i class="fa fa-exclamation" aria-hidden="true"></i>*}
-{*                                                     {$product.availability_message}*}
-{*                  {else}*}
-{*                      <i class="fa fa-ban" aria-hidden="true"></i>*}
-{*                              {$product.availability_message}*}
-{*                      {if isset($product.available_date) && $product.available_date != '0000-00-00'}*}
-{*                      {if $product.available_date|strtotime > $smarty.now}<span*}
-{*                              class="available-date"> - {l s='Availability date:' d='Shop.Theme.Catalog'} {$product.available_date}</span>{/if}*}
-{*                  {/if}*}
-{*                  {/if}*}
+{*                            class="badge *}
+{*                        {if $product.availability == 'in_stock'} {if $product.quantity <= 0  && $product.allow_oosp} badge-danger product-unavailable product-unavailable-allow-oosp {else}badge-success product-available{/if}{elseif $product.availability == 'available' || $product.availability == 'last_remaining_items'}badge-warning d-none product-last-items{else}badge-danger product-unavailable  {if $product.quantity_all_versions}product-combination-only-unavailable{/if}{/if} mt-2">*}
+{*             {$product.availability_message}*}
 {*                </span>*}
 {*                {/if}*}
 

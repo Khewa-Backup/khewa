@@ -14,9 +14,10 @@ class AdminIqitElementorContentController extends ModuleAdminController
         $this->className = 'IqitElementorContent';
         $this->table = 'iqit_elementor_content';
 
-        $hookId = Hook::getIdByName('displayManufacturerElementor');
+         $hookManufacturerId = Hook::getIdByName('displayManufacturerElementor');
+        $hookSupplierId = Hook::getIdByName('displaySupplierElementor');
 
-        $this->_where = 'AND a.`hook` != '.(int) $hookId;
+        $this->_where = 'AND a.`hook` NOT IN ('.(int)$hookManufacturerId.', '.(int)$hookSupplierId.')';
 
         $this->addRowAction('edit');
         $this->addRowAction('delete');
@@ -27,15 +28,15 @@ class AdminIqitElementorContentController extends ModuleAdminController
         $test = array();
         $test[0] = array(
             'id' => 0,
-            'name' => $this->l('No results were found for your search.')
+            'name' => $this->module->getTranslator()->trans('No results were found for your search.', [], 'Modules.Iqitelementor.Admin')
         );
 
 
         $this->fields_list = array(
-            'id_elementor' => array('title' => $this->l('ID'), 'align' => 'center', 'class' => 'fixed-width-xs'),
-            'title' => array('title' => $this->l('Name'), 'width' => 'auto'),
-            'hook' => array('title' => $this->l('Hook'), 'width' => 'auto', 'callback' => 'formatHook'),
-            'active' => array('title' => $this->l('Active'), 'width' => 'auto', 'align' => 'center', 'type' => 'bool', 'class' => 'fixed-width-xs'),
+            'id_elementor' => array('title' => $this->module->getTranslator()->trans('ID', [], 'Modules.Iqitelementor.Admin'), 'align' => 'center', 'class' => 'fixed-width-xs'),
+            'title' => array('title' => $this->module->getTranslator()->trans('Name', [], 'Modules.Iqitelementor.Admin'), 'width' => 'auto'),
+            'hook' => array('title' => $this->module->getTranslator()->trans('Hook', [], 'Modules.Iqitelementor.Admin'), 'width' => 'auto', 'callback' => 'formatHook'),
+            'active' => array('title' => $this->module->getTranslator()->trans('Active', [], 'Modules.Iqitelementor.Admin'), 'width' => 'auto', 'align' => 'center', 'type' => 'bool', 'class' => 'fixed-width-xs'),
         );
 
         if (!$this->module->active) {
@@ -141,7 +142,7 @@ class AdminIqitElementorContentController extends ModuleAdminController
 
         $this->fields_form[0]['form'] = array(
             'legend' => array(
-                'title' => isset($landing->id) ? $this->l('Edit layout.') : $this->l('New layout'),
+                'title' => isset($landing->id) ? $this->module->getTranslator()->trans('Edit layout.', [], 'Modules.Iqitelementor.Admin') : $this->module->getTranslator()->trans('New layout', [], 'Modules.Iqitelementor.Admin'),
                 'icon' => isset($landing->id) ? 'icon-edit' : 'icon-plus-square',
             ),
             'input' => array(
@@ -151,13 +152,13 @@ class AdminIqitElementorContentController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Title of layout'),
+                    'label' => $this->module->getTranslator()->trans('Title of layout', [], 'Modules.Iqitelementor.Admin'),
                     'name' => 'title',
                     'required' => true,
                 ),
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Hook'),
+                    'label' => $this->module->getTranslator()->trans('Hook', [], 'Modules.Iqitelementor.Admin'),
                     'name' => 'hook',
                     'options' => array(
                         'query' => IqitElementorContent::getSelectableHooks(),
@@ -167,25 +168,25 @@ class AdminIqitElementorContentController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'switch',
-                    'label' => $this->l('Status'),
+                    'label' => $this->module->getTranslator()->trans('Status', [], 'Modules.Iqitelementor.Admin'),
                     'name' => 'active',
                     'is_bool' => true,
                     'values' => array(
                         array(
                             'id' => 'active_on',
                             'value' => true,
-                            'label' => $this->l('Enabled'),
+                            'label' => $this->module->getTranslator()->trans('Enabled', [], 'Modules.Iqitelementor.Admin'),
                         ),
                         array(
                             'id' => 'active_off',
                             'value' => false,
-                            'label' => $this->l('Disabled'),
+                            'label' => $this->module->getTranslator()->trans('Disabled', [], 'Modules.Iqitelementor.Admin'),
                         ),
                     ),
                 ),
                 array(
                     'type' => 'elementor_trigger',
-                    'label' => $this->l('Title of layout'),
+                    'label' => $this->module->getTranslator()->trans('Title of layout', [], 'Modules.Iqitelementor.Admin'),
                     'url'  => $url,
                 ),
                 array(
@@ -195,7 +196,7 @@ class AdminIqitElementorContentController extends ModuleAdminController
             ),
             'buttons' => array(
                 'cancelBlock' => array(
-                    'title' => $this->l('Cancel'),
+                    'title' => $this->module->getTranslator()->trans('Cancel', [], 'Modules.Iqitelementor.Admin'),
                     'href' => (Tools::safeOutput(Tools::getValue('back', false)))
                         ?: $this->context->link->getAdminLink('Admin' . $this->name),
                     'icon' => 'process-icon-cancel',
@@ -203,7 +204,7 @@ class AdminIqitElementorContentController extends ModuleAdminController
             ),
             'submit' => array(
                 'name' => 'submit' . $this->className,
-                'title' => $this->l('Save and stay'),
+                'title' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Iqitelementor.Admin'),
             ),
         );
 
@@ -249,14 +250,14 @@ class AdminIqitElementorContentController extends ModuleAdminController
 
     public function initToolBarTitle()
     {
-        $this->toolbar_title[] = $this->l('Content on hooks');
+        $this->toolbar_title[] = $this->module->getTranslator()->trans('Content on hooks', [], 'Modules.Iqitelementor.Admin');
     }
 
     protected function getWarningMultishopHtml()
     {
         if (Shop::getContext() == Shop::CONTEXT_GROUP || Shop::getContext() == Shop::CONTEXT_ALL) {
             return '<p class="alert alert-warning">' .
-            $this->l('You cannot manage module from a "All Shops" or a "Group Shop" context, select directly the shop you want to edit') .
+            $this->module->l('You cannot manage module from a "All Shops" or a "Group Shop" context, select directly the shop you want to edit') . // Khewa PS 9.2: AdminController::l() was removed, use the module translator
             '</p>';
         } else {
             return '';

@@ -23,13 +23,13 @@ function upgrade_module_1_3_1_0($object)
         `position` int(10) UNSIGNED NOT NULL,
         `image` varchar(255) NOT NULL,
         PRIMARY KEY (`id_simpleblog_post_image`)
-    ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
+    ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4';
 
     $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'simpleblog_post_product` (
         `id_simpleblog_post` INT( 11 ) UNSIGNED NOT NULL,
         `id_product` INT( 11 ) UNSIGNED NOT NULL,
         PRIMARY KEY (`id_simpleblog_post`,`id_product`)
-    ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
+    ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4';
 
     /*
         

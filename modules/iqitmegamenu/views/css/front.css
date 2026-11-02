@@ -230,6 +230,7 @@ body{
       display: inline-block; }
       .cbp-hrmenu .cbp-links li a:before {
         content: "\f105";
+        font-size: 9px;
         display: inline;
         font-family: "FontAwesome";
         position: absolute;

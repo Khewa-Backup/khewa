@@ -24,7 +24,8 @@
 *}
 <div class="elementor-links">
     <div class="block  block-links">
-        {if $title}<h5 class="{$title_style} elementor-block-title"><span>{$title}</span></h5>{/if}
+
+        {if $title}<h5 class="{$title_style} elementor-block-title">{if $link.url}<a href="{$link.url}" {if $link.is_external}target="_blank"{/if}>{/if}<span>{$title}</span>{if $link.url}</a>{/if}</h5>{/if}
         <div class="block-content">
             <ul>
                 {foreach $links as $link}

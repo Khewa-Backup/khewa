@@ -32,9 +32,17 @@
 
                 <a href="{$product.url}" data-id_customization="{$product.id_customization|intval}">
                     {if $product.default_image}
+                        <picture>
+                        {if !empty($product.default_image.small.sources.avif)}<source srcset="{$product.default_image.small.sources.avif}" type="image/avif">{/if}
+                        {if !empty($product.default_image.small.sources.webp)}<source srcset="{$product.default_image.small.sources.webp}" type="image/webp">{/if}
                         <img src="{$product.default_image.bySize.cart_default.url}" alt="{$product.name|escape:'quotes'}"  class="img-fluid" loading="lazy">
+                        </picture>
                     {else}
-                        <img src="{$urls.no_picture_image.bySize.cart_default.url}" class="img-fluid"  loading="lazy" />
+                        <picture>
+                        {if !empty($urls.no_picture_image.bySize.small_default.sources.avif)}<source srcset="{$urls.no_picture_image.bySize.small_default.sources.avif}" type="image/avif">{/if}
+                        {if !empty($urls.no_picture_image.bySize.small_default.sources.webp)}<source srcset="{$urls.no_picture_image.bySize.small_default.sources.webp}" type="image/webp">{/if}
+                        <img src="{$urls.no_picture_image.bySize.small_default.url}" class="img-fluid" loading="lazy" />
+                        </picture>
                     {/if}
 
                 </a>
@@ -56,11 +64,11 @@
                 {if is_array($product.customizations) && $product.customizations|count}
                     {block name='cart_detailed_product_line_customization'}
                         {foreach from=$product.customizations item="customization"}
-                            <a href="#" data-toggle="modal"
-                               data-target="#product-customizations-modal-{$customization.id_customization}"
+                            <a href="#" data-bs-toggle="modal"
+                               data-bs-target="#product-customizations-modal-{$customization.id_customization}"
                                class="product-line-info-secondary text-muted">{l s='Product customization' d='Shop.Theme.Catalog'}
                                 <i class="fa fa-external-link" aria-hidden="true"></i></a>
-                            <div class="modal fade customization-modal"
+                            <div class="modal fade customization-modal js-customization-modal"
                                  id="product-customizations-modal-{$customization.id_customization}" tabindex="-1"
                                  role="dialog"
                                  aria-hidden="true">
@@ -68,7 +76,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <span class="modal-title">{l s='Product customization' d='Shop.Theme.Catalog'}</span>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="{l s='Close' d='Shop.Theme.Global'}">
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="{l s='Close' d='Shop.Theme.Global'}">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -172,7 +180,7 @@
                             data-link-action="delete-from-cart"
                             data-id-product="{$product.id_product|escape:'javascript'}"
                             data-id-product-attribute="{$product.id_product_attribute|escape:'javascript'}"
-                            data-id-customization="{$product.id_customization|escape:'javascript'}"
+                            data-id-customization="{$product.id_customization|default|escape:'javascript'}"
                     >
                         {if empty($product.is_gift)}
                             <i class="fa fa-trash-o" aria-hidden="true"></i>

@@ -76,14 +76,19 @@ class IqitProductsNav extends Module implements WidgetInterface
             $hookName = $configuration['hook'];
         }
 
+        $links = array();
+
         $id_product = (int) $configuration['smarty']->tpl_vars['product']->value['id_product'];
         $id_category_default = (int) $configuration['smarty']->tpl_vars['product']->value['id_category_default'];
         $position = $this->getPositionInCategory($id_product, $id_category_default);
+        
+        if($position == 0){
+            return;
+        }
 
         $previous = $this->getPreviousInCategory($position, $id_category_default);
         $next = $this->getNextInCategory($position, $id_category_default);
 
-        $links = array();
 
         if (isset($next) && $next > 0) {
             $idProductAttribute = Product::getDefaultAttribute($next);
@@ -95,21 +100,7 @@ class IqitProductsNav extends Module implements WidgetInterface
                 null,
                 $idProductAttribute);
             $links['next'] = $next;
-        } else{
-            $first = $this->getFirstInCategory($position, $id_category_default);
-            $idProductAttribute = Product::getDefaultAttribute($first);
-            if (isset($first) && $first > 0) {
-                $first = $this->context->link->getProductLink($first,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    $idProductAttribute);
-                $links['next'] = $first;
-            }
-        }
-
+        } 
         if (isset($previous) && $previous > 0) {
             $idProductAttribute = Product::getDefaultAttribute($previous);
             $previous = $this->context->link->getProductLink($previous,
@@ -120,20 +111,7 @@ class IqitProductsNav extends Module implements WidgetInterface
                 null,
                 $idProductAttribute);
             $links['previous'] = $previous;
-        } else{
-            $last = $this->getLastInCategory($position, $id_category_default);
-            $idProductAttribute = Product::getDefaultAttribute($last);
-            if (isset($last) && $last > 0) {
-                $last = $this->context->link->getProductLink($last,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    $idProductAttribute);
-                $links['previous'] = $last;
-            }
-        }
+        } 
         return $links;
     }
 
@@ -143,6 +121,10 @@ class IqitProductsNav extends Module implements WidgetInterface
             FROM `'._DB_PREFIX_.'category_product`
             WHERE id_category = '.(int)$id_category.'
             AND id_product = '.(int)$id_product);
+
+        if(!isset($result['position'])){
+            $result['position'] = 0;
+        } 
         return (int) $result['position'];
     }
 

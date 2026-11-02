@@ -656,7 +656,7 @@ class Widget_Testimonial extends Widget_Base {
         ?>
 
         <div class="elementor-testimonial-carousel-wrapper swiper-overflow swiper-arrows-<?php echo $instance['arrows_position'] ?>">
-            <div class="<?php echo implode( ' ', $carousel_classes ); ?> swiper-container  <?php echo implode( ' ', $cls_fix_classes); ?>" data-slider_options='<?php echo json_encode( $swiper_options ); ?>'>
+            <div class="<?php echo implode( ' ', $carousel_classes ); ?> swiper swiper-container  <?php echo implode( ' ', $cls_fix_classes); ?>" data-slider_options='<?php echo json_encode( $swiper_options ); ?>'>
                 <div class="swiper-wrapper">
                 <?php foreach ( $instance['testimonials_list']as $item ) : ?>
                     <div class="swiper-slide"><div class="swiper-slide-inner">

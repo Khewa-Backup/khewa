@@ -24,16 +24,17 @@ if (!defined('_PS_VERSION_')) {
 class IqitFreeDeliveryCount extends Module implements WidgetInterface
 {
     protected $config_form = false;
+    public $cfgName;
+    public $defaults;
 
 
     public function __construct()
     {
         $this->name = 'iqitfreedeliverycount';
         $this->tab = 'administration';
-        $this->version = '1.4.1';
+        $this->version = '1.4.2';
         $this->author = 'iqit-commerce.com';
         $this->need_instance = 0;
-        $this->module_key = '834065271d1b45780b9a539963f2b3d7';
         $this->bootstrap = true;
         parent::__construct();
 
@@ -62,7 +63,7 @@ class IqitFreeDeliveryCount extends Module implements WidgetInterface
         parent::install();
         $this->setDefaults();
         $this->registerHook('displayCartAjaxInfo');
-        $this->registerHook('header');
+        $this->registerHook('displayHeader');
         return true;
     }
 
@@ -212,7 +213,7 @@ class IqitFreeDeliveryCount extends Module implements WidgetInterface
         }
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         if (Configuration::get($this->cfgName . 'custom_status')) {
             $free_ship_from = Tools::convertPrice(
@@ -238,7 +239,7 @@ class IqitFreeDeliveryCount extends Module implements WidgetInterface
         if ($this->context->cart->isVirtualCart()){
             return;
         }
-
+        $templateFile = 'iqitfreedeliverycount.tpl';
         if (preg_match('/^displayCartAjaxInfo\d*$/', $hookName)) {
             $templateFile = 'iqitfreedeliverycount.tpl';
         }

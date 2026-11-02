@@ -28,30 +28,42 @@
         {include file='catalog/_partials/product-flags.tpl'}
 
 
-        <div id="product-images-large" class="product-images-large swiper-container column-images">
+
+
+
+
+        <div id="product-images-large" class="product-images-large swiper swiper-container column-images">
             <div id="swiper-wrapper-column-images" class="swiper-wrapper">
+            {hook h='displayAsFirstProductImage' product=$product imageCarusel='large'}
                 {if $product.images}
                     {foreach from=$product.images item=image name=covers}
                         <div class="product-lmage-large swiper-slide  {if $image.id_image == $product.default_image.id_image} js-thumb-selected{/if}">
                             <div class="easyzoom easyzoom-product">
-                                <a href="{$image.large.url}" class="js-easyzoom-trigger" rel="nofollow"></a>
+                                <a href="{if !empty($image.large.sources.webp)}{$image.large.sources.webp}{elseif !empty($image.large.sources.avif)}{$image.large.sources.avif}{else}{$image.large.url}{/if}" class="js-easyzoom-trigger" rel="nofollow"></a>
                             </div>
-                            {if $product.images}<a class="expander" data-toggle="modal"  data-image-large-src="{$image.large.url}" data-target="#product-modal"><span><i class="fa fa-expand" aria-hidden="true"></i></span></a>{/if}
+                            {if $product.images}<a class="expander" data-bs-toggle="modal"  data-image-large-src="{$image.large.url}" data-bs-target="#product-modal"><span><i class="fa fa-expand" aria-hidden="true"></i></span></a>{/if}
+                            <picture>
+                            {if !empty($image.bySize.large_default.sources.avif)}<source srcset="{$image.bySize.large_default.sources.avif}" type="image/avif">{/if}
+                            {if !empty($image.bySize.large_default.sources.webp)}<source srcset="{$image.bySize.large_default.sources.webp}" type="image/webp">{/if}
                             <img
-                                    data-src="{$image.bySize.large_default.url}"
-                                    data-image-large-src="{$image.large.url}"
+                                    src="{$image.bySize.large_default.url}"
+                                    data-image-large-src="{$image.large.url}" {if !empty($image.large.sources)}data-image-large-sources="{$image.large.sources|@json_encode}"{/if}
                                     alt="{if !empty($image.legend)}{$image.legend}{else}{$product.name|truncate:40:'...'}{/if}"
                                     title="{if !empty($image.legend)}{$image.legend}{else}{$product.name|truncate:40:'...'}{/if}"
                                     content="{$image.bySize.large_default.url}"
                                     width="{$image.bySize.large_default.width}"
                                     height="{$image.bySize.large_default.height}"
-                                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {$image.bySize.large_default.width} {$image.bySize.large_default.height}'%3E%3C/svg%3E"
+                                     loading="lazy"
                                     class="img-fluid swiper-lazy js-lazy-product-image"
                             >
+                            </picture>
                         </div>
                     {/foreach}
                 {else}
                     <div class="swiper-slide">
+                        <picture>
+                        {if !empty($urls.no_picture_image.bySize.large_default.sources.avif)}<source srcset="{$urls.no_picture_image.bySize.large_default.sources.avif}" type="image/avif">{/if}
+                        {if !empty($urls.no_picture_image.bySize.large_default.sources.webp)}<source srcset="{$urls.no_picture_image.bySize.large_default.sources.webp}" type="image/webp">{/if}
                         <img src="{$urls.no_picture_image.bySize.large_default.url}"
                              data-image-large-src="{$urls.no_picture_image.large.url}"
                              content="{$urls.no_picture_image.bySize.large_default.url}"
@@ -60,8 +72,10 @@
                              alt="{$product.name|truncate:40:'...'}"
                              class="img-fluid"
                         >
+                        </picture>
                     </div>
                 {/if}
+                {hook h='displayAsLastProductImage' product=$product imageCarusel='large'}
             </div>
             <div class="swiper-button-prev swiper-button-inner-prev swiper-button-arrow no-quick-view-d-md-none"></div>
             <div class="swiper-button-next swiper-button-inner-next swiper-button-arrow no-quick-view-d-md-none"></div>

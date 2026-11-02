@@ -26,7 +26,7 @@
 <div class="cart-summary-products js-cart-summary-products">
 
     <div>{$cart.summary_string}
-        <a href="#" data-toggle="collapse" class="text-muted pull-right" data-target="#cart-summary-product-list">
+        <a href="#" data-bs-toggle="collapse" class="text-muted pull-right" data-bs-target="#cart-summary-product-list">
             {l s='show details' d='Shop.Theme.Actions'} <i class="fa fa-angle-down" aria-hidden="true"></i>
         </a>
     </div>

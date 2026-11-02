@@ -88,7 +88,7 @@
                 {/block}
 
                 {block name="left_column"}
-                        <div id="left-column" class="col-12 col-md-3 {if $iqitTheme.g_sidebars_width == 'narrow'}col-lg-2{/if} order-first">
+                        <div id="left-column" class="col-12 col-md-3 {if $iqitTheme.g_sidebars_width == 'narrow'}col-lg-2{/if} order-md-first">
                             {if $iqitTheme.h_layout != 6 && $iqitTheme.h_layout != 7}{hook h="displayVerticalMenu"}{/if}
                             {hook h="displayLeftColumn"}
                         </div>
@@ -117,6 +117,7 @@
 </main>
 
 {block name='javascript_bottom'}
+    {include file="_partials/password-policy-template.tpl"}
     {include file="_partials/javascript.tpl" javascript=$javascript.bottom}
 {/block}
 

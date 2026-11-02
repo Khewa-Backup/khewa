@@ -33,83 +33,83 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
 
         parent::__construct();
 
-        $this->displayInformations = $this->l('Some option may be available after saving post');
+        $this->displayInformations = $this->module->getTranslator()->trans('Some option may be available after saving post', [], 'Modules.Phsimpleblog.Admin');
 
         $this->bulk_actions = [
             'delete' => [
-                'text' => $this->l('Delete selected'),
-                'confirm' => $this->l('Delete selected items?'),
+                'text' => $this->module->getTranslator()->trans('Delete selected', [], 'Modules.Phsimpleblog.Admin'),
+                'confirm' => $this->module->getTranslator()->trans('Delete selected items?', [], 'Modules.Phsimpleblog.Admin'),
             ],
-            'enableSelection' => ['text' => $this->l('Enable selection')],
-            'disableSelection' => ['text' => $this->l('Disable selection')],
+            'enableSelection' => ['text' => $this->module->getTranslator()->trans('Enable selection', [], 'Modules.Phsimpleblog.Admin')],
+            'disableSelection' => ['text' => $this->module->getTranslator()->trans('Disable selection', [], 'Modules.Phsimpleblog.Admin')],
         ];
 
         $this->fields_list = [
             'id_simpleblog_post' => [
-                'title' => $this->l('ID'),
+                'title' => $this->module->getTranslator()->trans('ID', [], 'Modules.Phsimpleblog.Admin'),
                 'align' => 'center',
                 'width' => 30,
             ],
             'post_type' => [
-                'title' => $this->l('Type'),
+                'title' => $this->module->getTranslator()->trans('Type', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 'auto',
                 'filter_key' => 'sbpt!name',
             ],
             'cover' => [
-                'title' => $this->l('Post thumbnail'),
+                'title' => $this->module->getTranslator()->trans('Post thumbnail', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 150,
                 'orderby' => false,
                 'search' => false,
                 'callback' => 'getPostThumbnail',
             ],
             'category' => [
-                'title' => $this->l('Category'),
+                'title' => $this->module->getTranslator()->trans('Category', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 'auto',
                 'filter_key' => 'sbcl!name',
             ],
             'title' => [
-                'title' => $this->l('Title'),
+                'title' => $this->module->getTranslator()->trans('Title', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 'auto',
                 'filter_key' => 'b!title',
             ],
             'short_content' => [
-                'title' => $this->l('Description'),
+                'title' => $this->module->getTranslator()->trans('Description', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 500,
                 'orderby' => false,
                 'callback' => 'getDescriptionClean',
             ],
             'views' => [
-                'title' => $this->l('Views'),
+                'title' => $this->module->getTranslator()->trans('Views', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 30,
                 'align' => 'center',
                 'search' => false,
             ],
             'likes' => [
-                'title' => $this->l('Likes'),
+                'title' => $this->module->getTranslator()->trans('Likes', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 30,
                 'align' => 'center',
                 'search' => false,
             ],
             'is_featured' => [
-                'title' => $this->l('Featured?'),
+                'title' => $this->module->getTranslator()->trans('Featured?', [], 'Modules.Phsimpleblog.Admin'),
                 'orderby' => false,
                 'align' => 'center',
                 'type' => 'bool',
                 'active' => 'is_featured',
             ],
             'date_add' => [
-                'title' => $this->l('Publication date'),
+                'title' => $this->module->getTranslator()->trans('Publication date', [], 'Modules.Phsimpleblog.Admin'),
                 'type' => 'date',
                 'filter_key' => 'a!date_add',
             ],
             'active' => [
-                'title' => $this->l('Displayed'), 'width' => 25, 'active' => 'status',
+                'title' => $this->module->getTranslator()->trans('Displayed', [], 'Modules.Phsimpleblog.Admin'), 'width' => 25, 'active' => 'status',
                 'align' => 'center', 'type' => 'bool', 'orderby' => false,
             ],
         ];
 
         if (!Tools::getValue('id_simpleblog_post', 0)) {
-            $this->informations[] = $this->l('You can view blog here: ') . '<a href="' . ph_simpleblog::getLink() . '" title="" class="_blank">' . ph_simpleblog::getLink() . '</a>';
+            $this->informations[] = $this->module->getTranslator()->trans('You can view blog here: ', [], 'Modules.Phsimpleblog.Admin') .  ph_simpleblog::getLink() ;
         }
     }
 
@@ -184,22 +184,22 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
         $this->toolbar_btn['save-and-stay'] = [
             'short' => 'SaveAndStay',
             'href' => '#',
-            'desc' => $this->l('Save and stay'),
+            'desc' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Phsimpleblog.Admin'),
         ];
         $this->toolbar_btn['back'] = [
             'href' => self::$currentIndex . '&token=' . Tools::getValue('token'),
-            'desc' => $this->l('Back to list'),
+            'desc' => $this->module->getTranslator()->trans('Back to list', [], 'Modules.Phsimpleblog.Admin'),
         ];
     }
 
     public function initPageHeaderToolbar()
     {
-        $this->page_header_toolbar_title = $this->l('Posts');
+        $this->page_header_toolbar_title = $this->module->getTranslator()->trans('Posts', [], 'Modules.Phsimpleblog.Admin');
 
         if ($this->display == 'add' || $this->display == 'edit') {
             $this->page_header_toolbar_btn['back_to_list'] = [
                 'href' => Context::getContext()->link->getAdminLink('AdminSimpleBlogPosts'),
-                'desc' => $this->l('Back to list', null, null, false),
+                'desc' => $this->module->getTranslator()->trans('Back to list', [], 'Modules.Phsimpleblog.Admin'),
                 'icon' => 'process-icon-back',
             ];
 
@@ -212,7 +212,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
 
                 $this->page_header_toolbar_btn['preview_post'] = [
                     'href' => Context::getContext()->link->getModuleLink('ph_simpleblog', 'single', ['rewrite' => $SimpleBlogPost->link_rewrite, 'sb_category' => $SimpleBlogPost->category_rewrite]),
-                    'desc' => $this->l('View post', null, null, false),
+                    'desc' => $this->module->getTranslator()->trans('View post', [], 'Modules.Phsimpleblog.Admin'),
                     'icon' => 'process-icon-preview',
                     'target' => true,
                 ];
@@ -222,13 +222,13 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
         if (!isset($this->display)) {
             $this->page_header_toolbar_btn['new_post'] = [
                 'href' => self::$currentIndex . '&addsimpleblog_post&token=' . $this->token,
-                'desc' => $this->l('Add new post', null, null, false),
+                'desc' => $this->module->getTranslator()->trans('Add new post', [], 'Modules.Phsimpleblog.Admin'),
                 'icon' => 'process-icon-new',
             ];
 
             $this->page_header_toolbar_btn['go_to_blog'] = [
                 'href' => ph_simpleblog::getLink(),
-                'desc' => $this->l('Go to blog', null, null, false),
+                'desc' => $this->module->getTranslator()->trans('Go to blog', [], 'Modules.Phsimpleblog.Admin'),
                 'icon' => 'process-icon-plus',
                 'target' => true,
             ];
@@ -318,18 +318,18 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
 
         $authors = [];
         $authors = SimpleBlogPostAuthor::getAll();
-        array_unshift($authors, ['name' => $this->l('Custom'), 'id_simpleblog_author' => 0]);
+        array_unshift($authors, ['name' => $this->module->getTranslator()->trans('Custom', [], 'Modules.Phsimpleblog.Admin'), 'id_simpleblog_author' => 0]);
 
         $i = 0;
         $this->fields_form[$i]['form'] = [
             'legend' => [
-                'title' => $this->l('Post'),
+                'title' => $this->module->getTranslator()->trans('Post', [], 'Modules.Phsimpleblog.Admin'),
                 'icon' => 'icon-folder-close',
             ],
             'input' => [
                 [
                     'type' => 'select',
-                    'label' => $this->l('Post type:'),
+                    'label' => $this->module->getTranslator()->trans('Post type:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'id_simpleblog_post_type',
                     'required' => true,
                     'options' => [
@@ -340,7 +340,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                 ],
                 [
                     'type' => 'select',
-                    'label' => $this->l('Category:'),
+                    'label' => $this->module->getTranslator()->trans('Category:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'id_simpleblog_category',
                     'required' => true,
                     'options' => [
@@ -351,7 +351,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                 ],
                 [
                     'type' => 'select',
-                    'label' => $this->l('Post author:'),
+                    'label' => $this->module->getTranslator()->trans('Post author:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'id_simpleblog_author',
                     'required' => false,
                     'options' => [
@@ -362,13 +362,13 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->l('Author:'),
+                    'label' => $this->module->getTranslator()->trans('Author:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'author',
                     'form_group_class' => 'post_author',
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->l('Title:'),
+                    'label' => $this->module->getTranslator()->trans('Title:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'title',
                     'required' => true,
                     'lang' => true,
@@ -377,7 +377,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                 ],
                 [
                     'type' => 'textarea',
-                    'label' => $this->l('Short content:'),
+                    'label' => $this->module->getTranslator()->trans('Short content:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'short_content',
                     'lang' => true,
                     'rows' => 5,
@@ -386,7 +386,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                 ],
                 [
                     'type' => 'textarea',
-                    'label' => $this->l('Full post content:'),
+                    'label' => $this->module->getTranslator()->trans('Full post content:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'content',
                     'lang' => true,
                     'rows' => 15,
@@ -395,21 +395,21 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                 ],
                 [
                     'type' => 'elementor-button',
-                    'label' => $this->l(''),
+                    'label' => $this->module->getTranslator()->trans('', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'elementor-button',
                     'id',
                 ],
                 [
                     'type' => 'tags',
-                    'label' => $this->l('Tags:'),
-                    'desc' => $this->l('separate by comma for eg. ipod, apple, something'),
+                    'label' => $this->module->getTranslator()->trans('Tags:', [], 'Modules.Phsimpleblog.Admin'),
+                    'desc' => $this->module->getTranslator()->trans('separate by comma for eg. ipod, apple, something', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'tags',
                     'required' => false,
                     'lang' => true,
                 ],
                 [
                     'type' => 'switch',
-                    'label' => $this->l('Featured?'),
+                    'label' => $this->module->getTranslator()->trans('Featured?', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'is_featured',
                     'required' => false,
                     'class' => 't',
@@ -418,18 +418,18 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                         [
                             'id' => 'is_featured_on',
                             'value' => 1,
-                            'label' => $this->l('Yes'),
+                            'label' => $this->module->getTranslator()->trans('Yes', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                         [
                             'id' => 'is_featured_off',
                             'value' => 0,
-                            'label' => $this->l('No'),
+                            'label' => $this->module->getTranslator()->trans('No', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                     ],
                 ],
                 [
                     'type' => 'switch',
-                    'label' => $this->l('Displayed:'),
+                    'label' => $this->module->getTranslator()->trans('Displayed:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'active',
                     'required' => false,
                     'class' => 't',
@@ -438,18 +438,18 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                         [
                             'id' => 'active_on',
                             'value' => 1,
-                            'label' => $this->l('Enabled'),
+                            'label' => $this->module->getTranslator()->trans('Enabled', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => 0,
-                            'label' => $this->l('Disabled'),
+                            'label' => $this->module->getTranslator()->trans('Disabled', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                     ],
                 ],
                 [
                     'type' => 'radio',
-                    'label' => $this->l('Allow comments?'),
+                    'label' => $this->module->getTranslator()->trans('Allow comments?', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'allow_comments',
                     'required' => false,
                     'class' => 't',
@@ -457,23 +457,23 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                         [
                             'id' => 'allow_comments_1',
                             'value' => 1,
-                            'label' => $this->l('Yes'),
+                            'label' => $this->module->getTranslator()->trans('Yes', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                         [
                             'id' => 'allow_comments_2',
                             'value' => 2,
-                            'label' => $this->l('No'),
+                            'label' => $this->module->getTranslator()->trans('No', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                         [
                             'id' => 'allow_comments_3',
                             'value' => 3,
-                            'label' => $this->l('Use global setting'),
+                            'label' => $this->module->getTranslator()->trans('Use global setting', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                     ],
                 ],
             ],
             'submit' => [
-                'title' => $this->l('Save and stay'),
+                'title' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Phsimpleblog.Admin'),
                 'stay' => true,
             ],
         ];
@@ -501,54 +501,54 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
 
             $description = '';
             if ($obj->post_type == 'post') {
-                $description = $this->l('Specific post type options are not available for default "Post" type. Change post type to see additional options.');
+                $description = $this->module->getTranslator()->trans('Specific post type options are not available for default "Post" type. Change post type to see additional options.', [], 'Modules.Phsimpleblog.Admin');
             }
 
             $gallery_styles = [];
             $gallery_styles[] = [
                 'value' => '2columns',
-                'label' => $this->l('2 columns')
+                'label' => $this->module->getTranslator()->trans('2 columns', [], 'Modules.Phsimpleblog.Admin')
             ];
             $gallery_styles[] = [
                 'value' => '3columns',
-                'label' => $this->l('3 columns')
+                'label' => $this->module->getTranslator()->trans('3 columns', [], 'Modules.Phsimpleblog.Admin')
             ];
             $gallery_styles[] = [
                 'value' => '4columns',
-                'label' => $this->l('4 columns')
+                'label' => $this->module->getTranslator()->trans('4 columns', [], 'Modules.Phsimpleblog.Admin')
             ];
             $gallery_styles[] = [
                 'value' => 'masonry',
-                'label' => $this->l('Masonry (Pinterest like) gallery')
+                'label' => $this->module->getTranslator()->trans('Masonry (Pinterest like) gallery', [], 'Modules.Phsimpleblog.Admin')
             ];
         
             $this->fields_form[$i]['form'] = [
                 'legend' => [
-                    'title' => $this->l('Post type options'),
+                    'title' => $this->module->getTranslator()->trans('Post type options', [], 'Modules.Phsimpleblog.Admin'),
                     'icon' => 'icon-folder-close',
                 ],
                 'description' => $description,
                 'input' => [
                     [
                         'type' => 'text',
-                        'label' => $this->l('External URL:'),
+                        'label' => $this->module->getTranslator()->trans('External URL:', [], 'Modules.Phsimpleblog.Admin'),
                         'name' => 'external_url',
                         'form_group_class' => 'simpleblog-post-type simpleblog-post-type-' . SimpleBlogPostType::getIdBySlug('url'),
                         'lang' => true,
                     ],
                     [
                         'type' => 'textarea',
-                        'label' => $this->l('Video embed code:'),
+                        'label' => $this->module->getTranslator()->trans('Video embed code:', [], 'Modules.Phsimpleblog.Admin'),
                         'name' => 'video_code',
                         'lang' => true,
                         'form_group_class' => 'simpleblog-post-type simpleblog-post-type-' . SimpleBlogPostType::getIdBySlug('video'),
-                        'desc' => $this->l('Remember to "Allow iframes on HTML fields" in Preferences -> General'),
+                        'desc' => $this->module->getTranslator()->trans('Remember to "Allow iframes on HTML fields" in Preferences -> General', [], 'Modules.Phsimpleblog.Admin'),
                     ],
                     [
                         'type' => 'select',
                         'name' => 'gallery_style',
                         'class' => 'fixed-width-xxl',
-                        'label' => $this->l('Choose how to display your gallery'),
+                        'label' => $this->module->getTranslator()->trans('Choose how to display your gallery', [], 'Modules.Phsimpleblog.Admin'),
                         'form_group_class' => 'simpleblog-post-type simpleblog-post-type-'.SimpleBlogPostType::getIdBySlug('gallery'),
                         'options' => [
                             'id' => 'value',
@@ -561,14 +561,14 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                         'multiple' => true,
                         'ajax' => true,
                         'name' => 'post_images',
-                        'label' => $this->l('Add images to gallery'),
+                        'label' => $this->module->getTranslator()->trans('Add images to gallery', [], 'Modules.Phsimpleblog.Admin'),
                         'required' => false,
                         'lang' => false,
                         'form_group_class' => 'simpleblog-post-type simpleblog-post-type-' . SimpleBlogPostType::getIdBySlug('gallery'),
                     ],
                 ],
                 'submit' => [
-                    'title' => $this->l('Save and stay'),
+                    'title' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Phsimpleblog.Admin'),
                     'stay' => true,
                 ],
             ];
@@ -576,37 +576,37 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
         } else {
             $this->fields_form[$i]['form'] = [
                 'legend' => [
-                    'title' => $this->l('Post type options'),
+                    'title' => $this->module->getTranslator()->trans('Post type options', [], 'Modules.Phsimpleblog.Admin'),
                     'icon' => 'icon-folder-close',
                 ],
-                'description' => $this->l('Specific post type options will be available after saving post'),
+                'description' => $this->module->getTranslator()->trans('Specific post type options will be available after saving post', [], 'Modules.Phsimpleblog.Admin'),
             ];
             ++$i;
         }
 
         $this->fields_form[$i]['form'] = [
             'legend' => [
-                'title' => $this->l('Post Images'),
+                'title' => $this->module->getTranslator()->trans('Post Images', [], 'Modules.Phsimpleblog.Admin'),
                 'icon' => 'icon-picture',
             ],
             'input' => [
                 [
                     'type' => 'file',
-                    'label' => $this->l('Post cover:'),
+                    'label' => $this->module->getTranslator()->trans('Post cover:', [], 'Modules.Phsimpleblog.Admin'),
                     'display_image' => true,
                     'name' => 'cover',
-                    'desc' => $this->l('Upload a image from your computer.'),
+                    'desc' => $this->module->getTranslator()->trans('Upload a image from your computer.', [], 'Modules.Phsimpleblog.Admin'),
                 ],
                 [
                     'type' => 'file',
-                    'label' => $this->l('Post featured image:'),
+                    'label' => $this->module->getTranslator()->trans('Post featured image:', [], 'Modules.Phsimpleblog.Admin'),
                     'display_image' => true,
                     'name' => 'featured',
-                    'desc' => $this->l('Upload a image from your computer. Featured image will be displayed only if you want on the single post page.'),
+                    'desc' => $this->module->getTranslator()->trans('Upload a image from your computer. Featured image will be displayed only if you want on the single post page.', [], 'Modules.Phsimpleblog.Admin'),
                 ],
             ],
             'submit' => [
-                'title' => $this->l('Save and stay'),
+                'title' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Phsimpleblog.Admin'),
                 'stay' => true,
             ],
         ];
@@ -627,12 +627,12 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
 
         $this->fields_form[$i]['form'] = [
             'legend' => [
-                'title' => $this->l('Related products'),
+                'title' => $this->module->getTranslator()->trans('Related products', [], 'Modules.Phsimpleblog.Admin'),
             ],
             'input' => [
                 [
                     'type' => 'select',
-                    'label' => $this->l('Product:'),
+                    'label' => $this->module->getTranslator()->trans('Product:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'id_product[]',
                     'id' => 'select_product',
                     'multiple' => true,
@@ -645,7 +645,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                 ],
             ],
             'submit' => [
-                'title' => $this->l('Save and stay'),
+                'title' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Phsimpleblog.Admin'),
                 'stay' => true,
             ],
         ];
@@ -655,45 +655,45 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
 
         $this->fields_form[$i]['form'] = [
             'legend' => [
-                'title' => $this->l('SEO'),
+                'title' => $this->module->getTranslator()->trans('SEO', [], 'Modules.Phsimpleblog.Admin'),
                 'icon' => 'icon-folder-close',
             ],
             'input' => [
                 [
                     'type' => 'text',
-                    'label' => $this->l('Meta title:'),
+                    'label' => $this->module->getTranslator()->trans('Meta title:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'meta_title',
                     'lang' => true,
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->l('Meta description:'),
+                    'label' => $this->module->getTranslator()->trans('Meta description:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'meta_description',
                     'lang' => true,
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->l('Meta keywords:'),
+                    'label' => $this->module->getTranslator()->trans('Meta keywords:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'meta_keywords',
                     'lang' => true,
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->l('Friendly URL:'),
+                    'label' => $this->module->getTranslator()->trans('Friendly URL:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'link_rewrite',
                     'required' => true,
                     'lang' => true,
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->l('Type canonical tag'),
+                    'label' => $this->module->getTranslator()->trans('Type canonical tag', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'canonical',
-                    'hint' => $this->l('Leave empty if you want to left original post URL'),
+                    'hint' => $this->module->getTranslator()->trans('Leave empty if you want to left original post URL', [], 'Modules.Phsimpleblog.Admin'),
                     'lang' => true,
                 ],
             ],
             'submit' => [
-                'title' => $this->l('Save and stay'),
+                'title' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Phsimpleblog.Admin'),
                 'stay' => true,
             ],
         ];
@@ -703,36 +703,36 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
         $guest = new Group(Configuration::get('PS_GUEST_GROUP'));
         $default = new Group(Configuration::get('PS_CUSTOMER_GROUP'));
 
-        $unidentified_group_information = sprintf($this->l('%s - All people without a valid customer account.'), '<b>' . $unidentified->name[$this->context->language->id] . '</b>');
-        $guest_group_information = sprintf($this->l('%s - Customer who placed an order with the guest checkout.'), '<b>' . $guest->name[$this->context->language->id] . '</b>');
-        $default_group_information = sprintf($this->l('%s - All people who have created an account on this site.'), '<b>' . $default->name[$this->context->language->id] . '</b>');
+        $unidentified_group_information = sprintf($this->module->getTranslator()->trans('%s - All people without a valid customer account.', [], 'Modules.Phsimpleblog.Admin'), '<b>' . $unidentified->name[$this->context->language->id] . '</b>');
+        $guest_group_information = sprintf($this->module->getTranslator()->trans('%s - Customer who placed an order with the guest checkout.', [], 'Modules.Phsimpleblog.Admin'), '<b>' . $guest->name[$this->context->language->id] . '</b>');
+        $default_group_information = sprintf($this->module->getTranslator()->trans('%s - All people who have created an account on this site.', [], 'Modules.Phsimpleblog.Admin'), '<b>' . $default->name[$this->context->language->id] . '</b>');
 
         $this->fields_form[$i]['form'] = [
             'legend' => [
-                'title' => $this->l('Availability'),
+                'title' => $this->module->getTranslator()->trans('Availability', [], 'Modules.Phsimpleblog.Admin'),
             ],
             'input' => [
                 [
                     'type' => 'datetime',
-                    'label' => $this->l('Publication date:'),
+                    'label' => $this->module->getTranslator()->trans('Publication date:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'date_add',
-                    'desc' => $this->l('Remember to set correctly your timezone in Blog for PrestaShop -> Settings. Current timezone:') . ' ' . Configuration::get('PH_BLOG_TIMEZONE') . ', ' . $this->l('current time with this setting:') . ' ' . SimpleBlogHelper::now(Configuration::get('PH_BLOG_TIMEZONE')),
+                    'desc' => $this->module->getTranslator()->trans('Remember to set correctly your timezone in Blog for PrestaShop -> Settings. Current timezone:', [], 'Modules.Phsimpleblog.Admin') . ' ' . Configuration::get('PH_BLOG_TIMEZONE') . ', ' . $this->module->getTranslator()->trans('current time with this setting:', [], 'Modules.Phsimpleblog.Admin') . ' ' . SimpleBlogHelper::now(Configuration::get('PH_BLOG_TIMEZONE')),
                     'required' => true,
                 ],
                 [
                     'type' => 'group',
-                    'label' => $this->l('Group access'),
+                    'label' => $this->module->getTranslator()->trans('Group access', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'groupBox',
                     'values' => Group::getGroups(Context::getContext()->language->id),
-                    'info_introduction' => $this->l('You now have three default customer groups.'),
+                    'info_introduction' => $this->module->getTranslator()->trans('You now have three default customer groups.', [], 'Modules.Phsimpleblog.Admin'),
                     'unidentified' => $unidentified_group_information,
                     'guest' => $guest_group_information,
                     'customer' => $default_group_information,
-                    'hint' => $this->l('Mark all of the customer groups which you would like to have access to this category.'),
+                    'hint' => $this->module->getTranslator()->trans('Mark all of the customer groups which you would like to have access to this category.', [], 'Modules.Phsimpleblog.Admin'),
                 ],
             ],
             'submit' => [
-                'title' => $this->l('Save and stay'),
+                'title' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Phsimpleblog.Admin'),
                 'stay' => true,
             ],
         ];
@@ -741,12 +741,12 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
         if (Shop::isFeatureActive()) {
             $this->fields_form[$i]['form'] = [
                 'legend' => [
-                    'title' => $this->l('Shop association:'),
+                    'title' => $this->module->getTranslator()->trans('Shop association:', [], 'Modules.Phsimpleblog.Admin'),
                 ],
                 'input' => [
                     [
                         'type' => 'shop',
-                        'label' => $this->l('Shop association:'),
+                        'label' => $this->module->getTranslator()->trans('Shop association:', [], 'Modules.Phsimpleblog.Admin'),
                         'name' => 'checkBoxShopAsso',
                     ],
                 ],
@@ -762,7 +762,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
     {
         if (Tools::getValue('id_simpleblog_post', 0) || Tools::getValue('submitAddsimpleblog_post', 0)) {
             if (Tools::getValue('id_product')) {
-                $_POST['id_product'] = implode(Tools::getValue('id_product'), ',');
+                $_POST['id_product'] = implode(',', Tools::getValue('id_product'));
             } else {
                 $_POST['id_product'] = '';
             }
@@ -916,31 +916,52 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
         $_POST['access'] = $access;
     }
 
-    public function processAdd()
-    {
-        $languages = Language::getLanguages(false);
-        $this->assignGroupsToPost();
+   public function processAdd()
+{
+    $languages = Language::getLanguages(false);
+    $this->assignGroupsToPost();
 
-        $post = parent::processAdd();
+    // PS9: parent::processAdd() zwraca bool (sukces/porażka)
+    $ok = parent::processAdd();
+    if (!$ok || !empty($this->errors)) {
+        return $ok;
+    }
 
-        $post->cover = $this->handlePostImage($post->id, 'cover');
-        $post->featured = $this->handlePostImage($post->id, 'featured');
+    /** @var SimpleBlogPost $post */
+    $post = $this->object; // zapisany obiekt z nadanym ID
+    if (!$post || empty($post->id)) {
+        return false;
+    }
 
-        $this->updateTags($languages, $post);
-        $this->updateAssoShop($post->id);
+    // Uploady po tym, jak mamy ID
+    $cover    = $this->handlePostImage((int) $post->id, 'cover');
+    $featured = $this->handlePostImage((int) $post->id, 'featured');
 
-        $modulesForCache = ['phblogrecentposts'];
-        foreach ($modulesForCache as $module) {
-            if (Module::isEnabled($module)) {
-                $instance = Module::getInstanceByName($module);
-                if (method_exists($instance, 'clearPostsCache')) {
-                    $instance->clearPostsCache();
-                }
+    if ($cover !== false) {
+        $post->cover = $cover;
+    }
+    if ($featured !== false) {
+        $post->featured = $featured;
+    }
+    if ($cover !== false || $featured !== false) {
+        $post->update();
+    }
+
+    $this->updateTags($languages, $post);
+    $this->updateAssoShop((int) $post->id);
+
+    $modulesForCache = ['phblogrecentposts'];
+    foreach ($modulesForCache as $module) {
+        if (Module::isEnabled($module)) {
+            $instance = Module::getInstanceByName($module);
+            if ($instance && method_exists($instance, 'clearPostsCache')) {
+                $instance->clearPostsCache();
             }
         }
-
-        return $post;
     }
+
+    return $ok;
+}
 
     public function processUpdate()
     {
@@ -1020,10 +1041,10 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
             $filenameParts = explode('.', $file['name']);
 
             $destFiles = [
-                'original' => $image_dir . $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::link_rewrite($filenameParts[0]) . '.jpg',
-                'thumbnail' => $image_dir . $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::link_rewrite($filenameParts[0]) . '-thumb.jpg',
-                'square' => $image_dir . $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::link_rewrite($filenameParts[0]) . '-square.jpg',
-                'wide' => $image_dir . $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::link_rewrite($filenameParts[0]) . '-wide.jpg',
+                'original' => $image_dir . $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::str2url($filenameParts[0]) . '.jpg',
+                'thumbnail' => $image_dir . $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::str2url($filenameParts[0]) . '-thumb.jpg',
+                'square' => $image_dir . $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::str2url($filenameParts[0]) . '-square.jpg',
+                'wide' => $image_dir . $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::str2url($filenameParts[0]) . '-wide.jpg',
             ];
 
             if (!ImageManager::resize($file['save_path'], $destFiles['original'], null, null, 'jpg', false, $error)) {
@@ -1050,7 +1071,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                 }
                 continue;
             } else {
-                $SimpleBlogPostImage->image = $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::link_rewrite($filenameParts[0]);
+                $SimpleBlogPostImage->image = $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::str2url($filenameParts[0]);
                 $SimpleBlogPostImage->update();
 
                 $thumbX = Configuration::get('PH_BLOG_THUMB_X');
@@ -1089,7 +1110,7 @@ class AdminSimpleBlogPostsController extends ModuleAdminController
                 unset($file['save_path']);
 
                 $file['status'] = 'ok';
-                $file['name'] = $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::link_rewrite($filenameParts[0]);
+                $file['name'] = $SimpleBlogPostImage->id . '-' . $SimpleBlogPostImage->id_simpleblog_post . '-' . Tools::str2url($filenameParts[0]);
                 $file['id'] = $SimpleBlogPostImage->id;
                 $file['position'] = $SimpleBlogPostImage->position;
                 $file['path'] = $image_dir;

@@ -110,12 +110,14 @@ class IqitReviewsActionsModuleFrontController extends ModuleFrontController
 
         $this->module->clearCache($idProduct);
 
-        $this->ajaxDie(json_encode(array(
+        header('Content-Type: application/json; charset=utf-8');
+        $this->ajaxRender(json_encode([
             'success' => $result,
             'data' => [
                 'errors' => $errors,
-                'message' => $message
-            ]
-        )));
+                'message' => $message,
+            ],
+        ]));
+        return;
     }
 }

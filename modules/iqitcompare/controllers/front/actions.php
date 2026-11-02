@@ -52,13 +52,16 @@ class IqitCompareActionsModuleFrontController extends ModuleFrontController
         $this->context->cookie->__set('iqitCompare', $productsIds);
         $this->context->cookie->__set('iqitCompareNb', (int) $this->context->cookie->iqitCompareNb - 1);
 
-        $this->ajaxDie(json_encode(array(
+        header('Content-Type: application/json; charset=utf-8');
+        $this->ajaxRender(json_encode([
             'success' => true,
             'data' => [
                 'message' => $this->l('Product removed'),
-                'type' => 'removed'
-            ]
-        )));
+                'type'    => 'removed',
+            ],
+        ]));
+        return;
+
     }
 
     /**
@@ -73,13 +76,16 @@ class IqitCompareActionsModuleFrontController extends ModuleFrontController
         $this->context->cookie->__set('iqitCompare', $productsIds);
         $this->context->cookie->__set('iqitCompareNb', 0);
 
-        $this->ajaxDie(json_encode(array(
+        header('Content-Type: application/json; charset=utf-8');
+        $this->ajaxRender(json_encode([
             'success' => true,
             'data' => [
                 'message' => $this->l('All products removed'),
-                'type' => 'removedAll'
-            ]
-        )));
+                'type' => 'removedAll',
+            ],
+        ]));
+        return;
+
     }
 
     /**

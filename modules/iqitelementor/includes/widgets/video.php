@@ -37,6 +37,7 @@ class Widget_Video extends Widget_Base {
                 'default' => 'youtube',
                 'options' => [
                     'youtube' => \IqitElementorWpHelper::__( 'YouTube', 'elementor' ),
+                    //'youtube_nocookie' => \IqitElementorWpHelper::__( 'YouTube without cookies', 'elementor' ),
                     'vimeo' => \IqitElementorWpHelper::__( 'Vimeo', 'elementor' ),
                     'hosted' => \IqitElementorWpHelper::__( 'HTML5 Video', 'elementor' ),
                 ],
@@ -356,22 +357,6 @@ class Widget_Video extends Widget_Base {
             ]
         );
 
-        $this->add_control(
-            'yt_showinfo',
-            [
-                'label' => \IqitElementorWpHelper::__( 'Player Title & Actions', 'elementor' ),
-                'type' => Controls_Manager::SELECT,
-                'section' => 'section_video',
-                'options' => [
-                    'yes' => \IqitElementorWpHelper::__( 'Show', 'elementor' ),
-                    'no' => \IqitElementorWpHelper::__( 'Hide', 'elementor' ),
-                ],
-                'default' => 'yes',
-                'condition' => [
-                    'video_type' => 'youtube',
-                ],
-            ]
-        );
 
         // Vimeo
         $this->add_control(
@@ -561,8 +546,8 @@ class Widget_Video extends Widget_Base {
         if ( $video_html ) : ?>
             <?php if (  $instance['in_modal'] === 'yes' ) : ?>
 
-                <button class="elementor-video-open-modal" data-toggle="modal"
-                     data-target="#elementor-video-modal-<?php echo (isset($instance['id_widget_instance']) ? $instance['id_widget_instance'] : '')
+                <button class="elementor-video-open-modal" data-bs-toggle="modal"
+                     data-bs-target="#elementor-video-modal-<?php echo (isset($instance['id_widget_instance']) ? $instance['id_widget_instance'] : '')
                      ?>">
                     <i class="fa fa-play-circle"></i>
                 </button>
@@ -641,17 +626,34 @@ class Widget_Video extends Widget_Base {
         $params = '';
         $iframe = '';
         if (strpos($url, 'youtube.com') !== FALSE) {
-            $step1 = explode('v=', $url);
-            $step2 = explode('&amp;', $step1[1]);
+
+            if (strpos($url, '/shorts/') !== false) {
+                $parts = explode('/shorts/', $url);
+
+                $subparts = explode('?', $parts[1]);
+                $video_id = $subparts[0];
+            }
+
+            else if (strpos($url, 'v=') !== false) {
+                $step1 = explode('v=', $url);
+
+                $step2 = explode('&', $step1[1]);
+                $video_id = $step2[0];
+            } else {
+     
+                $video_id = '';
+            }
+    
 
             if (isset($settings['autoplay']) && $settings['autoplay']) {
                 $params .= '?autoplay=1';
+                $params .= '&mute=1';
             }
             else {
                 $params .= '?autoplay=0';
             }
             if ($settings['loop']) {
-                $params .= '&loop=1 &playlist='.$step2[0];
+                $params .= '&loop=1&playlist=' . $video_id;
             }
             if (!$settings['rel']) {
                 $params .= '&rel=0';
@@ -659,12 +661,11 @@ class Widget_Video extends Widget_Base {
             if (!$settings['controls']) {
                 $params .= '&controls=0';
             }
-            if (!$settings['showinfo']) {
-                $params .= '&showinfo=0';
-            }
+    
 
-            $iframe = '<iframe width="' . $wdth . '" height="' . $hth . '" src="https://www.youtube-nocookie.com/embed/' . $step2[0] . $params . '" frameborder="0" allowfullscreen></iframe>';
-
+            $iframe = '<iframe width="' . $wdth . '" height="' . $hth . '" src="https://www.youtube.com/embed/' . $video_id . $params . '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+    
+                
         } else if (strpos($url, 'vimeo') !== FALSE) {
             if (isset($settings['autoplay']) && $settings['autoplay']) {
                 $params .= '?autoplay=1';
@@ -699,7 +700,7 @@ class Widget_Video extends Widget_Base {
         $params = [];
 
         if ( 'youtube' === $this->_current_instance['video_type'] ) {
-            $youtube_options = [ 'autoplay', 'loop', 'rel', 'controls', 'showinfo' ];
+            $youtube_options = [ 'autoplay', 'loop', 'rel', 'controls'];
 
             foreach ( $youtube_options as $option ) {
                 if ( 'autoplay' === $option && $this->allow_autoplay() )

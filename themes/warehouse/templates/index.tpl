@@ -35,21 +35,3 @@
         {/block}
     </section>
 {/block}
-
-{block name='head' append}
-    {assign var="searchUrl" value=$urls.pages.search|regex_replace:"/\?controller=search+$/":""}
-    <script type="application/ld+json">
-        {literal}
-		{
-			"@context": "https://schema.org",
-			"@type": "WebSite",
-			"url": "{/literal}{$urls.base_url}{literal}",
-			"potentialAction": {
-			    "@type": "SearchAction",
-			    "target": "{/literal}{$searchUrl}{literal}?controller=search&s={s}",
-			    "query-input": "required name=s"
-			}
-		}
-		{/literal}
-    </script>
-{/block}

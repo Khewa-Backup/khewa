@@ -26,7 +26,7 @@
 <section class="crossselling-products-modal">
   <p class="crossselling-products-modal-title">{l s='Customers who bought this product also bought:' d='Shop.Theme.Catalog'}</p>
   <div class="block-content swiper-container-wrapper">
-    <div class="products products-grid swiper-container swiper-crossselling-products swiper-cls-fix desktop-swiper-cls-fix-5 swiper-cls-row-fix-1 tablet-swiper-cls-fix-3 mobile-swiper-cls-fix-2">
+    <div class="products products-grid swiper swiper-container swiper-crossselling-products swiper-cls-fix desktop-swiper-cls-fix-5 swiper-cls-row-fix-1 tablet-swiper-cls-fix-3 mobile-swiper-cls-fix-2">
       <div class="swiper-wrapper">
         {foreach from=$products item="product"}
           <div class="swiper-slide"> {include file="catalog/_partials/miniatures/product.tpl" product=$product carousel=true}</div>

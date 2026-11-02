@@ -22,7 +22,7 @@ function upgrade_module_1_3_1_1($object)
         `slug` VARCHAR(255),
         `description` TEXT,
         PRIMARY KEY (`id_simpleblog_post_type`)
-    ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
+    ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4';
 
     /*
         

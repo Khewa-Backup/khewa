@@ -5,6 +5,6 @@ if (!defined('_PS_VERSION_'))
 
 function upgrade_module_1_1_0($object)
 {
-    $object->registerHook('header');
+    $object->registerHook('displayHeader');
 	return true;
 }

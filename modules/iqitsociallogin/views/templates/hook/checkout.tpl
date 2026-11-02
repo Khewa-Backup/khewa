@@ -1,4 +1,4 @@
-{if $facebook_status || $google_status ||  $twitter_status ||  $instagram_status}
+{if $facebook_status || $google_status  ||  $instagram_status}
 <div class="iqitsociallogin iqitsociallogin-checkout iqitsociallogin-colors-{$btn_colors} pb-3 pt-1">
         <span class="text-muted pr-1">{l s='Or connect with social account:' mod='iqitsociallogin'}</span>
 
@@ -38,17 +38,6 @@
         </a>
     {/if}
 
-    {if $twitter_status}
-        <a {if $type}
-                onclick="iqitSocialPopup('{url entity='module' name='iqitsociallogin' controller='authenticate' params=['provider' => 'twitter', 'page' => $page]}')"
-            {else}
-                href="{url entity='module' name='iqitsociallogin' controller='authenticate' params=['provider' => 'twitter', 'page' => $page]}"
-            {/if}
-           class="btn btn-secondary btn-iqitsociallogin btn-twitter mt-1 mb-1">
-            <i class="fa fa-twitter-square" aria-hidden="true"></i>
-            {l s='Twitter' mod='iqitsociallogin'}
-        </a>
-    {/if}
 </div>
 {/if}
 

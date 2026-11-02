@@ -60,14 +60,14 @@ $(function() {
 					},
 					success: function(result)
 					{             
-				    	var data = $.parseJSON(result);
-						if (data.status == 'success') 
+				    
+						if (result.status == 'success') 
 						{		
-							element.removeClass('voted').find('span.likes-count').text(data.message);
+							element.removeClass('voted').find('span.likes-count').text(result.message);
 						} 
 						else 
 						{
-							alert(data.message);
+							alert(result.message);
 						}
 					}
 				});
@@ -86,14 +86,14 @@ $(function() {
 					},
 					success: function(result)
 					{         
-				    	var data = $.parseJSON(result);
-						if (data.status == 'success') 
+				    
+						if (result.status == 'success') 
 						{		
-							element.addClass('voted').find('span.likes-count').text(data.message);
+							element.addClass('voted').find('span.likes-count').text(result.message);
 						} 
 						else 
 						{
-							alert(data.message);
+							alert(result.message);
 						}
 					}
 				});

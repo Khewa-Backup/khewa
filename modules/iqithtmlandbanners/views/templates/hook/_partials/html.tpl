@@ -30,21 +30,21 @@
     {$block.content nofilter}
 {elseif $block.hook == 'displayLeftColumn' || $block.hook == 'displayRightColumn'}
     <div id="iqithtmlandbanners-block-{$block.id}"  class="block block-toggle block-iqithtmlandbanners-html js-block-toggle">
-        <h5 class="block-title"><span>{$block.title}</span></h5>
+        <p class="block-title h5"><span>{$block.title}</span></p>
         <div class="block-content rte-content">
             {$block.content nofilter}
         </div>
     </div>
 {elseif $block.hook == 'displayMyAccountDashboard'}
     <div id="iqithtmlandbanners-block-{$block.id}"  class="col {if $block.width == 0}col-md{else}col-md-{$block.width}{/if} block block-toggle block-iqithtmlandbanners-html mt-4 js-block-toggle">
-        <h5 class="block-title"><span>{$block.title}</span></h5>
+        <p class="block-title h5"><span>{$block.title}</span></p>
         <div class="block-content rte-content">
             {$block.content nofilter}
         </div>
     </div>
 {else}
     <div id="iqithtmlandbanners-block-{$block.id}"  class="col {if $block.width == 0}col-md{else}col-md-{$block.width}{/if} block block-toggle block-iqithtmlandbanners-html js-block-toggle">
-        <h5 class="block-title"><span>{$block.title}</span></h5>
+        <p class="block-title h5"><span>{$block.title}</span></p>
         <div class="block-content rte-content">
             {$block.content nofilter}
         </div>

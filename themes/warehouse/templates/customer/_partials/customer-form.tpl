@@ -27,14 +27,21 @@
     {include file='_partials/form-errors.tpl' errors=$errors['']}
   {/block}
 
-<form action="{block name='customer_form_actionurl'}{$action}{/block}" id="customer-form" class="js-customer-form" method="post">
-  <div>
-    {block "form_fields"}
-      {foreach from=$formFields item="field"}
-        {block "form_field"}
-          {form_field field=$field}
+  <form action="{block name='customer_form_actionurl'}{$action}{/block}" id="customer-form" class="js-customer-form"
+    method="post">
+    <div>
+      {block "form_fields"}
+        {foreach from=$formFields item="field"}
+          {block "form_field"}
+          {if $field.type === "password"}
+            <div class="field-password-policy">
+              {form_field field=$field}
+            </div>
+          {else}
+            {form_field field=$field}
+          {/if}
         {/block}
-      {/foreach}
+        {/foreach}
       {$hook_create_account_form nofilter}
     {/block}
   </div>

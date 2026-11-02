@@ -17,7 +17,7 @@
     <div class="iqitproducttags">
         <ul>
             {foreach from=$tags item=tag key=i}
-                <li><a href="{url entity='search' params=['tag' => $tag|urlencode]}" class="tag tag-default">{$tag}</a>
+                <li><a href="{url entity='module' name='iqitsearch' controller='searchiqit' params=['s' => $tag|urlencode]}" class="tag tag-default">{$tag}</a>
                 </li>
             {/foreach}
         </ul>

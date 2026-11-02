@@ -411,6 +411,8 @@ class Element_Column extends Element_Base {
 	}
 
 	public function before_render( $instance, $element_id, $element_data = [] ) {
+
+	
 		$column_type = ! empty( $element_data['isInner'] ) ? 'inner' : 'top';
 
 		$this->add_render_attribute( 'wrapper', 'class', [

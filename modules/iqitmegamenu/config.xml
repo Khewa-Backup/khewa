@@ -2,7 +2,7 @@
 <module>
     <name>iqitmegamenu</name>
     <displayName><![CDATA[IQITMEGAMENU -  most powerfull navigation for Prestashop]]></displayName>
-    <version><![CDATA[4.0.0]]></version>
+    <version><![CDATA[1.2.0]]></version>
     <description><![CDATA[With drag and drop submenu creator]]></description>
     <author><![CDATA[IQIT-COMMERCE.COM]]></author>
     <tab><![CDATA[front_office_features]]></tab>

@@ -60,6 +60,7 @@
     line-height: 3rem;
     opacity: 0.8;
     transition: opacity .2s cubic-bezier(.7,0,.3,1);
+    width: 40px;
     &:hover{
       opacity: 1;
     }

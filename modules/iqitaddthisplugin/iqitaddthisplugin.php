@@ -139,19 +139,7 @@ class IqitAddthisPlugin extends Module implements WidgetInterface
 
     public function renderWidget($hookName = null, array $configuration = [])
     {
-        if ($this->context->controller->php_self != 'product') {
-            return;
-        }
-
-        if ($hookName == null && isset($configuration['hook'])) {
-            $hookName = $configuration['hook'];
-        }
-
-        if (!$this->isCached($this->templateFile, $this->getCacheId())) {
-            $this->smarty->assign($this->getWidgetVariables($hookName, $configuration));
-        }
-
-        return $this->fetch($this->templateFile, $this->getCacheId());
+        return;
     }
 
     public function getWidgetVariables($hookName = null, array $configuration = [])

@@ -30,16 +30,19 @@ class IqitSizeCharts extends Module implements WidgetInterface
 
     public $fields_list;
     public $fields_form;
+    public $cfgName;
+    public $defaults;
 
     protected $templateFile;
     protected $templatePath;
+    
 
     public function __construct()
     {
         $this->name = 'iqitsizecharts';
         $this->author = 'IQIT-COMMERCE.COM';
         $this->tab = 'front_office_features';
-        $this->version = '1.2.0';
+        $this->version = '1.2.2';
         $this->cfgName = 'iqitsizecharts_';
         $this->defaults = array(
             'status' => 0,
@@ -68,8 +71,8 @@ class IqitSizeCharts extends Module implements WidgetInterface
         if (!parent::install()
             || !$this->registerHook('displayAdminProductsExtra')
             || !$this->registerHook('displayProductVariants')
-            || !$this->registerHook('backOfficeHeader')
-            || !$this->registerHook('header')
+            || !$this->registerHook('displayBackOfficeHeader')
+            || !$this->registerHook('displayHeader')
             || !$this->registerHook('actionObjectProductUpdateAfter')
             || !$this->registerHook('actionObjectProductDeleteAfter')
             || !$this->installSQL()
@@ -98,7 +101,7 @@ class IqitSizeCharts extends Module implements WidgetInterface
         }
     }
 
-    public function hookBackOfficeHeader()
+    public function hookDisplayBackOfficeHeader()
     {
         Media::addJsDef(array(
             'iqitModulesSizeCharts' => [
@@ -108,7 +111,7 @@ class IqitSizeCharts extends Module implements WidgetInterface
         ));
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         $this->context->controller->registerStylesheet('modules-' . $this->name . '-style', 'modules/' . $this->name . '/views/css/front.css', ['media' => 'all', 'priority' => 150]);
     }
@@ -552,6 +555,9 @@ class IqitSizeCharts extends Module implements WidgetInterface
             $hookName = $configuration['hook'];
         }
 
+
+
+  
         if (preg_match('/^displayProductExtraContent\d*$/', $hookName)) {
             $array = array();
             $idProduct = (int)$configuration['product']->id;
@@ -560,14 +566,25 @@ class IqitSizeCharts extends Module implements WidgetInterface
             $productChart = IqitSizeChart::getChartAssignedToProduct($idProduct);
             $idCategory = (int)$configuration['product']->id_category_default;
             $id_manufacturer = $configuration['product']->id_manufacturer;
+            $productCategories = Product::getProductCategories($idProduct);
+
 
             $charts = array();
+            $finalCharts = array();
+
             if ($productChart > 0) {
                 $charts[] = (array)new IqitSizeChart($productChart, $idLang, $idShop);
             } elseif ($productChart == 0) {
                 return $array;
             } else {
-                $charts = IqitSizeChart::getChartsByCategoryAndBrand($idCategory, $id_manufacturer);
+                
+                foreach ($productCategories as $idCategory) {
+                    $charts = IqitSizeChart::getChartsByCategoryAndBrand($idCategory, $id_manufacturer);
+                    $finalCharts = array_merge($finalCharts, $charts);
+                }
+
+                $finalCharts = array_unique($finalCharts, SORT_REGULAR);
+
             }
 
             foreach ($charts as $key => $chart) {
@@ -614,17 +631,23 @@ class IqitSizeCharts extends Module implements WidgetInterface
             $idLang = (int)$this->context->language->id;
             $idShop = (int)$this->context->shop->id;
             $id_manufacturer = $configuration['product']['id_manufacturer'];
-
+                $productCategories = Product::getProductCategories($idProduct);
 
             $productChart = IqitSizeChart::getChartAssignedToProduct($idProduct);
 
             $charts = array();
+            $finalCharts = array();
             if ($productChart > 0) {
                 $charts[] = (array)new IqitSizeChart($productChart, $idLang, $idShop);
             } elseif ($productChart == 0) {
                 return $charts;
             } else {
-                $charts = IqitSizeChart::getChartsByCategoryAndBrand($idCategory, $id_manufacturer);
+                foreach ($productCategories as $idCategory) {
+                        $charts = IqitSizeChart::getChartsByCategoryAndBrand($idCategory, $id_manufacturer);
+                        $finalCharts = array_merge($finalCharts, $charts);
+                }
+
+                $finalCharts = array_unique($finalCharts, SORT_REGULAR);
             }
 
             return array(

@@ -30,6 +30,7 @@ class IqitHtmlAndBanners extends Module implements WidgetInterface
     private $iqitHtmlAndBannerRepository;
     public $imgBannersPath;
     protected $templateFile;
+    public $cfgName;
 
     public function __construct()
     {
@@ -44,8 +45,8 @@ class IqitHtmlAndBanners extends Module implements WidgetInterface
 
         parent::__construct();
 
-        $this->displayName = $this->l('IQITHTMLANDBANNERS');
-        $this->description = $this->l('Adds block with HTML or BANNERS in variouse hooks in your page');
+        $this->displayName = $this->trans('IQITHTMLANDBANNERS', [], 'Modules.Iqithtmlandbanners.Admin');
+        $this->description = $this->trans('Adds block with HTML or BANNERS in variouse hooks in your page', [], 'Modules.Iqithtmlandbanners.Admin');
 
         $this->iqitHtmlAndBannerRepository = new IqitHtmlAndBannerRepository(
             Db::getInstance(),

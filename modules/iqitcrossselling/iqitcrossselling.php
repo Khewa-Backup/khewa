@@ -17,7 +17,7 @@
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\PrestaShop\Adapter\Image\ImageRetriever;
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter;
-use PrestaShop\PrestaShop\Core\Product\ProductListingPresenter;
+use PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductListingPresenter;
 use PrestaShop\PrestaShop\Adapter\Product\ProductColorsRetriever;
 
 if (!defined('_PS_VERSION_')) {
@@ -33,7 +33,7 @@ class IqitCrossselling extends Module implements WidgetInterface
     {
         $this->name = 'iqitcrossselling';
         $this->author = 'IQIT-COMMERCE.COM';
-        $this->version = '1.0.0';
+        $this->version = '1.1.0';
         $this->need_instance = 0;
 
         $this->ps_versions_compliancy = array(
@@ -59,6 +59,9 @@ class IqitCrossselling extends Module implements WidgetInterface
     public function install()
     {
 
+        Configuration::updateValue('IQITCROSSSELLING_NBR', 10);
+        Configuration::updateValue('IQITCROSSSELLING_HIDE_OOSP', 0);
+
         return parent::install()
             && $this->registerHook('displayFooterProduct')
             && $this->registerHook('displayModalCartCrosseling')
@@ -68,6 +71,9 @@ class IqitCrossselling extends Module implements WidgetInterface
 
     public function uninstall()
     {
+
+        Configuration::deleteByName('IQITCROSSSELLING_NBR', 10);
+        Configuration::deleteByName('IQITCROSSSELLING_HIDE_OOSP', 0);
 
         return parent::uninstall();
     }
@@ -83,6 +89,103 @@ class IqitCrossselling extends Module implements WidgetInterface
     }
 
 
+    public function getContent()
+    {
+        $html = '';
+
+        if (Tools::isSubmit('submitCross')) {
+            if (0 != Tools::getValue('hideOosp') && 1 != Tools::getValue('IQITCROSSSELLING_HIDE_OOSP')) {
+                $html .= $this->displayError('Invalid displayPrice');
+            } elseif (!($product_nbr = Tools::getValue('IQITCROSSSELLING_NBR')) || empty($product_nbr)) {
+                $html .= $this->displayError($this->l('You must fill in the "Number of displayed products" field.'));
+            } elseif (0 === (int) $product_nbr) {
+                $html .= $this->displayError($this->l('Invalid number.'));
+            } else {
+                Configuration::updateValue('IQITCROSSSELLING_HIDE_OOSP', (int) Tools::getValue('IQITCROSSSELLING_HIDE_OOSP'));
+                Configuration::updateValue('IQITCROSSSELLING_NBR', (int) Tools::getValue('IQITCROSSSELLING_NBR'));
+
+                $this->_clearCache('*');
+
+                $html .= $this->displayConfirmation($this->l('The settings have been updated.'));
+            }
+        }
+
+        return $html . $this->renderForm();
+    }
+
+    public function renderForm()
+    {
+        $fields_form = [
+            'form' => [
+                'legend' => [
+                    'title' => $this->l('Settings'),
+                    'icon' => 'icon-cogs',
+                ],
+                'input' => [
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('Hide out of stock products'),
+                        'name' => 'IQITCROSSSELLING_HIDE_OOSP',
+                        'desc' => $this->l('Show the price on the products in the block.'),
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Yes'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('No'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Number of displayed products'),
+                        'name' => 'IQITCROSSSELLING_NBR',
+                        'class' => 'fixed-width-xs',
+                        'desc' => $this->l('Set the number of products displayed in this block.'),
+                    ],
+                ],
+                'submit' => [
+                    'title' => $this->l('Save'),
+                ],
+            ],
+        ];
+
+        $lang = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
+
+        $helper = new HelperForm();
+        $helper->show_toolbar = false;
+        $helper->table = $this->table;
+        $helper->default_form_language = $lang->id;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $helper->identifier = $this->identifier;
+        $helper->submit_action = 'submitCross';
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .
+            '&configure=' . $this->name .
+            '&tab_module=' . $this->tab .
+            '&module_name=' . $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->tpl_vars = [
+            'fields_value' => $this->getConfigFieldsValues(),
+            'languages' => $this->context->controller->getLanguages(),
+            'id_language' => $this->context->language->id,
+        ];
+
+        return $helper->generateForm([$fields_form]);
+    }
+
+    public function getConfigFieldsValues()
+    {
+        return [
+            'IQITCROSSSELLING_NBR' => Tools::getValue('IQITCROSSSELLING_NBR', Configuration::get('IQITCROSSSELLING_NBR')),
+            'IQITCROSSSELLING_HIDE_OOSP' => Tools::getValue('IQITCROSSSELLING_HIDE_OOSP', Configuration::get('IQITCROSSSELLING_HIDE_OOSP')),
+        ];
+    }
+
+
     public function getCacheIdKey($productIds)
     {
         return parent::getCacheId('iqitcrossselling|' . implode('|', $productIds));
@@ -95,9 +198,11 @@ class IqitCrossselling extends Module implements WidgetInterface
                 return $elem['id_product'];
             }, $configuration['cart']->getProducts());
         } else {
-            $productIds = array($configuration['product']['id_product']);
+            $productIds = isset($configuration['product']) && isset($configuration['product']['id_product'])
+                ? array($configuration['product']['id_product'])
+                : [];
         }
-
+    
         return array_unique($productIds);
     }
 
@@ -157,6 +262,10 @@ class IqitCrossselling extends Module implements WidgetInterface
         AND od.product_id IN ('.implode(',', $productIds).')';
 
         $orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($q_orders);
+        
+        $limitNb = Configuration::get('IQITCROSSSELLING_NBR');
+        $hideOosp = (bool) Configuration::get('IQITCROSSSELLING_HIDE_OOSP');
+
 
         if (is_array($orders) && (0 < count($orders))) {
             $list = '';
@@ -208,11 +317,12 @@ class IqitCrossselling extends Module implements WidgetInterface
                 AND cl.id_lang = '.(int)$this->context->language->id.'
                 AND od.product_id NOT IN ('.$list_product_ids.')
                 AND i.cover = 1
+                '.($hideOosp ? 'AND stock.quantity > 0' : '').'
                 AND p.visibility  IN ("both", "catalog")
                 AND product_shop.active = 1
                 '.(Group::isFeatureActive() ? $sql_groups_where : '').'
                 ORDER BY RAND()
-                LIMIT 10'
+                LIMIT ' . (int) $limitNb 
             );
         }
 

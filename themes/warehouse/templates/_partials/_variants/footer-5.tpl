@@ -31,7 +31,7 @@
 
       {if $iqitTheme.f_newsletter_status == 1}
       <div class="col-sm-6 col-md-4 block-newsletter">
-        <h5 class="mb-3">{l s='Sign up to newsletter' d='Shop.Warehousetheme'}</h5>
+        <p class="h5 mb-3">{l s='Sign up to newsletter' d='Shop.Warehousetheme'}</p>
         {widget name="ps_emailsubscription" hook='displayFooter'}
       </div>
       {/if}

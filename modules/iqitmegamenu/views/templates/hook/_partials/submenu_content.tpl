@@ -130,21 +130,16 @@
                 {elseif $node.contentType==5}
                     <ul class="cbp-manufacturers row">
                         {foreach from=$node.content.ids item=manufacturer}
-                            {assign var="myfile" value="img/m/{$manufacturer}-small_default.jpg"}
-                            {assign var="manufacturerName" value=Manufacturer::getNameById($manufacturer)}
-                            {if $manufacturerName !=''}
-                            {if file_exists($myfile)}
+                            {if isset($manufacturer.href) && isset($manufacturer.name) && isset($manufacturer.image)}
                                 <li class="col-{$node.content.line} transition-opacity-300">
-                                    <a href="{Context::getContext()->link->getManufacturerLink($manufacturer)}"
-                                       title="{$manufacturerName}">
-                                        <img src="{$urls.img_manu_url}{$manufacturer}-small_default.jpg"
+                                    <a href="{$manufacturer.href}" title="{$manufacturer.name}">
+                                        <img src="{$manufacturer.image}"
                                              loading="lazy"
                                              class="img-fluid logo_manufacturer " {if isset($manufacturerSize)} width="{$manufacturerSize.width}" height="{$manufacturerSize.height}"{/if}
-                                             alt="{$manufacturerName}"/>
+                                             alt="{$manufacturer.name}"/>
                                     </a>
                                 </li>
                             {/if}
-                                {/if}
                         {/foreach}
                     </ul>
                 {elseif $node.contentType==6}
@@ -160,14 +155,12 @@
                 {elseif $node.contentType==7}
                     <ul class="cbp-manufacturers cbp-suppliers row">
                         {foreach from=$node.content.ids item=supplier}
-                            {assign var="myfile" value="img/su/{$supplier}-small_default.jpg"}
-                            {if file_exists($myfile)}
+                            {if isset($supplier.href) && isset($supplier.name) && isset($supplier.image)}
                                 <li class="col-{$node.content.line} transition-opacity-300">
-                                    <a href="{Context::getContext()->link->getSupplierLink($supplier)}"
-                                       title="{supplier::getNameById($supplier)}">
-                                        <img loading="lazy" src="{$urls.img_sup_url}{$supplier}-small_default.jpg"
+                                    <a href="{$supplier.href}" title="{$supplier.name}">
+                                        <img loading="lazy" src="{$supplier.image}"
                                              class="img-fluid logo_manufacturer logo_supplier" {if isset($manufacturerSize)} width="{$manufacturerSize.width}" height="{$manufacturerSize.height}"{/if}
-                                             alt="{supplier::getNameById($supplier)}"/>
+                                             alt="{$supplier.name}"/>
                                     </a>
                                 </li>
                             {/if}

@@ -33,6 +33,10 @@
         {hook h='displayCountDown'}
     {/if}
 
+    {block name='product_iqit_flags'}
+        {hook h='displayProductCampagains' product=$product position='miniature'}
+    {/block}
+
     <div class="row extra-small-gutters justify-content-end">
         <div class="col">
             {block name='product_category_name'}
@@ -40,10 +44,10 @@
                     <div class="product-category-name text-muted">{$product.category_name}</div>{/if}
             {/block}
 
+           
+
             {block name='product_name'}
-                <h2 class="h3 product-title">
-                    <a href="{$product.url}">{$product.name|truncate:90:'...'}</a>
-                </h2>
+            <a class="h3 product-title d-block" href="{$product.url}">{$product.name|truncate:90:'...'}</a>
             {/block}
 
             {block name='product_brand'}

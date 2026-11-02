@@ -76,5 +76,7 @@
         </div>
       {/foreach}
     </div>
+    {else}
+      <div class="alert alert-info" role="alert" data-alert="info">{l s='You have not received any credit slips.' d='Shop.Notifications.Warning'}</div>
   {/if}
 {/block}

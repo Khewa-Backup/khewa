@@ -115,8 +115,7 @@ $(document).ready(function () {
     //remove tab
     $iqitadditionaltabList.on('click', '.js-iqitadditionaltabs-remove', function () {
         var tabId = $(this).data('tab');
-        modalConfirmation.create(translate_javascripts['Are you sure to delete this?'], null, {
-            onContinue: function () {
+
 
                 $.ajax({
                     url: iqitModulesAdditionalTabs.ajaxUrl,
@@ -131,8 +130,6 @@ $(document).ready(function () {
                     },
                 });
 
-            }
-        }).show();
     });
 
     //edit tab

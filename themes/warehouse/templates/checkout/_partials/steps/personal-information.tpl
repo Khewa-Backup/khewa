@@ -51,7 +51,7 @@
 
     <p class="">
       <i class="fa fa-question-circle-o" aria-hidden="true"></i> {l s='Already have an account?' d='Shop.Theme.Customeraccount'}
-      <a data-toggle="collapse" href="#personal-information-step-login" aria-expanded="false" aria-controls="collapseExample">
+      <a data-bs-toggle="collapse" href="#personal-information-step-login" aria-expanded="false" aria-controls="collapseExample">
         <u>{l s='Log in instead!' d='Shop.Theme.Customeraccount'}</u> <i class="fa fa-angle-right" aria-hidden="true"></i>
       </a>
     </p>

@@ -2,6 +2,7 @@
  * Custom code goes here.
  * A template should always ship with an empty custom.css
  */
+/* Khewa: newsletter button colour and social icons spacing (carried over from 4.5.5) */
 #main-page-content #footer .ps-emailsubscription-block .newsletter-input-group .btn-subscribe{
     color: #fff;
 }
@@ -37,5 +38,22 @@
     }
     .ps-social-follow{
         margin-bottom: 10px;
+    }
+}
+
+/* Khewa: theme 4.8.2 uses Bootstrap 5, where every block in a footer row is full width.
+   Keep the 4.5.5 look: newsletter and "Follow us" side by side, only as wide as they need. */
+.footer-container > .container > .row > .ps-emailsubscription-block,
+.footer-container > .container > .row > .ps-social-follow {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 100%;
+}
+
+/* Khewa: on wide screens Bootstrap 5 makes h4 titles 1.5rem; keep the 4.5.5 size (1.125rem),
+   e.g. "Subscribe to Newsletter" and "Log in with social account". */
+@media (min-width: 1200px) {
+    h4, .h4 {
+        font-size: 1.125rem;
     }
 }

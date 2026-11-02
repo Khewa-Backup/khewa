@@ -1622,6 +1622,62 @@ body:not(.elementor-device-mobile) #elementor-panel #elementor-panel-page-editor
   opacity: 0.6;
   display: block;
 }
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-control-selected-options {
+  display: none !important;
+}
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-control-selected-preview {
+  position: relative;
+}
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-selected-posts-wrapper {
+  padding-top: 10px;
+}
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-post .elementor-repeater-row-handle-sortable {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  background: #d5dadf;
+  width: 12px;
+  text-align: center;
+  height: 100%;
+  color: #fff;
+  cursor: move;
+}
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-repeater-row-handle-sortable i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-control-selected-preview .elementor-post {
+  border: 1px solid #d5dadf;
+  margin-bottom: 5px;
+  position: relative;
+  background-color: #fff;
+  padding: 3px;
+}
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-control-selected-preview .elementor-post-remove {
+  padding: 5px 7px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  border: none;
+  background: none;
+}
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-control-selected-preview .elementor-post-image {
+  width: 20%;
+  display: inline-block;
+  vertical-align: middle;
+}
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-control-selected-preview .elementor-post-info {
+  width: 80%;
+  display: inline-block;
+  vertical-align: middle;
+}
+#elementor-panel #elementor-panel-page-editor .elementor-control-type-autocomplete_posts .elementor-control-selected-preview .elementor-post-reference {
+  opacity: 0.6;
+  display: block;
+}
 #elementor-panel #elementor-panel-page-editor .elementor-control-type-select_sort .elementor-select-sort {
   display: none !important;
 }

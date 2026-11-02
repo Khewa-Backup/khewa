@@ -23,6 +23,8 @@ class IqitElementorActionsModuleFrontController extends ModuleFrontController
             $this->ajaxProcessHandleWidget();
         } elseif (Tools::getValue('process') == 'handleCsfrToken'){
             $this->ajaxProcessHandleCsfrToken();
+        } else {
+            Tools::redirect('index.php');
         }
     }
 

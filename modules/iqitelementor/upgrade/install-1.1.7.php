@@ -28,7 +28,7 @@ function upgrade_module_1_1_7($object)
       `hook` varchar(255) NOT NULL DEFAULT '',
       `active` tinyint(1) unsigned NOT NULL,
       PRIMARY KEY (`id_elementor`, `id_object`)
-    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8");
+    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8mb4");
 
     Db::getInstance()->execute("CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "iqit_elementor_content_lang` (
     `id_elementor` int(10) UNSIGNED NOT NULL,
@@ -36,14 +36,14 @@ function upgrade_module_1_1_7($object)
       `id_shop` int(10) unsigned NOT NULL,
       `data` longtext default NULL,
       PRIMARY KEY (`id_elementor`, `id_lang`, `id_shop`)
-    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8 ");
+    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8mb4 ");
 
 
     Db::getInstance()->execute("CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "iqit_elementor_content_shop` (
     `id_elementor` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `id_shop` int(10) unsigned NOT NULL,
       PRIMARY KEY (`id_elementor`, `id_shop`)
-    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8 ");
+    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8mb4 ");
 
 
     $object->uninstallTab();
@@ -54,13 +54,13 @@ function upgrade_module_1_1_7($object)
       `id_shop` int(10) unsigned NOT NULL,
       `just_elementor` int(10) UNSIGNED default NULL,
       PRIMARY KEY (`id_elementor`, `id_shop`)
-    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8');
+    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8mb4');
 
     Db::getInstance()->execute('CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'iqit_elementor_product_shop` (
     `id_elementor` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `id_shop` int(10) unsigned NOT NULL,
       PRIMARY KEY (`id_elementor`, `id_shop`)
-    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8');
+    ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8mb4');
 
 
     Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'iqit_elementor_product_lang`

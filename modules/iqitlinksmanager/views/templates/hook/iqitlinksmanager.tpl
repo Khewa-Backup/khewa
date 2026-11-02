@@ -33,7 +33,7 @@
         </div>
     {elseif $linkBlock.hook == 'displayLeftColumn' || $linkBlock.hook == 'displayRightColumn'}
         <div class="block block-toggle block-iqitlinksmanager block-iqitlinksmanager-{$linkBlock.id} block-links js-block-toggle">
-            <h5 class="block-title"><span>{$linkBlock.title}</span></h5>
+            <p class="block-title h5"><span>{$linkBlock.title}</span></p>
             <div class="block-content">
                 <ul>
                     {foreach $linkBlock.links as $link}
@@ -54,7 +54,7 @@
         </div>
     {else}
         <div class="col col-md block block-toggle block-iqitlinksmanager block-iqitlinksmanager-{$linkBlock.id} block-links js-block-toggle">
-            <h5 class="block-title"><span>{$linkBlock.title}</span></h5>
+            <p class="block-title h5"><span>{$linkBlock.title}</span></p>
             <div class="block-content">
                 <ul>
                     {foreach $linkBlock.links as $link}

@@ -33,7 +33,7 @@
               {if $social_share_link.class == 'facebook'}
                 <i class="fa fa-facebook" aria-hidden="true"></i>
               {elseif $social_share_link.class == 'twitter'}
-                <i class="fa fa-twitter" aria-hidden="true"></i>
+                <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
               {elseif $social_share_link.class == 'googleplus'}
                 <i class="fa fa-google-plus" aria-hidden="true"></i>
               {elseif $social_share_link.class == 'pinterest'}

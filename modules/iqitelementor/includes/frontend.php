@@ -24,7 +24,6 @@ class Frontend {
 		$this->stylesheet = new Stylesheet();
 
 		$breakpoints = Responsive::get_breakpoints();
-
 		$this->stylesheet
             ->add_device( 'tablet', $breakpoints['lg'] - 1 )
 			->add_device( 'mobile', $breakpoints['md'] - 1 );
@@ -37,7 +36,9 @@ class Frontend {
 		$section_obj->before_render( $instance, $section_data['id'], $section_data );
 
 		foreach ( $section_data['elements'] as $column_data ) {
+			$section_obj->before_render_column( $instance, $section_data['id'], $section_data );
 			$this->_print_column( $column_data );
+			$section_obj->after_render_column( $instance, $section_data['id'], $section_data );
 		}
 
 		$section_obj->after_render( $instance, $section_data['id'], $section_data );
@@ -112,7 +113,7 @@ class Frontend {
 			foreach ( $this->_enqueue_google_fonts as &$font ) {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
-			printf( '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=%s">', implode( '|', $this->_enqueue_google_fonts ) );
+			printf( '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=%s&display=swap">', implode( '|', $this->_enqueue_google_fonts ) );
 			$this->_enqueue_google_fonts = [];
 		}
 

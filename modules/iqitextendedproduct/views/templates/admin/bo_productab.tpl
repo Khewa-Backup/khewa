@@ -44,7 +44,7 @@
 
                 <div class="input-group-append">
                     <span class="input-group-text"><a
-                            href="{$baseAdminUrl}filemanager/dialog.php?type=2&field_id=iqitthreesixty-hosted-videourl"
+                            href="{$bAdminUrl}filemanager/dialog.php?type=2&field_id=iqitthreesixty-hosted-videourl"
                             class="js-iframe-upload-video" data-input-name="iqitthreesixty-hosted-videourl"
                             type="button">
                             {l s='Select video' mod='iqitextendedproduct'} 

@@ -304,6 +304,25 @@
 	z-index: 1;
 }
 */
+.elementor-editor-active .elementor-section-slidered:hover {
+  outline: 3px dashed yellow;
+}
+.elementor-editor-active .elementor-column {
+  min-height: 30px;
+}
+
+.elementor-section-slidered .swiper-wrapper {
+  -ms-flex-wrap: initial !important;
+  -webkit-flex-wrap: initial !important;
+          flex-wrap: initial !important;
+}
+.elementor-section-slidered .elementor-row-slidered-backend {
+  display: block;
+}
+.elementor-section-slidered .elementor-top-column {
+  width: 100% !important;
+}
+
 .elementor-inner-section .elementor-column-gap-no .elementor-element-populated {
   padding: 0;
 }
@@ -1542,8 +1561,11 @@
 .elementor-social-icon-tumblr {
   background-color: #35465c;
 }
-.elementor-social-icon-twitter {
+.elementor-social-icon-x-twitter {
   background-color: #55acee;
+}
+.elementor-social-icon-tiktok {
+  background-color: #000000;
 }
 .elementor-social-icon-vimeo {
   background-color: #1ab7ea;

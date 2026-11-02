@@ -33,7 +33,7 @@ function upgrade_module_1_2_2_0($object)
  //            `linkedin` TEXT NOT NULL,
  //            `twitter` TEXT NOT NULL,
  //            PRIMARY KEY (`id_simpleblog_author`)
- //        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+ //        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
     // Only for PrestaShop 1.6...
     // $tab = new Tab()
@@ -69,7 +69,7 @@ function upgrade_module_1_2_2_0($object)
             `date_add` datetime NOT NULL,
             `date_upd` datetime NOT NULL,
             PRIMARY KEY (`id_simpleblog_comment`)
-        ) ENGINE = '._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
+        ) ENGINE = '._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4';
 
     $tab = new Tab();
 

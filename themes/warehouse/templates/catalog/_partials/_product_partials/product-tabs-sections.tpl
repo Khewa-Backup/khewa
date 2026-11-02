@@ -87,10 +87,10 @@
         {if $iqitTheme.pp_accesories == 'tab'}
             {if $accessories}
                 <section class="product-accesories-section block-section">
-                    <h4 class="section-title"><span>{l s='Related products' d='Shop.Theme.Catalog'}</span></h4>
+                    <h4 class="section-title"><span>{l s='You might also like' d='Shop.Theme.Catalog'}</span></h4>
 
-                    <div class="section-content swiper-container-wrapper">
-                        <div class="products products-grid swiper-container swiper-default-carousel">
+                    <div class="section-content swiper swiper-container-wrapper">
+                        <div class="products products-grid swiper swiper-container swiper-default-carousel">
                             <div class="swiper-wrapper">
                                 {foreach from=$accessories item="product_accessory" key="position"}
                                     <div class="swiper-slide"> {include file="catalog/_partials/miniatures/product.tpl" product=$product_accessory  carousel=true position=$position}</div>
@@ -129,8 +129,7 @@
 
 
         {foreach from=$product.extraContent item=extra key=extraKey}
-            <section
-
+            <section 
             {foreach $extra.attr as $key => $val}
                 {if $key == "class"}
                     {$key}="product-extracontent-section block-section {$val}"

@@ -283,7 +283,7 @@ class IqitThemeEditorForm
                         'name' => 'h_absolute_wrapper_bg',
                         'size' => 30,
                         'condition' => array(
-                            'h_layout' => '<=1,2,3,4,5',
+                            'h_layout' => '<=1,2,3,4,5,8',
                         ),
                     ),
                     /*
@@ -1646,6 +1646,40 @@ class IqitThemeEditorForm
                 'input' => array(
                     array(
                         'type' => 'select',
+                        'label' => $this->module->l('Mobile menu content', 'IqitThemeEditorForm'),
+                        'name' => 'mm_content',
+                        'desc' => $this->module->l('Separate mobile menu - it will take mobile menu selected links from iqitmegamenu module mobile configuration, Same as on desktop - it will transform horizontal desktop tabs into mobile friendly format', 'IqitThemeEditorForm'),
+                        'options' => array(
+                            'query' => array(
+                                array(
+                                    'id_option' => 'accordion',
+                                    'name' => $this->module->l('Separate accordion menu content - simple selector', 'IqitThemeEditorForm'),
+                                ),
+                                array(
+                                    'id_option' => 'panel',
+                                    'name' => $this->module->l('Separate panel menu content - simple selector', 'IqitThemeEditorForm'),
+                                ),
+                                array(
+                                    'id_option' => 'separate',
+                                    'name' => $this->module->l('Separate mobile menu - drag&drop menu', 'IqitThemeEditorForm'),
+                                ),
+                                array(
+                                    'id_option' => 'desktop',
+                                    'name' => $this->module->l('From desktop menu: horizontal or vertical(only in sidebar header layout', 'IqitThemeEditorForm'),
+                                ),
+                                
+                                array(
+                                   'id_option' => 'desktop-vertical',
+                                    'name' => $this->module->l('From vertical menu', 'IqitThemeEditorForm'),
+                               ),
+                            ),
+                            'id' => 'id_option',
+                            'name' => 'name',
+                        ),
+                    ), 
+                    
+                    array(
+                        'type' => 'select',
                         'label' => $this->module->l('Type', 'IqitThemeEditorForm'),
                         'name' => 'mm_type',
                         'options' => array(
@@ -1664,35 +1698,31 @@ class IqitThemeEditorForm
                         ),
                     ),
                     array(
+                        'type' => 'select',
+                        'label' => $this->module->l('Expand trigger', 'IqitThemeEditorForm'),
+                        'name' => 'mm_expand_trigger',
+                        'options' => array(
+                            'query' => array(
+                                array(
+                                    'id_option' => 'entire-link',
+                                    'name' => $this->module->l('Entire link', 'IqitThemeEditorForm'),
+                                ),
+                                array(
+                                    'id_option' => 'arrow',
+                                    'name' => $this->module->l('Only icon arrow', 'IqitThemeEditorForm'),
+                                ),
+                            ),
+                            'id' => 'id_option',
+                            'name' => 'name',
+                        ),
+                    ),
+                    array(
                         'type' => 'color2',
-                        'label' => $this->module->l('First level bg', 'IqitThemeEditorForm'),
+                        'label' => $this->module->l('Background color', 'IqitThemeEditorForm'),
                         'name' => 'mm_background',
                         'size' => 30,
                     ),
-                    array(
-                        'type' => 'color2',
-                        'label' => $this->module->l('Second level bg', 'IqitThemeEditorForm'),
-                        'name' => 'mm_background_l2',
-                        'size' => 30,
-                    ),
-                    array(
-                        'type' => 'color2',
-                        'label' => $this->module->l('Third level bg', 'IqitThemeEditorForm'),
-                        'name' => 'mm_background_l3',
-                        'size' => 30,
-                    ),
-                    array(
-                        'type' => 'color2',
-                        'label' => $this->module->l('Text color', 'IqitThemeEditorForm'),
-                        'name' => 'mm_text',
-                        'size' => 30,
-                    ),
-                    array(
-                        'type' => 'border',
-                        'label' => $this->module->l('Inner border', 'IqitThemeEditorForm'),
-                        'name' => 'mm_inner_border',
-                        'size' => 30,
-                    ),
+        
                     array(
                         'type' => 'border',
                         'label' => $this->module->l('Border', 'IqitThemeEditorForm'),
@@ -1711,6 +1741,362 @@ class IqitThemeEditorForm
                             'mm_type' => '==push'
                         ),
                     ),
+
+                    array(
+                        'type' => 'subtitle_separator',
+                        'label' => $this->module->l('Header and footer', 'IqitThemeEditorForm'),
+                        'size' => 30,
+                        'border_top' => true
+                    ),
+
+                    array(
+                        'type' => 'select',
+                        'label' => $this->module->l('Show footer', 'IqitThemeEditorForm'),
+                        'name' => 'mm_hf_footer_visibilty',
+                        'options' => array(
+                            'query' => array(
+                                array(
+                                    'id_option' => 1,
+                                    'name' => $this->module->l('Yes', 'IqitThemeEditorForm'),
+                                ),
+                                array(
+                                    'id_option' => 0,
+                                    'name' => $this->module->l('No', 'IqitThemeEditorForm'),
+                                ),
+                            ),
+                            'id' => 'id_option',
+                            'name' => 'name',
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'select',
+                        'label' => $this->module->l('Show header', 'IqitThemeEditorForm'),
+                        'name' => 'mm_hf_header_visibilty',
+                        'condition' => array(
+                            'mm_content' => '==accordion'
+                        ),
+                        'options' => array(
+                            'query' => array(
+                                array(
+                                    'id_option' => 1,
+                                    'name' => $this->module->l('Yes', 'IqitThemeEditorForm'),
+                                ),
+                                array(
+                                    'id_option' => 0,
+                                    'name' => $this->module->l('No', 'IqitThemeEditorForm'),
+                                ),
+                            ),
+                            'id' => 'id_option',
+                            'name' => 'name',
+                        ),
+                    ),
+
+
+                    array(
+                        'type' => 'border',
+                        'label' => $this->module->l('Border', 'IqitThemeEditorForm'),
+                        'name' => 'mm_hf_border',
+                        'size' => 30,
+                    ),
+                    array(
+                        'type' => 'font',
+                        'label' => $this->module->l('Font size and style', 'IqitThemeEditorForm'),
+                        'name' => 'mm_hf_header_typo',
+                        'size' => 30,
+                        'class' => 'width-150',
+                        'min' => 1,
+                        'suffix' => 'px'
+                    ),
+                    array(
+                        'type' => 'color2',
+                        'label' => $this->module->l('Text color', 'IqitThemeEditorForm'),
+                        'name' => 'mm_hf_color',
+                        'size' => 30,
+                    ),
+                    array(
+                        'type' => 'color2',
+                        'label' => $this->module->l('Background color', 'IqitThemeEditorForm'),
+                        'name' => 'mm_hf_background',
+                        'size' => 30,
+                    ),
+
+
+
+
+                    array(
+                        'type' => 'subtitle_separator',
+                        'label' => $this->module->l('Tabs', 'IqitThemeEditorForm'),
+                        'size' => 30,
+                        'border_top' => true
+                    ),
+
+                    array(
+                        'type' => 'font',
+                        'label' => $this->module->l('Font size and style', 'IqitThemeEditorForm'),
+                        'name' => 'mm_main_tab_typo',
+                        'size' => 30,
+                        'class' => 'width-150',
+                        'min' => 1,
+                        'suffix' => 'px'
+                    ),
+
+                    array(
+                        'type' => 'color2',
+                        'label' => $this->module->l('Text color', 'IqitThemeEditorForm'),
+                        'name' => 'mm_main_tab_color',
+                        'size' => 30,
+                    ),
+
+                    array(
+                        'type' => 'border',
+                        'label' => $this->module->l('Border', 'IqitThemeEditorForm'),
+                        'name' => 'mm_main_tab_border',
+                        'size' => 30
+                    ),
+
+                    array(
+                        'type' => 'number',
+                        'label' => $this->module->l('Padding', 'IqitThemeEditorForm'),
+                        'name' => 'mm_main_tab_padding',
+                        'size' => 30,
+                        'min' => 0,
+                        'class' => 'width-150',
+                        'step' => 1,
+                    ),
+
+                    array(
+                        'type' => 'subtitle_separator',
+                        'label' => $this->module->l('Arrow icon', 'IqitThemeEditorForm'),
+                        'size' => 30,
+                    ),
+
+                    array(
+                        'type' => 'select',
+                        'label' => $this->module->l('Visibilty', 'IqitThemeEditorForm'),
+                        'name' => 'mm_arrow_icon_status',
+                        'options' => array(
+                            'query' => array(
+                                array(
+                                    'id_option' => 0,
+                                    'name' => $this->module->l('Hidden', 'IqitThemeEditorForm'),
+                                ),
+                                array(
+                                    'id_option' => 1,
+                                    'name' => $this->module->l('Visible', 'IqitThemeEditorForm'),
+                                ),
+                            ),
+                            'id' => 'id_option',
+                            'name' => 'name',
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'number',
+                        'label' => $this->module->l('Size', 'IqitThemeEditorForm'),
+                        'name' => 'mm_arrow_icon_size',
+                        'size' => 30,
+                        'min' => 0,
+                        'class' => 'width-150',
+                        'step' => 1,
+                    ),
+
+                    array(
+                        'type' => 'color2',
+                        'label' => $this->module->l('Color', 'IqitThemeEditorForm'),
+                        'name' => 'mm_arrow_icon_color',
+                        'size' => 30,
+                    ),
+
+                    array(
+                        'type' => 'subtitle_separator',
+                        'label' => $this->module->l('Accordion sub levels tabs', 'IqitThemeEditorForm'),
+                        'desc' => $this->module->l('Only on accordion menu type', 'IqitThemeEditorForm'),
+                        'size' => 30,
+                        'condition' => array(
+                            'mm_content' => '==accordion'
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'font',
+                        'label' => $this->module->l('Font size and style', 'IqitThemeEditorForm'),
+                        'name' => 'mm_accordion_tab2_typo',
+                        'size' => 30,
+                        'class' => 'width-150',
+                        'min' => 1,
+                        'suffix' => 'px',
+                        'condition' => array(
+                            'mm_content' => '==accordion'
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'color2',
+                        'label' => $this->module->l('Text color', 'IqitThemeEditorForm'),
+                        'name' => 'mm_accordion_tab2_color',
+                        'size' => 30,
+                        'condition' => array(
+                            'mm_content' => '==accordion'
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'border',
+                        'label' => $this->module->l('Border', 'IqitThemeEditorForm'),
+                        'name' => 'mm_accordion_tab2_border',
+                        'size' => 30,
+                        'condition' => array(
+                            'mm_content' => '==accordion'
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'number',
+                        'label' => $this->module->l('Padding', 'IqitThemeEditorForm'),
+                        'name' => 'mm_accordion_tab2_padding',
+                        'size' => 30,
+                        'min' => 0,
+                        'class' => 'width-150',
+                        'step' => 1,
+                        'condition' => array(
+                            'mm_content' => '==accordion'
+                        ),
+                    ),
+
+
+                    array(
+                        'type' => 'subtitle_separator',
+                        'label' => $this->module->l('Legends', 'IqitThemeEditorForm'),
+                        'size' => 30,
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                        
+                    ),
+
+                    array(
+                        'type' => 'font',
+                        'label' => $this->module->l('Font size and style', 'IqitThemeEditorForm'),
+                        'name' => 'mm_legend_typo',
+                        'size' => 30,
+                        'class' => 'width-150',
+                        'min' => 1,
+                        'suffix' => 'px',
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+                    array(
+                        'type' => 'color2',
+                        'label' => $this->module->l('Color', 'IqitThemeEditorForm'),
+                        'name' => 'mm_legend_color',
+                        'size' => 30,
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+                    array(
+                        'type' => 'color2',
+                        'label' => $this->module->l('Background', 'IqitThemeEditorForm'),
+                        'name' => 'mm_legend_background',
+                        'size' => 30,
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'subtitle_separator',
+                        'label' => $this->module->l('Submenu', 'IqitThemeEditorForm'),
+                        'size' => 30,
+                        'border_top' => true,
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'font',
+                        'label' => $this->module->l('Column title', 'IqitThemeEditorForm'),
+                        'name' => 'mm_submenu_title_typo',
+                        'size' => 30,
+                        'class' => 'width-150',
+                        'min' => 1,
+                        'suffix' => 'px',
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+                    array(
+                        'type' => 'color2',
+                        'label' => $this->module->l('Column title color', 'IqitThemeEditorForm'),
+                        'name' => 'mm_submenu_title_color',
+                        'size' => 30,
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+                    array(
+                        'type' => 'font',
+                        'label' => $this->module->l('Text', 'IqitThemeEditorForm'),
+                        'name' => 'mm_submenu_text_typo',
+                        'size' => 30,
+                        'class' => 'width-150',
+                        'min' => 1,
+                        'suffix' => 'px',
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+                    array(
+                        'type' => 'color2',
+                        'label' => $this->module->l('Text color', 'IqitThemeEditorForm'),
+                        'name' => 'mm_submenu_text_color',
+                        'size' => 30,
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'range',
+                        'label' => $this->module->l('Column spacing', 'IqitThemeEditorForm'),
+                        'name' => 'mm_submenu_column_spacing',
+                        'size' => 30,
+                        'min' => 0,
+                        'max' => 60,
+                        'step' => 1,
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+                    array(
+                        'type' => 'range',
+                        'label' => $this->module->l('Title spacing', 'IqitThemeEditorForm'),
+                        'name' => 'mm_submenu_title_spacing',
+                        'size' => 30,
+                        'min' => 0,
+                        'max' => 80,
+                        'step' => 1,
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+                    array(
+                        'type' => 'range',
+                        'label' => $this->module->l('Link spacing', 'IqitThemeEditorForm'),
+                        'name' => 'mm_submenu_link_spacing',
+                        'size' => 30,
+                        'min' => 0,
+                        'max' => 60,
+                        'step' => 1,
+                        'condition' => array(
+                            'mm_content' => '<=desktop,separate,desktop-vertical',
+                        ),
+                    ),
+
+                    
                 ),
                 'submit' => array(
                     'title' => $this->module->l('Save', 'IqitThemeEditorForm'),
@@ -3774,6 +4160,10 @@ class IqitThemeEditorForm
                                 array(
                                     'id_option' => 'rightcolumn',
                                     'name' => $this->module->l('Right column below add cart', 'IqitThemeEditorForm'),
+                                ),
+                                     array(
+                                    'id_option' => 'leftcolumn',
+                                    'name' => $this->module->l('Left column below product images', 'IqitThemeEditorForm'),
                                 )
                             ),
                             'id' => 'id_option',
@@ -4949,7 +5339,7 @@ class IqitThemeEditorForm
                     ),
                     array(
                         'type' => 'text',
-                        'label' => $this->module->l('Twitter url', 'IqitThemeEditorForm'),
+                        'label' => $this->module->l('Twitter(x) url', 'IqitThemeEditorForm'),
                         'name' => 'sm_twitter',
                         'size' => 30,
                     ),
@@ -4957,12 +5347,6 @@ class IqitThemeEditorForm
                         'type' => 'text',
                         'label' => $this->module->l('Youtube url', 'IqitThemeEditorForm'),
                         'name' => 'sm_youtube',
-                        'size' => 30,
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->module->l('Google url', 'IqitThemeEditorForm'),
-                        'name' => 'sm_google',
                         'size' => 30,
                     ),
                     array(
@@ -4987,6 +5371,12 @@ class IqitThemeEditorForm
                         'type' => 'text',
                         'label' => $this->module->l('Linkedin url', 'IqitThemeEditorForm'),
                         'name' => 'sm_linkedin',
+                        'size' => 30,
+                    ),
+                    array(
+                        'type' => 'text',
+                        'label' => $this->module->l('Tiktok url', 'IqitThemeEditorForm'),
+                        'name' => 'sm_tiktok',
                         'size' => 30,
                     ),
                     array(

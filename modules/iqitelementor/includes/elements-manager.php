@@ -33,6 +33,10 @@ class Elements_Manager {
                 'title' => \IqitElementorWpHelper::__( 'Prestashop', 'elementor' ),
                 'icon' => 'wordpress',
             ],
+            'custom' => [
+                'title' => \IqitElementorWpHelper::__( 'Custom', 'elementor' ),
+                'icon' => 'wordpress',
+            ],
         ];
     }
 

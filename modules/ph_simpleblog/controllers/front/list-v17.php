@@ -7,7 +7,6 @@
  * @copyright Copyright (c) 2011-2021 PrestaHome Team - www.PrestaHome.com
  * @license   You only can use module, nothing more!
  */
-
 class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaShopController
 {
     public $context;
@@ -19,6 +18,7 @@ class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaSho
     protected $listController;
 
     protected $posts;
+    public $controller_name;
 
     public function init()
     {
@@ -105,6 +105,14 @@ class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaSho
 
         $blogCategories = [];
 
+        $displayCategoryChildrens = Configuration::get('PH_BLOG_DISPLAY_CATEGORY_CHILDREN');
+        $displayCategoryDescription = Configuration::get('PH_BLOG_DISPLAY_CAT_DESC');
+        $displayCategoryImage = Configuration::get('PH_BLOG_DISPLAY_CATEGORY_IMAGE');
+
+
+
+        
+
         // Category things
         if ($this->sb_category != '') {
             if ($this->blogCategory->id_parent > 0) {
@@ -118,12 +126,31 @@ class PH_SimpleBlogListModuleFrontController extends DefaultListBlogForPrestaSho
 
             $this->context->smarty->assign('blogCategory', $this->blogCategory);
             $this->context->smarty->assign('category_rewrite', $this->blogCategory->link_rewrite);
+
+            if ($displayCategoryChildrens) {
+                $blogCategories = SimpleBlogCategory::getChildrens($this->blogCategory->id);
+            }
+            $this->context->smarty->assign('blogCategories', $blogCategories);
         } else {
             $finder = new BlogPostsFinder();
             $this->posts = $finder->findPosts();
             $blogCategories = SimpleBlogCategory::getCategories();
             $this->context->smarty->assign('blogCategories', $blogCategories);
         }
+
+        $this->context->smarty->assign([
+            'displayCategoryChildrens' => $displayCategoryChildrens,
+            'displayCategoryDescription' => $displayCategoryDescription,
+            'displayCategoryImage' => $displayCategoryImage,
+            'PH_BLOG_DISPLAY_DATE' => Configuration::get('PH_BLOG_DISPLAY_DATE'),
+            'PH_BLOG_DATEFORMAT' => Configuration::get('PH_BLOG_DATEFORMAT'),
+            'PH_BLOG_DISPLAY_MORE' => Configuration::get('PH_BLOG_DISPLAY_MORE'),
+            'PH_BLOG_DISPLAY_CATEGORY' => Configuration::get('PH_BLOG_DISPLAY_CATEGORY'),
+            'PH_BLOG_DISPLAY_THUMBNAIL' => Configuration::get('PH_BLOG_DISPLAY_THUMBNAIL'),
+            'PH_BLOG_DISPLAY_DESCRIPTION' => Configuration::get('PH_BLOG_DISPLAY_DESCRIPTION'),
+        ]);
+
+        
 
         $pagination = $this->getTemplateVarPagination();
         $this->context->smarty->assign('pagination', $pagination);

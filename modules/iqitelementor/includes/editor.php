@@ -6,7 +6,7 @@ if ( ! defined( 'ELEMENTOR_ABSPATH' ) ) exit; // Exit if accessed directly
 class Editor {
 
     public function is_edit_mode() {
-
+    
 
         if ( isset( $_GET['controller']  ) && $_GET['controller']  == 'IqitElementorEditor' ) {
             return true;

@@ -8,17 +8,10 @@
   width: 340px;
 
 
-  .cart-title{
-    hr{
-      width: 100%;
-    }
-    .close{
-      margin-top: 0.4rem;
-    }
 
-  }
 
   .cart-products {
+      padding-right: 8px;
     > li {
       padding-bottom: 0.875rem;
       border-bottom: 1px solid $gray;
@@ -30,6 +23,15 @@
     .col-info {
       padding-left: 1rem;
     }
+
+    .bootstrap-touchspin{
+      width: 75px;
+      flex-wrap: nowrap;
+    }
+    .block-cart-product-quantity{
+      height: 40px;
+    }
+
   }
   .block-cart-product-quantity-gift{
     background: inherit;
@@ -235,7 +237,7 @@
   padding-bottom: 120px;
 }
 
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(lg) {
 
 }
 

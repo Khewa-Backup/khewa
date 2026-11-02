@@ -24,8 +24,8 @@
  *}
 
 <div class="products-sort-nb-dropdown products-sort-order dropdown">
-    <a class="select-title expand-more form-control" rel="nofollow" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" aria-label="{l s='Sort by selection' d='Shop.Theme.Global'}">
-       <span class="select-title-name"> {if $listing.sort_selected}{$listing.sort_selected}{else}{l s='Select' d='Shop.Theme.Actions'}{/if}</span>
+    <a class="select-title expand-more form-control" rel="nofollow" data-bs-toggle="dropdown" data-bs-display="static" aria-haspopup="true" aria-expanded="false" aria-label="{l s='Sort by selection' d='Shop.Theme.Global'}">
+       <span class="select-title-name"> {if $listing.sort_selected}{$listing.sort_selected}{else}{l s='Choose' d='Shop.Theme.Actions'}{/if}</span>
         <i class="fa fa-angle-down" aria-hidden="true"></i>
     </a>
     <div class="dropdown-menu">
@@ -47,36 +47,37 @@
 
 
 <div class="products-sort-nb-dropdown products-nb-per-page dropdown">
-    <a class="select-title expand-more form-control" rel="nofollow" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false">
+    <a class="select-title expand-more form-control" rel="nofollow" data-bs-toggle="dropdown" data-bs-display="static" aria-haspopup="true" aria-expanded="false">
         {$listing.products|count}
         <i class="fa fa-angle-down" aria-hidden="true"></i>
     </a>
-
+    {assign var="showPerPageUrl" value=$listing.current_url|regex_replace:"/&page=\d+$/":""|regex_replace:"/\?page=\d+$/":""}
     <div class="dropdown-menu">
         <a
                 rel="nofollow"
-                href=" {$listing.current_url|add_url_param:'resultsPerPage':12}"
+                href=" {$showPerPageUrl|add_url_param:'resultsPerPage':12}"
                 class="select-list dropdown-item {['js-search-link' => true]|classnames}"
         >
             12
         </a>
         <a
                 rel="nofollow"
-                href=" {$listing.current_url|add_url_param:'resultsPerPage':24}"
+                href=" {$showPerPageUrl|add_url_param:'resultsPerPage':24}"
                 class="select-list dropdown-item {['js-search-link' => true]|classnames}"
         >
             24
         </a>
         <a
                 rel="nofollow"
-                href=" {$listing.current_url|add_url_param:'resultsPerPage':36}"
+                href=" {$showPerPageUrl|add_url_param:'resultsPerPage':36}"
                 class="select-list dropdown-item {['js-search-link' => true]|classnames}"
         >
             36
         </a>
+
         <a
                 rel="nofollow"
-                href=" {$listing.current_url|add_url_param:'resultsPerPage':99999}"
+                href=" {$showPerPageUrl|add_url_param:'resultsPerPage':99999}"
                 class="select-list dropdown-item {['js-search-link' => true]|classnames}"
         >
             {l s='Show all' d='Shop.Warehousetheme'}

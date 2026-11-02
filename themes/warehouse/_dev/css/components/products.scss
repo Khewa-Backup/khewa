@@ -226,7 +226,7 @@
     outline: none !important;
     box-shadow: none !important;
   }
-  &:not(.swiper-container-initialized) .swiper-wrapper{
+  &:not(.swiper-initialized) .swiper-wrapper{
     grid-auto-rows: 0;
     display: grid;
     overflow: hidden;
@@ -389,7 +389,7 @@
 }
 
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
   .product-quantity {
     .qty {
       width: 100%;

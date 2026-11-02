@@ -40,19 +40,19 @@
     </div>
     {else}
     <div class="elementor-brands-carousel-wrapper swiper-overflow swiper-arrows-{$arrows_position}"  >
-        <div class="swiper-container elementor-brands-carousel {$cls_fix_classes}" data-slider_options='{$options|@json_encode nofilter}'>
+        <div class="swiper-container swiper elementor-brands-carousel {$cls_fix_classes}" data-slider_options='{$options|@json_encode nofilter}'>
         <div class="swiper-wrapper">
 
         {foreach from=$brands item=brand name=brand_list}
             <div class="swiper-slide">
                 <a href="{$brand['link']}">
                     <img
-                         data-src="{$brand['image']}"
+                         src="{$brand['image']}"
+                         loading="lazy"
                          alt="{$brand['name']}"
                             {if isset($urls.no_picture_image.bySize.$imageFormat)}
                                 width="{$urls.no_picture_image.bySize.$imageFormat.width}"
                                 height="{$urls.no_picture_image.bySize.$imageFormat.height}"
-                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {$urls.no_picture_image.bySize.$imageFormat.width} {$urls.no_picture_image.bySize.$imageFormat.height}'%3E%3C/svg%3E"
                                 {else}
                             {/if}
                          class="swiper-lazy"

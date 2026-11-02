@@ -31,8 +31,8 @@
     <div class="images-container js-images-container images-container-{if $iqitTheme.pp_thumbs == "left" || $iqitTheme.pp_thumbs == "leftd"}left images-container-d-{$iqitTheme.pp_thumbs} {else}bottom{/if}">
         {if $iqitTheme.pp_thumbs == "left" || $iqitTheme.pp_thumbs == "leftd"}
             <div class="row no-gutters">
-                {if $product.images|@count gt 1}<div class="col-2 col-left-product-thumbs">{include file='catalog/_partials/_product_partials/product-thumbnails.tpl'}</div>{/if}
-                <div class="{if $product.images|@count gt 1}col-10{else}col-12{/if} col-left-product-cover">{include file='catalog/_partials/_product_partials/product-cover.tpl'}</div>
+                {if $product.images}<div class="col-2 col-left-product-thumbs">{include file='catalog/_partials/_product_partials/product-thumbnails.tpl'}</div>{/if}
+                <div class="{if $product.images}col-10{else}col-12{/if} col-left-product-cover">{include file='catalog/_partials/_product_partials/product-cover.tpl'}</div>
             </div>
         {else}
             {include file='catalog/_partials/_product_partials/product-cover.tpl'}

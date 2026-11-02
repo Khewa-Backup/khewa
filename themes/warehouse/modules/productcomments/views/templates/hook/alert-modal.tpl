@@ -1,10 +1,11 @@
 {**
- * 2007-2019 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
@@ -15,12 +16,11 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://www.prestashop.com for more information.
+ * needs please refer to https://devdocs.prestashop.com/ for more information.
  *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
  *}
 
 {assign var='icon' value=$icon|default:'check_circle'}
@@ -39,12 +39,10 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-         <span class="modal-title">
+        <h2>
+          <i class="material-icons {$icon}" data-icon="{$icon}"></i>
           {$modal_title}
-        </span>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        </h2>
       </div>
       <div class="modal-body">
         <div class="row">
@@ -54,7 +52,7 @@
         </div>
         <div class="row">
           <div class="col-md-12  col-sm-12 post-comment-buttons">
-            <button type="button" class="btn btn-comment btn-primary  btn-comment-huge" data-dismiss="modal" aria-label="{l s='OK' d='Modules.Productcomments.Shop'}">
+            <button type="button" class="btn btn-primary btn-comment btn-comment-huge" data-bs-dismiss="modal" aria-label="{l s='OK' d='Modules.Productcomments.Shop'}">
               {l s='OK' d='Modules.Productcomments.Shop'}
             </button>
           </div>

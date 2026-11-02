@@ -32,10 +32,10 @@
 									<div class="cbp-tabs-container">
 									<div class="row no-gutters">
 										<div class="tabs-links col-2">
-										<ul class="cbp-hrsub-tabs-names cbp-tabs-names">
+										<ul class="cbp-hrsub-tabs-names cbp-tabs-names" role="tablist">
 											{if isset($tab.submenu_content_tabs)}
 											{foreach $tab.submenu_content_tabs as $innertab name=innertabsnames}
-											<li class="innertab-{$innertab->id} {if $smarty.foreach.innertabsnames.first}active{/if}"><a data-target="#iq-{$innertab->id}-innertab-{$tab.id_tab}" {if $innertab->url_type != 2} href="{$innertab->url}" {/if}>
+											<li class="innertab-{$innertab->id} {if $smarty.foreach.innertabsnames.first}active{/if}"><a data-bs-target="#iq-{$innertab->id}-innertab-{$tab.id_tab}" {if $innertab->url_type != 2} href="{$innertab->url}" {/if} 	class="nav-link {if $smarty.foreach.innertabsnames.first}active{/if}">
 												{if $innertab->icon_type && !empty($innertab->icon_class)} <i class="fa fa {$innertab->icon_class} cbp-mainlink-icon"></i>{/if}
 												{if !$innertab->icon_type && !empty($innertab->icon)} <img src="{$innertab->icon}" alt="{$innertab->title}" class="cbp-mainlink-iicon" />{/if}
 												{$innertab->title}
@@ -83,10 +83,6 @@
 					</ul>
 				</nav>
 
-{if isset($mobile_menu_v)}
-<div id="_desktop_iqitmegamenu-mobile">
-	<ul id="iqitmegamenu-mobile">
-		{include file="module:iqitmegamenu/views/templates/hook/_partials/mobile_menu.tpl" menu=$mobile_menu_v}
-	</ul>
-</div>
+{if isset($mobile_menu) && $sidebar_header}
+	{include file="module:iqitmegamenu/views/templates/hook/mobile.tpl"}
 {/if}

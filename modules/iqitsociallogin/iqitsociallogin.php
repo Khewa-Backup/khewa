@@ -48,10 +48,6 @@ class IqitSocialLogin extends Module implements WidgetInterface
             'google_key' => '',
             'google_secret' => '',
 
-            'twitter_status' => 0,
-            'twitter_key' => '',
-            'twitter_secret' => '',
-
             'instagram_status' => 0,
             'instagram_key' => '',
             'instagram_secret' => '',
@@ -62,7 +58,7 @@ class IqitSocialLogin extends Module implements WidgetInterface
 
 
         $this->displayName = $this->l('IQITSOCIALLOGIN - allow customers to login with social account');
-        $this->description = $this->l('Social login with Facebook, Google, Twitter');
+        $this->description = $this->l('Social login with Facebook, Google');
 
         $this->templateFile = 'module:' . $this->name . '/views/templates/hook/';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
@@ -120,12 +116,6 @@ class IqitSocialLogin extends Module implements WidgetInterface
                 }
             }
 
-            if (Tools::getValue('twitter_status')) {
-                if (Tools::getValue('twitter_key') == '' || Tools::getValue('twitter_secret') == '') {
-                    Configuration::updateValue($this->cfgName . 'twitter_status', 0);
-                    $output .= $this->displayError($this->l('To enable Twitter login you need to fill API key an secret'));
-                }
-            }
 
             if (Tools::getValue('instagram_status')){
                 if (Tools::getValue('instagram_key') == '' || Tools::getValue('instagram_secret') == ''){
@@ -265,46 +255,6 @@ class IqitSocialLogin extends Module implements WidgetInterface
                         'label' => $this->l(''),
                         'name' => 'separator',
                     ),
-                    array(
-                        'type' => 'info',
-                        'label' => $this->l(''),
-                        'infoTitle' => 'Twitter',
-                        'info' => 'http://iqit-commerce.com/xdocs/warehouse-theme-documentation/#iqitsociallogin-twitter',
-                        'name' => 'info',
-                    ),
-                    array(
-                        'type' => 'switch',
-                        'label' => $this->l('Twitter login'),
-                        'name' => 'twitter_status',
-                        'is_bool' => true,
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => 1,
-                                'label' => $this->l('Yes'),
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => 0,
-                                'label' => $this->l('No'),
-                            ),
-                        ),
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Twitter API key'),
-                        'name' => 'twitter_key',
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Twitter API secret'),
-                        'name' => 'twitter_secret',
-                    ),
-                    array(
-                        'type' => 'separator',
-                        'label' => $this->l(''),
-                        'name' => 'separator',
-                    ),
                     /*
                     array(
                         'type' => 'switch',
@@ -422,7 +372,6 @@ class IqitSocialLogin extends Module implements WidgetInterface
                 'btn_colors' => Configuration::get($this->cfgName . 'btn_colors'),
                 'facebook_status' => Configuration::get($this->cfgName . 'facebook_status'),
                 'google_status' => Configuration::get($this->cfgName . 'google_status'),
-                'twitter_status' => Configuration::get($this->cfgName . 'twitter_status'),
                 'instagram_status' => Configuration::get($this->cfgName . 'instagram_status'),
 
             );

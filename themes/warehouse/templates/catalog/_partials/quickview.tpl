@@ -24,10 +24,10 @@
  *}
 <div id="quickview-modal" class="modal fade quickview" tabindex="-1"
      role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal" aria-label="{l s='Close' d='Shop.Theme.Global'}">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="{l s='Close' d='Shop.Theme.Global'}">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <div id="quickview-modal-product-content" class="row no-gutters">
@@ -41,7 +41,7 @@
                     <div class="col-md-6 align-self-center">
                         <div class="quickview-info">
                             <div class="product_header_container">
-                                <h1 class="h1"><a href="{$product.url}">{$product.name}</a></h1>
+                                <h1 class="h3 page-title"><a href="{$product.url}">{$product.name}</a></h1>
                                 {block name='product_prices'}
                                     {include file='catalog/_partials/product-prices.tpl'}
                                 {/block}

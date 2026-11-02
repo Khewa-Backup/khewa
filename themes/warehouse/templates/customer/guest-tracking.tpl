@@ -35,9 +35,11 @@
 {block name='order_messages'}
 {/block}
 
+
 {if !$is_customer}
   {block name='page_content' append}
     {block name='guest_to_customer'}
+      <hr class="mt-1 mb-4">
       <form action="{$urls.pages.guest_tracking}" method="post">
         <header>
           <h1 class="h3">{l s='Transform your guest account into a customer account and enjoy:' d='Shop.Theme.Customeraccount'}</h1>
@@ -48,12 +50,10 @@
           </ul>
         </header>
 
-        <section class="form-fields">
+        <section class="form-fields my-3">
 
-          <label>
-            <span>{l s='Set your password:' d='Shop.Forms.Labels'}</span>
-            <input type="password" data-validate="isPasswd" name="password" value="">
-          </label>
+            <input type="password" data-validate="isPasswd" name="password" value="" placeholder="{l s='Set your password:' d='Shop.Forms.Labels'}" class="form-control">
+
 
         </section>
 

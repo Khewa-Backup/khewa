@@ -7,6 +7,9 @@ $brand-secondary: #f39d72;
 $brand-success: #4cbb6c;
 $brand-warning: #ff9a52;
 $brand-danger: #ff4c4c;
+$blue: #2fb5d2;
+$teal: $gray-dark;
+$red: $brand-danger;
 $label-color: $gray-darker;
 $btn-primary-color: #fff;
 $btn-primary-bg: $brand-primary;
@@ -52,6 +55,37 @@ $display3-weight: 400;
 $display4-size: rem(20px);
 $display4-weight: 400;
 $text-muted: $gray;
+$input-btn-border-width: 1px;
+$dropdown-spacer: 0;
+//$badge-padding-y: .65em;
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1140px,
+  xxl: 1400px
+);
+
+
+$spacer: 16px;
+
+// stylelint-disable-next-line scss/dollar-variable-default
+$spacers: (
+  0: 0,
+  1: ($spacer * .25),
+  2: ($spacer * .5),
+  3: ($spacer * .75),
+  4: $spacer,
+  5: ($spacer * 1.25),
+  6: ($spacer * 1.5),
+  7: ($spacer * 1.75),
+  8: ($spacer * 2),
+);
+
+
+
 //warehouse
 $default-transition: all .2s cubic-bezier(0.7,0,0.3,1);
 $smooth-transition-timing: cubic-bezier(0.7,0,0.3,1);

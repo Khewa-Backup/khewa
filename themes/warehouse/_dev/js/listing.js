@@ -177,8 +177,8 @@ $(document).ready(() => {
 
     productModal.find('#quantity_wanted').TouchSpin({
       verticalbuttons: true,
-      verticalupclass: 'fa fa-angle-up touchspin-up',
-      verticaldownclass: 'fa fa-angle-down touchspin-down',
+      verticalupclass: 'fa-solid fa-angle-up touchspin-up',
+      verticaldownclass: 'fa-solid fa-angle-down touchspin-down',
       buttondown_class: 'btn btn-touchspin js-touchspin',
       buttonup_class: 'btn btn-touchspin js-touchspin',
       min: 1,
@@ -294,13 +294,16 @@ window.addEventListener('load', function() {
   const history = window.location.href;
   if ($(prestashop.themeSelectors.listing.list).length) {
     window.setTimeout(function() {
-    window.addEventListener('popstate', (e) => {
-      const {state} = e;
-      window.location.href = state && state.current_url ? state.current_url : history;
-    });
+      window.addEventListener('popstate', (e) => {
+        if (e.state && e.state.current_url) {
+          window.location.href = e.state.current_url;
+        }
+      });
   }, 1000);
   }
 });
+
+
 
 function createListingSpin() {
   if (iqitTheme.pl_grid_qty) {
@@ -309,8 +312,8 @@ function createListingSpin() {
     $.each($(spinnerSelector), (index, spinner) => {
       $(spinner).TouchSpin({
         verticalbuttons: true,
-        verticalupclass: 'fa fa-angle-up touchspin-up',
-        verticaldownclass: 'fa fa-angle-down touchspin-down',
+        verticalupclass: 'fa-solid fa-angle-up touchspin-up',
+        verticaldownclass: 'fa-solid fa-angle-down touchspin-down',
         buttondown_class: 'btn btn-touchspin js-touchspin',
         buttonup_class: 'btn btn-touchspin js-touchspin',
         min: parseInt($(spinner).attr('min'), 10),

@@ -67,7 +67,7 @@
     }
   }
 }
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
   #stores {
     .page-stores {
       .store-item-container {

@@ -29,13 +29,13 @@
         <div class="row">
             <div class="col-12">
                 <input
-                        class="btn btn-primary pull-right hidden-xs-down elementor-newsletter-btn"
+                        class="btn btn-primary pull-right d-none d-sm-block h-100 elementor-newsletter-btn"
                         name="submitNewsletter"
                         type="submit"
                         value="{l s='Subscribe' d='Shop.Theme.Actions'}"
                 >
                 <input
-                        class="btn btn-primary pull-right hidden-sm-up elementor-newsletter-btn"
+                        class="btn btn-primary pull-right d-sm-none h-100 elementor-newsletter-btn"
                         name="submitNewsletter"
                         type="submit"
                         value="{l s='OK'  mod='iqitelementor'}"
@@ -50,11 +50,12 @@
                     >
                 </div>
                 <input type="hidden" name="action" value="0">
-                {hook h='displayNewsletterRegistration'}
-                {if isset($id_module)}
-                    <div class="mt-2 text-muted"> {hook h='displayGDPRConsent' id_module=$id_module}</div>
-                {/if}
+           
             </div>
+            {hook h='displayNewsletterRegistration'}
+            {if isset($id_module)}
+                <div class="mt-2 text-muted"> {hook h='displayGDPRConsent' id_module=$id_module}</div>
+            {/if}
         </div>
     </form>
 </div>

@@ -23,6 +23,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 import $ from 'jquery';
+import updateSources from 'update-sources';
 
 export default class ProductSelect {
   init() {
@@ -33,16 +34,34 @@ export default class ProductSelect {
 
     $wrapper.on('show.bs.modal', '#product-modal', (e) => {
       let newSrc;
+      let $sourcesProvider;
+      let $modalCover = $('.js-modal-product-cover');
 
       if (iqitTheme.pp_image_layout === 'carousel') {
-        newSrc = $('#product-images-large .swiper-slide-active img').first().data('image-large-src');
+        $sourcesProvider = $('#product-images-large .swiper-slide-active img').first();
+        newSrc = $sourcesProvider.data('image-large-src');
+        
+        updateSources(
+          $modalCover,
+          $sourcesProvider.data('image-large-sources'),
+        );
+
       } else {
-        newSrc = $(e.relatedTarget).data('image-large-src');
+        $sourcesProvider = $(e.relatedTarget);
+        newSrc = $sourcesProvider.data('image-large-src');
+
+        updateSources(
+          $modalCover,
+          $sourcesProvider.data('image-large-sources'),
+        );
+  
       }
 
       $('.js-modal-product-cover-easyzoom').first().attr('href', newSrc);
-      $('.js-modal-product-cover').first().attr('src', newSrc);
+      $modalCover.first().attr('src', newSrc);
 
+
+     
       if (iqitTheme.pp_zoom === 'inner' || iqitTheme.pp_zoom === 'modalzoom') {
         const easyzoom = $('.easyzoom-modal').easyZoom();
         easyzoomInstance = easyzoom.data('easyZoom');
@@ -66,10 +85,6 @@ export default class ProductSelect {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
           },
-          preloadImages: false,
-          lazy: {
-            loadPrevNext: true,
-          },
           breakpoints: {
             768: {
               slidesPerView: 10,
@@ -90,10 +105,28 @@ export default class ProductSelect {
     });
 
     $('body').on('click', '.js-modal-thumb', (event) => {
+      let $sourcesProvider;
       if (iqitTheme.pp_zoom === 'inner' || iqitTheme.pp_zoom === 'modalzoom') {
-        easyzoomInstance.swap($(event.target).data('image-large-src'), $(event.target).data('image-large-src'));
+        $sourcesProvider = $(event.target);
+
+        easyzoomInstance.swap($sourcesProvider.data('image-large-src'), $sourcesProvider.data('image-large-src'));
+        let $modalCover = $('.js-modal-product-cover');
+        updateSources(
+          $modalCover,
+          $sourcesProvider.data('image-large-sources'),
+        );
+        
       } else {
-        $('.js-modal-product-cover').attr('src', $(event.target).data('image-large-src'));
+        let $modalCover = $('.js-modal-product-cover');
+        $sourcesProvider = $(event.target)
+
+        $modalCover.attr('src', $sourcesProvider.data('image-large-src'));
+
+        updateSources(
+          $modalCover,
+          $sourcesProvider.data('image-large-sources'),
+        );
+
       }
     });
   }

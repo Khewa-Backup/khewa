@@ -28,7 +28,7 @@
       *
       * @see FrontController::initContent()
       */
-     public function init()
+     public function init(): void
          {
 
              $this->page_name = 'module-iqitsearch-searchiqit';

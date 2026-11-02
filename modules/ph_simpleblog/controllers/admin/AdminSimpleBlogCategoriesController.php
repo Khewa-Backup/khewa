@@ -28,26 +28,26 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
 
         parent::__construct();
 
-        $this->bulk_actions = ['delete' => ['text' => $this->l('Delete selected'), 'confirm' => $this->l('Delete selected items?')]];
+        $this->bulk_actions = ['delete' => ['text' => $this->module->getTranslator()->trans('Delete selected', [], 'Modules.Phsimpleblog.Admin'), 'confirm' => $this->module->getTranslator()->trans('Delete selected items?', [], 'Modules.Phsimpleblog.Admin')]];
 
         $this->fields_list = [
             'id_simpleblog_category' => [
-                'title' => $this->l('ID'),
+                'title' => $this->module->getTranslator()->trans('ID', [], 'Modules.Phsimpleblog.Admin'),
                 'align' => 'center',
                 'width' => 30,
             ],
             'name' => [
-                'title' => $this->l('Name'),
+                'title' => $this->module->getTranslator()->trans('Name', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 'auto',
             ],
             'description' => [
-                'title' => $this->l('Description'),
+                'title' => $this->module->getTranslator()->trans('Description', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 500,
                 'orderby' => false,
                 'callback' => 'getDescriptionClean',
             ],
             'active' => [
-                'title' => $this->l('Displayed'),
+                'title' => $this->module->getTranslator()->trans('Displayed', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 25,
                 'active' => 'status',
                 'align' => 'center',
@@ -55,7 +55,7 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
                 'orderby' => false,
             ],
             'position' => [
-                'title' => $this->l('Position'),
+                'title' => $this->module->getTranslator()->trans('Position', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 40,
                 'filter_key' => 'a!position',
                 'position' => 'position',
@@ -103,11 +103,11 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
         $this->toolbar_btn['save-and-stay'] = [
             'short' => 'SaveAndStay',
             'href' => '#',
-            'desc' => $this->l('Save and stay'),
+            'desc' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Phsimpleblog.Admin'),
         ];
         $this->toolbar_btn['back'] = [
             'href' => self::$currentIndex . '&token=' . Tools::getValue('token'),
-            'desc' => $this->l('Back to list'),
+            'desc' => $this->module->getTranslator()->trans('Back to list', [], 'Modules.Phsimpleblog.Admin'),
         ];
     }
 
@@ -137,7 +137,7 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
 
         $categories = SimpleBlogCategory::getCategories($this->context->language->id, true, true);
 
-        array_unshift($categories, ['id' => 0, 'name' => $this->l('No parent')]);
+        array_unshift($categories, ['id' => 0, 'name' => $this->module->getTranslator()->trans('No parent', [], 'Modules.Phsimpleblog.Admin')]);
 
         foreach ($categories as $key => $category) {
             if (isset($obj->id) && $obj->id) {
@@ -149,13 +149,13 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
 
         $this->fields_form = [
             'legend' => [
-                'title' => $this->l('Category'),
+                'title' => $this->module->getTranslator()->trans('Category', [], 'Modules.Phsimpleblog.Admin'),
                 'image' => '../img/admin/tab-categories.gif',
             ],
             'input' => [
                 [
                     'type' => 'select',
-                    'label' => $this->l('Parent Category:'),
+                    'label' => $this->module->getTranslator()->trans('Parent Category:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'id_parent',
                     'required' => true,
                     'options' => [
@@ -167,7 +167,7 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
 
                 [
                     'type' => 'text',
-                    'label' => $this->l('Name:'),
+                    'label' => $this->module->getTranslator()->trans('Name:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'name',
                     'required' => true,
                     'lang' => true,
@@ -176,7 +176,7 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
 
                 [
                     'type' => 'textarea',
-                    'label' => $this->l('Description:'),
+                    'label' => $this->module->getTranslator()->trans('Description:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'description',
                     'lang' => true,
                     'rows' => 5,
@@ -186,43 +186,43 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
 
                 [
                     'type' => 'text',
-                    'label' => $this->l('Meta title:'),
+                    'label' => $this->module->getTranslator()->trans('Meta title:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'meta_title',
                     'lang' => true,
                 ],
 
                 [
                     'type' => 'text',
-                    'label' => $this->l('Meta description:'),
+                    'label' => $this->module->getTranslator()->trans('Meta description:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'meta_description',
                     'lang' => true,
                 ],
 
                 [
                     'type' => 'text',
-                    'label' => $this->l('Meta keywords:'),
+                    'label' => $this->module->getTranslator()->trans('Meta keywords:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'meta_keywords',
                     'lang' => true,
                 ],
 
                 [
                     'type' => 'text',
-                    'label' => $this->l('Friendly URL:'),
+                    'label' => $this->module->getTranslator()->trans('Friendly URL:', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'link_rewrite',
                     'required' => true,
                     'lang' => true,
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->l('Type canonical tag'),
+                    'label' => $this->module->getTranslator()->trans('Type canonical tag', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'canonical',
-                    'hint' => $this->l('Leave empty if you want to left original post URL'),
+                    'hint' => $this->module->getTranslator()->trans('Leave empty if you want to left original post URL', [], 'Modules.Phsimpleblog.Admin'),
                     'lang' => true,
                 ],
 
                 [
                     'type' => 'switch',
-                    'label' => $this->l('Displayed'),
+                    'label' => $this->module->getTranslator()->trans('Displayed', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'active',
                     'required' => false,
                     'is_bool' => true,
@@ -230,33 +230,33 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
                         [
                             'id' => 'active_on',
                             'value' => 1,
-                            'label' => $this->l('Enabled'),
+                            'label' => $this->module->getTranslator()->trans('Enabled', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => 0,
-                            'label' => $this->l('Disabled'),
+                            'label' => $this->module->getTranslator()->trans('Disabled', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                     ],
                 ],
 
                 [
                     'type' => 'file',
-                    'label' => $this->l('Category image:'),
+                    'label' => $this->module->getTranslator()->trans('Category image:', [], 'Modules.Phsimpleblog.Admin'),
                     'display_image' => true,
                     'name' => 'cover',
-                    'desc' => $this->l('Upload a image from your computer.'),
+                    'desc' => $this->module->getTranslator()->trans('Upload a image from your computer.', [], 'Modules.Phsimpleblog.Admin'),
                 ],
             ],
             'submit' => [
-                'title' => $this->l('Save'),
+                'title' => $this->module->getTranslator()->trans('Save', [], 'Modules.Phsimpleblog.Admin'),
             ],
         ];
 
         if (Shop::isFeatureActive()) {
             $this->fields_form['input'][] = [
                 'type' => 'shop',
-                'label' => $this->l('Shop association:'),
+                'label' => $this->module->getTranslator()->trans('Shop association:', [], 'Modules.Phsimpleblog.Admin'),
                 'name' => 'checkBoxShopAsso',
             ];
         }
@@ -278,18 +278,18 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
             $this->list_id = 'details';
             $this->initFormToolBar();
             $category = $this->loadObject($id);
-            $this->toolbar_title = $this->l('Subcategories of:') . ' ' . $category->name[$this->context->employee->id_lang];
+            $this->toolbar_title = $this->module->getTranslator()->trans('Subcategories of:', [], 'Modules.Phsimpleblog.Admin') . ' ' . $category->name[$this->context->employee->id_lang];
 
             unset($this->toolbar_btn['save-and-stay']);
             unset($this->toolbar_btn['new']);
             if ($this->display == 'details' || $this->display == 'add' || $this->display == 'edit') {
                 $this->toolbar_btn['new'] = [
                     'href' => Context::getContext()->link->getAdminLink('AdminSimpleBlogCategories') . '&addsimpleblog_category&id_parent=' . $category->id,
-                    'desc' => $this->l('Add new'),
+                    'desc' => $this->module->getTranslator()->trans('Add new', [], 'Modules.Phsimpleblog.Admin'),
                 ];
                 $this->toolbar_btn['back'] = [
                     'href' => Context::getContext()->link->getAdminLink('AdminSimpleBlogCategories'),
-                    'desc' => $this->l('Back to list'),
+                    'desc' => $this->module->getTranslator()->trans('Back to list', [], 'Modules.Phsimpleblog.Admin'),
                 ];
             }
 
@@ -300,19 +300,19 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
 
             $this->fields_list = [
                 'id_simpleblog_category' => [
-                    'title' => $this->l('ID'),
+                    'title' => $this->module->getTranslator()->trans('ID', [], 'Modules.Phsimpleblog.Admin'),
                     'align' => 'center',
                     'class' => 'fixed-width-xs',
                 ],
 
                 'name' => [
-                    'title' => $this->l('Name'),
+                    'title' => $this->module->getTranslator()->trans('Name', [], 'Modules.Phsimpleblog.Admin'),
                     'width' => 'auto',
                     'filter_key' => 'b!name',
                 ],
 
                 'active' => [
-                    'title' => $this->l('Enabled'),
+                    'title' => $this->module->getTranslator()->trans('Enabled', [], 'Modules.Phsimpleblog.Admin'),
                     'class' => 'fixed-width-xs',
                     'align' => 'center',
                     'active' => 'status',
@@ -321,7 +321,7 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
                 ],
 
                 'position' => [
-                    'title' => $this->l('Position'),
+                    'title' => $this->module->getTranslator()->trans('Position', [], 'Modules.Phsimpleblog.Admin'),
                     'class' => 'fixed-width-md',
                     'filter_key' => 'a!position',
                     'position' => 'position',
@@ -339,7 +339,7 @@ class AdminSimpleBlogCategoriesController extends ModuleAdminController
     {
         if ($this->tabAccess['delete'] == '1') {
             if (SimpleBlogCategory::getNbCats() == 1) {
-                $this->errors[] = $this->l('You cannot remove this category because this is last category already used by module.');
+                $this->errors[] = $this->module->getTranslator()->trans('You cannot remove this category because this is last category already used by module.', [], 'Modules.Phsimpleblog.Admin');
             } else {
                 return parent::processDelete();
             }

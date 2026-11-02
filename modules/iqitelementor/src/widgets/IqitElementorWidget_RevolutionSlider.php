@@ -47,6 +47,8 @@ class IqitElementorWidget_RevolutionSlider
      */
     public $icon;
 
+    public $context;
+
     public $status = 1;
     public $revModule;
     public $editMode = false;

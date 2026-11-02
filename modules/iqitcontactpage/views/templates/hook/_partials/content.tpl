@@ -18,7 +18,7 @@
             {if $company} <strong>{$company}</strong>{/if}
             {if $address}
             <div class="part">
-                <div class="icon"><a href="https://g.page/Khewa-in-Wakefield?share" target="_blank"><i class="fa fa-map-marker" aria-hidden="true"></i></a></div>
+                {* Khewa: map icon links to the shop on Google Maps *}<div class="icon"><a href="https://g.page/Khewa-in-Wakefield?share" target="_blank"><i class="fa fa-map-marker" aria-hidden="true"></i></a></div>
                 <div class="data">{$address|nl2br nofilter}</div>
             </div>
             {/if}

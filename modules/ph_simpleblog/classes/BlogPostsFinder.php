@@ -27,7 +27,7 @@ class BlogPostsFinder
     private $simpleResults = false;
     private $customWhere = false;
 
-    public function __construct(Context $context = null)
+    public function __construct(?Context $context = null)
     {
         if (!$context) {
             $context = Context::getContext();

@@ -88,6 +88,18 @@
                                 <div class="after-cover-tumbnails2 mt-4">{hook h='displayAfterProductThumbs2' product=$product}</div>
                             {/block}
                         {/block}
+
+                        {block name='product_tabs_left_col'}
+                            {if $iqitTheme.pp_tabs_placement == 'leftcolumn'}
+                                {if $iqitTheme.pp_tabs== 'tabh' || $iqitTheme.pp_tabs== 'tabha'}
+                                    {include file='catalog/_partials/_product_partials/product-tabs-h.tpl'}
+                                {elseif $iqitTheme.pp_tabs== 'section'}
+                                    {include file='catalog/_partials/_product_partials/product-tabs-sections.tpl'}
+                                {elseif $iqitTheme.pp_tabs== 'accordion'}
+                                    {include file='catalog/_partials/_product_partials/product-tabs-accordion.tpl'}
+                                {/if}
+                             {/if}
+                        {/block}
                 {/block}
             </div>
 
@@ -106,7 +118,7 @@
                                                      class="img-fluid  manufacturer-logo" loading="lazy" alt="{$product_manufacturer->name}" />
                                             </a>
                                         </div>
-                                    {/if}
+                         {/if}
                                 {/if}
                             {/if}
                         {/block}
@@ -114,7 +126,7 @@
                         {block name='page_header'}
                         <h1 class="h1 page-title"><span>{block name='page_title'}{$product.name}{/block}</span></h1>
                     {/block}
-
+                        {* Khewa: brand moved below the add-to-cart part (see further down) *}
 
                         {block name='hook_display_product_rating'}
                             {hook h='displayProductRating' product=$product}
@@ -129,6 +141,12 @@
                 {/block}
 
                 <div class="product-information">
+
+                {hook h='displayProductCampagains' product=$product position='small-product'}
+
+                {hook h='displayProductCampagains' product=$product position='highlighted-product'}
+
+                
                     {block name='product_description_short'}
                         <div id="product-description-short-{$product.id}"
                               class="rte-content product-description">{$product.description_short nofilter}</div>
@@ -193,48 +211,51 @@
                             {hook h='displayReassurance'}
                         {/block}
 
-                        {if $iqitTheme.pp_tabs_placement == 'rightcolumn'}
-                            {if $iqitTheme.pp_tabs== 'tabh' || $iqitTheme.pp_tabs== 'tabha'}
-                                {include file='catalog/_partials/_product_partials/product-tabs-h.tpl'}
-                            {elseif $iqitTheme.pp_tabs== 'section'}
-                                {include file='catalog/_partials/_product_partials/product-tabs-sections.tpl'}
-                            {elseif $iqitTheme.pp_tabs== 'accordion'}
-                                {include file='catalog/_partials/_product_partials/product-tabs-accordion.tpl'}
-                            {/if}
-                        {/if}
+                        {block name='product_tabs_right_col'}
+                            {if $iqitTheme.pp_tabs_placement == 'rightcolumn'}
+                                {if $iqitTheme.pp_tabs== 'tabh' || $iqitTheme.pp_tabs== 'tabha'}
+                                    {include file='catalog/_partials/_product_partials/product-tabs-h.tpl'}
+                                {elseif $iqitTheme.pp_tabs== 'section'}
+                                    {include file='catalog/_partials/_product_partials/product-tabs-sections.tpl'}
+                                {elseif $iqitTheme.pp_tabs== 'accordion'}
+                                    {include file='catalog/_partials/_product_partials/product-tabs-accordion.tpl'}
+                                {/if}
+                             {/if}
+                        {/block}
 
                     </div>
                 </div>
-                    {block name='product_brand_below'}
-                        {if $iqitTheme.pp_man_logo == 'title'}
-                            {if isset($product_manufacturer->id) && $product_manufacturer->active}
-                                {if isset($manufacturer_image_url)}
-                                    <div class="product-manufacturer mb-3">
-                                        <a href="{$product_brand_url}">
-                                            <img src="{$manufacturer_image_url}"
-                                                 class="img-fluid  manufacturer-logo" loading="lazy" alt="{$product_manufacturer->name}" />
-                                        </a>
-                                    </div>
-                                {else}
-                                    <label class="label">{l s='Brand' d='Shop.Theme.Catalog'}:</label>
-                                    <span>
+                    {* Khewa: brand and reference shown here, below the add-to-cart part, not under the title *}
+                        {block name='product_brand_below'}
+                            {if $iqitTheme.pp_man_logo == 'title'}
+                                {if isset($product_manufacturer->id) && $product_manufacturer->active}
+                                        {if isset($manufacturer_image_url)}
+                                            <div class="product-manufacturer mb-3">
+                                            <a href="{$product_brand_url}">
+                                                <img src="{$manufacturer_image_url}"
+                                                     class="img-fluid  manufacturer-logo" loading="lazy" alt="{$product_manufacturer->name}" />
+                                            </a>
+                                            </div>
+                                        {else}
+                                            <label class="label">{l s='Brand' d='Shop.Theme.Catalog'}:</label>
+                                            <span>
             <a href="{$product_brand_url}">{$product_manufacturer->name}</a>
           </span>
-                                {/if}
+                                        {/if}
 
+                                {/if}
                             {/if}
-                        {/if}
-                        {if $iqitTheme.pp_man_logo == 'next-title'}
-                            {if isset($product_manufacturer->id) && $product_manufacturer->active}
-                                {if !isset($manufacturer_image_url)}
-                                    <label class="label">{l s='Brand' d='Shop.Theme.Catalog'}:</label>
-                                    <span>
+                            {if $iqitTheme.pp_man_logo == 'next-title'}
+                                {if isset($product_manufacturer->id) && $product_manufacturer->active}
+                                    {if !isset($manufacturer_image_url)}
+                                        <label class="label">{l s='Brand' d='Shop.Theme.Catalog'}:</label>
+                                        <span>
                                         <a href="{$product_brand_url}">{$product_manufacturer->name}</a>
                                         </span>
+                                    {/if}
                                 {/if}
                             {/if}
-                        {/if}
-                    {/block}
+                        {/block}
                     {block name='product_reference'}
                         {if $iqitTheme.pp_reference == 'title'}
                             {if isset($product.reference_to_display) && $product.reference_to_display neq ''}
@@ -258,7 +279,7 @@
                                     class="product-accessories product-accessories-sidebar block d-none d-md-block d-lg-block d-xl-block">
                                 <p class="block-title"><span>{l s='You might also like' d='Shop.Theme.Catalog'}</span>
                                 </p>
-                                    <div id="product-accessories-sidebar" class="swiper-container">
+                                    <div id="product-accessories-sidebar" class="swiper swiper-container">
                                         <div class="swiper-wrapper">
                                             {foreach from=$accessories item="product_accessory" key="position"}
                                                 {block name='product_miniature'}
@@ -281,20 +302,22 @@
 
         </div>
 
+        {block name='product_tabs_footer'}
+
             {hook h='displayAboveProductsTabs'}
 
-        {if $iqitTheme.pp_tabs_placement == 'footer'}
-            {if $iqitTheme.pp_tabs== 'tabh' || $iqitTheme.pp_tabs== 'tabha'}
-                {include file='catalog/_partials/_product_partials/product-tabs-h.tpl'}
-            {elseif $iqitTheme.pp_tabs== 'section'}
-                {include file='catalog/_partials/_product_partials/product-tabs-sections.tpl'}
-            {elseif $iqitTheme.pp_tabs== 'accordion'}
-                {include file='catalog/_partials/_product_partials/product-tabs-accordion.tpl'}
+            {if $iqitTheme.pp_tabs_placement == 'footer'}
+                {if $iqitTheme.pp_tabs== 'tabh' || $iqitTheme.pp_tabs== 'tabha'}
+                    {include file='catalog/_partials/_product_partials/product-tabs-h.tpl'}
+                {elseif $iqitTheme.pp_tabs== 'section'}
+                    {include file='catalog/_partials/_product_partials/product-tabs-sections.tpl'}
+                {elseif $iqitTheme.pp_tabs== 'accordion'}
+                    {include file='catalog/_partials/_product_partials/product-tabs-accordion.tpl'}
+                {/if}
             {/if}
-        {/if}
+        {/block}
 
-
-            {if $iqitTheme.pp_tabs_placement == 'rightcolumn'}
+            {if $iqitTheme.pp_tabs_placement == 'rightcolumn' || $iqitTheme.pp_tabs_placement == 'leftcolumn'}
                 {hook h='displayProductElementor'}
             {/if}
 
@@ -306,8 +329,8 @@
                     <section class="product-accessories block block-section">
                         <p class="section-title">{l s='You might also like' d='Shop.Theme.Catalog'}</p>
 
-                        <div class="section-content swiper-container-wrapper">
-                            <div class="products products-grid swiper-container swiper-default-carousel">
+                        <div class="section-content swiper swiper-container-wrapper">
+                            <div class="products products-grid swiper swiper-container swiper-default-carousel">
                                 <div class="swiper-wrapper">
                                     {foreach from=$accessories item="product_accessory" key="position"}
                                         <div class="swiper-slide"> {include file="catalog/_partials/miniatures/product.tpl" product=$product_accessory  carousel=true position=$position}</div>
@@ -329,8 +352,8 @@
                     <section class="product-accessories product-accessories-sidebar-mobile block block-section d-md-none">
                         <p class="section-title">{l s='You might also like' d='Shop.Theme.Catalog'}</p>
 
-                        <div class="section-content swiper-container-wrapper">
-                            <div class="products products-grid swiper-container swiper-default-carousel">
+                        <div class="section-content swiper swiper-container-wrapper">
+                            <div class="products products-grid swiper swiper-container swiper-default-carousel">
                                 <div class="swiper-wrapper">
                                     {foreach from=$accessories item="product_accessory" key="position"}
                                         <div class="swiper-slide"> {include file="catalog/_partials/miniatures/product.tpl" product=$product_accessory  carousel=true position=$position}</div>

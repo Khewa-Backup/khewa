@@ -1,4 +1,5 @@
-input, textarea{
+input,
+textarea {
   font-family: inherit;
 }
 input:required {
@@ -7,30 +8,33 @@ input:required {
 input::-ms-clear {
   display: none;
 }
-input[type=number] {
-  -moz-appearance:textfield;
+input[type="number"] {
+  -moz-appearance: textfield;
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
 }
-select, .form-control-select{
-  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%), linear-gradient(to right, transparent, transparent);
+select,
+.form-control-select {
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%), linear-gradient(to right, transparent, transparent);
   background-position: calc(100% - 13px) calc(1em + 0px), calc(100% - 8px) calc(1em + 0px), 100% 0;
   background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
   background-repeat: no-repeat;
 }
 
-.custom-select2{
+.custom-select2 {
   position: relative;
   transition: $default-transition;
-  select, .form-control-select{
+  select,
+  .form-control-select {
     background: none !important;
     position: relative;
     z-index: 2;
   }
-  &:after{
+  &:after {
     content: "\f107";
     display: inline-block;
     font: normal normal normal 14px/1 FontAwesome;
@@ -46,7 +50,8 @@ select, .form-control-select{
     height: 13px;
   }
 }
-small.label, small.value {
+small.label,
+small.value {
   font-size: 0.8rem;
 }
 .form-control-label {
@@ -55,16 +60,17 @@ small.label, small.value {
 .form-control {
   border: none;
   height: auto;
-  padding: .6rem 1rem;
+  padding: 0.6rem 1rem;
   transition: $default-transition;
- -webkit-appearance: none;​
+  -webkit-appearance: none;
   &:focus {
     box-shadow: none;
   }
 }
+
 .input-group {
   &.focus {
-    outline: rem(3px) solid $blue;
+    outline: none;
   }
   .form-control:focus {
     outline: none;
@@ -96,8 +102,8 @@ select.form-control:not([size]):not([multiple]) {
 .form-control-comment {
   font-size: 0.8rem;
   opacity: 0.8;
-  padding-top: .4rem;
-  padding-bottom: .4rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
 }
 .form-control-submit {
   &.disabled {
@@ -158,13 +164,16 @@ select.form-control:not([size]):not([multiple]) {
       margin-top: 0;
     }
     i {
-      font-size: 1rem;
+      font-size: 10px;
       left: 6px;
+      top: 25%;
+      pointer-events: none;
+      font-weight: 900;
     }
   }
 }
-.radio-inline{
-  margin-right: .8rem;
+.radio-inline {
+  margin-right: 0.8rem;
 }
 .custom-radio {
   display: inline-block;
@@ -195,7 +204,7 @@ select.form-control:not([size]):not([multiple]) {
     bottom: 0;
     margin: auto;
   }
-  label{
+  label {
     display: inline;
   }
 }
@@ -273,12 +282,10 @@ select.form-control:not([size]):not([multiple]) {
   }
 }
 
-.custom-checkbox input[type=checkbox]+span:not(.color), .custom-radio{
+.custom-checkbox input[type="checkbox"] + span:not(.color),
+.custom-radio {
   border: 1px solid $gray-light;
 }
-
-
-
 
 .input-color,
 .input-radio {
@@ -307,7 +314,7 @@ select.form-control:not([size]):not([multiple]) {
     border: 2px solid $gray-light;
   }
 }
-.radio-label{
+.radio-label {
   width: auto;
   height: auto;
   min-height: 1.5rem;

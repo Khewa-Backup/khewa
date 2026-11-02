@@ -44,7 +44,6 @@
     var currentIndex = '{$currentIndex|@addcslashes:'\''}';
     var employee_token = '{getAdminToken tab='AdminEmployees'}';
     var default_language = '{$default_language|intval}';
-    var admin_modules_link = '{$link->getAdminLink("AdminModulesSf", true, ['route' => "admin_module_catalog_post"])|addslashes}';
     var tab_modules_list = '{if isset($tab_modules_list) && $tab_modules_list}{$tab_modules_list|addslashes}{/if}';
   </script>
 
@@ -59,11 +58,11 @@
     {include file=$smarty.const._PS_ALL_THEMES_DIR_|cat:"javascript.tpl"}
   {/if}
 
-  {if isset($css_files)}
-    {foreach from=$css_files key=css_uri item=media}
-      <link href="{$css_uri|escape:'html':'UTF-8'}" rel="stylesheet" type="text/css"/>
-    {/foreach}
-  {/if}
+{if isset($css_files)}
+{foreach from=$css_files key=css_uri item=media}
+  <link href="{$css_uri|escape:'html':'UTF-8'}" rel="stylesheet" type="text/css"/>
+{/foreach}
+{/if}
 
   {if isset($displayBackOfficeHeader)}
     	{$displayBackOfficeHeader}

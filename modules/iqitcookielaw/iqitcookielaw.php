@@ -23,12 +23,14 @@ use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 class IqitCookieLaw extends Module implements WidgetInterface
 {
     protected $templateFile;
+    public $cfgName;
+    public $defaults;
 
     public function __construct()
     {
         $this->name = 'iqitcookielaw';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.0';
+        $this->version = '1.0.2';
         $this->author = 'IQIT-COMMERCE.COM';
         $this->bootstrap = true;
 

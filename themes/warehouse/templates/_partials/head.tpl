@@ -54,6 +54,8 @@
               })(window,document,'script','dataLayer','{/literal}{$iqitTheme.codes_gtm}{literal}');{/literal}</script>
     <!-- End Google Tag Manager -->
   {/if}
+
+  
 {/block}
 
 {block name='head_seo'}
@@ -65,13 +67,12 @@
     {hook h='displayAfterTitleTag'}
   {/block}
   <meta name="description" content="{block name='head_seo_description'}{$page.meta.description}{/block}">
-  <meta name="keywords" content="{block name='head_seo_keywords'}{$page.meta.keywords}{/block}">
   {if $page.meta.robots !== 'index'}
     <meta name="robots" content="{$page.meta.robots}">
   {/if}
   {block name='head_seo_canonical'}
   {if $page.canonical}
-    <link rel="canonical" href="{$page.canonical}">
+    {if $page.meta.robots !== 'noindex'}<link rel="canonical" href="{$page.canonical}">{/if}
   {/if}
   {/block}
 
@@ -96,17 +97,17 @@
 {/block}
 
 {block name='head_og_tags'}
-    <meta property="og:title" content="{$page.meta.title}"/>
-    <meta property="og:url" content="https://{$smarty.server.HTTP_HOST}{$smarty.server.REQUEST_URI}"/>
-    <meta property="og:site_name" content="{$shop.name}"/>
+    <meta property="og:title" content="{$page.meta.title}">
+    <meta property="og:url" content="https://{$smarty.server.HTTP_HOST}{$smarty.server.REQUEST_URI}">
+    <meta property="og:site_name" content="{$shop.name}">
     <meta property="og:description" content="{$page.meta.description}">
     <meta property="og:type" content="website">
 
 {block name='head_og_image'}
     {if isset($iqitTheme.sm_og_logo) == 1 && $iqitTheme.sm_og_logo != ''}
-      <meta property="og:image" content="https://{$smarty.server.HTTP_HOST}{$iqitTheme.sm_og_logo }" />
+      <meta property="og:image" content="https://{$smarty.server.HTTP_HOST}{$iqitTheme.sm_og_logo }">
       {else}
-      <meta property="og:image" content="{$shop.logo}" />
+      <meta property="og:image" content="{$shop.logo}">
     {/if}
 {/block}
 {/block}
@@ -146,14 +147,23 @@
 
 
 <link rel="preload" as="font"
-      href="{$urls.theme_assets}css/font-awesome/fonts/fontawesome-webfont.woff?v=4.7.0"
-      type="font/woff" crossorigin="anonymous">
+      href="{$urls.theme_assets}css/font-awesome/webfonts/fa-brands-400.woff2"
+      type="font/woff2" crossorigin="anonymous">
+
 <link rel="preload" as="font"
-      href="{$urls.theme_assets}css/font-awesome/fonts/fontawesome-webfont.woff2?v=4.7.0"
+      href="{$urls.theme_assets}css/font-awesome/webfonts/fa-regular-400.woff2"
+      type="font/woff2" crossorigin="anonymous">
+
+<link rel="preload" as="font"
+      href="{$urls.theme_assets}css/font-awesome/webfonts/fa-solid-900.woff2"
+      type="font/woff2" crossorigin="anonymous">
+
+<link rel="preload" as="font"
+      href="{$urls.theme_assets}css/font-awesome/webfonts/fa-brands-400.woff2"
       type="font/woff2" crossorigin="anonymous">
 
 
-<link  rel="preload stylesheet"  as="style" href="{$urls.theme_assets}css/font-awesome/css/font-awesome-preload.css"
+<link  rel="preload stylesheet"  as="style" href="{$urls.theme_assets}css/font-awesome/css/font-awesome-preload.css?v=6.7.2"
        type="text/css" crossorigin="anonymous">
 
 

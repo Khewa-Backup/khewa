@@ -22,20 +22,19 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-<script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@id": "#store-organization",
-    "@type": "Organization",
-    "name" : "{$shop.name}",
-    "url" : "{$urls.pages.index}"{if $shop.logo_details},
-  
-      "logo": {
-        "@type": "ImageObject",
-        "url":"{$shop.logo_details.src}"
-      }
-    {/if}
-  }
+ <script type="application/ld+json">
+ {
+   "@context": "https://schema.org",
+   "@type": "Organization",
+   "name" : "{$shop.name}",
+   "url" : "{$urls.pages.index}"
+   {if $shop.logo_details}
+    ,"logo": {
+       "@type": "ImageObject",
+       "url":"{$shop.logo_details.src}"
+     }
+   {/if}
+ }
 </script>
 
 <script type="application/ld+json">
@@ -57,7 +56,8 @@
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "url" : "{$urls.pages.index}"{if $shop.logo_details},
+      "url" : "{$urls.pages.index}",
+      {if $shop.logo_details}
         "image": {
           "@type": "ImageObject",
           "url":"{$shop.logo_details.src}"

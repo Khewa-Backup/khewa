@@ -24,6 +24,7 @@
 *}
 
 <div class="ps-emailsubscription-block">
+    {* Khewa: newsletter title above the input *}
     <h4>{l s='Subscribe to Newsletter' d='Shop.Forms.Labels'}</h4>
     <form action="{url entity=index params=['fc' => 'module', 'module' => 'iqitemailsubscriptionconf', 'controller' => 'subscription']}"
           method="post">
@@ -38,17 +39,20 @@
                             required
                     >
                     <input type="hidden" name="blockHookName" value="{$hookName}" />
+                    <span class="input-group-append">
                     <button
                             class="btn btn-primary btn-subscribe btn-iconic"
                             name="submitNewsletter"
                             type="submit"
                             aria-label="{l s='Subscribe' d='Shop.Theme.Actions'}">
                     <i class="fa fa-envelope-o" aria-hidden="true"></i></button>
+                    </span>
                 </div>
         {if $conditions}
             <p class="mt-2 text-muted ps-emailsubscription-conditions">{$conditions}</p>
         {/if}
         {hook h='displayNewsletterRegistration'}
+        {* Khewa: GDPR consent box hidden under the newsletter *}
         {*if isset($id_module)}
             <div class="mt-2 text-muted" style="display: none;"> {hook h='displayGDPRConsent' id_module=$id_module}</div>
         {/if*}

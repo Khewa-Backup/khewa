@@ -27,9 +27,17 @@
     {if $product.cover}
     <a href="{$product.url}" title="{$product.name}" target="_blank" rel="noopener noreferrer nofollow">
       {if $product.default_image}
+        <picture>
+        {if !empty($product.default_image.bySize.cart_default.sources.avif)}<source srcset="{$product.default_image.bySize.cart_default.sources.avif}" type="image/avif">{/if}
+        {if !empty($product.default_image.bySize.cart_default.sources.webp)}<source srcset="{$product.default_image.bySize.cart_default.sources.webp}" type="image/webp">{/if}
         <img class="media-object img-fluid" src="{$product.default_image.small.url}" alt="{$product.name}" loading="lazy">
+        </picture>
       {else}
+        <picture>
+        {if !empty($urls.no_picture_image.bySize.cart_default.sources.avif)}<source srcset="{$urls.no_picture_image.bySize.cart_default.sources.avif}" type="image/avif">{/if}
+        {if !empty($urls.no_picture_image.bySize.cart_default.sources.webp)}<source srcset="{$urls.no_picture_image.bySize.cart_default.sources.webp}" type="image/webp">{/if}
         <img class="media-object img-fluid" src="{$urls.no_picture_image.bySize.small_default.url}" loading="lazy" />
+        </picture>
       {/if}
     </a>
     {/if}

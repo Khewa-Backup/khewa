@@ -46,6 +46,7 @@ class IqitElementorWidget_Search
      * @var string widget icon
      */
     public $icon;
+    public $context;
 
     public $status = 1;
 

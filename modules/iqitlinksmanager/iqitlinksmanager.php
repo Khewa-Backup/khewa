@@ -29,6 +29,8 @@ class IqitLinksManager extends Module implements WidgetInterface
     private $iqitLinkBlockPresenter;
     private $iqitLinkBlockRepository;
     protected $templateFile;
+    public $cfgName;
+    
 
     public function __construct()
     {
@@ -39,12 +41,11 @@ class IqitLinksManager extends Module implements WidgetInterface
         $this->bootstrap = true;
         $this->cfgName = 'iqitlinkmng_';
         $this->need_instance = 0;
-        $this->secure_key = Tools::encrypt($this->name);
 
         parent::__construct();
 
-        $this->displayName = $this->l('IQITLINKSMANAGER - block links');
-        $this->description = $this->l('Adds block with links in variouse hooks in your page');
+        $this->displayName = $this->trans('IQITLINKSMANAGER - block links', [], 'Modules.Iqitlinksmanager.Admin');
+        $this->description = $this->trans('Adds block with links in variouse hooks in your page', [], 'Modules.Iqitlinksmanager.Admin');
 
         $this->iqitLinkBlockRepository = new IqitLinkBlockRepository(
             Db::getInstance(),

@@ -30,10 +30,6 @@ $(document).ready(function () {
             e.stopPropagation();
         });
 
-        $(document).on('click', '#blockcart-content', function (e) {
-            e.stopPropagation();
-        });
-
 
         prestashop.on(
             'updateCart',

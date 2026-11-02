@@ -25,7 +25,7 @@
 
 <div id="currency_selector" class="d-inline-block">
     <div class="currency-selector dropdown js-dropdown d-inline-block">
-        <a class="expand-more" data-toggle="dropdown">{$current_currency.iso_code} {if $currency.sign !== $currency.iso_code} {$currency.sign}{/if} <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+        <a class="expand-more" data-bs-toggle="dropdown">{$current_currency.iso_code} {if $currency.sign !== $currency.iso_code} {$currency.sign}{/if} <i class="fa fa-angle-down" aria-hidden="true"></i></a>
         <div class="dropdown-menu">
             <ul>
                 {foreach from=$currencies item=currency}
@@ -38,3 +38,4 @@
         </div>
     </div>
 </div>
+

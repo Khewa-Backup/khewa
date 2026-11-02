@@ -43,7 +43,7 @@ class PH_SimpleBlogAuthorsListModuleFrontController extends DefaultListBlogForPr
 
 
         $breadcrumb['links'][] = [
-            'title' => $this->l('Authors', 'author-v17'),
+            'title' => $this->module->getTranslator()->trans('Authors', [], 'Modules.Phsimpleblog.Shop'),
             'url' => $this->context->link->getModuleLink('ph_simpleblog', 'authorslist'),
         ];
 

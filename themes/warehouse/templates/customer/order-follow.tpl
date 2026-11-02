@@ -64,7 +64,7 @@
     </table>
     <div class="order-returns hidden-md-up">
       {foreach from=$ordersReturn item=return}
-        <div class="order-return">
+        <div class="order-return border-bottom pb-2 mb-2">
           <ul>
             <li>
               <strong>{l s='Order' d='Shop.Theme.Customeraccount'}</strong>
@@ -92,7 +92,8 @@
         </div>
       {/foreach}
     </div>
-
+    {else}
+      <div class="alert alert-info" role="alert" data-alert="info">{l s='You have no merchandise return authorizations.' d='Shop.Notifications.Error'}</div>  
   {/if}
 
 {/block}

@@ -28,7 +28,6 @@
     var currentIndex = '{$currentIndex|@addcslashes:'\''}';
     var employee_token = '{getAdminToken tab='AdminEmployees'}';
     var default_language = '{$default_language|intval}';
-    var admin_modules_link = '{$link->getAdminLink("AdminModulesSf", true, ['route' => "admin_module_catalog_post"])|addslashes}';
     var tab_modules_list = '{if isset($tab_modules_list) && $tab_modules_list}{$tab_modules_list|addslashes}{/if}';
   </script>
   {if isset($css_files)}

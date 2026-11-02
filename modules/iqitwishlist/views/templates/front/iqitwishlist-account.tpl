@@ -13,7 +13,13 @@
 *
 *}
 
-{extends file='customer/page.tpl'}
+{assign var="themePath" value=""}
+
+{if !$readOnly}
+    {assign var="themePath" value="customer/"}
+{/if}
+
+{extends file="{$themePath}page.tpl"}
 
 
 
@@ -54,12 +60,6 @@
                                 data-text-copy="{l s='Copy to clipboard' mod='iqitwishlist'}">{l s='Copy to clipboard' mod='iqitwishlist'}</button>
                     </span>
                 </div>
-
-                <div class="addthis_inline_share_toolbox mt-3" data-title="{l s='My wishlist' mod='iqitwishlist'}"
-                     data-url="{url entity='module' name='iqitwishlist' controller='view' params=['wishlistToken' => $token]}"></div>
-
-                <script type="text/javascript"
-                        src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-58591f8d80978019"></script>
             </div>
         {/if}
         <p class="alert alert-warning hidden-xs-up"

@@ -37,21 +37,21 @@
                 {assign var="isDescriptionExist" value=true}
 
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab"
+                    <a class="nav-link active" data-bs-toggle="tab"
                        href="#description">
                         {l s='Description' d='Shop.Theme.Catalog'}
                     </a>
                 </li>
             {/if}
             <li class="nav-item  {if !$product.grouped_features}empty-product-details{/if}" id="product-details-tab-nav">
-                <a class="nav-link{if !$isDescriptionExist} active{/if}" data-toggle="tab"
+                <a class="nav-link{if !$isDescriptionExist} active{/if}" data-bs-toggle="tab"
                    href="#product-details-tab">
                     {l s='Product Details' d='Shop.Theme.Catalog'}
                 </a>
             </li>
             {if $product.attachments}
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#attachments">
+                    <a class="nav-link" data-bs-toggle="tab" href="#attachments">
                         {l s='Attachments' d='Shop.Theme.Catalog'}
                     </a>
                 </li>
@@ -60,8 +60,8 @@
             {if $iqitTheme.pp_accesories == 'tab'}
                 {if $accessories}
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#accessories-tab">
-                            {l s='Related products' d='Shop.Theme.Catalog'}
+                        <a class="nav-link" data-bs-toggle="tab" href="#accessories-tab">
+                        {l s='You might also like' d='Shop.Theme.Catalog'}
                         </a>
                     </li>
                 {/if}
@@ -72,7 +72,7 @@
                 {capture name="manufacturerElementorDescription"}{if $iqitTheme.pp_tabs_placement == 'footer'}{hook h='displayManufacturerElementor' manufacturerId = $product_manufacturer->id}{/if}{/capture}
                 {if $smarty.capture.manufacturerElementorDescription != '' || $product_manufacturer->description != ''}
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#brand-tab">
+                    <a class="nav-link" data-bs-toggle="tab" href="#brand-tab">
                         {l s='About' d='Shop.Warehousetheme'} {$product_manufacturer->name}
                     </a>
                 </li>
@@ -82,7 +82,7 @@
 
             {foreach from=$product.extraContent item=extra key=extraKey}
                 <li class="nav-item">
-                    <a  data-toggle="tab"
+                    <a  data-bs-toggle="tab"
                        href="#extra-{$extraKey}"
                     {foreach $extra.attr as $key => $val}
                     {if $key == "class"}

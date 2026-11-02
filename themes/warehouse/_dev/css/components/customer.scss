@@ -319,7 +319,7 @@
 }
 
 /*** Responsive part ***/
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
   .my-account-page-content-wrapper{
     //side menu of my account page
     .my-account-side-links{

@@ -38,7 +38,6 @@ class SimpleBlogTag extends ObjectModel
     public function __construct($id = null, $name = null, $id_lang = null)
     {
         $this->def = Tag::getDefinition($this);
-        $this->setDefinitionRetrocompatibility();
 
         if ($id) {
             parent::__construct($id);
@@ -158,7 +157,7 @@ class SimpleBlogTag extends ObjectModel
         return $result;
     }
 
-    public function getPosts($associated = true, Context $context = null)
+    public function getPosts($associated = true, ?Context $context = null)
     {
         if (!$context) {
             $context = Context::getContext();

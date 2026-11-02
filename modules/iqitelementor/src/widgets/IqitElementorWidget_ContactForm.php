@@ -42,6 +42,7 @@ class IqitElementorWidget_ContactForm
      * @var string widget name
      */
     public $name;
+    public $context;
     /**
      * @var string widget icon
      */

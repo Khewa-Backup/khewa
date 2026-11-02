@@ -3,13 +3,13 @@
     {if isset($iqitTheme.h_user_dropdown) && $iqitTheme.h_user_dropdown}
 
         <div class="dropdown">
-            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+            <a data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                class="account"
             href="#">
                 <i class="fa fa-user fa-fw icon" aria-hidden="true"></i>
                 <span class="title">{$customer.firstname|truncate:15:'...'}</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-menu dropdown-menu-end">
                 <a class="dropdown-item" href="{$urls.pages.identity}">
                     <i class="fa fa-user fa-fw" aria-hidden="true"></i>
                     {l s='Information' d='Shop.Theme.Customeraccount'}
@@ -41,13 +41,13 @@
                 {if $configuration.voucher_enabled && !$configuration.is_catalog}
                     <a class="dropdown-item" href="{$urls.pages.discount}">
                         <i class="fa fa-tags fa-fw" aria-hidden="true"></i>
-                        {l s='Credit slip codes' d='Shop.Theme.Customeraccount'}
+                        {* Khewa: vouchers are called credit slip codes *}{l s='Credit slip codes' d='Shop.Theme.Customeraccount'}
                     </a>
                 {/if}
 
                 {if $configuration.return_enabled && !$configuration.is_catalog}
                     <a class="dropdown-item" href="{$urls.pages.order_follow}">
-                        <i class="fa fa-undo fa-fw"" aria-hidden="true"></i>
+                        <i class="fa fa-undo fa-fw" aria-hidden="true"></i>
                         {l s='Merchandise returns' d='Shop.Theme.Customeraccount'}
                     </a>
                 {/if}
@@ -79,7 +79,7 @@
         {/if}
     {else}
         <a
-                href="{$urls.pages.my_account}"
+                href="{$urls.pages.authentication}?back={$urls.current_url|urlencode}"
                 title="{l s='Log in to your customer account' d='Shop.Theme.Customeraccount'}"
                 rel="nofollow"
         ><i class="fa fa-user" aria-hidden="true"></i>

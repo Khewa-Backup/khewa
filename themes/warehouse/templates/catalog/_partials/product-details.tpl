@@ -66,6 +66,7 @@
 
 {* if product have specific references, a table will be added to product details section *}
 {block name='product_specific_references'}
+{* Khewa: specific references (ISBN, UPC...) table hidden *}
     {if !empty($product.specific_references)}
 {*        <div class="specific-references">*}
 {*            {foreach from=$product.specific_references item=reference key=key}*}

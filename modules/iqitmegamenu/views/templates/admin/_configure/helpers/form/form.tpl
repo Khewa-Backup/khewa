@@ -44,29 +44,42 @@ $(document).ready(function() {
 			}
   		  });
 
- $('.iframe-column-upload').fancybox({
-			'width'		: 900,
-			'height'	: 600,
-			'type'		: 'iframe',
-      		'autoScale' : false,
-      		'autoDimensions': false,
-      		 'fitToView' : false,
-  			 'autoSize' : false,
-  			 onUpdate : function(){
-  			 	 $('.fancybox-iframe').contents().find('a.link').data('field_id', $(this.element).data("input-name"));
-			 	 $('.fancybox-iframe').contents().find('a.link').attr('data-field_id', $(this.element).data("input-name"));
-			 	},
-  			 afterShow: function(){
-			 	 $('.fancybox-iframe').contents().find('a.link').data('field_id', $(this.element).data("input-name"));
-			 	 $('.fancybox-iframe').contents().find('a.link').attr('data-field_id', $(this.element).data("input-name"));
-			},
-			beforeClose: function() {
-				var $input = $('#' + $(this.element).data("input-name"));
-				var val = $input.val();
+$('#grid-submenu').on('click', '.iframe-column-upload', function(e) {
+        e.preventDefault();
 
-				$input.val(val.replace(iqitBaseUrl, ""));
-			}
-  		  });
+        $.fancybox.open($(this), {
+            'width'         : 900,
+            'height'        : 600,
+            'type'          : 'iframe',
+            'autoScale'     : false,
+            'autoDimensions': false,
+            'fitToView'     : false,
+            'autoSize'      : false,
+            onUpdate : function(){
+                var inputName = $(this.element).data("input-name");
+                $('.fancybox-iframe').contents().find('a.link')
+                    .data('field_id', inputName)
+                    .attr('data-field_id', inputName);
+            },
+            afterShow: function(){
+                var inputName = $(this.element).data("input-name");
+                $('.fancybox-iframe').contents().find('a.link')
+                    .data('field_id', inputName)
+                    .attr('data-field_id', inputName);
+            },
+            beforeClose: function() {
+                var inputName = $(this.element).data("input-name");
+                var $input = $('#' + inputName);
+                var val = $input.val();
+
+                if (val) {
+                    $input.val(val.replace(iqitBaseUrl, ""));
+                }
+            }
+        });
+
+        return false;
+    });
 
 var control = $("#url_type");
 
@@ -193,6 +206,8 @@ $("#cssstyle-submenu").addClass('hidden');
 		$('.list-wrapper-vertical').show();
 		if($(this).attr('href')=='#submenutabs_tab')
 		$('.list-wrapper-submenutabs').show();
+		if($(this).attr('href')=='#mobile_tab')
+		$('.list-wrapper-mobile').show();
 		if($(this).attr('href')=='#customhtml_tab')
 		$('.list-wrapper-html').show();
 
@@ -286,7 +301,7 @@ function move(up)
 <ul>
 </div>
 </div>
-<div id="list-container" class="col-lg-10 tab-content">
+<div id="list-container" class="col-lg-10 tab-content {if isset($menu_type)}menu-type-{$menu_type}{/if}" >
 {$smarty.block.parent}
 </div>
 </div>
@@ -408,8 +423,9 @@ function move(up)
 
 
 	{elseif $input.type == 'image_upload'}
+
 	<p> <input id="{$input.name}" type="text" name="{$input.name}" value="{$fields_value[$input.name]}"> </p>
-	 <a href="filemanager/dialog.php?type=1&field_id={$input.name}" class="btn btn-default iframe-upload"  data-input-name="{$input.name}" type="button">{l s='Select image' mod='iqitmegamenu'} <i class="icon-angle-right"></i></a>
+	 <a href="/{$adminDir}/filemanager/dialog.php?type=1&field_id={$input.name}" class="btn btn-default iframe-upload"  data-input-name="{$input.name}" type="button">{l s='Select image' mod='iqitmegamenu'} <i class="icon-angle-right"></i></a>
 
 	{elseif $input.type == 'ietool'}
 
@@ -465,7 +481,11 @@ function move(up)
 	</div>	</div>	</div>
 
 	{elseif $input.type == 'custom_info'}
-	  &nbsp; {l s='Entire design configuration you can find in iqitthemeeditor > menu section' mod='iqitmegamenu'}
+	  &nbsp; {l s='Entire design configuration you can find in iqitthemeeditor > menu section' mod='iqitmegamenu'}><br><br><br>
+	  &nbsp; <strong>{l s='In thmeeditor you also select from which source mobile menu will be generated:' mod='iqitmegamenu'}</strong><br>
+	 - From horizontal menu drag&drops tabs <br>
+	 - From mobile menu drag&drops tabs tabs <br>
+	 - From simple categories selector visible below <br>
 	{else}
 		{$smarty.block.parent}
     {/if}

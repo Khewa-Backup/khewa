@@ -11,7 +11,7 @@
 *
 *}
 
-<div class="panel"><h3><i class="icon-list-ul"></i> {if $menu_type==1}{l s='Horizontal tabs list' mod='iqitmegamenu'}{elseif $menu_type==2}{l s='Vertical tabs list' mod='iqitmegamenu'}{elseif $menu_type==3}{l s='Predefinied submenu tabs' mod='iqitmegamenu'}{/if}
+<div class="panel"><h3><i class="icon-list-ul"></i> {if $menu_type==1}{l s='Horizontal tabs list' mod='iqitmegamenu'}{elseif $menu_type==2}{l s='Vertical tabs list' mod='iqitmegamenu'}{elseif $menu_type==3}{l s='Predefinied submenu tabs' mod='iqitmegamenu'}{elseif $menu_type==4}{l s='Drag and drop - mobile menu' mod='iqitmegamenu'}{/if}
 	<span class="panel-heading-action">
 		<a id="desc-product-new" class="list-toolbar-btn" href="{$link->getAdminLink('AdminModules')}&configure=iqitmegamenu&addTab=1&menu_type={$menu_type}">
 			<span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="Add new" data-html="true">

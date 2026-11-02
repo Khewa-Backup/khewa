@@ -67,7 +67,7 @@ class IqitElementor extends Module implements WidgetInterface
     {
         $this->name = 'iqitelementor';
         $this->tab = 'front_office_features';
-        $this->version = '1.1.9';
+        $this->version = '1.2.4';
         $this->author = 'IQIT-COMMERCE.COM';
         $this->bootstrap = true;
         $this->controllers = array('preview','widget');
@@ -75,8 +75,10 @@ class IqitElementor extends Module implements WidgetInterface
         parent::__construct();
 
 
-        $this->displayName = $this->l('IQITELEMENTOR - drag&drop front-end page builder');
-        $this->description = $this->l('Flexible page builder based on Wordpress Elementor plugin by POJO.me');
+
+
+        $this->displayName = $this->trans('IQITELEMENTOR - drag&drop front-end page builder', [], 'Modules.Iqitelementor.Admin');
+        $this->description = $this->trans('Flexible page builder based on Wordpress Elementor plugin by POJO.me', [], 'Modules.Iqitelementor.Admin');
 
     }
 
@@ -96,10 +98,12 @@ class IqitElementor extends Module implements WidgetInterface
             && $this->registerHook('actionObjectCmsUpdateAfter')
             && $this->registerHook('actionObjectSimpleBlogPostUpdateAfter')
             && $this->registerHook('actionObjectSimpleBlogPostAddAfter')
+            && $this->registerHook('actionObjectYbc_blog_post_classUpdateAfter')
+            && $this->registerHook('actionObjectYbc_blog_post_classUpdateBefore')
             && $this->registerHook('actionObjectCmsDeleteAfter')
             && $this->registerHook('actionObjectProductDeleteAfter')
             && $this->registerHook('displayCMSDisputeInformation')
-            && $this->registerHook('displayBlogElementor')
+            && $this->registerHook('displayYbcBlogElementor')
             && $this->registerHook('displayProductElementor')
             && $this->registerHook('displayCategoryElementor')
             && $this->registerHook('actionObjectManufacturerUpdateAfter')
@@ -110,7 +114,7 @@ class IqitElementor extends Module implements WidgetInterface
             && $this->registerHook('actionObjectCategoryUpdateAfter')
             && $this->registerHook('actionObjectCategoryAddAfter')
             && $this->registerHook('actionObjectCategoryDeleteAfter')
-            && $this->registerHook('header')
+            && $this->registerHook('displayHeader')
             && $this->registerHook('isJustElementor')
             && $this->registerHook('registerGDPRConsent')
             && $this->registerHook('actionProductAdd')
@@ -126,7 +130,7 @@ class IqitElementor extends Module implements WidgetInterface
         return false;
     }
 
-    public function refreshInstagramToken($apiHost = 'https://graph.instagram.com/refresh_access_token', $params, $method = 'GET')
+    public function refreshInstagramToken($apiHost, $params, $method = 'GET')
     {
         $paramString = null;
 
@@ -165,6 +169,7 @@ class IqitElementor extends Module implements WidgetInterface
 
     public function hookDisplayBackOfficeHeader($params)
     {
+        
         $instagramExpDate = (int) Configuration::get('iqit_elementor_inst_token_exp');
 
         if($instagramExpDate){
@@ -184,7 +189,7 @@ class IqitElementor extends Module implements WidgetInterface
                 }
             }
         }
-
+        
         $this->context->controller->addCSS($this->_path . 'views/css/backoffice.css');
 
         $onlyElementor = array();
@@ -199,6 +204,7 @@ class IqitElementor extends Module implements WidgetInterface
             $this->context->controller->controller_name == 'AdminProducts' ||
             $this->context->controller->controller_name == 'AdminCategories' ||
             $this->context->controller->controller_name == 'AdminManufacturers' ||
+            $this->context->controller->controller_name == 'AdminYbcBlogPost' ||
             $this->context->controller->controller_name == 'AdminSimpleBlogPosts'
             ) {
 
@@ -268,7 +274,34 @@ class IqitElementor extends Module implements WidgetInterface
                     }
                 }
 
-            } elseif ($this->context->controller->controller_name == 'AdminCategories'){
+            } elseif ($this->context->controller->controller_name == 'AdminYbcBlogPost'){
+                $idPage = (int) Tools::getValue('id_post');
+                $pageType = 'ybcblog';
+
+                if($idPage){
+                    $blogPost = new Ybc_blog_post_class($idPage);
+
+                    foreach ($blogPost->description as $key => $contentLang ){
+
+                        $strippedCms = preg_replace('/^<p[^>]*>(.*)<\/p[^>]*>/is', '$1', $contentLang);
+                        $strippedCms = str_replace(array("\r\n", "\n", "\r"), '', $strippedCms);
+                        $content = json_decode($strippedCms, true);
+
+                        if (json_last_error() == JSON_ERROR_NONE){
+                            if (empty($content)){
+                                $onlyElementor[$key] = 0;
+                            } else{
+                                $onlyElementor[$key] = 1;
+                            }
+
+                        } else{
+                            $onlyElementor[$key] = 0;
+                        }
+                    }
+                }
+
+            } 
+            elseif ($this->context->controller->controller_name == 'AdminCategories'){
                 global $kernel;
 
                 $request = $kernel->getContainer()->get('request_stack')->getCurrentRequest();
@@ -303,11 +336,15 @@ class IqitElementor extends Module implements WidgetInterface
                 }
 
                 $idPage = (int) $request->attributes->get('id');
+                if (!$idPage){
+                    $idPage = (int) $request->attributes->get('productId');
+                }
                 $pageType = 'product';
+
             }
 
 
-
+           
             if (!$idPage) {
                 if($newContent){
                     $url = $this->context->link->getAdminLink('IqitElementorEditor').'&pageType='.$pageType.'&contentType='.$contentType.'&newContent='.$newContent.'&pageId=' . $idPage . '&idLang='. (int) $this->context->language->id;
@@ -348,7 +385,7 @@ class IqitElementor extends Module implements WidgetInterface
         return ($this->uninstallSQL() && $this->uninstallTab() &&  parent::uninstall());
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
      //   $this->context->controller->requireAssets(array('font-awesome'));
         $this->registerCssFiles();
@@ -500,7 +537,7 @@ class IqitElementor extends Module implements WidgetInterface
     public function renderIqitElementorWidget($name, $options, $preview = false){
        $templateFile = strtolower($name) . '.tpl';
        $this->smarty->assign($this->getIqitElementorWidgetVariables($name, $options, $preview ));
-       return $this->fetch(_PS_MODULE_DIR_ .'/iqitelementor/views/templates/widgets/' . $templateFile);
+       return $this->fetch('module:' . $this->name . '/views/templates/widgets/' . $templateFile);
     }
 
     public function getIqitElementorWidgetVariables($name, $options = [], $preview = false)
@@ -535,6 +572,10 @@ class IqitElementor extends Module implements WidgetInterface
             $blogId = (int)  $configuration['smarty']->tpl_vars['post']->value->id_simpleblog_post;
             $templateFile = 'generated_content_cms.tpl';
             $cacheId = 'iqitelementor|'.$hookName.'|'.$blogId;
+        } elseif (preg_match('/^displayYbcBlogElementor\d*$/', $hookName)){
+            $blogId = (int) $configuration['smarty']->tpl_vars['blog_post']->value['id_post'];
+            $templateFile = 'generated_content_cms.tpl';
+            $cacheId = 'iqitelementor|'.$hookName.'|'.$blogId;
         } elseif (preg_match('/^displayManufacturerElementor\d*$/', $hookName)){
             $manfuacturerId = (int) $configuration['manufacturerId'];
             $templateFile = 'generated_content_cms.tpl';
@@ -542,6 +583,10 @@ class IqitElementor extends Module implements WidgetInterface
         } elseif (preg_match('/^display.*$/', $hookName)){
             $templateFile = 'generated_content_content.tpl';
             $cacheId = 'iqitelementor|'.$hookName;
+        }
+
+        if (!empty($this->context->customer->id)) {
+            $cacheId .= '|' . $this->context->customer->id;
         }
 
         if (!$this->isCached('module:' . $this->name . '/views/templates/hook/' .$templateFile, $this->getCacheId($cacheId))){
@@ -633,6 +678,23 @@ class IqitElementor extends Module implements WidgetInterface
                 $options['elementor'] = false;
                 $content = $blogContent;
             }
+        } elseif (preg_match('/^displayYbcBlogElementor\d*$/', $hookName)){
+      
+            $blogContent =  $configuration['smarty']->tpl_vars['blog_post']->value['description'];
+            $strippedBlog = preg_replace('/^<p[^>]*>(.*)<\/p[^>]*>/is', '$1', $blogContent);
+            $strippedBlog = str_replace(array("\r", "\n"), '', $strippedBlog);
+
+            $content = json_decode($strippedBlog, true);
+
+            if (json_last_error() == JSON_ERROR_NONE){
+                ob_start();
+                PluginElementor::instance()->get_frontend((array) $content);
+                $options['elementor'] = true;
+                $content = ob_get_clean();
+            } else {
+                $options['elementor'] = false;
+                $content = $blogContent;
+            }
         }  elseif (preg_match('/^displayManufacturerElementor\d*$/', $hookName)){
 
             $options['elementor'] = false;
@@ -681,8 +743,7 @@ class IqitElementor extends Module implements WidgetInterface
 
     public function getFrontEditorToken()
     {
-        return Tools::getAdminToken($this->name.(int)Tab::getIdFromClassName($this->name)
-            .(is_object(Context::getContext()->employee) ? (int)Context::getContext()->employee->id :
+        return Tools::hash($this->name . (is_object(Context::getContext()->employee) ? (int)Context::getContext()->employee->id :
                 Tools::getValue('id_employee')));
     }
 
@@ -751,6 +812,12 @@ class IqitElementor extends Module implements WidgetInterface
         $this->_clearCache($templateFile, $cacheId);
     }
 
+    public function clearYbcBlogCache($idPost) {
+        $cacheId = 'iqitelementor|displayYbcBlogElementor|'.(int)$idPost;
+        $templateFile = 'module:' . $this->name . '/views/templates/hook/generated_content_cms.tpl';
+        $this->_clearCache($templateFile, $cacheId);
+    }
+
     public function hookActionObjectCmsDeleteAfter($params) {
         $templateFile = 'module:' . $this->name . '/views/templates/hook/generated_content.tpl';
         $cmsId = (int) $params['object']->id_cms;
@@ -769,6 +836,17 @@ class IqitElementor extends Module implements WidgetInterface
         $this->_clearCache($templateFile, $cacheId);
     }
 
+    
+    public function hookActionObjectYbc_blog_post_classUpdateBefore($params) {
+        $pur = (int) Configuration::get('PS_USE_HTMLPURIFIER');
+        Configuration::updateValue('PS_USE_HTMLPURIFIER_TMP', $pur);
+        Configuration::updateValue('PS_USE_HTMLPURIFIER', 0);
+    }
+
+    public function hookActionObjectYbc_blog_post_classUpdateAfter($params) {
+        $pur = (int) Configuration::get('PS_USE_HTMLPURIFIER_TMP');
+        Configuration::updateValue('PS_USE_HTMLPURIFIER', $pur);
+    }
 
     public function hookIsJustElementor($params) {
         return  IqitElementorCategory::isJustElementor((int )$params['categoryId']);
@@ -792,6 +870,7 @@ class IqitElementor extends Module implements WidgetInterface
             $this->clearHomeCache();
         }
     }
+
 
 
     public function hookActionObjectCmsUpdateBefore($params) {

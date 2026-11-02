@@ -88,15 +88,10 @@
 
 /*** Tooltips ***/
 .tooltip-inner{
-  @include st2(background, $form_tooltip_bg);
-  @include st2(color, $form_tooltip_txt);
+  @include st2(background, $form_tooltip_bg+'!important');
+  @include st2(color, $form_tooltip_txt+'!important');
 }
-.tooltip.bs-tether-element-attached-bottom .tooltip-inner:before, .tooltip.tooltip-top .tooltip-inner:before,
-.bs-tooltip-auto[x-placement^=top] .arrow:before, .bs-tooltip-top .arrow:before{
-  @include st2(border-top-color, $form_tooltip_bg);
-}
-
-
-.bs-tooltip-auto[x-placement^=bottom] .arrow::before, .bs-tooltip-bottom .arrow::before {
-  @include st2(border-bottom-color, $form_tooltip_bg);
+.tooltip{
+  @include st2(--bs-tooltip-bg, $form_tooltip_bg);
+  @include st2(--bs-tooltip-color, $form_tooltip_txt);
 }

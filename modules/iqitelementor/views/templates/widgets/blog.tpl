@@ -28,7 +28,7 @@
 
     {if $view == 'carousel'}
         <section class="elementor-blog-posts elementor-blog-posts-carousel elementor-swiper-slider swiper-overflow ph_simpleblog">
-            <div class="elementor-blog-carousel swiper-container simpleblog-posts {$classes}" data-slider_options='{$options|@json_encode nofilter}'>
+            <div class="elementor-blog-carousel swiper swiper-container simpleblog-posts {$classes}" data-slider_options='{$options|@json_encode nofilter}'>
                 <div class="swiper-wrapper">
                     {foreach $posts as $post}
                     <div class="swiper-slide"><div class="simpleblog-posts-column">{include file="module:ph_simpleblog/views/templates/front/1.7/_partials/post-miniature.tpl" post=$post}</div></div>

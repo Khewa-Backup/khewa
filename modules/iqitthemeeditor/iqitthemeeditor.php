@@ -26,17 +26,18 @@ class IqitThemeEditor extends Module
     public $defaults;
     public $systemFonts;
     public $customFilteringModule = false;
+    public $cfgName;
 
     public function __construct()
     {
         $this->name = 'iqitthemeeditor';
         $this->tab = 'front_office_features';
-        $this->version = '4.5.5';
+        $this->version = '4.8.2';
         $this->author = 'IQIT-COMMERCE.COM';
         $this->bootstrap = true;
         $this->cfgName = 'iqitthemeed_';
         $this->controllers = array('preview');
-
+        
         parent::__construct();
 
         $this->defaults = array(
@@ -216,13 +217,15 @@ class IqitThemeEditor extends Module
             'sm_facebook' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
             'sm_twitter' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
             'sm_youtube' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
-            'sm_google' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
             'sm_instagram' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
             'sm_pinterest' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
             'sm_vimeo' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
             'sm_linkedin' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
+            'sm_tiktok' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
             'sm_og_logo' => array('type' => 'default', 'value' => '', 'cached' => true, 'scssType' => 'ignore'),
 
+
+           
             //compare
             'cp_position' => array('type' => 'default', 'value' => ''),
             'cp_float_bg' => array('type' => 'default', 'value' => ''),
@@ -391,14 +394,50 @@ class IqitThemeEditor extends Module
 
             //mobile-menu
             'mm_type' => array('type' => 'default', 'value' => '', 'cached' => true),
+            'mm_content' => array('type' => 'default', 'value' => '', 'cached' => true),
             'mm_background' => array('type' => 'default', 'value' => ''),
-            'mm_background_l2' => array('type' => 'default', 'value' => ''),
-            'mm_background_l3' => array('type' => 'default', 'value' => ''),
             'mm_text' => array('type' => 'default', 'value' => ''),
-            'mm_inner_border' => array('type' => 'json', 'value' => '', 'scssType' => 'border'),
             'mm_border' => array('type' => 'json', 'value' => '', 'scssType' => 'border'),
             'mm_boxshadow' => array('type' => 'json', 'value' => '', 'scssType' => 'box-shadow'),
 
+            //4.8.6
+            'mm_expand_trigger' => array('type' => 'default', 'value' => '' , 'cached' => true),
+            'mm_main_tab_typo' => array('type' => 'json', 'value' => '', 'scssType' => 'font'),
+            'mm_main_tab_color'  => array('type' => 'default', 'value' => ''),
+            'mm_main_tab_border' => array('type' => 'json', 'value' => '', 'scssType' => 'border'),
+            'mm_main_tab_padding' => array('type' => 'default', 'value' => ''),
+            'mm_arrow_icon_status' => array('type' => 'default', 'value' => ''),
+            'mm_arrow_icon_size' => array('type' => 'default', 'value' => ''),
+            'mm_arrow_icon_color' => array('type' => 'default', 'value' => ''),
+
+            'mm_legend_typo' => array('type' => 'json', 'value' => '', 'scssType' => 'font'),
+            'mm_legend_color' => array('type' => 'default', 'value' => ''),
+            'mm_legend_background' => array('type' => 'default', 'value' => ''),
+
+            'mm_accordion_tab2_typo' => array('type' => 'json', 'value' => '', 'scssType' => 'font'),
+            'mm_accordion_tab2_color'  => array('type' => 'default', 'value' => ''),
+            'mm_accordion_tab2_border' => array('type' => 'json', 'value' => '', 'scssType' => 'border'),
+            'mm_accordion_tab2_padding' => array('type' => 'default', 'value' => ''),
+
+            'mm_hf_border' => array('type' => 'json', 'value' => '', 'scssType' => 'border'),
+            'mm_hf_color' => array('type' => 'default', 'value' => ''),
+            'mm_hf_background' => array('type' => 'default', 'value' => ''),
+            'mm_hf_footer_visibilty' => array('type' => 'default', 'value' => ''),
+            //4.6.1
+            'mm_hf_header_visibilty' => array('type' => 'default', 'value' => ''),
+            'mm_hf_header_typo' => array('type' => 'json', 'value' => '', 'scssType' => 'font'),
+        
+            'mm_submenu_title_typo' => array('type' => 'json', 'value' => '', 'scssType' => 'font'),
+            'mm_submenu_title_color' => array('type' => 'default', 'value' => ''),
+            'mm_submenu_text_typo' => array('type' => 'json', 'value' => '', 'scssType' => 'font'),
+            'mm_submenu_text_color' => array('type' => 'default', 'value' => ''),
+
+            'mm_submenu_column_spacing' => array('type' => 'default', 'value' => ''),
+            'mm_submenu_title_spacing' => array('type' => 'default', 'value' => ''),
+            'mm_submenu_link_spacing' => array('type' => 'default', 'value' => ''),
+            
+
+            
 
             //content-wrapper
             'cw_padding_tb' => array('type' => 'default', 'value' => ''),
@@ -677,15 +716,15 @@ class IqitThemeEditor extends Module
         );
 
 
-        $this->displayName = $this->l('IQITTHEMEEDITOR - Customize your theme');
-        $this->description = $this->l('Change design of your shop');
+        $this->displayName = $this->trans('IQITTHEMEEDITOR - Customize your theme', [], 'Modules.Iqitthemeeditor.Admin');
+        $this->description = $this->trans('Change design of your shop', [], 'Modules.Iqitthemeeditor.Admin');
     }
 
     public function install()
     {
         $var = (parent::install()
             && $this->installTab()
-            && $this->registerHook('header')
+            && $this->registerHook('displayHeader')
             && $this->registerHook('displayMaintenance')
             && $this->registerHook('ProductSearchProvider')
             && $this->registerHook('actionProductSearchAfter')
@@ -706,210 +745,48 @@ class IqitThemeEditor extends Module
     }
 
     public function registerCustomHooks(){
-        $hook_name = 'displayHeaderLeft';
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
+
+
+        $customHooks = array(
+            'displayHeaderLeft', 
+            'displayHeaderButtons', 
+            'displayMyAccountDashboard',
+            'displayWrapperBottomInContainer',
+            'displayWrapperTopInContainer',
+            'displayNavCenter',
+            'displayHeaderButtonsMobile',
+            'displayBelowHeader',
+            'displayCheckoutFooter',
+            'displayAboveMobileMenu',
+            'displayBelowMobileMenu',
+            'displayCartAjaxInfoModal',
+            'displayCartAjaxInfoBlock',
+            'displayHeaderTop',
+            'displayNotFound',
+            'displayAboveProductsTabs',
+            'displayAsLastProductImage',
+            'displayAsFirstProductImage'
+
+        );
+
+        foreach($customHooks as $hookName){
+            $idHook = Hook::getIdByName($hookName);
+            if (!$idHook) {
+                $newHook = new Hook();
+                $newHook->name = pSQL($hookName);
+                $newHook->title = pSQL($hookName);
+                $newHook->position = 1;
+                $newHook->add();
+            }
         }
 
-
-        $hook_name = 'displayHeaderButtons';
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-        $hook_name = 'displayMyAccountDashboard';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-        $hook_name = 'displayWrapperBottomInContainer';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-        $hook_name = 'displayWrapperTopInContainer';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-
-        $hook_name = 'displayNavCenter';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-        $hook_name = 'displayHeaderButtonsMobile';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-        $hook_name = 'displayBelowHeader';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-
-        $hook_name = 'displayCheckoutFooter';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-
-        $hook_name = 'displayAboveMobileMenu';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-
-        $hook_name = 'displayBelowMobileMenu';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-
-        $hook_name = 'displayCartAjaxInfoModal';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-
-        $hook_name = 'displayCartAjaxInfoBlock';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-
-        $hook_name = 'displayHeaderTop';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-        $hook_name = 'displayNotFound';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
-
-        $hook_name = 'displayAboveProductsTabs';
-
-        $id_hook = Hook::getIdByName($hook_name);
-        // If hook does not exist, we create it
-        if (!$id_hook) {
-            $new_hook = new Hook();
-            $new_hook->name = pSQL($hook_name);
-            $new_hook->title = pSQL($hook_name);
-            $new_hook->position = 1;
-            $new_hook->add();
-        }
+   
     }
 
 
     public function getFrontEditorToken()
     {
-        return Tools::getAdminToken($this->name . (int)Tab::getIdFromClassName($this->name)
-            . (is_object(Context::getContext()->employee) ? (int)Context::getContext()->employee->id :
+        return Tools::hash($this->name . (is_object(Context::getContext()->employee) ? (int)Context::getContext()->employee->id :
                 Tools::getValue('id_employee')));
     }
 
@@ -1026,14 +903,14 @@ class IqitThemeEditor extends Module
 
     public function generateCssAndJsProcess($allShops = false)
     {
-        include_once _PS_MODULE_DIR_ . 'iqitthemeeditor/src/scssphp/scss.inc.php';
+        include_once _PS_MODULE_DIR_ . 'iqitthemeeditor/vendor/autoload.php';
 
         $css = '';
         $css .= Configuration::get($this->cfgName . 'typo_font_include') . ' .iqitfake{ display: none;} ';
 
         $vars = '';
         $compiler = new Compiler();
-        $compiler->setIgnoreErrors(true);
+        //$compiler->setIgnoreErrors(true);
         $compiler->setImportPaths($this->local_path . 'views/scss/');
 
         foreach ($this->defaults as $key => $default) {
@@ -1063,36 +940,33 @@ class IqitThemeEditor extends Module
                 $vars .= ' ' . $this->configToScssVar($key) . PHP_EOL;
             }
         }
+
+
+        $code = $vars . "\n@import 'iqitthemeeditor.scss';";
+
         try {
-            $css .= $compiler->compile($vars . ' @import "iqitthemeeditor.scss";');
+            $result = $compiler->compileString($code); // zamiast compile()
+            $css   .= $result->getCss();               // pobieramy CSS z obiektu wyniku
         } catch (Exception $e) {
-            $message = '<div class="alert alert-danger">' . $this->l('There is error in SCSS to CSS compiler');
+            $message  = '<div class="alert alert-danger">' .
+                $this->trans('There is error in SCSS to CSS compiler', [], 'Modules.Iqitthemeeditor.Admin');
             $message .= '<ul><li>' . $e->getMessage() . ' </li></ul></div>';
+
             return ['success' => false, 'message' => $message];
-        }
+}
 
-        $material = Configuration::get($this->cfgName . 'typo_material');
 
-        if ($material){
-            try {
-                $css .= $compiler->compile($vars . ' @import "material.scss";');
-            } catch (Exception $e) {
-                $message = '<div class="alert alert-danger">' . $this->l('There is error in SCSS to CSS compiler');
-                $message .= '<ul><li>' . $e->getMessage() . ' </li></ul></div>';
-                return ['success' => false, 'message' => $message];
-            }
-        }
 
 
         $css .= Configuration::get($this->cfgName . 'codes_css');
-        $css = trim(preg_replace('/\s+/', ' ', $css));
+        $css = htmlspecialchars_decode(trim(preg_replace('/\s+/', ' ', $css)));
 
         if (Shop::getContext() == Shop::CONTEXT_SHOP) {
             $js = ' ';
-            $js .= Configuration::get($this->cfgName . 'codes_js');
+            $js .= htmlspecialchars_decode(Configuration::get($this->cfgName . 'codes_js'));
             $myFile = $this->local_path . "views/js/custom_s_" . (int)$this->context->shop->getContextShopID() . ".js";
             if (!file_put_contents($myFile, $js)) {
-                $message = '<div class="alert alert-danger">' . $this->l('Problem with file permissions') . '</div>';
+                $message = '<div class="alert alert-danger">' . $this->trans('Problem with file permissions', [], 'Modules.Iqitthemeeditor.Admin') . '</div>';
                 return ['success' => false, 'message' => $message];
             }
         }
@@ -1103,16 +977,18 @@ class IqitThemeEditor extends Module
                 $myFile = $this->local_path . "views/css/custom_s_" . (int)$shop->id . ".css";
                 file_put_contents($myFile, $css);
             }
+            $message = '<div class="alert alert-success">' . $this->trans('Seting saved. Refresh your frontoffice with CTRL + f5 to see results. ', [], 'Modules.Iqitthemeeditor.Admin') . '</div>';
             self::clearAssetsCache();
+            return ['success' => true, 'message' => $message];
         } else {
             if (Shop::getContext() == Shop::CONTEXT_SHOP) {
                 $myFile = $this->local_path . "views/css/custom_s_" . (int)$this->context->shop->getContextShopID() . ".css";
                 if (file_put_contents($myFile, $css)) {
                     self::clearAssetsCache();
-                    $message = '<div class="alert alert-success">' . $this->l('Seting saved. Refresh your frontoffice with CTRL + f5 to see results. ') . '</div>';
+                    $message = '<div class="alert alert-success">' . $this->trans('Seting saved. Refresh your frontoffice with CTRL + f5 to see results. ', [], 'Modules.Iqitthemeeditor.Admin') . '</div>';
                     return ['success' => true, 'message' => $message];
                 } else {
-                    $message = '<div class="alert alert-danger">' . $this->l('Problem with file permissions') . '</div>';
+                    $message = '<div class="alert alert-danger">' . $this->trans('Problem with file permissions', [], 'Modules.Iqitthemeeditor.Admin') . '</div>';
                     return ['success' => false, 'message' => $message];
                 }
             }
@@ -1288,6 +1164,7 @@ class IqitThemeEditor extends Module
                 'h_absolute' => $options['h_absolute'],
                 'h_sticky' => $options['h_sticky'],
                 'hw_width' => $options['hw_width'],
+                'mm_content' =>  $options['mm_content'],
                 'hm_submenu_width' => $options['hm_submenu_width'],
                 'h_search_type' => $options['h_search_type'],
                 'pl_lazyload' => (bool)$options['pl_lazyload'],
@@ -1308,10 +1185,11 @@ class IqitThemeEditor extends Module
 
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
 
         if (!Tools::getValue('iqit_fronteditor_token') || !(Tools::getValue('iqit_fronteditor_token') == $this->getFrontEditorToken()) || !Tools::getIsset('id_employee') || !$this->checkEnvironment()) {
+     
             $optionsData = Configuration::get($this->cfgName . 'options');
 
             if (Shop::getContext() == Shop::CONTEXT_SHOP) {
@@ -1323,10 +1201,13 @@ class IqitThemeEditor extends Module
         } else {
             $isEditor = Tools::getValue('isIqitThemeEditor');
 
+      
             if ($isEditor) {
+                
                 $optionsData = Tools::getValue('iqitThemeEditorOptions');
                 $optionsData = urldecode($optionsData);
             } else {
+            
                 $optionsData = Configuration::get($this->cfgName . 'options');
             }
         }
@@ -1416,7 +1297,7 @@ class IqitThemeEditor extends Module
 
     public function hookDisplayMaintenance()
     {
-        $this->hookHeader();
+        $this->hookDisplayHeader();
         $this->context->smarty->assign('iqitThemeMaintenanceJs', $this->_path . 'views/js/maintenance.js');
     }
 
@@ -1425,5 +1306,7 @@ class IqitThemeEditor extends Module
     public function hookActionDispatcher()
     {
         $this->context->smarty->registerPlugin('modifier', 'add_url_param', array('IqitSmartyModifiers', 'smarty_modifier_add_url_param'));
+        $this->context->smarty->registerPlugin('modifier', 'iqit_mb_substr', array('IqitSmartyModifiers', 'smarty_modifier_iqit_mb_substr'));
+
     }
 }

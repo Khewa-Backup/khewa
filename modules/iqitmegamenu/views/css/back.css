@@ -196,3 +196,13 @@ margin-right: 5px;
 .autocomplete-suggestion { position: relative; padding: 0 .6em; line-height: 23px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.02em; color: #333; }
 .autocomplete-suggestion b { font-weight: normal; color: #1f8dd6; }
 .autocomplete-suggestion.selected { background: #f0f0f0; }
+
+
+.menu-type-4 #cssstyle-submenu,
+.menu-type-4 .hidden-mobile-menu{
+display: none !important
+
+}
+.menu-type-4  .menu_row .menu_column{
+	width: 100% !important;
+}

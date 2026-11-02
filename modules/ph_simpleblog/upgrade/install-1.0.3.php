@@ -19,13 +19,13 @@ function upgrade_module_1_0_3($object)
             `id_lang` INT( 11 ) unsigned NOT NULL,
             `name` VARCHAR(60) NOT NULL,
             PRIMARY KEY (`id_simpleblog_tag`)
-        ) ENGINE = '._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
+        ) ENGINE = '._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4';
 
     $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'simpleblog_post_tag` (
             `id_simpleblog_post` INT( 11 ) unsigned NOT NULL,
             `id_simpleblog_tag` INT( 11 ) unsigned NOT NULL,
             PRIMARY KEY (`id_simpleblog_tag`)
-        ) ENGINE = '._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
+        ) ENGINE = '._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4';
 
     foreach ($sql as $s) {
         if (!Db::getInstance()->Execute($s)) {

@@ -53,8 +53,30 @@ class IqitWishlistActionsModuleFrontController extends ModuleFrontController
 
         $context = Context::getContext();
 
-        if (!$context->customer->isLogged()) {
-            $this->ajaxDie(json_encode(array(
+        if ($context->customer->isLogged() && $this->isTokenValid()) {
+            $wishlistProduct = new IqitWishlistProduct((int)Tools::getValue('idProduct'));
+            if ($wishlistProduct->id_customer == $context->customer->id) {
+                $wishlistProduct->delete();
+                $this->ajaxRender(json_encode(array(
+                    'success' => true,
+                    'data' => [
+                        'message' => $this->l('Product removed from wishlist'),
+                        'type' => 'removed'
+                    ]
+                )));
+            } else{
+                $this->ajaxRender(json_encode(array(
+                    'success' => false,
+                    'data' => [
+                        'message' => $this->l('You need to log in first to correct account'),
+                        'type' => 'notLogged'
+                    ]
+                )));
+            }
+       
+            return;
+        } else {
+            $this->ajaxRender(json_encode(array(
                 'success' => false,
                 'data' => [
                     'message' => $this->l('You need to log in first'),
@@ -62,17 +84,6 @@ class IqitWishlistActionsModuleFrontController extends ModuleFrontController
                 ]
             )));
         }
-
-        $wishlistProduct = new IqitWishlistProduct((int)Tools::getValue('idProduct'));
-        $wishlistProduct->delete();
-
-        $this->ajaxDie(json_encode(array(
-            'success' => true,
-            'data' => [
-                'message' => $this->l('Product removed from wishlist'),
-                'type' => 'removed'
-            ]
-        )));
     }
 
     /**
@@ -84,48 +95,49 @@ class IqitWishlistActionsModuleFrontController extends ModuleFrontController
 
         $context = Context::getContext();
 
-        if (!$context->customer->isLogged()) {
-            $this->ajaxDie(json_encode(array(
+        if ($context->customer->isLogged() && $this->isTokenValid()) {
+            $idProduct = (int)Tools::getValue('idProduct');
+            $idProductAttribute = (int)Tools::getValue('idProductAttribute');
+            $idCustomer = (int)$context->customer->id;
+            $idShop = (int)$context->shop->id;
+            $idLang = (int)$context->language->id;
+    
+            $product = new Product($idProduct, false, $idLang, $idShop, $context);
+    
+            if (!Validate::isLoadedObject($product) || IqitWishlistProduct::isCustomerWishlistProduct($idCustomer, (int)$product->id, $idProductAttribute)) {
+                $this->ajaxRender(json_encode(array(
+                    'success' => false,
+                    'data' => [
+                        'message' => $this->l('You need to log in first'),
+                        'type' => 'inWishlit'
+                    ]
+                )));
+            } else {
+                $wishlistProduct = new IqitWishlistProduct();
+                $wishlistProduct->id_product = $idProduct;
+                $wishlistProduct->id_customer = $idCustomer;
+                $wishlistProduct->id_product_attribute = $idProductAttribute;
+                $wishlistProduct->id_shop = $idShop;
+    
+                if ($wishlistProduct->add()) {
+                    $this->ajaxRender(json_encode(array(
+                        'success' => true,
+                        'data' => [
+                            'message' => $this->l('Product added to wishlist'),
+                            'type' => 'added'
+                        ]
+                    )));
+                }
+            }
+            return;
+        } else{
+            $this->ajaxRender(json_encode(array(
                 'success' => false,
                 'data' => [
                     'message' => $this->l('You need to log in first'),
                     'type' => 'notLogged'
                 ]
             )));
-        }
-
-        $idProduct = (int)Tools::getValue('idProduct');
-        $idProductAttribute = (int)Tools::getValue('idProductAttribute');
-        $idCustomer = (int)$context->customer->id;
-        $idShop = (int)$context->shop->id;
-        $idLang = (int)$context->language->id;
-
-        $product = new Product($idProduct, false, $idLang, $idShop, $context);
-
-        if (!Validate::isLoadedObject($product) || IqitWishlistProduct::isCustomerWishlistProduct($idCustomer, (int)$product->id, $idProductAttribute)) {
-            $this->ajaxDie(json_encode(array(
-                'success' => false,
-                'data' => [
-                    'message' => $this->l('You need to log in first'),
-                    'type' => 'inWishlit'
-                ]
-            )));
-        } else {
-            $wishlistProduct = new IqitWishlistProduct();
-            $wishlistProduct->id_product = $idProduct;
-            $wishlistProduct->id_customer = $idCustomer;
-            $wishlistProduct->id_product_attribute = $idProductAttribute;
-            $wishlistProduct->id_shop = $idShop;
-
-            if ($wishlistProduct->add()) {
-                $this->ajaxDie(json_encode(array(
-                    'success' => true,
-                    'data' => [
-                        'message' => $this->l('Product added to wishlist'),
-                        'type' => 'added'
-                    ]
-                )));
-            }
         }
     }
 }

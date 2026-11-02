@@ -341,10 +341,12 @@ class IqitLinkBlockRepository
 
         foreach ($staticPages as $staticPage) {
             $meta = Meta::getMetaByPage($staticPage, ($id_lang) ? (int) $id_lang : (int) Context::getContext()->language->id);
-            $statics[] = [
-                'id_cms' => $staticPage,
-                'title' => $meta['title'],
-            ];
+            if(isset($meta['title'])){
+                $statics[] = [
+                    'id_cms' => $staticPage,
+                    'title' => $meta['title'],
+                ];
+            }
         }
 
         $pages[]['pages'] = $statics;

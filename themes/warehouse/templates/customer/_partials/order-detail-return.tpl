@@ -1,12 +1,13 @@
 {**
- * 2007-2017 PrestaShop
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
+ * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
@@ -15,12 +16,11 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://devdocs.prestashop.com/ for more information.
  *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2017 PrestaShop SA
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * International Registered Trademark & Property of PrestaShop SA
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 {block name='order_products_table'}
   <form id="order-return-form" class="js-order-return-form" action="{$urls.pages.order_follow}" method="post">
@@ -40,37 +40,23 @@
         {foreach from=$order.products item=product name=products}
           <tr>
             <td>
-              {if !$product.customizations}
+              {if !$product.is_virtual}
                 <span id="_desktop_product_line_{$product.id_order_detail}">
-                <input type="checkbox" id="cb_{$product.id_order_detail}" name="ids_order_detail[{$product.id_order_detail}]" value="{$product.id_order_detail}">
-              </span>
-              {else}
-                {foreach $product.customizations  as $customization}
-                  <span id="_desktop_product_customization_line_{$product.id_order_detail}_{$customization.id_customization}">
-                  <input type="checkbox" id="cb_{$product.id_order_detail}" name="customization_ids[{$product.id_order_detail}][]" value="{$customization.id_customization}">
+                  <input type="checkbox" id="cb_{$product.id_order_detail}" name="ids_order_detail[{$product.id_order_detail}]" value="{$product.id_order_detail}">
                 </span>
-                {/foreach}
               {/if}
             </td>
             <td>
-              <div class="row">
-                {if isset($product.cover.bySize.cart_default.url)}
-                  <div class="col-2">
-                    <a href="{url entity='product' id=$product.product_id ipa=$product.id_product_attribute}">
-                    <img src="{$product.cover.bySize.cart_default.url}" alt="{$product.name}" class="img-fluid" loading="lazy"/>
-                   </a>
-                  </div>
-                {/if}
-                <div class="col-10">
-                  <strong>
-                    <a href="{url entity='product' id=$product.product_id ipa=$product.id_product_attribute}">
-                      {$product.name}
-                    </a>
-                  </strong><br/>
-                  {if isset($product.download_link)}<a href="{$product.download_link}">{l s='Download' d='Shop.Theme.Catalog'}</a>{/if}<br/>
-                  {if $product.product_reference}
-                    {l s='Reference' d='Shop.Theme.Catalog'}: {$product.product_reference}<br/>
-                  {/if}
+              <strong>{$product.name}</strong><br/>
+              {if $product.product_reference}
+                {l s='Reference: %reference%' sprintf=['%reference%' => $product.product_reference] d='Shop.Theme.Catalog'}<br/>
+              {/if}
+              {if $product.is_virtual}
+                {l s='Virtual products can\'t be returned.' d='Shop.Theme.Customeraccount'}<br/>
+              {/if}
+              {if isset($product.download_link)}
+                <a href="{$product.download_link}">{l s='Download' d='Shop.Theme.Actions'}</a><br/>
+              {/if}
               {if $product.customizations}
                 {foreach from=$product.customizations item="customization"}
                   <div class="customization">
@@ -100,7 +86,7 @@
                                       {$field.text}
                                     {/if}
                                   {elseif $field.type == 'image'}
-                                    <img src="{$field.image.small.url}" class="img-fluid" loading="lazy">
+                                    <img src="{$field.image.small.url}" loading="lazy">
                                   {/if}
                                 </div>
                               </div>
@@ -112,43 +98,22 @@
                   </div>
                 {/foreach}
               {/if}
-                </div>
-              </div>
             </td>
             <td class="qty">
-              {if !$product.customizations}
-                <div class="current">
-                  {$product.quantity}
+              <div class="current">
+                {$product.quantity}
+              </div>
+              {if $product.quantity > $product.qty_returned && !$product.is_virtual}
+                <div class="select" id="_desktop_return_qty_{$product.id_order_detail}">
+                  <select name="order_qte_input[{$product.id_order_detail}]" class="form-control form-control-select">
+                    {section name=quantity start=1 loop=$product.quantity+1-$product.qty_returned}
+                      <option value="{$smarty.section.quantity.index}">{$smarty.section.quantity.index}</option>
+                    {/section}
+                  </select>
                 </div>
-                {if $product.quantity > $product.qty_returned}
-                  <div class="select" id="_desktop_return_qty_{$product.id_order_detail}">
-                    <select name="order_qte_input[{$product.id_order_detail}]" class="form-control form-control-select">
-                      {section name=quantity start=1 loop=$product.quantity+1-$product.qty_returned}
-                        <option value="{$smarty.section.quantity.index}">{$smarty.section.quantity.index}</option>
-                      {/section}
-                    </select>
-                  </div>
                 {/if}
-              {else}
-                {foreach $product.customizations as $customization}
-                  <div class="current">
-                    {$customization.quantity}
-                  </div>
-                  <div class="select" id="_desktop_return_qty_{$product.id_order_detail}_{$customization.id_customization}">
-                    <select
-                      name="customization_qty_input[{$customization.id_customization}]"
-                      class="form-control form-control-select"
-                    >
-                      {section name=quantity start=1 loop=$customization.quantity+1}
-                        <option value="{$smarty.section.quantity.index}">{$smarty.section.quantity.index}</option>
-                      {/section}
-                    </select>
-                  </div>
-                {/foreach}
-                <div class="clearfix"></div>
-              {/if}
             </td>
-            <td class="text-xs-right">{$product.qty_returned}</td>
+            <td class="text-xs-right">{if !$product.is_virtual}{$product.qty_returned}{/if}</td>
             <td class="text-xs-right">{$product.price}</td>
             <td class="text-xs-right">{$product.total}</td>
           </tr>
@@ -188,10 +153,11 @@
                 <div class="col-sm-5 desc">
                   <div class="name">{$product.name}</div>
                   {if $product.product_reference}
-                    <div class="ref">{l s='Reference' d='Shop.Theme.Catalog'}: {$product.product_reference}</div>
+                    <div class="ref">{l s='Reference: %reference%' sprintf=['%reference%' => $product.product_reference] d='Shop.Theme.Catalog'}</div>
                   {/if}
-                  {if isset($product.download_link)}<a
-                  href="{$product.download_link}">{l s='Download' d='Shop.Theme.Catalog'}</a>{/if}<br/>
+                  {if isset($product.download_link)}
+                    <a href="{$product.download_link}">{l s='Download' d='Shop.Theme.Actions'}</a><br/>
+                  {/if}
                   {if $product.customizations}
                     {foreach $product.customizations as $customization}
                       <div class="customization">
@@ -208,16 +174,9 @@
                       {$product.price}
                     </div>
                     <div class="col-xs-4">
-                      {if $product.customizations}
-                        {foreach $product.customizations as $customization}
-                          <div class="q">{l s='Quantity' d='Shop.Theme.Catalog'}: {$customization.quantity}</div>
-                          <div class="s" id="_mobile_return_qty_{$product.id_order_detail}_{$customization.id_customization}"></div>
-                        {/foreach}
-                      {else}
-                        <div class="q">{l s='Quantity' d='Shop.Theme.Catalog'}: {$product.quantity}</div>
-                        {if $product.quantity > $product.qty_returned}
-                          <div class="s" id="_mobile_return_qty_{$product.id_order_detail}"></div>
-                        {/if}
+                      <div class="q">{l s='Quantity' d='Shop.Theme.Catalog'}: {$product.quantity}</div>
+                      {if $product.quantity > $product.qty_returned}
+                        <div class="s" id="_mobile_return_qty_{$product.id_order_detail}"></div>
                       {/if}
                       {if $product.qty_returned > 0}
                         <div>{l s='Returned' d='Shop.Theme.Customeraccount'}: {$product.qty_returned}</div>

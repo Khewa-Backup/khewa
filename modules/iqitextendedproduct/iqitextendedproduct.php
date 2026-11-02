@@ -33,19 +33,22 @@ class IqitExtendedProduct extends Module implements WidgetInterface
     protected $UPLOAD_DIR;
     protected $templateFile;
 
+    public $cfgName;
+    public $defaults;
+
     public function __construct()
     {
         $this->name = 'iqitextendedproduct';
         $this->author = 'IQIT-COMMERCE.COM';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.1';
+        $this->version = '1.2.0';
         $this->cfgName = 'iqitextendedp_';
         $this->defaults = array(
             'bg' => '#151515',
             'color' => '#ffffff',
         );
 
-        $this->SOURCE_INDEX = _PS_PROD_IMG_DIR_ . 'index.php';
+        $this->SOURCE_INDEX = _PS_MODULE_DIR_ . 'iqitextendedproduct/index.php';
         $this->UPLOAD_DIR = _PS_MODULE_DIR_ . 'iqitextendedproduct/uploads/';
 
         $this->bootstrap = true;
@@ -53,15 +56,17 @@ class IqitExtendedProduct extends Module implements WidgetInterface
 
         $this->displayName = $this->l('IQITEXTENDEDPRODUCT - 360 degree image rotation and videos');
         $this->description = $this->l('Extend your product presentation with additional features');
-        $this->templateFile = 'module:'.$this->name.'/views/templates/hook/below-thumbs.tpl';
+        $this->templateFile = 'module:'.$this->name.'/views/templates/hook/iqitextendedproduct_front.tpl';
     }
 
     public function install()
     {
         if (!parent::install()
-            || !$this->registerHook('backOfficeHeader')
-            || !$this->registerHook('header')
+            || !$this->registerHook('displayBackOfficeHeader')
+            || !$this->registerHook('displayHeader')
             || !$this->registerHook('displayAfterProductThumbs')
+            || !$this->registerHook('displayAsLastProductImage')
+            || !$this->registerHook('displayAsFirstProductImage')
             || !$this->registerHook('displayAdminProductsExtra')
             || !$this->registerHook('actionObjectProductUpdateAfter')
             || !$this->registerHook('actionObjectProductDeleteAfter')
@@ -70,7 +75,11 @@ class IqitExtendedProduct extends Module implements WidgetInterface
             return false;
         }
 
+
+        $this->installAdminTab();
+
         Configuration::updateValue('iqitextendedproduct_speed', '70');
+        Configuration::updateValue('iqitextendedproduct_hook', 'modal');
 
         foreach ($this->defaults as $default => $value) {
             if ($default == 'content') {
@@ -91,23 +100,48 @@ class IqitExtendedProduct extends Module implements WidgetInterface
         return false;
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         $this->context->controller->registerStylesheet('modules-'.$this->name.'-style', 'modules/'.$this->name.'/views/css/front.css', ['media' => 'all', 'priority' => 150]);
         $this->context->controller->registerJavascript('modules'.$this->name.'-script', 'modules/'.$this->name.'/views/js/front.js', ['position' => 'bottom', 'priority' => 150]);
 
         Media::addJsDef(array('iqitextendedproduct' => [
             'speed' => Configuration::get('iqitextendedproduct_speed'),
+            'hook' => Configuration::get('iqitextendedproduct_hook'),
         ]));
     }
 
     public function uninstall()
     {
+
+        $id_tab = (int) Tab::getIdFromClassName('AdminIqitExtendedProduct');
+        if ($id_tab) {
+            $tab = new Tab($id_tab);
+            $tab->delete();
+        }
+
+
         foreach ($this->defaults as $default => $value) {
             Configuration::deleteByName($this->cfgName . $default);
         }
 
         return $this->uninstallSQL() && parent::uninstall();
+    }
+
+
+    public function installAdminTab(): bool
+    {
+        $tab = new Tab();
+        $tab->class_name = 'AdminIqitExtendedProduct';
+        $tab->module = $this->name;
+        $tab->active = 0;
+        $tab->id_parent = (int) Tab::getIdFromClassName('AdminParentModulesSf'); // nie pokaże się w menu
+        foreach (Language::getLanguages(false) as $lang) {
+            $tab->name[$lang['id_lang']] = 'AdminIqitExtendedProduct';
+        }
+        $ok = $tab->add();
+
+        return (bool) $ok;
     }
 
 
@@ -138,15 +172,21 @@ class IqitExtendedProduct extends Module implements WidgetInterface
         $this->context->smarty->assign(array(
             'product' =>$idProduct,
             'path' => $this->_path,
+            'bAdminUrl' => __PS_BASE_URI__.basename(_PS_ADMIN_DIR_).'/',
             'threeSixtyContent' => $threeSixtyContent,
             'productVideoContent' => $productVideoContent,
-            'threeSixtyActionUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=' . $this->name . '&action=UploaderThreeSixty&ajax=1&id_product=' . $idProduct,
+            'threeSixtyActionUrl' => $this->context->link->getAdminLink('AdminIqitExtendedProduct', true, [], [
+                'ajax' => 1,
+                'id_product' => (int) $idProduct,
+                'action' => 'UploaderThreeSixty',
+            ]),
+
         ));
 
         return $this->display(__FILE__, 'views/templates/admin/bo_productab.tpl');
     }
 
-    public function hookBackOfficeHeader()
+    public function hookDisplayBackOfficeHeader()
     {
         if ($this->context->controller->controller_name == 'AdminProducts') {
             $this->context->controller->addCSS($this->_path . 'views/css/admin_tab.css');
@@ -163,85 +203,6 @@ class IqitExtendedProduct extends Module implements WidgetInterface
         }
     }
 
-    public function ajaxProcessUploaderThreeSixty()
-    {
-        $idProduct = (int) Tools::getValue('id_product');
-        $folder = 'threesixty/';
-
-        $product = new Product((int) $idProduct);
-        if (!Validate::isLoadedObject($product)) {
-            $files = array();
-            $files[0]['error'] = Tools::displayError('Cannot add image because product creation failed.');
-        }
-        header('Content-Type: application/json');
-        $step = (int) Tools::getValue('step');
-
-        if ($step == 1) {
-            $image_uploader = new HelperImageUploader('threesixty-file-upload');
-            $image_uploader->setAcceptTypes(array('jpeg', 'gif', 'png', 'jpg'));
-            $files = $image_uploader->process();
-            $new_destination = $this->getPathForCreation($idProduct, $folder);
-
-            foreach ($files as &$file) {
-                $filename = uniqid() . '.jpg';
-                $error = 0;
-                if (!ImageManager::resize($file['save_path'], $new_destination . $filename, null, null, 'jpg', false, $error)) {
-                    switch ($error) {
-                        case ImageManager::ERROR_FILE_NOT_EXIST:
-                        $file['error'] = Tools::displayError('An error occurred while copying image, the file does not exist anymore.');
-                        break;
-                        case ImageManager::ERROR_FILE_WIDTH:
-                        $file['error'] = Tools::displayError('An error occurred while copying image, the file width is 0px.');
-                        break;
-                        case ImageManager::ERROR_MEMORY_LIMIT:
-                        $file['error'] = Tools::displayError('An error occurred while copying image, check your memory limit.');
-                        break;
-                        default:
-                        $file['error'] = Tools::displayError('An error occurred while copying image.');
-                        break;
-                    }
-                    continue;
-                }
-                unlink($file['save_path']);
-                unset($file['save_path']);
-                $file['status'] = 'ok';
-                $file['name'] = $filename;
-            }
-            die(json_encode($files[0]));
-        } elseif ($step == 2) {
-            $file = (string) Tools::getValue('file');
-            if (file_exists($this->UPLOAD_DIR . $folder . $idProduct . '/' . $file)) {
-                $res = @unlink($this->UPLOAD_DIR . $folder . $idProduct . '/' . $file);
-            }
-            if ($res) {
-                die('ok');
-            } else {
-                die('error');
-            }
-        }
-    }
-
-    private function getPathForCreation($id_product, $folder)
-    {
-        $path = $this->getFolder($id_product);
-        $this->createFolder($id_product, $this->UPLOAD_DIR . $folder);
-        return $this->UPLOAD_DIR . $folder . $path;
-    }
-
-    private function createFolder($id_product, $folder)
-    {
-        if (!file_exists($folder . $this->getFolder($id_product))) {
-            $success = @mkdir($folder . $this->getFolder($id_product), self::ACCESS_RIGHTS, true);
-            $chmod = @chmod($folder . $this->getFolder($id_product), self::ACCESS_RIGHTS);
-            if (($success || $chmod)
-                && !file_exists($folder . $this->getFolder($id_product) . 'index.php')
-                && file_exists($this->SOURCE_INDEX)) {
-                return @copy($this->SOURCE_INDEX, $folder . $this->getFolder($id_product) . 'index.php');
-            }
-        }
-        return true;
-    }
-
     private function getFolder($id_product)
     {
         if (!is_numeric($id_product)) {
@@ -253,12 +214,11 @@ class IqitExtendedProduct extends Module implements WidgetInterface
 
     private function deleteFolder($id_product, $folder)
     {
-        $path = $this->getPathForCreation($id_product, $folder);
+        $relativePath = $this->getFolder($id_product);
+        $path = $this->UPLOAD_DIR . $folder . $relativePath;
+    
         if (is_dir($path)) {
-            $deleteFolder = true;
-        }
-        if (isset($deleteFolder) && $deleteFolder) {
-            array_map('unlink', glob($path.'*.*'));
+            array_map('unlink', glob($path . '*.*'));
             @rmdir($path);
         }
     }
@@ -268,9 +228,33 @@ class IqitExtendedProduct extends Module implements WidgetInterface
         if ($hookName == null && isset($configuration['hook'])) {
             $hookName = $configuration['hook'];
         }
+
         $idProduct = (int) $configuration['smarty']->tpl_vars['product']->value['id_product'];
 
-        $cacheId = 'iqitextendedproduct|'.$idProduct;
+        $position = Configuration::get('iqitextendedproduct_hook');
+
+        if($hookName == 'displayAsFirstProductImage'){
+            if($position != 'first-image'){
+                return;
+            }
+        } elseif($hookName == 'displayAsLastProductImage'){
+            if($position != 'last-image'){
+                return;
+            }
+        } else{
+            if($position != 'modal'){
+                return;
+            }
+        }
+
+        $imageCarusel = 'large';
+
+        if(isset($configuration['imageCarusel'])){
+            $imageCarusel = $configuration['imageCarusel'];
+        }
+
+
+        $cacheId = 'iqitextendedproduct|'.$idProduct.'|'.$hookName.'|'.$imageCarusel;
 
         if (!$this->isCached($this->templateFile, $this->getCacheId($cacheId))) {
             $this->smarty->assign($this->getWidgetVariables($hookName, $configuration));
@@ -280,6 +264,12 @@ class IqitExtendedProduct extends Module implements WidgetInterface
 
     public function getWidgetVariables($hookName = null, array $configuration = [])
     {
+        $imageCarusel = '';
+
+        if(isset($configuration['imageCarusel'])){
+            $imageCarusel = $configuration['imageCarusel'];
+        }
+
         $idProduct = (int) $configuration['smarty']->tpl_vars['product']->value['id_product'];
 
         $idThreeSixty = IqitThreeSixty::getIdByProduct($idProduct);
@@ -307,7 +297,9 @@ class IqitExtendedProduct extends Module implements WidgetInterface
             'isThreeSixtyContent' => $isThreeSixtyContent,
             'productVideoContent' => $productVideoContent,
             'path' => $this->_path,
-            'idProduct' => $idProduct
+            'idProduct' => $idProduct,
+            'hookName' => $hookName,
+            'imageCarusel' => $imageCarusel
         );
     }
 
@@ -443,6 +435,7 @@ class IqitExtendedProduct extends Module implements WidgetInterface
 
         if (Tools::isSubmit('submitModule')) {
             Configuration::updateValue('iqitextendedproduct_speed', Tools::getValue('iqitextendedproduct_speed'));
+            Configuration::updateValue('iqitextendedproduct_hook', Tools::getValue('iqitextendedproduct_hook'));
             $output .= $this->displayConfirmation($this->l('Configuration updated'));
             $this->clearCache();
         }
@@ -465,6 +458,29 @@ class IqitExtendedProduct extends Module implements WidgetInterface
                         'label' => $this->l('360 image rotation speed in miliseconds'),
                         'name' => 'iqitextendedproduct_speed',
                         'desc' => $this->l('Lower value = faster animation, higher value = slower animation'),
+                    ),
+                    array(
+                        'type' => 'select',
+                        'label' => $this->l('360 position'),
+                        'name' => 'iqitextendedproduct_hook',
+                        'options' => array(
+                            'query' => array(
+                                array(
+                                    'id_option' => 'modal',
+                                    'name' => $this->l('Modal'),
+                                ),
+                                array(
+                                    'id_option' => 'first-image',
+                                    'name' => $this->l('First image'),
+                                ),
+                                array(
+                                    'id_option' => 'last-image',
+                                    'name' => $this->l('Last image'),
+                                ),
+                            ),
+                            'id' => 'id_option',
+                            'name' => 'name',
+                        ),
                     ),
                 ),
                 'submit' => array(
@@ -501,6 +517,7 @@ class IqitExtendedProduct extends Module implements WidgetInterface
     {
         return array(
             'iqitextendedproduct_speed' => Tools::getValue('iqitextendedproduct_speed', Configuration::get('iqitextendedproduct_speed')),
+            'iqitextendedproduct_hook' => Tools::getValue('iqitextendedproduct_hook', Configuration::get('iqitextendedproduct_hook')),
         );
     }
 

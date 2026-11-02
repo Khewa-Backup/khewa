@@ -1,5 +1,5 @@
 <div class="simpleblog__addComment blog-mb">
-{if $customer.is_logged || Configuration::get('PH_BLOG_COMMENT_ALLOW_GUEST')}
+{if $customer.is_logged || $PH_BLOG_COMMENT_ALLOW_GUEST}
     <h2 class="section-title"><span>{l s='New comment' d='Modules.Simpleblog.Shop'}</span></h2>
 	<form class="simpleblog__addComment__form cardblog" action="{$post->url|escape:'html':'UTF-8'}" method="post">
     <p class="simpleblog_answer_info card-header text-xs-center">{l s='You are replying to a comment' d='Modules.Simpleblog.Shop'}</p>
@@ -21,9 +21,9 @@
                     <textarea class="form-control"id="comment_content" name="comment_content" rows="6">{if isset($smarty.post.comment_content)}{$smarty.post.comment_content|escape:'htmlall':'UTF-8'}{/if}</textarea>
                 </div>
             </div>
-            {if Configuration::get('PH_BLOG_COMMENTS_RECAPTCHA') && Configuration::get('PH_BLOG_COMMENTS_RECAPTCHA_SITE_KEY')}
+            {if $PH_BLOG_COMMENTS_RECAPTCHA && $PH_BLOG_COMMENTS_RECAPTCHA_SITE_KEY}
             <div class="form-group row">
-                <div class="g-recaptcha" data-sitekey="{Configuration::get('PH_BLOG_COMMENTS_RECAPTCHA_SITE_KEY')}" data-theme="{Configuration::get('PH_BLOG_COMMENTS_RECAPTCHA_THEME')}"></div>
+                <div class="g-recaptcha" data-sitekey="{$PH_BLOG_COMMENTS_RECAPTCHA_SITE_KEY}" data-theme="{$PH_BLOG_COMMENTS_RECAPTCHA_THEME}"></div>
                 <script src='https://www.google.com/recaptcha/api.js'></script>
             </div>
             {/if}

@@ -133,7 +133,7 @@ class SimpleBlogComment extends ObjectModel
         return $comments;
     }
 
-    public static function presentComment($depth = 1, SimpleBlogComment $comment)
+    public static function presentComment($depth = 1, ?SimpleBlogComment $comment = null)
     {
         $output['depth'] = $depth;
         $output['id'] = (int) $comment->id;

@@ -81,6 +81,8 @@
 
       </div>
 
+      {hook h='displayCrossSellingShoppingCart'}
+
     </div>
   </section>
 {/block}

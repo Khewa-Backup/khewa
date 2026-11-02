@@ -15,7 +15,7 @@
 
 {if isset($charts) && $charts}
 
-    <button class="btn btn-secondary mt-3" data-button-action="open-iqitsizecharts" type="button" data-toggle="modal" data-target="#iqitsizecharts-modal">
+    <button class="btn btn-secondary mt-3" data-button-action="open-iqitsizecharts" type="button" data-bs-toggle="modal" data-bs-target="#iqitsizecharts-modal">
         <i class="fa fa-table"></i> {l s='Size chart' mod='iqitsizecharts'}
     </button>
 

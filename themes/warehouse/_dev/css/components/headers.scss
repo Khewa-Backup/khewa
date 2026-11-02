@@ -247,7 +247,7 @@
 }
 
 /*** Responsive part ***/
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(lg) {
   #desktop-header {
     display: none;
   }
@@ -313,7 +313,7 @@
   }
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
   #mobile-header {
     .m-nav-btn > i {
       font-size: rem(24px);

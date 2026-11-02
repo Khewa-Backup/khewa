@@ -2,12 +2,12 @@
     {if $logged}
         {if isset($iqitTheme.h_user_dropdown) && $iqitTheme.h_user_dropdown}
             <div class="dropdown">
-            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+            <a data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                class="header-btn header-user-btn">
                 <i class="fa fa-user fa-fw icon" aria-hidden="true"></i>
                 <span class="title">{$customer.firstname|truncate:15:'...'}</span>
             </a>
-                <div class="dropdown-menu dropdown-menu-right">
+                <div class="dropdown-menu dropdown-menu-end">
                     <a class="dropdown-item" href="{$urls.pages.identity}">
                         <i class="fa fa-user fa-fw" aria-hidden="true"></i>
                         {l s='Information' d='Shop.Theme.Customeraccount'}
@@ -64,7 +64,7 @@
             </a>
         {/if}
     {else}
-        <a href="{$urls.pages.my_account}"
+        <a href="{$urls.pages.authentication}?back={$urls.current_url|urlencode}"
            title="{l s='Log in to your customer account' d='Shop.Theme.Customeraccount'}"
            rel="nofollow" class="header-btn header-user-btn">
             <i class="fa fa-user fa-fw icon" aria-hidden="true"></i>

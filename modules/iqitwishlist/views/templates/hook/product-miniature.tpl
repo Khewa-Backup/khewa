@@ -14,7 +14,7 @@
 *}
 
 {if isset($id_product_attribute)}
-<a href="#" class="btn-iqitwishlist-add js-iqitwishlist-add"  data-id-product="{$id_product|intval}" data-id-product-attribute="{$id_product_attribute|intval}"
+<a href="#" class="btn-iqitwishlist-add js-iqitwishlist-add"  data-id-product="{$id_product|intval}" data-id-product-attribute="{$id_product_attribute|intval}" data-token="{$static_token}"
    data-url="{url entity='module' name='iqitwishlist' controller='actions'}" data-toggle="tooltip" title="{l s='Add to wishlist' mod='iqitwishlist'}">
     <i class="fa fa-heart-o not-added" aria-hidden="true"></i> <i class="fa fa-heart added" aria-hidden="true"></i>
 </a>

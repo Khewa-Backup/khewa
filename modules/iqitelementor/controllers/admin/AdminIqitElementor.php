@@ -13,26 +13,25 @@ class AdminIqitElementorController extends ModuleAdminController
         $this->bootstrap = true;
         $this->className = 'IqitElementorLanding';
         $this->table = 'iqit_elementor_landing';
-        $this->_where = 'AND a.`id_shop` = '.(int) Context::getContext()->shop->id;
+
 
 
         $this->addRowAction('edit');
         $this->addRowAction('delete');
         parent::__construct();
 
+        $this->_where = 'AND a.`id_shop` = '.(int) Context::getContext()->shop->id;
         $this->_orderBy = 'id_iqit_elementor_landing';
         $this->identifier = 'id_iqit_elementor_landing';
         $test = array();
         $test[0] = array(
             'id' => 0,
-            'name' => $this->l('No results were found for your search.')
+            'name' => $this->module->getTranslator()->trans('No results were found for your search.', [], 'Modules.Iqitelementor.Admin')
         );
 
-        //instagram generator url
-        $instagramRedirectUrl = urlencode('https://iqit-commerce.com/feed-token-generator/');
-        $urlInstagramTokenGenerator = 'https://api.instagram.com/oauth/authorize?client_id=4256387477723336&redirect_uri='. $instagramRedirectUrl .'&scope=user_profile,user_media&response_type=code&state=';
-        $urlInstagramTokenGenerator .= ''.urlencode($this->context->link->getAdminLink('AdminIqitElementor').'&instagamIntegration=connect').'';
-        $urlRemove = $this->context->link->getAdminLink('AdminIqitElementor').'&instagamTokenRemove=1';
+        //instagram generator url        
+        $urlInsagramConnect = $this->context->link->getAdminLink('AdminIqitElementor').'&instagamIntegration=1';
+        $urlInsagramRemove = $this->context->link->getAdminLink('AdminIqitElementor').'&instagamTokenRemove=1';
 
         //instagram profile
         $instagramToken = Configuration::get('iqit_elementor_inst_token');
@@ -41,52 +40,53 @@ class AdminIqitElementorController extends ModuleAdminController
 
         $this->fields_options = array(
             'general' => array(
-                'title' =>    $this->l('Settings'),
+                'title' =>    $this->module->getTranslator()->trans('Settings', [], 'Modules.Iqitelementor.Admin'),
                 'fields' =>    array(
                     'iqit_homepage_layout' => array(
-                        'title' => $this->l('Homepage layout'),
-                        'desc' => $this->l('Choose your homepage layout. You can create multiple layouts in list above. So you can change them fast when needed.'),
+                        'title' => $this->module->getTranslator()->trans('Homepage layout', [], 'Modules.Iqitelementor.Admin'),
+                        'desc' => $this->module->getTranslator()->trans('Choose your homepage layout. You can create multiple layouts in list above. So you can change them fast when needed.', [], 'Modules.Iqitelementor.Admin'),
                         'cast' => 'intval',
                         'type' => 'select',
                         'list' => array_merge($test, IqitElementorLanding::getLandingPages()),
                         'identifier' => 'id'
                     ),
                     'iqit_elementor_cache' => array(
-                        'title' => $this->l('Autoclear cache'),
-                        'desc' => $this->l('If enabled module cache will be cleared after product or manufacturer create/edit/delete. If not it will be only clearad when you edit layout.'),
+                        'title' => $this->module->getTranslator()->trans('Autoclear cache', [], 'Modules.Iqitelementor.Admin'),
+                        'desc' => $this->module->getTranslator()->trans('If enabled module cache will be cleared after product or manufacturer create/edit/delete. If not it will be only clearad when you edit layout.', [], 'Modules.Iqitelementor.Admin'),
                         'cast' => 'intval',
                         'type' => 'select',
                         'list' => array(
                             array(
                                 'id' => '0',
-                                'name' => $this->l('No'),
+                                'name' => $this->module->getTranslator()->trans('No', [], 'Modules.Iqitelementor.Admin'),
                             ),
                             array(
                                 'id' => '1',
-                                'name' => $this->l('Yes'),
+                                'name' => $this->module->getTranslator()->trans('Yes', [], 'Modules.Iqitelementor.Admin'),
                             )
                         ),
                         'identifier' => 'id'
                     ),
+                    
                     'iqit_elementor_instagram_connect' => array(
-                        'title' => $this->l('Instagram connection'),
-                        'desc' => $this->l('Required for instagram feed widget token connection type'),
+                        'title' => $this->module->getTranslator()->trans('Instagram account', [], 'Modules.Iqitelementor.Admin'),
                         'type' => 'instagram_connect',
-                        'url'  => $urlInstagramTokenGenerator,
+                        'url'  => $urlInsagramConnect,
                         'token'  => $instagramToken,
                         'username'  => $instagramUsername,
-                        'urlRemove'  => $urlRemove,
+                        'urlRemove'  => $urlInsagramRemove,
                         'instagramExpDate' => $instagramExpDate
                     ),
+                    
 
                 ),
-                'submit' => array('title' => $this->l('Save'))
+                'submit' => array('title' => $this->module->getTranslator()->trans('Save', [], 'Modules.Iqitelementor.Admin'))
             )
         );
 
         $this->fields_list = array(
-            'id_iqit_elementor_landing' => array('title' => $this->l('ID'), 'align' => 'center', 'class' => 'fixed-width-xs'),
-            'title' => array('title' => $this->l('Name'), 'width' => 'auto'),
+            'id_iqit_elementor_landing' => array('title' => $this->module->getTranslator()->trans('ID', [], 'Modules.Iqitelementor.Admin'), 'align' => 'center', 'class' => 'fixed-width-xs'),
+            'title' => array('title' => $this->module->getTranslator()->trans('Name', [], 'Modules.Iqitelementor.Admin'), 'width' => 'auto'),
         );
 
         if (!$this->module->active) {
@@ -97,11 +97,6 @@ class AdminIqitElementorController extends ModuleAdminController
 
     public function init()
     {
-
-        if (Tools::getValue('instagamIntegration')) {
-            $this->addInstagramProfile();
-            Tools::redirectAdmin($this->context->link->getAdminLink('AdminIqitElementor'));
-        }
         if (Tools::getValue('instagamTokenRemove')) {
             $this->removeInstagramProfile();
             Tools::redirectAdmin($this->context->link->getAdminLink('AdminIqitElementor'));
@@ -118,14 +113,55 @@ class AdminIqitElementorController extends ModuleAdminController
         parent::init();
     }
 
-
-    public function addInstagramProfile()
+    
+    private function makeApiRequest($url)
     {
-        if (Tools::getValue('instagramToken')) {
-            Configuration::updateValue('iqit_elementor_inst_token', Tools::getValue('instagramToken'));
-            Configuration::updateValue('iqit_elementor_inst_token_exp', IqitElementor::instaTokenExpirationDate(Tools::getValue('instagramTokenExpire')));
-            Configuration::updateValue('iqit_elementor_inst_username', Tools::getValue('instagamProfile'));
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return json_decode($response, true);
+    }
+
+
+    public function addInstagramProfile($accessToken)
+    {
+        // Endpoint do pobrania danych użytkownika
+        $userInfoEndpoint = "https://graph.instagram.com/v22.0/me?fields=user_id,username&id&access_token=" . $accessToken;
+
+        // Wywołanie API
+        $userInfoResponse = $this->makeApiRequest($userInfoEndpoint);
+        if (!$userInfoResponse || !isset($userInfoResponse['user_id'], $userInfoResponse['username'])) {
+            $this->errors[] = ('Nie udało się pobrać danych użytkownika Instagrama.');
+            return;
         }
+
+        // Pobranie danych z odpowiedzi
+        $userId = $userInfoResponse['user_id'];
+        $username = $userInfoResponse['username'];
+
+        // Opcjonalne odświeżenie tokena
+        $refreshEndpoint = "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=" . $accessToken;
+        $refreshResponse = $this->makeApiRequest($refreshEndpoint);
+        if (!$refreshResponse || !isset($refreshResponse['access_token'], $refreshResponse['expires_in'])) {
+            $this->errors[] = new Exception('Nie udało się odświeżyć tokena.');
+            return;
+        }
+
+        // Aktualizacja tokena i daty jego wygaśnięcia
+        $newAccessToken = $refreshResponse['access_token'];
+        $expiresIn = $refreshResponse['expires_in']; // W sekundach
+
+        // Zapis do bazy danych
+        Configuration::updateValue('iqit_elementor_inst_token', $newAccessToken);
+        Configuration::updateValue('iqit_elementor_inst_username', $username);
+        Configuration::updateValue('iqit_elementor_inst_user_id', $userId);
+        Configuration::updateValue('iqit_elementor_inst_token_exp', IqitElementor::instaTokenExpirationDate($expiresIn));
+
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminIqitElementor'));
     }
 
     public function removeInstagramProfile()
@@ -133,6 +169,7 @@ class AdminIqitElementorController extends ModuleAdminController
             Configuration::deleteByName('iqit_elementor_inst_token');
             Configuration::deleteByName('iqit_elementor_inst_token_exp');
             Configuration::deleteByName('iqit_elementor_inst_username');
+            Configuration::deleteByName('iqit_elementor_inst_user_id');
     }
 
         public function initContent()
@@ -161,10 +198,18 @@ class AdminIqitElementorController extends ModuleAdminController
             if (!$returnObject) {
                 return false;
             }
-
             Tools::redirectAdmin($this->context->link->getAdminLink('Admin'.$this->name) . '&id_iqit_elementor_landing='.$returnObject->id .'&updateiqit_elementor_landing');
         }
 
+        if (Tools::isSubmit('submitInstagramConnect')) {
+            $instagramToken = Tools::getValue('iqit_elementor_inst_token');
+            if( $instagramToken ){
+                    $this->addInstagramProfile($instagramToken);
+            } else{
+                $this->errors[] = Tools::displayError('Please fill instagram access token first');
+            }
+            
+        }
         if (Tools::isSubmit('submitOptions' . $this->table)) {
             $this->module->clearHomeCache();
         }
@@ -186,7 +231,7 @@ class AdminIqitElementorController extends ModuleAdminController
 
         $this->fields_form[0]['form'] = array(
             'legend' => array(
-                'title' => isset($landing->id) ? $this->l('Edit layout.') : $this->l('New layout'),
+                'title' => isset($landing->id) ? $this->module->getTranslator()->trans('Edit layout.', [], 'Modules.Iqitelementor.Admin') : $this->module->getTranslator()->trans('New layout', [], 'Modules.Iqitelementor.Admin'),
                 'icon' => isset($landing->id) ? 'icon-edit' : 'icon-plus-square',
             ),
             'input' => array(
@@ -196,13 +241,13 @@ class AdminIqitElementorController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Title of layout'),
+                    'label' => $this->module->getTranslator()->trans('Title of layout', [], 'Modules.Iqitelementor.Admin'),
                     'name' => 'title',
                     'required' => true,
                 ),
                 array(
                     'type' => 'elementor_trigger',
-                    'label' => $this->l('Title of layout'),
+                    'label' => $this->module->getTranslator()->trans('Title of layout', [], 'Modules.Iqitelementor.Admin'),
                     'url'  => $url,
                 ),
                 array(
@@ -212,7 +257,7 @@ class AdminIqitElementorController extends ModuleAdminController
             ),
             'buttons' => array(
                 'cancelBlock' => array(
-                    'title' => $this->l('Cancel'),
+                    'title' => $this->module->getTranslator()->trans('Cancel', [], 'Modules.Iqitelementor.Admin'),
                     'href' => (Tools::safeOutput(Tools::getValue('back', false)))
                         ?: $this->context->link->getAdminLink('Admin' . $this->name),
                     'icon' => 'process-icon-cancel',
@@ -220,7 +265,7 @@ class AdminIqitElementorController extends ModuleAdminController
             ),
             'submit' => array(
                 'name' => 'submit' . $this->className,
-                'title' => $this->l('Save and stay'),
+                'title' => $this->module->getTranslator()->trans('Save and stay', [], 'Modules.Iqitelementor.Admin'),
             ),
         );
 
@@ -263,7 +308,7 @@ class AdminIqitElementorController extends ModuleAdminController
 
     public function initToolBarTitle()
     {
-        $this->toolbar_title[] = $this->l('Homepage layouts');
+        $this->toolbar_title[] = $this->module->getTranslator()->trans('Homepage layouts', [], 'Modules.Iqitelementor.Admin');
     }
 
 
@@ -289,7 +334,7 @@ class AdminIqitElementorController extends ModuleAdminController
     {
         if (Shop::getContext() == Shop::CONTEXT_GROUP || Shop::getContext() == Shop::CONTEXT_ALL) {
             return '<p class="alert alert-warning">' .
-            $this->l('You cannot manage module from a "All Shops" or a "Group Shop" context, select directly the shop you want to edit') .
+            $this->module->l('You cannot manage module from a "All Shops" or a "Group Shop" context, select directly the shop you want to edit') . // Khewa PS 9.2: AdminController::l() was removed, use the module translator
             '</p>';
         } else {
             return '';

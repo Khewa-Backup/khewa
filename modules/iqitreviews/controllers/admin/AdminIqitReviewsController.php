@@ -104,7 +104,7 @@ class AdminIqitReviewsController extends ModuleAdminController
                 'title' => $this->trans('Published', [], 'Modules.Iqitreviews.Adminiqitreviews'),
                 'align' => 'center',
                 'active' => 'status',
-                'type' => 'bool',
+                'type' => 'bool', 
                 'orderby' => false,
                 'filter_key' => 'a!status',
                 'class' => 'fixed-width-sm'
@@ -150,7 +150,7 @@ class AdminIqitReviewsController extends ModuleAdminController
 
     public static function getCommentClean($comment)
     {
-        return Tools::getDescriptionClean($comment);
+        return strip_tags(stripslashes($comment));
     }
 
     public static function formatRating($rating)

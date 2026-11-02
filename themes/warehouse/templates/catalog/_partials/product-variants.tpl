@@ -47,7 +47,7 @@
             {elseif $group.group_type == 'color'}
                 <ul id="group_{$id_attribute_group}">
                     {foreach from=$group.attributes key=id_attribute item=group_attribute}
-                        <li class="float-left input-container {if $group.attributes_quantity.$id_attribute <= 0} attribute-not-in-stock{/if}" data-toggle="tooltip" data-animation="false" data-placement="top"  data-container= ".product-variants" title="{$group_attribute.name}">
+                        <li class="float-left input-container {if $group.attributes_quantity.$id_attribute <= 0} attribute-not-in-stock{/if}" data-bs-toggle="tooltip" data-animation="false" data-placement="top"  data-container= ".product-variants" title="{$group_attribute.name}">
                             <input class="input-color" type="radio" data-product-attribute="{$id_attribute_group}"
                                    name="group[{$id_attribute_group}]"
                                    value="{$id_attribute}"{if $group_attribute.selected} checked="checked"{/if}>

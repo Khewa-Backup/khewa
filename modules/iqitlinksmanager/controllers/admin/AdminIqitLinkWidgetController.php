@@ -91,7 +91,7 @@ class AdminIqitLinkWidgetController extends ModuleAdminController
     public function renderView()
     {
 
-        $title = $this->l('Link block configuration');
+        $title = $this->module->getTranslator()->trans('Link block configuration', [], 'Modules.Iqitlinksmanager.Admin');
 
         $this->fields_form[]['form'] = array(
             'legend' => array(
@@ -101,14 +101,14 @@ class AdminIqitLinkWidgetController extends ModuleAdminController
             'input' => array(
                 array(
                     'type' => 'link_blocks',
-                    'label' => $this->l('Link Blocks'),
+                    'label' => $this->module->getTranslator()->trans('Link Blocks', [], 'Modules.Iqitlinksmanager.Admin'),
                     'name' => 'link_blocks',
                     'values' => $this->repository->getCMSBlocksSortedByHook(),
                 ),
             ),
             'buttons' => array(
                 'newBlock' => array(
-                    'title' => $this->l('New block'),
+                    'title' => $this->module->getTranslator()->trans('New block', [], 'Modules.Iqitlinksmanager.Admin'),
                     'href' => $this->context->link->getAdminLink('Admin' . $this->name) . '&amp;addIqitLinkBlock',
                     'class' => 'pull-right',
                     'icon' => 'process-icon-new',
@@ -134,7 +134,7 @@ class AdminIqitLinkWidgetController extends ModuleAdminController
         $this->fields_form[0]['form'] = array(
             'tinymce' => true,
             'legend' => array(
-                'title' => isset($block->id) ? $this->l('Edit the link block.') : $this->l('New link block'),
+                'title' => isset($block->id) ? $this->module->getTranslator()->trans('Edit the link block.', [], 'Modules.Iqitlinksmanager.Admin') : $this->module->getTranslator()->trans('New link block', [], 'Modules.Iqitlinksmanager.Admin'),
                 'icon' => isset($block->id) ? 'icon-edit' : 'icon-plus-square',
             ),
             'input' => array(
@@ -149,14 +149,14 @@ class AdminIqitLinkWidgetController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Name of the link block'),
+                    'label' => $this->module->getTranslator()->trans('Name of the link block', [], 'Modules.Iqitlinksmanager.Admin'),
                     'name' => 'name',
                     'lang' => true,
                     'required' => true,
                 ),
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Hook'),
+                    'label' => $this->module->getTranslator()->trans('Hook', [], 'Modules.Iqitlinksmanager.Admin'),
                     'name' => 'id_hook',
                     'class' => 'input-lg',
                     'options' => array(
@@ -167,18 +167,18 @@ class AdminIqitLinkWidgetController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'repository_links',
-                    'label' => $this->l('Links repository'),
+                    'label' => $this->module->getTranslator()->trans('Links repository', [], 'Modules.Iqitlinksmanager.Admin'),
                     'name' => 'repository_links',
                 ),
                 array(
                     'type' => 'selected_links',
-                    'label' => $this->l('Selected links'),
+                    'label' => $this->module->getTranslator()->trans('Selected links', [], 'Modules.Iqitlinksmanager.Admin'),
                     'name' => 'selected_links[]',
                 ),
             ),
             'buttons' => array(
                 'cancelBlock' => array(
-                    'title' => $this->l('Cancel'),
+                    'title' => $this->module->getTranslator()->trans('Cancel', [], 'Modules.Iqitlinksmanager.Admin'),
                     'href' => (Tools::safeOutput(Tools::getValue('back', false)))
                     ?: $this->context->link->getAdminLink('Admin' . $this->name),
                     'icon' => 'process-icon-cancel',
@@ -186,7 +186,7 @@ class AdminIqitLinkWidgetController extends ModuleAdminController
             ),
             'submit' => array(
                 'name' => 'submit' . $this->className,
-                'title' => $this->l('Save'),
+                'title' => $this->module->getTranslator()->trans('Save', [], 'Modules.Iqitlinksmanager.Admin'),
             ),
         );
 
@@ -240,8 +240,8 @@ class AdminIqitLinkWidgetController extends ModuleAdminController
 
     public function initToolBarTitle()
     {
-        $this->toolbar_title[] = $this->l('Themes');
-        $this->toolbar_title[] = $this->l('Iqit Links Manager"');
+        $this->toolbar_title[] = $this->module->getTranslator()->trans('Themes', [], 'Modules.Iqitlinksmanager.Admin');
+        $this->toolbar_title[] = $this->module->getTranslator()->trans('Iqit linksmanager', [], 'Modules.Iqitlinksmanager.Admin');
     }
 
     public function setMedia($isNewTheme = false)

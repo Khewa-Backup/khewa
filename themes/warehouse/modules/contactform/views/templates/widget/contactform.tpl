@@ -49,7 +49,7 @@
 
                 {if $contact.orders}
                     <div class="form-group row">
-                        <label class="col-md-3 form-control-label" for="id-order">>{l s='Order reference' d='Shop.Forms.Labels'}</label>
+                        <label class="col-md-3 form-control-label" for="id-order">{l s='Order reference' d='Shop.Forms.Labels'}</label>
                         <div class="col-md-6">
                             <select id="id-order" name="id_order" class="form-control form-control-select">
                                 <option value="">{l s='Select reference' d='Shop.Forms.Help'}</option>

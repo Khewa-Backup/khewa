@@ -46,7 +46,7 @@ class SimpleBlogPostAuthor extends ObjectModel
             ],
             'photo' => [
                 'type' => self::TYPE_STRING,
-                'validate' => 'isAnything',
+                'validate' => 'isString',
                 'size' => 9999,
             ],
             'email' => [
@@ -56,23 +56,23 @@ class SimpleBlogPostAuthor extends ObjectModel
             ],
             'facebook' => [
                 'type' => self::TYPE_STRING,
-                'validate' => 'isAnything',
+                'validate' => 'isString',
             ],
             'google' => [
                 'type' => self::TYPE_STRING,
-                'validate' => 'isAnything',
+                'validate' => 'isString',
             ],
             'linkedin' => [
                 'type' => self::TYPE_STRING,
-                'validate' => 'isAnything',
+                'validate' => 'isString',
             ],
             'twitter' => [
                 'type' => self::TYPE_STRING,
-                'validate' => 'isAnything',
+                'validate' => 'isString',
             ],
             'instagram' => [
                 'type' => self::TYPE_STRING,
-                'validate' => 'isAnything',
+                'validate' => 'isString',
             ],
             'phone' => [
                 'type' => self::TYPE_STRING,

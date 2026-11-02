@@ -19,6 +19,7 @@
            class="btn btn-secondary btn-lg btn-iconic btn-iqitwishlist-add js-iqitwishlist-add" data-animation="false" id="iqit-wishlist-product-btn"
            data-id-product="{$product.id_product|intval}"
            data-id-product-attribute="{$product.id_product_attribute|intval}"
+           data-token="{$static_token}"
            data-url="{url entity='module' name='iqitwishlist' controller='actions'}">
             <i class="fa fa-heart-o not-added" aria-hidden="true"></i> <i class="fa fa-heart added"
                                                                           aria-hidden="true"></i>

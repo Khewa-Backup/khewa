@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\PrestaShop\Adapter\Image\ImageRetriever;
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter;
-use PrestaShop\PrestaShop\Core\Product\ProductListingPresenter;
+use PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductListingPresenter;
 use PrestaShop\PrestaShop\Adapter\Product\ProductColorsRetriever;
 
 include_once _PS_MODULE_DIR_ . 'iqitmegamenu/models/IqitMenuTab.php';
@@ -37,17 +37,31 @@ class IqitMegaMenu extends Module implements WidgetInterface
     private $spacer_size = '5';
     private $verticalPosition;
     private $sidebarHeader;
+    private $menuMobileContent;
+
+
+    public $defaults_horizontal;
+    public $defaults_vertical;
+    public $defaults_mobile;
+    public $config_name;
+    public $iqitdevmode;
+    public $iqitTheme;
 
     public function __construct()
     {
         $this->name = 'iqitmegamenu';
         $this->tab = 'front_office_features';
-        $this->version = '4.0.0';
+        $this->version = '4.2.0';
         $this->author = 'IQIT-COMMERCE.COM';
         $this->need_instance = 0;
         $this->iqitdevmode = false;
         $this->iqitTheme = false;
         $this->bootstrap = true;
+
+        $this->ps_versions_compliancy = [
+            'min' => '9.0.0',
+            'max' => '9.99.99',
+        ];
 
         parent::__construct();
 
@@ -69,6 +83,8 @@ class IqitMegaMenu extends Module implements WidgetInterface
         $this->defaults_vertical = array();
 
         $this->verticalPosition = Configuration::get('iqitthemeed_vm_position');
+        $this->menuMobileContent = Configuration::get('iqitthemeed_mm_content');
+
         $this->sidebarHeader = false;
         $h_layout = Configuration::get('iqitthemeed_h_layout');
         if ($h_layout == 6 || $h_layout == 7) {
@@ -81,7 +97,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
     public function install()
     {
         if (parent::install() &&
-            $this->registerHook('header') &&
+            $this->registerHook('displayHeader') &&
             $this->registerHook('displayMainMenu') &&
             $this->registerHook('displayVerticalMenuElementor') &&
             $this->registerHook('displayVerticalMenu') &&
@@ -100,10 +116,11 @@ class IqitMegaMenu extends Module implements WidgetInterface
             $this->registerHook('actionObjectProductUpdateAfter') &&
             $this->registerHook('actionObjectProductDeleteAfter') &&
             $this->registerHook('actionObjectProductAddAfter') &&
-            $this->registerHook('categoryUpdate') &&
             $this->registerHook('actionShopDataDuplication') &&
             $this->createTables()
         ) {
+            $this->installAdminTab();
+
             $this->installSamples();
             $this->setDefaults();
             $this->generateCss();
@@ -120,8 +137,32 @@ class IqitMegaMenu extends Module implements WidgetInterface
     }
 
 
+    public function installAdminTab(): bool
+    {
+        $tab = new Tab();
+        $tab->class_name = 'AdminIqitMegaMenu';
+        $tab->module = $this->name;
+        $tab->active = 0;
+        $tab->id_parent = (int) Tab::getIdFromClassName('AdminParentModulesSf'); // nie pokaże się w menu
+        foreach (Language::getLanguages(false) as $lang) {
+            $tab->name[$lang['id_lang']] = 'AdminIqitMegaMenu';
+        }
+        $ok = $tab->add();
+
+        return (bool) $ok;
+    }
+
+
     public function uninstall()
     {
+
+        $id_tab = (int) Tab::getIdFromClassName('AdminIqitMegaMenu');
+        if ($id_tab) {
+            $tab = new Tab($id_tab);
+            $tab->delete();
+        }
+
+
         foreach ($this->defaults_mobile as $default => $value) {
             Configuration::deleteByName($this->config_name . '_' . $default);
         }
@@ -294,11 +335,14 @@ class IqitMegaMenu extends Module implements WidgetInterface
         $this->context->controller->addCSS($this->_path . 'views/css/fontawesome-iconpicker.min.css');
         $this->context->controller->addCSS($this->_path . 'views/css/font-awesome.min.css');
 
+
+        $this->context->smarty->assign('adminDir', basename(_PS_ADMIN_DIR_));
+
         $base_url = Tools::getHttpHost(true);  // DON'T TOUCH (base url (only domain) of site (without final /)).
         $base_url = Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE') ? $base_url : str_replace('https', 'http', $base_url);
 
         Media::addJsDef(array(
-            'iqitsearch_url' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=' . $this->name,
+            'iqitsearch_url' => $this->context->link->getAdminLink('AdminIqitMegaMenu', true, [], []),
             'iqitBaseUrl'  => Tools::safeOutput($base_url)
         ));
 
@@ -537,6 +581,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
         $this->_html .= '<div class="list-wrapper list-wrapper-horizontal">' . $this->renderTabsLinks(1) . '</div>';
         $this->_html .= '<div class="list-wrapper list-wrapper-vertical">' . $this->renderTabsLinks(2) . '</div>';
         $this->_html .= '<div class="list-wrapper list-wrapper-submenutabs">' . $this->renderTabsLinks(3) . '</div>';
+        $this->_html .= '<div class="list-wrapper list-wrapper-mobile">' . $this->renderTabsLinks(4) . '</div>';
         $this->_html .= '<div class="list-wrapper list-wrapper-html">' . $this->renderHtmlContents() . '</div>';
         $this->_html .= $this->renderForm();
 
@@ -982,7 +1027,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                         ),
                     ),
                     array(
-                        'type' => 'icon_selector',
+                        'type' => 'text',
                         'label' => $this->l('Icon class'),
                         'name' => 'icon_class',
                         'desc' => $this->l('For example: "fa-star". You can use font awesome icons here'),
@@ -1079,6 +1124,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                         'label' => $this->l('Float right'),
                         'hide' => (Tools::getValue('menu_type') == 3 ? true : false),
                         'name' => 'float',
+                        'form_group_class' => 'hidden-mobile-menu',
                         'is_bool' => true,
                         'desc' => $this->l('Position menu on right side of menu. If center option of menu is enabled it do not take effect'),
                         'values' => array(
@@ -1098,6 +1144,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                         'type' => 'color',
                         'label' => $this->l('Main link background color'),
                         'name' => 'bg_color',
+                        'form_group_class' => 'hidden-mobile-menu',
                         'desc' => $this->l('Optional field. If not set default color will be used'),
                         'size' => 30,
                     ),
@@ -1105,6 +1152,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                         'type' => 'color',
                         'label' => $this->l('Main link text color'),
                         'name' => 'txt_color',
+                        'form_group_class' => 'hidden-mobile-menu',
                         'desc' => $this->l('Optional field. If not set default color will be used'),
                         'size' => 30,
                     ),
@@ -1112,6 +1160,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                         'type' => 'color',
                         'label' => $this->l('Main link hover background color'),
                         'name' => 'h_bg_color',
+                        'form_group_class' => 'hidden-mobile-menu',
                         'desc' => $this->l('Optional field. If not set default color will be used'),
                         'size' => 30,
                     ),
@@ -1119,6 +1168,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                         'type' => 'color',
                         'label' => $this->l('Main link hover text color'),
                         'name' => 'h_txt_color',
+                        'form_group_class' => 'hidden-mobile-menu',
                         'desc' => $this->l('Optional field. If not set default color will be used'),
                         'size' => 30,
                     ),
@@ -1126,6 +1176,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                         'type' => 'color',
                         'label' => $this->l('Legend background color'),
                         'name' => 'labelbg_color',
+                        'form_group_class' => 'hidden-mobile-menu',
                         'desc' => $this->l('Optional field. If not set default color will be used'),
                         'size' => 30,
                     ),
@@ -1133,6 +1184,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                         'type' => 'color',
                         'label' => $this->l('Legend text color'),
                         'name' => 'labeltxt_color',
+                        'form_group_class' => 'hidden-mobile-menu',
                         'desc' => $this->l('Optional field. If not set default color will be used'),
                         'size' => 30,
                     ),
@@ -1150,6 +1202,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                         'type' => 'select',
                         'label' => $this->l('Submenu width'),
                         'name' => 'submenu_width',
+                        'form_group_class' => 'hidden-mobile-menu',
                         'hide' => (Tools::getValue('menu_type') == 3 ? true : false),
                         'options' => array(
                             'query' => $columns_width,
@@ -1388,7 +1441,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
 
             if ($tab->submenu_type == 2 && $tab->submenu_content != '') {
                 $submenu_content = $tab->submenu_content;
-                $arr = Tools::jsonDecode($tab->submenu_content, true);
+                $arr = json_decode($tab->submenu_content, true);
 
                 if (!is_array($arr)){
                     $arr = array();
@@ -1423,6 +1476,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
             'module_path' => $this->_path,
+            'menu_type' => Tools::getValue('menu_type'),
             'va_links_select' => $this->renderChoicesSelect(null, null, 'select-links-ids'),
             'custom_html_select' => $this->renderCustomHtmlSelect(),
             'manufacturers_select' => $this->renderManufacturersSelect(),
@@ -1485,6 +1539,8 @@ class IqitMegaMenu extends Module implements WidgetInterface
         $fields['submenu_border_l'] = '';
         $fields['submenu_border_i'] = '';
 
+        $languages = Language::getLanguages(false);
+
         if (Tools::isSubmit('id_tab') && IqitMenuTab::tabExists((int)Tools::getValue('id_tab'))) {
             $tab = new IqitMenuTab((int)Tools::getValue('id_tab'));
 
@@ -1526,10 +1582,27 @@ class IqitMegaMenu extends Module implements WidgetInterface
             $fields['submenu_border_i'] = $tab->submenu_border_i;
 
             $group_access = unserialize($tab->group_access);
-
-            foreach ($group_access as $group => $value) {
-                $fields['groupBox_' . $group] = $value;
+            if (!is_array($group_access)) {
+                $group_access = array();
             }
+
+            $groups = Group::getGroups($this->context->language->id);
+            foreach ($groups as $group) {
+                $group_id = (int)$group['id_group'];
+                $fields['groupBox_' . $group_id] = array_key_exists($group_id, $group_access)
+                    ? (bool)$group_access[$group_id]
+                    : true;
+            }
+
+            foreach ($languages as $lang) {
+                $fields['title'][$lang['id_lang']] = Tools::getValue('title_' . (int)$lang['id_lang'],
+                    $tab->title[$lang['id_lang']]);
+                $fields['url'][$lang['id_lang']] = Tools::getValue('url_' . (int)$lang['id_lang'],
+                    $tab->url[$lang['id_lang']]);
+                $fields['label'][$lang['id_lang']] = Tools::getValue('label_' . (int)$lang['id_lang'],
+                    $tab->label[$lang['id_lang']]);
+            }
+
         } else {
             $tab = new IqitMenuTab();
 
@@ -1538,18 +1611,17 @@ class IqitMegaMenu extends Module implements WidgetInterface
             foreach ($groups as $group) {
                 $fields['groupBox_' . $group['id_group']] = true;
             }
+
+            foreach ($languages as $lang) {
+                $fields['title'][$lang['id_lang']] = '';
+                $fields['url'][$lang['id_lang']] = '';
+                $fields['label'][$lang['id_lang']] = '';
+            }
         }
 
-        $languages = Language::getLanguages(false);
+    
 
-        foreach ($languages as $lang) {
-            $fields['title'][$lang['id_lang']] = Tools::getValue('title_' . (int)$lang['id_lang'],
-                $tab->title[$lang['id_lang']]);
-            $fields['url'][$lang['id_lang']] = Tools::getValue('url_' . (int)$lang['id_lang'],
-                $tab->url[$lang['id_lang']]);
-            $fields['label'][$lang['id_lang']] = Tools::getValue('label_' . (int)$lang['id_lang'],
-                $tab->label[$lang['id_lang']]);
-        }
+  
 
         return $fields;
     }
@@ -1645,17 +1717,18 @@ class IqitMegaMenu extends Module implements WidgetInterface
             $html = new IqitMenuHtml((int)Tools::getValue('id_html'));
             $fields['id_html'] = (int)Tools::getValue('id_html', $html->id);
             $fields['title'] = $html->title;
+            $languages = Language::getLanguages(false);
+
+            foreach ($languages as $lang) {
+                $fields['html'][$lang['id_lang']] = Tools::getValue('html_' . (int)$lang['id_lang'], $html->html[$lang['id_lang']]);
+            }
         } else {
-            $html = new IqitMenuHtml();
+            $languages = Language::getLanguages(false);
+
+            foreach ($languages as $lang) {
+                $fields['html'][$lang['id_lang']] = '';
+            }
         }
-
-        $languages = Language::getLanguages(false);
-
-        foreach ($languages as $lang) {
-            $fields['html'][$lang['id_lang']] = Tools::getValue('html_' . (int)$lang['id_lang'],
-                $html->html[$lang['id_lang']]);
-        }
-
         return $fields;
     }
 
@@ -1736,6 +1809,11 @@ class IqitMegaMenu extends Module implements WidgetInterface
                                 }
                             }
                             break;
+                        case 5:
+                            if (isset($node['content']['ids']) && is_array($node['content']['ids'])) {
+                                $node['content']['ids'] = $this->buildManufacturerLogoItems($node['content']['ids'], $id_lang);
+                            }
+                            break;
                         case 6:
                             if (isset($node['content']['source'][$id_lang]) && $node['content']['source'][$id_lang] != '') {
                                 $node['content']['source'] = $node['content']['source'][$id_lang];
@@ -1762,6 +1840,11 @@ class IqitMegaMenu extends Module implements WidgetInterface
                             }
 
                             break;
+                        case 7:
+                            if (isset($node['content']['ids']) && is_array($node['content']['ids'])) {
+                                $node['content']['ids'] = $this->buildSupplierLogoItems($node['content']['ids'], $id_lang);
+                            }
+                            break;
                     }
                 }
             }
@@ -1785,6 +1868,74 @@ class IqitMegaMenu extends Module implements WidgetInterface
 
         $tree = $this->sortArrayTree($tree);
         return $tree;
+    }
+
+    private function buildManufacturerLogoItems($manufacturerIds, $id_lang)
+    {
+        $items = array();
+        if (!is_array($manufacturerIds)) {
+            return $items;
+        }
+
+        foreach ($manufacturerIds as $manufacturerId) {
+            $manufacturerId = (int)$manufacturerId;
+            if ($manufacturerId <= 0) {
+                continue;
+            }
+
+            $manufacturer = new Manufacturer($manufacturerId, (int)$id_lang);
+            if (!Validate::isLoadedObject($manufacturer) || $manufacturer->name === '') {
+                continue;
+            }
+
+            $imagePath = _PS_MANU_IMG_DIR_ . $manufacturerId . '-small_default.jpg';
+            if (!file_exists($imagePath)) {
+                continue;
+            }
+
+            $items[] = array(
+                'id' => $manufacturerId,
+                'name' => $manufacturer->name,
+                'href' => $this->context->link->getManufacturerLink($manufacturer),
+                'image' => $this->context->link->getManufacturerImageLink($manufacturerId, 'small_default'),
+            );
+        }
+
+        return $items;
+    }
+
+    private function buildSupplierLogoItems($supplierIds, $id_lang)
+    {
+        $items = array();
+        if (!is_array($supplierIds)) {
+            return $items;
+        }
+
+        foreach ($supplierIds as $supplierId) {
+            $supplierId = (int)$supplierId;
+            if ($supplierId <= 0) {
+                continue;
+            }
+
+            $supplier = new Supplier($supplierId, (int)$id_lang);
+            if (!Validate::isLoadedObject($supplier) || $supplier->name === '') {
+                continue;
+            }
+
+            $imagePath = _PS_SUPP_IMG_DIR_ . $supplierId . '-small_default.jpg';
+            if (!file_exists($imagePath)) {
+                continue;
+            }
+
+            $items[] = array(
+                'id' => $supplierId,
+                'name' => $supplier->name,
+                'href' => $this->context->link->getSupplierLink($supplier),
+                'image' => $this->context->link->getSupplierImageLink($supplierId, 'small_default'),
+            );
+        }
+
+        return $items;
     }
 
     public function sortArrayTree($passedTree)
@@ -2274,7 +2425,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
 
             if ($tab['submenu_type'] == 2) {
                 if (Tools::strlen(($tab['submenu_content']))) {
-                    $css .= $this->generateSubmenuCss($this->buildSubmenuTree(Tools::jsonDecode($tab['submenu_content'],
+                    $css .= $this->generateSubmenuCss($this->buildSubmenuTree(json_decode($tab['submenu_content'],
                         true), true, true), '.cbp-hrmenu li#cbp-hrmenu-tab-' . $tabs[$key]['id_tab']);
                 }
             }
@@ -2335,7 +2486,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
 
             if ($tab['submenu_type'] == 2) {
                 if (Tools::strlen(($tab['submenu_content']))) {
-                    $css .= $this->generateSubmenuCss($this->buildSubmenuTree(Tools::jsonDecode($tab['submenu_content'],
+                    $css .= $this->generateSubmenuCss($this->buildSubmenuTree(json_decode($tab['submenu_content'],
                         true), true, true), '.cbp-hrmenu .innertabcontent-' . $tabs[$key]['id_tab']);
                 }
             }
@@ -2493,8 +2644,10 @@ class IqitMegaMenu extends Module implements WidgetInterface
     /**
      * Add the CSS & JavaScript files you want to be added on the FO.
      */
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
+        $this->context->smarty->registerClass('Manufacturer', 'Manufacturer');
+        $this->context->smarty->registerClass('Supplier', 'Supplier');
         $jsVars = array();
 
         $this->user_groups = ($this->context->customer->isLogged() ? $this->context->customer->getGroups() : array(Configuration::get('PS_UNIDENTIFIED_GROUP')));
@@ -2551,7 +2704,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
         } elseif ((preg_match('/^displayMainMenu\d*$/', $hookName))) {
             $templateFile = 'horizontal.tpl';
         }
-
+        
         if (!$this->isCached('module:' . $this->name . '/views/templates/hook/' .$templateFile, $this->getCacheId($cacheId))) {
             $this->smarty->assign($this->getWidgetVariables($hookName, $configuration));
         }
@@ -2564,6 +2717,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
             $hookName = $configuration['hook'];
         }
 
+
         if (preg_match('/^displayVerticalMenu\d*$/', $hookName)) {
             return $this->_prepareHookVertical();
         } elseif (preg_match('/^displayVerticalMenuElementor\d*$/', $hookName)) {
@@ -2575,7 +2729,10 @@ class IqitMegaMenu extends Module implements WidgetInterface
 
             if ($this->verticalPosition == 'horizontal' || ($this->context->controller->php_self != 'index' && $this->verticalPosition == 'hiddenHorizontal')) {
                 $varsVertical = $this->_prepareHookVertical(2);
+            } elseif($this->menuMobileContent == 'desktop-vertical'){
+                $varsVertical['mobile_menu'] = $this->makeMegaMenu(2);
             }
+            
             return array_merge($varsHorizontal, $varsVertical);
         }
     }
@@ -2586,14 +2743,32 @@ class IqitMegaMenu extends Module implements WidgetInterface
             'ver_position' => $pos,
         );
 
+        $verticalMenu = $this->makeMegaMenu(2);
         $options = [
             'menu_settings_v' => $menu_settings_v,
-            'vertical_menu' => $this->makeMegaMenu(2),
+            'vertical_menu' => $verticalMenu,
         ];
 
         if ($this->sidebarHeader){
-            $options['mobile_menu_v'] = $this->makeMenuMobile();
+            $mobileMenu = false;
+            if ($this->menuMobileContent == 'accordion' || $this->menuMobileContent == 'panel'){
+                $mobileMenu = $this->makeMenuMobile();
+            } elseif($this->menuMobileContent == 'separate'){
+                $mobileMenu = $this->makeMegaMenu(4);
+            } 
+            else{
+                $mobileMenu = $verticalMenu;
+            }
+            
+            $options['mobile_menu'] = $mobileMenu;
         }
+
+        if($this->menuMobileContent == 'desktop-vertical'){
+            $mobileMenu = $verticalMenu;
+            $options['mobile_menu'] = $mobileMenu;
+        }
+        
+        $options['sidebar_header'] = $this->sidebarHeader;
 
         return $options;
     }
@@ -2603,11 +2778,21 @@ class IqitMegaMenu extends Module implements WidgetInterface
         $menu_settings = array();
 
         $small = Image::getSize(ImageType::getFormattedName('small'));
+        $horizontalMenu = $this->makeMegaMenu(1);
+
+        
+        if ($this->menuMobileContent == 'accordion' || $this->menuMobileContent == 'panel'){
+            $mobileMenu = $this->makeMenuMobile();
+        } elseif($this->menuMobileContent == 'separate'){
+            $mobileMenu = $this->makeMegaMenu(4);
+        } else{
+            $mobileMenu = $horizontalMenu;
+        }
 
         return [
-            'mobile_menu' => $this->makeMenuMobile(),
+            'mobile_menu' => $mobileMenu,
             'menu_settings' => $menu_settings,
-            'horizontal_menu' => $this->makeMegaMenu(1),
+            'horizontal_menu' => $horizontalMenu,
             'this_path' => $this->_path,
             'homeSize' => Image::getSize(ImageType::getFormattedName('home')),
             'mediumSize' => $small,
@@ -3172,7 +3357,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                             }
 
                             if (Tools::strlen(($innertab->submenu_content))) {
-                                $arr = Tools::jsonDecode($innertab->submenu_content, true);
+                                $arr = json_decode($innertab->submenu_content, true);
                                 if(!is_array($arr)){
                                      $arr = array();
                                 }
@@ -3198,7 +3383,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
             }
             if ($tab['submenu_type'] == 2) {
                 if (Tools::strlen(($tab['submenu_content']))) {
-                    $tabs[$key]['submenu_content'] = $this->buildSubmenuTree(Tools::jsonDecode($tab['submenu_content'],
+                    $tabs[$key]['submenu_content'] = $this->buildSubmenuTree(json_decode($tab['submenu_content'],
                         true), true);
                 }
             }
@@ -3276,7 +3461,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
                     }
 
                     if ((int)Configuration::get('PS_REWRITING_SETTINGS')) {
-                        $manufacturer->link_rewrite = Tools::link_rewrite($manufacturer->name);
+                        $manufacturer->link_rewrite = Tools::str2url($manufacturer->name);
                     } else {
                         $manufacturer->link_rewrite = 0;
                     }
@@ -3431,35 +3616,31 @@ class IqitMegaMenu extends Module implements WidgetInterface
                 return $return_categories;
             }
 
-            if ($category['level_depth'] > 1) {
-                $cat = new Category($category['id_category']);
-                $link = $cat->getLink();
-            } else {
-                $cat = new Category($category['id_category']);
-                $link = $cat->getLink();
-            }
-
+ 
+            $cat = new Category($category['id_category']);
+            $link = $cat->getLink();
+ 
             if ($subcats) {
                 $return_categories[$key]['title'] = $category['name'];
                 $return_categories[$key]['href'] = $link;
             } else {
                 $return_categories['title'] = $category['name'];
                 $return_categories['href'] = $link;
-            }
 
-            if (isset($node['thumb']) && $node['thumb']) {
-                $files = scandir(_PS_CAT_IMG_DIR_);
+                if (isset($node['thumb']) && $node['thumb']) {
+                    
+                    $return_categories['thumb'] = $this->context->link->getCatImageLink($category['link_rewrite'], (int)$category['id_category'],  'medium_default');
+                     
 
-                if (count(preg_grep('/^' . $category['id_category'] . '-([0-9])?_thumb.jpg/i', $files)) > 0) {
-                    foreach ($files as $file) {
-                        if (preg_match('/^' . $category['id_category'] . '-([0-9])?_thumb.jpg/i', $file) === 1) {
-                            $image_url = $this->context->link->getMediaLink(_THEME_CAT_DIR_ . $file);
-                            $return_categories['thumb'] = $image_url;
-                            break;
+                    /*
+                        if($cat->id_image){
+                            $return_categories['thumb'] = $this->context->link->getCatImageLink($category['link_rewrite'], (int)$category['id_category'],  ImageType::getFormattedName('small'));
                         }
-                    }
+                    */
                 }
             }
+
+    
 
             if (isset($category['children']) && !empty($category['children'])) {
                 if ($subcats) {
@@ -3640,10 +3821,17 @@ class IqitMegaMenu extends Module implements WidgetInterface
     {
         $product_ids = join(',', $ids);
 
+
+        if(  $product_ids == ""){
+            return;
+        }
+
+   
+
         $id_shop = (int)Context::getContext()->shop->id;
 
         $sql = 'SELECT p.*, product_shop.*, stock.out_of_stock, IFNULL(stock.quantity, 0) as quantity, pl.`description`, pl.`description_short`, pl.`link_rewrite`,
-					pl.`meta_description`, pl.`meta_keywords`, pl.`meta_title`, pl.`name`, pl.`available_now`, pl.`available_later`,
+					pl.`meta_description`, pl.`meta_title`, pl.`name`, pl.`available_now`, pl.`available_later`,
 					image_shop.`id_image` id_image, il.`legend`, m.`name` as manufacturer_name, cl.`name` AS category_default, IFNULL(product_attribute_shop.id_product_attribute, 0) id_product_attribute,
 					DATEDIFF(
 						p.`date_add`,
@@ -3671,7 +3859,7 @@ class IqitMegaMenu extends Module implements WidgetInterface
 				' . Product::sqlStock('p', 0) . '
 				WHERE p.id_product IN (' . $product_ids . ')' .
             ($active ? ' AND product_shop.`active` = 1 AND product_shop.`visibility` != \'none\'' : '') . '
-				ORDER BY  FIELD(p.`id_product`,' . $product_ids . ')';
+				ORDER BY FIELD(p.`id_product`,' . $product_ids . ')';
         if (!$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql)) {
             return false;
         }
@@ -3756,10 +3944,6 @@ class IqitMegaMenu extends Module implements WidgetInterface
         $this->clearMenuCache();
     }
 
-    public function hookCategoryUpdate($params)
-    {
-        $this->clearMenuCache();
-    }
 
     public function clearMenuCache()
     {
@@ -3821,86 +4005,9 @@ class IqitMegaMenu extends Module implements WidgetInterface
         $tab->add();
     }
 
-    public function ajaxProcessSearchProducts()
-    {
-        header('Content-Type: application/json');
+    
 
-        $query = Tools::getValue('q', false);
-        if (!$query or $query == '' or Tools::strlen($query) < 1) {
-            die();
-        }
-        if ($pos = strpos($query, ' (ref:')) {
-            $query = Tools::substr($query, 0, $pos);
-        }
-        $excludeIds = Tools::getValue('excludeIds', false);
-        if ($excludeIds && $excludeIds != 'NaN') {
-            $excludeIds = implode(',', array_map('intval', explode(',', $excludeIds)));
-        } else {
-            $excludeIds = '';
-        }
-        $excludeVirtuals = false;
-        $exclude_packs = false;
-        $context = Context::getContext();
-        $sql = 'SELECT p.`id_product`, pl.`link_rewrite`, p.`reference`, pl.`name`, image.`id_image` id_image, il.`legend`, p.`cache_default_attribute`
-        FROM `' . _DB_PREFIX_ . 'product` p
-        ' . Shop::addSqlAssociation('product', 'p') . '
-        LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (pl.id_product = p.id_product AND pl.id_lang = ' . (int)$context->language->id . Shop::addSqlRestrictionOnLang('pl') . ')
-        LEFT JOIN `' . _DB_PREFIX_ . 'image` image
-        ON (image.`id_product` = p.`id_product` AND image.cover=1)
-        LEFT JOIN `' . _DB_PREFIX_ . 'image_lang` il ON (image.`id_image` = il.`id_image` AND il.`id_lang` = ' . (int)$context->language->id . ')
-        WHERE (pl.name LIKE \'%' . pSQL($query) . '%\' OR p.reference LIKE \'%' . pSQL($query) . '%\') AND p.`active` = 1' .
-            (!empty($excludeIds) ? ' AND p.id_product NOT IN (' . $excludeIds . ') ' : ' ') .
-            ($excludeVirtuals ? 'AND NOT EXISTS (SELECT 1 FROM `' . _DB_PREFIX_ . 'product_download` pd WHERE (pd.id_product = p.id_product))' : '') .
-            ($exclude_packs ? 'AND (p.cache_is_pack IS NULL OR p.cache_is_pack = 0)' : '') .
-            ' GROUP BY p.id_product
-            LIMIT 50';
-
-        $items = Db::getInstance()->executeS($sql);
-
-        if ($items && ($excludeIds || strpos($_SERVER['HTTP_REFERER'], 'AdminScenes') !== false)) {
-            foreach ($items as $item) {
-                echo trim($item['name']) . (!empty($item['reference']) ? ' (ref: ' . $item['reference'] . ')' : '') . '|' . (int)($item['id_product']) . "\n";
-            }
-        } elseif ($items) {
-            $results = array();
-            foreach ($items as $item) {
-                $product = array(
-                    'id' => (int)($item['id_product']),
-                    'name' => $item['name'],
-                    'ref' => (!empty($item['reference']) ? $item['reference'] : ''),
-                    'image' => str_replace('http://', Tools::getShopProtocol(),
-                        $context->link->getImageLink($item['link_rewrite'], $item['id_image'],
-                            ImageType::getFormattedName('medium'))),
-                );
-                array_push($results, $product);
-            }
-            $results = array_values($results);
-            die(json_encode($results));
-        } else {
-            die(json_encode(new stdClass));
-        }
-    }
-
-    public function ajaxProcessUpdateHorizontalTabsPosition()
-    {
-        $tabs = Tools::getValue('tabs');
-        foreach ($tabs as $position => $id_tab) {
-            $res = Db::getInstance()->execute('
-            UPDATE `' . _DB_PREFIX_ . 'iqitmegamenu_tabs` SET `position` = ' . (int)$position . '
-            WHERE `id_tab` = ' . (int)$id_tab . ' AND menu_type = 1');
-        }
-        $this->clearMenuCache();
-    }
-
-    public function ajaxProcessupdateVerticalTabsPosition()
-    {
-        $tabs = Tools::getValue('tabs');
-        foreach ($tabs as $position => $id_tab) {
-            $res = Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'iqitmegamenu_tabs` SET `position` = ' . (int)$position . '
-            WHERE `id_tab` = ' . (int)$id_tab . ' AND menu_type = 2');
-        }
-        $this->clearMenuCache();
-    }
+   
 
     private function duplicateTab($id_tab)
     {

@@ -32,7 +32,7 @@ function upgrade_module_1_1_5($object)
   `id_category` int(10) UNSIGNED NOT NULL,
   `just_elementor` int(10) UNSIGNED default NULL,
   PRIMARY KEY (`id_elementor`, `id_category`)
-  ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8;
+  ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8mb4;
     ');
 
 
@@ -41,7 +41,7 @@ function upgrade_module_1_1_5($object)
   `id_lang` int(10) UNSIGNED NOT NULL,
   `data` longtext default NULL,
   PRIMARY KEY (`id_elementor`, `id_lang`)
-  ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8;');
+  ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8mb4;');
 
 
     $sql = "DROP TABLE IF EXISTS

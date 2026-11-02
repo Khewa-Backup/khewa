@@ -42,19 +42,19 @@ class IqitHtmlAndBannerRepository
     			`position` int(10) unsigned NOT NULL default '0',
     			`content` text default NULL,
     			PRIMARY KEY (`id_iqit_htmlandbanner`)
-            ) ENGINE=$engine DEFAULT CHARSET=utf8",
+            ) ENGINE=$engine DEFAULT CHARSET=utf8mb4",
             "CREATE TABLE IF NOT EXISTS `{$this->db_prefix}iqit_htmlandbanner_lang`(
     			`id_iqit_htmlandbanner` int(10) unsigned NOT NULL,
     			`id_lang` int(10) unsigned NOT NULL,
     			`name` varchar(40) NOT NULL default '',
     			`description` text default NULL,    			
     			PRIMARY KEY (`id_iqit_htmlandbanner`, `id_lang`)
-            ) ENGINE=$engine DEFAULT CHARSET=utf8",
+            ) ENGINE=$engine DEFAULT CHARSET=utf8mb4",
             "CREATE TABLE IF NOT EXISTS `{$this->db_prefix}iqit_htmlandbanner_shop` (
     			`id_iqit_htmlandbanner` int(10) unsigned NOT NULL auto_increment,
     			`id_shop` int(10) unsigned NOT NULL,
     			PRIMARY KEY (`id_iqit_htmlandbanner`, `id_shop`)
-            ) ENGINE=$engine DEFAULT CHARSET=utf8",
+            ) ENGINE=$engine DEFAULT CHARSET=utf8mb4",
         ];
 
         foreach ($queries as $query) {

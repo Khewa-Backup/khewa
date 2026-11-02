@@ -27,7 +27,7 @@
 
         {if $view == 'carousel_s' || $view == 'carousel'}
             <div class="swiper-container-wrapper swiper-overflow swiper-arrows-{$arrows_position}">
-            <div class="products elementor-products-carousel swiper-products-carousel swiper-container products-grid  {$cls_fix_classes}"  data-slider_options='{$options|@json_encode nofilter}'>
+            <div class="products elementor-products-carousel swiper-products-carousel swiper-container swiper  products-grid  {$cls_fix_classes}"  data-slider_options='{$options|@json_encode nofilter}'>
                 <div class="swiper-wrapper">
         {else}
             <div class="products row {if $view == 'list'}products-list{else}products-grid {/if}">

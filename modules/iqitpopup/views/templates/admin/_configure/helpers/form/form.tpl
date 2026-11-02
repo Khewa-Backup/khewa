@@ -57,7 +57,7 @@ $(document).ready(function() {
 
 
 	<p> <input id="{$input.name}" type="text" name="{$input.name}" value="{$fields_value[$input.name]|escape:'html':'UTF-8'}"> </p>
-	 <a href="filemanager/dialog.php?type=1&field_id={$input.name}" class="btn btn-default iframe-upload"  data-input-name="{$input.name}" type="button">{l s='Background image selector' mod='iqitpopup'} <i class="icon-angle-right"></i></a>
+	 <a href="/{$adminDir}/filemanager/dialog.php?type=1&field_id={$input.name}" class="btn btn-default iframe-upload"  data-input-name="{$input.name}" type="button">{l s='Background image selector' mod='iqitpopup'} <i class="icon-angle-right"></i></a>
 
 	{else}
 		{$smarty.block.parent}

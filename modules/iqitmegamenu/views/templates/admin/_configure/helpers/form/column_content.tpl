@@ -12,8 +12,8 @@
 *}
 
 
-	<div class="menu-column-content">
-		<p>
+	<div class="menu-column-content" style="padding-top: 10px;">
+		<p class="hidden-mobile-menu">
 			<label>{l s='Column width' mod='iqitmegamenu'}:</label>
 
 			<select class="select-column-width">
@@ -202,14 +202,14 @@
 							<div class="form-group">
 								<label  class="control-label col-lg-3">{l s='Show category thumb' mod='iqitmegamenu'}</label>
 								<div class="col-lg-9"><select class="select-categories-thumb">
-									<option value="1" {if isset($node.content.thumb) && $node.content.thumb == 1}selected{/if} >{l s='Yes' mod='iqitmegamenu'}</option>
 									<option value="0"  {if isset($node.content.thumb) && $node.content.thumb == 0}selected{/if}>{l s='No' mod='iqitmegamenu'}</option>
+									<option value="1" {if isset($node.content.thumb) && $node.content.thumb == 1}selected{/if} >{l s='Yes' mod='iqitmegamenu'}</option>
 								</select>
 							<p class="help-block">
 								{l s='It works only with enabled option "selected categories as tree root". It will show first menu thumbail. You can define menu thumbail during category edit.' mod='iqitmegamenu'}
 							</p></div>
 							</div>
-							<div class="form-group">
+							<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Categories per line' mod='iqitmegamenu'}</label>
 								<div class="col-lg-9"><select class="select-categories-line">
 									<option value="12"  {if isset($node.content.line) && $node.content.line == 12}selected{/if} >1</option>
@@ -258,7 +258,7 @@
 								</script>
 								{/if}
 							</div>
-							<div class="form-group">
+							<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Select view' mod='iqitmegamenu'}</label>
 								<select class="select-links-view col-lg-9">
 									<option value="2" {if isset($node.content.view) && $node.content.view == 2}selected{/if} >{l s='Horizontal(with column title inline)' mod='iqitmegamenu'}</option>
@@ -280,7 +280,7 @@
 								{/if}
 								<div class="col-lg-7">
 									<input value="{if isset($node.content.source[$language.id_lang])}{$node.content.source[$language.id_lang]}{/if}" type="text" class="image-source image-source-{$language.id_lang}" name="{if isset($node.elementId)}{$node.elementId}-{/if}image-source-{$language.id_lang}"  id="{if isset($node.elementId)}{$node.elementId}-{/if}image-source-{$language.id_lang}" data-lang-id="{$language.id_lang}" >
-									<a href="filemanager/dialog.php?type=1&field_id={if isset($node.elementId)}{$node.elementId}-{/if}image-source-{$language.id_lang}" class="btn btn-default iframe-column-upload"  data-input-name="{if isset($node.elementId)}{$node.elementId}-{/if}image-source-{$language.id_lang}" type="button">{l s='Select image' mod='iqitmegamenu'} <i class="icon-angle-right"></i></a>
+									<a href="/{$adminDir}/filemanager/dialog.php?type=1&field_id={if isset($node.elementId)}{$node.elementId}-{/if}image-source-{$language.id_lang}" class="btn btn-default iframe-column-upload"  data-input-name="{if isset($node.elementId)}{$node.elementId}-{/if}image-source-{$language.id_lang}" type="button">{l s='Select image' mod='iqitmegamenu'} <i class="icon-angle-right"></i></a>
 								</div>
 								{if $languages|count > 1}
 								<div class="col-lg-2">
@@ -364,7 +364,7 @@
 							{/foreach}
 						</div>
 
-						<div class="form-group">
+						<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Absolute positions' mod='iqitmegamenu'}</label>
 								<div class="col-lg-9">
 								<select class="select-image-absolute">
@@ -377,25 +377,25 @@
 								</div>
 							</div>
 
-						<div class="form-group">
+						<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Top' mod='iqitmegamenu'}</label>
 								<div class="col-lg-9">
 								<input value="{if isset($node.content.i_a_t)}{$node.content.i_a_t}{/if}" type="text" class="image-absolute-t">
 								</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Right' mod='iqitmegamenu'}</label>
 								<div class="col-lg-9">
 								<input value="{if isset($node.content.i_a_r)}{$node.content.i_a_r}{/if}" type="text" class="image-absolute-r">
 								</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Bottom' mod='iqitmegamenu'}</label>
 								<div class="col-lg-9">
 								<input value="{if isset($node.content.i_a_b)}{$node.content.i_a_b}{/if}" type="text" class="image-absolute-b">
 								</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Left' mod='iqitmegamenu'}</label>
 								<div class="col-lg-9">
 								<input value="{if isset($node.content.i_a_l)}{$node.content.i_a_l}{/if}" type="text" class="image-absolute-l">
@@ -425,7 +425,7 @@
 								<button type="button" class="btn btn-danger remove-products-ids"><i class="icon-trash"></i> {l s='Remove selected' mod='iqitmegamenu'}</button>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Select view' mod='iqitmegamenu'}</label>
 								<select class="select-products-view col-lg-9">
 									<option value="1" {if isset($node.content.view) && $node.content.view == 1}selected{/if} >{l s='Grid(big image + product name below)' mod='iqitmegamenu'}</option>
@@ -433,7 +433,7 @@
 								</select>
 							</div>
 
-							<div class="form-group">
+							<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Products per line' mod='iqitmegamenu'}</label>
 								<select class="select-products-line col-lg-9">
 									<option value="12"  {if isset($node.content.line) && $node.content.line == 12}selected{/if} >1</option>
@@ -459,7 +459,7 @@
 									{/foreach}
 								</select>
 							</div>
-							<div class="form-group">
+							<div class="form-group hidden-mobile-menu">
 								<label  class="control-label col-lg-3">{l s='Logos per line' mod='iqitmegamenu'}</label>
 								<select class="select-manufacturers-line col-lg-9">
 									<option value="12"  {if isset($node.content.line) && $node.content.line == 12}selected{/if} >1</option>
@@ -497,7 +497,7 @@
 					</div>
 
 
-					<div class="style-wrapper clearfix">
+					<div class="style-wrapper hidden-mobile-menu clearfix">
 						<div class="col-lg-9 col-md-offset-3">
 						<p class="help-block">
 								{l s='Optional column style fields' mod='iqitmegamenu'}

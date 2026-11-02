@@ -27,7 +27,7 @@
     <div class="checker" id="uniform-psgdpr">
         <span><input type="checkbox" name="psgdpr-consent" id="psgdpr-consent" value="1" required></span>
     </div>
-    <label for="psgdpr-consent">{$label nofilter}{* html data *}
+    {* Khewa: closing label tag left out, as on the old live shop *}<label for="psgdpr-consent">{$label nofilter}{* html data *}
 </div>
 
 {literal}

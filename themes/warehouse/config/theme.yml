@@ -1,6 +1,6 @@
 name: warehouse
 display_name: Warehouse
-version: 4.5.5
+version: 4.8.2
 author:
   name: "IQIT COMMERCE"
   email: "support@iqit-commerce.com"
@@ -8,7 +8,7 @@ author:
 
 meta:
   compatibility:
-      from: 1.7.8.5
+      from: 9.0.0
       to: ~
 
   available_layouts:
@@ -44,18 +44,19 @@ global_settings:
      - iqitcountdown
      - iqitelementor
      - iqitemailsubscriptionconf
-     - iqitaddthisplugin
      - iqitfreedeliverycount
      - iqitlinksmanager
      - iqitmegamenu
      - iqitpopup
      - iqitproductsnav
+     - iqitproductflags
      - iqitproducttags
      - iqitreviews
      - iqitsearch
      - iqitsizecharts
      - iqitthemeeditor
      - iqitwishlist
+     - iqitproductvariants
      - iqitextendedproduct
      - ps_emailsubscription
      - ph_simpleblog
@@ -67,7 +68,13 @@ global_settings:
      - ps_linklist
      - ps_mainmenu
      - ps_categorytree
+     - ps_bestsellers
      - ps_featuredproducts
+     - ps_newproducts
+     - ps_viewedproduct
+     - ps_themecusto
+     - psxdesign
+     - ps_specials
      - ps_searchbar
      - ps_imageslider
      - ps_customtext
@@ -85,8 +92,6 @@ global_settings:
         - ps_currencyselector
         - iqitwishlist
         - iqitcompare
-      displayTopColumn:
-        - revsliderprestashop
       displayHome:
         - revsliderprestashop
         - iqitelementor
@@ -118,8 +123,6 @@ global_settings:
         - ~
       displayRightColumnProduct:
         - iqithtmlandbanners
-      displayReassurance:
-        - iqitaddthisplugin
       displayCustomerLoginFormAfter:
         - iqitsociallogin
       displayRegistrationBeforeForm:
@@ -140,8 +143,6 @@ global_settings:
         - iqitelementor
       displayManufacturerElementor:
         - iqitelementor
-      displayProductRating:
-        - productcomments
 
 
   image_types:
@@ -177,7 +178,7 @@ global_settings:
       width: 1100
       height: 1422
       scope: [products]
-
+  new_password_policy_feature: true
 
 theme_settings:
   default_layout: layout-full-width
@@ -192,7 +193,6 @@ theme_settings:
 dependencies:
   modules:
     - iqitadditionaltabs
-    - iqitaddthisplugin
     - iqitcompare
     - iqitcontactpage
     - iqitcookielaw
@@ -204,6 +204,8 @@ dependencies:
     - iqitfreedeliverycount
     - iqitlinksmanager
     - iqitmegamenu
+    - iqitproductflags
+    - iqitproductvariants
     - iqitpopup
     - iqitproductsnav
     - iqitproducttags
@@ -215,6 +217,7 @@ dependencies:
     - iqitthemeeditor
     - iqitwishlist
     - revsliderprestashop
+    - iqitcustomwidget
     - ph_simpleblog
     - ph_blog_column_custom
     - ph_relatedposts

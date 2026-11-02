@@ -379,7 +379,7 @@ body#checkout {
     height: auto;
   }
 }
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(lg) {
   .done {
     margin: 0;
     padding: 0;
@@ -433,7 +433,7 @@ body#checkout {
 
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
   body#checkout {
     section.checkout-step {
       .content {

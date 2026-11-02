@@ -36,7 +36,7 @@
                 {$manufacturer.short_description nofilter}
 
                 {if $manufacturer.description}
-                    <a class="btn btn-secondary btn-brands-more float-right collapsed "  data-toggle="collapse" data-parent="#manufacturer-description"
+                    <a class="btn btn-secondary btn-brands-more float-right collapsed "  data-bs-toggle="collapse" data-parent="#manufacturer-description"
                    href="#manufacturer-description">
                         {l s='More' d='Shop.Warehousetheme'}
                     </a>
@@ -49,7 +49,7 @@
             <div class="card">
                 <div id="manufacturer-description" class="collapse rte-content" role="tabpanel">
                     {$manufacturer.description nofilter}
-                    <a class="btn btn-secondary float-right"  data-toggle="collapse" data-parent="#manufacturer-description"
+                    <a class="btn btn-secondary float-right"  data-bs-toggle="collapse" data-parent="#manufacturer-description"
                        href="#manufacturer-description">
                         {l s='Less' d='Shop.Warehousetheme'}
                     </a>

@@ -51,8 +51,8 @@
 		<meta property="og:description" content="{$page.meta.description}">
 	{/if}
 
-	<meta property="fb:admins" content="{Configuration::get('PH_BLOG_FACEBOOK_MODERATOR')|intval}"/>
-	<meta property="fb:app_id" content="{Configuration::get('PH_BLOG_FACEBOOK_APP_ID')|intval}"/>
+	<meta property="fb:admins" content="{$PH_BLOG_FACEBOOK_MODERATOR|intval}"/>
+	<meta property="fb:app_id" content="{$PH_BLOG_FACEBOOK_APP_ID|intval}"/>
 {/block}
 
 
@@ -61,7 +61,7 @@
 {/block}
 
 {block name='hook_after_body_opening_tag' append}{strip}
-{if Configuration::get('PH_BLOG_FB_INIT')}
+{if $PH_BLOG_FB_INIT}
     <div id="fb-root"></div>
     <script>
     (function(d, s, id) {
@@ -90,21 +90,39 @@
 	{block name='head_seo_keywords'}{$post->meta_keywords}{/block}
 {/if}
 
+
+{block name='head_hreflang'}
+
+    {widget_block name="ps_languageselector"}
+        {foreach from=$languages item=language name=alter_langs_loop}
+            {assign var="postForHrefLang" value=SimpleBlogPost::getByRewrite($post->link_rewrite, $language.id_lang, $post->category_rewrite)}
+            <link rel="alternate" href="{SimpleBlogPost::getLink($postForHrefLang->link_rewrite, $postForHrefLang->category_rewrite, $language.id_lang)}" hreflang="{$language.iso_code}">
+            {if $smarty.foreach.alter_langs_loop.index == 0}
+                <link rel="alternate" href="{SimpleBlogPost::getLink($postForHrefLang->link_rewrite, $postForHrefLang->category_rewrite, $language.id_lang)}" hreflang="x-default">
+            {/if}
+        {/foreach}
+    {/widget_block}
+  {/block}
+  
+
 {block name='page_content'}
+
+
+
 {assign var='post_type' value=$post->post_type}
 <div class="simpleblog__postInfo text-muted">
     <ul>
-    	{if Configuration::get('PH_BLOG_DISPLAY_DATE')}
+    	{if $PH_BLOG_DISPLAY_DATE}
         <li>
             <i class="fa fa-calendar"></i>
         	<span>
         		<time>
-        			{$post->date_add|date_format:Configuration::get('PH_BLOG_DATEFORMAT')}
+        			{$post->date_add|date_format:$PH_BLOG_DATEFORMAT}
         		</time>
         	</span>
         </li>
         {/if}
-        {if $post->author && Configuration::get('PH_BLOG_DISPLAY_AUTHOR')}
+        {if $post->author && $PH_BLOG_DISPLAY_AUTHOR}
         <li>
             <i class="fa fa-user"></i>
         	<span>
@@ -116,7 +134,7 @@
 	        </span>
         </li>
         {/if}
-        {if Configuration::get('PH_BLOG_DISPLAY_CATEGORY')}
+        {if $PH_BLOG_DISPLAY_CATEGORY}
         <li>
             <i class="fa fa-tags"></i>
         	<span>
@@ -130,7 +148,7 @@
 
         </li>
         {/if}
-        {if Configuration::get('PH_BLOG_DISPLAY_LIKES')}
+        {if $PH_BLOG_DISPLAY_LIKES}
         <li>
         	<a href="#" data-guest="{$guest}" data-post="{$post->id_simpleblog_post}" class="simpleblog-like-button">
                 <i class="fa fa-heart"></i>
@@ -143,7 +161,7 @@
 	        </a>
         </li>
         {/if}
-        {if Configuration::get('PH_BLOG_DISPLAY_VIEWS')}
+        {if $PH_BLOG_DISPLAY_VIEWS}
         <li>
             <i class="fa fa-eye"></i>
         	<span>
@@ -151,7 +169,7 @@
 	        </span>
         </li>
         {/if}
-        {if $allow_comments eq true && Configuration::get('PH_BLOG_COMMENTS_SYSTEM') == 'native'}
+        {if $allow_comments eq true && $PH_BLOG_COMMENTS_SYSTEM == 'native'}
         <li>
             <i class="fa fa-comments"></i>
         	<span>
@@ -159,7 +177,7 @@
         	</span>
         </li>
         {/if}
-		{if $post->tags && Configuration::get('PH_BLOG_DISPLAY_TAGS') && isset($post->tags_list)}
+		{if $post->tags && $PH_BLOG_DISPLAY_TAGS && isset($post->tags_list)}
 		<li>
 			<i class="fa fa-tags"></i>
 				{foreach from=$post->tags_list item=tag name='tagsLoop'}
@@ -170,7 +188,7 @@
     </ul>
 </div>
 <div class="simpleblog__post blog-mb cardblog">
-	{if $post->featured_image && Configuration::get('PH_BLOG_DISPLAY_FEATURED')}
+	{if $post->featured_image && $PH_BLOG_DISPLAY_FEATURED}
 			<img src="{$post->featured_image}" alt="{$post->title}" class="img-fluid mb-4" />
 	{/if}
     <div class="simpleblog__post__content card-block pb-1">
@@ -221,7 +239,7 @@
 </div>
 
 
-{if Configuration::get('PH_BLOG_DISPLAY_SHARER')}
+{if $PH_BLOG_DISPLAY_SHARERS}
 <div class="simpleblog__share blog-mb">
     <h2 class="section-title"><span>{l s='Share this post' d='Modules.Simpleblog.Shop'}</span></h2>
     <ul class="my-2">
@@ -258,23 +276,23 @@
 {/if}
 
 
-{if Configuration::get('PH_BLOG_DISPLAY_RELATED') && $related_products}
+{if $PH_BLOG_DISPLAY_RELATED && $related_products}
 	{include file="module:ph_simpleblog/views/templates/front/1.7/_partials/post-single-related-products.tpl"}
 {/if}
 
-{if $post->author->active|default:false && Configuration::get('PH_BLOG_DISPLAY_AUTHOR')}
+{if $post->author->active|default:false && $PH_BLOG_DISPLAY_AUTHOR}
 		{include file='module:ph_simpleblog/views/templates/front/1.7/_partials/post-author.tpl' author=$post->author}
 {/if}
 
-{if $allow_comments eq true && Configuration::get('PH_BLOG_COMMENTS_SYSTEM') == 'native'}
+{if $allow_comments eq true && $PH_BLOG_COMMENTS_SYSTEM == 'native'}
 	{include file="module:ph_simpleblog/views/templates/front/1.7/comments/layout.tpl"}
 {/if}
 
-{if $allow_comments eq true && Configuration::get('PH_BLOG_COMMENTS_SYSTEM') == 'facebook'}
+{if $allow_comments eq true && $PH_BLOG_COMMENTS_SYSTEM == 'facebook'}
 	{include file="module:ph_simpleblog/views/templates/front/1.7/comments/facebook.tpl"}
 {/if}
 
-{if $allow_comments eq true && Configuration::get('PH_BLOG_COMMENTS_SYSTEM') == 'disqus'}
+{if $allow_comments eq true && $PH_BLOG_COMMENTS_SYSTEM == 'disqus'}
 	{include file="module:ph_simpleblog/views/templates/front/1.7/comments/disqus.tpl"}
 {/if}
 

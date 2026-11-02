@@ -59,7 +59,6 @@ $(window).on('load',function () {
 
     prestashop.on('afterUpdateProductList', function (e) {
         reInitIqitCountDown();
-
     });
 
 });

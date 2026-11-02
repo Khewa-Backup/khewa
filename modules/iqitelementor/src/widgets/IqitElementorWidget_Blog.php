@@ -33,11 +33,12 @@ use PrestaShop\PrestaShop\Adapter\PricesDrop\PricesDropProductSearchProvider;
 use PrestaShop\PrestaShop\Adapter\Category\CategoryProductSearchProvider;
 use PrestaShop\PrestaShop\Adapter\Image\ImageRetriever;
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter;
-use PrestaShop\PrestaShop\Core\Product\ProductListingPresenter;
+use PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductListingPresenter;
 use PrestaShop\PrestaShop\Adapter\Product\ProductColorsRetriever;
 use PrestaShop\PrestaShop\Core\Product\Search\ProductSearchContext;
 use PrestaShop\PrestaShop\Core\Product\Search\ProductSearchQuery;
 use PrestaShop\PrestaShop\Core\Product\Search\SortOrder;
+
 
 /**
  * Class ElementorWidget_Blog
@@ -65,11 +66,13 @@ class IqitElementorWidget_Blog
 
     public $editMode = false;
 
+
     public function __construct()
     {
         if(!Module::isEnabled('ph_simpleblog'))
         {
             $this->status = 0;
+            return;
         }
 
         $this->name = IqitElementorWpHelper::__('Blog posts', 'elementor');
@@ -97,6 +100,7 @@ class IqitElementorWidget_Blog
             1 => 12,
         ];
 
+        $postsSourceOptions['ms'] = IqitElementorWpHelper::__('Manual selection', 'elementor');
         $postsSourceOptions['lp'] = IqitElementorWpHelper::__('Latest posts', 'elementor');
         $postsSourceOptions['fp'] = IqitElementorWpHelper::__('Featured posts', 'elementor');
 
@@ -139,6 +143,16 @@ class IqitElementorWidget_Blog
                 'label_block' => true,
                 'section' => 'section_pswidget_options',
                 'options' => $postsSourceOptions,
+            ],
+            'posts_ids' => [
+                'label' => IqitElementorWpHelper::__('Search for posts', 'elementor'),
+                'placeholder' => IqitElementorWpHelper::__( 'Post title', 'elementor' ),
+                'type' => 'autocomplete_posts',
+                'label_block' => true,
+                'condition' => [
+                    'posts_source' => ['ms'],
+                ],
+                'section' => 'section_pswidget_options',
             ],
             'posts_limit' => [
                 'label' => IqitElementorWpHelper::__('Limit', 'elementor'),
@@ -428,6 +442,8 @@ class IqitElementorWidget_Blog
             $posts = $this->preparePosts((int) $optionsSource['posts_limit']);
         } elseif ($source == 'fp'){
             $posts = $this->preparePosts((int) $optionsSource['posts_limit'], null, true);
+        } elseif($source == 'ms'){
+            $posts = $this->preparePosts((int) $optionsSource['posts_limit'], null, false, true, $optionsSource['posts_ids']);
         } else{
 
             $source = str_replace('cat_', '', $source);
@@ -477,18 +493,30 @@ class IqitElementorWidget_Blog
             'posts' => $posts,
             'view' => $optionsSource['view'],
             'options' => $options,
-            'classes' =>  implode( ' ', $classes )
+            'classes' =>  implode( ' ', $classes ),
+            'PH_BLOG_DISPLAY_DATE' => Configuration::get('PH_BLOG_DISPLAY_DATE'),
+            'PH_BLOG_DATEFORMAT' => Configuration::get('PH_BLOG_DATEFORMAT'),
+            'PH_BLOG_DISPLAY_MORE' => Configuration::get('PH_BLOG_DISPLAY_MORE'),
+            'PH_BLOG_DISPLAY_CATEGORY' => Configuration::get('PH_BLOG_DISPLAY_CATEGORY'),
+            'PH_BLOG_DISPLAY_THUMBNAIL' => Configuration::get('PH_BLOG_DISPLAY_THUMBNAIL'),
+            'PH_BLOG_DISPLAY_DESCRIPTION' => Configuration::get('PH_BLOG_DISPLAY_DESCRIPTION'),
         ];
     }
 
-    public function preparePosts($nb = 10, $cat = null, $featured = false)
+    public function preparePosts($nb = 10, $cat = null, $featured = false, $selected = false, $ids = array())
     {
         if(!Module::isEnabled('ph_simpleblog')) {
             return false;
         }
 
         $id_lang = (int) $this->context->language->id;
-        $posts = \SimpleBlogPost::getPosts($id_lang, $nb, $cat, null, true, 'sbp.date_add', 'DESC', null, $featured);
+
+        if($selected){
+            $posts = \SimpleBlogPost::getPosts($id_lang, 30, null, null, true, 'IN-LIST', false, null, false, false, null, 'IN', $ids);
+        } else{
+            $posts = \SimpleBlogPost::getPosts($id_lang, $nb, $cat, null, true, 'sbp.date_add', 'DESC', null, $featured);
+        }
+     
 
         return $posts;
     }

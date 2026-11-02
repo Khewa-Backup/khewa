@@ -40,9 +40,9 @@
 
                     </a>
                 </div>
-                <h6 class="product-title">
-                    <a href="{$product.url}">{$product.name|truncate:100:'...'}</a>
-                </h6>
+               
+                    <a class="product-title h6 mt-1 d-inline-block" href="{$product.url}">{$product.name|truncate:100:'...'}</a>
+            
                 {if $product.show_price}
                 <div class="product-price-and-shipping" >
                     <span class="product-price">{$product.price}</span>
@@ -50,6 +50,11 @@
                         {hook h='displayProductPriceBlock' product=$product type="old_price"}
                         <span class="regular-price text-muted">{$product.regular_price}</span>
                     {/if}
+
+                {hook h='displayProductPriceBlock' product=$product type='unit_price'}
+                {hook h='displayProductPriceBlock' product=$product type='weight'}
+    
+
                 </div>
                 {/if}
             </div>

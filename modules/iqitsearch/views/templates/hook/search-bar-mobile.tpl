@@ -25,7 +25,7 @@
                data-brands-text="{l s='Brand' mod='iqitsearch'}"
                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                class="form-control form-search-control">
-        <button type="submit" class="search-btn">
+        <button type="submit" class="search-btn" aria-label="{l s='Search our catalog' mod='iqitsearch'}">
             <i class="fa fa-search"></i>
         </button>
     </div>

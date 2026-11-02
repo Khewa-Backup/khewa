@@ -14,19 +14,60 @@
 {block name='head_seo_title'}{strip}{$meta_title}{/strip}{/block}
 {block name='head_seo_description'}{strip}{$meta_description}{/strip}{/block}
 
+	
+
+	{block name='head_hreflang'}
+
+		{if $pagination.current_page > 1}
+				{assign var="paginationHreflang" value="/page/{$pagination.current_page}"}
+			{else}
+				{assign var="paginationHreflang" value=""}
+		{/if}
+
+
+		{if $is_category eq true}
+			{widget_block name="ps_languageselector"}
+			{foreach from=$languages item=language name=alter_langs_loop}
+				{assign var="categoryForHrefLang" value=SimpleBlogCategory::getRewriteByCategory($blogCategory->id_simpleblog_category, $language.id_lang)}
+				
+				<link rel="alternate" href="{Context::getContext()->link->getModuleLink('ph_simpleblog', 'category', [ 'sb_category' => $categoryForHrefLang], null, $language.id_lang)}{$paginationHreflang}" hreflang="{$language.iso_code}">
+				{if $smarty.foreach.alter_langs_loop.index == 0}
+					<link rel="alternate" href="{Context::getContext()->link->getModuleLink('ph_simpleblog', 'category', [ 'sb_category' => $categoryForHrefLang], null, $language.id_lang)}{$paginationHreflang}" hreflang="x-default">
+				{/if}
+
+			{/foreach}
+			{/widget_block}
+			{else}
+				{widget_block name="ps_languageselector"}
+				{foreach from=$languages item=language name=alter_langs_loop}
+					
+					<link rel="alternate" href="{Context::getContext()->link->getModuleLink('ph_simpleblog', 'list', [], null, $language.id_lang)}{$paginationHreflang}" hreflang="{$language.iso_code}">
+					{if $smarty.foreach.alter_langs_loop.index == 0}
+						<link rel="alternate" href="{Context::getContext()->link->getModuleLink('ph_simpleblog', 'list', [], null, $language.id_lang)}{$paginationHreflang}" hreflang="x-default">
+					{/if}
+	
+		
+				{/foreach}
+				{/widget_block}
+		{/if}
+	  {/block}
+
+	  
+
+
 {block name='page_content'}
 	{block name='category_elements'}
 		{block name='category_heading'}
 		{if $is_category eq true}
-			{if Configuration::get('PH_BLOG_DISPLAY_CATEGORY_IMAGE') && isset($blogCategory->image) || !empty($blogCategory->description) && Configuration::get('PH_BLOG_DISPLAY_CAT_DESC')}
+			{if $displayCategoryImage && isset($blogCategory->image) || !empty($blogCategory->description) && $displayCategoryDescription}
 				<div class="cardblog">
-					{if Configuration::get('PH_BLOG_DISPLAY_CATEGORY_IMAGE') && isset($blogCategory->image)}
+					{if $displayCategoryImage && isset($blogCategory->image)}
 						<div class="simpleblog-category-image">
 							<img src="{$blogCategory->image}" alt="{$blogCategory->name}" class="img-fluid" />
 						</div>
 					{/if}
 
-					{if !empty($blogCategory->description) && Configuration::get('PH_BLOG_DISPLAY_CAT_DESC')}
+					{if !empty($blogCategory->description) && $displayCategoryDescription}
 						<div class="ph_cat_description rte card-block pb-1">
 							{$blogCategory->description nofilter}
 						</div>
@@ -37,16 +78,11 @@
 		{/block}
 
 		{block name='category_children'}
-		{if Configuration::get('PH_BLOG_DISPLAY_CATEGORY_CHILDREN')}
-			{if $is_category eq true}
-				{assign var="subcategories" value=SimpleBlogCategory::getChildrens($blogCategory->id_simpleblog_category)}
-			{else}
-				{assign var="subcategories" value=SimpleBlogCategory::getCategories($language.id, true, true)}
-			{/if}
-			{if $subcategories && $subcategories|count > 0}
+		{if $displayCategoryChildrens}
+			{if $blogCategories && $blogCategories|count > 0}
 			<div class="blogSubcat mb-2">
 				<ul class="blogSubcat__list my-1">
-					{foreach from=$subcategories item=category}
+					{foreach from=$blogCategories item=category}
 						<li class="blogSubcat__item">
 							<a
 								class="blogSubcat__link cardblog btn mb-0"

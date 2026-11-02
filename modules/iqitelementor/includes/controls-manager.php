@@ -12,6 +12,7 @@ class Controls_Manager {
     const SELECT_BIG = 'select_big';
     const SELECT_SORT  = 'select_sort';
     const AUTOCOMPLETE_PRODUCTS = 'autocomplete_products';
+	const AUTOCOMPLETE_POSTS = 'autocomplete_posts';
     const MODULES = 'modules';
 	const CHECKBOX = 'checkbox';
 	const SWITCHER = 'switcher';
@@ -72,6 +73,7 @@ class Controls_Manager {
             self::SELECT_BIG,
             self::SELECT_SORT,
             self::AUTOCOMPLETE_PRODUCTS,
+			self::AUTOCOMPLETE_POSTS,
             self::MODULES,
             self::CHECKBOX,
 			self::SWITCHER,

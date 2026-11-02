@@ -27,7 +27,7 @@
 {if $field.type == 'hidden'}
 
   {block name='form_field_item_hidden'}
-    <input type="hidden" name="{$field.name}" value="{$field.value}">
+    <input type="hidden" name="{$field.name}" value="{$field.value|default}">
   {/block}
 
 {else}
@@ -38,7 +38,7 @@
         {$field.label}
       {/if}
     </label>
-    <div class="col-md-8{if ($field.type === 'radio-buttons')} form-control-valign{/if}">
+    <div class="col-md-8 js-input-column {if ($field.type === 'radio-buttons')} form-control-valign{/if}">
 
       {if $field.type === 'select'}
 
@@ -100,7 +100,7 @@
       {elseif $field.type === 'date'}
 
         {block name='form_field_item_date'}
-          <input name="{$field.name}" class="form-control" type="date" value="{$field.value}" placeholder="{if isset($field.availableValues.placeholder)}{$field.availableValues.placeholder}{/if}">
+          <input name="{$field.name}" class="form-control" type="date" value="{$field.value|default}" placeholder="{if isset($field.availableValues.placeholder)}{$field.availableValues.placeholder}{/if}">
           {if isset($field.availableValues.comment)}
             <span class="form-control-comment">
               {$field.availableValues.comment}
@@ -114,7 +114,7 @@
           <div class="js-parent-focus">
             {html_select_date
             field_order=DMY
-            time={$field.value}
+            time={$field.value|default}
             field_array={$field.name}
             prefix=false
             reverse_years=true
@@ -137,8 +137,11 @@
             <input id="field-{$field.name}"
               class="form-control js-child-focus js-visible-password"
               name="{$field.name}"
-                   aria-label="{l s='Password input of at least 5 characters' d='Shop.Forms.Help'}"
+              aria-label="{l s='Password input' d='Shop.Forms.Help'}"
               title="{l s='At least 5 characters long' d='Shop.Forms.Help'}"
+             {if isset($configuration.password_policy.minimum_length)}data-minlength="{$configuration.password_policy.minimum_length}"{/if}
+             {if isset($configuration.password_policy.maximum_length)}data-maxlength="{$configuration.password_policy.maximum_length}"{/if}
+             {if isset($configuration.password_policy.minimum_score)}data-minscore="{$configuration.password_policy.minimum_score}"{/if}
               {if isset($wishlistModal)}autocomplete="new-password" {else}
                     {if $field.autocomplete}autocomplete="{$field.autocomplete}"{/if}
               {/if}
@@ -167,7 +170,7 @@
             class="form-control"
             name="{$field.name}"
             type="{$field.type}"
-            value="{$field.value}"
+            value="{$field.value|default}"
             {if $field.autocomplete}autocomplete="{$field.autocomplete}"{/if}
             {if isset($field.availableValues.placeholder)}placeholder="{$field.availableValues.placeholder}"{/if}
             {if $field.maxLength}maxlength="{$field.maxLength}"{/if}

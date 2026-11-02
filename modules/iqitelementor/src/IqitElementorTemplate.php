@@ -47,7 +47,7 @@ class IqitElementorTemplate extends ObjectModel
 
     public static function getTemplates(){
 
-        $sql = 'SELECT `id_template`, `title`  FROM '._DB_PREFIX_.'iqit_elementor_template';
+        $sql = 'SELECT `id_template`, `title` FROM '._DB_PREFIX_.'iqit_elementor_template ORDER BY `title` ASC';
         return $results = Db::getInstance()->ExecuteS($sql);
     }
 

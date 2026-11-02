@@ -65,8 +65,10 @@
                                 <input type="hidden" name="addDiscount" value="1">
                                 <input class="form-control" type="text" name="discount_name"
                                        placeholder="{l s='Promo code' d='Shop.Theme.Checkout'}">
-                                <button type="submit" class="btn btn-secondary">
-                                    <span>{l s='Add' d='Shop.Theme.Actions'}</span></button>
+                                       <div class="input-group-append">
+                                    <button type="submit" class="btn btn-secondary h-100">
+                                        <span>{l s='Add' d='Shop.Theme.Actions'}</span></button>
+                                       </div>
                                 </div>
                             </form>
                         {/block}

@@ -106,7 +106,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <span class="modal-title"></span>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="{l s='Close' d='Shop.Theme.Global'}">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="{l s='Close' d='Shop.Theme.Global'}">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>

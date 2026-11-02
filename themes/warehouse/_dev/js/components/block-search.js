@@ -49,6 +49,7 @@ prestashop.blocksearch.initAutocomplete = ($searchWidget, $searchBox, searchURL)
                 ajax: true
             }, null, 'json')
                 .then(function (resp) {
+                    resp.products = Object.values(resp.products);
                     if (Object.keys(resp.brands).length){
                         let brands = {type: 'brands', results: resp.brands};
                         resp.products.push(brands);
@@ -61,16 +62,16 @@ prestashop.blocksearch.initAutocomplete = ($searchWidget, $searchBox, searchURL)
                     if (resp.products.length >= resultsPerPage){
                         resp.products.push(showAll);
                     }
+
                     response(resp.products);
                 })
                 .fail(response);
         },
         renderItem: function (product, search) {
-            console.log(product);
             if(product.type == 'all') {
                 return '<div class="autocomplete-suggestion autocomplete-suggestion-show-all dropdown-item" data-type="all" data-val="'+ search + '">' +
                     '<div class="row no-gutters align-items-center">' +
-                    '<div class="col"><span class="name">' + allText + ' <i class="fa fa-angle-right" aria-hidden="true"></i></span></div>' +
+                    '<div class="col"><span class="name">' + allText + ' <i class="fa fa-solid fa-angle-right" aria-hidden="true"></i></span></div>' +
                     '</div>' +
                     '</div>';
             } else if (product.type == 'brands') {
@@ -146,13 +147,13 @@ export default class BlockSearch {
 
         $searchToggle.on('shown.bs.dropdown', function () {
             setTimeout(function(){
-                $searchBox.focus();
+                $searchBox.trigger('focus');
             }, 300);
         });
 
         $searchToggleMobile.on('shown.bs.dropdown', function () {
             setTimeout(function(){
-                $('#mobile-btn-search').find('input[type=text]').focus();
+                $('#mobile-btn-search').find('input[type=text]').trigger('focus');
             }, 300);
         });
 

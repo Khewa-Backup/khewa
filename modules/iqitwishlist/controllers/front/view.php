@@ -16,7 +16,7 @@
 
 use PrestaShop\PrestaShop\Adapter\Image\ImageRetriever;
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter;
-use PrestaShop\PrestaShop\Core\Product\ProductListingPresenter;
+use PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductListingPresenter;
 use PrestaShop\PrestaShop\Adapter\Product\ProductColorsRetriever;
 
 
@@ -36,23 +36,29 @@ class IqitWishlistViewModuleFrontController extends ModuleFrontController
         $engine = new PhpEncryption(_NEW_COOKIE_KEY_);
 
         $idCustomerToken = '';
-        if (Context::getContext()->customer->isLogged()) {
-            $idCustomer = (int)Context::getContext()->customer->id;
-            $idCustomerToken = $engine->encrypt($idCustomer);
-            $readOnly = false;
-        } else {
+
             $encryptedValue = Tools::getValue('wishlistToken');
             if (!$encryptedValue) {
-                Tools::redirect('index.php?controller=authentication&back=my-account');
+                if (Context::getContext()->customer->isLogged()) {
+                    $idCustomer = (string)Context::getContext()->customer->id;
+                    $idCustomerToken = $engine->encrypt($idCustomer);
+                    $readOnly = false;
+                } else{
+                    Tools::redirect('index.php?controller=authentication&back=my-account');
+                }
+            } else{
+                $readOnly = true;
+                $idCustomer = (int) $engine->decrypt($encryptedValue);
+    
+                if (!$idCustomer) {
+                    Tools::redirect('index.php?controller=authentication&back=my-account');
+                }
             }
 
-            $readOnly = true;
-            $idCustomer = (int) $engine->decrypt($encryptedValue);
+   
+        
 
-            if (!$idCustomer) {
-                Tools::redirect('index.php?controller=authentication&back=my-account');
-            }
-        }
+
 
 
         $idLang = (int)Context::getContext()->language->id;
@@ -143,6 +149,7 @@ class IqitWishlistViewModuleFrontController extends ModuleFrontController
         $breadcrumb = parent::getBreadcrumbLinks();
 
         $breadcrumb['links'][] = $this->addMyAccountToBreadcrumb();
+        
 
         return $breadcrumb;
     }

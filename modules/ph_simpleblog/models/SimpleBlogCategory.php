@@ -20,6 +20,7 @@ class SimpleBlogCategory extends ObjectModel
     public $meta_keywords;
     public $meta_description;
     public $canonical;
+    public $tags;
     public $date_add;
     public $date_upd;
     public $cover;

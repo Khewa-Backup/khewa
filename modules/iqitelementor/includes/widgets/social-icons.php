@@ -33,13 +33,13 @@ class Widget_Social_Icons extends Widget_Base {
 				'type' => Controls_Manager::REPEATER,
 				'default' => [
 					[
-						'social' => 'fa fa-facebook',
+						'social' => 'fa-brands fa-instagram',
 					],
 					[
-						'social' => 'fa fa-twitter',
+						'social' => 'fa-brands fa-x-twitter',
 					],
 					[
-						'social' => 'fa fa-google-plus',
+						'social' => 'fa-brands fa-tiktok',
 					],
 				],
 				'section' => 'section_social_icon',
@@ -51,32 +51,32 @@ class Widget_Social_Icons extends Widget_Base {
 						'label_block' => true,
 						'default' => 'fa fa-wordpress',
 						'include' => [
-							'fa fa-behance',
-							'fa fa-bitbucket',
-							'fa fa-codepen',
-							'fa fa-delicious',
-							'fa fa-digg',
-							'fa fa-dribbble',
-							'fa fa-facebook',
-							'fa fa-flickr',
-							'fa fa-foursquare',
-							'fa fa-github',
-							'fa fa-google-plus',
-							'fa fa-instagram',
-							'fa fa-jsfiddle',
-							'fa fa-linkedin',
-							'fa fa-medium',
-							'fa fa-pinterest',
-							'fa fa-product-hunt',
-							'fa fa-reddit',
-							'fa fa-snapchat',
-							'fa fa-soundcloud',
-							'fa fa-stack-overflow',
-							'fa fa-tumblr',
-							'fa fa-twitter',
-							'fa fa-vimeo',
-							'fa fa-wordpress',
-							'fa fa-youtube',
+									'fa-brands fa-behance',
+									'fa-brands fa-bitbucket',
+									'fa-brands fa-codepen',
+									'fa-brands fa-delicious',
+									'fa-brands fa-digg',
+									'fa-brands fa-dribbble',
+									'fa-brands fa-facebook',
+									'fa-brands fa-flickr',
+									'fa-brands fa-foursquare',
+									'fa-brands fa-github',
+									'fa-brands fa-instagram',
+									'fa-brands fa-jsfiddle',
+									'fa-brands fa-linkedin',
+									'fa-brands fa-medium',
+									'fa-brands fa-pinterest',
+									'fa-brands fa-product-hunt',
+									'fa-brands fa-reddit',
+									'fa-brands fa-snapchat',
+									'fa-brands fa-soundcloud',
+									'fa-brands fa-stack-overflow',
+									'fa-brands fa-tumblr',
+									'fa-brands fa-x-twitter',
+									'fa-brands fa-tiktok',
+									'fa-brands fa-vimeo',
+									'fa-brands fa-wordpress',
+									'fa-brands fa-youtube'
 						],
 					],
 					[
@@ -292,7 +292,7 @@ class Widget_Social_Icons extends Widget_Base {
 		?>
 		<div class="elementor-social-icons-wrapper">
 			<?php foreach ( $instance['social_icon_list'] as $item ) :
-				$social = str_replace( 'fa fa-', '', $item['social'] );
+				$social = str_replace( 'fa-brands fa-', '', $item['social'] );
 				$target = $item['link']['is_external'] ? ' target="_blank" rel="noopener noreferrer"' : '';
 				?>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-<?php echo \IqitElementorWpHelper::esc_attr( $social ); ?>" href="<?php echo \IqitElementorWpHelper::esc_attr( $item['link']['url'] ); ?>"<?php echo $target; ?>>
@@ -308,7 +308,7 @@ class Widget_Social_Icons extends Widget_Base {
 		<div class="elementor-social-icons-wrapper">
 			<# _.each( settings.social_icon_list, function( item ) {
 				var link = item.link ? item.link.url : '',
-					social = item.social.replace( 'fa fa-', '' ); #>
+					social = item.social.replace( 'fa-brands fa-', '' ); #>
 				<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }}" href="{{ link }}">
 					<i class="{{ item.social }}"></i>
 				</a>

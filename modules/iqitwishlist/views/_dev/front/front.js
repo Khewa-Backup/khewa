@@ -28,6 +28,7 @@ $(document).ready(() => {
             'ajax': 1,
             'idProduct': elm.dataset.idProduct,
             'idProductAttribute': elm.dataset.idProductAttribute,
+            'token': elm.dataset.token,
         };
 
         $.post(elm.dataset.url, data, null, 'json').then(function (resp) {
@@ -70,6 +71,7 @@ $(document).ready(() => {
             'process': 'remove',
             'ajax': 1,
             'idProduct': elm.dataset.idProduct,
+            'token': elm.dataset.token,
         };
 
         $.post(elm.dataset.url, data, null, 'json').then(function (resp) {

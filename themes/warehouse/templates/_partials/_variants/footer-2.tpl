@@ -25,31 +25,32 @@
 
 
 {if $iqitTheme.f_newsletter_status == 1 || $iqitTheme.f_social_status == 1}
-<div id="footer-container-first" class="footer-container footer-style-2">
-  <div class="container">
-    <div class="row align-items-center">
+  <div id="footer-container-first" class="footer-container footer-style-2">
+    <div class="container">
+      <div class="row align-items-center">
 
         {if $iqitTheme.f_newsletter_status == 1}
-        <div class="col-sm-6 col-md-4 block-newsletter">
-          <h5 class="mb-3">{l s='Sign up to newsletter' d='Shop.Warehousetheme'}</h5>
-          {widget name="ps_emailsubscription" hook='displayFooter'}
-        </div>
+          <div class="col-sm-6 col-md-4 block-newsletter">
+            <p class="mb-3 h5">{l s='Sign up to newsletter' d='Shop.Warehousetheme'}</p>
+            {widget name="ps_emailsubscription" hook='displayFooter'}
+          </div>
         {/if}
 
         {if $iqitTheme.f_social_status == 1}
-        <div class="{if $iqitTheme.f_newsletter_status == 1}col-sm-6 push-md-2{else}col{/if} block-social-links text-right">
-          {include file='_elements/social-links.tpl' class='_footer'}
-        </div>
+          <div
+            class="{if $iqitTheme.f_newsletter_status == 1}col-sm-6 push-md-2{else}col{/if} block-social-links text-right">
+            {include file='_elements/social-links.tpl' class='_footer'}
+          </div>
         {/if}
 
-    </div>
-    <div class="row">
-      {block name='hook_footer_before'}
-        {hook h='displayFooterBefore'}
-      {/block}
+      </div>
+      <div class="row">
+        {block name='hook_footer_before'}
+          {hook h='displayFooterBefore'}
+        {/block}
+      </div>
     </div>
   </div>
-</div>
 {/if}
 
 <div id="footer-container-main" class="footer-container footer-style-2">

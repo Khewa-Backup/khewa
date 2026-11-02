@@ -33,6 +33,8 @@
                 {/if}
             {/block}
         {/foreach}
+
+        {hook h='displayGridBanners' nbProdutsShown=$listing.products|count}
     </div>
 
     {block name='pagination_bottom'}

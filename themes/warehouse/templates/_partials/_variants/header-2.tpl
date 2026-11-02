@@ -52,7 +52,7 @@
                     {/if}
                     {widget name="iqitsearch"}
                     {hook h='displayHeaderLeft'}
-                </div>
+                </div>  
                 <div class="col col-header-center text-center">
                     <div id="desktop_logo">
                         {renderLogo}

@@ -64,7 +64,7 @@
                 {l s='Theme version' mod='iqitthemeeditor'}  {$theme_version}
 
                 <iframe width="100%" height="180px"
-                        src="//iqit-commerce.com/iframe/lastnews/news17.php?product=warehouse&version={$theme_version|escape:'html':'UTF-8'}"
+                        src="//iqit-commerce.com/iframe/lastnews/news17.php?product=warehouse&psversion={$ps_version|escape:'html':'UTF-8'}&version={$theme_version|escape:'html':'UTF-8'}"
                         style="border: none; overflow: hidden;"></iframe>
             </div>
 
@@ -244,45 +244,67 @@
         <div class="js-border-generator border-generator row">
             <input type="hidden" value="" name="{$input.name}" id="{$input.name}" class="js-border-input"/>
             <div class="col-xs-2">
+               {assign var=borderType  value=''}
+                {assign var=borderWidth value=1}
+                {assign var=borderColor value=''}
+
+                {if isset($fields_value[$input.name])}
+                    {if isset($fields_value[$input.name].type)}
+                        {assign var=borderType value=$fields_value[$input.name].type}
+                    {/if}
+                    {if isset($fields_value[$input.name].width)}
+                        {assign var=borderWidth value=$fields_value[$input.name].width}
+                    {/if}
+                    {if isset($fields_value[$input.name].color)}
+                        {assign var=borderColor value=$fields_value[$input.name].color}
+                    {/if}
+                {/if}
+
+       
+
                 <select name="{$input.name}_type" id="{$input.name}_type" class="js-border-type js-scss-ignore"
                         data-name="type">
-                    <option value="none"
-                            {if $fields_value[$input.name].type=='none'}selected{/if}>{l s='none' mod='iqitthemeeditor'}</option>
-                    <option value="solid"
-                            {if $fields_value[$input.name].type=='solid'}selected{/if}>{l s='solid' mod='iqitthemeeditor'}</option>
-                    <option value="dotted"
-                            {if $fields_value[$input.name].type=='dotted'}selected{/if}>{l s='dotted' mod='iqitthemeeditor'}</option>
-                    <option value="dashed"
-                            {if $fields_value[$input.name].type=='dashed'}selected{/if}>{l s='dashed' mod='iqitthemeeditor'}</option>
-                    <option value="groove"
-                            {if $fields_value[$input.name].type=='groove'}selected{/if}>{l s='groove' mod='iqitthemeeditor'}</option>
-                    <option value="double"
-                            {if $fields_value[$input.name].type=='double'}selected{/if}>{l s='double' mod='iqitthemeeditor'}</option>
+
+                    <option value="none"   {if $borderType == 'none'}selected{/if}>{l s='none' mod='iqitthemeeditor'}</option>
+                    <option value="solid"  {if $borderType == 'solid'}selected{/if}>{l s='solid' mod='iqitthemeeditor'}</option>
+                    <option value="dotted" {if $borderType == 'dotted'}selected{/if}>{l s='dotted' mod='iqitthemeeditor'}</option>
+                    <option value="dashed" {if $borderType == 'dashed'}selected{/if}>{l s='dashed' mod='iqitthemeeditor'}</option>
+                    <option value="groove" {if $borderType == 'groove'}selected{/if}>{l s='groove' mod='iqitthemeeditor'}</option>
+                    <option value="double" {if $borderType == 'double'}selected{/if}>{l s='double' mod='iqitthemeeditor'}</option>
+
                 </select>
             </div>
-            <div class="col-xs-4 js-border-controls-wrapper hidden-option {if $fields_value[$input.name].type != 'none'}visible-inline-option{/if}">
-                <div class="row">
-            <div class="col-xs-6 border-width">
-                <select name="{$input.name}_width" id="{$input.name}_width" class="js-border-width js-scss-ignore"
-                        data-name="width">
-                    {for $i=1 to 20}
-                        <option value="{$i}" {if $fields_value[$input.name].width == $i}selected{/if}>{$i}px
-                        </option>
-                    {/for}
-                </select>
-            </div>
-            <div class="col-xs-6 border-color">
-                <div class="row">
-                    <div class="input-group colorpicker-component">
-                        <input type="text" value="{$fields_value[$input.name].color|escape:'html':'UTF-8'}"
-                               class="form-control js-border-color js-scss-ignore" name="{$input.name}_color"
-                               data-name="color"/>
-                        <span class="input-group-addon"><i></i></span>
+        {* Bezpieczne ustawienie zmiennych pomocniczych *}
+     
+
+        <div class="col-xs-4 js-border-controls-wrapper hidden-option {if $borderType != '' && $borderType != 'none'}visible-inline-option{/if}">
+            <div class="row">
+
+                <div class="col-xs-6 border-width">
+                    <select name="{$input.name}_width" id="{$input.name}_width" class="js-border-width js-scss-ignore"
+                            data-name="width">
+                        {for $i=1 to 20}
+                            <option value="{$i}" {if $borderWidth == $i}selected{/if}>{$i}px</option>
+                        {/for}
+                    </select>
+                </div>
+
+                <div class="col-xs-6 border-color">
+                    <div class="row">
+                        <div class="input-group colorpicker-component">
+                            <input type="text"
+                                value="{$borderColor|escape:'html':'UTF-8'}"
+                                class="form-control js-border-color js-scss-ignore"
+                                name="{$input.name}_color"
+                                data-name="color" />
+                            <span class="input-group-addon"><i></i></span>
+                        </div>
                     </div>
                 </div>
+
             </div>
-            </div>
-            </div>
+        </div>
+
         </div>
     {elseif $input.type == 'color2'}
         <div class="form-group">

@@ -1,13 +1,4 @@
 <?php
-/**
-* 2016 Revolution Slider
-*
-*  @author    SmatDataSoft <support@smartdatasoft.com>
-*  @copyright 2016 SmatDataSoft
-*  @license   private
-*  @version   5.1.3
-*  International Registered Trademark & Property of SmatDataSoft
-*/
 
 class RevDbEngine
 {
@@ -15,8 +6,9 @@ class RevDbEngine
     public static $wpdb;
     public $mysqli;
     //$dbh;
-
+    public $insert_id;
     public $prefix;
+
 
     public function __construct()
     {
@@ -25,9 +17,13 @@ class RevDbEngine
 
     public function realEscape($string)
     {
-        return Db::getInstance()->escape($string);
+        return RevLoader::$prestaDbInstance->escape($string);
     }
 
+
+    public function getDbInstance(){
+
+    }
     public function _escape($data)
     {
         if (is_array($data)) {
@@ -71,7 +67,8 @@ public function prepare( $query, $args ) {
     {
 
         //if($query = $this->mysqli->query($sql))
-        $query = Db::getInstance()->execute($sql);
+        $query = RevLoader::$prestaDbInstance->execute($sql);
+        $this->insert_id = $this->Insert_ID();
         if ($query) {
             return true;
         }
@@ -126,9 +123,9 @@ public function prepare( $query, $args ) {
             $sql .= $wherestr;
         }
 
-//        if(Db::getInstance()->update($table, $this->_escape($data), $wherestr , $limit, $null_values, $use_cache, $add_prefix))
+//        if(RevLoader::$prestaDbInstance->update($table, $this->_escape($data), $wherestr , $limit, $null_values, $use_cache, $add_prefix))
 //                return true;
-        if (Db::getInstance()->execute($sql)) {
+        if (RevLoader::$prestaDbInstance->execute($sql)) {
             return true;
         }
 
@@ -176,7 +173,8 @@ public function fetchSingle($tableName,$where="",$orderField="",$groupByField=""
 
         $sql .= "{$cols} {$vals}";
 
-        if (Db::getInstance()->execute($sql)) {
+        if (RevLoader::$prestaDbInstance->execute($sql)) {
+            $this->insert_id = $this->Insert_ID();
             return $this->Insert_ID();
         }
 
@@ -185,12 +183,13 @@ public function fetchSingle($tableName,$where="",$orderField="",$groupByField=""
 
     public function Insert_ID()
     {
-        return Db::getInstance()->Insert_ID();
+        return RevLoader::$prestaDbInstance->Insert_ID();
     }
 
     public function get_var($sql, $assoc = false)
     {
-        $query = Db::getInstance()->getValue($sql);
+
+        $query = RevLoader::$prestaDbInstance->getValue($sql);
 
         if (!empty($query)) {
             return $query;
@@ -201,7 +200,7 @@ public function fetchSingle($tableName,$where="",$orderField="",$groupByField=""
 
     public function get_row($sql, $assoc = false)
     {
-        $query = Db::getInstance()->getRow($sql);
+        $query = RevLoader::$prestaDbInstance->getRow($sql);
 
         if ($query) {
             return $query;
@@ -212,7 +211,7 @@ public function fetchSingle($tableName,$where="",$orderField="",$groupByField=""
 
     public function getResults($sql, $assoc = false)
     {
-        $query = Db::getInstance()->ExecuteS($sql, true, false);
+        $query = RevLoader::$prestaDbInstance->ExecuteS($sql, true, false);
 
         if (!empty($query)) {
             return $query;
@@ -285,7 +284,7 @@ public function get_results($sql, $assoc = false)
         return $this->getResults($sql,$assoc);
     }
     public function getLastInsertID(){
-        return Db::getInstance()->Insert_ID();
+        return RevLoader::$prestaDbInstance->Insert_ID();
     }
     
     public function runSql($query){
@@ -307,10 +306,17 @@ public function get_results($sql, $assoc = false)
 
 			}
 
+        }
+        
+   private function throwError($message,$code=-1){
+        //RevSliderFunctions::throwError($message,$code);
+        if(!empty($code)){
+			throw new Exception($message, $code);
+		}else{
+			throw new Exception($message);
 		}
-                private function throwError($message,$code=-1){
-		RevSliderFunctions::throwError($message,$code);
-	}
+    }
+    
     public static function rev_db_instance()
     {
         if (!self::$wpdb instanceof RevDbEngine) {

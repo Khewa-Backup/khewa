@@ -46,9 +46,9 @@
                                  
                                 </div>
                                    {if $field.text !== ''}
-                                       <div class="clearfix mt-3"> <h6 class="customization-message float-left">{l s='Your customization:' d='Shop.Theme.Catalog'}
+                                       <div class="clearfix mt-3"> <p class="customization-message h6 float-left">{l s='Your customization:' d='Shop.Theme.Catalog'}
                                             <label>{$field.text}</label>
-                                        </h6></div>
+                                        </p></div>
                                     {/if}
                             {elseif $field.type == 'image'}
                                 <input class="filestyle file-input js-file-input" {if $field.required} required {/if}
@@ -56,8 +56,7 @@
                                        type="file" name="{$field.input_name}" data-buttontext="{l s='Choose file' d='Shop.Theme.Actions'}">
                                 <div class="clearfix">{if !$field.required}
                                     <small class="pull-left">{l s='optional' d='Shop.Forms.Help'}</small>{/if}
-                                <small class="pull-right">{l s='.png .jpg .gif' d='Shop.Forms.Help'}</small>
-                                </div>
+                                    </div>
 
                                 {if $field.is_customized}
                                     <img src="{$field.image.small.url}" loading="lazy">

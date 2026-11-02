@@ -46,6 +46,7 @@ class IqitElementorWidget_Menu
      * @var string widget icon
      */
     public $icon;
+    public $context;
 
     public $status = 1;
 

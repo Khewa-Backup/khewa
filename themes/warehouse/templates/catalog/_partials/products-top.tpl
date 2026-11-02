@@ -67,8 +67,8 @@
 
         {if isset($currentSortUrl)}
         <div class="col view-switcher">
-            <a href="{$currentSortUrl}&productListView=grid" class="{if $iqitTheme.pl_default_view == 'grid'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="grid"  rel="nofollow"><i class="fa fa-th" aria-hidden="true"></i></a>
-            <a href="{$currentSortUrl}&productListView=list" class="{if $iqitTheme.pl_default_view == 'list'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="list"  rel="nofollow"><i class="fa fa-th-list" aria-hidden="true"></i></a>
+            <a href="{$currentSortUrl}&productListView=grid" class="{if $iqitTheme.pl_default_view == 'grid'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="grid"  rel="nofollow"><i class="fa-solid fa-grip" aria-hidden="true"></i></a>
+            <a href="{$currentSortUrl}&productListView=list" class="{if $iqitTheme.pl_default_view == 'list'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="list"  rel="nofollow"><i class="fa-solid fa-list" aria-hidden="true"></i></a>
         </div>
             {else}
 
@@ -85,8 +85,8 @@
 
 
                <div class="col view-switcher ">
-                   <a href="{$currentSortUrl2}&productListView=grid" class="{if $iqitTheme.pl_default_view == 'grid'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="grid"  rel="nofollow"><i class="fa fa-th" aria-hidden="true"></i></a>
-                   <a href="{$currentSortUrl2}&productListView=list" class="{if $iqitTheme.pl_default_view == 'list'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="list"  rel="nofollow"><i class="fa fa-th-list" aria-hidden="true"></i></a>
+                   <a href="{$currentSortUrl2}&productListView=grid" class="{if $iqitTheme.pl_default_view == 'grid'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="grid"  rel="nofollow"><i class="fa-solid fa-grip" aria-hidden="true"></i></a>
+                   <a href="{$currentSortUrl2}&productListView=list" class="{if $iqitTheme.pl_default_view == 'list'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="list"  rel="nofollow"><i class="fa-solid fa-list" aria-hidden="true"></i></a>
                </div>
 
 
@@ -99,8 +99,8 @@
                 {/foreach}
 
                 <div class="col view-switcher ">
-                    <a href="{$currentSortUrl2}?productListView=grid" class="{if $iqitTheme.pl_default_view == 'grid'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="grid"  rel="nofollow"><i class="fa fa-th" aria-hidden="true"></i></a>
-                    <a href="{$currentSortUrl2}?productListView=list" class="{if $iqitTheme.pl_default_view == 'list'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="list"  rel="nofollow"><i class="fa fa-th-list" aria-hidden="true"></i></a>
+                    <a href="{$currentSortUrl2}?productListView=grid" class="{if $iqitTheme.pl_default_view == 'grid'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="grid"  rel="nofollow"><i class="fa-solid fa-grip" aria-hidden="true"></i></a>
+                    <a href="{$currentSortUrl2}?productListView=list" class="{if $iqitTheme.pl_default_view == 'list'}current{/if} {['js-search-link' => true]|classnames} hidden-sm-down" data-button-action="change-list-view" data-view="list"  rel="nofollow"><i class="fa-solid fa-list" aria-hidden="true"></i></a>
                 </div>
 
             {/if}

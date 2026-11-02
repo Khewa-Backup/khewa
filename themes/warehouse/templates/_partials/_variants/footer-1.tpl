@@ -39,7 +39,7 @@
                 {if $iqitTheme.f_social_status == 1}
                 {block name='socials_footer'}
                 <div class="block block-footer block-toggle block-social-links js-block-toggle">
-                    <h5 class="block-title"><span>{l s='Follow us' d='Shop.Warehousetheme'}</span></h5>
+                    <p class="block-title h5"><span>{l s='Follow us' d='Shop.Warehousetheme'}</span></p>
                     <div class="block-content">
                         {include file='_elements/social-links.tpl' class='_footer'}
                     </div>
@@ -49,7 +49,7 @@
                 {block name='newsletter_footer'}
                 {if $iqitTheme.f_newsletter_status == 1}
                 <div class="block block-footer block-toggle block-newsletter js-block-toggle">
-                    <h5 class="block-title"><span>{l s='Newsletter' d='Shop.Warehousetheme'}</span></h5>
+                    <p class="block-title h5"><span>{l s='Newsletter' d='Shop.Warehousetheme'}</span></p>
                     <div class="block-content">
                         {widget name="ps_emailsubscription" hook='displayFooter'}
                     </div>

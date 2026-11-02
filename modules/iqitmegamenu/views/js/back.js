@@ -46,6 +46,23 @@ $(document).ready(function () {
         });
 
 
+    var $myMobileTabs = $('#tabs4');
+    $myMobileTabs.sortable({
+        opacity: 0.6,
+        cursor: "move",
+        update: function() {
+            var order = $(this).sortable("serialize") + "&action=updateMobileTabsPosition&ajax=true";
+            $.post(iqitsearch_url, order);
+        }
+    });
+    $myMobileTabs.hover(function() {
+            $(this).css("cursor","move");
+        },
+        function() {
+            $(this).css("cursor","auto");
+        });
+
+
     $('.list-wrapper').detach().prependTo('#list-container');
 
     $('.icp-auto').iconpicker({

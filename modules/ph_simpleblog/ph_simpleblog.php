@@ -37,6 +37,7 @@ class ph_simpleblog extends Module
 {
     public $is_16;
     public $is_17;
+    public $secure_key;
 
     // Not used at this moment, some issues with PrestaShop 1.7.x
     public $moduleTabs = array(
@@ -108,9 +109,9 @@ class ph_simpleblog extends Module
         $this->author = 'PrestaHome';
         $this->need_instance = 0;
         $this->is_configurable = 1;
+        $this->secure_key = Tools::hash($this->name);
         $this->ps_versions_compliancy['min'] = '1.6';
         $this->ps_versions_compliancy['max'] = _PS_VERSION_;
-        $this->secure_key = Tools::encrypt($this->name);
         $this->is_16 = (version_compare(_PS_VERSION_, '1.6', '>=') === true && version_compare(_PS_VERSION_, '1.7', '<') === true);
         $this->is_17 = (version_compare(_PS_VERSION_, '1.7', '>=') === true);
 
@@ -134,10 +135,10 @@ class ph_simpleblog extends Module
 
         parent::__construct();
 
-        $this->displayName = $this->l('Blog for PrestaShop');
-        $this->description = $this->l('Adds a blog to your PrestaShop store');
+        $this->displayName = $this->trans('Blog for PrestaShop', [], 'Modules.Phsimpleblog.Admin');
+        $this->description = $this->trans('Adds a blog to your PrestaShop store', [], 'Modules.Phsimpleblog.Admin');
 
-        $this->confirmUninstall = $this->l('Are you sure you want to delete this module?');
+        $this->confirmUninstall = $this->trans('Are you sure you want to delete this module?', [], 'Modules.Phsimpleblog.Admin');
 
         if ($this->isWarehouseTheme()) {
             $this->isWarehouse = true;
@@ -241,49 +242,49 @@ class ph_simpleblog extends Module
     {
         // Main tab
         $mainTab = $this->myInstallModuleTab(
-            $this->l('Blog for PrestaShop'),
+            $this->trans('Blog for PrestaShop', [], 'Modules.Phsimpleblog.Admin'),
             $this->is_17 ? 'AdminBlogForPrestaShop' : 'AdminSimpleBlog',
             Tab::getIdFromClassName('IMPROVE')
         );
 
         // Posts
         $this->myInstallModuleTab(
-            $this->l('Posts'),
+            $this->trans('Posts', [], 'Modules.Phsimpleblog.Admin'),
             'AdminSimpleBlogPosts',
             (int) $mainTab->id
         );
 
         // Categories
         $this->myInstallModuleTab(
-            $this->l('Categories'),
+            $this->trans('Categories', [], 'Modules.Phsimpleblog.Admin'),
             'AdminSimpleBlogCategories',
             (int) $mainTab->id
         );
 
         // Comments
         $this->myInstallModuleTab(
-            $this->l('Comments'),
+            $this->trans('Comments', [], 'Modules.Phsimpleblog.Admin'),
             'AdminSimpleBlogComments',
             (int) $mainTab->id
         );
 
         // Tags
         $this->myInstallModuleTab(
-            $this->l('Tags'),
+            $this->trans('Tags', [], 'Modules.Phsimpleblog.Admin'),
             'AdminSimpleBlogTags',
             (int) $mainTab->id
         );
 
         // Authors
         $this->myInstallModuleTab(
-            $this->l('Authors'),
+            $this->trans('Authors', [], 'Modules.Phsimpleblog.Admin'),
             'AdminSimpleBlogAuthors',
             (int) $mainTab->id
         );
 
         // Settings
         $this->myInstallModuleTab(
-            $this->l('Settings'),
+            $this->trans('Settings', [], 'Modules.Phsimpleblog.Admin'),
             'AdminSimpleBlogSettings',
             (int) $mainTab->id
         );
@@ -364,7 +365,7 @@ class ph_simpleblog extends Module
         $default_post_type = new SimpleBlogPostType();
         $default_post_type->name = 'Post';
         $default_post_type->slug = 'post';
-        $default_post_type->description = $this->l('Default type of post');
+        $default_post_type->description = $this->trans('Default type of post', [], 'Modules.Phsimpleblog.Admin');
         $default_post_type->add();
 
         $gallery_post_type = new SimpleBlogPostType();
@@ -373,12 +374,12 @@ class ph_simpleblog extends Module
         $gallery_post_type->add();
 
         $external_url_post_type = new SimpleBlogPostType();
-        $external_url_post_type->name = $this->l('External URL');
+        $external_url_post_type->name = $this->trans('External URL', [], 'Modules.Phsimpleblog.Admin');
         $external_url_post_type->slug = 'url';
         $external_url_post_type->add();
 
         $video_post_type = new SimpleBlogPostType();
-        $video_post_type->name = $this->l('Video');
+        $video_post_type->name = $this->trans('Video', [], 'Modules.Phsimpleblog.Admin');
         $video_post_type->slug = 'video';
         $video_post_type->add();
     }
@@ -410,7 +411,7 @@ class ph_simpleblog extends Module
             'PH_BLOG_LAYOUT' => 'default',
             'PH_BLOG_LIST_LAYOUT' => 'grid',
             'PH_BLOG_GRID_COLUMNS' => 2,
-            'PH_BLOG_MAIN_TITLE' => array_fill_keys(self::getLanguagesIDs(), $this->l('Blog - whats new?')),
+            'PH_BLOG_MAIN_TITLE' => array_fill_keys(self::getLanguagesIDs(), $this->trans('Blog - whats new?', [], 'Modules.Phsimpleblog.Admin')),
             'PH_BLOG_LOAD_FA' => false,
             'PH_BLOG_DISPLAY_AUTHOR' => true,
             'PH_BLOG_DISPLAY_DATE' => true,
@@ -611,9 +612,23 @@ class ph_simpleblog extends Module
         // No implementation needed inside the main module
     }
 
+
+
     public function hookDisplayHeader($params)
     {
+        $this->context->smarty->registerClass('SimpleBlogCategory', 'SimpleBlogCategory');
+        $this->context->smarty->registerClass('SimpleBlogPost', 'SimpleBlogPost');
+        
         $this->myAssignModuleAssets();
+
+          
+
+
+            $this->context->smarty->assign([
+                'PH_BLOG_DISPLAY_DESCRIPTION'        => (bool) \Configuration::get('PH_BLOG_DISPLAY_DESCRIPTION'),
+                'PH_BLOG_DISPLAY_THUMBNAIL'          => (bool) \Configuration::get('PH_BLOG_DISPLAY_THUMBNAIL'),
+
+         ]);
 
         if (Tools::getValue('module') && Tools::getValue('module') == 'ph_simpleblog' && Tools::getValue('controller') == 'single') {
             $post = $this->context->controller->getPost();
@@ -794,6 +809,7 @@ class ph_simpleblog extends Module
     {
         $this->context->smarty->assign(array(
             'categories' => SimpleBlogCategory::getCategories($this->context->language->id, true),
+            'blog_link' => self::getLink(),
         ));
     }
 
@@ -970,7 +986,7 @@ class ph_simpleblog extends Module
             $redirect_type = Configuration::get('PS_CANONICAL_REDIRECT') == 2 ? '301' : '302';
             header('HTTP/1.0 '.$redirect_type.' Moved');
             header('Cache-Control: no-cache');
-            Tools::redirectLink($final_url);
+            Tools::redirect($final_url);
         }
     }
 }

@@ -18,8 +18,8 @@ function createSpin() {
   $.each($(spinnerSelector), (index, spinner) => {
     $(spinner).TouchSpin({
       verticalbuttons: true,
-      verticalupclass: 'fa fa-angle-up touchspin-up',
-      verticaldownclass: 'fa fa-angle-down touchspin-down',
+      verticalupclass: 'fa-solid fa-angle-up touchspin-up',
+      verticaldownclass: 'fa-solid fa-angle-down touchspin-down',
       buttondown_class: 'btn btn-touchspin  js-touchspin js-increase-product-quantity',
       buttonup_class: 'btn btn-touchspin js-decrease-product-quantity',
       min: parseInt($(spinner).attr('min'), 10),
@@ -28,6 +28,7 @@ function createSpin() {
   });
   CheckUpdateQuantityOperations.switchErrorStat();
 }
+
 
 $(document).ready(() => {
   const productLineInCartSelector = '.js-cart-line-product-quantity';
@@ -268,20 +269,6 @@ $(document).ready(() => {
 
   const $timeoutEffect = 400;
 
-  $body.on('hidden.bs.collapse', '#promo-code', () => {
-    $('.display-promo').show($timeoutEffect);
-  });
-
-  $body.on('click', '.promo-code-button', (event) => {
-    event.preventDefault();
-
-    $('#promo-code').collapse('toggle');
-  });
-
-  $body.on('click', '.display-promo', (event) => {
-    $(event.currentTarget).hide($timeoutEffect);
-  });
-
   $body.on('click', '.js-discount .code', (event) => {
     event.stopPropagation();
 
@@ -290,8 +277,6 @@ $(document).ready(() => {
 
     $discountInput.val($code.text());
     // Show promo code field
-    $('#promo-code').collapse('show');
-    $('.display-promo').hide($timeoutEffect);
 
     return false;
   });

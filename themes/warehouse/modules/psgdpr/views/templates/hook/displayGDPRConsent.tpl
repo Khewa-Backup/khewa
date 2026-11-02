@@ -18,6 +18,7 @@
  *}
 
 
+{* Khewa: GDPR box is not shown; consent is sent as given (hidden field) *}
 <input name="psgdpr_consent_checkbox" type="hidden" value="1">
 {*
 <div id="gdpr_consent_{$psgdpr_id_module|escape:'htmlall':'UTF-8'}" class="gdpr_module_{$psgdpr_id_module|escape:'htmlall':'UTF-8'}">

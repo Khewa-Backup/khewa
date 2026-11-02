@@ -45,7 +45,7 @@
   visibility: hidden;
   transition: $default-transition;
   -webkit-transition: $default-transition;
-
+  inset: 0px 0px auto auto;
 
 }
 .show > :not(.dropdown-menu-custom).dropdown-menu{

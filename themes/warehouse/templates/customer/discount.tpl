@@ -25,7 +25,7 @@
 {extends file='customer/page.tpl'}
 
 {block name='page_title'}
-  {l s='Your credit slip codes' d='Shop.Theme.Customeraccount'}
+  {* Khewa: vouchers are called credit slip codes *}{l s='Your credit slip codes' d='Shop.Theme.Customeraccount'}
 {/block}
 
 {block name='page_content'}
@@ -34,7 +34,7 @@
       <thead class="thead-default">
         <tr>
           <th>{l s='Code' d='Shop.Theme.Checkout'}</th>
-          <th>{l s='Description' d='Shop.Theme.Checkout'}</th>
+          <th>{l s='Name' d='Shop.Theme.Checkout'}</th>
           <th>{l s='Quantity' d='Shop.Theme.Checkout'}</th>
           <th>{l s='Value' d='Shop.Theme.Checkout'}</th>
           <th>{l s='Minimum' d='Shop.Theme.Checkout'}</th>
@@ -92,5 +92,7 @@
         </div>
       {/foreach}
     </div>
+    {else}
+      <div class="alert alert-info" role="alert" data-alert="info">{l s='You do not have any vouchers.' d='Shop.Notifications.Warning'}</div>
   {/if}
 {/block}

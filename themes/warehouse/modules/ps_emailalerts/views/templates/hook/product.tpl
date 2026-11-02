@@ -29,7 +29,7 @@
 
     <div class="input-group mr-2 mb-2">
         {if isset($email) AND $email}
-            <input type="email" placeholder="{l s='your@email.com' d='Modules.Mailalerts.Shop'}" class="form-control"/>
+            <input type="email" placeholder="{l s='your@email.com' d='Modules.Emailalerts.Shop'}" class="form-control"/>
             <br/>
         {/if}
     </div>
@@ -42,10 +42,11 @@
         <input type="hidden" value="{$id_product}"/>
         <input type="hidden" value="{$id_product_attribute}"/>
         <input type="submit"  class="btn btn-secondary"
-           onclick="return addNotification();"  value="{l s='Notify me when available' d='Modules.Mailalerts.Shop'}" />
+           onclick="return addNotification();"  value="{l s='Notify me when available' d='Modules.Emailalerts.Shop'}" />
     </div>
         <div class="input-group mr-2 mb-2">
     <span class="alert alert-info js-mailalert-response" style="display:none;"></span>
         </div>
     </form>
 </div>
+

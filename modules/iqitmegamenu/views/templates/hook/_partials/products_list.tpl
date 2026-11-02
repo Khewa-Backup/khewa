@@ -18,11 +18,19 @@
 
                     <div class="thumbnail-container col-3">  
                         <a class="thumbnail product-thumbnail" href="{$product.url}" title="{$product.name}">
+                           {if $product.cover}
                             <img class="img-fluid"
                                  src="{$product.cover.bySize.small_default.url}"
                                  loading="lazy"
                                  alt="{if !empty($product.legend)}{$product.legend}{else}{$product.name}{/if}"
                                     {if isset($mediumSize)} width="{$mediumSize.width}" height="{$mediumSize.height}"{/if}/>
+                            {else}
+                                                    <img class="img-fluid"
+                        src="{$urls.no_picture_image.bySize.small_default.url}"
+                        loading="lazy"
+                        alt="{if !empty($product.legend)}{$product.legend}{else}{$product.name}{/if}"
+                       {if isset($homeSize)} width="{$homeSize.width}" height="{$homeSize.height}"{/if} />
+                            {/if}
                         </a>
                     </div>
 

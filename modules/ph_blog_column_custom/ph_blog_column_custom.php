@@ -9,6 +9,7 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+require_once _PS_MODULE_DIR_.'ph_simpleblog/models/SimpleBlogCategory.php';
 
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 
@@ -30,7 +31,6 @@ class PH_Blog_Column_Custom extends Module implements WidgetInterface
         $this->author = 'www.PrestaHome.com';
         $this->need_instance = 0;
         $this->is_configurable = 1;
-        $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
 
         parent::__construct();
@@ -243,7 +243,6 @@ class PH_Blog_Column_Custom extends Module implements WidgetInterface
                     'type' => 'select',
                     'label' => $this->l('Display posts from:'),
                     'name' => self::$cfg_prefix.'FROM',
-                    'validation' => 'isAnything',
                     'options' => array(
                         'query' => $from,
                         'id' => 'id',
@@ -254,7 +253,6 @@ class PH_Blog_Column_Custom extends Module implements WidgetInterface
                     'type' => 'select',
                     'label' => $this->l('Layout:'),
                     'name' => self::$cfg_prefix.'LAYOUT',
-                    'validation' => 'isAnything',
                     'options' => array(
                         'query' => $layout,
                         'id' => 'id',

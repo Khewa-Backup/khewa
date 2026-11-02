@@ -15,11 +15,13 @@ if (!defined('_PS_VERSION_')) {
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\PrestaShop\Core\Product\ProductExtraContent;
 
-if(file_exists(_PS_MODULE_DIR_ . 'ph_simpleblog/models/SimpleBlogPost.php'))
+if (file_exists(_PS_MODULE_DIR_ . 'ph_simpleblog/models/SimpleBlogPost.php')) {
     require_once _PS_MODULE_DIR_ . 'ph_simpleblog/models/SimpleBlogPost.php';
+}
 
-if(file_exists(_PS_MODULE_DIR_ . 'ph_relatedposts/models/SimpleBlogRelatedPost.php'))
+if (file_exists(_PS_MODULE_DIR_ . 'ph_relatedposts/models/SimpleBlogRelatedPost.php')) {
     require_once _PS_MODULE_DIR_ . 'ph_relatedposts/models/SimpleBlogRelatedPost.php';
+}
 
 class ph_relatedposts extends Module implements WidgetInterface
 {
@@ -33,13 +35,13 @@ class ph_relatedposts extends Module implements WidgetInterface
         $this->is_configurable = 1;
         $this->ps_versions_compliancy['min'] = '1.7.1.0';
         $this->ps_versions_compliancy['max'] = _PS_VERSION_;
-        $this->secure_key = Tools::encrypt($this->name);
 
-        $moduleManagerBuilder = \PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance();
+        $moduleManagerBuilder = PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance();
         $moduleManager = $moduleManagerBuilder->build();
 
-        if(!$moduleManager->isInstalled('ph_simpleblog') || !Module::isEnabled('ph_simpleblog'))
+        if (!$moduleManager->isInstalled('ph_simpleblog') || !Module::isEnabled('ph_simpleblog')) {
             $this->warning = $this->l('You have to install and activate ph_simpleblog before use ph_relatedposts');
+        }
 
         parent::__construct();
 
@@ -51,13 +53,13 @@ class ph_relatedposts extends Module implements WidgetInterface
 
     public function install()
     {
-        return (parent::install() 
-                && $this->prepareModuleSettings() 
+        return parent::install()
+                && $this->prepareModuleSettings()
                 && $this->registerHook('actionObjectProductDeleteAfter')
                 && $this->registerHook('actionObjectSimpleBlogPostDeleteAfter')
                 && $this->registerHook('displayProductExtraContent')
                 && $this->registerHook('displayAdminProductsExtra')
-                && $this->registerHook('actionObjectProductUpdateAfter'));
+                && $this->registerHook('actionObjectProductUpdateAfter');
     }
 
     public function isUsingNewTranslationSystem()
@@ -65,25 +67,26 @@ class ph_relatedposts extends Module implements WidgetInterface
         return false;
     }
 
-
     public function prepareModuleSettings()
     {
-        $sql = array();
-        include (dirname(__file__) . '/init/install_sql.php');
+        $sql = [];
+        include dirname(__FILE__) . '/init/install_sql.php';
         foreach ($sql as $s) {
             if (!Db::getInstance()->execute($s)) {
                 return false;
             }
         }
+
         return true;
     }
 
-    public function uninstall() {
+    public function uninstall()
+    {
         if (!parent::uninstall()) {
             return false;
         }
-        $sql = array();
-        include (dirname(__file__) . '/init/uninstall_sql.php');
+        $sql = [];
+        include dirname(__FILE__) . '/init/uninstall_sql.php';
         foreach ($sql as $s) {
             if (!Db::getInstance()->execute($s)) {
                 return false;
@@ -93,15 +96,18 @@ class ph_relatedposts extends Module implements WidgetInterface
         return true;
     }
 
-    public function hookActionObjectProductDeleteAfter($params) {
+    public function hookActionObjectProductDeleteAfter($params)
+    {
         return SimpleBlogRelatedPost::cleanRelatedForProduct($params['object']->id);
     }
 
-    public function hookActionObjectSimpleBlogPostDeleteAfter($params) {
+    public function hookActionObjectSimpleBlogPostDeleteAfter($params)
+    {
         return SimpleBlogRelatedPost::cleanRelatedForPost($params['object']->id);
     }
 
-    public function hookActionObjectProductUpdateAfter($params) {
+    public function hookActionObjectProductUpdateAfter($params)
+    {
         if (!isset($params['object']->id)) {
             return;
         }
@@ -111,53 +117,49 @@ class ph_relatedposts extends Module implements WidgetInterface
 
         $relatedPosts = Tools::getValue('ph_relatedposts');
 
-        if (isset($relatedPosts['related_posts']) && $relatedPosts['related_posts'])
-        {
+        if (isset($relatedPosts['related_posts']) && $relatedPosts['related_posts']) {
             $relatedPosts = $relatedPosts['related_posts'];
-            foreach($relatedPosts as $post)
-            {
+            foreach ($relatedPosts as $post) {
                 $instance = new SimpleBlogRelatedPost();
                 $instance->id_simpleblog_post = $post;
                 $instance->id_product = $idProduct;
                 $instance->add();
-            }    
+            }
         }
     }
 
-    public function hookDisplayAdminProductsExtra($params){
-
-        $moduleManagerBuilder = \PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance();
+    public function hookDisplayAdminProductsExtra($params)
+    {
+        $moduleManagerBuilder = PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance();
         $moduleManager = $moduleManagerBuilder->build();
 
-        if(!$moduleManager->isInstalled('ph_simpleblog') || !Module::isEnabled('ph_simpleblog'))
+        if (!$moduleManager->isInstalled('ph_simpleblog') || !Module::isEnabled('ph_simpleblog')) {
             return;
+        }
 
         $idProduct = (int) Tools::getValue('id_product', $params['id_product']);
 
         $posts = SimpleBlogPost::getSimplePosts($this->context->language->id);
 
-        $selected_posts = array();
-        $related_posts = array();
+        $selected_posts = [];
+        $related_posts = [];
 
-        foreach(SimpleBlogRelatedPost::getByProductId($idProduct) as $key => $post)
-        {
+        foreach (SimpleBlogRelatedPost::getByProductId($idProduct) as $key => $post) {
             $related_posts[] = $post['id_simpleblog_post'];
         }
 
-        if(sizeof($related_posts) > 0)
-        {
+        if (sizeof($related_posts) > 0) {
             $posts = SimpleBlogPost::getSimplePosts($this->context->language->id, null, null, 'NOT IN', $related_posts);
             $selected_posts = SimpleBlogPost::getSimplePosts($this->context->language->id, null, null, 'IN', $related_posts);
         }
 
-        $this->context->smarty->assign(array(
-            'idProduct ' => $idProduct ,
+        $this->context->smarty->assign([
+            'idProduct ' => $idProduct,
             'posts' => $posts,
             'selected_posts' => $selected_posts,
             'module_path' => $this->_path,
-            'secure_key' => $this->secure_key,
             'path' => $this->_path,
-        ));
+        ]);
 
         return $this->display(__FILE__, 'views/templates/admin/admin-tab.tpl');
     }
@@ -169,29 +171,28 @@ class ph_relatedposts extends Module implements WidgetInterface
         }
 
         if (preg_match('/^displayProductExtraContent\d*$/', $hookName)) {
-
             $templateFile = 'related-posts.tpl';
             $assign = $this->getWidgetVariables($hookName, $configuration);
 
             $this->smarty->assign($assign);
-            $array = array();
-            if($assign)
-            {
+            $array = [];
+            if ($assign) {
                 $array[] = (new ProductExtraContent())
                     ->setTitle($this->l('Related posts'))
                     ->setContent($this->fetch('module:' . $this->name . '/views/templates/hook/' . $templateFile));
+
                 return $array;
             }
-            return  $array;
-        } else{
 
-            $templateFile = 'related-posts-section.tpl';
-            $assign = $this->getWidgetVariables($hookName, $configuration);
-
-            $this->smarty->assign($assign);
-            return $this->fetch('module:' . $this->name . '/views/templates/hook/' .$templateFile);
-
+            return $array;
         }
+
+        $templateFile = 'related-posts-section.tpl';
+        $assign = $this->getWidgetVariables($hookName, $configuration);
+
+        $this->smarty->assign($assign);
+
+        return $this->fetch('module:' . $this->name . '/views/templates/hook/' . $templateFile);
     }
 
     public function getWidgetVariables($hookName = null, array $configuration = [])
@@ -201,34 +202,45 @@ class ph_relatedposts extends Module implements WidgetInterface
         }
 
         if (preg_match('/^displayProductExtraContent\d*$/', $hookName) || preg_match('/^displayFooterProduct\d*$/', $hookName)) {
-
-
-            if (isset($configuration['product']->id)){
+            if (isset($configuration['product']->id)) {
                 $idProduct = (int) $configuration['product']->id;
-            } else{
+            } else {
                 $idProduct = (int) $configuration['product']['id'];
             }
 
             $cacheId = 'PhRelatedPosts' . $idProduct;
 
             if (!Cache::isStored($cacheId)) {
-                $relatedPostsById = SimpleBlogRelatedPost::getByProductId((int)$idProduct);
+                $relatedPostsById = SimpleBlogRelatedPost::getByProductId((int) $idProduct);
                 $relatedPosts = [];
 
-                if(sizeof($relatedPostsById) < 1){
+                if (sizeof($relatedPostsById) < 1) {
                     return false;
                 }
 
-                foreach($relatedPostsById as $key => $post) {
+                foreach ($relatedPostsById as $key => $post) {
                     $relatedPosts[] = $post['id_simpleblog_post'];
                 }
 
                 $posts = SimpleBlogPost::getPosts($this->context->language->id, 999, null, null, true, false, false, null, false, false, null, 'IN', $relatedPosts);
 
-               Cache::store($cacheId, array('posts' => $posts, 'blogLayout' => 'grid',  'columns' => Configuration::get('PH_RELATEDPOSTS_GRID_COLUMNS'), 'is_category' => false));
+                Cache::store($cacheId, ['posts' => $posts,
+                    'blogLayout' => 'grid',
+                    'columns' => Configuration::get('PH_RELATEDPOSTS_GRID_COLUMNS'),
+                    'is_category' => false,
+                    'PH_BLOG_DISPLAY_DATE' => Configuration::get('PH_BLOG_DISPLAY_DATE'),
+                    'PH_BLOG_DATEFORMAT' => Configuration::get('PH_BLOG_DATEFORMAT'),
+                    'PH_BLOG_DISPLAY_MORE' => Configuration::get('PH_BLOG_DISPLAY_MORE'),
+                    'PH_BLOG_DISPLAY_CATEGORY' => Configuration::get('PH_BLOG_DISPLAY_CATEGORY'),
+                    'PH_BLOG_DISPLAY_THUMBNAIL' => Configuration::get('PH_BLOG_DISPLAY_THUMBNAIL'),
+                    'PH_BLOG_DISPLAY_DESCRIPTION' => Configuration::get('PH_BLOG_DISPLAY_DESCRIPTION'),
+                ]
+                );
             }
+
             return Cache::retrieve($cacheId);
         }
+
         return false;
     }
 }

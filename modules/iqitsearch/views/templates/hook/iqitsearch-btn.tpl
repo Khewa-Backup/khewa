@@ -13,8 +13,8 @@
 *
 *}
 
-<div id="header-search-btn" class="col col-auto header-btn-w header-search-btn-w">
-    <a data-toggle="dropdown" id="header-search-btn-drop"  class="header-btn header-search-btn" data-display="static">
+<div id="header-search-btn" class="col col-auto position-relative header-btn-w header-search-btn-w ">
+    <a data-toggle="dropdown" id="header-search-btn-drop"  class="header-btn header-search-btn" data-bs-display="static">
         <i class="fa fa-search fa-fw icon" aria-hidden="true"></i>
         <span class="title">{l s='Search' d='Shop.Theme.Catalog'}</span>
     </a>

@@ -35,23 +35,28 @@
       <article id="store-{$store.id}" class="store-item">
         <div class="store-item-container clearfix">
           <div class="col-md-3 store-picture hidden-sm-down">
-            <img
-                    src="{$store.image.bySize.stores_default.url}"
-                    {if !empty($store.image.legend)}
-                      alt="{$store.image.legend}"
-                      title="{$store.image.legend}"
-                    {else}
-                      alt="{$store.name}"
-                    {/if}
-                    class="img-fluid"
-                    loading="lazy"
-            >
+            <picture>
+              {if !empty($store.image.bySize.stores_default.sources.avif)}<source srcset="{$store.image.bySize.stores_default.sources.avif}" type="image/avif">{/if}
+              {if !empty($store.image.bySize.stores_default.sources.webp)}<source srcset="{$store.image.bySize.stores_default.sources.webp}" type="image/webp">{/if}
+              <img
+                src="{$store.image.bySize.stores_default.url}"
+                class="img-fluid"
+                loading="lazy"
+                {if !empty($store.image.legend)}
+                  alt="{$store.image.legend}"
+                  title="{$store.image.legend}"
+                {else}
+                  alt="{$store.name}"
+                {/if}
+              >
+            </picture>
+
           </div>
           <div class="col-md-5 col-sm-7 col-xs-12 store-description">
             <p class="h3 card-title">{$store.name}</p>
             <address>{$store.address.formatted nofilter}</address>
             {if $store.note || $store.phone || $store.fax || $store.email}
-              <a data-toggle="collapse" href="#about-{$store.id}" aria-expanded="false" aria-controls="about-{$store.id}"><strong>{l s='About and Contact' d='Shop.Theme.Global'}</strong><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+              <a data-bs-toggle="collapse" href="#about-{$store.id}" aria-expanded="false" aria-controls="about-{$store.id}"><strong>{l s='About and Contact' d='Shop.Theme.Global'}</strong><i class="fa fa-angle-right" aria-hidden="true"></i></a>
             {/if}
           </div>
           <div class="col-md-4 col-sm-5 col-xs-12 divide-left">
@@ -80,13 +85,13 @@
             {/if}
             <ul class="card-body">
               {if $store.phone}
-                <li><i class="fa fa-phone" aria-hidden="true"></i>{$store.phone}</li>
+                <li><i class="fa fa-phone" aria-hidden="true"></i><a href="tel:{$store.phone}">{$store.phone}</a></li>
               {/if}
               {if $store.fax}
                 <li><i class="fa fa-fax" aria-hidden="true"></i>{$store.fax}</li>
               {/if}
               {if $store.email}
-                <li><i class="fa fa-envelope-o" aria-hidden="true"></i>{$store.email}</li>
+                <li><i class="fa fa-envelope-o" aria-hidden="true"></i><a href="mailto:{$store.email}">{$store.email}</a></li>
               {/if}
             </ul>
           </div>

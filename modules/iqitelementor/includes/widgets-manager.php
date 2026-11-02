@@ -57,6 +57,8 @@ class Widgets_Manager {
 			$this->register_widget( __NAMESPACE__ . '\Widget_' . $class_name );
 		}
 
+		\Hook::exec('actionRegisterElementorWidget', ['widgets_manager' => $this]);
+
 		$this->_register_wp_widgets();
 	}
 

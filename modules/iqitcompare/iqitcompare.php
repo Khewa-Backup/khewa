@@ -21,11 +21,12 @@ class IqitCompare extends Module implements WidgetInterface
 {
     protected $config_form = false;
     public $cfgName;
+    public $defaults;
 
     public function __construct()
     {
         $this->name = 'iqitcompare';
-        $this->version = '1.1.0';
+        $this->version = '1.1.3';
         $this->author = 'iqit-commerce.com';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -52,7 +53,7 @@ class IqitCompare extends Module implements WidgetInterface
     {
         return (parent::install()
             && $this->setDefaults()
-            && $this->registerHook('header')
+            && $this->registerHook('displayHeader')
             && $this->registerHook('displayNav2')
             && $this->registerHook('displayAfterProductAddCartBtn')
             && $this->registerHook('displayProductListFunctionalButtons')
@@ -77,7 +78,7 @@ class IqitCompare extends Module implements WidgetInterface
     }
 
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         $this->context->controller->registerStylesheet('modules-'.$this->name.'-style', 'modules/'.$this->name.'/views/css/front.css', ['media' => 'all', 'priority' => 150]);
         $this->context->controller->registerJavascript('modules'.$this->name.'-script', 'modules/'.$this->name.'/views/js/front.js', ['position' => 'bottom', 'priority' => 150]);

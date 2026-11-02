@@ -16,7 +16,7 @@ class IqitMenuTab extends ObjectModel
     public $id;
     public $menu_type;
     public $id_tab;
-    public $id_shop_list;
+    public $id_shop_list = [];
     public $id_shop;
     public $active;
     public $active_label;

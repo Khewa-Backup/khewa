@@ -28,13 +28,13 @@
         <div class="mobile-main-bar">
             <div class="row no-gutters align-items-center row-mobile-header">
                 <div class="col col-auto col-mobile-btn col-mobile-btn-menu col-mobile-menu-{$iqitTheme.mm_type}">
-                    <a class="m-nav-btn" data-toggle="dropdown" data-display="static"><i class="fa fa-bars" aria-hidden="true"></i>
+                    <a class="m-nav-btn js-m-nav-btn-menu" data-bs-toggle="dropdown" data-bs-display="static"><i class="fa fa-bars" aria-hidden="true"></i>
                         <span>{l s='Menu' d='Shop.Theme.Global'}</span></a>
                     <div id="mobile_menu_click_overlay"></div>
                     <div id="_mobile_iqitmegamenu-mobile" class="dropdown-menu-custom dropdown-menu"></div>
                 </div>
                 <div id="mobile-btn-search" class="col col-auto col-mobile-btn col-mobile-btn-search">
-                    <a class="m-nav-btn" data-toggle="dropdown" data-display="static"><i class="fa fa-search" aria-hidden="true"></i>
+                    <a class="m-nav-btn" data-bs-toggle="dropdown" data-bs-display="static"><i class="fa fa-search" aria-hidden="true"></i>
                         <span>{l s='Search' d='Shop.Theme.Catalog'}</span></a>
                     <div id="search-widget-mobile" class="dropdown-content dropdown-menu dropdown-mobile search-widget">
                         {hook h="litespeedEsiBegin" m="iqitsearch" field="widget_block" tpl="module:iqitsearch/views/templates/hook/search-bar-mobile.tpl"}
@@ -61,7 +61,7 @@
                 {if !$configuration.is_catalog}
                 <div class="col col-auto col-mobile-btn col-mobile-btn-cart ps-shoppingcart {if isset($iqitTheme.cart_style) && $iqitTheme.cart_style == "floating"}dropdown{else}side-cart{/if}">
                     <div id="mobile-cart-wrapper">
-                    <a id="mobile-cart-toogle"  class="m-nav-btn" data-toggle="dropdown" data-display="static"><i class="fa fa-shopping-bag mobile-bag-icon" aria-hidden="true"><span id="mobile-cart-products-count" class="cart-products-count cart-products-count-btn">
+                    <a id="mobile-cart-toogle"  class="m-nav-btn" data-bs-auto-close="outside" data-bs-toggle="dropdown" data-bs-display="static"><i class="fa fa-shopping-bag mobile-bag-icon" aria-hidden="true"><span id="mobile-cart-products-count" class="cart-products-count cart-products-count-btn">
                                 {hook h="litespeedEsiBegin" m="ps_shoppingcart" field="widget_block" tpl="module:ps_shoppingcart/ps_shoppingcart-mqty.tpl"}
                                 {widget_block name="ps_shoppingcart"}
                                     {include 'module:ps_shoppingcart/ps_shoppingcart-mqty.tpl'}

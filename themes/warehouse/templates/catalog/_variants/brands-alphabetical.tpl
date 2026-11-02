@@ -31,16 +31,16 @@
                 {foreach from=$brands item=brand name=brands}
                     {if !isset($currentLetterSelector)}
 
-                        {$currentLetterSelector = $brand.name|mb_substr:0:1}
+                        {$currentLetterSelector = $brand.name|iqit_mb_substr:0:1}
                         <a href="#man-letter-{if in_array($currentLetterSelector, array('0','1','2','3','4','5','6','7','8','9'))}1{else}{$currentLetterSelector}{/if}">
-                            {if in_array($currentLetterSelector, array('0','1','2','3','4','5','6','7','8','9'))}0-9{$currentLetterSelector = 1}{else}{$brand.name|mb_substr:0:1}{/if}
+                            {if in_array($currentLetterSelector, array('0','1','2','3','4','5','6','7','8','9'))}0-9{$currentLetterSelector = 1}{else}{$brand.name|iqit_mb_substr:0:1}{/if}
                         </a>
                         {if !$smarty.foreach.brands.last}<span class="ms-l-sep">/</span>{/if}
 
-                    {elseif isset($currentLetterSelector) && $currentLetterSelector|upper != $brand.name|mb_substr:0:1|upper && (string)($brand.name|mb_substr:0:1) != (string)((int)($brand.name|mb_substr:0:1))}
+                    {elseif isset($currentLetterSelector) && $currentLetterSelector|upper != $brand.name|iqit_mb_substr:0:1|upper && (string)($brand.name|iqit_mb_substr:0:1) != (string)((int)($brand.name|iqit_mb_substr:0:1))}
 
-                        {$currentLetterSelector = $brand.name|mb_substr:0:1}
-                        <a href="#man-letter-{$currentLetterSelector}">{$brand.name|mb_substr:0:1}</a>
+                        {$currentLetterSelector = $brand.name|iqit_mb_substr:0:1}
+                        <a href="#man-letter-{$currentLetterSelector}">{$brand.name|iqit_mb_substr:0:1}</a>
                         {if !$smarty.foreach.brands.last}<span class="ms-l-sep">/</span>{/if}
 
                     {/if}

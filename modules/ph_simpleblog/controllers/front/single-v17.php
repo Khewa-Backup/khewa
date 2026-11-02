@@ -11,13 +11,15 @@
 use PrestaShop\PrestaShop\Adapter\Image\ImageRetriever;
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter;
 use PrestaShop\PrestaShop\Adapter\Product\ProductColorsRetriever;
-use PrestaShop\PrestaShop\Core\Product\ProductListingPresenter;
+use PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductListingPresenter;
 
 class PH_SimpleBlogSingleModuleFrontController extends ModuleFrontController
 {
     protected $SimpleBlogPost;
     protected $previousPost = false;
     protected $nextPost = false;
+    protected $simpleblog_post_rewrite;
+    public $controller_name;
 
     public function init()
     {
@@ -152,12 +154,43 @@ class PH_SimpleBlogSingleModuleFrontController extends ModuleFrontController
 
         // Comments
         $this->prepareCommentsSection();
-
+        $displayRelated = Configuration::get('PH_BLOG_DISPLAY_RELATED');
         // Related products
-        if (Configuration::get('PH_BLOG_DISPLAY_RELATED')) {
+        if ($displayRelated) {
             $related_products = $this->getRelatedProducts();
             $this->context->smarty->assign('related_products', $related_products);
         }
+        
+
+        $this->context->smarty->assign([
+            'PH_BLOG_COMMENT_ALLOW_GUEST' => Configuration::get('PH_BLOG_COMMENT_ALLOW_GUEST'),
+            'PH_BLOG_COMMENTS_RECAPTCHA' => Configuration::get('PH_BLOG_COMMENTS_RECAPTCHA'),
+            'PH_BLOG_COMMENTS_RECAPTCHA_SITE_KEY' => Configuration::get('PH_BLOG_COMMENTS_RECAPTCHA_SITE_KEY'),
+            'PH_BLOG_COMMENTS_RECAPTCHA_THEME' => Configuration::get('PH_BLOG_COMMENTS_RECAPTCHA_THEME'),
+            'PH_BLOG_DISPLAY_SHARERS' => Configuration::get('PH_BLOG_DISPLAY_SHARERS'),
+            'PH_BLOG_DISPLAY_RELATED' => $displayRelated,
+            'PH_BLOG_DISPLAY_CATEGORY' => Configuration::get('PH_BLOG_DISPLAY_CATEGORY'),
+            'PH_BLOG_FB_INIT' => Configuration::get('PH_BLOG_FB_INIT'),
+            'PH_BLOG_DISPLAY_LIKES' => Configuration::get('PH_BLOG_DISPLAY_LIKES'),
+            'PH_BLOG_DISPLAY_VIEWS' => Configuration::get('PH_BLOG_DISPLAY_VIEWS'),
+            'PH_BLOG_DISPLAY_DATE' => Configuration::get('PH_BLOG_DISPLAY_DATE'),
+            'PH_BLOG_DATEFORMAT' => Configuration::get('PH_BLOG_DATEFORMAT'),
+            'PH_BLOG_COMMENTS_SYSTEM' => Configuration::get('PH_BLOG_COMMENTS_SYSTEM'),
+            'PH_BLOG_DISPLAY_AUTHOR' => Configuration::get('PH_BLOG_DISPLAY_AUTHOR'),
+            'PH_BLOG_DISPLAY_TAGS' => Configuration::get('PH_BLOG_DISPLAY_TAGS'),
+            'PH_BLOG_FACEBOOK_MODERATOR' => Configuration::get('PH_BLOG_FACEBOOK_MODERATOR'),
+            'PH_BLOG_FACEBOOK_APP_ID' => Configuration::get('PH_BLOG_FACEBOOK_APP_ID'),
+            'PH_BLOG_DISPLAY_FEATURED' => Configuration::get('PH_BLOG_DISPLAY_FEATURED'),
+            'PH_BLOG_DISPLAY_DATE' => Configuration::get('PH_BLOG_DISPLAY_DATE'),
+            'PH_BLOG_DATEFORMAT' => Configuration::get('PH_BLOG_DATEFORMAT'),
+            'PH_BLOG_DISPLAY_MORE' => Configuration::get('PH_BLOG_DISPLAY_MORE'),
+            'PH_BLOG_DISPLAY_CATEGORY' => Configuration::get('PH_BLOG_DISPLAY_CATEGORY'),
+            ''
+        ]);
+
+
+        $displayCategoryImage = Configuration::get('PH_BLOG_DISPLAY_CATEGORY_IMAGE');
+
 
         $this->setTemplate('module:ph_simpleblog/views/templates/front/1.7/single.tpl');
     }
@@ -204,7 +237,7 @@ class PH_SimpleBlogSingleModuleFrontController extends ModuleFrontController
         $SimpleBlogPost = SimpleBlogPost::getByRewrite($this->simpleblog_post_rewrite, $id_lang);
 
         $breadcrumb['links'][] = [
-            'title' => $this->l('Blog', 'single-v17'),
+            'title' => $this->module->getTranslator()->trans('Blog', [], 'Modules.Phsimpleblog.Shop'),
             'url' => $this->context->link->getModuleLink('ph_simpleblog', 'list'),
         ];
 
@@ -277,9 +310,9 @@ class PH_SimpleBlogSingleModuleFrontController extends ModuleFrontController
 
                 if ($comment->add()) {
                     if (!Configuration::get('PH_BLOG_COMMENT_AUTO_APPROVAL')) {
-                        $confirmation = $this->l('Your comment was sucessfully added but it will be visible after moderator approval.', 'single-v17');
+                        $confirmation = $this->module->getTranslator()->trans('Your comment was sucessfully added but it will be visible after moderator approval.', [], 'Modules.Phsimpleblog.Shop');
                     } else {
-                        $confirmation = $this->l('Your comment was sucessfully added.', 'single-v17');
+                        $confirmation = $this->module->getTranslator()->trans('Your comment was sucessfully added.', [], 'Modules.Phsimpleblog.Shop');
                     }
 
                     $link = $this->context->link->getModuleLink(
@@ -308,7 +341,7 @@ class PH_SimpleBlogSingleModuleFrontController extends ModuleFrontController
                         Mail::Send(
                             $this->context->language->id,
                             'new_comment',
-                            sprintf($this->l('New comment on %1$s blog for article: %2$s', 'single-v17'), $toName, $this->SimpleBlogPost->title),
+                            sprintf($this->module->getTranslator()->trans('New comment on %1$s blog for article: %2$s', [], 'Modules.Phsimpleblog.Shop'), $toName, $this->SimpleBlogPost->title),
                             [
                                 '{lastname}' => $lastname,
                                 '{firstname}' => $firstname,

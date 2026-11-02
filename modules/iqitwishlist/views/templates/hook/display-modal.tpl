@@ -15,7 +15,7 @@
 
 {if isset($login_form)}
 <div id="iqitwishlist-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <span class="modal-title">{l s='You need to login or create account' mod='iqitwishlist'}</span>

@@ -134,9 +134,7 @@ $(document).ready(() => {
             },
             preloadImages: false,
             initialSlide: $('#product-images-large').find('.js-thumb-selected').first().index(),
-            lazy: {
-              loadPrevNext: true,
-            },
+            lazyPreloadPrevNext: 1,
             pagination: {
               el: '.swiper-pagination-product',
               clickable: true,
@@ -175,10 +173,7 @@ $(document).ready(() => {
           fadeEffect: {
             crossFade: true,
           },
-          preloadImages: false,
-          lazy: {
-            loadPrevNext: true,
-          },
+          lazyPreloadPrevNext: 1,
           navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
@@ -226,10 +221,7 @@ $(document).ready(() => {
         slidesPerView: slides,
         watchSlidesVisibility: true,
         watchSlidesProgress: true,
-        preloadImages: false,
-        lazy: {
-          loadPrevNext: true,
-        },
+        lazyPreloadPrevNext: 1,
         navigation: {
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev',
@@ -268,8 +260,8 @@ $(document).ready(() => {
 
     $quantityInput.TouchSpin({
       verticalbuttons: true,
-      verticalupclass: 'fa fa-angle-up touchspin-up',
-      verticaldownclass: 'fa fa-angle-down touchspin-down',
+      verticalupclass: 'fa-solid fa-angle-up touchspin-up',
+      verticaldownclass: 'fa-solid fa-angle-down touchspin-down',
       buttondown_class: 'btn btn-touchspin js-touchspin',
       buttonup_class: 'btn btn-touchspin js-touchspin',
       min: parseInt($quantityInput.attr('min'), 10),
@@ -278,16 +270,22 @@ $(document).ready(() => {
 
     $(prestashop.themeSelectors.touchspin).off('touchstart.touchspin');
 
-    $quantityInput.focusout(() => {
+    $quantityInput.on('focusout', () => {
       if ($quantityInput.val() === '' || parseInt($quantityInput.val()) < parseInt($quantityInput.attr('min'))) {
         $quantityInput.val($quantityInput.attr('min'));
         $quantityInput.trigger('change');
       }
     });
 
+    let previousValue = '';
+
     $('body').on('change keyup', prestashop.selectors.quantityWanted, (e) => {
-      if ($quantityInput.val() !== '') {
-        $(e.currentTarget).trigger('touchspin.stopspin');
+      const $quantityInput = $(e.currentTarget);
+      const currentValue = $quantityInput.val();
+    
+      if (currentValue !== previousValue && !isNaN(parseFloat(currentValue)) && isFinite(currentValue)) {
+        previousValue = currentValue;
+        $quantityInput.trigger('touchspin.stopspin');
         prestashop.emit('updateProduct', {
           eventType: 'updatedProductQuantity',
           event: e,
@@ -315,8 +313,10 @@ $(document).ready(() => {
       speed: 600,
       watchOverflow: true,
       slidesPerView: 1,
-      slidesPerColumn: 5,
-      slidesPerColumnFill: 'row',
+      grid: {
+        rows: 5,          
+        fill: 'row'   
+      },
     });
   }
   /* eslint-disable */
@@ -340,7 +340,7 @@ $(document).ready(() => {
         }
 
         concat += `${val.innerText}`
-          + '<i class="fa fa-angle-down float-right angle-down" aria-hidden="true"></i><i class="fa fa-angle-up float-right angle-up" aria-hidden="true"></i>'
+          + '<i class="fa-solid fa-angle-down float-right angle-down" aria-hidden="true"></i><i class="fa-solid fa-angle-up float-right angle-up" aria-hidden="true"></i>'
           + '</a>';
 
         concat += '</div>';

@@ -36,9 +36,17 @@
             <span class="image">
               {if $add_product_link}<a href="{$product.url}" target="_blank">{/if}
                     {if !empty($product.default_image)}
+                        <picture>
+                        {if !empty($product.default_image.medium.sources.avif)}<source srcset="{$product.default_image.medium.sources.avif}" type="image/avif">{/if}
+                        {if !empty($product.default_image.medium.sources.webp)}<source srcset="{$product.default_image.medium.sources.webp}" type="image/webp">{/if}
                         <img src="{$product.default_image.medium.url}" class="img-fluid"  loading="lazy" />
+                        </picture>
                        {else}
+                        <picture>
+                        {if !empty($urls.no_picture_image.bySize.medium_default.sources.avif)}<source srcset="{$urls.no_picture_image.bySize.medium_default.sources.avif}" type="image/avif">{/if}
+                        {if !empty($urls.no_picture_image.bySize.medium_default.sources.webp)}<source srcset="{$urls.no_picture_image.bySize.medium_default.sources.webp}" type="image/webp">{/if}
                         <img src="{$urls.no_picture_image.bySize.medium_default.url}" class="img-fluid"  loading="lazy" />
+                        </picture>
                     {/if}
               {if $add_product_link}</a>{/if}
             </span>
@@ -56,13 +64,13 @@
             {if is_array($product.customizations) && $product.customizations|count}
               {foreach from=$product.customizations item="customization"}
                 <div class="customizations">
-                  <a href="#" data-toggle="modal" data-target="#product-customizations-modal-{$customization.id_customization}">{l s='Product customization' d='Shop.Theme.Catalog'}</a>
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#product-customizations-modal-{$customization.id_customization}">{l s='Product customization' d='Shop.Theme.Catalog'}</a>
                 </div>
                 <div class="modal fade customization-modal" id="product-customizations-modal-{$customization.id_customization}" tabindex="-1" role="dialog" aria-hidden="true">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="{l s='Close' d='Shop.Theme.Global'}">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="{l s='Close' d='Shop.Theme.Global'}">
                           <span aria-hidden="true">&times;</span>
                         </button>
                         <h4 class="modal-title">{l s='Product customization' d='Shop.Theme.Catalog'}</h4>
@@ -127,7 +135,7 @@
           </tr>
         {else}
           <tr class="total-value font-weight-bold">
-            <td><span class="text-uppercase">{$totals.total.label}&nbsp;{if $configuration.taxes_enabled}{$labels.tax_short}{/if}</span></td>
+            <td><span class="text-uppercase">{$totals.total.label}&nbsp;{$totals.total.label}&nbsp;{if $configuration.taxes_enabled && $configuration.display_taxes_label}{$labels.tax_short}{/if}</span></td>
             <td>{$totals.total.value}</td>
           </tr>
         {/if}

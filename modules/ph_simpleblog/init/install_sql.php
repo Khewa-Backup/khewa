@@ -20,7 +20,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post` (
             `date_add` datetime NOT NULL,
             `date_upd` datetime NOT NULL,
             PRIMARY KEY (`id_simpleblog_post`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post_lang` (
             `id_simpleblog_post` int(10) UNSIGNED NOT NULL,
@@ -36,13 +36,13 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post_lang` (
             `external_url` text,
             `link_rewrite` varchar(255) NOT NULL,
             PRIMARY KEY (`id_simpleblog_post`,`id_lang`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post_shop` (
             `id_simpleblog_post` int(11) UNSIGNED NOT NULL,
             `id_shop` int(11) UNSIGNED NOT NULL,
             PRIMARY KEY (`id_simpleblog_post`,`id_shop`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post_image` (
             `id_simpleblog_post_image` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -50,13 +50,13 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post_image` 
             `position` int(10) UNSIGNED NOT NULL,
             `image` varchar(255) NOT NULL,
             PRIMARY KEY (`id_simpleblog_post_image`)
-        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post_product` (
             `id_simpleblog_post` INT( 11 ) UNSIGNED NOT NULL,
             `id_product` INT( 11 ) UNSIGNED NOT NULL,
             PRIMARY KEY (`id_simpleblog_post`,`id_product`)
-        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post_type` (
         `id_simpleblog_post_type` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -64,7 +64,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post_type` (
         `slug` VARCHAR(255),
         `description` TEXT,
         PRIMARY KEY (`id_simpleblog_post_type`)
-    ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+    ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 # categories
 
@@ -77,7 +77,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_category` (
             `date_add` datetime NOT NULL,
             `date_upd` datetime NOT NULL,
             PRIMARY KEY (`id_simpleblog_category`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_category_lang` (
             `id_simpleblog_category` int(10) UNSIGNED NOT NULL,
@@ -90,13 +90,13 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_category_lan
             `canonical` text NOT NULL,
             `meta_description` varchar(255) NOT NULL,
             PRIMARY KEY (`id_simpleblog_category`,`id_lang`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_category_shop` (
             `id_simpleblog_category` int(11) UNSIGNED NOT NULL,
             `id_shop` int(11) UNSIGNED NOT NULL,
             PRIMARY KEY (`id_simpleblog_category`,`id_shop`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 # tags
 
@@ -105,14 +105,14 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_tag` (
             `id_lang` INT( 11 ) UNSIGNED NOT NULL,
             `name` VARCHAR(60) NOT NULL,
             PRIMARY KEY (`id_simpleblog_tag`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_post_tag` (
         `id_simpleblog_post` INT( 11 ) UNSIGNED NOT NULL,
         `id_simpleblog_tag` INT( 11 ) UNSIGNED NOT NULL,
         PRIMARY KEY (`id_simpleblog_post`, `id_simpleblog_tag`),
         KEY (`id_simpleblog_tag`)
-    ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+    ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_comment` (
         `id_simpleblog_comment` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -128,7 +128,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_comment` (
         `date_add` datetime NOT NULL,
         `date_upd` datetime NOT NULL,
         PRIMARY KEY (`id_simpleblog_comment`)
-    ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+    ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_author` (
             `id_simpleblog_author` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -146,7 +146,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_author` (
             `link_rewrite` varchar(128) NOT NULL,
             `active` tinyint(1) unsigned NOT NULL,
             PRIMARY KEY (`id_simpleblog_author`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_author_lang` (
             `id_simpleblog_author` int(10) UNSIGNED NOT NULL,
@@ -154,4 +154,4 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_author_lang`
             `bio` TEXT NOT NULL,
             `additional_info` TEXT NOT NULL,
             PRIMARY KEY (`id_simpleblog_author`,`id_lang`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';

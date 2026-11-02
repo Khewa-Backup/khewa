@@ -38,7 +38,7 @@ class IqitWishlistProduct extends ObjectModel
     );
 
 
-    public static function getWishlistProductsNb($idCustomer, Shop $shop = null)
+    public static function getWishlistProductsNb($idCustomer, ?Shop $shop = null)
     {
         if (!$idCustomer) {
             return false;
@@ -50,10 +50,10 @@ class IqitWishlistProduct extends ObjectModel
 			SELECT COUNT(*)
 			FROM `' . _DB_PREFIX_ . 'iqitwishlist_product`
 			WHERE `id_customer` = ' . (int)$idCustomer . '
-			AND `id_shop` = ' . (int)$shop->id);
+			AND `id_shop` = ' . (int)$shop->id, false);
     }
 
-    public static function isCustomerWishlistProduct($idCustomer, $idProduct, $idProductAttribute, Shop $shop = null)
+    public static function isCustomerWishlistProduct($idCustomer, $idProduct, $idProductAttribute, ?Shop $shop = null)
     {
         if (!$idCustomer) {
             return false;
@@ -67,7 +67,7 @@ class IqitWishlistProduct extends ObjectModel
 			WHERE `id_customer` = ' . (int)$idCustomer . '
 			AND `id_product` = ' . (int)$idProduct . '
 			AND `id_product_attribute` = ' . (int)$idProductAttribute . '
-			AND `id_shop` = ' . (int)$shop->id);
+			AND `id_shop` = ' . (int)$shop->id, false);
     }
 
     public static function getWishlistProducts($idCustomer, $id_lang, $full = false)
@@ -89,7 +89,7 @@ class IqitWishlistProduct extends ObjectModel
 				WHERE product_shop.`id_shop` = ' . (int)$context->shop->id . '
 				AND a.`id_customer` = ' . (int)$idCustomer . '
 				GROUP BY a.`id_product`, a.`id_product_attribute`';
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql, true, false);
         foreach ($result as &$line) {
             if (Combination::isFeatureActive() && isset($line['id_product_attribute']) && $line['id_product_attribute']) {
                 $line['cache_default_attribute'] = $line['id_product_attribute'] = $line['id_product_attribute'];
@@ -190,10 +190,12 @@ class IqitWishlistProduct extends ObjectModel
                 AND product_shop.active = 1
                 ' . (Group::isFeatureActive() ? $sql_groups_where : '') . '
                 ORDER BY RAND()
-                LIMIT ' . (int)Configuration::get('CROSSSELLING_NBR')
+                LIMIT 12' 
             );
         }
 
         return $order_products;
     }
+
+    
 }

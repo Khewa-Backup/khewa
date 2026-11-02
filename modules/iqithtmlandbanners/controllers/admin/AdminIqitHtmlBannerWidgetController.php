@@ -23,7 +23,7 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
     const UPLOAD_DIR = _PS_MODULE_DIR_ . 'iqithtmlandbanners/uploads/';
     const UPLOAD_URL = _MODULE_DIR_ . 'iqithtmlandbanners/uploads/';
     const ACCESS_RIGHTS = 0775;
-    const SOURCE_INDEX = _PS_PROD_IMG_DIR_ . 'index.php';
+    const SOURCE_INDEX = _PS_MODULE_DIR_ . 'iqithtmlandbanners/index.php';
 
     public $repository;
     public $presenter;
@@ -100,7 +100,7 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
     public function renderView()
     {
 
-        $title = $this->l('Block configuration');
+        $title = $this->module->getTranslator()->trans('Block configuration', [], 'Modules.Iqithtmlandbanners.Admin');
         $this->fields_form[]['form'] = array(
             'legend' => array(
                 'title' => $title,
@@ -109,20 +109,20 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
             'input' => array(
                 array(
                     'type' => 'blocks',
-                    'label' => $this->l('Blocks'),
+                    'label' => $this->module->getTranslator()->trans('Blocks', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'name' => 'blocks',
                     'values' => $this->repository->getCMSBlocksSortedByHook(),
                 ),
             ),
             'buttons' => array(
                 'newBlock' => array(
-                    'title' => $this->l('New html widget'),
+                    'title' => $this->module->getTranslator()->trans('New html widget', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'href' => $this->context->link->getAdminLink('Admin' . $this->name) . '&addIqitHtmlAndBanner&type=1',
                     'class' => 'pull-right',
                     'icon' => 'process-icon-new',
                 ),
                 'newBlock2' => array(
-                    'title' => $this->l('New banner widget'),
+                    'title' => $this->module->getTranslator()->trans('New banner widget', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'href' => $this->context->link->getAdminLink('Admin' . $this->name) . '&addIqitHtmlAndBanner&type=0',
                     'class' => 'pull-right',
                     'icon' => 'process-icon-new',
@@ -150,12 +150,12 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
         $this->fields_form[0]['form'] = array(
             'tinymce' => true,
             'legend' => array(
-                'title' => isset($block->id) ? $this->l('Edit the  block.') : $this->l('New  block'),
+                'title' => isset($block->id) ? $this->module->getTranslator()->trans('Edit the  block.', [], 'Modules.Iqithtmlandbanners.Admin') : $this->module->getTranslator()->trans('New  block', [], 'Modules.Iqithtmlandbanners.Admin'),
                 'icon' => isset($block->id) ? 'icon-edit' : 'icon-plus-square',
             ),
             'buttons' => array(
                 'cancelBlock' => array(
-                    'title' => $this->l('Cancel'),
+                    'title' => $this->module->getTranslator()->trans('Cancel', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'href' => (Tools::safeOutput(Tools::getValue('back', false)))
                     ?: $this->context->link->getAdminLink('Admin' . $this->name),
                     'icon' => 'process-icon-cancel',
@@ -163,7 +163,7 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
             ),
             'submit' => array(
                 'name' => 'submit' . $this->className,
-                'title' => $this->l('Save'),
+                'title' => $this->module->getTranslator()->trans('Save', [], 'Modules.Iqithtmlandbanners.Admin'),
             ),
         );
 
@@ -187,14 +187,14 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Name of the block'),
+                    'label' => $this->module->getTranslator()->trans('Name of the block', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'name' => 'name',
                     'lang' => true,
                     'required' => true,
                 ),
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Hook'),
+                    'label' => $this->module->getTranslator()->trans('Hook', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'name' => 'id_hook',
                     'options' => array(
                         'query' => $this->repository->getDisplayHooksForHelper(),
@@ -204,7 +204,7 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Width'),
+                    'label' => $this->module->getTranslator()->trans('Width', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'name' => 'width',
                     'options' => array(
                         'query' => array(
@@ -270,12 +270,13 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
                  ),
                 array(
                     'type' => 'textarea',
-                    'label' => $this->l('Content'),
+                    'label' => $this->module->getTranslator()->trans('Content', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'name' => 'description',
                     'lang' => true,
                     'autoload_rte' => true,
                     'cols' => 60,
                     'rows' => 30,
+    
                 )
             );
             $block->type = 1;
@@ -298,14 +299,14 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
                 ),
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Name of the link block'),
+                    'label' => $this->module->getTranslator()->trans('Name of the link block', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'name' => 'name',
                     'lang' => true,
                     'required' => true,
                 ),
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Hook'),
+                    'label' => $this->module->getTranslator()->trans('Hook', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'name' => 'id_hook',
                     'options' => array(
                         'query' => $this->repository->getDisplayHooksForHelperBanner(),
@@ -320,11 +321,11 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
                     'ajax' => true,
                     'max_files' => 40,
                     'url' => $this->context->link->getAdminLink('Admin'.$this->name).'&ajax=1&action=addImages',
-                    'label' => $this->l('Images'),
+                    'label' => $this->module->getTranslator()->trans('Images', [], 'Modules.Iqithtmlandbanners.Admin'),
                 ),
                 array(
                     'type' => 'banners',
-                    'label' => $this->l('Banners'),
+                    'label' => $this->module->getTranslator()->trans('Banners', [], 'Modules.Iqithtmlandbanners.Admin'),
                     'name' => 'banners',
 
                 ),
@@ -348,6 +349,10 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
             $helper->submit_action = 'submitEdit' . $this->className;
         } else {
             $helper->submit_action = 'submitAdd' . $this->className;
+
+            foreach ($this->_languages as $lang) {
+                $block->description[$lang['id_lang']] = '';
+            }
         }
 
         $helper->fields_value = (array) $block;
@@ -379,8 +384,8 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
 
     public function initToolBarTitle()
     {
-        $this->toolbar_title[] = $this->l('Themes');
-        $this->toolbar_title[] = $this->l('Html and Banners');
+        $this->toolbar_title[] = $this->module->getTranslator()->trans('Themes', [], 'Modules.Iqithtmlandbanners.Admin');
+        $this->toolbar_title[] = $this->module->getTranslator()->trans('Html and Banners', [], 'Modules.Iqithtmlandbanners.Admin');
     }
 
     public function setMedia($isNewTheme = false)
@@ -439,7 +444,7 @@ class AdminIqitHtmlBannerWidgetController extends ModuleAdminController
         $folder = 'images/';
 
         $imageUploader = new HelperImageUploader('banners');
-        $imageUploader->setAcceptTypes(array('jpeg', 'gif', 'png', 'jpg'));
+        $imageUploader->setAcceptTypes(array('jpeg', 'gif', 'png', 'jpg', 'webp'));
         $files = $imageUploader->process();
         $newDestination = self::UPLOAD_DIR . $folder;
 

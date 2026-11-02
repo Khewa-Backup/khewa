@@ -41,7 +41,7 @@ function upgrade_module_1_7_0($module)
             `www` VARCHAR(255) NOT NULL,
             `active` tinyint(1) unsigned NOT NULL,
             PRIMARY KEY (`id_simpleblog_author`)
-        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+        ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
     $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'simpleblog_author_lang` (
                 `id_simpleblog_author` int(10) UNSIGNED NOT NULL,
@@ -49,7 +49,7 @@ function upgrade_module_1_7_0($module)
                 `bio` TEXT NOT NULL,
                 `additional_info` TEXT NOT NULL,
                 PRIMARY KEY (`id_simpleblog_author`,`id_lang`)
-            ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8';
+            ) ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4';
 
     foreach ($sql as $s) {
         if (!Db::getInstance()->Execute($s)) {

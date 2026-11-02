@@ -45,8 +45,8 @@
 
         {if $allowGuests || $isLogged}
             <div class="col col-auto mb-3">
-                <button type="button" class="btn btn-primary " data-toggle="modal"
-                        data-target="#iqit-reviews-modal">
+                <button type="button" class="btn btn-primary " data-bs-toggle="modal"
+                        data-bs-target="#iqit-reviews-modal">
                     <i class="fa fa-pencil-square-o"
                        aria-hidden="true"></i> {l s='Write  review' d='Modules.Iqitreviews.Shop'}
                 </button>
@@ -91,7 +91,7 @@
                     "review": {
                         "@type": "Review",
                         "reviewBody": "{$review.comment}",
-                        "name": "{$review.title}",
+                        "name": "{if $review.title == ''}{$review.title}{else}{$productName}{/if}",
                         "reviewRating": {
                             "@type": "Rating",
                             "ratingValue": "{$review.rating}",

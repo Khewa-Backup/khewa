@@ -35,7 +35,7 @@ function upgrade_module_1_1_4($object)
   `id_elementor` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `id_category` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id_elementor`, `id_category`)
-  ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8;
+  ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8mb4;
     ');
 
 
@@ -44,7 +44,7 @@ function upgrade_module_1_1_4($object)
   `id_lang` int(10) UNSIGNED NOT NULL,
   `data` longtext default NULL,
   PRIMARY KEY (`id_elementor`, `id_lang`)
-  ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8;');
+  ) ENGINE=ENGINE_TYPE  DEFAULT CHARSET=utf8mb4;');
 
 
     return true;

@@ -30,7 +30,7 @@
 
 
       <div class="col block-newsletter">
-        <h5>{l s='Sign up to newsletter' d='Shop.Warehousetheme'}</h5>
+        <p class="h5">{l s='Sign up to newsletter' d='Shop.Warehousetheme'}</p>
         {widget name="ps_emailsubscription" hook='displayFooter'}
       </div>
 

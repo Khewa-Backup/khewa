@@ -5,5 +5,6 @@ if (!defined('_PS_VERSION_'))
 
 function upgrade_module_4_3_4($object)
 {
+
     return true;
 }

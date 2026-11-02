@@ -41,6 +41,7 @@ class IqitElementorWidget_Links
     private $db;
     private $shop;
     private $db_prefix;
+    public $context;
     private $link;
     private $language;
     protected $pattern = '/^([A-Z_]*_)[a-zA-Z0-9-]+/';
@@ -106,6 +107,13 @@ class IqitElementorWidget_Links
                 'type' => 'text',
                 'default' => 'Title',
                 'section' => 'section_pswidget_options',
+            ],
+            'link' => [
+                'label' => IqitElementorWpHelper::__( 'Title link', 'elementor' ),
+                'type' => 'url',
+                'label_block' => true,
+                'section' => 'section_pswidget_options',
+                'placeholder' => IqitElementorWpHelper::__( 'http://your-link.com', 'elementor' ),
             ],
             'link_list' => [
                 'label' => IqitElementorWpHelper::__('Select links', 'elementor'),
@@ -188,6 +196,7 @@ class IqitElementorWidget_Links
         $widgetOptions = [];
         $widgetOptions['links'] = [];
         $widgetOptions['title'] = $optionsSource['title'];
+        $widgetOptions['link'] = $optionsSource['link'];
         $widgetOptions['title_style'] = $optionsSource['title_style'];
 
         if ( is_array($selectedLinks)){
@@ -301,10 +310,12 @@ class IqitElementorWidget_Links
 
         foreach ($staticPages as $staticPage) {
             $meta = Meta::getMetaByPage($staticPage, ($id_lang) ? (int) $id_lang : (int) Context::getContext()->language->id);
-            $statics[] = [
-                'id_cms' => $staticPage,
-                'title' => $meta['title'],
-            ];
+            if($meta){
+                $statics[] = [
+                    'id_cms' => $staticPage,
+                    'title' => $meta['title'],
+                ];
+            }
         }
 
         $pages[]['pages'] = $statics;

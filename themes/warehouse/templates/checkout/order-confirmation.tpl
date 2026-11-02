@@ -13,7 +13,7 @@
           </h1>
 
           <div class="mail-sent-info">
-            {l s='An email has been sent to your mail address %email%.' d='Shop.Theme.Checkout' sprintf=['%email%' => $customer.email]}
+            {l s='An email has been sent to your mail address %email%.' d='Shop.Theme.Checkout' sprintf=['%email%' => $order_customer.email]}
             {if $order.details.invoice_url}
               {* [1][/1] is for a HTML tag. *}
               {l
@@ -63,6 +63,11 @@
                     <em class="text-muted">{$order.carrier.delay}</em>
                   </li>
                 {/if}
+                {if $order.details.recyclable}
+                  <li>  
+                    <em>{l s='You have given permission to receive your order in recycled packaging.' d="Shop.Theme.Customeraccount"}</em>
+                  </li>
+                {/if}
               </ul>
             </div>
           {/block}
@@ -85,14 +90,7 @@
 
 
     {block name='customer_registration_form'}
-        {if $customer.is_guest}
-            <div id="registration-form" class="card">
-                <div class="card-body">
-                    <h4 class="h4">{l s='Save time on your next order, sign up now' d='Shop.Theme.Checkout'}</h4>
-                    {render file='customer/_partials/customer-form.tpl' ui=$register_form}
-                </div>
-            </div>
-        {/if}
+
     {/block}
 
   {block name='hook_order_confirmation_2'}

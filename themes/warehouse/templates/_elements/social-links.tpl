@@ -26,12 +26,12 @@
 {block name='social_links'}
 <ul class="social-links {if isset($class)}{$class}{/if}" itemscope itemtype="https://schema.org/Organization" itemid="#store-organization">
     {if isset($iqitTheme.sm_facebook) == 1 && $iqitTheme.sm_facebook != ''}<li class="facebook"><a itemprop="sameAs" href="{$iqitTheme.sm_facebook}" target="_blank" rel="noreferrer noopener"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></a></li>{/if}
-  {if isset($iqitTheme.sm_twitter) == 1 && $iqitTheme.sm_twitter != ''}<li class="twitter"><a itemprop="sameAs" href="{$iqitTheme.sm_twitter}" target="_blank" rel="noreferrer noopener"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></a></li>{/if}
+  {if isset($iqitTheme.sm_twitter) == 1 && $iqitTheme.sm_twitter != ''}<li class="twitter"><a itemprop="sameAs" href="{$iqitTheme.sm_twitter}" target="_blank" rel="noreferrer noopener"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a></li>{/if}
   {if isset($iqitTheme.sm_instagram) == 1 && $iqitTheme.sm_instagram != ''}<li class="instagram"><a itemprop="sameAs" href="{$iqitTheme.sm_instagram}" target="_blank" rel="noreferrer noopener"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></a></li>{/if}
-  {if isset($iqitTheme.sm_google) == 1 && $iqitTheme.sm_google != ''}<li class="google"><a itemprop="sameAs" href="{$iqitTheme.sm_google}" target="_blank" rel="noreferrer noopener"><i class="fa fa-google-plus fa-fw" aria-hidden="true"></i></a></li>{/if}
   {if isset($iqitTheme.sm_pinterest) == 1 && $iqitTheme.sm_pinterest != ''}<li class="pinterest"><a itemprop="sameAs" href="{$iqitTheme.sm_pinterest}" target="_blank" rel="noreferrer noopener"><i class="fa fa-pinterest-p fa-fw" aria-hidden="true"></i></a></li>{/if}
   {if isset($iqitTheme.sm_youtube) == 1 && $iqitTheme.sm_youtube != ''}<li class="youtube"><a href="{$iqitTheme.sm_youtube}" target="_blank" rel="noreferrer noopener"><i class="fa fa-youtube fa-fw" aria-hidden="true"></i></a></li>{/if}
   {if isset($iqitTheme.sm_vimeo) == 1 && $iqitTheme.sm_vimeo != ''}<li class="vimeo"><a itemprop="sameAs" href="{$iqitTheme.sm_vimeo}" target="_blank" rel="noreferrer noopener"><i class="fa fa-vimeo fa-fw" aria-hidden="true"></i></a></li>{/if}
   {if isset($iqitTheme.sm_linkedin) == 1 && $iqitTheme.sm_linkedin != ''}<li class="linkedin"><a itemprop="sameAs" href="{$iqitTheme.sm_linkedin}" target="_blank" rel="noreferrer noopener"><i class="fa fa-linkedin fa-fw" aria-hidden="true"></i></a></li>{/if}
+  {if isset($iqitTheme.sm_tiktok) == 1 && $iqitTheme.sm_tiktok != ''}<li class="tiktok"><a itemprop="sameAs" href="{$iqitTheme.sm_tiktok}" target="_blank" rel="noreferrer noopener"><i class="fa-brands fa-tiktok fa-fw" aria-hidden="true"></i></a></li>{/if}
 </ul>
 {/block}

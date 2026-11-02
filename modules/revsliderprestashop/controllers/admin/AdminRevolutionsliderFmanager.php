@@ -1,13 +1,5 @@
 <?php
-/**
-* 2016 Revolution Slider
-*
-*  @author    SmatDataSoft <support@smartdatasoft.com>
-*  @copyright 2016 SmatDataSoft
-*  @license   private
-*  @version   5.1.3
-*  International Registered Trademark & Property of SmatDataSoft
-*/
+
 
 
             
@@ -96,7 +88,7 @@ class AdminRevolutionsliderFmanagerController extends ModuleAdminController
             }
         }
 
-        $name = $this->l('New Bookmark');
+        $name = $this->module->l('New Bookmark'); // Khewa PS 9.2: AdminController::l() was removed, use the module translator
         if (@RevsliderPrestashop::getIsset($this->context->smarty->tpl_vars['breadcrumbs2']) && $this->context->smarty->tpl_vars['breadcrumbs2']->value['tab']['name']) {
             if ($this->context->smarty->tpl_vars['breadcrumbs2']->value['action']['name']) {
                 $name = $this->context->smarty->tpl_vars['breadcrumbs2']->value['tab']['name'].' > '.$this->context->smarty->tpl_vars['breadcrumbs2']->value['action']['name'];
@@ -110,7 +102,7 @@ class AdminRevolutionsliderFmanagerController extends ModuleAdminController
         $link = preg_replace('/&token=[a-z0-9]{32}/', '', basename($_SERVER['REQUEST_URI']));
 
         $quick_access[] = array(
-            'name' => $this->l('Bookmark this page'),
+            'name' => $this->module->l('Bookmark this page'), // Khewa PS 9.2: AdminController::l() was removed, use the module translator
             'link' => $this->context->link->getAdminLink('AdminQuickAccesses').'&new_window=0&name_'.(int)Configuration::get('PS_LANG_DEFAULT').'='.urlencode($name).'&link='.urlencode($link).'&submitAddquick_access=1',
             'new_window' => 0
         );
@@ -204,7 +196,7 @@ class AdminRevolutionsliderFmanagerController extends ModuleAdminController
                 'show_new_messages' => Configuration::get('PS_SHOW_NEW_MESSAGES') && @RevsliderPrestashop::getIsset($accesses['AdminCustomerThreads'])&& $accesses['AdminCustomerThreads']['view'],
                 'employee' => $this->context->employee,
                 'search_type' => Tools::getValue('bo_search_type'),
-                'bo_query' => Tools::safeOutput(Tools::stripslashes(Tools::getValue('bo_query'))),
+                'bo_query' => Tools::safeOutput(stripslashes(Tools::getValue('bo_query'))),
                 'quick_access' => $quick_access,
                 'multi_shop' => Shop::isFeatureActive(),
                 'shop_list' => Helper::renderShopList(),
@@ -214,7 +206,7 @@ class AdminRevolutionsliderFmanagerController extends ModuleAdminController
                 'tabs' => $tabs,
                 'is_multishop' => $is_multishop,
                 'multishop_context' => $this->multishop_context,
-                'default_tab_link' => $this->context->link->getAdminLink(Tab::getClassNameById((int)Context::getContext()->employee->default_tab)),
+                'default_tab_link' => '',
                 'collapse_menu' => @RevsliderPrestashop::getIsset($this->context->cookie->collapse_menu) ? (int)$this->context->cookie->collapse_menu : 0
             ));
         } else {

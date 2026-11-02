@@ -221,6 +221,10 @@
     top: 2px;
     position: relative;
   }
+  .dropdown-menu{
+    max-height: 300px;
+    overflow-x: auto;
+  }
 }
 
 
@@ -337,6 +341,6 @@
 
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 
 }

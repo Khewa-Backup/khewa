@@ -27,14 +27,15 @@ $(document).ready(function(){
 
   cbpHorizontalMenu = (function() {
 
-    var menuId = '#cbp-hrmenu',
+
+     var menuId = '#cbp-hrmenu',
         $listItems = $( menuId + '> ul > li'  ),
         $menuItems = $listItems.children( 'a, .cbp-main-link' ),
-        $innerTabs = $( menuId + ' .cbp-hrsub-tabs-names li > a'  ),
         $body = $( 'body' ),
         current = -1;
     currentlevel = -1;
 
+    const innerTabs = document.querySelectorAll(menuId + ' .cbp-hrsub-tabs-names li > a');
 
     if (iqitTheme.hm_submenu_width == 'default') {
       var $header = $( '#desktop-header-container' );
@@ -59,9 +60,11 @@ $(document).ready(function(){
 
       $listItems.on( 'mouseover', function( event ) { event.stopPropagation(); } );
 
-      $innerTabs.hover( function(){
-        $innerTabs.removeClass('active');
-        $(this).tab('show');
+      innerTabs.forEach(tab => {
+        tab.addEventListener('mouseenter', function() {
+          const tabTrigger = new bootstrap.Tab(this);
+          tabTrigger.show();
+        });
       });
     }
 
@@ -157,10 +160,11 @@ $(document).ready(function(){
     var menuId = '#cbp-hrmenu1-ul',
         $listItems = $( menuId + ' > li'  ),
         $menuItems = $listItems.children( 'a' ),
-        $innerTabs = $( menuId + ' .cbp-hrsub-tabs-names li > a'  ),
         $body = $( 'body' ),
         current = -1,
         currentlevel = -1;
+
+    const innerTabs = document.querySelectorAll(menuId + ' .cbp-hrsub-tabs-names li > a');    
 
     $listItems.has('ul').find(' > a').doubleTapToGo();
 
@@ -182,9 +186,11 @@ $(document).ready(function(){
 
       $listItems.on( 'mouseover', function( event ) { event.stopPropagation(); } );
 
-      $innerTabs.hover( function(){
-        $innerTabs.removeClass('active');
-        $(this).tab('show');
+      innerTabs.forEach(tab => {
+        tab.addEventListener('mouseenter', function() {
+          const tabTrigger = new bootstrap.Tab(this);
+          tabTrigger.show();
+        });
       });
 
       $( window ).resize(function() {

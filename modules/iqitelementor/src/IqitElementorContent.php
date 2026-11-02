@@ -80,7 +80,7 @@ class IqitElementorContent extends ObjectModel
             'displayFooterProduct', 'displayAboveProductsTabs', 'displayMyAccountDashboard', 'displayCheckoutFooter', 'displayShoppingCart', 'displayFooter', 'displayFooterBefore', 'displayFooterAfter',
             'displayLeftColumn', 'displayRightColumn',  'displayWrapperTopInContainer', 'displayWrapperTop',  'displayWrapperBottom', 'displayWrapperBottomInContainer',
             'displayCartAjaxInfoModal', 'displayCartAjaxInfoBlock', 'displayTop', 'displayHeaderTop', 'displayNotFound',
-            'displayReassurance', 'displayRightColumnProduct', 'displayAfterProductThumbs2',  'displayProductAdditionalInfo',  'displayBelowHeader', 'displayBelowProductsCategory'];
+            'displayReassurance', 'displayRightColumnProduct', 'displayAfterProductThumbs2',  'displayProductAdditionalInfo',  'displayBelowHeader', 'displayBelowProductsCategory', 'displayCustomerLoginFormAfter'];
 
         $sql = "SELECT h.id_hook as id, h.name as name
                 FROM ". _DB_PREFIX_ . "hook h

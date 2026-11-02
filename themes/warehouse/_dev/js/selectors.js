@@ -25,6 +25,20 @@
 import prestashop from 'prestashop';
 import $ from 'jquery';
 
+const passwordPolicy = {
+  template: '#password-feedback',
+  hint: '.js-hint-password',
+  container: '.password-strength-feedback',
+  strengthText: '.password-strength-text',
+  requirementScore: '.password-requirements-score',
+  requirementLength: '.password-requirements-length',
+  requirementScoreIcon: '.password-requirements-score i',
+  requirementLengthIcon: '.password-requirements-length i',
+  progressBar: '.progress-bar',
+  inputColumn: '.js-input-column',
+};
+
+
 prestashop.themeSelectors = {
   product: {
     imagesModal: '.js-product-images-modal',
@@ -51,6 +65,8 @@ prestashop.themeSelectors = {
   },
   order: {
     returnForm: '#order-return-form, .js-order-return-form',
+    returnFormHeadCheckboxes: '#order-return-form table thead input[type=checkbox], .js-order-return-form table thead input[type=checkbox]',
+    returnFormContentCheckboxes: '#order-return-form table tbody input[type=checkbox], .js-order-return-form table tbody input[type=checkbox]',
   },
   clear: '.clear',
   fileInput: '.js-file-input',
@@ -65,6 +81,7 @@ prestashop.themeSelectors = {
     imagesLink: '.card-block .cart-summary-products p a, .js-show-details',
     carrierExtraContent: '.carrier-extra-content, .js-carrier-extra-content',
   },
+  passwordPolicy,
 };
 
 $(document).ready(() => {

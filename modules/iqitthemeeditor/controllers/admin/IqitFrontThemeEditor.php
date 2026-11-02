@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'iqitthemeeditor/src/scssphp/scss.inc.php';
+include_once _PS_MODULE_DIR_ . 'iqitthemeeditor/vendor/autoload.php';
 include_once _PS_MODULE_DIR_ . 'iqitthemeeditor/src/IqitThemeEditorForm.php';
 
 class IqitFrontThemeEditorController extends ModuleAdminController
@@ -75,15 +75,144 @@ class IqitFrontThemeEditorController extends ModuleAdminController
     public function initContent(){
         $this->setMedia();
         $this->initHeader();
+
+    $this->setMedia();
+
+    if (Shop::getContext() == Shop::CONTEXT_GROUP || Shop::getContext() == Shop::CONTEXT_ALL) {
+        Tools::redirectAdmin(
+            $this->context->link->getAdminLink('AdminIqitThemeEditor') . '&liveRedirect=1'
+        );
+        return;
+    }
+
+    $idLang = (int) $this->context->language->id;
+    $idShop = (int) $this->context->shop->id;
+
+    $params = [
+        'iqit_fronteditor_token' => $this->module->getFrontEditorToken(),
+        'admin_webpath'          => $this->context->controller->admin_webpath,
+        'id_employee'            => is_object($this->context->employee)
+            ? (int) $this->context->employee->id
+            : (int) Tools::getValue('id_employee'),
+    ];
+
+    // Dane do podglądu
+    $idProduct  = (int) $this->getPreviewProductId($idShop);
+    $ipa        = $idProduct ? (int) Product::getDefaultAttribute($idProduct) : 0;
+    $idCategory = (int) $this->getPreviewCategoryId($idShop);
+
+    $product  = $idProduct ? new Product($idProduct, false, $idLang) : null;
+    $category = $idCategory ? new Category($idCategory, $idLang) : null;
+
+    // Linki podglądu
+    $previewLinks = [
+        'index' => [
+            'title' => $this->module->getTranslator()->trans('Homepage', [], 'Modules.Iqitthemeeditor.Admin'),
+            'link'  => $this->context->link->getPageLink('index', true, null, $params),
+        ],
+        'brands' => [
+            'title' => $this->module->getTranslator()->trans('Brands', [], 'Modules.Iqitthemeeditor.Admin'),
+            'link'  => $this->context->link->getPageLink('manufacturer', true, null, $params),
+        ],
+        'maintenance' => [
+            'title' => $this->module->getTranslator()->trans('Maintenance', [], 'Modules.Iqitthemeeditor.Admin'),
+            'link'  => $this->context->link->getModuleLink('iqitthemeeditor', 'Preview', [
+                'page'                   => 'maintenance',
+                'iqit_fronteditor_token' => $this->module->getFrontEditorToken(),
+                'admin_webpath'          => $this->context->controller->admin_webpath,
+                'id_employee'            => is_object($this->context->employee)
+                    ? (int) $this->context->employee->id
+                    : (int) Tools::getValue('id_employee'),
+            ], true),
+        ],
+        'form' => [
+            'title' => $this->module->getTranslator()->trans('Form', [], 'Modules.Iqitthemeeditor.Admin'),
+            'link'  => $this->context->link->getModuleLink('iqitthemeeditor', 'Preview', [
+                'page'                   => 'form',
+                'iqit_fronteditor_token' => $this->module->getFrontEditorToken(),
+                'admin_webpath'          => $this->context->controller->admin_webpath,
+                'id_employee'            => is_object($this->context->employee)
+                    ? (int) $this->context->employee->id
+                    : (int) Tools::getValue('id_employee'),
+            ], true),
+        ],
+    ];
+
+    if ($product && Validate::isLoadedObject($product)) {
+        $previewLinks['product'] = [
+            'title' => $this->module->getTranslator()->trans('Product', [], 'Modules.Iqitthemeeditor.Admin'),
+            'link'  => $this->context->link->getProductLink(
+                (int) $product->id,
+                $product->link_rewrite,
+                null,
+                null,
+                null,
+                null,
+                $ipa,
+                false,
+                false,
+                false,
+                $params
+            ),
+        ];
+    }
+
+    if ($category && Validate::isLoadedObject($category)) {
+        $previewLinks['category'] = [
+            'title' => $this->module->getTranslator()->trans('Category', [], 'Modules.Iqitthemeeditor.Admin'),
+            'link'  => $this->parseCategoryUrl($this->context->link->getCategoryLink($category)),
+        ];
+    }
+
+
+    Media::addJsDef([
+        'iqitFrontEditor' => [
+            'ajaxurl'               => $this->context->link->getAdminLink('IqitFrontThemeEditor') . '&ajax=1',
+            'iqit_fronteditor_token'=> $this->module->getFrontEditorToken(),
+            'admin_webpath'         => $this->context->controller->admin_webpath,
+            'id_employee'           => is_object($this->context->employee)
+                ? (int) $this->context->employee->id
+                : (int) Tools::getValue('id_employee'),
+        ],
+    ]);
+
+
+    $smartyCacheStatus   = (bool) Configuration::get('PS_SMARTY_CACHE');
+    $additonalCache      = (bool) _PS_CACHE_ENABLED_;
+    $cacheStatus         = ($additonalCache || $smartyCacheStatus);
+
+
+    $form = $this->buildHelper();
+
+
+    $this->context->smarty->assign([
+  
+        'js_def_vars' => Media::getJsDef(),
+        'js_files'    => array_unique($this->js_files),
+        'css_files'   => $this->css_files,
+
+
+        'baseDir'      => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/',
+        'previewLinks' => $previewLinks,
+        'editorForm'   => $form,
+        'cacheStatus'  => $cacheStatus,
+        'cacheLink'    => $this->context->link->getAdminLink('AdminPerformance'),
+        'backToBo'     => $this->context->link->getAdminLink('AdminIqitThemeEditor'),
+    ]);
+
+    header('Content-Type: text/html; charset=utf-8');
+    echo $this->context->smarty->fetch(
+        _PS_MODULE_DIR_ . 'iqitthemeeditor/views/templates/admin/fronteditor.tpl'
+    );
+    exit;
+    
     }
 
     public function setMedia($isNewTheme = false)
     {
-        $this->addJs(_PS_JS_DIR_ . 'jquery/jquery-3.4.1.min.js');
-        $this->addJs(_PS_JS_DIR_ . 'jquery/jquery-migrate-3.1.0.min.js');
-        // implement $.browser object and live method, that has been removed since jquery 1.9
-        $this->addJs(_PS_JS_DIR_ . 'jquery/jquery.browser-0.1.0.min.js');
-        $this->addJs(_PS_JS_DIR_ . 'jquery/jquery.live-polyfill-1.1.2.min.js');
+        $this->addJs(_PS_JS_DIR_ . 'jquery/jquery-3.7.1.min.js');
+        $this->addJs(_PS_JS_DIR_ . 'jquery/jquery-migrate-3.4.0.min.js');
+
         $this->addjQueryPlugin(array('autosize', 'fancybox'));
 
         $this->addCSS(array(
@@ -146,15 +275,15 @@ class IqitFrontThemeEditorController extends ModuleAdminController
 
         $previewLinks = array(
             'index' => [
-                'title' => $this->l('Homepage'),
+                'title' => $this->module->getTranslator()->trans('Homepage', [], 'Modules.Iqitthemeeditor.Admin'),
                 'link' => $this->context->link->getPageLink('index', true, null, $params)
             ],
             'brands' => [
-                'title' => $this->l('Brands'),
+                'title' => $this->module->getTranslator()->trans('Brands', [], 'Modules.Iqitthemeeditor.Admin'),
                 'link' => $this->context->link->getPageLink('manufacturer', true, null, $params)
             ],
             'maintenance' => [
-                'title' => $this->l('Maintenance'),
+                'title' => $this->module->getTranslator()->trans('Maintenance', [], 'Modules.Iqitthemeeditor.Admin'),
                 'link' => $this->context->link->getModuleLink('iqitthemeeditor', 'Preview', array(
                     'page' => 'maintenance',
                     'iqit_fronteditor_token' => $this->module->getFrontEditorToken(),
@@ -164,7 +293,7 @@ class IqitFrontThemeEditorController extends ModuleAdminController
                 ), true)
             ],
             'form' => [
-                'title' => $this->l('Form'),
+                'title' => $this->module->getTranslator()->trans('Form', [], 'Modules.Iqitthemeeditor.Admin'),
                 'link' => $this->context->link->getModuleLink('iqitthemeeditor', 'Preview', array(
                     'page' => 'form',
                     'iqit_fronteditor_token' => $this->module->getFrontEditorToken(),
@@ -177,14 +306,14 @@ class IqitFrontThemeEditorController extends ModuleAdminController
 
         if (Validate::isLoadedObject($product)){
             $previewLinks['product'] = [
-                'title' => $this->l('Product'),
+                'title' => $this->module->getTranslator()->trans('Product', [], 'Modules.Iqitthemeeditor.Admin'),
                 'link' => $this->context->link->getProductLink($product->id, $product->link_rewrite, null, null, null, null, $ipa, false, false, false, $params)
             ];
         }
 
         if (Validate::isLoadedObject($category)){
             $previewLinks['category'] = [
-                'title' => $this->l('Category'),
+                'title' => $this->module->getTranslator()->trans('Category', [], 'Modules.Iqitthemeeditor.Admin'),
                 'link' => $this->parseCategoryUrl($this->context->link->getCategoryLink($category))
             ];
         }
@@ -249,7 +378,10 @@ class IqitFrontThemeEditorController extends ModuleAdminController
                 Configuration::updateValue($this->cfgName . $key, $messageTrads, true);
             } elseif ($default['type'] == 'html') {
                 Configuration::updateValue($this->cfgName . $key, htmlspecialchars($formData[$key]), true);
-            }  else {
+            } elseif ($default['type'] == 'raw') {
+                if (isset($formData[$key]))
+                    Configuration::updateValue($this->cfgName . $key, htmlspecialchars($formData[$key]));
+            } else {
                 Configuration::updateValue($this->cfgName . $key, $formData[$key]);
             }
 
@@ -301,6 +433,7 @@ class IqitFrontThemeEditorController extends ModuleAdminController
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
             'theme_version' => $this->module->version,
+            'ps_version' => _PS_VERSION_,
             'frontEditorLink' => $this->context->link->getAdminLink('IqitFrontThemeEditor'),
             'current_link' => $this->context->link->getAdminLink('Admin' . $this->name),
             'formType' => 'front',
@@ -336,7 +469,9 @@ class IqitFrontThemeEditorController extends ModuleAdminController
                 }
             } elseif ($default['type'] == 'html') {
                 $var[$key] = htmlspecialchars_decode(Configuration::get($this->cfgName  . $key));
-            }  else {
+            }  elseif ($default['type'] == 'raw') {
+                $var[$key] = htmlspecialchars_decode (Configuration::get($this->cfgName  . $key));
+            } else {
                 $var[$key] = Configuration::get($this->cfgName . $key);
             }
         }

@@ -24,15 +24,21 @@ class Iqitpopup extends Module implements WidgetInterface
 {
     protected $config_form = false;
     protected $templateFile;
+    public $config_name;
+    public $defaults;
 
     public function __construct()
     {
         $this->name = 'iqitpopup';
         $this->tab = 'front_office_features';
-        $this->version = '1.1.1';
+        $this->version = '1.1.2';
         $this->author = 'IQIT-COMMERCE.COM';
         $this->need_instance = 0;
         $this->bootstrap = true;
+        $this->ps_versions_compliancy = [
+            'min' => '9.0.0',
+            'max' => '9.99.99',
+        ];
         parent::__construct();
 
         $this->displayName = $this->l('IQITPOPUP - Pop-up window module with newsletter subscription');
@@ -67,7 +73,7 @@ class Iqitpopup extends Module implements WidgetInterface
     public function install()
     {
         if (parent::install() &&
-            $this->registerHook('header') &&
+            $this->registerHook('displayHeader') &&
             $this->registerHook('displayBeforeBodyClosingTag') &&
             $this->registerHook('registerGDPRConsent')
         ) {
@@ -126,7 +132,7 @@ class Iqitpopup extends Module implements WidgetInterface
         if (Tools::isSubmit('submitIqitpopupModule')) {
             $this->_postProcess();
         }
-
+        $this->context->smarty->assign('adminDir', basename(_PS_ADMIN_DIR_));
         $this->context->smarty->assign('module_dir', $this->_path);
 
         return $output . $this->renderForm();
@@ -522,7 +528,7 @@ class Iqitpopup extends Module implements WidgetInterface
         return $repeat_option;
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         if (Configuration::get($this->config_name . '_pages') && $this->context->controller->php_self != 'index') {
             return;

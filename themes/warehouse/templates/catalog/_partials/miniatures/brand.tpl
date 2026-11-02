@@ -24,7 +24,17 @@
  *}
 {block name='brand_miniature_item'}
   <div class="col-4 col-sm-2 col-lg-2 col-xl-1 brand">
-    <div class="brand-img"><a href="{$brand.url}"><img src="{$brand.image}" class="img-fluid" alt="{$brand.name}" loading="lazy" /></a></div>
+    <div class="brand-img"><a href="{$brand.url}">
+        <picture>
+          {if !empty($brand.image.bySize.small_default.sources.avif)}
+          <source srcset="{$brand.image.bySize.small_default.sources.avif}" type="image/avif">{/if}
+          {if !empty($brand.image.bySize.small_default.sources.webp)}
+          <source srcset="{$brand.image.bySize.small_default.sources.webp}" type="image/webp">{/if}
+          <img src="{$brand.image.bySize.small_default.url}"
+            alt="{if !empty($brand.image.legend)}{$brand.image.legend}{else}{$brand.name}{/if}" class="img-fluid"
+            loading="lazy">
+        </picture>
+      </a></div>
     <div class="brand-infos">
       <a href="{$brand.url}">{$brand.name}</a>
     </div>

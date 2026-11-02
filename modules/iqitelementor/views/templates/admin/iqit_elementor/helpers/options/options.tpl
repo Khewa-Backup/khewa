@@ -38,7 +38,10 @@
             </a>
             <p class="expiration-date">{l s='Expiration date' mod='iqitelementor'}: {$field['instagramExpDate']}({l s='Autorenewal' mod='iqitelementor'})</p>
         {else}
-        <a href="{$field['url']|escape:'html':'UTF-8'}" class="m-b-2 m-r-1 btn pointer btn-connect-with-instagram"><i class="icon-instagram"></i> {l s='Connect with your Instagram' mod='iqitelementor'}</a>
+            <input class="form-control " style="margin-bottom: 12px;" type="text" size="5" name="iqit_elementor_inst_token" value="" placeholder="{l s='Acess token' mod='iqitelementor'}">
+                <button type="submit" class="btn btn-connect-with-instagram" name="submitInstagramConnect"><i class="icon-instagram"></i> {l s='Connect with your Instagram' mod='iqitelementor'}</button>
+                <br><br>
+            If you want to use instagram feed widget you need to fill field with your access token, and then click 'Connect with your Instagram' <br> Learn <a href="https://iqit-commerce.com/how-to-get-instagram-token/">How to get Instagram acess token</a>
         {/if}
         </div>
     </div>
@@ -63,3 +66,4 @@
         {$smarty.block.parent}
     {/if}
 {/block}
+

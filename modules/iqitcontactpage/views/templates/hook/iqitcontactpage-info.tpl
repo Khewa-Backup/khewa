@@ -20,7 +20,7 @@
             {if $content}
                 <hr/>
                 <div class="part">
-                    {$content|nl2br nofilter}
+                    {$content nofilter}
                 </div>
             {/if}
     </div>

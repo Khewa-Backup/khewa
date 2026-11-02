@@ -121,7 +121,7 @@
 <script>
 $(document).ready(function(){
 	hideOtherLanguage({$defaultFormLanguage});
-	$(".copyNiceUrl").live('keyup change',function(e){
+	$(".copyNiceUrl").on('keyup change',function(e){
 		if(!isArrowKey(e))
 			return copyNiceUrl();
 	});

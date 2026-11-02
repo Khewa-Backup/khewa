@@ -72,7 +72,7 @@ class DefaultListBlogForPrestaShopController extends ModuleFrontController
             }
         } else {
             if (empty($defaultMetaTitleForBlog)) {
-                $meta_title = $pageVariables['meta']['title'] . ' ' . $this->l('Blog', 'default_list');
+                $meta_title = $pageVariables['meta']['title'] . ' ' . $this->module->getTranslator()->trans('Blog', [], 'Modules.Phsimpleblog.Shop');
             } else {
                 $meta_title = $defaultMetaTitleForBlog;
             }
@@ -162,7 +162,7 @@ class DefaultListBlogForPrestaShopController extends ModuleFrontController
         $breadcrumb = parent::getBreadcrumbLinks();
 
         $breadcrumb['links'][] = [
-            'title' => $this->l('Blog', 'default_list'),
+            'title' => $this->module->getTranslator()->trans('Blog', [], 'Modules.Phsimpleblog.Shop'),
             'url' => $this->context->link->getModuleLink('ph_simpleblog', 'list'),
         ];
 

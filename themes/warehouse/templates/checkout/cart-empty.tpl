@@ -24,10 +24,6 @@
  *}
 {extends file='checkout/cart.tpl'}
 
-{block name='content' append}
-  {hook h='displayCrossSellingShoppingCart'}
-{/block}
-
 {block name='continue_shopping' append}
   <a class="btn btn-secondary" href="{$urls.pages.index}">
     <i class="fa fa-angle-left" aria-hidden="true"></i> {l s='Continue shopping' d='Shop.Theme.Actions'}

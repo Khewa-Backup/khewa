@@ -30,93 +30,9 @@ class IqitElementorEditorController  extends ModuleAdminController
     public function initContent(){
         $this->setMedia();
         $this->initHeader();
-    }
-    public function setMedia($isNewTheme = false){
 
 
-        $is_177 = (version_compare(_PS_VERSION_, '1.7.7.0', '>=') === true) ? true : false;
-
-        if($is_177){
-            $this->addJs(_PS_JS_DIR_ . 'jquery/jquery-3.4.1.min.js');
-            $this->addJs(_PS_JS_DIR_ . 'jquery/jquery-migrate-3.1.0.min.js');
-            // implement $.browser object and live method, that has been removed since jquery 1.9
-            $this->addJs(_PS_JS_DIR_ . 'jquery/jquery.browser-0.1.0.min.js');
-            $this->addJs(_PS_JS_DIR_ . 'jquery/jquery.live-polyfill-1.1.2.min.js');
-        } else{
-            $this->addJquery();
-        }
-
-        $this->addJS(_PS_JS_DIR_.'tiny_mce/tinymce.min.js');
-        $this->addJqueryPlugin('fancybox');
-        $this->addJqueryPlugin('autocomplete');
-
-
-        $this->addCSS(array(
-            __PS_BASE_URI__.$this->admin_webpath.'/themes/'.$this->bo_theme.'/css/admin-theme.css',
-            __PS_BASE_URI__.$this->admin_webpath.'/themes/'.$this->bo_theme.'/public/theme.css',
-            _MODULE_DIR_.'iqitelementor/views/lib/font-awesome/css/font-awesome.min.css',
-            _MODULE_DIR_.'iqitelementor/views/lib/select2/css/select2.min.css',
-            _MODULE_DIR_.'iqitelementor/views/lib/eicons/css/elementor-icons.css',
-            _MODULE_DIR_.'iqitelementor/views/lib/color-picker/color-picker.min.css',
-            _MODULE_DIR_.'iqitelementor/views/css/editor.min.css'
-        ));
-
-        $this->addJS(array(
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/core.min.js?ver=1.11.4',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/widget.min.js?ver=1.11.4',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/mouse.min.js?ver=1.11.4',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/sortable.min.js?ver=1.11.4',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/resizable.min.js?ver=1.11.4',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/position.min.js?ver=1.11.4"',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/draggable.min.js?ver=1.11.4',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/slider.min.js?ver=1.11.4',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery/jquery.ui.touch-punch.js?ver=0.2.2',
-            _MODULE_DIR_.'iqitelementor/views/lib/color-picker/iris.min.js?ver=1.0.7',
-            _MODULE_DIR_.'iqitelementor/views/lib/color-picker/color-picker.min.js?ver=4.6.1',
-            _MODULE_DIR_.'iqitelementor/views/lib/color-picker/wp-color-picker-alpha.js?ver=1.1',
-            _MODULE_DIR_.'iqitelementor/views/lib/waypoints/waypoints-for-editor.js?ver=2.0.2',
-            _MODULE_DIR_.'iqitelementor/views/lib/imagesloaded/imagesloaded.min.js?ver=4.1.0',
-            _MODULE_DIR_.'iqitelementor/views/lib/lazyload/lazyload.transpiled.min.js',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery-numerator/jquery-numerator.min.js?ver=0.2.0',
-            _MODULE_DIR_.'iqitelementor/views/lib/swiper/swiper-bundle.min.js',
-            _MODULE_DIR_.'iqitelementor/views/lib/underscore/underscore-min.js',
-            _MODULE_DIR_.'iqitelementor/views/lib/instagram-lite-master/instagramLite.min.js',
-            _MODULE_DIR_.'iqitelementor/views/lib/backbone/backbone-min.js',
-            _MODULE_DIR_.'iqitelementor/views/lib/backbone/backbone.marionette.js?ver=2.4.5',
-            _MODULE_DIR_.'iqitelementor/views/lib/backbone/backbone.radio.min.js?ver=1.0.4',
-            _MODULE_DIR_.'iqitelementor/views/lib/perfect-scrollbar/perfect-scrollbar.jquery.min.js?ver=0.6.12',
-            _MODULE_DIR_.'iqitelementor/views/lib/jquery-easing/jquery-easing.min.js?ver=1.3.2',
-            _MODULE_DIR_.'iqitelementor/views/lib/nprogress/nprogress.js?ver=0.2.0',
-            _MODULE_DIR_.'iqitelementor/views/lib/tipsy/tipsy.min.js?ver=1.0.0',
-            _MODULE_DIR_.'iqitelementor/views/lib/ps-helper/ps-helper.js',
-            _MODULE_DIR_.'iqitelementor/views/lib/dialog/dialog.js?ver=3.0.0',
-            _MODULE_DIR_.'iqitelementor/views/lib/select2/js/select2.min.js?ver=4.0.2',
-            _MODULE_DIR_.'iqitelementor/views/js/frontend.js?ver=0.9.3',
-            _MODULE_DIR_.'iqitelementor/views/js/editor.js?ver=0.9.3',
-        ));
-
-
-
-        $base_url = Tools::getHttpHost(true);  // DON'T TOUCH (base url (only domain) of site (without final /)).
-        $base_url = Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE') ? $base_url : str_replace('https', 'http', $base_url);
-
-        Media::addJsDef(
-            array('elementorFrontendConfig' => [
-                'isEditMode' => 1,
-                'stretchedSectionContainer' =>'',
-                'is_rtl' => (bool) $this->context->language->is_rtl,
-                'instagramToken' => Configuration::get('iqit_elementor_inst_token'),
-                'ajax_csfr_token_url' => $this->context->link->getModuleLink($this->module->name, 'Actions', ['process' => 'handleCsfrToken', 'ajax' => 1], true),
-                'iqitBaseUrl' => Tools::safeOutput($base_url)
-        ]));
-
-        Hook::exec('actionAdminControllerSetMedia');
-
-    }
-
-    public function display()
-    {
-        ob_start();
+         ob_start();
         PluginElementor::instance()->editor->print_panel_html();
         $output = ob_get_contents();
         ob_end_clean();
@@ -160,6 +76,18 @@ class IqitElementorEditorController  extends ModuleAdminController
                 $strippedCms = str_replace(array("\r", "\n"), '', $strippedCms);
                 $content = json_decode($strippedCms, true);
 
+                if (json_last_error() == JSON_ERROR_NONE){
+                    $elementorData = $content;
+                }
+                break;
+            case 'ybcblog':
+                $editedPage = new Ybc_blog_post_class($pageId, $idLang);
+                $editedPageLink = $this->context->link->getAdminLink('AdminYbcBlogPost') . '&id_post='. $pageId .'&editybc_post';
+    
+                $strippedCms = preg_replace('/^<p[^>]*>(.*)<\/p[^>]*>/is', '$1', $editedPage->description);
+                $strippedCms = str_replace(array("\r", "\n"), '', $strippedCms);
+                $content = json_decode($strippedCms, true);
+    
                 if (json_last_error() == JSON_ERROR_NONE){
                     $elementorData = $content;
                 }
@@ -259,57 +187,59 @@ class IqitElementorEditorController  extends ModuleAdminController
                 'introduction' => PluginElementor::instance()->get_current_introduction(),
                 'viewportBreakpoints' =>  Responsive::get_breakpoints(),
                 'i18n' => [
-                    'elementor' => $this->l('Elementor'),
-                    'dialog_confirm_delete' => $this->l('Are you sure you want to remove this?').' {0}',
-                    'dialog_user_taken_over' => '{0} '.$this->l('has taken over and is currently editing. Do you want to take over this page editing?'),
-                    'delete' =>  $this->l('Delete'),
-                    'cancel' =>  $this->l('Cancel'),
-                    'delete_element' => $this->l('Delete').' {0}',
-                    'take_over' => $this->l('Take Over'),
-                    'go_back' => $this->l('Go Back'),
-                    'saved' => $this->l('Saved'),
-                    'before_unload_alert' => $this->l('Please note: All unsaved changes will be lost.'),
-                    'edit_element' => $this->l('Edit').' {0}',
-                    'global_colors' => $this->l('Global Colors'),
-                    'global_fonts' => $this->l('Global Fonts'),
-                    'about_elementor' => $this->l('About Elementor'),
-                    'clear_page' => $this->l('Delete all content'),
-                    'dialog_confirm_clear_page' => $this->l('Are you shure you want delete all content?'),
-                    'changes_lost' => $this->l('You have unsaved changes!'),
-                    'dialog_confirm_changes_lost' => $this->l('Please return and save, otherwise your changes will be lost.'),
-                    'import_language_dialog_title' => $this->l('Erase content and import'),
-                    'import_language_dialog_msg' => $this->l('Please confirm that you want to erase content of this page and import content of other language'),
-                    'inner_section' => $this->l('Columns'),
-                    'dialog_confirm_gallery_delete' => $this->l('Are you sure you want to reset this gallery?'),
-                    'delete_gallery' => $this->l('Reset Gallery'),
-                    'gallery_images_selected' => '{0}' . $this->l('Images Selected'),
-                    'insert_media' => $this->l('Insert Media'),
-                    'preview_el_not_found_header' => $this->l('Preview not found'),
-                    'preview_el_not_found_message' => $this->l('Make sure you added own ip in Maintenance settings (Backoffice > shop parameters > general > maintenance)'),
-                    'learn_more' => $this->l('Learn more'),
-                    'ie_edge_browser' => $this->l('Builder do not support IE/Edge browsers'),
-                    'ie_edge_browser_info' => $this->l('Please edit your layout in different browser, like Chrome, Firefox, Opera or Safari'),
-                    'an_error_occurred' => $this->l('An error occurred'),
-                    'templates_request_error' => $this->l('The following error occurred when processing the request:'),
-                    'save_your_template' => $this->l('Save Your {0} to Library'),
-                    'load_your_template' => $this->l('Load your template from file'),
-                    'page' => $this->l('Page'),
-                    'section' => $this->l('Section'),
-                    'delete_template' => $this->l('Delete Template'),
-                    'delete_template_confirm' => $this->l('Are you sure you want to delete this template?'),
+                    'elementor' => $this->module->getTranslator()->trans('Elementor', [], 'Modules.Iqitelementor.Admin'),
+                    'dialog_confirm_delete' => $this->module->getTranslator()->trans('Are you sure you want to remove this?', [], 'Modules.Iqitelementor.Admin').' {0}',
+                    'dialog_user_taken_over' => '{0} '.$this->module->getTranslator()->trans('has taken over and is currently editing. Do you want to take over this page editing?', [], 'Modules.Iqitelementor.Admin'),
+                    'delete' =>  $this->module->getTranslator()->trans('Delete', [], 'Modules.Iqitelementor.Admin'),
+                    'cancel' =>  $this->module->getTranslator()->trans('Cancel', [], 'Modules.Iqitelementor.Admin'),
+                    'delete_element' => $this->module->getTranslator()->trans('Delete', [], 'Modules.Iqitelementor.Admin').' {0}',
+                    'take_over' => $this->module->getTranslator()->trans('Take Over', [], 'Modules.Iqitelementor.Admin'),
+                    'go_back' => $this->module->getTranslator()->trans('Go Back', [], 'Modules.Iqitelementor.Admin'),
+                    'saved' => $this->module->getTranslator()->trans('Saved', [], 'Modules.Iqitelementor.Admin'),
+                    'before_unload_alert' => $this->module->getTranslator()->trans('Please note: All unsaved changes will be lost.', [], 'Modules.Iqitelementor.Admin'),
+                    'edit_element' => $this->module->getTranslator()->trans('Edit', [], 'Modules.Iqitelementor.Admin').' {0}',
+                    'global_colors' => $this->module->getTranslator()->trans('Global Colors', [], 'Modules.Iqitelementor.Admin'),
+                    'global_fonts' => $this->module->getTranslator()->trans('Global Fonts', [], 'Modules.Iqitelementor.Admin'),
+                    'about_elementor' => $this->module->getTranslator()->trans('About Elementor', [], 'Modules.Iqitelementor.Admin'),
+                    'clear_page' => $this->module->getTranslator()->trans('Delete all content', [], 'Modules.Iqitelementor.Admin'),
+                    'dialog_confirm_clear_page' => $this->module->getTranslator()->trans('Are you shure you want delete all content?', [], 'Modules.Iqitelementor.Admin'),
+                    'changes_lost' => $this->module->getTranslator()->trans('You have unsaved changes!', [], 'Modules.Iqitelementor.Admin'),
+                    'dialog_confirm_changes_lost' => $this->module->getTranslator()->trans('Please return and save, otherwise your changes will be lost.', [], 'Modules.Iqitelementor.Admin'),
+                    'import_language_dialog_title' => $this->module->getTranslator()->trans('Erase content and import', [], 'Modules.Iqitelementor.Admin'),
+                    'import_language_dialog_msg' => $this->module->getTranslator()->trans('Please confirm that you want to erase content of this page and import content of other language', [], 'Modules.Iqitelementor.Admin'),
+                    'inner_section' => $this->module->getTranslator()->trans('Columns', [], 'Modules.Iqitelementor.Admin'),
+                    'dialog_confirm_gallery_delete' => $this->module->getTranslator()->trans('Are you sure you want to reset this gallery?', [], 'Modules.Iqitelementor.Admin'),
+                    'delete_gallery' => $this->module->getTranslator()->trans('Reset Gallery', [], 'Modules.Iqitelementor.Admin'),
+                    'gallery_images_selected' => '{0}' . $this->module->getTranslator()->trans('Images Selected', [], 'Modules.Iqitelementor.Admin'),
+                    'insert_media' => $this->module->getTranslator()->trans('Insert Media', [], 'Modules.Iqitelementor.Admin'),
+                    'preview_el_not_found_header' => $this->module->getTranslator()->trans('Preview not found', [], 'Modules.Iqitelementor.Admin'),
+                    'preview_el_not_found_message' => $this->module->getTranslator()->trans('Make sure you added own ip in Maintenance settings (Backoffice > shop parameters > general > maintenance)', [], 'Modules.Iqitelementor.Admin'),
+                    'learn_more' => $this->module->getTranslator()->trans('Learn more', [], 'Modules.Iqitelementor.Admin'),
+                    'ie_edge_browser' => $this->module->getTranslator()->trans('Builder do not support IE/Edge browsers', [], 'Modules.Iqitelementor.Admin'),
+                    'ie_edge_browser_info' => $this->module->getTranslator()->trans('Please edit your layout in different browser, like Chrome, Firefox, Opera or Safari', [], 'Modules.Iqitelementor.Admin'),
+                    'an_error_occurred' => $this->module->getTranslator()->trans('An error occurred', [], 'Modules.Iqitelementor.Admin'),
+                    'templates_request_error' => $this->module->getTranslator()->trans('The following error occurred when processing the request:', [], 'Modules.Iqitelementor.Admin'),
+                    'save_your_template' => $this->module->getTranslator()->trans('Save Your {0} to Library', [], 'Modules.Iqitelementor.Admin'),
+                    'load_your_template' => $this->module->getTranslator()->trans('Load your template from file', [], 'Modules.Iqitelementor.Admin'),
+                    'page' => $this->module->getTranslator()->trans('Page', [], 'Modules.Iqitelementor.Admin'),
+                    'section' => $this->module->getTranslator()->trans('Section', [], 'Modules.Iqitelementor.Admin'),
+                    'delete_template' => $this->module->getTranslator()->trans('Delete Template', [], 'Modules.Iqitelementor.Admin'),
+                    'delete_template_confirm' => $this->module->getTranslator()->trans('Are you sure you want to delete this template?', [], 'Modules.Iqitelementor.Admin'),
                 ],
             ]));
 
         Media::addJsDef(
             array('wpColorPickerL10n' => [
-                'clear' => $this->l('Clear'),
-                'defaultString' => $this->l('Default'),
-                'pick' => $this->l('Pick a color'),
-                'current' => $this->l('Current color')
+                'clear' => $this->module->getTranslator()->trans('Clear', [], 'Modules.Iqitelementor.Admin'),
+                'defaultString' => $this->module->getTranslator()->trans('Default', [], 'Modules.Iqitelementor.Admin'),
+                'pick' => $this->module->getTranslator()->trans('Pick a color', [], 'Modules.Iqitelementor.Admin'),
+                'current' => $this->module->getTranslator()->trans('Current color', [], 'Modules.Iqitelementor.Admin')
             ]));
 
         $this->context->smarty->assign(array(
             'js_def_vars' => Media::getJsDef(),
+        'js_files'    => array_unique($this->js_files),
+        'css_files'   => $this->css_files,
         ));
 
         $this->context->smarty->assign(array(
@@ -317,7 +247,97 @@ class IqitElementorEditorController  extends ModuleAdminController
             'pluginContent' => $output,
         ));
 
-        $this->smartyOutputContent(_PS_MODULE_DIR_ .'/iqitelementor/views/templates/admin/adminiqitelementor.tpl');
+
+    
+        header('Content-Type: text/html; charset=utf-8');
+        echo $this->context->smarty->fetch(
+            _PS_MODULE_DIR_ . 'iqitelementor/views/templates/admin/adminiqitelementor.tpl'
+        );
+        exit;
+
+
+    }
+    public function setMedia($isNewTheme = false){
+
+
+        $is_177 = (version_compare(_PS_VERSION_, '1.7.7.0', '>=') === true) ? true : false;
+
+        if($is_177){
+            $this->addJs(_PS_JS_DIR_ . 'jquery/jquery-3.7.1.min.js');
+            $this->addJs(_PS_JS_DIR_ . 'jquery/jquery-migrate-3.4.0.min.js');
+        } 
+
+        $this->addJS(_PS_JS_DIR_.'tiny_mce/tinymce.min.js');
+        $this->addJqueryPlugin('fancybox');
+        $this->addJqueryPlugin('autocomplete');
+
+
+        $this->addCSS(array(
+            __PS_BASE_URI__.$this->admin_webpath.'/themes/'.$this->bo_theme.'/css/admin-theme.css',
+            __PS_BASE_URI__.$this->admin_webpath.'/themes/'.$this->bo_theme.'/public/theme.css',
+            _MODULE_DIR_.'iqitelementor/views/lib/font-awesome/css/font-awesome.min.css',
+            _MODULE_DIR_.'iqitelementor/views/lib/select2/css/select2.min.css',
+            _MODULE_DIR_.'iqitelementor/views/lib/eicons/css/elementor-icons.css',
+            _MODULE_DIR_.'iqitelementor/views/lib/color-picker/color-picker.min.css',
+            _MODULE_DIR_.'iqitelementor/views/css/editor.min.css'
+        ));
+
+        $this->addJS(array(
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/core.min.js?ver=1.11.4',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/widget.min.js?ver=1.11.4',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/mouse.min.js?ver=1.11.4',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/sortable.min.js?ver=1.11.4',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/resizable.min.js?ver=1.11.4',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/position.min.js?ver=1.11.4"',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/draggable.min.js?ver=1.11.4',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery/ui/slider.min.js?ver=1.11.4',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery/jquery.ui.touch-punch.js?ver=0.2.2',
+            _MODULE_DIR_.'iqitelementor/views/lib/color-picker/iris.min.js?ver=1.0.7',
+            _MODULE_DIR_.'iqitelementor/views/lib/color-picker/color-picker.min.js?ver=4.6.1',
+            _MODULE_DIR_.'iqitelementor/views/lib/color-picker/wp-color-picker-alpha.js?ver=1.1',
+            _MODULE_DIR_.'iqitelementor/views/lib/waypoints/waypoints-for-editor.js?ver=2.0.2',
+            _MODULE_DIR_.'iqitelementor/views/lib/imagesloaded/imagesloaded.min.js?ver=4.1.0',
+            _MODULE_DIR_.'iqitelementor/views/lib/lazyload/lazyload.transpiled.min.js',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery-numerator/jquery-numerator.min.js?ver=0.2.0',
+            _MODULE_DIR_.'iqitelementor/views/lib/swiper/swiper-bundle.min.js',
+            _MODULE_DIR_.'iqitelementor/views/lib/underscore/underscore-min.js',
+            _MODULE_DIR_.'iqitelementor/views/lib/instagram-lite-master/instagramLite.min.js',
+            _MODULE_DIR_.'iqitelementor/views/lib/backbone/backbone-min.js',
+            _MODULE_DIR_.'iqitelementor/views/lib/backbone/backbone.marionette.js?ver=2.4.5',
+            _MODULE_DIR_.'iqitelementor/views/lib/backbone/backbone.radio.min.js?ver=1.0.4',
+            _MODULE_DIR_.'iqitelementor/views/lib/perfect-scrollbar/perfect-scrollbar.jquery.min.js?ver=0.6.12',
+            _MODULE_DIR_.'iqitelementor/views/lib/jquery-easing/jquery-easing.min.js?ver=1.3.2',
+            _MODULE_DIR_.'iqitelementor/views/lib/nprogress/nprogress.js?ver=0.2.0',
+            _MODULE_DIR_.'iqitelementor/views/lib/tipsy/tipsy.min.js?ver=1.0.0',
+            _MODULE_DIR_.'iqitelementor/views/lib/ps-helper/ps-helper.js',
+            _MODULE_DIR_.'iqitelementor/views/lib/dialog/dialog.js?ver=3.0.0',
+            _MODULE_DIR_.'iqitelementor/views/lib/select2/js/select2.min.js?ver=4.0.2',
+            _MODULE_DIR_.'iqitelementor/views/js/frontend.js?ver=0.9.3',
+            _MODULE_DIR_.'iqitelementor/views/js/editor.js?ver=0.9.3',
+        ));
+
+
+
+        $base_url = Tools::getHttpHost(true);  // DON'T TOUCH (base url (only domain) of site (without final /)).
+        $base_url = Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE') ? $base_url : str_replace('https', 'http', $base_url);
+
+        Media::addJsDef(
+            array('elementorFrontendConfig' => [
+                'isEditMode' => 1,
+                'stretchedSectionContainer' =>'',
+                'is_rtl' => (bool) $this->context->language->is_rtl,
+                'instagramToken' => Configuration::get('iqit_elementor_inst_token'),
+                'ajax_csfr_token_url' => $this->context->link->getModuleLink($this->module->name, 'Actions', ['process' => 'handleCsfrToken', 'ajax' => 1], true),
+                'iqitBaseUrl' => Tools::safeOutput($base_url)
+        ]));
+
+        Hook::exec('actionAdminControllerSetMedia');
+
+    }
+
+    public function display()
+    {
+       
     }
 
     public function ajaxProcessRenderWidget()
@@ -358,6 +378,16 @@ class IqitElementorEditorController  extends ModuleAdminController
                 $blogPost->content[$idLang] = $data;
                 $blogPost->update();
                 break;
+            case 'ybcblog':
+                $blogPost = new Ybc_blog_post_class($pageId);
+                $blogPost->description[$idLang] = $data;
+                $blogPost->update();
+
+                $this->module->clearYbcBlogCache($pageId);
+                $blog = Module::getInstanceByName('ybc_blog');
+                $blog->_clearCache('single_post.tpl');
+              
+                break;        
             case 'category':
                 $id = IqitElementorCategory::getIdByCategory($pageId);
                 if ($id){
@@ -469,6 +499,16 @@ class IqitElementorEditorController  extends ModuleAdminController
                 $strippedCms = str_replace(array("\r", "\n"), '', $strippedCms);
                 $content = json_decode($strippedCms, true);
 
+                if (json_last_error() == JSON_ERROR_NONE){
+                    $data = $content;
+                }
+                break;
+            case 'ybcblog':
+                $source = new Ybc_blog_post_class($pageId, $idLang);
+                $strippedCms = preg_replace('/^<p[^>]*>(.*)<\/p[^>]*>/is', '$1', $source->description);
+                $strippedCms = str_replace(array("\r", "\n"), '', $strippedCms);
+                $content = json_decode($strippedCms, true);
+    
                 if (json_last_error() == JSON_ERROR_NONE){
                     $data = $content;
                 }
@@ -624,7 +664,7 @@ class IqitElementorEditorController  extends ModuleAdminController
         $return = array(
             'error' => true,
             'data' => array(
-                'message' => $this->l('Problem with file')
+                'message' => $this->module->getTranslator()->trans('Problem with file', [], 'Modules.Iqitelementor.Admin')
             )
         );
 
@@ -748,6 +788,119 @@ class IqitElementorEditorController  extends ModuleAdminController
             }
             $results = array_values($results);
             die(json_encode($results));
+        } else {
+            die(json_encode(new stdClass));
+        }
+    }
+
+    public function ajaxProcessGetPosts()
+    {
+        header('Content-Type: application/json');
+        
+        $post_ids =  Tools::getValue('ids');
+
+
+  
+        if (!$post_ids) {
+            $return = array(
+                'success' => true,
+                'data' => '',
+            );
+             die(json_encode($return));
+        }
+        $context = Context::getContext();
+        $post_ids_array = explode(',', $post_ids);
+
+
+     
+        $posts = SimpleBlogPost::getPosts($context->language->id, 30, null, null, true, 'IN-LIST', false, null, false, false, null, 'IN', $post_ids_array);
+ 
+
+        $results = array();
+        foreach ($posts as $item) {
+            $product = array(
+                'id' => (int)($item['id_simpleblog_post']),
+                'name' => $item['title'],
+                'ref' => '',
+                'image' =>  (isset($item['banner_thumb'])) ? $item['banner_thumb'] : '',
+            );
+            array_push($results, $product);
+        }
+        $results = array_values($results);
+
+
+        
+        $return = array(
+            'success' => true,
+            'data' => $results,
+        );
+
+        die(json_encode($return));
+    }
+
+    public function ajaxProcessSearchPosts()
+    {
+        $query = Tools::getValue('q', false);
+        if (!$query or $query == '' or Tools::strlen($query) < 1) {
+            die();
+        }
+        if ($pos = strpos($query, ' (ref:')) {
+            $query = Tools::substr($query, 0, $pos);
+        }
+        $excludeIds = Tools::getValue('excludeIds', false);
+        if ($excludeIds && $excludeIds != 'NaN') {
+            $excludeIds = implode(',', array_map('intval', explode(',', $excludeIds)));
+        } else {
+            $excludeIds = '';
+        }
+
+        $context = Context::getContext();
+        $sql_param_search = Search::getSearchParamFromWord($query);
+        $result[]= Db::getInstance()->executeS('
+                  SELECT p.id_simpleblog_post
+                    FROM `'._DB_PREFIX_.'simpleblog_post` p
+                    LEFT JOIN `'._DB_PREFIX_.'simpleblog_post_lang` pl
+                    ON p.`id_simpleblog_post` = pl.`id_simpleblog_post`
+                    LEFT JOIN `'._DB_PREFIX_.'simpleblog_post_shop` ps
+                    ON p.`id_simpleblog_post` = ps.`id_simpleblog_post`
+                    LEFT OUTER JOIN `'._DB_PREFIX_.'simpleblog_post_tag` pt
+                    ON p.`id_simpleblog_post` = pt.`id_simpleblog_post`
+                    LEFT OUTER JOIN `'._DB_PREFIX_.'simpleblog_tag` t
+                    ON pt.`id_simpleblog_tag` = t.`id_simpleblog_tag`
+                    AND t.`id_lang` = '.  (int)$context->language->id .'
+                    WHERE (pl.`title` LIKE \'%'.$sql_param_search.'\'
+                    OR t.`name` LIKE \'%'.$sql_param_search.'\')
+                    AND `active` = 1
+                    AND pl.`id_lang` = '. (int)$context->language->id.'
+                    AND ps.`id_shop` = '. (int)$context->shop->id .'
+                    GROUP BY p.`id_simpleblog_post`
+                    ORDER BY p.`date_add` DESC
+                ');
+
+        foreach ($result as $select){
+            foreach ($select as $post){
+                $posts[$post['id_simpleblog_post']] = $post['id_simpleblog_post'];
+            }
+        }
+   
+        if (!empty($posts)){
+            $posts = SimpleBlogPost::getPosts($context->language->id, 10, null, null, true, 'sbp.date_add', 'DESC', null, false, false, null, 'IN', $posts);
+
+
+            $results = array();
+            foreach ($posts as $item) {
+                $product = array(
+                    'id' => (int)($item['id_simpleblog_post']),
+                    'name' => $item['title'],
+                    'ref' => '',
+                    'image' =>  (isset($item['banner_thumb'])) ? $item['banner_thumb'] : '',
+                );
+                array_push($results, $product);
+            }
+            $results = array_values($results);
+
+            die(json_encode($results));
+
         } else {
             die(json_encode(new stdClass));
         }

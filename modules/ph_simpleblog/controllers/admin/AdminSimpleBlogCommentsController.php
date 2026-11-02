@@ -28,11 +28,11 @@ class AdminSimpleBlogCommentsController extends ModuleAdminController
 
         $this->bulk_actions = [
             'delete' => [
-                'text' => $this->l('Delete selected'),
-                'confirm' => $this->l('Delete selected items?'),
+                'text' => $this->module->getTranslator()->trans('Delete selected', [], 'Modules.Phsimpleblog.Admin'),
+                'confirm' => $this->module->getTranslator()->trans('Delete selected items?', [], 'Modules.Phsimpleblog.Admin'),
             ],
-            'enableSelection' => ['text' => $this->l('Enable selection')],
-            'disableSelection' => ['text' => $this->l('Disable selection')],
+            'enableSelection' => ['text' => $this->module->getTranslator()->trans('Enable selection', [], 'Modules.Phsimpleblog.Admin')],
+            'disableSelection' => ['text' => $this->module->getTranslator()->trans('Disable selection', [], 'Modules.Phsimpleblog.Admin')],
         ];
 
         $this->_select = 'sbpl.title AS `post_title`';
@@ -41,33 +41,33 @@ class AdminSimpleBlogCommentsController extends ModuleAdminController
 
         $this->fields_list = [
             'id_simpleblog_comment' => [
-                'title' => $this->l('ID'),
+                'title' => $this->module->getTranslator()->trans('ID', [], 'Modules.Phsimpleblog.Admin'),
                 'type' => 'int',
                 'align' => 'center',
                 'width' => 25,
             ],
             'id_simpleblog_post' => [
-                'title' => $this->l('Post ID'),
+                'title' => $this->module->getTranslator()->trans('Post ID', [], 'Modules.Phsimpleblog.Admin'),
                 'type' => 'int',
                 'align' => 'center',
                 'width' => 25,
             ],
             'post_title' => [
-                'title' => $this->l('Comment for'),
+                'title' => $this->module->getTranslator()->trans('Comment for', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 'auto',
             ],
             'name' => [
-                'title' => $this->l('Name'),
+                'title' => $this->module->getTranslator()->trans('Name', [], 'Modules.Phsimpleblog.Admin'),
             ],
             'email' => [
-                'title' => $this->l('E-mail'),
+                'title' => $this->module->getTranslator()->trans('E-mail', [], 'Modules.Phsimpleblog.Admin'),
             ],
             'comment' => [
-                'title' => $this->l('Comment'),
+                'title' => $this->module->getTranslator()->trans('Comment', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 'auto',
             ],
             'active' => [
-                'title' => $this->l('Status'),
+                'title' => $this->module->getTranslator()->trans('Status', [], 'Modules.Phsimpleblog.Admin'),
                 'width' => 70,
                 'active' => 'status',
                 'align' => 'center',
@@ -83,7 +83,7 @@ class AdminSimpleBlogCommentsController extends ModuleAdminController
 
         $this->fields_form[0]['form'] = [
             'legend' => [
-                'title' => $this->l('Comment'),
+                'title' => $this->module->getTranslator()->trans('Comment', [], 'Modules.Phsimpleblog.Admin'),
             ],
             'input' => [
                 [
@@ -93,37 +93,37 @@ class AdminSimpleBlogCommentsController extends ModuleAdminController
                 [
                     'type' => 'hidden',
                     'name' => 'id_customer',
-                    'label' => $this->l('Customer'),
+                    'label' => $this->module->getTranslator()->trans('Customer', [], 'Modules.Phsimpleblog.Admin'),
                 ],
                 [
                     'type' => 'text',
                     'name' => 'id_simpleblog_post',
-                    'label' => $this->l('Post ID'),
+                    'label' => $this->module->getTranslator()->trans('Post ID', [], 'Modules.Phsimpleblog.Admin'),
                 ],
                 [
                     'type' => 'text',
                     'name' => 'name',
-                    'label' => $this->l('Name'),
+                    'label' => $this->module->getTranslator()->trans('Name', [], 'Modules.Phsimpleblog.Admin'),
                     'required' => false,
                     'lang' => false,
                 ],
                 [
                     'type' => 'text',
                     'name' => 'email',
-                    'label' => $this->l('E-mail'),
+                    'label' => $this->module->getTranslator()->trans('E-mail', [], 'Modules.Phsimpleblog.Admin'),
                     'required' => false,
                     'lang' => false,
                 ],
                 [
                     'type' => 'text',
                     'name' => 'ip',
-                    'label' => $this->l('IP Address'),
+                    'label' => $this->module->getTranslator()->trans('IP Address', [], 'Modules.Phsimpleblog.Admin'),
                     'required' => false,
                     'lang' => false,
                 ],
                 [
                     'type' => 'textarea',
-                    'label' => $this->l('Comment'),
+                    'label' => $this->module->getTranslator()->trans('Comment', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'comment',
                     'cols' => 75,
                     'rows' => 7,
@@ -132,7 +132,7 @@ class AdminSimpleBlogCommentsController extends ModuleAdminController
                 ],
                 [
                     'type' => 'switch',
-                    'label' => $this->l('Displayed'),
+                    'label' => $this->module->getTranslator()->trans('Displayed', [], 'Modules.Phsimpleblog.Admin'),
                     'name' => 'active',
                     'required' => false,
                     'is_bool' => true,
@@ -140,18 +140,18 @@ class AdminSimpleBlogCommentsController extends ModuleAdminController
                         [
                             'id' => 'active_on',
                             'value' => 1,
-                            'label' => $this->l('Enabled'),
+                            'label' => $this->module->getTranslator()->trans('Enabled', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                         [
                             'id' => 'active_off',
                             'value' => 0,
-                            'label' => $this->l('Disabled'),
+                            'label' => $this->module->getTranslator()->trans('Disabled', [], 'Modules.Phsimpleblog.Admin'),
                         ],
                     ],
                 ],
             ],
             'submit' => [
-                'title' => $this->l('Save'),
+                'title' => $this->module->getTranslator()->trans('Save', [], 'Modules.Phsimpleblog.Admin'),
                 'name' => 'savePostComment',
             ],
         ];

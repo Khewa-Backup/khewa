@@ -14,6 +14,13 @@ class PluginElementor {
 	 */
     private static $_instance = null;
 
+    public $controls_manager;
+    public $schemes_manager;
+    public $elements_manager;
+    public $widgets_manager;
+    public $editor;
+    public $frontend;
+
 	/**
 	 * @return string
 	 */
@@ -79,6 +86,8 @@ class PluginElementor {
         include_once( ELEMENTOR_PATH . 'includes/frontend.php' );
         include_once( ELEMENTOR_PATH . 'includes/responsive.php' );
         include_once( ELEMENTOR_PATH . 'includes/stylesheet.php' );
+
+ 
 
 	}
 

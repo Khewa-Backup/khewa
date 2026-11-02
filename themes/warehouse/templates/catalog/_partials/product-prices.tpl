@@ -25,35 +25,46 @@
 
 
 
-    <div class="product-prices js-product-prices">
+<div class="product-prices js-product-prices">
+
+    {* Khewa: product reference moved to product.tpl, below the brand *}
 
 
-
-
-        {if $product.show_price}
-
+    {if $product.show_price}
         {if !$configuration.is_catalog}
-{*            {block name='product_availability'}*}
+            {block name='product_availability'}
+                {* Khewa: stock badge hidden on the product page *}
 {*                {if $product.show_availability && $product.availability_message}*}
 {*                    <span id="product-availability"*}
-{*                          class="js-product-availability badge {if $product.availability == 'available'} {if $product.quantity <= 0  && !$product.allow_oosp} badge-danger product-unavailable  {elseif $product.quantity <= 0  && $product.allow_oosp}badge-warning product-unavailable-allow-oosp {else}badge-success product-available{/if}{elseif $product.availability == 'last_remaining_items'}badge-warning product-last-items{else}badge-danger product-unavailable{/if}">*}
-{*                  {if $product.availability == 'available'}*}
-{*                      <i class="fa fa-check rtl-no-flip" aria-hidden="true"></i>*}
-{*                                                     {$product.availability_message}*}
-{*                  {elseif $product.availability == 'last_remaining_items'}*}
-{*                      <i class="fa fa-exclamation" aria-hidden="true"></i>*}
-{*                                                     {$product.availability_message}*}
-{*                  {else}*}
-{*                      <i class="fa fa-ban" aria-hidden="true"></i>*}
-{*                              {$product.availability_message}*}
-{*                      {if isset($product.available_date) && $product.available_date != '0000-00-00'}*}
-{*                      {if $product.available_date|strtotime > $smarty.now}<span*}
-{*                              class="available-date"> - {l s='Availability date:' d='Shop.Theme.Catalog'} {$product.available_date}</span>{/if}*}
-{*                  {/if}*}
-{*                  {/if}*}
-{*                </span>*}
+{*                        class="js-product-availability badge *}
+{*                        {if $product.availability == 'in_stock'}*}
+{*                        {if $product.quantity <= 0  && !$product.allow_oosp} badge-danger product-unavailable  *}
+{*                            {elseif $product.quantity <= 0  && $product.allow_oosp}badge-warning product-unavailable-allow-oosp *}
+{*                            {else}badge-success product-available*}
+{*                            {/if} *}
+{*                        {elseif $product.availability == 'available' || $product.availability == 'last_remaining_items'}*}
+{*                            badge-warning product-last-items*}
+{*                            {else}*}
+{*                            badge-danger product-unavailable*}
+{*                        {/if}">*}
+{*                        {if $product.availability == 'in_stock'}*}
+                  
+{*                            {$product.availability_message}*}
+{*                        {elseif $product.availability == 'available' || $product.availability == 'last_remaining_items'}*}
+               
+{*                            {$product.availability_message}*}
+{*                        {else}*}
+                     
+{*                            {$product.availability_message}*}
+{*                            {if isset($product.available_date) && $product.available_date != '0000-00-00'}*}
+
+{*                                {if $product.available_date|date_format:"%y%m%d" > $smarty.now|date_format:"%y%m%d"}<span*}
+{*                                    class="available-date"> - {l s='Availability date:' d='  '} {$product.available_date}</span>{/if}*}
+{*                            {/if}*}
+{*                        {/if}*}
+{*                    </span>*}
 {*                {/if}*}
-{*            {/block}*}
+            {/block}
         {/if}
 
 
@@ -61,8 +72,9 @@
             <div class="{if $product.has_discount}has-discount{/if}">
 
                 <div>
-                    <span class="current-price"><span class="product-price current-price-value" content="{$product.rounded_display_price}">
-                          {capture name='custom_price'}{hook h='displayProductPriceBlock' product=$product type='custom_price' hook_origin='product_sheet'}{/capture}
+                    <span class="current-price"><span class="product-price current-price-value"
+                            content="{$product.rounded_display_price}">
+                            {capture name='custom_price'}{hook h='displayProductPriceBlock' product=$product type='custom_price' hook_origin='product_sheet'}{/capture}
                             {if '' !== $smarty.capture.custom_price}
                                 {$smarty.capture.custom_price nofilter}
                             {else}
@@ -73,22 +85,24 @@
                         <span class="product-discount">
                             {hook h='displayProductPriceBlock' product=$product type="old_price"}
                             <span class="regular-price">{$product.regular_price}</span>
-                         </span>
+                        </span>
 
                         {if $product.discount_type === 'percentage'}
-                            <span class="badge badge-discount discount discount-percentage">-{$product.discount_percentage_absolute}</span>
+                            <span
+                                class="badge badge-discount discount discount-percentage">-{$product.discount_percentage_absolute}</span>
                         {else}
                             <span class="badge badge-discount discount discount-amount">-{$product.discount_to_display}</span>
                         {/if}
 
-                        {if isset($product.specific_prices.to) && $product.specific_prices.to != '0000-00-00 00:00:00'}<meta itemprop="priceValidUntil" content="{$product.specific_prices.to}"/>{/if}
+                        {if isset($product.specific_prices.to) && $product.specific_prices.to != '0000-00-00 00:00:00'}
+                        <meta itemprop="priceValidUntil" content="{$product.specific_prices.to}" />{/if}
 
                     {/if}
                 </div>
 
                 {block name='product_unit_price'}
                     {if $displayUnitPrice}
-                        <p class="product-unit-price text-muted">{l s='(%unit_price%)' d='Shop.Theme.Catalog' sprintf=['%unit_price%' => $product.unit_price_full]}</p>
+                        <p class="product-unit-price text-muted">{$product.unit_price_full}</p>
                     {/if}
                 {/block}
             </div>
@@ -96,7 +110,8 @@
 
         {block name='product_without_taxes'}
             {if $priceDisplay == 2}
-                <p class="product-without-taxes text-muted">{l s='%price% tax excl.' d='Shop.Theme.Catalog' sprintf=['%price%' => $product.price_tax_exc]}</p>
+                <p class="product-without-taxes text-muted">
+                    {l s='%price% tax excl.' d='Shop.Theme.Catalog' sprintf=['%price%' => $product.price_tax_exc]}</p>
             {/if}
         {/block}
 
@@ -109,8 +124,9 @@
         {/block}
 
         {block name='product_ecotax'}
-            {if $product.ecotax.amount > 0}
-                <p class="price-ecotax text-muted">{l s='Including %amount% for ecotax' d='Shop.Theme.Catalog' sprintf=['%amount%' => $product.ecotax.value]}
+            {if !$product.is_virtual && $product.ecotax.amount > 0}
+                <p class="price-ecotax text-muted">
+                    {l s='Including %amount% for ecotax' d='Shop.Theme.Catalog' sprintf=['%amount%' => $product.ecotax.value]}
                     {if $product.has_discount}
                         {l s='(not impacted by the discount)' d='Shop.Theme.Catalog'}
                     {/if}
@@ -120,36 +136,30 @@
 
         {hook h='displayProductPriceBlock' product=$product type="weight" hook_origin='product_sheet'}
 
-            <div class="tax-shipping-delivery-label">
-                {if !$configuration.taxes_enabled}
-                    {l s='No tax' d='Shop.Theme.Catalog'}
-                {elseif $configuration.display_taxes_label}
-                    {$product.labels.tax_long}
-                {/if}
-                {hook h='displayProductPriceBlock' product=$product type="price"}
-                {hook h='displayProductPriceBlock' product=$product type="after_price"}
-                {if $product.is_virtual	== 0}
-                    {if $product.additional_delivery_times == 1}
-                        {if $product.delivery_information}
-                            <span class="delivery-information">{$product.delivery_information}</span>
-                        {/if}
-                    {elseif $product.additional_delivery_times == 2}
-                        {if $product.quantity > 0}
-                            <span class="delivery-information">{$product.delivery_in_stock}</span>
-                            {* Out of stock message should not be displayed if customer can't order the product. *}
-                        {elseif $product.quantity <= 0 && $product.add_to_cart_url}
-                            <span class="delivery-information">{$product.delivery_out_stock}</span>
-                        {/if}
+        <div class="tax-shipping-delivery-label">
+            {if !$configuration.taxes_enabled}
+                {l s='No tax' d='Shop.Theme.Catalog'}
+            {elseif $configuration.display_taxes_label}
+                {$product.labels.tax_long}
+            {/if}
+            {hook h='displayProductPriceBlock' product=$product type="price"}
+            {hook h='displayProductPriceBlock' product=$product type="after_price"}
+            {if $product.is_virtual	== 0}
+                {if $product.additional_delivery_times == 1}
+                    {if $product.delivery_information}
+                        <span class="delivery-information">{$product.delivery_information}</span>
+                    {/if}
+                {elseif $product.additional_delivery_times == 2}
+                    {if $product.quantity >= $product.quantity_wanted}
+                        <span class="delivery-information">{$product.delivery_in_stock}</span>
+                        {* Out of stock message should not be displayed if customer can't order the product. *}
+                    {elseif $product.add_to_cart_url}
+                        <span class="delivery-information">{$product.delivery_out_stock}</span>
                     {/if}
                 {/if}
-            </div>
+            {/if}
+        </div>
 
         {hook h='displayCountDown'}
-        {/if}
-    </div>
-
-
-
-
-
-
+    {/if}
+</div>

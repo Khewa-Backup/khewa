@@ -46,16 +46,21 @@
     "name": "{$product.name}",
     "description": "{$page.meta.description|regex_replace:"/[\r\n]/" : " "}",
     "category": "{$product.category_name}",
-    {if !empty($product.cover)}"image" :"{$product.cover.bySize.home_default.url}",{/if}
+    {if !empty($product.cover)}"image" :"{$product.cover.bySize.large_default.url}",{else}"image" :" {$urls.no_picture_image.bySize.large_default.url}",{/if}
     "sku": "{if $product.reference}{$product.reference}{else}{$product.id}{/if}",
     "mpn": "{if $product.mpn}{$product.mpn}{elseif $product.reference}{$product.reference}{else}{$product.id}{/if}"
     {if $product.ean13},"gtin13": "{$product.ean13}"
     {else if $product.upc},"gtin13": "{$product.upc}"
     {/if}
-    {if $product_manufacturer->name OR $shop.name},
+    {if isset($product_manufacturer) && $product_manufacturer->name},
     "brand": {
       "@type": "Brand",
-      "name": "{if $product_manufacturer->name}{$product_manufacturer->name|escape:'html':'UTF-8'}{else}{$shop.name}{/if}"
+      "name": "{$product_manufacturer->name|escape:'html':'UTF-8'}"
+    }
+    {elseif $shop.name},
+    "brand": {
+      "@type": "Organization",
+      "name": "{$shop.name}"
     }
     {/if}
     {if $hasAggregateRating},

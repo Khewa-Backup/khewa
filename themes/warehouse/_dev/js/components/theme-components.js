@@ -26,6 +26,7 @@
 import $ from 'jquery';
 import debounce from 'throttle-debounce/debounce';
 
+
 export default class ThemeCompontents {
   init() {
     this.backToTop();
@@ -115,23 +116,16 @@ export default class ThemeCompontents {
     }
   }
 
-  productCarousels() {
-    const $carousels = $('.swiper-default-carousel');
-    let autoplay;
+   productCarousels() {
 
-    if (iqitTheme.pl_crsl_autoplay) {
-      autoplay = {
-        delay: 4500,
-        disableOnInteraction: true,
-      };
-    }
+    const carousels = document.querySelectorAll('.swiper-default-carousel');
+  
 
     const defaultOptions = {
       pagination: {
         el: '.swiper-pagination-product',
         clickable: true,
       },
-      autoplay,
       loop: false,
       speed: 600,
       lazy: {
@@ -162,26 +156,36 @@ export default class ThemeCompontents {
         },
       },
     };
+  
 
-    $carousels.each(function () {
-      const $carousel = $(this);
-      const swiperOptions = $.extend({}, defaultOptions, $carousel.data('swiper_options'));
-      const mySwiper = new Swiper($carousel[0], swiperOptions);
+    if (iqitTheme.pl_crsl_autoplay) {
+      defaultOptions.autoplay = {
+        delay: 4500,
+        disableOnInteraction: true,
+      };
+    }
+  
+
+    carousels.forEach(function(carousel) {
+      let customOptions = {};
+      const dataOptions = carousel.getAttribute('data-swiper_options');
+      if (dataOptions) {
+        try {
+          customOptions = JSON.parse(dataOptions);
+        } catch (err) {
+          console.error('data swiper parse error', carousel, err);
+        }
+      }
+  
+
+      const swiperOptions = Object.assign({}, defaultOptions, customOptions);
+  
+
+      new Swiper(carousel, swiperOptions);
     });
   }
 
   otherCarousels() {
-    const mySwiper = new Swiper('.js-iqithtmlandbanners-block-banner-slider', {
-      loop: true,
-      watchOverflow: true,
-      autoplay: {
-        delay: 5000,
-        disableOnInteraction: true,
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
-    });
+
   }
 }

@@ -50,6 +50,7 @@ Every change in a vendor module's code is marked in the code with a comment star
 | paypal (202 ecommerce) | 6.7.1 (newest) | 1) **PayPal is not shown at checkout on the live site either.** Its files are 6.7.1, but on the live server its upgrade never ran (the live database said 5.4.2). 6.x needs the account secret encrypted, and the live secret was still the old plain 5.x value. 2) Five old 5.x admin pages (2021 files) no longer work: Setup, Customize checkout, Help, Installment, Get credentials. | 1) The upgrade ran during the 9.2 update. The secret was encrypted the same way PayPal 6.x saves it (`ToolKit::encrypt`). **PayPal now shows at checkout.** 2) Their menu entries are hidden; PayPal 6.x uses Modules › PayPal › Configure instead. One harmless line fix in one of those old files (`jsonEncode` → `json_encode`). | Checkout shows "Pay with Paypal", settings and logs pages |
 | thegiftcard (Keyrnel) | 1.18.1 → **1.18.3** | Choosing a gift card amount failed: 9.2 rejects the gift card variants' ISBN values (see "Catalog ISBN problem" below) | Updated from `module files/v1.18.3-thegiftcard.zip`. Cleared ISBN on the gift card product (4523) and its 23 variants only; old values saved in table `zz_giftcard_isbn_backup`. | Gift card page, picking $20 and $50, preview PDF, add to cart |
 | amazzingfilter (Amazzing Filter, the product filter on category pages) | 3.2.6 (no newer version) | Admin › Catalog › Products crashed (`setMedia()` called on the new product page). Also: `Tools::encrypt` and `Tools::link_rewrite` removed (cron link, product links), `addColorsToProductList` removed (filter updates on the shop page would crash), the autoloader class moved (settings page, Overrides tab would crash), the attribute class is now `ProductAttribute` (its cache was not cleared when attributes change). The old product-page script does not work on the new product page. | Fixed in its code (7 files). The cron link keeps its old secret, so it still works. When a product's combinations are added, changed or removed on the new product page, the product is now re-indexed on the server at the end of that save. PHP 8.2+ warnings about added properties are switched off for its own classes. Module is on again. | Category pages (EN and FR): picking categories and colours, price slider, pages, sorting, links with filters, reload. Best sales page filter, search, home, product page, add to cart. Admin: settings page (all 15 tabs), edit and save a template, save settings, clear cache, re-index all products in all 3 shops, Catalog › Products list and product edit page, Catalog › Categories. Re-index after a product save and after a combination change (run directly) |
+| Warehouse theme + its modules (iqit, ThemeForest) | 4.5.5 → **4.8.2** (the PrestaShop 9 version) | Elementor, mega menu, links, extended product, Revolution slider and the blog crashed (`Tools::encrypt`, `Tools::jsonDecode`, `Hook::getRetroHookName`, `_PS_PROD_IMG_DIR_` removed). Theme editor admin page crashed (`l()` removed). | Followed the vendor path 4.5.5 → 4.7.2 → 4.8.2 from `module files/themeforest-…zip` and `theme_4_8_2.zip`: new theme files, new module files copied over the old ones (their translations, uploads and generated CSS kept), each module's own upgrade steps run. Revolution slider 5.4.7.6 → 6.2.22.5 (folder replaced, `uploads/` kept). Khewa's own theme changes put back (list below). Small fix in 4 admin files: `$this->l(` → `$this->module->l(` (marked `Khewa PS 9.2`). Theme editor CSS made again from the saved settings (same as pressing Save). All 7 modules switched back on. New 4.8.2 modules (iqitproductflags, iqitproductvariants, iqitcustomwidget) are copied but not installed. | Home (EN, FR, and shops 2 and 3), menu, footer links, mobile 375px home + menu, category page with the filter (colour filter: 176 → 3), product page, add to cart, cart, checkout step 1 (guest and logged in), search box suggestions + results, blog list, customer login, account, credit slip codes page. Admin: Theme editor, Elementor pages, Content on hooks, Mega menu, Links manager, Revolution slider, Blog posts/categories/settings, product edit › Modules › extended product. No new PHP errors. |
 
 Database changes in this section (not in git):
 - Canada Post carriers 377, 378, 383, 384, 430 switched back on.
@@ -57,6 +58,32 @@ Database changes in this section (not in git):
 - PayPal: `PAYPAL_EC_SECRET_LIVE` encrypted. Menu entries `AdminPayPalSetup`, `AdminPayPalCustomizeCheckout` and `AdminPayPalHelp` hidden (`active = 0`).
 - Gift card product 4523: ISBN cleared.
 - amazzingfilter switched back on (rows moved back from `zz_module_shop_off` to `ps_module_shop`, `active = 1`). Its product index (`ps_af_index`) was rebuilt from its settings page.
+- Warehouse theme update: module versions in `ps_module` raised by each module's upgrade steps (iqitthemeeditor 4.8.2, iqitelementor 1.2.4, iqitmegamenu 4.2.0, iqitextendedproduct 1.2.0, iqitadditionaltabs 1.3.0, iqitcompare 1.1.3, iqitcookielaw 1.0.2, iqitcrossselling 1.1.0, iqitfreedeliverycount 1.4.2, iqitpopup 1.1.2, iqitreviews 1.0.5, iqitwishlist 1.1.3, revsliderprestashop 6.2.22.5). These steps also moved hooks from `Header` to `displayHeader`, added a few hooks and admin tabs, and added new settings (theme editor mobile menu `iqitthemeed_mm_*`, `sm_tiktok`, `IQITCROSSSELLING_NBR` = 10, `IQITCROSSSELLING_HIDE_OOSP` = 0, `iqitextendedproduct_hook` = modal, `iqit_elementor_inst_token` emptied). Revolution slider: `ps_revslider_options` columns renamed, old tabs removed, table `ps_revslider_backup_slides` added (there are no sliders).
+- New mobile menu text colours (`iqitthemeed_mm_main_tab_color`, `_arrow_icon_color`, `_accordion_tab2_color`, `_submenu_title_color`, `_submenu_text_color`) set to `#dcd3e0`, Khewa's old menu text colour, so the text shows on Khewa's black menu.
+- iqitelementor, iqitmegamenu, iqitlinksmanager, iqitextendedproduct, revsliderprestashop, ph_simpleblog, ph_relatedposts switched back on (rows moved back from `zz_module_shop_off`, `active = 1`).
+
+
+### Khewa's own Warehouse theme changes, put back on 4.8.2
+
+Found by comparing the old theme and modules with the stock 4.5.5 files. Each one is marked `Khewa` in the code. **A new Warehouse version from the vendor will remove them again.**
+
+- "Vouchers" is called "Credit slip codes" (account menu, account page, page title).
+- Cart, side cart and checkout: a shipping line with no price in it (like "Free") shows no value.
+- Newsletter block: "Subscribe to Newsletter" title added; GDPR box under it hidden.
+- GDPR: the consent box is not shown, consent is sent as a hidden field; label tag left open as before.
+- Product lists and product page: stock badge hidden.
+- Product page: brand and reference moved below the add-to-cart part; specific references table (ISBN, UPC…) hidden.
+- Contact block: map icon links to Khewa on Google Maps (module iqitcontactpage).
+- `custom.css`: newsletter button colour, social icons spacing.
+- `theme.css`: logo width 142px, menu tab max width, no arrow before footer links.
+- New for 4.8.2 (to keep the old look, in `custom.css`): newsletter and "Follow us" side by side in the footer; h4 titles keep the old size on wide screens.
+- Not carried: a commented-out block in the language selector and two whitespace edits (they changed nothing).
+
+Things seen while testing the Warehouse update, not changed:
+- Shops 2 (ENTREPOT) and 3 (Kisisam) show a blank page (even for an admin; normal visitors get the maintenance page). Cause: module `wpfooterslider` (not part of the theme) calls the removed `Tools::encrypt()`. With it off for a moment, both home pages showed fine with the 4.8.2 theme. Shop 2 also uses an old purple test colour file from the vendor (`iqitthemeeditor/views/css/custom_s_2.css`), same as before.
+- The home page "New Products" block is empty: the Elementor block shows module `newprodslider`, which is not switched on for any shop (same on the old live site).
+- Admin product edit page shows the word "Array" at the very top. It is not from the theme modules (still there with them off).
+- There are no blog posts and no Revolution sliders in the database, so related posts and sliders show nothing.
 
 ## What was NOT tested, on purpose
 
@@ -112,17 +139,10 @@ Each of these crashed a page on 9.2, so it's switched off. The files and the dat
 | rc_pgtagmanager (Google Tag Manager) | **Cart and checkout pages came out completely blank** | Constant `_PS_PRICE_COMPUTE_PRECISION_` was removed. The error was swallowed while the page rendered, so nothing showed in the logs. |
 | directlabelprintproduct | Every admin page | `addJquery()` was removed |
 | cronjobs | Every admin page | `Tools::encrypt()` was removed |
-| iqitextendedproduct | Admin dashboard | Constant `_PS_PROD_IMG_DIR_` was removed |
 | bulkactions | Admin › Catalog › Categories | `setMedia()` call on the admin controller no longer exists |
 | featuredproducts | Shop home page (now and then) | Random products with no price break the product presenter (`formatPrice(null)`) |
 | pm_crosssellingoncart | Shop home page | `prepareMultipleProductsForTemplate()` gets `false` instead of a list |
-| iqitelementor | Shop home page (Elementor layout) | `Hook::getRetroHookName()` was removed |
-| iqitmegamenu | Shop menu | `Tools::jsonDecode()` was removed |
-| iqitlinksmanager | Shop footer links | `Tools::encrypt()` was removed |
-| revsliderprestashop | Shop home page slider | `Tools::encrypt()` was removed |
 | an_wishlist | Shop home page | `addJquery()` was removed |
-| ph_simpleblog | Shop home page, Admin blog pages | `Tools::encrypt()` was removed |
-| ph_relatedposts | Shop product page | `Tools::encrypt()` was removed |
 | wkhelpdesk | Admin help desk pages | Admin controller method `l()` was removed |
 | wkinventory | Admin › Barcodes and Stocktake pages | `Translate::getAdminTranslation()` was removed |
 | bestkit_log | Admin log pages | Admin controller method `l()` was removed |
@@ -132,9 +152,9 @@ Each of these crashed a page on 9.2, so it's switched off. The files and the dat
 
 The same list, one name per line, is in `backups/modules-switched-off.txt`.
 
-**Switched back on, with one broken page:** `iqitthemeeditor` (Warehouse theme settings). Switching it off made **every category page blank**, because the theme's templates use its `add_url_param` modifier. So it stays on. Only its own Admin › Theme editor page fails (removed `l()`).
+`iqitthemeeditor` (Warehouse theme settings) stayed on the whole time: switching it off makes **every category page blank**, because the theme's templates use its `add_url_param` modifier. Its admin page works again since the Warehouse 4.8.2 update.
 
-With the other Warehouse theme modules off (Elementor, mega menu, links, slider), the shop works but looks plainer. All 47 shop pages I could reach from the home, category and product pages, plus the customer account pages, load fully.
+The Warehouse theme modules (Elementor, mega menu, links, slider, blog) are on again since the Warehouse 4.8.2 update.
 
 **To switch a module back on** (replace `NAME`):
 ```sql

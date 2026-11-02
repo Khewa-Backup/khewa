@@ -33,10 +33,13 @@
             <div class="product-category-name text-muted">{$product.category_name}</div>{/if}
     {/block}
 
+    {block name='product_iqit_flags'}
+        {hook h='displayProductCampagains' product=$product position='miniature' align='center'}
+    {/block}
+
+
     {block name='product_name'}
-        <h2 class="h3 product-title">
-            <a href="{$product.url}">{$product.name|truncate:90:'...'}</a>
-        </h2>
+    <a class="h3 product-title d-block" href="{$product.url}">{$product.name|truncate:90:'...'}</a>
     {/block}
 
     {block name='product_brand'}

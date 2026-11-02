@@ -32,7 +32,7 @@
             {if $depth===0}
               <a href="{$node.link}">{$node.name}</a>
               {if $node.children}
-                <span class="collapse-icons" data-toggle="collapse" data-target="#exCollapsingNavbar{$node.id}">
+                <span class="collapse-icons" data-bs-toggle="collapse" data-bs-target="#exCollapsingNavbar{$node.id}">
                   <i class="fa fa-angle-down add" aria-hidden="true"></i>
                   <i class="fa fa-angle-up remove" aria-hidden="true"></i>
                 </span>
@@ -43,7 +43,7 @@
             {else}
               <a class="category-sub-link" href="{$node.link}">{$node.name}</a>
               {if $node.children}
-                <span class="arrows collapse-icons" data-toggle="collapse" data-target="#exCollapsingNavbar{$node.id}">
+                <span class="arrows collapse-icons" data-bs-toggle="collapse" data-bs-target="#exCollapsingNavbar{$node.id}">
                    <i class="fa fa-angle-down add" aria-hidden="true"></i>
                    <i class="fa fa-angle-up remove" aria-hidden="true"></i>
                 </span>
@@ -59,9 +59,10 @@
   {/strip}
 {/function}
 
-{if $categories.children|count}
+
+{if !empty($categories.children)}
   <div class="block block-toggle block-categories block-links js-block-toggle">
-    <h5 class="block-title"><span><a href="{$categories.link nofilter}">{$categories.name}</a></span> </h5>
+    <p class="block-title h5"><span><a href="{$categories.link nofilter}">{$categories.name}</a></span> </p>
     <div class="category-top-menu block-content">
       {categories nodes=$categories.children}
     </div>

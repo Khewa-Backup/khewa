@@ -27,19 +27,6 @@
          data-refresh-url="{url entity='cart' params=['ajax' => true, 'action' => 'refresh']}">
         {if $cart.products}
             <ul class="cart-items">
-                <li class="cart-item-header hidden-sm-down">
-                    <div class="row small-gutters">
-                        <div class="col-6">{l s='Product' d='Shop.Theme.Checkout'}</div>
-                        <div class="col-6">
-                            <div class="row small-gutters">
-                                <div class="col">{l s='Price' d='Shop.Theme.Checkout'}</div>
-                                <div class="col">{l s='Qty' d='Shop.Theme.Checkout'}</div>
-                                <div class="col">{l s='Total' d='Shop.Theme.Checkout'}</div>
-                                <div class="col col-auto"><i class="fa fa-trash-o invisible" aria-hidden="true"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
                 {foreach from=$cart.products item=product}
                     <li class="cart-item">
                         {block name='cart_detailed_product_line'}

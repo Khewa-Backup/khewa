@@ -37,7 +37,7 @@ class IqitReviews extends Module implements WidgetInterface
     public function __construct()
     {
         $this->name = 'iqitreviews';
-        $this->version = '1.0.3';
+        $this->version = '1.0.5';
         $this->author = 'iqit-commerce.com';
         $this->tab = 'front_office_features';
         $this->bootstrap = true;
@@ -67,7 +67,7 @@ class IqitReviews extends Module implements WidgetInterface
     {
         return (parent::install()
             && $this->setDefaults()
-            && $this->registerHook('header')
+            && $this->registerHook('displayHeader')
             && $this->registerHook('actionObjectProductDeleteAfter')
             && $this->registerHook('displayProductExtraContent')
             && $this->registerHook('displayProductRating')
@@ -104,7 +104,7 @@ class IqitReviews extends Module implements WidgetInterface
         );
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         $this->context->controller->registerStylesheet('modules-' . $this->name . '-style', 'modules/' . $this->name . '/views/css/front.css', ['media' => 'all', 'priority' => 150]);
         $this->context->controller->registerJavascript('modules' . $this->name . '-script', 'modules/' . $this->name . '/views/js/front.js', ['position' => 'bottom', 'priority' => 150]);
@@ -113,6 +113,8 @@ class IqitReviews extends Module implements WidgetInterface
 
         ]));
     }
+
+
 
     public function renderWidget($hookName = null, array $configuration = [])
     {
@@ -176,6 +178,7 @@ class IqitReviews extends Module implements WidgetInterface
                 'isLogged' => $this->context->customer->isLogged(),
                 'allowGuests' => Configuration::get($this->cfgName . 'guest'),
                 'idProduct' => (int)$configuration['product']['id_product'],
+                'productName' => $configuration['product']['name'],
             );
         } elseif (preg_match('/^displayProductExtraContent\d*$/', $hookName) || preg_match('/^displayFooterProductd*$/', $hookName)) {
             $reviews = IqitProductReview::getByProduct((int)$configuration['product']->id);
@@ -188,6 +191,7 @@ class IqitReviews extends Module implements WidgetInterface
                 'isLogged' => $this->context->customer->isLogged(),
                 'allowGuests' => Configuration::get($this->cfgName . 'guest'),
                 'idProduct' => (int)$configuration['product']->id,
+                'productName' => $configuration['product']->name
             );
         } elseif (preg_match('/^displayProductRating\d*$/', $hookName) || preg_match('/^displayProductListReviews\d*$/', $hookName)) {
             $snippetData = IqitProductReview::getSnippetData((int)$configuration['product']['id_product']);

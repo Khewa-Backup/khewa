@@ -27,18 +27,13 @@
 
 {block name='content'}
   <section id="main">
-
     {block name='brand_header'}
       <h1 class="h1 page-title"><span>{l s='Brands' d='Shop.Theme.Catalog'}</span></h1>
     {/block}
-
       {if $iqitTheme.brands_layout == 1}
          {include file='catalog/_variants/brands-alphabetical.tpl'}
       {else}
          {include file='catalog/_variants/brands-grid.tpl'}
       {/if}
-
-
   </section>
-
 {/block}

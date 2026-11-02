@@ -15,13 +15,13 @@
 
 {block name='iqitcontactpage-info-block'}
     <div class="col col-md block block-toggle block-iqitcontactpage js-block-toggle">
-        <h5 class="block-title"><span>{l s='Contact us' mod='iqitcontactpage'}</span></h5>
+        <p class="block-title h5"><span>{l s='Contact us' mod='iqitcontactpage'}</span></p>
         <div class="block-content">
             {include 'module:iqitcontactpage/views/templates/hook/_partials/content.tpl'}
             {if $content}
                 <hr/>
                 <div class="part">
-                    {$content|nl2br nofilter}
+                    {$content nofilter}
                 </div>
             {/if}
         </div>

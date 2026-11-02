@@ -24,12 +24,8 @@
  *}
 {block name='product_miniature_item'}
     <div class="js-product-miniature-wrapper col-12">
-        <article
-                class="product-miniature product-miniature-default product-miniature-list js-product-miniature"
-                data-id-product="{$product.id_product}"
-                data-id-product-attribute="{$product.id_product_attribute}"
-
-        >
+        <article class="product-miniature product-miniature-default product-miniature-list js-product-miniature"
+            data-id-product="{$product.id_product}" data-id-product-attribute="{$product.id_product_attribute}">
             <div class="row medium-gutters product-miniature-list-row">
 
                 <div class="col-12 col-sm-3">
@@ -41,19 +37,18 @@
                 <div class="col col-description">
 
                     {block name='product_name'}
-                        <h2 class="h3 product-title">
-                            <a href="{$product.url}">{$product.name|truncate:200:'...' }</a>
-                        </h2>
+                       <a class="h3 product-title d-block" href="{$product.url}">{$product.name|truncate:200:'...'}</a>
                     {/block}
 
                     {block name='product_reference'}
                         {if $product.reference != ''}
-                            <div class="product-reference text-muted">{$product.reference}</div>{/if}
+                        <div class="product-reference text-muted">{$product.reference}</div>{/if}
                     {/block}
 
                     {block name='product_brand'}
                         {if isset($product.manufacturer_name ) && $product.manufacturer_name != ''}
-                            <div class="product-brand text-muted"> <a href="{$product.url}">{$product.manufacturer_name}</a></div>{/if}
+                            <div class="product-brand text-muted"> <a href="{$product.url}">{$product.manufacturer_name}</a></div>
+                        {/if}
                     {/block}
 
                     {block name='product_reviews'}
@@ -78,24 +73,23 @@
 
                     {block name='product_availability'}
                         <div class="product-availability">
-                            {if $product.show_availability && $product.availability_message}
+                             {if $product.show_availability && $product.availability_message}
                                 <span
-                                        class="badge {if $product.availability == 'available'} {if $product.quantity <= 0  && $product.allow_oosp} badge-danger product-unavailable product-unavailable-allow-oosp {else}badge-success product-available{/if}{elseif $product.availability == 'last_remaining_items'}badge-warning d-none product-last-items{else}badge-danger product-unavailable{/if} mt-2">
-                  {if $product.availability == 'available'}
-                      <i class="fa fa-check rtl-no-flip" aria-hidden="true"></i>
-                                                     {$product.availability_message}
-                  {elseif $product.availability == 'last_remaining_items'}
-                      <i class="fa fa-exclamation" aria-hidden="true"></i>
-                                                     {$product.availability_message}
-                  {else}
-                      <i class="fa fa-ban" aria-hidden="true"></i>
-                              {$product.availability_message}
-                      {if isset($product.available_date) && $product.available_date != '0000-00-00'}
-                      {if $product.available_date|strtotime > $smarty.now}<span
-                              class="available-date"> - {l s='Availability date:' d='Shop.Theme.Catalog'} {$product.available_date}</span>{/if}
-                  {/if}
-                  {/if}
-                </span>
+                                    class="badge 
+                                       {if $product.availability == 'in_stock'} {if $product.quantity <= 0  && $product.allow_oosp} badge-danger product-unavailable product-unavailable-allow-oosp {else}badge-success product-available{/if}{elseif $product.availability == 'available' || $product.availability == 'last_remaining_items'}badge-warning d-none product-last-items{else}badge-danger product-unavailable  {if $product.quantity_all_versions}product-combination-only-unavailable{/if}{/if} mt-2">
+                                    {if $product.availability == 'available'}
+                                        {$product.availability_message}
+                                    {elseif $product.availability == 'last_remaining_items'}
+                                        {$product.availability_message}
+                                    {else}
+                                        {$product.availability_message}
+                                        {if isset($product.available_date) && $product.available_date != '0000-00-00'}
+                                            {if $product.available_date|date_format:"%y%m%d" > $smarty.now|date_format:"%y%m%d"}<span
+                                                    class="available-date"> - {l s='Availability date:' d='Shop.Theme.Catalog'}
+                                                {$product.available_date}</span>{/if}
+                                        {/if}
+                                    {/if}
+                                </span>
                             {/if}
                         </div>
                     {/block}
@@ -131,8 +125,8 @@
                             <div class="product-functional-buttons-links">
                                 {hook h='displayProductListFunctionalButtons' product=$product}
                                 {block name='quick_view'}
-                                    <a class="js-quick-view-iqit" href="#" data-link-action="quickview" data-toggle="tooltip"
-                                       title="{l s='Quick view' d='Shop.Theme.Actions'}">
+                                    <a class="js-quick-view-iqit" href="#" data-link-action="quickview" data-bs-toggle="tooltip"
+                                        title="{l s='Quick view' d='Shop.Theme.Actions'}">
                                         <i class="fa fa-eye" aria-hidden="true"></i></a>
                                 {/block}
                             </div>

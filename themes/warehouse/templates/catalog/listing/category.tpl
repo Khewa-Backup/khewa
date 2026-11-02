@@ -25,13 +25,15 @@
 {extends file='catalog/listing/product-list.tpl'}
 
 {if isset($category)}
-{capture name="justElementor"}{hook h='isJustElementor' categoryId=$category.id}{/capture}
+    {capture name="justElementor"}{hook h='isJustElementor' categoryId=$category.id}{/capture}
 {/if}
 
 {block name='head' append}
     {if $iqitTheme.bread_bg_category}
         {if isset($category.image.bySize.category_default.url) && $category.image.bySize.category_default.url != ''}
-            <style> #wrapper .breadcrumb{  background-image: url('{$category.image.bySize.category_default.url}'); }</style>
+            <style>
+                #wrapper .breadcrumb{  background-image: url('{$category.image.bySize.category_default.url}'); }
+            </style>
         {/if}
     {/if}
 {/block}
@@ -51,21 +53,29 @@
 
 
 {block name='hook_display_wrapper_top_container' append}
-    {if $iqitTheme.cat_desc == 'above-s'}
-        {if $category.description}
-            <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
+    {if $listing.pagination.items_shown_from == 1}
+        {if $iqitTheme.cat_desc == 'above-s'}
+            {if $category.description}
+                <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
+                    <div class="rte-content">{$category.description nofilter}</div>
+                </div>
+            {/if}
+            {hook h='displayCategoryElementor'}
         {/if}
-        {hook h='displayCategoryElementor'}
     {/if}
 {/block}
 
 
 {block name='hook_display_wrapper_bottom_container' append}
-    {if $iqitTheme.cat_desc == 'below-s'}
-        {if $category.description}
-            <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
+    {if $listing.pagination.items_shown_from == 1}
+        {if $iqitTheme.cat_desc == 'below-s'}
+            {if $category.description}
+                <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
+                    <div class="rte-content">{$category.description nofilter}</div>
+                </div>
+            {/if}
+            {hook h='displayCategoryElementor'}
         {/if}
-        {hook h='displayCategoryElementor'}
     {/if}
 {/block}
 
@@ -73,89 +83,129 @@
 
 
 {if $smarty.capture.justElementor}
+    
+    {block name='head_pagination_seo'}
+         
+    {/block}
+
     {block name='left_column'}{/block}
     {block name='right_column'}{/block}
-    {block name='content_wrapper_start'} <div id="content-wrapper" class="col-12">  {/block}
-    {block name='content'}
-        {hook h='displayCategoryElementor'}
-    {/block}
-{else}
 
-{block name='product_list_header'}
-    {include file='catalog/_partials/category-header.tpl' listing=$listing category=$category}
-    {if $iqitTheme.cat_image == 1}
-        {if isset($category.image.bySize.category_default.url) && $category.image.bySize.category_default.url}
-            <div class="category-image {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
-                {if $iqitTheme.cat_desc == 'onimage'}
-                    {if $category.description}
-                        <div class="category-description category-description-image"> <div class="rte-content">{$category.description nofilter}</div></div>
+
+    {block name='content_wrapper_start'} <div id="content-wrapper" class="col-12"> {/block}
+        {block name='content'}
+            {hook h='displayCategoryElementor'}
+        {/block}
+    {else}
+
+
+        {block name='product_list_footer'}
+  
+        {/block}
+
+        
+        {block name='product_list_header'}
+            {include file='catalog/_partials/category-header.tpl' listing=$listing category=$category}
+            {if $listing.pagination.items_shown_from == 1}
+                {if $iqitTheme.cat_image == 1}
+                    {if isset($category.image.bySize.category_default.url) && $category.image.bySize.category_default.url}
+                        <div class="category-image {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
+                            {if $iqitTheme.cat_desc == 'onimage'}
+                                {if $category.description}
+                                    <div class="category-description category-description-image">
+                                        <div class="rte-content">{$category.description nofilter}</div>
+                                    </div>
+                                {/if}
+                            {/if}
+                            <picture>
+                            {if !empty($category.image.bySize.category_default.sources.avif)}<source srcset="{$category.image.bySize.category_default.sources.avif}" type="image/avif">{/if}
+                            {if !empty($category.image.bySize.category_default.sources.webp)}<source srcset="{$category.image.bySize.category_default.sources.webp}" type="image/webp">{/if}
+                            <img src="{$category.image.bySize.category_default.url}"
+                                alt="{if !empty($category.image.legend)}{$category.image.legend}{else}{$category.name}{/if}"
+                                class="img-fluid" width="{$category.image.bySize.category_default.width}"
+                                height="{$category.image.bySize.category_default.height}" loading="lazy">
+                            </picture>
+                        </div>
+                    {else}
+                        {if $iqitTheme.cat_desc == 'onimage'}
+                            {if $category.description}
+                                <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
+                                    <div class="rte-content">{$category.description nofilter}</div>
+                                </div>
+                            {/if}
+                        {/if}
                     {/if}
                 {/if}
-                <img src="{$category.image.bySize.category_default.url}" alt="{if !empty($category.image.legend)}{$category.image.legend}{else}{$category.name}{/if}"
-                     class="img-fluid" width="{$category.image.bySize.category_default.width}" height="{$category.image.bySize.category_default.height}" loading="lazy"  >
-            </div>
-        {else}
-            {if $iqitTheme.cat_desc == 'onimage'}
-                {if $category.description}
-                    <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
+
+
+                {if $iqitTheme.cat_desc == 'above'}
+                    {if $category.description}
+                        <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
+                            <div class="rte-content">{$category.description nofilter}</div>
+                        </div>
+                    {/if}
+                    {hook h='displayCategoryElementor'}
                 {/if}
+
+
+                {if $iqitTheme.cat_desc == 'above-d'}
+                    {if $category.description}
+                        <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
+                            <div class="rte-content">{$category.description nofilter}</div>
+                        </div>
+                    {/if}
+                {/if}
+
+                {if $iqitTheme.cat_desc == 'below-d'}
+                    {hook h='displayCategoryElementor'}
+                {/if}
+
+                {if $iqitTheme.cat_sub_thumbs == 1}
+                    {include file='catalog/_partials/category-subcategories.tpl'}
+                {/if}
+
             {/if}
-        {/if}
-    {/if}
+        {/block}
 
+        {block name='product_list_bottom'}
+            {include file='catalog/_partials/products-bottom.tpl' listing=$listing}
+        {/block}
 
-    {if $iqitTheme.cat_desc == 'above'}
-        {if $category.description}
-            <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
-        {/if}
-        {hook h='displayCategoryElementor'}
-    {/if}
+        {block name='product_list_bottom_static'}
+            {if $listing.pagination.items_shown_from == 1}
+                {if $iqitTheme.cat_desc == 'below'}
+                    {if $category.description}
+                        <div class="category-description category-description-bottom {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}">
+                            <hr />
+                            <div class="rte-content">{$category.description nofilter}</div>
+                        </div>
+                    {/if}
 
+                    
+                    {include file='catalog/_partials/category-footer.tpl' listing=$listing category=$category}
 
-    {if $iqitTheme.cat_desc == 'above-d'}
-        {if $category.description}
-                <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"> <div class="rte-content">{$category.description nofilter}</div></div>
-        {/if}
-    {/if}
+                    {hook h='displayCategoryElementor'}
+                {/if}
 
-    {if $iqitTheme.cat_desc == 'below-d'}
-        {hook h='displayCategoryElementor'}
-    {/if}
+                {if $iqitTheme.cat_desc == 'above-d'}
+                    
+                    {include file='catalog/_partials/category-footer.tpl' listing=$listing category=$category}
+                    {hook h='displayCategoryElementor'}
+                {/if}
 
-        {if $iqitTheme.cat_sub_thumbs == 1}
-        {include file='catalog/_partials/category-subcategories.tpl'}
-    {/if}
+                {if $iqitTheme.cat_desc == 'below-d'}
+                    {if $category.description}
 
+                        <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if} mt-4">
+                            <hr />
+                            <div class="rte-content">{$category.description nofilter}</div>
+                        </div>
+                    {/if}
+      
+                    {include file='catalog/_partials/category-footer.tpl' listing=$listing category=$category}
+                {/if}
 
-{/block}
-
-{block name='product_list_bottom'}
-    {include file='catalog/_partials/products-bottom.tpl' listing=$listing}
-{/block}
-
-{block name='product_list_bottom_static'}
-    {if $listing.pagination.items_shown_from == 1}
-    {if $iqitTheme.cat_desc == 'below'}
-        {if $category.description}
-            <div class="category-description category-description-bottom {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if}"><hr /> <div class="rte-content">{$category.description nofilter}</div></div>
-        {/if}
-        {hook h='displayCategoryElementor'}
-    {/if}
-
-        {if $iqitTheme.cat_desc == 'above-d'}
-            {hook h='displayCategoryElementor'}
-        {/if}
-
-        {if $iqitTheme.cat_desc == 'below-d'}
-            {if $category.description}
-
-                <div class="category-description category-description-top {if $iqitTheme.cat_hide_mobile} hidden-sm-down{/if} mt-4"><hr /> <div class="rte-content">{$category.description nofilter}</div></div>
+                
             {/if}
-        {/if}
-
-
-    {/if}
-{/block}
-    {/if}
-
-
+        {/block}
+{/if}

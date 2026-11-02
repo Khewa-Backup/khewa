@@ -22,6 +22,8 @@ use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 
 class IqitCountDown extends Module implements WidgetInterface
 {
+    public $cfgName;
+
     public function __construct()
     {
         $this->name = 'iqitcountdown';

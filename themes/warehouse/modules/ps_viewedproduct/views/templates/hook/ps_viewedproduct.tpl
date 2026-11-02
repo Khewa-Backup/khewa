@@ -26,7 +26,7 @@
 <section class="viewed-products block block-section">
   <h4 class="section-title"><span>{l s='Viewed products' d='Shop.Theme.Catalog'}</span></h4>
   <div class="block-content swiper-container-wrapper">
-    <div class="products products-grid swiper-container swiper-default-carousel">
+    <div class="products products-grid swiper swiper-container swiper-default-carousel">
       <div class="swiper-wrapper">
         {foreach from=$products item="product"}
           <div class="swiper-slide"> {include file="catalog/_partials/miniatures/product.tpl" product=$product carousel=true}</div>

@@ -266,15 +266,44 @@ class Group_Control_Background extends Group_Control_Base {
 		// End Background:image
 
 		// Background:video
+
+		$controls['video_type'] =
+            [
+                'label' => \IqitElementorWpHelper::__( 'Video Type', 'elementor' ),
+                'type' => Controls_Manager::SELECT,
+                'section' => 'section_video',
+                'default' => 'youtube',
+                'options' => [
+                    'youtube' => \IqitElementorWpHelper::__( 'YouTube', 'elementor' ),
+                    'hosted' => \IqitElementorWpHelper::__( 'HTML5 Video', 'elementor' ),
+                ],
+            ];
+
+
 		$controls['video_link'] = [
 			'label' => \IqitElementorWpHelper::_x( 'Video Link', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
 			'placeholder' => 'https://www.youtube.com/watch?v=9uOETcuFjbE',
-			'description' => \IqitElementorWpHelper::__( 'Insert YouTube link or video file (mp4 is recommended)', 'elementor' ),
+			'description' => \IqitElementorWpHelper::__( 'Insert YouTube link', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
 			'condition' => [
 				'background' => [ 'video' ],
+				'video_type' => [ 'youtube' ],
+			],
+		];
+
+		$controls['video_link_h'] = [
+			'label' => \IqitElementorWpHelper::_x( 'Mp4 video Link', 'Background Control', 'elementor' ),
+		    'type' => Controls_Manager::URL,
+			'placeholder' => '',
+			'description' => \IqitElementorWpHelper::__( 'video file (mp4 is recommended)', 'elementor' ),
+			'label_block' => true,
+			'show_external' => false,
+			'default' => '',
+			'condition' => [
+				'background' => [ 'video' ],
+				'video_type' => [ 'hosted' ],
 			],
 		];
 

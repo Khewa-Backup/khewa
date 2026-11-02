@@ -133,7 +133,7 @@
   @include st2(background, $f_top_bg);
   @include st2(color, $f_top_txt);
 
-  h5 {
+  .h5 {
     font-size: 1.5rem;
     @include st(font-style, $fw_block_title_typo_style, '');
     @include st(font-weight, $fw_block_title_typo_weight, '');

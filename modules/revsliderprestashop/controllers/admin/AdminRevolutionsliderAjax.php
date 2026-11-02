@@ -1,18 +1,10 @@
 <?php
-/**
-* 2016 Revolution Slider
-*
-*  @author    SmatDataSoft <support@smartdatasoft.com>
-*  @copyright 2016 SmatDataSoft
-*  @license   private
-*  @version   5.1.3
-*  International Registered Trademark & Property of SmatDataSoft
-*/
+
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-            
+require_once _PS_MODULE_DIR_ . 'revsliderprestashop/rev-loader.php';
 class AdminRevolutionsliderAjaxController extends ModuleAdminController
 {
 
@@ -44,12 +36,12 @@ class AdminRevolutionsliderAjaxController extends ModuleAdminController
      */
     public function initProcess()
     {
-                 ob_start(); 
-               
-                RevSliderAdmin::onAjaxAction();  
-                $output = ob_get_contents();
-                ob_end_clean();
-             //   die($output);
-                die($output); 
+        ob_start();
+        $RevSliderAdmin = new RevSliderAdmin();
+        $RevSliderAdmin->do_ajax_action();
+        $output = ob_get_contents();
+        ob_end_clean();
+        //die($output);
+        die($output); 
     } 
 }

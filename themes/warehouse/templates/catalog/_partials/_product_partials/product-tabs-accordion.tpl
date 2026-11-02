@@ -39,7 +39,7 @@
             {assign var="isDescriptionExist" value=true}
         <div class="card">
             <div class="title" role="tab">
-                <a data-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-description" aria-expanded="true">
+                <a data-bs-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-description" aria-expanded="true">
                     {l s='Description' d='Shop.Theme.Catalog'}
                     <i class="fa fa-angle-down float-right angle-down" aria-hidden="true"></i>
                     <i class="fa fa-angle-up float-right angle-up" aria-hidden="true"></i>
@@ -60,7 +60,7 @@
 
         <div class="card {if !$product.grouped_features}empty-product-details{/if}" id="product-details-tab-card">
             <div class="title" role="tab">
-                <a  {if $isDescriptionExist} class="collapsed"{/if} data-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-details" aria-expanded="true">
+                <a  {if $isDescriptionExist} class="collapsed"{/if} data-bs-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-details" aria-expanded="true">
                     {l s='Product Details' d='Shop.Theme.Catalog'}
                     <i class="fa fa-angle-down float-right angle-down" aria-hidden="true"></i>
                     <i class="fa fa-angle-up float-right angle-up" aria-hidden="true"></i>
@@ -79,7 +79,7 @@
         {if $product.attachments}
             <div class="card">
                 <div class="title" role="tab">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-attachments" aria-expanded="true">
+                    <a class="collapsed" data-bs-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-attachments" aria-expanded="true">
                         {l s='Attachments' d='Shop.Theme.Catalog'}
                         <i class="fa fa-angle-down float-right angle-down" aria-hidden="true"></i>
                         <i class="fa fa-angle-up float-right angle-up" aria-hidden="true"></i>
@@ -116,8 +116,8 @@
             {if $accessories}
                 <div class="card">
                     <div class="title" role="tab">
-                        <a class="collapsed" data-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-accessories" aria-expanded="true">
-                            {l s='Related products' d='Shop.Theme.Catalog'}
+                        <a class="collapsed" data-bs-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-accessories" aria-expanded="true">
+                        {l s='You might also like' d='Shop.Theme.Catalog'}
                             <i class="fa fa-angle-down float-right angle-down" aria-hidden="true"></i>
                             <i class="fa fa-angle-up float-right angle-up" aria-hidden="true"></i>
                         </a>
@@ -144,7 +144,7 @@
             {if $smarty.capture.manufacturerElementorDescription != '' || $product_manufacturer->description != ''}
                 <div class="card">
                     <div class="title" role="tab">
-                        <a class="collapsed" data-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-manufacturer" aria-expanded="true">
+                        <a class="collapsed" data-bs-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-manufacturer" aria-expanded="true">
                             {l s='About' d='Shop.Warehousetheme'} {$product_manufacturer->name}
                             <i class="fa fa-angle-down float-right angle-down" aria-hidden="true"></i>
                             <i class="fa fa-angle-up float-right angle-up" aria-hidden="true"></i>
@@ -176,7 +176,7 @@
             {/foreach}
             >
                 <div class="title" role="tab">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-extra-{$extraKey}" aria-expanded="true">
+                    <a class="collapsed" data-bs-toggle="collapse" data-parent="#productdaas-accordion" href="#productdaas-accordion-extra-{$extraKey}" aria-expanded="true">
                         {$extra.title nofilter}
                         <i class="fa fa-angle-down float-right angle-down" aria-hidden="true"></i>
                         <i class="fa fa-angle-up float-right angle-up" aria-hidden="true"></i>

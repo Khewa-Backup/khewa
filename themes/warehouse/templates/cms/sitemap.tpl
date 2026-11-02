@@ -29,24 +29,12 @@
 {/block}
 
 {block name='page_content_container'}
-    <div class="row sitemap ">
-        <div class="col block-links">
-          <h2 class="block-title"><span>{$our_offers}</span></h2>
-          {include file='cms/_partials/sitemap-nested-list.tpl' links=$links.offers}
-        </div>
-        <div class="col block-links">
-          <h2 class="block-title"><span>{$categories}</span></h2>
-          {include file='cms/_partials/sitemap-nested-list.tpl' links=$links.categories}
-        </div>
-        <div class="col block-links">
-          <h2 class="block-title"><span>{$your_account}</span></h2>
-          {include file='cms/_partials/sitemap-nested-list.tpl' links=$links.user_account}
-        </div>
-        <div class="col block-links">
-          <h2 class="block-title"><span>{$pages}</span></h2>
-          {include file='cms/_partials/sitemap-nested-list.tpl' links=$links.pages}
-        </div>
-    </div>
+  <div class="row sitemap ">
+    {foreach $sitemapUrls as $group}
+      <div class="col block-links">
+        <h2 class="block-title"><span>{$group.name}</span></h2>
+        {include file='cms/_partials/sitemap-nested-list.tpl' links=$group.links}
+      </div>
+    {/foreach}
+  </div>
 {/block}
-
-

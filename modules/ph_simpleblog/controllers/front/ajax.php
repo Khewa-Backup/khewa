@@ -38,15 +38,13 @@ class Ph_SimpleBlogAjaxModuleFrontController extends ModuleFrontController
         $reply = SimpleBlogPost::changeRating('up', (int) $id_simpleblog_post);
         $message = $reply[0]['likes'];
 
-        $this->ajaxDie(
-            json_encode(
-                [
-                    'hasError' => false,
-                    'status' => 'success',
-                    'message' => $message,
-                ]
-            )
-        );
+        header('Content-Type: application/json; charset=utf-8');
+        $this->ajaxRender(json_encode([
+            'hasError' => false,
+            'status'   => 'success',
+            'message'  => $message,
+        ]));
+        exit;
     }
 
     public function displayAjaxRemoveRating()
@@ -55,14 +53,12 @@ class Ph_SimpleBlogAjaxModuleFrontController extends ModuleFrontController
         $reply = SimpleBlogPost::changeRating('down', (int) $id_simpleblog_post);
         $message = $reply[0]['likes'];
 
-        $this->ajaxDie(
-            json_encode(
-                [
-                    'hasError' => false,
-                    'status' => 'success',
-                    'message' => $message,
-                ]
-            )
-        );
+        header('Content-Type: application/json; charset=utf-8');
+        $this->ajaxRender(json_encode([
+            'hasError' => false,
+            'status'   => 'success',
+            'message'  => $message,
+        ]));
+        exit;
     }
 }

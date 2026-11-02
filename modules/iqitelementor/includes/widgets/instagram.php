@@ -30,10 +30,7 @@ class Widget_Instagram extends Widget_Base {
 
 
         if(\Configuration::get('iqit_elementor_inst_token')){
-            $user = \Configuration::get('iqit_elementor_inst_username');
-            $html = '<p>'.\IqitElementorWpHelper::__( 'Assigned account:', 'elementor' ).'</p>
-                    <a href="https://instagram.com/'. $user.'" target="_blank" class="m-b-2 m-r-1 btn btn-connect-with-instagram">
-                     <i class="icon-instagram"></i> '. $user.'</a>';
+            $html = '';
         } else{
             $context = \Context::getContext();
             $html = '<div class="panel-alert panel-alert-warning">';
@@ -543,7 +540,7 @@ class Widget_Instagram extends Widget_Base {
 
         if (  $instance['instagram_view'] == 'slider'  ) : ?>
             <div class="elementor-instagram-carousel-wrapper swiper-overflow swiper-arrows-<?php echo  $instance['arrows_position']; ?>" >
-                <div class="swiper-container <?php echo implode( ' ', $carousel_classes ); ?>  <?php echo implode( ' ', $cls_fix_classes); ?>"  data-slider_options='<?php echo json_encode( $swiper_options ); ?>'>
+                <div class="swiper-container swiper <?php echo implode( ' ', $carousel_classes ); ?>  <?php echo implode( ' ', $cls_fix_classes); ?>"  data-slider_options='<?php echo json_encode( $swiper_options ); ?>'>
                     <div class="swiper-wrapper elementor-instagram" data-options='<?php echo json_encode( $instagram_options  ); ?>'></div>
                     <?php if ( $show_dots ) : ?>
                         <div class="swiper-pagination elementor-swiper-pagination swiper-dots-<?php echo $instance['dots_position']; ?>"></div>
