@@ -282,6 +282,7 @@ The client sees **this local 9.2 shop** (16 Oct data) at **https://khewa.shopima
   - same safety as staging (`tunnel/tunnel-settings.sql`): emails off, Stripe test mode (card 4242 4242 4242 4242), PayPal sandbox, Mailchimp / Tag Manager / Etsy off.
   - `.htaccess` rebuilt for the new address (security block kept); `.env` `PS_TRUSTED_PROXIES=127.0.0.1,::1` so the shop trusts the tunnel's https.
   - **Before the real upload these are set again for khewa.com** (`live-settings.sql`, `.htaccess`, `.env`).
+- **Menu pictures (4 Nov):** the new mega menu (4.2.0) showed a broken picture under each column title when the category has no picture (the old 4.0.0 showed none). `modules/iqitmegamenu/iqitmegamenu.php` now only adds the picture when the category has one (marked `Khewa PS 9.2`). No more broken pictures or gaps in the menu.
 - **Speed fixes on this Mac (4 Nov):** PHP code cache 512 MB / 100,000 files (`/opt/homebrew/etc/php/8.5/conf.d/zz-khewa-opcache.ini`), MySQL buffer 2 GB and lighter disk flushing (`/Applications/AMPPS/apps/mysql/etc/my.cnf`), web server 150 workers with short keep-alive, PHP-FPM 20 workers. Home page: was 1.8–3.5 s locally, now about 1.1 s; through the tunnel the full home page loads in about 2–8 s.
 
 ## Staging copy on stage.khewa.com (4 Nov 2026)

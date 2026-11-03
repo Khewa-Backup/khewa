@@ -3627,10 +3627,11 @@ class IqitMegaMenu extends Module implements WidgetInterface
                 $return_categories['title'] = $category['name'];
                 $return_categories['href'] = $link;
 
-                if (isset($node['thumb']) && $node['thumb']) {
-                    
+                // Khewa PS 9.2: only show a picture when the category has one (otherwise a broken image + 404 per column)
+                if (isset($node['thumb']) && $node['thumb'] && $cat->id_image) {
+
                     $return_categories['thumb'] = $this->context->link->getCatImageLink($category['link_rewrite'], (int)$category['id_category'],  'medium_default');
-                     
+
 
                     /*
                         if($cat->id_image){
