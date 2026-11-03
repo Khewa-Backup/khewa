@@ -271,6 +271,19 @@ The shop's update tool is now 7.6.6. The old one is in `backups/modules-moved-ou
 - `khewa_live-before-pos-5.8.1.sql.gz`, `khewa_live-before-giftcard-paypal-carriers.sql.gz`, `khewa_live-before-module-fixes.sql.gz`: database before each round of module work
 - `update-to-8.2.8.log`, `update-to-9.2.0.log`: update tool output
 
+## Preview through a Cloudflare tunnel (4 Nov 2026)
+
+The client sees **this local 9.2 shop** (16 Oct data) at **https://khewa.shopiman.com/** while this Mac is on and awake.
+- **Login in front of the whole site** (browser asks): user and password are in `/Users/hello/khewa-php83-apache/tunnel-login.txt`. Then the normal shop, admin (`/admin556cvt7923/`, accounts #1 and #2) and POS (`/en/pos`).
+- **Start:** `khewa-updates/tunnel/start.sh` (after MySQL, PHP 8.5 and the web server are running, see "How to start it"). **Stop:** `khewa-updates/tunnel/stop.sh`. Log: `tunnel/tunnel.log`.
+- How it works: Cloudflare tunnel `khewa` (id `c16e1a99-…`, config `khewa-updates/tunnel/config.yml`, `protocol: http2` because QUIC/UDP is blocked on this network) → `127.0.0.1:8086` (checks the login, removes it, passes on) → `127.0.0.1:8087` (the shop at the root). Both are in `/Users/hello/khewa-php83-apache/httpd.conf`. The other shopiman.com tunnels (bookchat, shopify-app, ttsapi) are untouched.
+- **Changed in the local shop for the tunnel** (backup: `backups/khewa_live-before-tunnel-2026-11-04.sql.gz`):
+  - shop address `khewa.shopiman.com`, root `/`, https on (3 shops). **`localhost:8084` now redirects to the tunnel address**; use the tunnel address locally too.
+  - same safety as staging (`tunnel/tunnel-settings.sql`): emails off, Stripe test mode (card 4242 4242 4242 4242), PayPal sandbox, Mailchimp / Tag Manager / Etsy off.
+  - `.htaccess` rebuilt for the new address (security block kept); `.env` `PS_TRUSTED_PROXIES=127.0.0.1,::1` so the shop trusts the tunnel's https.
+  - **Before the real upload these are set again for khewa.com** (`live-settings.sql`, `.htaccess`, `.env`).
+- **Speed fixes on this Mac (4 Nov):** PHP code cache 512 MB / 100,000 files (`/opt/homebrew/etc/php/8.5/conf.d/zz-khewa-opcache.ini`), MySQL buffer 2 GB and lighter disk flushing (`/Applications/AMPPS/apps/mysql/etc/my.cnf`), web server 150 workers with short keep-alive, PHP-FPM 20 workers. Home page: was 1.8–3.5 s locally, now about 1.1 s; through the tunnel the full home page loads in about 2–8 s.
+
 ## Staging copy on stage.khewa.com (4 Nov 2026)
 
 The client wants to check the 9.2 shop on `stage.khewa.com` before it goes live. The files are in `khewa-updates/for-stage/` (outside git):
