@@ -271,6 +271,29 @@ The shop's update tool is now 7.6.6. The old one is in `backups/modules-moved-ou
 - `khewa_live-before-pos-5.8.1.sql.gz`, `khewa_live-before-giftcard-paypal-carriers.sql.gz`, `khewa_live-before-module-fixes.sql.gz`: database before each round of module work
 - `update-to-8.2.8.log`, `update-to-9.2.0.log`: update tool output
 
+## Server home folder clean-up (4 Nov 2026, before the 9.2 upload)
+
+Checked over FTP (read only) on 4 Nov. The main live shop (`public_html`) stays until upload day.
+
+**Saved first** to `/Users/hello/khewa-incident-2026-10-29/evidence/`: the July, September and October access logs (`logs/…ssl_log-{Jul,Sep,Oct}-2026.gz`, `logs/…-{Sep,Oct}-2026.gz`), `.php.error.log`, and `.bash_history` (as `home/bash_history-2026-11-04.txt`). The 34 shell commands run between 28 Oct and 1 Nov are all read-only checks (logs, settings, `crontab -l`, file counts); none change, download or delete anything.
+
+**Safe to remove:**
+- `stage.khewa.com/` (old staging files; keep the subdomain if the new site goes there; its database `kbklzsah_stage` is separate)
+- `test.khewa.com/` (nearly empty: `.htaccess`, `.well-known`)
+- `themeforest.zip` (125 MB, Warehouse theme package; a copy is local)
+- `example-queries.txt` (a database query list from 25 Oct; no password, but names the database and its user)
+- everything inside `logs/` (saved locally; keep the folder)
+- `public_ftp/incoming`, `public_ftp/public_html` (empty)
+- `.htpasswds/public_html/thewayofm.com` (old domain)
+- `.trash/` contents, `.wp-cli/`, `lscache/` (empty)
+- inside `tmp/`: `analog`, `awstats`, `webalizer`, `webalizerftp`, `pma_template_compiles_kbklzsah`, old `sess_*` files (keep `pear`)
+- `.ssh/id_rsa` (unless that key is used to log in somewhere; `authorized_keys` is empty)
+- `.softaculous/` only if Softaculous is never used (it just records the 2 installs)
+
+**Do not touch:** `public_html` (until upload day), `mail`, `etc`, `ssl`, `bin`, `php`, `perl5`, `lscmData`, `access-logs` and `www` (links), and the other dot folders (`.cpanel`, `.cagefs`, `.cl.selector`, `.clwpos`, `.cphorde`, `.pki`, `.razor`, `.redis`, `.memcached`, `.spamassassin`, `.subaccounts`, `.a2opt`).
+
+**How:** small files can go over FTP in a minute. Big folders (`stage.khewa.com`, the `tmp` stats folders, `.trash`) are much faster with cPanel File Manager (it deletes on the server in seconds; over FTP every file is one command, which can take hours for a full shop copy). Check cPanel → Cron Jobs for lines pointing into `stage.khewa.com` or `test.khewa.com` before deleting them.
+
 ## Hack report: local 9.2 copy (3 Nov 2026)
 
 **Attacker code found and removed:**
