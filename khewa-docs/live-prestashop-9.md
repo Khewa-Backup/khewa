@@ -292,6 +292,8 @@ Checked over FTP (read only) on 4 Nov. The main live shop (`public_html`) stays 
 
 **Do not touch:** `public_html` (until upload day), `mail`, `etc`, `ssl`, `bin`, `php`, `perl5`, `lscmData`, `access-logs` and `www` (links), and the other dot folders (`.cpanel`, `.cagefs`, `.cl.selector`, `.clwpos`, `.cphorde`, `.pki`, `.razor`, `.redis`, `.memcached`, `.spamassassin`, `.subaccounts`, `.a2opt`).
 
+**Done on 4 Nov over FTP:** deleted `themeforest.zip`, `example-queries.txt` (copy in evidence), all 55 files in `logs/` (all saved first in `evidence/logs/`, checked), the 7 old `tmp/sess_*` files, the empty `public_ftp/incoming` and `public_ftp/public_html`, and `.htpasswds/public_html/thewayofm.com`. Shop checked after: loads. `.ssh/id_rsa` kept (not confirmed unused). **Left for cPanel File Manager:** `stage.khewa.com/`, `test.khewa.com/`, the `tmp` stats folders, `.trash/`, `.wp-cli/`.
+
 **How:** small files can go over FTP in a minute. Big folders (`stage.khewa.com`, the `tmp` stats folders, `.trash`) are much faster with cPanel File Manager (it deletes on the server in seconds; over FTP every file is one command, which can take hours for a full shop copy). Check cPanel → Cron Jobs for lines pointing into `stage.khewa.com` or `test.khewa.com` before deleting them.
 
 ## Hack report: local 9.2 copy (3 Nov 2026)
