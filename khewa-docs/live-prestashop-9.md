@@ -271,6 +271,13 @@ The shop's update tool is now 7.6.6. The old one is in `backups/modules-moved-ou
 - `khewa_live-before-pos-5.8.1.sql.gz`, `khewa_live-before-giftcard-paypal-carriers.sql.gz`, `khewa_live-before-module-fixes.sql.gz`: database before each round of module work
 - `update-to-8.2.8.log`, `update-to-9.2.0.log`: update tool output
 
+## Staging copy on stage.khewa.com (4 Nov 2026)
+
+The client wants to check the 9.2 shop on `stage.khewa.com` before it goes live. The files are in `khewa-updates/for-stage/` (outside git):
+- `khewa_stage_9.2-2026-11-04.sql.gz`: export of the local 9.2 database (632 tables). Tested by importing it into a spare local database: no errors, about 2 minutes. MySQL-8-only collations changed to `utf8mb4_unicode_ci` so it also imports on MariaDB.
+- `stage-settings.sql`: sets the address to `stage.khewa.com` (3 shops, root, https), keeps emails off, puts Stripe in test mode and PayPal in sandbox, and switches off Mailchimp, Tag Manager and Etsy. Tested on the same spare database.
+- `README-stage.md`: the steps (empty the staging DB, import, run the settings), plus what is changed in the files after the zip is uploaded (`parameters.php`, `.htaccess` with the security block and the staging IP lock, `robots.txt` = `Disallow: /`, empty cache).
+
 ## Server home folder clean-up (4 Nov 2026, before the 9.2 upload)
 
 Checked over FTP (read only) on 4 Nov. The main live shop (`public_html`) stays until upload day.
