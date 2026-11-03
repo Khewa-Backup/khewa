@@ -339,6 +339,12 @@ This copy was taken from the live server on 16 Oct, before the 29 Oct clean-up, 
 - **Old PayPal 5.4.2 and Stripe 3.7.3 leftover files (3 Nov):** 872 files moved out (`LIST-3.txt`); the code that runs matches the official PayPal 6.7.1 and Stripe 3.9.0 exactly.
 - **Stripe: Khewa's own change put back (3 Nov).** Commit `1f9a45d8c` (19 Aug 2026) in the khewa repo made Stripe remove discount codes that are no longer valid before charging, so the amount charged matches the order. Stripe 3.9.0 had lost it; re-added in `classes/model/CartContextModel.php` and `classes/services/PrestashopCartService.php::getAmount()` (marked `Khewa`). The older "stripe changes" commit `ffcac2604` was only a Stripe version update, not a Khewa change.
 - **POS cron counter pages locked (3 Nov):** `crons/rockposprodcount.php` and `crons/rockposcustindex.php` (Khewa-made in 2023, not part of a module) showed product/customer counts to anyone. They now answer only from the command line or with a secret key; `crons/rockposcornpi.sh` and `rockposcornci.sh` already send it, so the live crontab lines don't change. The key is `md5(cookie_key . "khewa_pos_crons")` from `app/config/parameters.php`; if the cookie key is ever changed, put the new key into both `.sh` files. `crons/.htaccess` blocks web access to the `.sh` files. Left as the vendors made them, on purpose: RockPOS's own `searchCron` (no token), Mailchimp's cron (no token), Superspeed's short cron token. `ordersexportsalesreportpro` stays switched off (not needed).
+- **Live server fixed on 3 Nov** (the old 1.7 shop, before the 9.2 upload). Server copies saved first in `/Users/hello/khewa-incident-2026-10-29/evidence/live-server-2026-11-03/`:
+  - `modules/wkhelpdesk/views/js/tinymce/tinymce_wk_setup.js`: the card skimmer line (line 30) removed; file now 1,513 bytes.
+  - `modules/ps_shoppingcart/controllers/front/redirect.php`: the encrypted backdoor deleted (`/module/ps_shoppingcart/redirect` now 404).
+  - `modules/updateproducts/files/import_products.php`: empty attacker file deleted.
+  - `modules/mailchimppro/views/js/front/mc-cdn-health.js`: already replaced on 27 Oct with a harmless one-line placeholder; left as it is.
+  - Shop home checked after: loads normally.
 - Full scan outputs: `/Users/hello/khewa-incident-2026-10-29/scan-2026-11-03/`.
 
 ## Login-check gap pass (3 Nov)
