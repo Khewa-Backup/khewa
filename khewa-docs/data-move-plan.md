@@ -11,6 +11,14 @@ Since then the live shop (still PrestaShop 1.7.8) has kept going:
 
 On upload day the shop goes into maintenance for a few hours, and this data has to come across.
 
+## Update 4 Nov: staging first, with today's live data
+The client wants to check `stage.khewa.com` with the real live data. So the "practice run" becomes the staging build:
+- Live database exported on 4 Nov → merged into a copy of our 9.2 database with the steps below → tested locally → exported for staging with `stage-settings.sql` (test payments, emails off, outside-sync modules off).
+- Pictures: copied from live `img/` to staging by hand, then checked.
+- On go-live day the same script runs on the final live dump, with `live-settings.sql` (khewa.com, real payments, emails on, modules on).
+- The client confirmed that module changes and admin user changes made on live since 16 Oct don't matter, so all setup tables stay from our 9.2 copy.
+- The owner's own steps for both times are in `my-steps.md`.
+
 ## Why not a module
 This is a one-time move, done while the shop is closed. A PrestaShop module would run inside the shop it is changing, which is the wrong place. A **script run from the command line** is safer: it can be tested first, timed, and run again from the start if something fails.
 
