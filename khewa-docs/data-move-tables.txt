@@ -11,6 +11,9 @@
 #   - gift card, loyalty and POS counters/settings changed by staff since 16 Oct
 #   - PS_CURRENCY_DEFAULT rates if changed (ps_currency conversion_rate)
 #
+# Exceptions on the DATA list (handled in data-move/merge.sh): ps_feature_flag, ps_cart_rule_type, ps_cart_rule_type_lang
+# are kept from here; ps_product_attribute_lang is rebuilt; ps_cart_rule_compatible_types is not on live (emptied).
+#
 # Row counts are from the local database on 3 Nov 2026 (estimates for big tables).
 
 

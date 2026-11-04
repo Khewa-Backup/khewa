@@ -1,0 +1,35 @@
+-- row counts that differ (table, live, merged):
+  none: every data table has the same row count as live
+-- newest rows (live | merged):
+  MAX(id_order) ps_orders: 35084 | 35084
+  MAX(date_add) ps_orders: 2026-11-03 16:00:36 | 2026-11-03 16:00:36
+  MAX(id_customer) ps_customer: 1263 | 1263
+  MAX(id_product) ps_product: 18430 | 18430
+  MAX(id_cart) ps_cart: 39629 | 39629
+  MAX(id_cart_rule) ps_cart_rule: 2029 | 2029
+  MAX(id_pos_order) ps_pos_orders: NULL | NULL
+  MAX(number) ps_order_invoice: 35039 | 35039
+-- order totals for the last 7 days (live | merged):
+khewa_cutover	96	6165.35
+khewa_live	96	6165.35
+-- stock and price, 10 random products (rows where live and merged differ):
+-- gift cards / vouchers: remaining amount and uses differ:
+-- data that points at setup rows that don't exist here:
+orders.current_state	0
+order_history.state	0
+orders.id_carrier	0
+orders.id_currency	0
+customer.id_default_group	0
+address.id_country	0
+product.id_tax_rules_group	0
+cart.id_carrier	0
+image_shop without image	0
+-- new admin accounts or modules on live since our copy (should be none):
+module only on live	welcome	6.0.9
+module only on live	psaddonsconnect	2.1.2
+module only on live	ps_buybuttonlite	1.0.1
+module only on live	ewrelatedproductspro	1.0.3
+module only on live	pwfavorites	2.2.1
+-- security scan of the merged data (hits not seen on 3 Nov):
+  ps_log	message	b64blob	1
+  (148 tables, 504 text columns scanned)
