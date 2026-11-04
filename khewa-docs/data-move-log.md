@@ -12,7 +12,7 @@ Plan and reasons: `data-move-plan.md`. Table list: `data-move-tables.txt`. Scrip
    bash merge.sh ../../../backups/live-db-final.sql.gz final > run-final.log 2>&1
    ```
 3. Read `out-final/checks.txt` (see "What the checks must show" below).
-4. Test in the browser: home, a category, a product, add to cart, checkout up to payment, admin order list, a POS sale.
+4. Test in the browser: home, a category, a product, add to cart, **customer sign in**, wishlist, checkout up to payment, admin order list, a POS sale.
 5. Export for the server (see "Export for the server" below).
 
 The script does, in order:
@@ -59,6 +59,14 @@ C. Live values copied over our settings:
 - Invoice, delivery slip and credit slip numbers: PrestaShop takes the next number from the highest number in the copied invoice/slip tables, so they continue on their own. No counter changed on live.
 - Gift card and loyalty counters: no change on live.
 - Settings that changed on live but stay as here: Mailchimp report cache, PrestaShop Accounts login tokens, the update tool's last check, CSS/JS cache numbers.
+
+## Customer logins after the move
+Customers must be able to sign in with their live password. This works because:
+- `ps_customer` (with the password hashes) comes from live like every other data table.
+- The shop's secret key (`cookie_key` in `app/config/parameters.php`) is **the same as on the live server** (checked 4 Nov). 77 live customers still have the old 1.7 password type (md5 + this key); the other 1,125 have the modern type (bcrypt). Both were tested here: the old type signs in and is upgraded to the modern type on the first sign in.
+- **Never change `cookie_key` / `new_cookie_key` in `parameters.php` before or during the move.** If it changes, the 77 old-type customers can no longer sign in (they would need "Forgot your password"). All customers would also be signed out, which is fine.
+- Spam protection does not block sign in on the local copy or the tunnel (it is only on for khewa.com and *.khewa.com).
+- `checks.sh` prints the count of each password type, and step 4 of "How to run it again" includes a sign in test with a test customer (create, sign in, delete).
 
 ## What the checks must show (`out-<label>/checks.txt`)
 - "none: every data table has the same row count as live"

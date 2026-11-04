@@ -53,6 +53,15 @@ class InvReCaptcha extends Module
         $json = Configuration::get('irc_config');
         $this->config = $json ? array_merge($this->defaults, json_decode($json, true)) : $this->defaults;
         $this->isActive = ($this->config['sitekey'] || 'altcha' === $this->config['provider']) && $this->config['secretkey'] && $this->config['forms'];
+        // Khewa: the Google key only works on khewa.com and its subdomains (stage.khewa.com).
+        // On any other shop address (local copy, preview tunnel) the check could never pass and
+        // blocked sign in, sign up and the contact form, so it stays off there.
+        if ($this->isActive && 'grecaptcha' === $this->config['provider']) {
+            $shopDomain = strtolower((string) Configuration::get('PS_SHOP_DOMAIN_SSL'));
+            if ($shopDomain !== 'khewa.com' && substr($shopDomain, -10) !== '.khewa.com') {
+                $this->isActive = false;
+            }
+        }
         // BC fix for PS < 1.7.3
         $this->context->controller instanceof FrontController
             && version_compare(_PS_VERSION_, '1.7.3', '<')

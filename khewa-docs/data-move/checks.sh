@@ -58,5 +58,8 @@ echo "-- new admin accounts or modules on live since our copy (should be none):"
 m -e "SELECT 'employee', id_employee, email FROM khewa_live.ps_employee WHERE id_employee NOT IN (1,2)"
 m -e "SELECT 'module only on live', name, version FROM khewa_cutover.ps_module WHERE name NOT IN (SELECT name FROM khewa_live.ps_module)"
 
+echo "-- customer password types (both sign in while cookie_key is unchanged):"
+m -e "SELECT IF(LEFT(passwd,4) = CONCAT(CHAR(36),'2y',CHAR(36)), 'modern (bcrypt)', IF(LENGTH(passwd)=32, 'old 1.7 (md5 + cookie_key)', 'other')), COUNT(*) FROM khewa_live.ps_customer GROUP BY 1"
+
 echo "-- security scan of the merged data (hits not seen on 3 Nov):"
 /usr/bin/python3 -I "$HERE/dbscan-merged.py" "$OUT"
