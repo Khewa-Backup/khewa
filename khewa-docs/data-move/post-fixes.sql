@@ -98,3 +98,14 @@ UPDATE ps_employee l JOIN khewa_cutover.ps_employee c ON c.id_employee = l.id_em
 SET l.passwd = c.passwd, l.last_passwd_gen = c.last_passwd_gen WHERE l.id_employee = 2;
 
 SELECT 'post-fixes done' AS result;
+
+-- ===== E. label printing for store staff (20 Nov 2026) =====
+-- On 9.2 a staff account without rights to the label module gets a hard "refused" (403),
+-- and Direct Label Print then shows "couldn't load product data" on every admin page.
+-- On 1.7 the same refusal failed silently. Give the Sales (6) and Khewa (8) profiles the
+-- label module, like SuperAdmin (1) and Tech (7) already have. Run on live too.
+INSERT IGNORE INTO ps_access (id_profile, id_authorization_role)
+SELECT p.id_profile, r.id_authorization_role
+FROM ps_profile p
+JOIN ps_authorization_role r ON r.slug LIKE 'ROLE_MOD_TAB_ADMINDIRECTLABELPRINTPRODUCT_%'
+WHERE p.id_profile IN (6, 8);
