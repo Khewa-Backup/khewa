@@ -1,0 +1,109 @@
+--------------
+SET SESSION sql_mode = 'NO_AUTO_VALUE_ON_ZERO'
+--------------
+
+--------------
+UPDATE ps_product      SET unit_price = IF(unit_price_ratio != 0, price / unit_price_ratio, 0)
+--------------
+
+--------------
+UPDATE ps_product_shop SET unit_price = IF(unit_price_ratio != 0, price / unit_price_ratio, 0)
+--------------
+
+--------------
+UPDATE ps_product      SET redirect_type = 'default' WHERE redirect_type IN ('', '404') OR redirect_type IS NULL OR redirect_type + 0 = 0
+--------------
+
+--------------
+UPDATE ps_product_shop SET redirect_type = 'default' WHERE redirect_type IN ('', '404') OR redirect_type IS NULL OR redirect_type + 0 = 0
+--------------
+
+--------------
+TRUNCATE ps_product_attribute_lang
+--------------
+
+--------------
+INSERT INTO ps_product_attribute_lang (id_product_attribute, id_lang, available_now, available_later)
+  SELECT pa.id_product_attribute, l.id_lang, '', '' FROM ps_product_attribute pa CROSS JOIN ps_lang l
+--------------
+
+--------------
+UPDATE ps_product                SET minimal_quantity = 1 WHERE minimal_quantity = 0
+--------------
+
+--------------
+UPDATE ps_product_shop           SET minimal_quantity = 1 WHERE minimal_quantity = 0
+--------------
+
+--------------
+UPDATE ps_product_attribute      SET minimal_quantity = 1 WHERE minimal_quantity = 0
+--------------
+
+--------------
+UPDATE ps_product_attribute_shop SET minimal_quantity = 1 WHERE minimal_quantity = 0
+--------------
+
+--------------
+UPDATE ps_stock SET reference = '' WHERE reference IS NULL
+--------------
+
+--------------
+UPDATE ps_category SET redirect_type = '404' WHERE is_root_category = 1
+--------------
+
+--------------
+UPDATE ps_feature_value fv JOIN (
+  SELECT id_feature_value, ROW_NUMBER() OVER (PARTITION BY id_feature ORDER BY id_feature_value) - 1 AS pos
+  FROM ps_feature_value) p ON p.id_feature_value = fv.id_feature_value
+SET fv.position = p.pos
+--------------
+
+--------------
+UPDATE ps_cart_rule cr
+LEFT JOIN (
+  SELECT ocr.id_cart_rule, COUNT(*) AS quantity_used
+  FROM ps_order_cart_rule ocr JOIN ps_orders o ON ocr.id_order = o.id_order
+  WHERE ocr.deleted = 0
+    AND o.current_state != (SELECT CAST(value AS UNSIGNED) FROM ps_configuration WHERE name = 'PS_OS_ERROR' LIMIT 1)
+  GROUP BY ocr.id_cart_rule
+) used ON used.id_cart_rule = cr.id_cart_rule
+SET cr.total_quantity = cr.quantity + COALESCE(used.quantity_used, 0)
+WHERE cr.quantity IS NOT NULL
+--------------
+
+--------------
+UPDATE ps_product           SET isbn = '' WHERE id_product = 4523
+--------------
+
+--------------
+UPDATE ps_product_attribute SET isbn = '' WHERE id_product = 4523
+--------------
+
+--------------
+UPDATE ps_wkinventory SET name = 'Inventory 2021 (disabled, never applied)', done = 1, stock_updated = 1
+WHERE id_inventory = 2
+--------------
+
+--------------
+UPDATE ps_configuration l JOIN khewa_cutover.ps_configuration c
+  ON c.name = l.name AND c.id_shop <=> l.id_shop AND c.id_shop_group <=> l.id_shop_group
+SET l.value = c.value, l.date_upd = c.date_upd
+WHERE l.name IN ('dlp_pb_auto_UPC_id', 'dymoPrinterIndex_dlpp')
+--------------
+
+--------------
+UPDATE ps_currency l JOIN khewa_cutover.ps_currency c ON c.id_currency = l.id_currency
+SET l.conversion_rate = c.conversion_rate
+--------------
+
+--------------
+UPDATE ps_currency_shop l JOIN khewa_cutover.ps_currency_shop c ON c.id_currency = l.id_currency AND c.id_shop = l.id_shop
+SET l.conversion_rate = c.conversion_rate
+--------------
+
+--------------
+SELECT 'post-fixes done' AS result
+--------------
+
+result
+post-fixes done

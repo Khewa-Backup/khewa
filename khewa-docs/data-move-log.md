@@ -84,12 +84,13 @@ mysqldump -uroot -pmysql --single-transaction --quick --routines --triggers --no
   --set-gtid-purged=OFF --column-statistics=0 --default-character-set=utf8mb4 --hex-blob khewa_live \
   | sed 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' | gzip > for-stage/<name>.sql.gz
 ```
-Then on the server run `stage-settings.sql` (staging) or `live-settings.sql` (go-live).
+Then on the server run `stage-settings.sql` (staging). For go-live the settings are put in before the export instead (see the 20 Nov run): copy `khewa_live` into `khewa_golive`, run `data-move/live-settings.sql` on it, export `khewa_golive`.
 
 Code zip (from inside `live/`; product pictures come from the live `img` folder, so `img/p` is left out):
 ```
 zip -r -q -y ../for-stage/<name>.zip . -x '.git' '.git/*' 'khewa-docs/*' 'var/cache/*' 'var/logs/*' 'var/sessions/*' 'img/p/[0-9]*' '*.DS_Store'
 ```
+For go-live the zip also leaves out the folders that stay on the server (`upload`, `download` and the shop's picture folders in `img`), so the older local copies never overwrite newer live files. Then `.htaccess` inside the zip is replaced with the khewa.com one (`for-live/htaccess-khewa.com.txt`: the local one with `khewa.shopiman.com` changed to `khewa.com`).
 
 **After the live `img` folder is copied onto the server:** PrestaShop 9 keeps category pictures differently from 1.7 (it needs a `<id>_thumb.jpg` next to each `<id>.jpg`). The update tool's step `ps_900_migrate_category_images()` must run once on the server's `img/c`, then thumbnails are rebuilt for anything missing. Also check that `img` has only picture and document files.
 
@@ -108,3 +109,17 @@ zip -r -q -y ../for-stage/<name>.zip . -x '.git' '.git/*' 'khewa-docs/*' 'var/ca
 - Live's visit stats (`ps_connections`, `ps_guest`) only go back to 27 Oct (46,341 rows instead of 3.4 million), so the database is 46 MB packed instead of 100 MB. That matches live.
 - Tested: home, product page (newest product), add to cart; admin orders, customers, products, cart rules, carts, gift cards, RockPOS pages, and order #35084 (products, invoice, totals). No new errors in the logs. The temporary test admin was deleted after; only admins #1 and #2 remain.
 - Made: `for-stage/khewa_stage_9.2-live-data-2026-11-04.sql.gz` (46 MB) and `for-stage/khewa-new-code-2026-11-04.zip` (653 MB, 97,750 files). The old 9.2 database file without live data moved to `backups/old-for-stage/`.
+
+### 20 Nov 2026: go-live data (live dump of 19 Nov 18:52, `backups/live-db-final.sql.gz`)
+- Dump: phpMyAdmin export from MariaDB 10.5, plain `.sql` of 465 MB (packed to 47 MB first), 620 tables, version 1.7.8.7.
+- Backup before: `backups/khewa_live-before-merge-final.sql.gz`.
+- Ran in one go, about 2.5 minutes. 246 tables copied.
+- Checks: every data table has the same row count as live. Newest order #35266 (19 Nov 17:01), customer 1270, product 18459, cart 39823, cart rule 2032, invoice 35221: the same on both sides. Last 7 days: 73 orders, $4,134.79 on both. No stock, price or voucher differences. Nothing points at missing setup rows. Customers: 1,132 modern passwords, 77 old 1.7 type.
+- Filter index: shop 1: 977 products, shop 2: 276, shop 3: 350.
+- Security scan: only `ps_log.message` b64blob, as before. Clean.
+- **Found and fixed:** Direct Label Print's automatic **EAN** number had moved on live (2163, here 2127), so new barcodes would have repeated. `post-fixes.sql` now copies `dlp_pb_auto_ean_id` and `selectedDymoIndex_dlpp` from live too (UPC was already copied). Applied.
+- **Found: `post-fixes.sql` was never in git** (`.gitignore` skips `*.sql`). Added with `git add -f`, with `live-settings.sql`.
+- Setup compared with live: carriers, order states, groups, taxes, currencies, zones, countries, languages, shops, image types: the same. Settings changed on live since 3 Nov: only the label printer counters (copied), PrestaShop Accounts tokens and Mailchimp report cache (not needed). Modules only on live: the same 5 as before.
+- **Staff accounts:** live still has 16 more staff accounts than here (11 active; several used this week, including the POS accounts `Rock@khewa.com` and `Rock_Window@khewa.com`). This copy has only #1 and #2 (the 3 Nov cleanup). Decision for go-live: see `live-prestashop-9.md`.
+- Tested through the tunnel with a temporary customer and admin (both deleted after): home, customer sign in, a product, add to cart, checkout start, admin sign in, order list (newest #35266). No page errors.
+- Go-live files in `for-live/`: `khewa_live_9.2-2026-11-20.sql.gz` (with `live-settings.sql` already applied: khewa.com, emails on, Stripe and PayPal live, Mailchimp / Tag Manager / Etsy on for all 3 shops), `khewa-new-code-2026-11-20.zip`, `htaccess-khewa.com.txt`, `README-live.md`.

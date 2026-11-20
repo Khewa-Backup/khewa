@@ -470,3 +470,7 @@ Why: in Aug 2026 someone logged into the admin with a real account and uploaded 
 5. **Firewall:** Cloudflare or the host's WAF in front of the shop.
 6. **File-change alerts:** get a message the same day a `.php` file is added or changed, not two months later.
 7. **PHP:** 8.5.12 (or at least 8.3.36), with `session.upload_progress.enabled = Off` (see "How to start it").
+
+## Go-live files (20 Nov 2026)
+- Live data of 19 Nov 18:52 moved in (details and checks: `data-move-log.md`, run of 20 Nov). Files for the server are in `khewa-updates/for-live/` with the steps in `README-live.md`.
+- **Staff accounts:** the old live shop still has 16 staff accounts that this copy does not have (11 active; several used this week, including the POS accounts). This copy has only #1 and #2 since the 3 Nov cleanup. If they are not brought back, staff (and the POS) must get new accounts after go-live.
