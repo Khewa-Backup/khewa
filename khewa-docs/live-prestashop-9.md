@@ -474,3 +474,24 @@ Why: in Aug 2026 someone logged into the admin with a real account and uploaded 
 ## Go-live files (20 Nov 2026)
 - Live data of 19 Nov 18:52 moved in (details and checks: `data-move-log.md`, run of 20 Nov). Files for the server are in `khewa-updates/for-live/` with the steps in `README-live.md`.
 - **Staff accounts back (20 Nov):** the 11 active live staff accounts (including the POS tills) are copied from live with their live passwords, but **switched off** on the client's request (20 Nov): only #1 and #2 can sign in; any account can be switched back on in Advanced Parameters > Team. The 5 accounts already off on live stay out. #1 and #2 as before (#2 has its live password).
+
+## Old 1.7 shop on this Mac (20 Nov 2026)
+A copy of the old live shop (PrestaShop 1.7.8.7), to look things up after the move to 9.2.
+- **Address:** https://khewa.shopiman.com/ (the tunnel, with the same browser password as before, see `/Users/hello/khewa-php83-apache/tunnel-login.txt`). Admin: `/admin556cvt7923/`, only accounts #1 and #2 (old live passwords). Directly on this Mac: `127.0.0.1:8088` (needs the host name `khewa.shopiman.com`).
+- **Code:** `khewa-updates/old-live/`, unpacked from `backups/live-code-2026-10-16.tar.gz` (the live code of 16 Oct). Not in git.
+- **Database:** `khewa_old_live`, a copy of the live 1.7 dump of 19 Nov 18:52 (`khewa_cutover`). Settings: `data-move/old-live-settings.sql`.
+- **Runs on:** PHP 7.4 (AMPPS) as its own PHP-FPM on port 9074 (`/Users/hello/khewa-php83-apache/php74-fpm.conf`; start: `/Applications/AMPPS/apps/php74/sbin/php-fpm -y /Users/hello/khewa-php83-apache/php74-fpm.conf`), and the web server in `/Users/hello/khewa-php83-apache/httpd.conf`: port 8086 (browser password) now passes on to 8088 (old-live). Search engines are told not to list it (`X-Robots-Tag: noindex`). Debug mode off.
+- **Cleaned the same way as the 9.2 copy (attacker files moved, not deleted, to `/Users/hello/khewa-incident-2026-10-29/quarantine-old-live/`):**
+  - all files from the 3 Nov hack report: `robots.php`, the fake `wp-admin.php` / `wp-core.php` files, `.well-known/acme-challenge/init.php`, `modules/prestaeditor/`, `geoff*`, `sucuri*`, `phpinfo.php`, `inode_diagnostic2.php`, the `ps_shoppingcart` backdoor `redirect.php`, the empty `updateproducts` attacker file
+  - `controllers/front/AuthController.php` (backdoor) and `OrderController.php` (card skimmer): replaced by the official 1.7.8.7 files. The live copies were the official file plus only the attacker code.
+  - the skimmer line in `wkhelpdesk/.../tinymce_wk_setup.js` and the hidden line in `mailchimppro/.../mc-cdn-health.js`: cut out
+  - the theme's combined script files from September (`themes/warehouse/assets/cache/`) and `config/xml/untrusted_modules_list.xml`: moved out, the shop makes them again
+  - the same unneeded files as on 3 Nov (old copies, zips, logs, the 2021 card-sale logs with the Virtual Merchant PIN), except what 1.7 still uses
+  - two file managers with no login check are blocked from the web: `wkhelpdesk/libs/filemanager` (also stopped in its `config.php`) and `revsliderprestashop/include/filemanager` (**this hole was also on the old live server**)
+- **Checked:** the attack scan (`/Users/hello/khewa-incident-2026-10-29/scan-old-live-2026-11-20/`) finds nothing left. Every core file compared with official 1.7.8.7: the only differences are Khewa's own changes (all the same as in the `khewa` repo), two admin screen tweaks that hide order totals, and two harmless Symfony test files. Known attack addresses give 403 or 404.
+- **Switched off so nothing goes out** (rows kept in `zz_module_shop_off`): emails, PayPal, Stripe (also test mode), Virtual Merchant test mode, Canada Post labels, Mailchimp, Etsy, Tag Manager, Facebook, PrestaShop account / eventbus / metrics / marketplace, cron jobs, backups module, auto-upgrade, spam protection (Google's key only works on khewa.com, so it would block every sign in here). Staff: only #1 and #2 active, the others switched off.
+- **Tested:** home, a product, a customer sign-in and an admin sign-in (temporary test accounts, deleted after).
+- **Not there:** 41 product pictures added after 16 Oct (newest ids 10716–10721). They are only on the live server.
+- Not changed, on purpose: the old modules' own weak spots (behind the browser password; only 2 admin accounts).
+
+**The local 9.2 shop is now local only:** http://127.0.0.1:8087/ (admin `/admin556cvt7923/`). Shop address and `.htaccess` changed to `127.0.0.1:8087`, https off (`data-move/local-only-settings.sql`, backup first: `backups/khewa_live-before-local-only.sql.gz`). To put it back on the tunnel: run `tunnel/tunnel-settings.sql`, put the `.htaccess` host back, and in `httpd.conf` point port 8086 at 8087 again.

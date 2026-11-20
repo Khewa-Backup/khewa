@@ -42,115 +42,115 @@ RewriteEngine on
 RewriteRule \.git - [F,L]
 
 
-#Domain: khewa.shopiman.com
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+#Domain: 127.0.0.1:8087
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule . - [E=REWRITEBASE:/]
 RewriteRule ^api(?:/(.*))?$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]
 RewriteRule ^upload/.+$ %{ENV:REWRITEBASE}index.php [QSA,L]
 
 # Rewrites for product images (support up to < 10 million images)
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$1$3 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$1$4 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$1$5 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$1$6 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$6/$1$7 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$6/$7/$1$8 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$6/$7/$8/$1$9 [L]
 # Rewrites for category images
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^c/([\d]+)(|_thumb)(\-[\.*\w-]*)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/c/$1$2$3$4 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^c/([a-zA-Z_-]+)(|_thumb)(-[\d]+)?/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/c/$1$2$3$4 [L]
 # AlphaImageLoader for IE and fancybox
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ %{ENV:REWRITEBASE}js/jquery/plugins/fancybox/images/$1.$2 [L]
 
 
-#Domain: khewa.shopiman.com
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+#Domain: 127.0.0.1:8087
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule . - [E=REWRITEBASE:/]
 RewriteRule ^api(?:/(.*))?$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]
 RewriteRule ^upload/.+$ %{ENV:REWRITEBASE}index.php [QSA,L]
 
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^entrepot$ /entrepot/ [L,R]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^entrepot/(.*) /$1 [L]
 
 # Rewrites for product images (support up to < 10 million images)
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$1$3 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$1$4 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$1$5 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$1$6 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$6/$1$7 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$6/$7/$1$8 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$6/$7/$8/$1$9 [L]
 # Rewrites for category images
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^c/([\d]+)(|_thumb)(\-[\.*\w-]*)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/c/$1$2$3$4 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^c/([a-zA-Z_-]+)(|_thumb)(-[\d]+)?/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/c/$1$2$3$4 [L]
 # AlphaImageLoader for IE and fancybox
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ %{ENV:REWRITEBASE}js/jquery/plugins/fancybox/images/$1.$2 [L]
 
 
-#Domain: khewa.shopiman.com
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+#Domain: 127.0.0.1:8087
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule . - [E=REWRITEBASE:/]
 RewriteRule ^api(?:/(.*))?$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]
 RewriteRule ^upload/.+$ %{ENV:REWRITEBASE}index.php [QSA,L]
 
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^kisisam$ /kisisam/ [L,R]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^kisisam/(.*) /$1 [L]
 
 # Rewrites for product images (support up to < 10 million images)
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$1$3 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$1$4 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$1$5 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$1$6 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$6/$1$7 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$6/$7/$1$8 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^(([\d])([\d])([\d])([\d])([\d])([\d])([\d])(?:\-[\w-]*)?)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/p/$2/$3/$4/$5/$6/$7/$8/$1$9 [L]
 # Rewrites for category images
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^c/([\d]+)(|_thumb)(\-[\.*\w-]*)/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/c/$1$2$3$4 [L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^c/([a-zA-Z_-]+)(|_thumb)(-[\d]+)?/.+(\.(?:jpe?g|webp|png|avif))$ %{ENV:REWRITEBASE}img/c/$1$2$3$4 [L]
 # AlphaImageLoader for IE and fancybox
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ %{ENV:REWRITEBASE}js/jquery/plugins/fancybox/images/$1.$2 [L]
 
 # Send all other traffic to dispatcher
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^.*$ - [NC,L]
-RewriteCond %{HTTP_HOST} ^khewa.shopiman.com$
+RewriteCond %{HTTP_HOST} ^127.0.0.1:8087$
 RewriteRule ^.*$ %{ENV:REWRITEBASE}index.php [NC,L]
 </IfModule>
 
