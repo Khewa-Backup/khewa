@@ -473,4 +473,4 @@ Why: in Aug 2026 someone logged into the admin with a real account and uploaded 
 
 ## Go-live files (20 Nov 2026)
 - Live data of 19 Nov 18:52 moved in (details and checks: `data-move-log.md`, run of 20 Nov). Files for the server are in `khewa-updates/for-live/` with the steps in `README-live.md`.
-- **Staff accounts back (20 Nov):** the 11 active live staff accounts (including the POS tills) are copied from live with their live passwords, so staff sign in as before. The 5 switched-off live accounts stay out. #1 and #2 as before (#2 has its live password).
+- **Staff accounts back (20 Nov):** the 11 active live staff accounts (including the POS tills) are copied from live with their live passwords, but **switched off** on the client's request (20 Nov): only #1 and #2 can sign in; any account can be switched back on in Advanced Parameters > Team. The 5 accounts already off on live stay out. #1 and #2 as before (#2 has its live password).

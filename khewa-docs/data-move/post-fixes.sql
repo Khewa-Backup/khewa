@@ -90,6 +90,9 @@ INSERT IGNORE INTO ps_employee_shop (id_employee, id_shop)
 SELECT es.id_employee, es.id_shop FROM khewa_cutover.ps_employee_shop es
 JOIN ps_employee e ON e.id_employee = es.id_employee
 WHERE es.id_employee NOT IN (1, 2) AND es.id_shop IN (SELECT id_shop FROM ps_shop);
+-- (20 Nov, the client's wish) the copied staff accounts are kept but switched OFF:
+-- only #1 and #2 can sign in. Switch one back on in Advanced Parameters > Team.
+UPDATE ps_employee SET active = 0 WHERE id_employee NOT IN (1, 2);
 -- the client's own admin account (#2) keeps its live password too
 UPDATE ps_employee l JOIN khewa_cutover.ps_employee c ON c.id_employee = l.id_employee
 SET l.passwd = c.passwd, l.last_passwd_gen = c.last_passwd_gen WHERE l.id_employee = 2;
