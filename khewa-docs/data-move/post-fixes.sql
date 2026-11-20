@@ -70,4 +70,28 @@ SET l.conversion_rate = c.conversion_rate;
 UPDATE ps_currency_shop l JOIN khewa_cutover.ps_currency_shop c ON c.id_currency = l.id_currency AND c.id_shop = l.id_shop
 SET l.conversion_rate = c.conversion_rate;
 
+-- ===== D. staff accounts from live (20 Nov 2026) =====
+-- The 3 Nov cleanup left only #1 and #2 here. The shop's staff and the two POS tills still use their
+-- live accounts, so every ACTIVE live account except #1 and #2 is copied with its live password.
+-- Switched-off live accounts are not copied. Their start page is matched to the 9.2 menu by name.
+-- (live has 0000-00-00 stats dates, so strict date checks are off for this part)
+SET SESSION sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+DELETE FROM ps_employee_shop WHERE id_employee NOT IN (1, 2);
+DELETE FROM ps_employee WHERE id_employee NOT IN (1, 2);
+INSERT INTO ps_employee (id_employee,id_profile,id_lang,lastname,firstname,email,passwd,last_passwd_gen,stats_date_from,stats_date_to,stats_compare_from,stats_compare_to,stats_compare_option,preselect_date_range,bo_color,bo_theme,bo_css,default_tab,bo_width,bo_menu,active,optin,id_last_order,id_last_customer_message,id_last_customer,last_connection_date,reset_password_token,reset_password_validity,has_enabled_gravatar)
+SELECT e.id_employee,e.id_profile,e.id_lang,e.lastname,e.firstname,e.email,e.passwd,e.last_passwd_gen,e.stats_date_from,e.stats_date_to,e.stats_compare_from,e.stats_compare_to,e.stats_compare_option,e.preselect_date_range,e.bo_color,e.bo_theme,e.bo_css,
+  COALESCE(nt.id_tab, 0),e.bo_width,e.bo_menu,e.active,e.optin,e.id_last_order,e.id_last_customer_message,e.id_last_customer,e.last_connection_date,NULL,NULL,e.has_enabled_gravatar
+FROM khewa_cutover.ps_employee e
+LEFT JOIN khewa_cutover.ps_tab ot ON ot.id_tab = e.default_tab
+LEFT JOIN ps_tab nt ON nt.class_name = ot.class_name
+WHERE e.active = 1 AND e.id_employee NOT IN (1, 2)
+  AND e.id_profile IN (SELECT id_profile FROM ps_profile) AND e.id_lang IN (SELECT id_lang FROM ps_lang);
+INSERT IGNORE INTO ps_employee_shop (id_employee, id_shop)
+SELECT es.id_employee, es.id_shop FROM khewa_cutover.ps_employee_shop es
+JOIN ps_employee e ON e.id_employee = es.id_employee
+WHERE es.id_employee NOT IN (1, 2) AND es.id_shop IN (SELECT id_shop FROM ps_shop);
+-- the client's own admin account (#2) keeps its live password too
+UPDATE ps_employee l JOIN khewa_cutover.ps_employee c ON c.id_employee = l.id_employee
+SET l.passwd = c.passwd, l.last_passwd_gen = c.last_passwd_gen WHERE l.id_employee = 2;
+
 SELECT 'post-fixes done' AS result;

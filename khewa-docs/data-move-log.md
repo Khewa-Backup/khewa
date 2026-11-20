@@ -74,7 +74,7 @@ Customers must be able to sign in with their live password. This works because:
 - last 7 days: the same number of orders and the same total
 - stock, price and cart rule rows that differ: none
 - data pointing at missing setup rows: 0 everywhere
-- employees: only #1 and #2; no module that exists only on live
+- staff: no active live account missing or with another password; modules only on live: the same 5 as before
 - security scan: only `ps_log.message b64blob` (as on 3 Nov), or each new hit is read by eye
 
 ## Export for the server
@@ -120,6 +120,6 @@ For go-live the zip also leaves out the folders that stay on the server (`upload
 - **Found and fixed:** Direct Label Print's automatic **EAN** number had moved on live (2163, here 2127), so new barcodes would have repeated. `post-fixes.sql` now copies `dlp_pb_auto_ean_id` and `selectedDymoIndex_dlpp` from live too (UPC was already copied). Applied.
 - **Found: `post-fixes.sql` was never in git** (`.gitignore` skips `*.sql`). Added with `git add -f`, with `live-settings.sql`.
 - Setup compared with live: carriers, order states, groups, taxes, currencies, zones, countries, languages, shops, image types: the same. Settings changed on live since 3 Nov: only the label printer counters (copied), PrestaShop Accounts tokens and Mailchimp report cache (not needed). Modules only on live: the same 5 as before.
-- **Staff accounts:** live still has 16 more staff accounts than here (11 active; several used this week, including the POS accounts `Rock@khewa.com` and `Rock_Window@khewa.com`). This copy has only #1 and #2 (the 3 Nov cleanup). Decision for go-live: see `live-prestashop-9.md`.
+- **Staff accounts brought back (agreed 20 Nov):** live still had 11 active staff accounts that this copy did not (the 3 Nov cleanup kept only #1 and #2), several used this week, including the POS tills `Rock@khewa.com` and `Rock_Window@khewa.com`. `post-fixes.sql` part D now copies every active live account (not #1) with its live password and shops; switched-off accounts are left out. #2 (the client) also gets its live password (it was changed on live after 3 Nov). Tested with a staff and a till account (temporary password, real one put back after): both sign in and open the POS, as on live. `checks.sh` now lists any active live account missing here or with another password (should be none).
 - Tested through the tunnel with a temporary customer and admin (both deleted after): home, customer sign in, a product, add to cart, checkout start, admin sign in, order list (newest #35266). No page errors.
 - Go-live files in `for-live/`: `khewa_live_9.2-2026-11-20.sql.gz` (with `live-settings.sql` already applied: khewa.com, emails on, Stripe and PayPal live, Mailchimp / Tag Manager / Etsy on for all 3 shops), `khewa-new-code-2026-11-20.zip`, `htaccess-khewa.com.txt`, `README-live.md`.

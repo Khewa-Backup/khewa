@@ -473,4 +473,4 @@ Why: in Aug 2026 someone logged into the admin with a real account and uploaded 
 
 ## Go-live files (20 Nov 2026)
 - Live data of 19 Nov 18:52 moved in (details and checks: `data-move-log.md`, run of 20 Nov). Files for the server are in `khewa-updates/for-live/` with the steps in `README-live.md`.
-- **Staff accounts:** the old live shop still has 16 staff accounts that this copy does not have (11 active; several used this week, including the POS accounts). This copy has only #1 and #2 since the 3 Nov cleanup. If they are not brought back, staff (and the POS) must get new accounts after go-live.
+- **Staff accounts back (20 Nov):** the 11 active live staff accounts (including the POS tills) are copied from live with their live passwords, so staff sign in as before. The 5 switched-off live accounts stay out. #1 and #2 as before (#2 has its live password).

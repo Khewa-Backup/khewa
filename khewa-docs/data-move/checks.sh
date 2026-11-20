@@ -54,8 +54,10 @@ SELECT 'cart.id_carrier', COUNT(*) FROM ps_cart c WHERE c.id_carrier NOT IN (SEL
 SELECT 'image_shop without image', COUNT(*) FROM ps_image_shop s WHERE s.id_image NOT IN (SELECT id_image FROM ps_image);
 "
 
-echo "-- new admin accounts or modules on live since our copy (should be none):"
-m -e "SELECT 'employee', id_employee, email FROM khewa_live.ps_employee WHERE id_employee NOT IN (1,2)"
+echo "-- active live staff accounts missing here, or with another password (should be none):"
+m -e "SELECT 'employee', c.id_employee, c.email FROM khewa_cutover.ps_employee c LEFT JOIN khewa_live.ps_employee l USING (id_employee)
+  WHERE c.active = 1 AND c.id_employee <> 1 AND NOT (l.passwd <=> c.passwd)"
+echo "-- modules on live since our copy (should be only the 5 left out on purpose):"
 m -e "SELECT 'module only on live', name, version FROM khewa_cutover.ps_module WHERE name NOT IN (SELECT name FROM khewa_live.ps_module)"
 
 echo "-- customer password types (both sign in while cookie_key is unchanged):"
