@@ -1,0 +1,42 @@
+# khewatwofactor: staff login code, Symfony part (back office kernel only).
+#
+# PrestaShop 9.2 loads modules/<name>/config/admin/services.yml for every active module when
+# it builds the back office container. That container is then cached in var/cache/prod.
+#
+# Why the listeners look odd:
+# If the module folder is renamed or deleted (the cPanel/FTP way out), the cached container
+# still has these services. A normal listener service would then try to load
+# GateSubscriber.php, which is gone, and every back office page would fail with a fatal error.
+# So the two listeners below are plain PHP closures built by core classes only, and they
+# first check that the module file is still there:
+#   - file there:      the closure calls GateSubscriber (the real check)
+#   - file not there:  the closure calls Context::getContext(), which does nothing harmful
+# The real service (khewatwofactor.gate) is only created in the first case.
+services:
+    khewatwofactor.gate:
+        class: 'KhewaTwoFactor\EventSubscriber\GateSubscriber'
+        file: '%kernel.project_dir%/modules/khewatwofactor/src/EventSubscriber/GateSubscriber.php'
+        # public: the legacy hook in khewatwofactor.php asks it whether the code was given
+        public: true
+        arguments:
+            - '@security.helper'
+            - '@router'
+            - '@security.csrf.token_manager'
+
+    # Every back office request, after the firewall (8) and PrestaShop's session check (7).
+    khewatwofactor.request_listener:
+        class: Closure
+        factory: ['Closure', 'fromCallable']
+        arguments:
+            - '@=service("filesystem").exists(parameter("kernel.project_dir") ~ "/modules/khewatwofactor/src/EventSubscriber/GateSubscriber.php") ? [service("khewatwofactor.gate"), "onKernelRequest"] : "Context::getContext"'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: __invoke, priority: 5 }
+
+    # Right after a good password, after PrestaShop's own LoginSuccess listener (priority 0).
+    khewatwofactor.login_listener:
+        class: Closure
+        factory: ['Closure', 'fromCallable']
+        arguments:
+            - '@=service("filesystem").exists(parameter("kernel.project_dir") ~ "/modules/khewatwofactor/src/EventSubscriber/GateSubscriber.php") ? [service("khewatwofactor.gate"), "onLoginSuccess"] : "Context::getContext"'
+        tags:
+            - { name: kernel.event_listener, event: 'Symfony\Component\Security\Http\Event\LoginSuccessEvent', method: __invoke, priority: -64 }

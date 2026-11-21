@@ -1,0 +1,10 @@
+Hello {firstname},
+
+Your login code for {shop_name} is:
+
+{code}
+
+It works for {minutes} minutes and only once.
+It was asked for from IP {ip}.
+
+If you did not just log in, change your password now and tell the site owner.

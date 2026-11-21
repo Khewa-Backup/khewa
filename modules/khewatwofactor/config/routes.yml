@@ -1,0 +1,9 @@
+# khewatwofactor: the page where staff type their login code.
+# GateSubscriber answers this URL itself while the code is not given yet.
+# The controller is a core one (back office home redirect), not a module class, so nothing
+# breaks if the module folder is renamed while the old route is still in the cache.
+khewatwofactor_code:
+    path: /khewa-login-code
+    methods: [GET, POST]
+    defaults:
+        _controller: 'PrestaShopBundle\Controller\Admin\LoginController::homepageAction'

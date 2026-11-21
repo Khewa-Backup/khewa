@@ -1,0 +1,10 @@
+Bonjour {firstname},
+
+Votre code de connexion pour {shop_name} est :
+
+{code}
+
+Il est valide {minutes} minutes et une seule fois.
+Il a été demandé depuis l'adresse IP {ip}.
+
+Si vous ne venez pas de vous connecter, changez votre mot de passe tout de suite et prévenez le responsable du site.
