@@ -17,7 +17,7 @@
 # Row counts are from the local database on 3 Nov 2026 (estimates for big tables).
 
 
-## DATA (251 tables)
+## DATA (252 tables)
 ps_accessory	390	catalogue
 ps_address	1193	customers and their messages
 ps_an_wishlist	10	reviews / wishlists
@@ -89,6 +89,7 @@ ps_date_range	0	visit stats and the shop log
 ps_discountgenerator_group	23	generated discount codes
 ps_discountgenerator_group_lang	46	generated discount codes
 ps_discountgenerator_list	333	generated discount codes
+ps_dlpp_templates	1	label layout (Direct Label Print); moved from SETUP 21 Nov 2026, the client changed it on live
 ps_emailsubscription	183	newsletter / stock alerts / reviews / GDPR log
 ps_etsy_attribute_mapping	0	Etsy sync data (Etsy not connected)
 ps_etsy_attribute_mapping1	5	Etsy sync data (Etsy not connected)
@@ -273,7 +274,7 @@ ps_wkinventory_product	3688	stocktake lists (redo the 2021 lock after)
 ## REBUILD (1 tables)
 ps_af_index	1419	filter index: rebuild after the move
 
-## SETUP (379 tables)
+## SETUP (378 tables)
 ps_access	2509	shop setup
 ps_address_format	244	setup / module settings
 ps_admin_filter	305	shop setup
@@ -359,7 +360,6 @@ ps_currency_lang	4	shop setup
 ps_currency_shop	9	shop setup
 ps_customer_b2b	0	new in 9.2, not in live (empty)
 ps_delivery	2410	shop setup
-ps_dlpp_templates	1	setup / module settings
 ps_elegantalseoessentials_auto_meta	0	module setup (fixed here)
 ps_elegantalseoessentials_auto_meta_lang	0	module setup (fixed here)
 ps_elegantalseoessentials_auto_meta_shop	0	module setup (fixed here)

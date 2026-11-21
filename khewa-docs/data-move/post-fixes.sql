@@ -109,3 +109,14 @@ SELECT p.id_profile, r.id_authorization_role
 FROM ps_profile p
 JOIN ps_authorization_role r ON r.slug LIKE 'ROLE_MOD_TAB_ADMINDIRECTLABELPRINTPRODUCT_%'
 WHERE p.id_profile IN (6, 8);
+
+-- ===== F. label layout from live (21 Nov 2026) =====
+-- ps_dlpp_templates was kept from this copy, which still had an old 1 in x 1 in QR layout.
+-- The store prints with the newer 30336 layout (UPC, name, reference, price) set on live.
+-- The table is now on the DATA list, so the move copies it; this also copies it when run by hand.
+-- Same change for the live server: for-live/label-layout-fix.sql
+REPLACE INTO ps_dlpp_templates SELECT * FROM khewa_cutover.ps_dlpp_templates;
+UPDATE ps_configuration l JOIN khewa_cutover.ps_configuration c
+  ON c.name = l.name AND c.id_shop <=> l.id_shop AND c.id_shop_group <=> l.id_shop_group
+SET l.value = c.value, l.date_upd = c.date_upd
+WHERE l.name = 'label_dymosoftwaretype';
