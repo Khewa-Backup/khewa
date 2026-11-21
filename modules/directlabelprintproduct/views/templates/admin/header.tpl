@@ -43,6 +43,20 @@
             if(!id){
                 id = el.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("data-product-id");
             }
+            {* Khewa PS 9.2: the 9.2 products list has no data-product-id, so take the id from the same row (bulk checkbox, else the Preview link) *}
+            if(!id){
+                var dlppRow = el.closest("tr");
+                var dlppBox = dlppRow ? dlppRow.querySelector('input[name="product_bulk[]"]') : null;
+                if (dlppBox && dlppBox.value) {
+                    id = dlppBox.value;
+                } else if (dlppRow) {
+                    var dlppLink = dlppRow.querySelector('a[href*="/preview"]');
+                    var dlppMatch = dlppLink ? dlppLink.getAttribute("href").match(/\/products\/(\d+)\/preview/) : null;
+                    if (dlppMatch) {
+                        id = dlppMatch[1];
+                    }
+                }
+            }
 
             console.log("print product label:" + id);
 

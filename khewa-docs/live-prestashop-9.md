@@ -495,3 +495,17 @@ A copy of the old live shop (PrestaShop 1.7.8.7), to look things up after the mo
 - Not changed, on purpose: the old modules' own weak spots (behind the browser password; only 2 admin accounts).
 
 **The local 9.2 shop is now local only:** http://127.0.0.1:8087/ (admin `/admin556cvt7923/`). Shop address and `.htaccess` changed to `127.0.0.1:8087`, https off (`data-move/local-only-settings.sql`, backup first: `backups/khewa_live-before-local-only.sql.gz`). To put it back on the tunnel: run `tunnel/tunnel-settings.sql`, put the `.htaccess` host back, and in `httpd.conf` point port 8086 at 8087 again.
+
+## Label printing fix (21 Nov 2026)
+
+Store staff got labels with only a barcode, no name or price. Two causes:
+
+1. **Label button in the products list.** The module looks for `data-product-id` on the row, which the 9.2 list doesn't have. So it asked for product "null" and printed the layout's sample text. Fixed in `modules/directlabelprintproduct/views/templates/admin/header.tpl` (`prepareProductLabel()`, marked `Khewa PS 9.2`): it now takes the product number from the row's checkbox, or from the Preview link.
+   - **On live:** upload `for-live/directlabelprintproduct-header.tpl` to `public_html/modules/directlabelprintproduct/views/templates/admin/header.tpl`.
+   - Then clear the cache: delete `var/cache/prod/smarty/compile`, or use Advanced Parameters > Performance > "Clear cache".
+   - **A module update undoes this.** Put the change back after any update of Direct Label Print.
+2. **Old label layout.** The 9.2 copy kept an old 1 in x 1 in QR layout. The store uses the 30336 layout from live 1.7. On live, run `for-live/label-layout-fix.sql` (also in `data-move/post-fixes.sql` part F).
+
+Tested as a store staff account (profile 6 "Sales"): 3 dots > "Label" on products 18258 and 16600. The label gets the real name, price, reference and UPC. Proof: `for-live/label-proof-2026-11-21-v2.pdf` (screen drawing, not a Dymo print).
+
+**Still not working:** the bulk "Print Product Labels" items. The module adds them to the 1.7 bulk menu, which 9.2 doesn't have, so they don't show up at all. Print one product at a time from the row menu.
